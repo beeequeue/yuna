@@ -1,0 +1,41 @@
+{
+  "name": "crunch",
+  "version": "0.1.0",
+  "dependencies": {
+    "vue": "^2.5.17",
+    "vue-class-component": "^6.0.0",
+    "vue-property-decorator": "^7.0.0",
+    "vue-router": "^3.0.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.0.0",
+    "@vue/cli-plugin-typescript": "^3.0.0",
+    "@vue/cli-service": "^3.0.0",
+    "lint-staged": "^6.0.0",
+    "node-sass": "^4.9.0",
+    "sass-loader": "^7.0.1",
+    "tslint-config-prettier": "^1.14.0",
+    "tslint-config-standard": "^7.1.0",
+    "typescript": "^3.0.0",
+    "vue-template-compiler": "^2.5.17"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "vue-cli-service lint",
+      "git add"
+    ],
+    "*.vue": [
+      "git add"
+    ]
+  },
+  "private": true,
+  "scripts": {
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "serve": "vue-cli-service serve"
+  }
+}
