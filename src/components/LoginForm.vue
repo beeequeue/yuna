@@ -25,7 +25,7 @@
   import * as crunchyroll from '@/lib/crunchyroll'
 
   @Component
-  export default class HelloWorld extends Vue {
+  export default class LoginForm extends Vue {
     username = ''
     password = ''
     loggedIn = false
@@ -39,7 +39,7 @@
     }
 
     async logIn() {
-      const result = await crunchyroll.login(this.username, this.password)
+      const result = await crunchyroll.login(this.username, this.password, await crunchyroll.createSession())
 
       if (result.user.username === this.username) this.loggedIn = true
     }

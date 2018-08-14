@@ -23,6 +23,7 @@
     "tslint-config-prettier": "^1.14.0",
     "tslint-config-standard": "^7.1.0",
     "typescript": "^3.0.0",
+    "vue-svg-loader": "^0.5.0",
     "vue-template-compiler": "^2.5.17"
   },
   "gitHooks": {
