@@ -40,7 +40,7 @@ interface LoginSuccess {
   code: 'ok'
 }
 
-export const login = async (username: string, password: string) => {
+export const createSession = async () => {
   const sessionResponse = await superagent
     .post(`https://${API_URL}/start_session.${VERSION}.json`)
     .query({ access_token, device_type, device_id })
@@ -49,10 +49,18 @@ export const login = async (username: string, password: string) => {
     return Promise.reject(sessionResponse.body)
   }
 
+  return sessionResponse.body.data.session_id
+}
+
+export const login = async (
+  username: string,
+  password: string,
+  sessionId: string,
+) => {
   const data = new FormData()
   data.append('account', username)
   data.append('password', password)
-  data.append('session_id', sessionResponse.body.data.session_id)
+  data.append('session_id', sessionId)
 
   const response = (await superagent
     .post(`https://${API_URL}/login.${VERSION}.json`)
