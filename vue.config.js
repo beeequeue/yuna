@@ -20,10 +20,10 @@ module.exports = {
         return options
       })
 
-    config.plugin('define').tap(args => [
+    config.plugin('define').tap(() => [
       {
         'process.env': {
-          NODE_ENV: '"development"',
+          NODE_ENV: JSON.stringify(process.env.NODE_ENV),
           BASE_URL: '"/"',
           ACCESS_TOKEN: JSON.stringify(process.env.ACCESS_TOKEN),
         },

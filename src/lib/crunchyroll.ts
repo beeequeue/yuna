@@ -16,7 +16,7 @@ interface CrunchyrollError {
   message: string
 }
 
-interface CrunchyrollUser {
+export interface CrunchyrollUser {
   class: 'user'
   user_id: number
   etp_guid: string

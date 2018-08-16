@@ -1,16 +1,16 @@
 <template>
   <div>
-    <div v-if="!loggedIn">
+    <div v-if="!isLoggedIn">
       <div>Username: {{username}}</div>
       <input :value="username" @input="updateUsername" placeholder="Username" />
       <br/>
       <input :value="password" @input="updatePassword" type="password" placeholder="Password" />
       <br/>
       <br/>
-      <button @click="logIn">Login</button>
+      <button @click="handleLogin">Login</button>
     </div>
 
-    <div v-if="loggedIn">
+    <div v-if="isLoggedIn">
       Logged in!
     </div>
   </div>
@@ -22,13 +22,13 @@
     Prop,
     Vue
   } from 'vue-property-decorator'
-  import * as crunchyroll from '@/lib/crunchyroll'
 
   @Component
   export default class LoginForm extends Vue {
+    @Prop() login!: (user: string, pass: string) => void
+    @Prop() isLoggedIn!: boolean
     username = ''
     password = ''
-    loggedIn = false
 
     updateUsername(e: any) {
       this.username = e.currentTarget.value
@@ -38,10 +38,8 @@
       this.password = e.currentTarget.value
     }
 
-    async logIn() {
-      const result = await crunchyroll.login(this.username, this.password, await crunchyroll.createSession())
-
-      if (result.user.username === this.username) this.loggedIn = true
+    handleLogin() {
+      this.login(this.username, this.password)
     }
   }
 </script>

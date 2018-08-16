@@ -4,13 +4,16 @@
   "dependencies": {
     "@types/superagent": "^3.8.3",
     "@types/uuid": "^3.4.3",
+    "@types/webpack-env": "^1.13.6",
     "normalize.css": "^8.0.0",
     "superagent": "^3.8.3",
     "uuid": "^3.3.2",
     "vue": "^2.5.17",
     "vue-class-component": "^6.0.0",
     "vue-property-decorator": "^7.0.0",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.1",
+    "vuex-typescript": "^3.0.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.0",

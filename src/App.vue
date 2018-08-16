@@ -4,6 +4,19 @@
   </div>
 </template>
 
+<script lang="ts">
+import { Vue } from 'vue-property-decorator'
+import Component from 'vue-class-component'
+import { createSession } from './state/auth'
+
+@Component
+export default class App extends Vue {
+  mounted() {
+    createSession(this.$store)
+  }
+}
+</script>
+
 <style lang="scss">
 @import 'colors';
 
