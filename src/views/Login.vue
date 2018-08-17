@@ -12,7 +12,6 @@ import Logo from '@/assets/logo.svg'
 import LoginForm from '@/components/LoginForm.vue'
 import { isLoggedIn, loginCrunchyroll } from '../state/auth'
 
-
 @Component({
   components: {
     Logo,
@@ -30,14 +29,13 @@ export default class Login extends Vue {
     await loginCrunchyroll(this.$store, { user, pass })
 
     if (this.isLoggedIn) {
-      this.$router.push('/')
+      this.$router.go(-1)
     }
   }
 
   get isLoggedIn() {
     return isLoggedIn(this.$store)
   }
-
 }
 </script>
 
@@ -45,6 +43,10 @@ export default class Login extends Vue {
 @import '../colors';
 
 .login {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   padding: 35px 50px;
   background: $dark;
   border-radius: 5px;

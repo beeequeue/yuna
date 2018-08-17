@@ -1,5 +1,7 @@
 <template>
   <div id="app" :style="`background-image: url(${backgroundImage})`">
+    <navbar v-if="isLoggedIn"/>
+
     <router-view/>
 
     <button class="logout-button" v-if="isLoggedIn" @click="logOut">log out</button>
@@ -10,12 +12,15 @@
 import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 
+import Navbar from './components/Navbar/Navbar.vue'
 import { createSession, isLoggedIn, logOutCrunchyroll } from './state/auth'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys()
 
-@Component
+@Component({
+  components: { Navbar },
+})
 export default class App extends Vue {
   mounted() {
     createSession(this.$store)
@@ -54,15 +59,13 @@ body,
 
 #app {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 25px;
+  flex-direction: column;
 
   background-size: cover;
   background-position: center, center;
 
   color: $white;
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

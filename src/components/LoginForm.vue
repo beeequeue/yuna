@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="!isLoggedIn">
-      <div>Username: {{username}}</div>
+      <br/>
       <input :value="username" @input="updateUsername" placeholder="Username" />
       <br/>
       <input :value="password" @input="updatePassword" type="password" placeholder="Password" />

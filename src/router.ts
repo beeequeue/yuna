@@ -14,10 +14,10 @@ export const router = new Router({
         import(/* webpackChunkName: "login" */ './views/Login.vue'),
     },
     {
-      path: '/about',
-      name: 'about',
+      path: '/list',
+      name: 'list',
       component: () =>
-        import(/* webpackChunkName: "about" */ './views/About.vue'),
+        import(/* webpackChunkName: "list" */ './views/List.vue'),
     },
   ],
 })
