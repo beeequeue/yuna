@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="login">
     <Logo class="logo"/>
 
     <LoginForm :login="login" :isLoggedIn="isLoggedIn" />
@@ -19,8 +19,12 @@ import { isLoggedIn, loginCrunchyroll } from '../state/auth'
   },
 })
 export default class Login extends Vue {
-  login(user: string, pass: string) {
-    loginCrunchyroll(this.$store, { user, pass })
+  async login(user: string, pass: string) {
+    await loginCrunchyroll(this.$store, { user, pass })
+
+    if (this.isLoggedIn) {
+      this.$router.push('/')
+    }
   }
 
   get isLoggedIn() {

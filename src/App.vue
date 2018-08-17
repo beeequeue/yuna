@@ -1,18 +1,34 @@
 <template>
   <div id="app">
     <router-view/>
+
+    <button class="logout-button" @click="logOut">log out</button>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
-import { createSession } from './state/auth'
+import { createSession, isLoggedIn, logOutCrunchyroll } from './state/auth'
 
 @Component
 export default class App extends Vue {
   mounted() {
     createSession(this.$store)
+
+    if (!this.isLoggedIn) {
+      return this.$router.push('/login')
+    }
+  }
+
+  get isLoggedIn() {
+    return isLoggedIn(this.$store)
+  }
+
+  logOut() {
+    logOutCrunchyroll(this.$store)
+
+    this.$router.push('/login')
   }
 }
 </script>
@@ -44,5 +60,11 @@ body,
   & * {
     box-sizing: border-box;
   }
+}
+
+.logout-button {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
 }
 </style>

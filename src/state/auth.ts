@@ -37,7 +37,9 @@ export const auth = {
     },
 
     setCrunchyroll(state: AuthState, data: CrunchyrollData) {
-      state.crunchyroll = { ...data }
+      state.crunchyroll = data
+
+      localStorage.setItem('crunchyroll', JSON.stringify(data))
     },
   },
 
@@ -64,12 +66,16 @@ export const auth = {
           expires: data.expires,
         }
 
-        localStorage.setItem('crunchyroll', JSON.stringify(crunchyrollData))
-
         setCrunchyroll(context, crunchyrollData)
       } catch (err) {
         return
       }
+    },
+
+    async logOutCrunchyroll(context: AuthContext) {
+      if (!context.state.crunchyroll) return
+
+      setCrunchyroll(context, null as any)
     },
   },
 }
@@ -83,3 +89,4 @@ const setCrunchyroll = commit(auth.mutations.setCrunchyroll)
 
 export const createSession = dispatch(auth.actions.createSession)
 export const loginCrunchyroll = dispatch(auth.actions.loginCrunchyroll)
+export const logOutCrunchyroll = dispatch(auth.actions.logOutCrunchyroll)
