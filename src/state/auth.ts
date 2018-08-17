@@ -17,9 +17,17 @@ export interface AuthState {
 
 type AuthContext = ActionContext<AuthState, RootState>
 
+const cachedUserString = localStorage.getItem('crunchyroll')
+
 const initialState: AuthState = {
   sessionId: '',
-  crunchyroll: JSON.parse(localStorage.getItem('crunchyroll') || 'null'),
+  crunchyroll: null,
+}
+
+try {
+  initialState.crunchyroll = JSON.parse(cachedUserString || 'null')
+} catch (e) {
+  localStorage.removeItem('crunchyroll')
 }
 
 export const auth = {
