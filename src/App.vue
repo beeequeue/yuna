@@ -1,15 +1,19 @@
 <template>
-  <div id="app">
+  <div id="app" :style="`background-image: url(${backgroundImage})`">
     <router-view/>
 
-    <button class="logout-button" @click="logOut">log out</button>
+    <button class="logout-button" v-if="isLoggedIn" @click="logOut">log out</button>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
+
 import { createSession, isLoggedIn, logOutCrunchyroll } from './state/auth'
+
+const requireBg = require.context('@/assets/bg')
+const backgrounds = requireBg.keys()
 
 @Component
 export default class App extends Vue {
@@ -30,6 +34,10 @@ export default class App extends Vue {
 
     this.$router.push('/login')
   }
+
+  backgroundImage = requireBg(
+    backgrounds[Math.floor(Math.random() * backgrounds.length)],
+  )
 }
 </script>
 
@@ -50,7 +58,9 @@ body,
   align-items: center;
   margin-bottom: 25px;
 
-  background: $dark;
+  background-size: cover;
+  background-position: center, center;
+
   color: $white;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
