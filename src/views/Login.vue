@@ -34,6 +34,6 @@ export default class Login extends Vue {
 
 .logo {
   height: 100px;
-  fill: $purple;
+  fill: $main;
 }
 </style>

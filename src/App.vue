@@ -35,7 +35,7 @@ body,
   margin-bottom: 25px;
 
   background: $dark;
-  color: $purpleLight;
+  color: $white;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
