@@ -1,25 +1,31 @@
 <template>
 <div class="container">
-  <span class="button">D</span>
+  <icon class="button" :icon="homeOutlineSvg"/>
 
-  <Item text="Queue" path="/queue"/>
+  <item text="Queue" path="/queue"/>
 
   <span>Search goes here</span>
 
-  <Item text="List" path="/list"/>
+  <item text="List" path="/list"/>
 
-  <span class="button">S</span>
+  <icon class="button" :icon="settingsSvg"/>
 </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { mdiHomeOutline, mdiSettingsOutline } from '@mdi/js'
+
 import Item from './Item.vue'
+import Icon from '../Icon.vue'
 
 @Component({
-  components: { Item },
+  components: { Icon, Item },
 })
-export default class Navbar extends Vue {}
+export default class Navbar extends Vue {
+  homeOutlineSvg = mdiHomeOutline
+  settingsSvg = mdiSettingsOutline
+}
 </script>
 
 <style scoped lang="scss">
@@ -38,6 +44,7 @@ export default class Navbar extends Vue {}
     align-items: center;
     height: 50px;
     padding: 10px;
+    fill: $white;
 
     cursor: pointer;
   }

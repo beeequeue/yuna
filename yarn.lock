@@ -566,6 +566,10 @@
     cssnano-preset-default "^4.0.0"
     postcss "^7.0.0"
 
+"@mdi/js@^2.6.95":
+  version "2.6.95"
+  resolved "https://registry.yarnpkg.com/@mdi/js/-/js-2.6.95.tgz#c2c851e603da731657df0ef6cc0fca36b938d63c"
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
