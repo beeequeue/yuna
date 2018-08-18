@@ -12,43 +12,39 @@
 </template>
 
 <script lang="ts">
-  import {
-    Component,
-    Prop,
-    Vue
-  } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 
-  @Component
-  export default class LoginForm extends Vue {
-    @Prop() login!: (user: string, pass: string) => Promise<void>
-    username = ''
-    password = ''
-    error: string | null = null
+@Component
+export default class LoginForm extends Vue {
+  @Prop() login!: (user: string, pass: string) => Promise<void>
+  username = ''
+  password = ''
+  error: string | null = null
 
-    updateUsername(e: any) {
-      this.username = e.currentTarget.value
-    }
+  updateUsername(e: any) {
+    this.username = e.currentTarget.value
+  }
 
-    updatePassword(e: any) {
-      this.password = e.currentTarget.value
-    }
+  updatePassword(e: any) {
+    this.password = e.currentTarget.value
+  }
 
-    async handleLogin() {
-      try {
-        await this.login(this.username, this.password)
-      } catch (e) {
-        if (e.message) {
-          this.error = e.message
-        }
-
-        return
+  async handleLogin() {
+    try {
+      await this.login(this.username, this.password)
+    } catch (e) {
+      if (e.message) {
+        this.error = e.message
       }
 
-      this.username = ''
-      this.password = ''
-      this.error = null
+      return
     }
+
+    this.username = ''
+    this.password = ''
+    this.error = null
   }
+}
 </script>
 
 <style scoped lang="scss">
