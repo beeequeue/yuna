@@ -33,7 +33,7 @@ export default class Navbar extends Vue {
 
 .container {
   display: grid;
-  grid-template-columns: 50px 1fr 400px 1fr 50px;
+  grid-template-columns: 50px 1fr auto 1fr 50px;
   justify-items: center;
   align-items: center;
   background: $dark;
@@ -48,5 +48,15 @@ export default class Navbar extends Vue {
 
     cursor: pointer;
   }
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: transform 0.5s;
+}
+
+.v-enter,
+.v-leave-to {
+  transform: translateY(-100%);
 }
 </style>

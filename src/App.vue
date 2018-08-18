@@ -1,6 +1,8 @@
 <template>
   <div id="app" :style="`background-image: url(${backgroundImage})`">
-    <navbar v-if="isLoggedIn"/>
+    <transition>
+      <navbar v-if="isLoggedIn"/>
+    </transition>
 
     <router-view/>
 
