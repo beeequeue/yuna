@@ -65,14 +65,14 @@ export interface Media {
 
 export interface Series {
   class: 'series'
+  media_type: 'anime'
   series_id: string
   etp_guid: string
-  url: string
   name: string
-  media_type: 'anime'
+  description: string
+  url: string
   landscape_image: ImageSet
   portrait_image: ImageSet
-  description: string
 }
 
 export interface QueueEntry {
@@ -130,22 +130,28 @@ const responseIsError = (
   return res.body.error === true
 }
 
-const handleResponse = (data: any) => {
+const handleValue = (value: any) => {
+  if (typeof value === 'object' && value != null) {
+    return handleResponse(value)
+  } else if (
+    typeof value === 'string' &&
+    value.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}-\d{2}:\d{2}/)
+  ) {
+    return new Date(value)
+  }
+
+  return value
+}
+
+const handleResponse = <R>(data: any): R => {
+  if (Array.isArray(data)) {
+    return data.map(handleValue) as any
+  }
+
   const newData: any = {}
   const keys = Object.keys(data)
 
-  keys.forEach(key => {
-    const value = data[key]
-
-    if (typeof value === 'object' && value != null) {
-      newData[key] = handleResponse(value)
-    } else if (
-      typeof value === 'string' &&
-      value.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}-\d{2}:\d{2}/)
-    ) {
-      newData[key] = new Date(value)
-    }
-  })
+  keys.forEach(key => (newData[key] = handleValue(data[key])))
 
   return newData
 }
