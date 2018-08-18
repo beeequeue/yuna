@@ -1,17 +1,14 @@
 import { Response } from 'superagent'
 import { Location, VueRouter } from 'vue-router/types/router'
 
-export interface RequestSuccess<B extends object = any> extends Response {
+export interface RequestSuccess<B extends object> extends Response {
   status: 200
   ok: true
   body: B
 }
 
-export interface RequestError<
-  S extends number = 400 | 404 | 500,
-  B extends object = any
-> extends Response {
-  status: S | 500
+export interface RequestError<B extends object> extends Response {
+  status: 200 | 400 | 401 | 404 | 500 | 502
   ok: false
   body: B
 }

@@ -1,22 +1,12 @@
 import superagent from 'superagent'
 import uuid from 'uuid/v4'
-import { RequestSuccess, RequestError } from './../utils'
+import { RequestError, RequestSuccess } from './../utils'
 
-// tslint:disable:variable-name
 const API_URL = 'api.crunchyroll.com'
 const VERSION = '0'
-const access_token = process.env.ACCESS_TOKEN
-const device_type = 'com.crunchyroll.windows.desktop'
-const device_id = `NANI-${uuid()}`
-// tslint:enable:variable-name
+const accessToken = process.env.ACCESS_TOKEN
 
-interface CrunchyrollError {
-  error: true
-  code: string
-  message: string
-}
-
-export interface CrunchyrollUser {
+export interface User {
   class: 'user'
   user_id: number
   etp_guid: string
@@ -30,26 +20,148 @@ export interface CrunchyrollUser {
   created: Date | string
 }
 
-interface LoginSuccess {
-  data: {
-    user: CrunchyrollUser
-    auth: string
-    expires: Date
-  }
-  error: false
+export interface ImageSet {
+  thumb_url: string
+  small_url: string
+  medium_url: string
+  large_url: string
+  full_url: string
+  wide_url: string
+  widestar_url: string
+  fwide_url: string
+  fwidestar_url: string
+  width: string
+  height: string
+}
+
+export interface Media {
+  class: string
+  media_id: string
+  etp_guid: string
+  collection_id: string
+  collection_etp_guid: string
+  series_id: string
+  series_etp_guid: string
+  media_type: string
+  episode_number: string
+  name: string
+  description: string
+  screenshot_image: ImageSet
+  bif_url: string
+  url: string
+  clip: boolean
+  available: boolean
+  premium_available: boolean
+  free_available: boolean
+  availability_notes: string
+  available_time: Date
+  unavailable_time: Date
+  premium_available_time: Date
+  premium_unavailable_time: Date
+  free_available_time: Date
+  free_unavailable_time: Date
+  created: Date
+}
+
+export interface Series {
+  class: 'series'
+  series_id: string
+  etp_guid: string
+  url: string
+  name: string
+  media_type: 'anime'
+  landscape_image: ImageSet
+  portrait_image: ImageSet
+  description: string
+}
+
+export interface QueueEntry {
+  last_watched_media: Media
+  most_likely_media: Media
+  ordering: number
+  queue_entry_id: number
+  last_watched_media_playhead: number
+  most_likely_media_playhead: number
+  playhead: number
+  series: Series
+}
+
+interface CrunchyrollSuccess<D extends object = any> {
   code: 'ok'
+  error: false
+  data: D
+}
+
+interface CrunchyrollError {
+  code: 'bad_request' | string
+  error: true
+  message: string
+}
+
+type CrunchyrollResponse<D extends object = any> =
+  | RequestSuccess<CrunchyrollSuccess<D>>
+  | RequestError<CrunchyrollError>
+
+interface LoginSuccess {
+  user: User
+  auth: string
+  expires: Date
+}
+
+type RequestTypes =
+  | 'add_to_queue'
+  | 'categories'
+  | 'info'
+  | 'list_media'
+  | 'log'
+  | 'login'
+  | 'logout'
+  | 'queue'
+  | 'recently_watched'
+  | 'remove_from_queue'
+  | 'start_session'
+
+const getUrl = (req: RequestTypes) =>
+  `https://${API_URL}/${req}.${VERSION}.json`
+
+const responseIsError = (
+  res: CrunchyrollResponse,
+): res is RequestError<CrunchyrollError> => {
+  return res.body.error === true
+}
+
+const handleResponse = (data: any) => {
+  const newData: any = {}
+  const keys = Object.keys(data)
+
+  keys.forEach(key => {
+    const value = data[key]
+
+    if (typeof value === 'object' && value != null) {
+      newData[key] = handleResponse(value)
+    } else if (
+      typeof value === 'string' &&
+      value.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}-\d{2}:\d{2}/)
+    ) {
+      newData[key] = new Date(value)
+    }
+  })
+
+  return newData
 }
 
 export const createSession = async () => {
-  const sessionResponse = await superagent
-    .post(`https://${API_URL}/start_session.${VERSION}.json`)
-    .query({ access_token, device_type, device_id })
+  const response = (await superagent.post(getUrl('start_session')).query({
+    access_token: accessToken,
+    device_type: 'com.crunchyroll.windows.desktop',
+    device_id: `NANI-${uuid()}`,
+  })) as CrunchyrollResponse<{ session_id: string }>
 
-  if (sessionResponse.body.error) {
-    return Promise.reject(sessionResponse.body)
+  if (responseIsError(response)) {
+    throw new Error(response.body.message)
   }
 
-  return sessionResponse.body.data.session_id
+  return response.body.data.session_id
 }
 
 export const login = async (
@@ -63,14 +175,26 @@ export const login = async (
   data.append('session_id', sessionId)
 
   const response = (await superagent
-    .post(`https://${API_URL}/login.${VERSION}.json`)
-    .send(data)) as
-    | RequestSuccess<LoginSuccess>
-    | RequestError<200, CrunchyrollError>
+    .post(getUrl('login'))
+    .send(data)) as CrunchyrollResponse<LoginSuccess>
 
-  if (response.body.error) {
-    return Promise.reject(response.body)
+  if (responseIsError(response)) {
+    throw new Error(response.body.message)
   }
 
   return response.body.data
+}
+
+export const getQueue = async (token: string) => {
+  const response = (await superagent
+    .get(getUrl('queue'))
+    .query({ media_types: 'anime', session_id: token })) as CrunchyrollResponse<
+    QueueEntry
+  >
+
+  if (responseIsError(response)) {
+    throw new Error(response.body.message)
+  }
+
+  return handleResponse(response.body.data)
 }
