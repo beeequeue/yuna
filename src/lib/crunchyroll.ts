@@ -20,7 +20,7 @@ export interface User {
   created: Date | string
 }
 
-export interface ImageSet {
+interface ImageSet {
   thumb_url: string
   small_url: string
   medium_url: string
@@ -34,7 +34,7 @@ export interface ImageSet {
   height: string
 }
 
-export interface Media {
+interface Media {
   class: string
   media_id: string
   etp_guid: string
@@ -63,7 +63,7 @@ export interface Media {
   created: Date
 }
 
-export interface Series {
+interface Series {
   class: 'series'
   media_type: 'anime'
   series_id: string
@@ -75,7 +75,7 @@ export interface Series {
   portrait_image: ImageSet
 }
 
-export interface QueueEntry {
+interface QueueEntry {
   last_watched_media: Media
   most_likely_media: Media
   ordering: number
@@ -132,6 +132,7 @@ const responseIsError = (
 
 const handleValue = (value: any) => {
   if (typeof value === 'object' && value != null) {
+    // tslint:disable:no-use-before-declare
     return handleResponse(value)
   } else if (
     typeof value === 'string' &&
@@ -191,16 +192,15 @@ export const login = async (
   return response.body.data
 }
 
-export const getQueue = async (token: string) => {
-  const response = (await superagent
-    .get(getUrl('queue'))
-    .query({ media_types: 'anime', session_id: token })) as CrunchyrollResponse<
-    QueueEntry
-  >
+export const fetchQueue = async (sessionId: string) => {
+  const response = (await superagent.get(getUrl('queue')).query({
+    media_types: 'anime',
+    session_id: sessionId,
+  })) as CrunchyrollResponse
 
   if (responseIsError(response)) {
     throw new Error(response.body.message)
   }
 
-  return handleResponse(response.body.data)
+  return handleResponse<QueueEntry[]>(response.body.data)
 }

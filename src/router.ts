@@ -14,6 +14,12 @@ export const router = new Router({
         import(/* webpackChunkName: "login" */ './views/Login.vue'),
     },
     {
+      path: '/queue',
+      name: 'queue',
+      component: () =>
+        import(/* webpackChunkName: "queue" */ './views/Queue.vue'),
+    },
+    {
       path: '/list',
       name: 'list',
       component: () =>
