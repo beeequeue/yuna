@@ -5,7 +5,7 @@ import * as crunchyroll from '@/lib/crunchyroll'
 import { RootState } from '@/state/store'
 import { getStoreAccessors } from 'vuex-typescript'
 
-interface CrunchyrollData extends crunchyroll.CrunchyrollUser {
+interface CrunchyrollData extends crunchyroll.User {
   token: string
   expires: Date
 }
@@ -17,11 +17,18 @@ export interface AuthState {
 
 type AuthContext = ActionContext<AuthState, RootState>
 
+const cachedSessionId = localStorage.getItem('sessionId')
 const cachedUserString = localStorage.getItem('crunchyroll')
 
 const initialState: AuthState = {
   sessionId: '',
   crunchyroll: null,
+}
+
+try {
+  initialState.sessionId = JSON.parse(cachedSessionId || '""')
+} catch (e) {
+  localStorage.removeItem('sessionId')
 }
 
 try {
@@ -37,11 +44,17 @@ export const auth = {
     isLoggedIn(state: AuthState) {
       return state.crunchyroll ? state.crunchyroll.token != null : false
     },
+
+    getSessionId(state: AuthState) {
+      return state.sessionId
+    },
   },
 
   mutations: {
     setSessionId(state: AuthState, sessionId: string) {
       state.sessionId = sessionId
+
+      localStorage.setItem('sessionId', JSON.stringify(sessionId))
     },
 
     setCrunchyroll(state: AuthState, data: CrunchyrollData) {
@@ -90,6 +103,7 @@ export const auth = {
       if (!context.state.crunchyroll) return
 
       setCrunchyroll(context, null as any)
+      await createSession(context)
     },
   },
 }
@@ -97,6 +111,7 @@ export const auth = {
 const { commit, dispatch, read } = getStoreAccessors<AuthState, RootState>('')
 
 export const isLoggedIn = read(auth.getters.isLoggedIn)
+export const getSessionId = read(auth.getters.getSessionId)
 
 const setSessionId = commit(auth.mutations.setSessionId)
 const setCrunchyroll = commit(auth.mutations.setCrunchyroll)
