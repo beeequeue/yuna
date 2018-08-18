@@ -17,7 +17,12 @@ import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 
 import Navbar from './components/Navbar/Navbar.vue'
-import { createSession, isLoggedIn, logOutCrunchyroll } from './state/auth'
+import {
+  createSession,
+  getSessionId,
+  isLoggedIn,
+  logOutCrunchyroll,
+} from './state/auth'
 import { goToLogin } from './utils'
 
 const requireBg = require.context('@/assets/bg')
@@ -27,8 +32,10 @@ const backgrounds = requireBg.keys()
   components: { Navbar },
 })
 export default class App extends Vue {
-  mounted() {
-    createSession(this.$store)
+  async mounted() {
+    if (getSessionId(this.$store).length < 1) {
+      await createSession(this.$store)
+    }
 
     if (!this.isLoggedIn) {
       return goToLogin(this.$router)
