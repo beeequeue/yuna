@@ -20,16 +20,20 @@ import { isLoggedIn, loginCrunchyroll } from '../state/auth'
 })
 export default class Login extends Vue {
   mounted() {
+    this.redirectTo = this.$route.query['redirect']
+
     if (this.isLoggedIn) {
-      this.$router.push('/')
+      this.$router.push('..')
     }
   }
+
+  redirectTo?: string
 
   async login(user: string, pass: string) {
     await loginCrunchyroll(this.$store, { user, pass })
 
     if (this.isLoggedIn) {
-      this.$router.go(-1)
+      this.$router.push(this.redirectTo || '..')
     }
   }
 

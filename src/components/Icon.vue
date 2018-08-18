@@ -1,5 +1,5 @@
 <template>
-<svg viewBox="0 0 24 24" :class="this.class" :style="style">
+<svg viewBox="0 0 24 24">
   <path :d="icon"/>
 </svg>
 </template>
@@ -10,7 +10,5 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 @Component
 export default class Icon extends Vue {
   @Prop(String) icon!: string
-  @Prop(String) class!: string
-  @Prop(String) style!: any
 }
 </script>

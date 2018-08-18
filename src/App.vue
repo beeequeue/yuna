@@ -14,6 +14,7 @@ import Component from 'vue-class-component'
 
 import Navbar from './components/Navbar/Navbar.vue'
 import { createSession, isLoggedIn, logOutCrunchyroll } from './state/auth'
+import { goToLogin } from './utils'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys()
@@ -26,7 +27,7 @@ export default class App extends Vue {
     createSession(this.$store)
 
     if (!this.isLoggedIn) {
-      return this.$router.push('/login')
+      return goToLogin(this.$router)
     }
   }
 
@@ -37,7 +38,7 @@ export default class App extends Vue {
   logOut() {
     logOutCrunchyroll(this.$store)
 
-    this.$router.push('/login')
+    goToLogin(this.$router)
   }
 
   backgroundImage = requireBg(
