@@ -2,7 +2,7 @@
   <div class="login">
     <Logo class="logo"/>
 
-    <LoginForm :login="login" :isLoggedIn="isLoggedIn" />
+    <LoginForm :login="login"/>
   </div>
 </template>
 
@@ -19,6 +19,8 @@ import { isLoggedIn, loginCrunchyroll } from '../state/auth'
   },
 })
 export default class Login extends Vue {
+  redirectTo?: string
+
   mounted() {
     this.redirectTo = this.$route.query['redirect']
 
@@ -27,10 +29,12 @@ export default class Login extends Vue {
     }
   }
 
-  redirectTo?: string
-
   async login(user: string, pass: string) {
-    await loginCrunchyroll(this.$store, { user, pass })
+    try {
+      await loginCrunchyroll(this.$store, { user, pass })
+    } catch (e) {
+      return Promise.reject(e)
+    }
 
     if (this.isLoggedIn) {
       this.$router.push(this.redirectTo || '..')
@@ -55,10 +59,22 @@ export default class Login extends Vue {
   background: $dark;
   border-radius: 5px;
   box-shadow: 0 5px 6px $shadow;
+  will-change: transform, opacity;
+
+  & > .logo {
+    height: 100px;
+    fill: $main;
+  }
 }
 
-.logo {
-  height: 100px;
-  fill: $main;
+.v-enter-active,
+.v-leave-active {
+  transition: transform 0.5s, opacity 0.5s;
+}
+
+.v-enter,
+.v-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -45%);
 }
 </style>

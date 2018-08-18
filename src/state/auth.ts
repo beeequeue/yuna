@@ -62,11 +62,17 @@ export const auth = {
       payload: { user: string; pass: string },
     ) {
       try {
-        const data = await crunchyroll.login(
-          payload.user,
-          payload.pass,
-          context.state.sessionId,
-        )
+        let data
+
+        try {
+          data = await crunchyroll.login(
+            payload.user,
+            payload.pass,
+            context.state.sessionId,
+          )
+        } catch (e) {
+          return Promise.reject(e)
+        }
 
         const crunchyrollData: CrunchyrollData = {
           ...data.user,

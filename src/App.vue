@@ -4,7 +4,9 @@
       <navbar v-if="isLoggedIn"/>
     </transition>
 
-    <router-view/>
+    <transition>
+      <router-view/>
+    </transition>
 
     <button class="logout-button" v-if="isLoggedIn" @click="logOut">log out</button>
   </div>
