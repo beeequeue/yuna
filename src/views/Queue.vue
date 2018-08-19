@@ -32,14 +32,14 @@ import { Component, Vue } from 'vue-property-decorator'
 import { mdiPlayCircleOutline } from '@mdi/js'
 
 import Icon from '../components/Icon.vue'
-import { getQueue } from '../state/user'
+import { updateQueue } from '../state/user'
 
 @Component({
   components: { Icon },
 })
 export default class Queue extends Vue {
   public mounted() {
-    getQueue(this.$store)
+    updateQueue(this.$store)
   }
 
   get queue() {
@@ -62,7 +62,8 @@ export default class Queue extends Vue {
     display: inline-block;
     left: 0;
     height: 100%;
-    padding: 0 25px;
+    padding: 15px 25px;
+    overflow-y: auto;
 
     min-width: 800px;
     background: #10111a;
@@ -122,7 +123,6 @@ export default class Queue extends Vue {
       background: black;
 
       & > .image {
-        width: 125px;
         opacity: 0.65;
         transition: opacity 0.1s;
       }

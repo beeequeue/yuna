@@ -37,12 +37,13 @@ export interface Episode {
   image: string
 
   crunchyroll?: {
+    id: string
     url: string
     premiumOnly: boolean
   }
 }
 
-interface QueueItem {
+export interface QueueItem {
   episode: Episode
   series: Anime
 }
@@ -60,7 +61,11 @@ const initialState: UserState = {
 export const user = {
   state: { ...initialState },
 
-  getters: {},
+  getters: {
+    getQueue(state: UserState) {
+      return state.queue
+    },
+  },
 
   mutations: {
     setQueue(state: UserState, queue: QueueItem[]) {
@@ -69,7 +74,7 @@ export const user = {
   },
 
   actions: {
-    async getQueue(context: UserContext) {
+    async updateQueue(context: UserContext) {
       const crQueue = await fetchQueue(context.rootState.auth.sessionId)
 
       const newQueue: QueueItem[] = crQueue.map(
@@ -85,6 +90,7 @@ export const user = {
             image: nextEpisode.screenshot_image.full_url,
             progress: playhead,
             crunchyroll: {
+              id: nextEpisode.media_id,
               url: nextEpisode.url,
               premiumOnly:
                 !nextEpisode.free_available && nextEpisode.premium_available,
@@ -113,8 +119,10 @@ export const user = {
   },
 }
 
-const { commit, dispatch } = getStoreAccessors<UserState, RootState>('')
+const { read, commit, dispatch } = getStoreAccessors<UserState, RootState>('')
+
+export const getQueue = read(user.getters.getQueue)
 
 const setQueue = commit(user.mutations.setQueue)
 
-export const getQueue = dispatch(user.actions.getQueue)
+export const updateQueue = dispatch(user.actions.updateQueue)

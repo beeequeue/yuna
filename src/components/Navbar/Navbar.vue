@@ -1,6 +1,8 @@
 <template>
 <div class="container">
-  <icon class="button" :icon="homeOutlineSvg"/>
+  <router-link to="/">
+    <icon class="button" :icon="homeOutlineSvg"/>
+  </router-link>
 
   <item text="Queue" path="/queue"/>
 
@@ -8,7 +10,9 @@
 
   <item text="List" path="/list"/>
 
-  <icon class="button" :icon="settingsSvg"/>
+  <router-link to="/settings">
+    <icon class="button" :icon="settingsSvg"/>
+  </router-link>
 </div>
 </template>
 
@@ -38,7 +42,7 @@ export default class Navbar extends Vue {
   align-items: center;
   background: $dark;
 
-  & > .button {
+  & .button {
     display: flex;
     justify-content: center;
     align-items: center;
