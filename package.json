@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "dependencies": {
     "@mdi/js": "^2.6.95",
+    "@types/hls.js": "^0.10.1",
     "@types/superagent": "^3.8.3",
     "@types/uuid": "^3.4.3",
     "@types/webpack-env": "^1.13.6",
+    "hls.js": "^0.11.0",
     "normalize.css": "^8.0.0",
     "superagent": "^3.8.3",
     "uuid": "^3.3.2",

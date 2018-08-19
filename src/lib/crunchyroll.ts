@@ -1,6 +1,8 @@
 import superagent from 'superagent'
 import uuid from 'uuid/v4'
-import { RequestError, RequestSuccess } from './../utils'
+
+import { RequestError, RequestSuccess } from '@/utils'
+import { Episode } from '@/state/user'
 
 const API_URL = 'api.crunchyroll.com'
 const VERSION = '0'
@@ -203,4 +205,43 @@ export const fetchQueue = async (sessionId: string) => {
   }
 
   return handleResponse<QueueEntry[]>(response.body.data)
+}
+
+export interface StreamData {
+  subLanguage: string
+  audioLanguage: string
+  format: 'hls'
+  streams: Array<{
+    quality: 'adaptive' | 'low' | 'mid' | 'high' | 'ultra'
+    expires: Date
+    url: string
+  }>
+}
+
+export const fetchStream = async (sessionId: string, episode: Episode) => {
+  if (!episode.crunchyroll) throw new Error('No crunchyroll data!')
+
+  const { body, error } = await superagent.get(getUrl('info')).query({
+    session_id: sessionId,
+    media_id: episode.crunchyroll.id,
+    fields: 'media.stream_data',
+  })
+
+  if (error || body.error) {
+    throw new Error(body.message)
+  }
+
+  const streamData = body.data.stream_data
+
+  const toReturn: StreamData = {
+    subLanguage: streamData.hardsub_lang,
+    audioLanguage: streamData.audio_lang,
+    format: 'hls',
+    streams: streamData.streams.map((s: any) => ({
+      ...s,
+      expires: new Date(s.expires),
+    })),
+  }
+
+  return toReturn
 }
