@@ -2,7 +2,12 @@
   <div class="queue">
     <div class="series">
       <div v-for="item in queue" class="anime" :key="item.series.crunchyroll.id">
-        <img class="image" :src="item.series.landscapeImage"/>
+        <a
+          class="anime-name"
+          :href="item.series.crunchyroll.url"
+          target="_blank">
+          <img class="image" :src="item.series.landscapeImage.large"/>
+        </a>
 
         <div class="details">
           <a
@@ -19,7 +24,7 @@
         </div>
 
         <a class="episode" :href="item.episode.crunchyroll.url" target="_blank">
-          <img class="image" :src="item.episode.image"/>
+          <img class="image" :src="item.episode.image.large"/>
           <icon class="play-button" :icon="playSvg"/>
         </a>
       </div>
@@ -38,12 +43,12 @@ import { updateQueue } from '../state/user'
   components: { Icon },
 })
 export default class Queue extends Vue {
+  public playSvg = mdiPlayCircleOutline
 
   get queue() {
     return this.$store.state.user.queue
   }
 
-  public playSvg = mdiPlayCircleOutline
   public mounted() {
     updateQueue(this.$store)
   }
@@ -67,6 +72,7 @@ export default class Queue extends Vue {
 
     min-width: 800px;
     background: #10111a;
+    user-select: none;
   }
 
   .anime {
