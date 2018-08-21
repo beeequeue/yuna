@@ -1,11 +1,15 @@
 <template>
 <div class="controls">
-  <span class="play-pause">
-    <transition>
-      <icon v-if="paused" key="play" class="button" :icon="playSvg" @click.native="playOrPause"/>
-      <icon v-else class="button" key="pause" :icon="pauseSvg" @click.native="playOrPause"/>
-    </transition>
-  </span>
+  <div class="cover" @click="playOrPause"/>
+
+  <div class="toolbar">
+    <span class="play-pause">
+      <transition>
+        <icon v-if="paused" key="play" class="button" :icon="playSvg" @click.native="playOrPause"/>
+        <icon v-else class="button" key="pause" :icon="pauseSvg" @click.native="playOrPause"/>
+      </transition>
+    </span>
+  </div>
 </div>
 </template>
 
@@ -36,6 +40,20 @@ export default class Controls extends Vue {
 @import '../../colors';
 
 .controls {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+
+   & > .cover {
+     position: absolute;
+     top: 0;
+     height: 100%;
+     width: 100%;
+   }
+}
+
+.toolbar {
   position: absolute;
   bottom: 0;
   width: 100%;

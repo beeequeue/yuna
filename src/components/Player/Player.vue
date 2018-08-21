@@ -7,7 +7,7 @@
       ref="player"
     />
 
-    <controls :paused="paused" :playOrPause="playOrPause"/>
+    <controls v-if="true" :paused="paused" :playOrPause="playOrPause"/>
   </div>
 </template>
 
@@ -82,8 +82,9 @@ export default class Player extends Vue {
 
 .player {
   position: absolute;
-  width: 900px;
-  height: 506px;
+  width: 100%;
+  height: 100%;
+  background: #050505;
 
   & > video {
     height: 100%;

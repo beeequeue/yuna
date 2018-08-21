@@ -1,11 +1,8 @@
 <template>
   <div class="list">
-    <div style="background: red;">
-      <button @click="inc">+</button>
-      <button @click="dec">-</button>
+    <div class="player-container">
+      <player v-if="streamUrl" :stream="streamUrl"/>
     </div>
-
-    <player v-if="streamUrl" :stream="streamUrl"/>
   </div>
 </template>
 
@@ -55,6 +52,12 @@ export default class PlayerContainer extends Vue {
 @import '../colors';
 
 .list {
+  height: 100%;
+  width: 100%;
+}
+
+.player-container {
+  position: relative;
   height: 100%;
   width: 100%;
 }
