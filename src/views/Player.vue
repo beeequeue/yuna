@@ -17,33 +17,19 @@ import { getSessionId } from '../state/auth'
   components: { Player },
 })
 export default class PlayerContainer extends Vue {
-  index = 1
-  streamUrl: string | null = null
+  public index = 1
+  public streamUrl: string | null = null
   get episode() {
     return getQueue(this.$store)[this.index] ? getQueue(this.$store)[this.index].episode : null
   }
 
   @Watch('episode')
-  async onEpisodeChange() {
+  public async onEpisodeChange() {
     if (!this.episode) return
     const sessionId = getSessionId(this.$store)
     const streamData = await fetchStream(sessionId, this.episode)
 
     this.streamUrl = streamData.streams[this.index].url
-  }
-
-  inc() {
-    if (this.index + 1 < getQueue(this.$store).length) {
-      this.index++
-      console.log(this.index)
-    }
-  }
-
-  dec() {
-    if (this.index - 1 > -1) {
-      this.index--
-      console.log(this.index)
-    }
   }
 }
 </script>

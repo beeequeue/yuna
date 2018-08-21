@@ -23,16 +23,16 @@ import Icon from '../Icon.vue'
   components: { Icon },
 })
 export default class Controls extends Vue {
-  @Prop(Boolean) paused!: boolean
+  @Prop(Boolean) public paused!: boolean
 
-  playOrPause() {
+  public playSvg = mdiPlay
+  public pauseSvg = mdiPause
+
+  public playOrPause() {
     this.paused
       ? (this.$parent.$refs.player as HTMLVideoElement).play()
       : (this.$parent.$refs.player as HTMLVideoElement).pause()
   }
-
-  playSvg = mdiPlay
-  pauseSvg = mdiPause
 }
 </script>
 

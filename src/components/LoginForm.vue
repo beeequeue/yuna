@@ -16,20 +16,20 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component
 export default class LoginForm extends Vue {
-  @Prop() login!: (user: string, pass: string) => Promise<void>
-  username = ''
-  password = ''
-  error: string | null = null
+  @Prop() public login!: (user: string, pass: string) => Promise<void>
+  public username = ''
+  public password = ''
+  public error: string | null = null
 
-  updateUsername(e: any) {
+  public updateUsername(e: any) {
     this.username = e.currentTarget.value
   }
 
-  updatePassword(e: any) {
+  public updatePassword(e: any) {
     this.password = e.currentTarget.value
   }
 
-  async handleLogin() {
+  public async handleLogin() {
     try {
       await this.login(this.username, this.password)
     } catch (e) {

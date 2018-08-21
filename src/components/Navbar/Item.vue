@@ -13,8 +13,8 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component
 export default class Item extends Vue {
-  @Prop(String) text!: string
-  @Prop(String) path!: string
+  @Prop(String) public text!: string
+  @Prop(String) public path!: string
 }
 </script>
 

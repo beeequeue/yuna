@@ -27,8 +27,8 @@ import Icon from '../Icon.vue'
   components: { Icon, Item },
 })
 export default class Navbar extends Vue {
-  homeOutlineSvg = mdiHomeOutline
-  settingsSvg = mdiSettingsOutline
+  public homeOutlineSvg = mdiHomeOutline
+  public settingsSvg = mdiSettingsOutline
 }
 </script>
 

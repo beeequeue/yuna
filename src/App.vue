@@ -33,7 +33,15 @@ const backgrounds = requireBg.keys()
   components: { Navbar },
 })
 export default class App extends Vue {
-  async mounted() {
+
+  get isLoggedIn() {
+    return isLoggedIn(this.$store)
+  }
+
+  public backgroundImage = requireBg(
+    backgrounds[Math.floor(Math.random() * backgrounds.length)],
+  )
+  public async mounted() {
     if (getSessionId(this.$store).length < 1) {
       await createSession(this.$store)
     }
@@ -43,25 +51,17 @@ export default class App extends Vue {
     }
   }
 
-  updated() {
+  public updated() {
     if (this.isLoggedIn) {
       updateQueue(this.$store)
     }
   }
 
-  get isLoggedIn() {
-    return isLoggedIn(this.$store)
-  }
-
-  logOut() {
+  public logOut() {
     logOutCrunchyroll(this.$store)
 
     goToLogin(this.$router)
   }
-
-  backgroundImage = requireBg(
-    backgrounds[Math.floor(Math.random() * backgrounds.length)],
-  )
 }
 </script>
 

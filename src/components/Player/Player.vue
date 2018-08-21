@@ -22,13 +22,17 @@ import Controls from './Controls.vue'
   components: { Controls, Icon },
 })
 export default class Player extends Vue {
-  @Prop(String) stream?: string
-  paused = false
-  progress = 0
-  progressInSeconds = 0
-  hls = new Hls()
+  @Prop(String) public stream?: string
+  public paused = false
+  public progress = 0
+  public progressInSeconds = 0
+  public hls = new Hls()
 
-  async mounted() {
+  public $refs!: {
+    player: HTMLVideoElement
+  }
+
+  public async mounted() {
     this.registerEvents()
 
     if (Hls.isSupported()) {
@@ -40,7 +44,7 @@ export default class Player extends Vue {
     }
   }
 
-  registerEvents() {
+  public registerEvents() {
     this.$refs.player.onplay = () => {
       this.paused = false
     }
@@ -50,7 +54,7 @@ export default class Player extends Vue {
   }
 
   @Watch('stream')
-  onNewStream() {
+  public onNewStream() {
     if (!this.stream) return
 
     const hls = new Hls()
@@ -61,18 +65,14 @@ export default class Player extends Vue {
     this.hls = hls
   }
 
-  playOrPause() {
+  public playOrPause() {
     this.$refs.player.paused
       ? this.$refs.player.play()
       : this.$refs.player.pause()
   }
 
-  async goTo() {
+  public async goTo() {
     this.$refs.player.currentTime = 0
-  }
-
-  $refs!: {
-    player: HTMLVideoElement
   }
 }
 </script>

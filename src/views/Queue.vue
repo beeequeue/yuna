@@ -38,15 +38,15 @@ import { updateQueue } from '../state/user'
   components: { Icon },
 })
 export default class Queue extends Vue {
-  public mounted() {
-    updateQueue(this.$store)
-  }
 
   get queue() {
     return this.$store.state.user.queue
   }
 
-  playSvg = mdiPlayCircleOutline
+  public playSvg = mdiPlayCircleOutline
+  public mounted() {
+    updateQueue(this.$store)
+  }
 }
 </script>
 
