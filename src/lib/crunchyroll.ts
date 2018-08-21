@@ -1,8 +1,10 @@
+/* tslint:disable:class-name */
 import superagent from 'superagent'
 import uuid from 'uuid/v4'
 
 import { RequestError, RequestSuccess } from '@/utils'
-import { Episode } from '@/state/user'
+import { QueueItem } from '@/state/user'
+import { Anime, Episode, ImageSet, StreamData } from '@/types'
 
 const API_URL = 'api.crunchyroll.com'
 const VERSION = '0'
@@ -19,10 +21,10 @@ export interface User {
   premium?: string
   is_publisher: false
   access_type: 'premium' | string
-  created: Date | string
+  created: string
 }
 
-interface ImageSet {
+interface _ImageSet {
   thumb_url: string
   small_url: string
   medium_url: string
@@ -36,7 +38,40 @@ interface ImageSet {
   height: string
 }
 
-interface Media {
+interface _StreamData {
+  hardsub_lang: string
+  audio_lang: string
+  format: 'hls'
+  streams: [
+    {
+      quality: 'adaptive'
+      expires: string
+      url: string
+    },
+    {
+      quality: 'low'
+      expires: string
+      url: string
+    },
+    {
+      quality: 'mid'
+      expires: string
+      url: string
+    },
+    {
+      quality: 'high'
+      expires: string
+      url: string
+    },
+    {
+      quality: 'ultra'
+      expires: string
+      url: string
+    }
+  ]
+}
+
+interface _Media {
   class: string
   media_id: string
   etp_guid: string
@@ -48,7 +83,7 @@ interface Media {
   episode_number: string
   name: string
   description: string
-  screenshot_image: ImageSet
+  screenshot_image: _ImageSet
   bif_url: string
   url: string
   clip: boolean
@@ -56,16 +91,17 @@ interface Media {
   premium_available: boolean
   free_available: boolean
   availability_notes: string
-  available_time: Date
-  unavailable_time: Date
-  premium_available_time: Date
-  premium_unavailable_time: Date
-  free_available_time: Date
-  free_unavailable_time: Date
-  created: Date
+  available_time: string
+  unavailable_time: string
+  premium_available_time: string
+  premium_unavailable_time: string
+  free_available_time: string
+  free_unavailable_time: string
+  created: string
+  stream_data: _StreamData
 }
 
-interface Series {
+interface _Series {
   class: 'series'
   media_type: 'anime'
   series_id: string
@@ -73,19 +109,20 @@ interface Series {
   name: string
   description: string
   url: string
-  landscape_image: ImageSet
-  portrait_image: ImageSet
+  media_count: number
+  landscape_image: _ImageSet
+  portrait_image: _ImageSet
 }
 
-interface QueueEntry {
-  last_watched_media: Media
-  most_likely_media: Media
+interface _QueueEntry {
+  last_watched_media: _Media
+  most_likely_media: _Media
   ordering: number
   queue_entry_id: number
   last_watched_media_playhead: number
   most_likely_media_playhead: number
   playhead: number
-  series: Series
+  series: _Series
 }
 
 interface CrunchyrollSuccess<D extends object = any> {
@@ -132,33 +169,6 @@ const responseIsError = (
   return res.body.error === true
 }
 
-const handleValue = (value: any) => {
-  if (typeof value === 'object' && value != null) {
-    // tslint:disable:no-use-before-declare
-    return handleResponse(value)
-  } else if (
-    typeof value === 'string' &&
-    value.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}-\d{2}:\d{2}/)
-  ) {
-    return new Date(value)
-  }
-
-  return value
-}
-
-const handleResponse = <R>(data: any): R => {
-  if (Array.isArray(data)) {
-    return data.map(handleValue) as any
-  }
-
-  const newData: any = {}
-  const keys = Object.keys(data)
-
-  keys.forEach(key => (newData[key] = handleValue(data[key])))
-
-  return newData
-}
-
 export const createSession = async () => {
   const response = (await superagent.post(getUrl('start_session')).query({
     access_token: accessToken,
@@ -172,6 +182,29 @@ export const createSession = async () => {
 
   return response.body.data.session_id
 }
+
+const mediaFields = [
+  'most_likely_media',
+  'media.name',
+  'media.description',
+  'media.episode_number',
+  'media.screenshot_image',
+  'media.media_id',
+  'media.series_id',
+  'media.collection_id',
+  'media.url',
+  'media.stream_data',
+]
+const seriesFields = [
+  'series',
+  'series.name',
+  'series.description',
+  'series.series_id',
+  'series.url',
+  'series.media_count',
+  'series.landscape_image',
+  'series.portrait_image',
+]
 
 export const login = async (
   username: string,
@@ -198,50 +231,104 @@ export const fetchQueue = async (sessionId: string) => {
   const response = (await superagent.get(getUrl('queue')).query({
     media_types: 'anime',
     session_id: sessionId,
-  })) as CrunchyrollResponse
+    fields: [...mediaFields, ...seriesFields].join(','),
+  })) as CrunchyrollResponse<_QueueEntry[]>
 
   if (responseIsError(response)) {
     throw new Error(response.body.message)
   }
 
-  return handleResponse<QueueEntry[]>(response.body.data)
-}
-
-export interface StreamData {
-  subLanguage: string
-  audioLanguage: string
-  format: 'hls'
-  streams: Array<{
-    quality: 'adaptive' | 'low' | 'mid' | 'high' | 'ultra'
-    expires: Date
-    url: string
-  }>
+  return response.body.data.map(queueEntryToQueueItem)
 }
 
 export const fetchStream = async (sessionId: string, episode: Episode) => {
   if (!episode.crunchyroll) throw new Error('No crunchyroll data!')
 
-  const { body, error } = await superagent.get(getUrl('info')).query({
+  const response = (await superagent.get(getUrl('info')).query({
     session_id: sessionId,
     media_id: episode.crunchyroll.id,
     fields: 'media.stream_data',
-  })
+  })) as CrunchyrollResponse<{ stream_data: _StreamData }>
 
-  if (error || body.error) {
-    throw new Error(body.message)
+  if (responseIsError(response)) {
+    throw new Error(response.body.message)
   }
 
-  const streamData = body.data.stream_data
-
-  const toReturn: StreamData = {
-    subLanguage: streamData.hardsub_lang,
-    audioLanguage: streamData.audio_lang,
-    format: 'hls',
-    streams: streamData.streams.map((s: any) => ({
-      ...s,
-      expires: new Date(s.expires),
-    })),
-  }
-
-  return toReturn
+  return convertStreamData(response.body.data.stream_data)
 }
+
+// Mapping functions
+const convertImageSet = (imgSet: _ImageSet): ImageSet => ({
+  small: imgSet.medium_url,
+  large: imgSet.full_url,
+  wide: imgSet.fwide_url,
+  height: Number(imgSet.height),
+  width: Number(imgSet.width),
+})
+
+const convertStreamData = (streamData: _StreamData): StreamData => ({
+  subLanguage: streamData.hardsub_lang,
+  audioLanguage: streamData.audio_lang,
+  format: 'hls',
+  streams: streamData.streams.map((s: any) => ({
+    ...s,
+    expires: new Date(s.expires),
+  })),
+})
+
+const mediaToEpisode = (
+  {
+    name,
+    description,
+    episode_number,
+    screenshot_image,
+    media_id,
+    series_id,
+    collection_id,
+    url,
+    stream_data,
+  }: _Media,
+  playhead: number,
+): Episode => ({
+  name,
+  description,
+  index: Number(episode_number),
+  progress: playhead,
+  image: convertImageSet(screenshot_image),
+  crunchyroll: {
+    id: media_id,
+    series: series_id,
+    collection: collection_id,
+    url,
+    streamData: convertStreamData(stream_data),
+  },
+})
+
+const seriesToAnime = ({
+  name,
+  description,
+  series_id,
+  url,
+  landscape_image,
+  portrait_image,
+}: _Series): Anime => ({
+  name,
+  romajiName: name,
+  description,
+  episodes: 12,
+  crunchyroll: {
+    id: series_id,
+    url,
+  },
+  landscapeImage: convertImageSet(landscape_image),
+  portraitImage: convertImageSet(portrait_image),
+})
+
+const queueEntryToQueueItem = ({
+  most_likely_media,
+  most_likely_media_playhead,
+  series,
+}: _QueueEntry): QueueItem => ({
+  episode: mediaToEpisode(most_likely_media, most_likely_media_playhead),
+  series: seriesToAnime(series),
+})
