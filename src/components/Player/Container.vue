@@ -1,11 +1,11 @@
 <template>
-  <transition-group class="player-container" :class="classFromRoute" name="lol">
+  <div class="player-container" :class="classFromRoute">
     <player
       v-if="streamUrl"
       key="player"
       :stream="streamUrl"
     />
-  </transition-group>
+  </div>
 </template>
 
 <script lang="ts">
@@ -30,9 +30,9 @@ export default class PlayerContainer extends Vue {
   get classFromRoute() {
     const pathWithoutSlash = this.$route.path.substr(1)
 
-    switch(pathWithoutSlash) {
-      case('login'):
-      case('queue'):
+    switch (pathWithoutSlash) {
+      case 'login':
+      case 'queue':
         return pathWithoutSlash
       default:
         return 'small'
@@ -53,6 +53,8 @@ export default class PlayerContainer extends Vue {
 <style scoped lang="scss">
 @import '../../colors';
 
+$anim-speed: 0.5s;
+
 .player-container {
   position: fixed;
   top: 0;
@@ -60,6 +62,10 @@ export default class PlayerContainer extends Vue {
   bottom: 0;
   left: 0;
   pointer-events: none;
+
+  will-change: top, right, bottom, left;
+  transition: top $anim-speed, right $anim-speed, bottom $anim-speed,
+    left $anim-speed;
 
   & > * {
     pointer-events: all;
@@ -81,10 +87,5 @@ export default class PlayerContainer extends Vue {
   left: 75%;
   right: 15px;
   bottom: 15px;
-}
-
-.v-move {
-  will-change: opacity, transform, top, left;
-  transition: opacity 0.1s, transform 0.1s, top 0.1s, left 0.1s;
 }
 </style>

@@ -1,50 +1,25 @@
 <template>
-  <div class="queue">
-    <div class="series">
-      <div v-for="item in queue" class="anime" :key="item.series.crunchyroll.id">
-        <a
-          class="anime-name"
-          :href="item.series.crunchyroll.url"
-          target="_blank">
-          <img class="image" :src="item.series.landscapeImage.large"/>
-        </a>
-
-        <div class="details">
-          <a
-            class="anime-name"
-            :href="item.series.crunchyroll.url"
-            target="_blank">
-            {{item.series.name}}
-          </a>
-
-          <p class="episode-name">
-            {{item.episode.progress > 0 ? 'Current' : 'Next'}} episode:
-            {{item.episode.name}}
-          </p>
-        </div>
-
-        <a class="episode" :href="item.episode.crunchyroll.url" target="_blank">
-          <img class="image" :src="item.episode.image.large"/>
-          <icon class="play-button" :icon="playSvg"/>
-        </a>
-      </div>
+  <div class="container">
+    <div class="queue">
+      <queue-item v-for="item in queue" :item="item" :key="item.series.crunchyroll.id" class="anime"/>
     </div>
+
+    <div class="sidebar"></div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { mdiPlayCircleOutline } from '@mdi/js'
 
 import Icon from '../components/Icon.vue'
 import { updateQueue } from '../state/user'
+import QueueItem from '../components/QueueItem.vue'
+
 
 @Component({
-  components: { Icon },
+  components: { QueueItem, Icon },
 })
 export default class Queue extends Vue {
-  public playSvg = mdiPlayCircleOutline
-
   get queue() {
     return this.$store.state.user.queue
   }
@@ -58,16 +33,19 @@ export default class Queue extends Vue {
 <style scoped lang="scss">
 @import '../colors';
 
-.queue {
+.container {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  grid-template-rows: 1fr 170px;
+  grid-template-areas:
+    'queue sidebar'
+    'queue player';
+
   width: 100%;
   height: 100%;
 
-  .series {
-    position: absolute;
-    display: inline-block;
-    left: 0;
-    height: 100%;
-    width: calc(100% - 300px);
+  .queue {
+    grid-area: queue;
     padding: 15px 25px;
     overflow-y: auto;
 
@@ -76,80 +54,9 @@ export default class Queue extends Vue {
     user-select: none;
   }
 
-  .anime {
-    display: grid;
-    grid-template-columns: [anime] 200px [details] 1fr [episode] auto;
-    grid-auto-rows: 100px;
-
-    position: relative;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.35);
-    margin-bottom: 10px;
-    border-radius: 5px;
-    overflow: hidden;
-
-    & .image {
-      object-fit: cover;
-      width: 200px;
-      height: 100px;
-    }
-
-    & > .details {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 10px 15px;
-
-      & > .anime-name {
-        margin: 0;
-
-        color: $white;
-        text-align: left;
-        text-decoration: none;
-        font-family: 'Raleway', sans-serif;
-        font-weight: 300;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-
-      & > .episode-name {
-        width: 100%;
-        margin: auto 0 0;
-
-        text-align: right;
-        font-family: 'Raleway', sans-serif;
-        font-weight: 300;
-      }
-    }
-
-    & > .episode {
-      position: relative;
-      justify-self: end;
-      background: black;
-
-      & > .image {
-        opacity: 0.65;
-        transition: opacity 0.1s;
-      }
-
-      & > .play-button {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        height: 50px;
-        width: 50px;
-        fill: $white;
-      }
-
-      &:hover {
-        & > .image {
-          opacity: 0.8;
-        }
-      }
-    }
+  .sidebar {
+    grid-area: sidebar;
+    background: #1a1b29;
   }
 }
 
@@ -157,15 +64,20 @@ export default class Queue extends Vue {
 .v-leave-active {
   transition: none 0.5s; // Required for Vue to realize there are transitions
 
-  & > .series {
+  & > .queue,
+  & > .sidebar {
     transition: transform 0.5s;
   }
 }
 
 .v-enter,
 .v-leave-to {
-  & > .series {
+  & > .queue {
     transform: translateX(-100%);
+  }
+
+  & > .sidebar {
+    transform: translateX(100%);
   }
 }
 </style>

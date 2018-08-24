@@ -2,6 +2,8 @@
 <div class="controls">
   <div class="cover" @click="playOrPause"/>
 
+  <!--<icon v-if=""/>-->
+
   <div class="toolbar">
     <span class="play-pause">
       <transition>
@@ -84,12 +86,13 @@ $buttonSize: 45px;
     &.v-enter-active,
     &.v-leave-active {
       will-change: opacity;
-      transition: opacity 0.1s;
+      transition: opacity 0.1s, transform 0.05s;
     }
 
     &.v-enter,
     &.v-leave-to {
       opacity: 0;
+      transform: scale(0.5);
     }
   }
 }
