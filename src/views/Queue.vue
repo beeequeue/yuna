@@ -67,6 +67,7 @@ export default class Queue extends Vue {
     display: inline-block;
     left: 0;
     height: 100%;
+    width: calc(100% - 300px);
     padding: 15px 25px;
     overflow-y: auto;
 

@@ -23,7 +23,7 @@ export const router = new Router({
       path: '/list',
       name: 'list',
       component: () =>
-        import(/* webpackChunkName: "list" */ './views/Player.vue'),
+        import(/* webpackChunkName: "list" */ './views/List.vue'),
     },
   ],
 })

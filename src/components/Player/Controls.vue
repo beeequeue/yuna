@@ -24,20 +24,17 @@ import Icon from '../Icon.vue'
 })
 export default class Controls extends Vue {
   @Prop(Boolean) public paused!: boolean
+  @Prop() public playOrPause!: () => void
 
   public playSvg = mdiPlay
   public pauseSvg = mdiPause
-
-  public playOrPause() {
-    this.paused
-      ? (this.$parent.$refs.player as HTMLVideoElement).play()
-      : (this.$parent.$refs.player as HTMLVideoElement).pause()
-  }
 }
 </script>
 
 <style scoped lang="scss">
 @import '../../colors';
+
+$buttonSize: 45px;
 
 .controls {
   position: absolute;
@@ -66,8 +63,8 @@ export default class Controls extends Vue {
   & > .play-pause {
     position: relative;
     display: inline-block;
-    height: 40px;
-    width: 40px;
+    height: $buttonSize;
+    width: $buttonSize;
 
     & > .button {
       position: absolute;
@@ -77,8 +74,8 @@ export default class Controls extends Vue {
   }
 
   & .button {
-    height: 40px;
-    width: 40px;
+    height: $buttonSize;
+    width: $buttonSize;
     padding: 5px;
 
     fill: white;

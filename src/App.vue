@@ -8,6 +8,8 @@
       <router-view/>
     </transition>
 
+    <player-container/>
+
     <button class="logout-button" v-if="isLoggedIn" @click="logOut">log out</button>
   </div>
 </template>
@@ -17,6 +19,7 @@ import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 
 import Navbar from './components/Navbar/Navbar.vue'
+import PlayerContainer from './components/Player/Container.vue'
 import {
   createSession,
   getSessionId,
@@ -30,10 +33,9 @@ const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys()
 
 @Component({
-  components: { Navbar },
+  components: { PlayerContainer, Navbar },
 })
 export default class App extends Vue {
-
   get isLoggedIn() {
     return isLoggedIn(this.$store)
   }
@@ -98,5 +100,28 @@ body,
   position: absolute;
   bottom: 5px;
   right: 5px;
+}
+
+// Global classes
+.fill-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.no-interaction {
+  pointer-events: none;
+}
+
+// Default transitions
+.fade-enter-active,
+.fade-leave-active {
+  will-change: opacity;
+  transition: opacity 0.1s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
