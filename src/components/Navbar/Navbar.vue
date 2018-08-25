@@ -36,11 +36,13 @@ export default class Navbar extends Vue {
 @import '../../colors';
 
 .container {
+  position: relative;
   display: grid;
   grid-template-columns: 50px 1fr auto 1fr 50px;
   justify-items: center;
   align-items: center;
   background: $dark;
+  z-index: 10;
 
   & .button {
     display: flex;

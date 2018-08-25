@@ -27,7 +27,6 @@ import {
   logOutCrunchyroll,
 } from './state/auth'
 import { goToLogin } from './utils'
-import { updateQueue } from './state/user'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys()
@@ -50,12 +49,6 @@ export default class App extends Vue {
 
     if (!this.isLoggedIn) {
       return goToLogin(this.$router)
-    }
-  }
-
-  public updated() {
-    if (this.isLoggedIn) {
-      updateQueue(this.$store)
     }
   }
 
@@ -93,6 +86,8 @@ body,
 
   & * {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent !important;
+    outline: none !important;
   }
 }
 

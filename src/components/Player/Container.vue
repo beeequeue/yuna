@@ -74,7 +74,10 @@ $anim-speed: 0.5s;
 
 .login {
   opacity: 0;
-  pointer-events: none;
+
+  & * {
+    pointer-events: none !important;
+  }
 }
 
 .queue {

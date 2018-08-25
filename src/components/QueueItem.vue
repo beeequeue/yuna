@@ -81,7 +81,7 @@ export default class QueueItem extends Vue {
       font-family: 'Raleway', sans-serif;
       font-weight: 300;
 
-      & :hover {
+      &:hover {
         text-decoration: underline;
       }
     }
@@ -116,7 +116,7 @@ export default class QueueItem extends Vue {
       fill: $white;
     }
 
-    & :hover {
+    &:hover {
       & > .image {
         opacity: 0.8;
       }
