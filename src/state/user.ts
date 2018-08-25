@@ -52,6 +52,6 @@ const { read, commit, dispatch } = getStoreAccessors<UserState, RootState>('')
 
 export const getQueue = read(user.getters.getQueue)
 
-const setQueue = commit(user.mutations.setQueue)
+export const setQueue = commit(user.mutations.setQueue)
 
 export const updateQueue = dispatch(user.actions.updateQueue)

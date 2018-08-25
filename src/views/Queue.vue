@@ -1,31 +1,63 @@
 <template>
   <div class="container">
     <div class="queue">
-      <queue-item v-for="item in queue" :item="item" :key="item.series.crunchyroll.id" class="anime"/>
+      <transition-group name="fade">
+        <queue-item
+          v-for="item in queue"
+          :item="item"
+          :key="item.series.crunchyroll.id"
+          class="anime"
+        />
+      </transition-group>
+
+      <transition name="fade">
+        <div v-if="queue.length < 1" class="empty-message">
+          Seems your queue is empty!<br/>
+
+          <strike>>You can add some from your list or by searching,<br/></strike>
+
+          or try to<br/><br/>
+
+          <raised-button class="cr-import" @click.native="importQueue">
+            Import from Crunchyroll
+          </raised-button>
+        </div>
+      </transition>
     </div>
 
-    <div class="sidebar"></div>
+    <div class="sidebar">
+      <raised-button class="cr-import" @click.native="importQueue">
+        Import from Crunchyroll
+      </raised-button>
+
+      <raised-button type="danger" @click.native="clearQueue">
+        Clear queue
+      </raised-button>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-import Icon from '../components/Icon.vue'
-import { updateQueue } from '../state/user'
 import QueueItem from '../components/QueueItem.vue'
-
+import RaisedButton from '../components/RaisedButton.vue'
+import { updateQueue, setQueue } from '../state/user'
 
 @Component({
-  components: { QueueItem, Icon },
+  components: { QueueItem, RaisedButton },
 })
 export default class Queue extends Vue {
-  get queue() {
+  public get queue() {
     return this.$store.state.user.queue
   }
 
-  public mounted() {
+  public importQueue() {
     updateQueue(this.$store)
+  }
+
+  public clearQueue() {
+    setQueue(this.$store, [])
   }
 }
 </script>
@@ -34,6 +66,7 @@ export default class Queue extends Vue {
 @import '../colors';
 
 .container {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 300px;
   grid-template-rows: 1fr 170px;
@@ -45,6 +78,7 @@ export default class Queue extends Vue {
   height: 100%;
 
   .queue {
+    position: relative;
     grid-area: queue;
     padding: 15px 25px;
     overflow-y: auto;
@@ -52,11 +86,38 @@ export default class Queue extends Vue {
     min-width: 800px;
     background: #10111a;
     user-select: none;
+
+    & > .empty-message {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      font-size: 1.25em;
+      font-weight: 600;
+    }
   }
 
   .sidebar {
     grid-area: sidebar;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px 25px;
+
     background: #1a1b29;
+
+    & > .button {
+      margin: 8px 0;
+    }
+
+    & > .cr-import {
+      margin-top: auto;
+    }
   }
 }
 
@@ -77,7 +138,7 @@ export default class Queue extends Vue {
   }
 
   & > .sidebar {
-    transform: translateX(100%);
+    transform: translateY(-125%);
   }
 }
 </style>
