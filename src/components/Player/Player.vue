@@ -95,7 +95,8 @@ export default class Player extends Vue {
 @import '../../colors';
 
 .player {
-  /*width: 100%;*/
+  position: relative;
+  width: 100%;
   height: 100%;
   overflow: hidden;
 

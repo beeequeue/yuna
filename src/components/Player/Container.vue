@@ -57,15 +57,15 @@ $anim-speed: 0.5s;
 
 .player-container {
   position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: #050505;
   pointer-events: none;
 
-  will-change: top, right, bottom, left;
-  transition: top $anim-speed, right $anim-speed, bottom $anim-speed,
-    left $anim-speed;
+  will-change: right, bottom, max-height, max-width;
+  transition: right $anim-speed, bottom $anim-speed, max-height $anim-speed,
+    max-width $anim-speed;
 
   & > * {
     pointer-events: all;
@@ -78,13 +78,15 @@ $anim-speed: 0.5s;
 }
 
 .queue {
-  top: auto;
-  left: calc(100% - 300px);
+  max-height: 170px;
+  max-width: 300px;
+  right: 0;
+  bottom: 0;
 }
 
 .small {
-  top: 75%;
-  left: 75%;
+  max-width: 320px;
+  max-height: 180px;
   right: 15px;
   bottom: 15px;
 }
