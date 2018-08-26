@@ -1,6 +1,9 @@
 const webpack = require('webpack')
 
 module.exports = {
+  configureWebpack: {
+    target: 'electron-renderer',
+  },
   lintOnSave: false,
   chainWebpack: config => {
     const svgRules = config.module.rule('svg')
@@ -27,6 +30,7 @@ module.exports = {
           BASE_URL: '"/"',
           ACCESS_TOKEN: JSON.stringify(process.env.ACCESS_TOKEN),
         },
+        'global.GENTLY': false,
       },
     ])
   },

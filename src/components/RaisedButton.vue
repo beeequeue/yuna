@@ -14,7 +14,7 @@ export enum Type {
 
 @Component
 export default class RaisedButton extends Vue {
-  @Prop(String) type?: Type
+  @Prop(String) public type?: Type
 
   public get typeClass() {
     return this.type

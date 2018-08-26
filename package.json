@@ -23,12 +23,14 @@
     "@vue/cli-plugin-typescript": "^3.0.0",
     "@vue/cli-service": "^3.0.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "electron": "^2.0.2",
     "lint-staged": "^6.0.0",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.0.1",
     "tslint-config-prettier": "^1.14.0",
     "tslint-config-standard": "^7.1.0",
     "typescript": "^3.0.0",
+    "vue-cli-plugin-electron-builder": "^1.0.0-rc.1",
     "vue-svg-loader": "^0.5.0",
     "vue-template-compiler": "^2.5.17"
   },
@@ -45,10 +47,14 @@
       "git add"
     ]
   },
+  "main": "dist_electron/bundled/background.js",
   "private": true,
   "scripts": {
     "build": "vue-cli-service build",
+    "build:electron": "vue-cli-service build:electron",
     "lint": "vue-cli-service lint",
-    "serve": "vue-cli-service serve"
+    "postinstall": "electron-builder install-app-deps",
+    "serve": "vue-cli-service serve",
+    "serve:electron": "vue-cli-service serve:electron"
   }
 }

@@ -1,5 +1,5 @@
 /* tslint:disable:class-name */
-import superagent from 'superagent'
+import superagent from 'superagent/superagent'
 import uuid from 'uuid/v4'
 
 import { RequestError, RequestSuccess } from '@/utils'

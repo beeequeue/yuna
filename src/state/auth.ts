@@ -1,9 +1,9 @@
 // tslint:disable:no-use-before-declare
 import { ActionContext } from 'vuex'
+import { getStoreAccessors } from 'vuex-typescript'
 
 import * as crunchyroll from '@/lib/crunchyroll'
 import { RootState } from '@/state/store'
-import { getStoreAccessors } from 'vuex-typescript'
 
 interface CrunchyrollData extends crunchyroll.User {
   token: string

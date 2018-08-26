@@ -66,3 +66,6 @@ typings/
 # dotenv environment variables file
 .env
 
+
+#Electron-builder output
+/dist_electron
