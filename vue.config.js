@@ -29,6 +29,7 @@ module.exports = {
           NODE_ENV: JSON.stringify(process.env.NODE_ENV),
           BASE_URL: '"/"',
           ACCESS_TOKEN: JSON.stringify(process.env.ACCESS_TOKEN),
+          IS_ELECTRON: JSON.stringify(process.env.IS_ELECTRON || false),
         },
         'global.GENTLY': false,
       },

@@ -1,5 +1,7 @@
 <template>
   <div id="app" :style="`background-image: url(${backgroundImage})`">
+    <title-bar v-if="isElectron"/>
+
     <transition>
       <navbar v-if="isLoggedIn"/>
     </transition>
@@ -20,6 +22,7 @@ import Component from 'vue-class-component'
 
 import Navbar from './components/Navbar/Navbar.vue'
 import PlayerContainer from './components/Player/Container.vue'
+import TitleBar from './components/TitleBar.vue'
 import {
   createSession,
   getSessionId,
@@ -32,9 +35,11 @@ const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys()
 
 @Component({
-  components: { PlayerContainer, Navbar },
+  components: { TitleBar, PlayerContainer, Navbar },
 })
 export default class App extends Vue {
+  public isElectron = process.env.IS_ELECTRON
+
   get isLoggedIn() {
     return isLoggedIn(this.$store)
   }
@@ -42,6 +47,7 @@ export default class App extends Vue {
   public backgroundImage = requireBg(
     backgrounds[Math.floor(Math.random() * backgrounds.length)],
   )
+
   public async mounted() {
     if (getSessionId(this.$store).length < 1) {
       await createSession(this.$store)

@@ -1,5 +1,5 @@
 <template>
-<span>
+<span class="icon">
   <svg viewBox="0 0 24 24">
     <path :d="icon"/>
   </svg>
@@ -16,7 +16,7 @@ export default class Icon extends Vue {
 </script>
 
 <style scoped lang="scss">
-span {
+.icon {
   position: relative;
   display: inline-block;
 
