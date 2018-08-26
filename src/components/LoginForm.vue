@@ -1,5 +1,5 @@
 <template>
-<div>
+<div @keydown.enter="handleLogin">
   <br/>
   <div v-if="error">{{error}}</div>
   <input :value="username" @input="updateUsername" placeholder="Username" />

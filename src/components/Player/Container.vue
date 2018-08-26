@@ -63,9 +63,9 @@ $anim-speed: 0.5s;
   background: #050505;
   pointer-events: none;
 
-  will-change: right, bottom, max-height, max-width;
+  will-change: right, bottom, max-height, max-width, opacity;
   transition: right $anim-speed, bottom $anim-speed, max-height $anim-speed,
-    max-width $anim-speed;
+    max-width $anim-speed, opacity 0.25s;
 
   & > * {
     pointer-events: all;
