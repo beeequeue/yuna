@@ -2,7 +2,7 @@ const webpack = require('webpack')
 
 module.exports = {
   configureWebpack: {
-    target: 'electron-renderer',
+    target: process.env.IS_ELECTRON ? 'electron-renderer' : 'web',
   },
   lintOnSave: false,
   chainWebpack: config => {

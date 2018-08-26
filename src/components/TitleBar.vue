@@ -11,10 +11,14 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import electron from 'electron'
 import { mdiClose, mdiMinus } from '@mdi/js'
 
 import Icon from './Icon.vue'
+
+let electron: any
+if (process.env.IS_ELECTRON) {
+  electron = import('electron')
+}
 
 @Component({
   components: { Icon },
