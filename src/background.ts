@@ -1,12 +1,14 @@
 'use strict'
 
 import { app, protocol, BrowserWindow } from 'electron'
+import electronDebug from 'electron-debug'
 import * as path from 'path'
 import { format as formatUrl } from 'url'
 import {
   createProtocol,
   installVueDevtools,
 } from 'vue-cli-plugin-electron-builder/lib'
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 if (isDevelopment) {
   // Don't load any native (external) modules until the following line is run:
@@ -19,7 +21,10 @@ let mainWindow: any
 
 // Standard scheme must be registered before the app is ready
 protocol.registerStandardSchemes(['app'], { secure: true })
-// app.commandLine.appendSwitch('remote-debugging-port', '9222')
+
+// Register extra stuff
+electronDebug({ enabled: true })
+
 function createMainWindow() {
   const window = new BrowserWindow({
     width: 1200,
@@ -80,5 +85,6 @@ app.on('ready', async () => {
     // Install Vue Devtools
     await installVueDevtools()
   }
+
   mainWindow = createMainWindow()
 })
