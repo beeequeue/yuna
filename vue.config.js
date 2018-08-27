@@ -1,6 +1,7 @@
-const webpack = require('webpack')
-
 module.exports = {
+  css: {
+    sourceMap: true,
+  },
   configureWebpack: {
     target: process.env.IS_ELECTRON ? 'electron-renderer' : 'web',
   },
@@ -14,13 +15,11 @@ module.exports = {
       .use('vue-svg-loader')
       .loader('vue-svg-loader')
       .tap(() => {
-        const options = {
+        return {
           svgo: {
             plugins: [{ removeDoctype: true }, { removeComments: true }],
           },
         }
-
-        return options
       })
 
     config.plugin('define').tap(() => [
