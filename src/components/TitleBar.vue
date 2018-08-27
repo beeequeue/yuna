@@ -17,7 +17,7 @@ import Icon from './Icon.vue'
 
 let electron: any
 if (process.env.IS_ELECTRON) {
-  electron = import('electron')
+  electron = (window as any).require('electron')
 }
 
 @Component({
