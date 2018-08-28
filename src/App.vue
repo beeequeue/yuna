@@ -43,6 +43,8 @@ export default class App extends Vue {
   )
 
   public async mounted() {
+    console.dir(this.$router)
+    console.dir(this.$router.currentRoute)
     if (getSessionId(this.$store).length < 1 || !this.isLoggedIn) {
       await createSession(this.$store)
     }
