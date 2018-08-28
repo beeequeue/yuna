@@ -9,6 +9,7 @@ import { Anime, Episode, ImageSet, StreamData } from '@/types'
 const API_URL = 'api.crunchyroll.com'
 const VERSION = '0'
 const accessToken = process.env.ACCESS_TOKEN
+console.log(accessToken)
 
 export interface User {
   class: 'user'

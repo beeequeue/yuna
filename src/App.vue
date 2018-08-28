@@ -23,13 +23,7 @@ import Component from 'vue-class-component'
 import Navbar from './components/Navbar/Navbar.vue'
 import PlayerContainer from './components/Player/Container.vue'
 import TitleBar from './components/TitleBar.vue'
-import {
-  createSession,
-  getSessionId,
-  isLoggedIn,
-  logOutCrunchyroll,
-} from './state/auth'
-import { goToLogin } from './utils'
+import { createSession, getSessionId, isLoggedIn, logOutCrunchyroll } from './state/auth'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys()
@@ -49,19 +43,19 @@ export default class App extends Vue {
   )
 
   public async mounted() {
-    if (getSessionId(this.$store).length < 1) {
+    if (getSessionId(this.$store).length < 1 || !this.isLoggedIn) {
       await createSession(this.$store)
     }
 
     if (!this.isLoggedIn) {
-      return goToLogin(this.$router)
+      return this.$router.push('login')
     }
   }
 
   public logOut() {
     logOutCrunchyroll(this.$store)
 
-    goToLogin(this.$router)
+    this.$router.push('login')
   }
 }
 </script>

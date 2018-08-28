@@ -19,13 +19,9 @@ import { isLoggedIn, loginCrunchyroll } from '../state/auth'
   },
 })
 export default class Login extends Vue {
-  public redirectTo?: string
-
   public mounted() {
-    this.redirectTo = this.$route.query.redirect
-
     if (this.isLoggedIn) {
-      this.$router.push('..')
+      this.$router.back()
     }
   }
 
@@ -37,7 +33,7 @@ export default class Login extends Vue {
     }
 
     if (this.isLoggedIn) {
-      this.$router.push(this.redirectTo || '..')
+      this.$router.back()
     }
   }
 
