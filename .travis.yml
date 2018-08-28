@@ -39,7 +39,7 @@ script:
       electronuserland/builder:wine \
       /bin/bash -c "yarn --link-duplicates --pure-lockfile && yarn build:electron -lw --ia32 --x64"
   else
-    yarn release
+    yarn build:electron
   fi
 
 before_cache:
@@ -48,3 +48,11 @@ before_cache:
 branches:
   except:
   - "/^v\\d+\\.\\d+\\.\\d+$/"
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep-history: false
+  on:
+    branch: master
