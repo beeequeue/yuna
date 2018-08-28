@@ -3,7 +3,7 @@ matrix:
   - os: osx
     osx_image: xcode9.4
     language: node_js
-    node_js: "10"
+    node_js: '10'
     env:
     - ELECTRON_CACHE=$HOME/.cache/electron
     - ELECTRON_BUILDER_CACHE=$HOME/.cache/electron-builder
@@ -15,8 +15,8 @@ matrix:
 cache:
   directories:
   - node_modules
-  - $HOME/.cache/electron
-  - $HOME/.cache/electron-builder
+  - "$HOME/.cache/electron"
+  - "$HOME/.cache/electron-builder"
 
 before_install:
 - |
@@ -50,9 +50,9 @@ branches:
   - "/^v\\d+\\.\\d+\\.\\d+$/"
 
 deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
-  keep-history: false
+  provider: releases
+  api_key: $GITHUB_API_KEY
+  file_glob: true
+  file: dist_electron/*
   on:
-    branch: master
+    tags: true
