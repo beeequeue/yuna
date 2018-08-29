@@ -14,7 +14,7 @@
         <div v-if="queue.length < 1" class="empty-message">
           Seems your queue is empty!<br/>
 
-          <strike>>You can add some from your list or by searching,<br/></strike>
+          <strike>You can add some from your list or by searching,<br/></strike>
 
           or try to<br/><br/>
 
@@ -42,7 +42,7 @@ import { Component, Vue } from 'vue-property-decorator'
 
 import QueueItem from '../components/QueueItem.vue'
 import RaisedButton from '../components/RaisedButton.vue'
-import { updateQueue, setQueue } from '../state/user'
+import { setQueue, updateQueue } from '../state/user'
 
 @Component({
   components: { QueueItem, RaisedButton },

@@ -9,22 +9,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import Player from './Player.vue'
-import { getQueue } from '../../state/user'
-import { fetchStream } from '../../lib/crunchyroll'
-import { getSessionId } from '../../state/auth'
+import { getCurrentEpisode } from '../../state/user'
 
 @Component({
   components: { Player },
 })
 export default class PlayerContainer extends Vue {
-  public index = 0
-  public streamUrl: string | null = null
+  get streamUrl() {
+    return this.episode && this.episode.crunchyroll.streamData.streams[0].url
+  }
+
   get episode() {
-    return getQueue(this.$store)[this.index]
-      ? getQueue(this.$store)[this.index].episode
-      : null
+    return getCurrentEpisode(this.$store)
   }
 
   get classFromRoute() {
@@ -37,15 +35,6 @@ export default class PlayerContainer extends Vue {
       default:
         return 'small'
     }
-  }
-
-  @Watch('episode')
-  public async onEpisodeChange() {
-    if (!this.episode) return
-    const sessionId = getSessionId(this.$store)
-    const streamData = await fetchStream(sessionId, this.episode)
-
-    this.streamUrl = streamData.streams[this.index].url
   }
 }
 </script>

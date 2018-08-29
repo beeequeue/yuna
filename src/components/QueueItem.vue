@@ -21,10 +21,10 @@
     </p>
   </div>
 
-  <a class="episode" :href="item.episode.crunchyroll.url" target="_blank">
+  <button class="episode" @click="setEpisode(item.episode)">
     <img class="image" :src="item.episode.image.large"/>
     <icon class="play-button" :icon="playSvg"/>
-  </a>
+  </button>
 </div>
 </template>
 
@@ -34,12 +34,18 @@ import Component from 'vue-class-component'
 import { mdiPlayCircleOutline } from '@mdi/js'
 
 import Icon from './Icon.vue'
+import { setCurrentEpisode } from '../state/user'
+import { Episode } from '../types'
 
 @Component({
   components: { Icon },
 })
 export default class QueueItem extends Vue {
   @Prop() public item!: QueueItem
+
+  public setEpisode(episode: Episode) {
+    setCurrentEpisode(this.$store, episode)
+  }
 
   public playSvg = mdiPlayCircleOutline
 }
@@ -100,6 +106,8 @@ export default class QueueItem extends Vue {
     position: relative;
     justify-self: end;
     background: black;
+    border: 0;
+    cursor: pointer;
 
     & > .image {
       opacity: 0.65;

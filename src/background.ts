@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, BrowserWindow, protocol } from 'electron'
 import electronDebug from 'electron-debug'
 import * as path from 'path'
 import { format as formatUrl } from 'url'
@@ -23,7 +23,7 @@ let mainWindow: any
 protocol.registerStandardSchemes(['app'], { secure: true })
 
 // Register extra stuff
-electronDebug({ enabled: true })
+electronDebug({ enabled: process.env.NODE_ENV === 'production' })
 
 function createMainWindow() {
   const window = new BrowserWindow({
