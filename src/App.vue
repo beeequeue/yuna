@@ -12,7 +12,7 @@
 
     <player-container v-if="isLoggedIn"/>
 
-    <button class="logout-button" v-if="isLoggedIn" @click="logOut">log out</button>
+    <!--<button class="logout-button" v-if="isLoggedIn" @click="logOut">log out</button>-->
   </div>
 </template>
 

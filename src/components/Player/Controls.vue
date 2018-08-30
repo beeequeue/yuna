@@ -5,10 +5,19 @@
   <!--<icon v-if=""/>-->
 
   <div class="toolbar">
-    <span class="play-pause">
+    <span class="button-collapser">
       <transition>
         <icon v-if="paused" key="play" class="button" :icon="playSvg" @click.native="playOrPause"/>
         <icon v-else class="button" key="pause" :icon="pauseSvg" @click.native="playOrPause"/>
+      </transition>
+    </span>
+
+    <span class="separator"/>
+
+    <span class="button-collapser">
+      <transition>
+        <icon v-if="this.$route.path !== '/player-big'" key="max" class="button" :icon="maximizeSvg" @click.native="maximizePlayer"/>
+        <icon v-else class="button" key="min" :icon="minimizeSvg" @click.native="$router.back()"/>
       </transition>
     </span>
   </div>
@@ -17,7 +26,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mdiPause, mdiPlay } from '@mdi/js'
+import { mdiArrowCollapse, mdiArrowExpand, mdiPause, mdiPlay } from '@mdi/js'
 
 import Icon from '../Icon.vue'
 
@@ -28,8 +37,14 @@ export default class Controls extends Vue {
   @Prop(Boolean) public paused!: boolean
   @Prop() public playOrPause!: () => void
 
+  public maximizePlayer() {
+    this.$router.push('/player-big')
+  }
+
   public playSvg = mdiPlay
   public pauseSvg = mdiPause
+  public maximizeSvg = mdiArrowExpand
+  public minimizeSvg = mdiArrowCollapse
 }
 </script>
 
@@ -62,9 +77,14 @@ $buttonSize: 45px;
 
   background: rgba(0, 0, 0, 0.75);
 
-  & > .play-pause {
+  & > .separator {
+    width: 100%;
+  }
+
+  & > .button-collapser {
     position: relative;
     display: inline-block;
+    flex-shrink: 0;
     height: $buttonSize;
     width: $buttonSize;
 
@@ -86,7 +106,7 @@ $buttonSize: 45px;
     &.v-enter-active,
     &.v-leave-active {
       will-change: opacity;
-      transition: opacity 0.1s, transform 0.05s;
+      transition: opacity 0.1s, transform 0.1s;
     }
 
     &.v-enter,

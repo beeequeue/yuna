@@ -31,6 +31,7 @@ export default class PlayerContainer extends Vue {
     switch (pathWithoutSlash) {
       case 'login':
       case 'queue':
+      case 'player-big':
         return pathWithoutSlash
       default:
         return 'small'
@@ -74,6 +75,13 @@ $anim-speed: 0.5s;
   max-width: 300px;
   right: 0;
   bottom: 0;
+}
+
+.player-big {
+  bottom: 0;
+  right: 0;
+  max-height: calc(100% - 80px);
+  max-width: 100%;
 }
 
 .small {
