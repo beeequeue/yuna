@@ -3,6 +3,7 @@
     <video
       preload
       muted
+      :poster="episode.image.large"
       ref="player"
     />
 
@@ -10,7 +11,7 @@
       <icon v-if="!initiated && loaded" class="uninitiated-icon" :icon="playCircleSvg"/>
     </transition>
 
-    <controls :paused="paused" :playOrPause="playOrPause"/>
+    <controls :episode="episode" :paused="paused" :play="play" :pause="pause"/>
   </div>
 </template>
 
@@ -21,12 +22,13 @@ import { mdiPlayCircle } from '@mdi/js'
 
 import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
+import { Episode } from '../../types'
 
 @Component({
   components: { Controls, Icon },
 })
 export default class Player extends Vue {
-  @Prop(String) public stream!: string
+  @Prop() public episode!: Episode
   public initiated = false
   public loaded = false
   public paused = true
@@ -40,12 +42,16 @@ export default class Player extends Vue {
     player: HTMLVideoElement
   }
 
+  public get streamUrl() {
+    return this.episode.crunchyroll.streamData.streams[0].url
+  }
+
   public async mounted() {
     if (Hls.isSupported()) {
       const hls = new Hls()
 
       hls.attachMedia(this.$refs.player)
-      hls.loadSource(this.stream)
+      hls.loadSource(this.streamUrl)
 
       this.hls = hls
     }
@@ -65,13 +71,16 @@ export default class Player extends Vue {
     })
   }
 
-  @Watch('stream')
+  @Watch('episode')
   public onNewStream() {
-    if (!this.stream) return
+    if (!this.streamUrl) return
+
+    this.initiated = false
+    this.paused = true
 
     const hls = new Hls()
 
-    hls.loadSource(this.stream)
+    hls.loadSource(this.streamUrl)
     hls.attachMedia(this.$refs.player)
 
     this.hls = hls
@@ -79,14 +88,16 @@ export default class Player extends Vue {
     this.registerEvents()
   }
 
-  public playOrPause() {
+  public play() {
     if (this.paused) {
       if (!this.initiated) this.initiated = true
 
       this.$refs.player.play()
-    } else {
-      this.$refs.player.pause()
     }
+  }
+
+  public pause() {
+    if (!this.paused) this.$refs.player.pause()
   }
 }
 </script>

@@ -15,13 +15,15 @@ export interface Episode {
   name: string
   description: string
   index: number
+  duration: number
   progress: number
   image: ImageSet
+  animeName: string
 
   crunchyroll: {
     id: string
     url: string
-    series: string
+    seriesId: string
     collection: string
     streamData: StreamData
   }

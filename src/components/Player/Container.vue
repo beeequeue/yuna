@@ -1,9 +1,9 @@
 <template>
   <div class="player-container" :class="classFromRoute">
     <player
-      v-if="streamUrl"
+      v-if="episode"
       key="player"
-      :stream="streamUrl"
+      :episode="episode"
     />
   </div>
 </template>
@@ -17,10 +17,6 @@ import { getCurrentEpisode } from '../../state/user'
   components: { Player },
 })
 export default class PlayerContainer extends Vue {
-  get streamUrl() {
-    return this.episode && this.episode.crunchyroll.streamData.streams[0].url
-  }
-
   get episode() {
     return getCurrentEpisode(this.$store)
   }

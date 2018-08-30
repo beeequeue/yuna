@@ -9,7 +9,6 @@ import { Anime, Episode, ImageSet, StreamData } from '@/types'
 const API_URL = 'api.crunchyroll.com'
 const VERSION = '0'
 const accessToken = process.env.ACCESS_TOKEN
-console.log(accessToken)
 
 export interface User {
   class: 'user'
@@ -79,9 +78,11 @@ interface _Media {
   collection_id: string
   collection_etp_guid: string
   series_id: string
+  series_name: string
   series_etp_guid: string
   media_type: string
   episode_number: string
+  duration: number
   name: string
   description: string
   screenshot_image: _ImageSet
@@ -192,6 +193,7 @@ const mediaFields = [
   'media.screenshot_image',
   'media.media_id',
   'media.series_id',
+  'media.series_name',
   'media.collection_id',
   'media.url',
   'media.stream_data',
@@ -282,9 +284,11 @@ const mediaToEpisode = (
     name,
     description,
     episode_number,
+    duration,
     screenshot_image,
     media_id,
     series_id,
+    series_name,
     collection_id,
     url,
     stream_data,
@@ -293,12 +297,15 @@ const mediaToEpisode = (
 ): Episode => ({
   name,
   description,
+  animeName: series_name,
   index: Number(episode_number),
+  duration,
   progress: playhead,
   image: convertImageSet(screenshot_image),
+
   crunchyroll: {
     id: media_id,
-    series: series_id,
+    seriesId: series_id,
     collection: collection_id,
     url,
     streamData: convertStreamData(stream_data),
