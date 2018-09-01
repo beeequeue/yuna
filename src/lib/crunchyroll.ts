@@ -190,6 +190,8 @@ const mediaFields = [
   'media.name',
   'media.description',
   'media.episode_number',
+  'media.duration',
+  'media.playhead',
   'media.screenshot_image',
   'media.media_id',
   'media.series_id',

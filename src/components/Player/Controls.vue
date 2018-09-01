@@ -11,6 +11,14 @@
   </transition>
 
   <div class="toolbar">
+    <progress-bar
+      :duration="episode.duration"
+      :progressPercentage="progressPercentage"
+      :progressInSeconds="progressInSeconds"
+      :loadedPercentage="loadedPercentage"
+      :onSetTime="onSetTime"
+    />
+
     <span class="button-collapser">
       <transition>
         <icon v-if="paused" key="play" class="button" :icon="playSvg" @click.native="play"/>
@@ -35,18 +43,23 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiArrowCollapse, mdiArrowExpand, mdiPause, mdiPlay } from '@mdi/js'
 
 import Icon from '../Icon.vue'
+import ProgressBar from './ProgressBar.vue'
 import { Episode } from '../../types'
 
 @Component({
-  components: { Icon },
+  components: { ProgressBar, Icon },
 })
 export default class Controls extends Vue {
   @Prop() public episode!: Episode
   @Prop(Boolean) public paused!: boolean
+  @Prop(Number) public progressInSeconds!: number
+  @Prop(Number) public progressPercentage!: number
+  @Prop(Number) public loadedPercentage!: number
   @Prop() public play!: () => void
   @Prop() public pause!: () => void
+  @Prop() public onSetTime!: (e: Event) => void
 
-  get isPlayerMaximized() {
+  public get isPlayerMaximized() {
     return this.$route.path === '/player-big'
   }
 

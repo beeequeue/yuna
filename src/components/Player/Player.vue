@@ -11,7 +11,16 @@
       <icon v-if="!initiated && loaded" class="uninitiated-icon" :icon="playCircleSvg"/>
     </transition>
 
-    <controls :episode="episode" :paused="paused" :play="play" :pause="pause"/>
+    <controls
+      :episode="episode"
+      :paused="paused"
+      :progressPercentage="progressPercentage"
+      :progressInSeconds="progressInSeconds"
+      :loadedPercentage="loadedPercentage"
+      :onSetTime="onSetTime"
+      :play="play"
+      :pause="pause"
+    />
   </div>
 </template>
 
@@ -32,8 +41,10 @@ export default class Player extends Vue {
   public initiated = false
   public loaded = false
   public paused = true
-  public progress = 0
+  public progressPercentage = 0
   public progressInSeconds = 0
+  public loadedSeconds = 0
+  public loadedPercentage = 0
   public hls = new Hls()
 
   public playCircleSvg = mdiPlayCircle
@@ -66,9 +77,30 @@ export default class Player extends Vue {
     this.$refs.player.onpause = () => {
       this.paused = true
     }
+    this.$refs.player.onprogress = this.onLoadedProgress
+    this.$refs.player.ontimeupdate = this.onTimeUpdate
+
     this.hls.on('hlsFragLoaded', () => {
       this.loaded = true
     })
+  }
+
+  public onLoadedProgress(e: Event) {
+    const element = e.target as HTMLVideoElement
+    this.loadedSeconds = element.buffered.end(0)
+    this.loadedPercentage = this.loadedSeconds / this.episode.duration
+  }
+
+  public onTimeUpdate(e: Event) {
+    const element = e.target as HTMLVideoElement
+    this.progressInSeconds = Math.round(element.currentTime)
+    this.progressPercentage = element.currentTime / this.episode.duration
+  }
+
+  public onSetTime(e: Event) {
+    const element = e.target as HTMLInputElement
+
+    this.$refs.player.currentTime = Number(element.value)
   }
 
   @Watch('episode')
@@ -123,7 +155,7 @@ export default class Player extends Vue {
     left: 50%;
     transform: translate(-50%, -50%);
     height: 50%;
-    fill: $gray;
+    fill: $white;
     z-index: 1;
     pointer-events: none;
   }
