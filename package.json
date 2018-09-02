@@ -9,6 +9,7 @@
     "@types/uuid": "^3.4.3",
     "@types/webpack-env": "^1.13.6",
     "electron-debug": "^2.0.0",
+    "electron-util": "^0.9.0",
     "hls.js": "^0.11.0",
     "normalize.css": "^8.0.0",
     "superagent": "^3.8.3",
@@ -26,15 +27,17 @@
     "@vue/cli-service": "^3.0.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "electron": "^2.0.2",
-    "lint-staged": "^6.0.0",
+    "lint-staged": "^7.2.2",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.0.1",
+    "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.14.0",
-    "tslint-config-standard": "^7.1.0",
-    "typescript": "^3.0.0",
+    "tslint-config-standard": "^8.0.0",
+    "typescript": "^3.0.3",
     "vue-cli-plugin-electron-builder": "^1.0.0-rc.2",
-    "vue-svg-loader": "^0.5.0",
-    "vue-template-compiler": "^2.5.17"
+    "vue-svg-loader": "^0.8.0",
+    "vue-template-compiler": "^2.5.17",
+    "webpack": "^4.17.1"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"
