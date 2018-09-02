@@ -1,19 +1,17 @@
 <template>
-  <div id="app" :style="`background-image: url(${backgroundImage})`">
-    <title-bar v-if="isElectron"/>
+<div id="app" :style="`background-image: url(${backgroundImage})`">
+  <title-bar v-if="isElectron"/>
 
-    <transition>
-      <navbar v-if="isLoggedIn"/>
-    </transition>
+  <transition>
+    <navbar v-if="isLoggedIn"/>
+  </transition>
 
-    <transition>
-      <router-view/>
-    </transition>
+  <transition>
+    <router-view/>
+  </transition>
 
-    <player-container v-if="isLoggedIn"/>
-
-    <!--<button class="logout-button" v-if="isLoggedIn" @click="logOut">log out</button>-->
-  </div>
+  <player-container v-if="isLoggedIn"/>
+</div>
 </template>
 
 <script lang="ts">
@@ -23,7 +21,7 @@ import Component from 'vue-class-component'
 import Navbar from './components/Navbar/Navbar.vue'
 import PlayerContainer from './components/Player/Container.vue'
 import TitleBar from './components/TitleBar.vue'
-import { createSession, getSessionId, isLoggedIn, logOutCrunchyroll } from './state/auth'
+import { createSession, getSessionId, isLoggedIn } from './state/auth'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys()
@@ -50,12 +48,6 @@ export default class App extends Vue {
     if (!this.isLoggedIn) {
       return this.$router.push('login')
     }
-  }
-
-  public logOut() {
-    logOutCrunchyroll(this.$store)
-
-    this.$router.push('login')
   }
 }
 </script>
@@ -89,12 +81,6 @@ body,
     -webkit-tap-highlight-color: transparent !important;
     outline: none !important;
   }
-}
-
-.logout-button {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
 }
 
 // Global classes

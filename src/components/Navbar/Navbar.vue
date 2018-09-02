@@ -10,9 +10,18 @@
 
   <item text="List" path="/list"/>
 
-  <router-link to="/settings">
-    <icon class="button" :icon="settingsSvg"/>
-  </router-link>
+  <icon
+    class="button"
+    :class="openClass"
+    :icon="settingsSvg"
+    @click.native="toggleOpen"
+  />
+
+  <settings-dropdown
+    :class="openClass"
+    :open="settingsOpen"
+    :toggleOpen="toggleOpen"
+  />
 </div>
 </template>
 
@@ -22,11 +31,24 @@ import { mdiHomeOutline, mdiSettingsOutline } from '@mdi/js'
 
 import Item from './Item.vue'
 import Icon from '../Icon.vue'
+import SettingsDropdown from './SettingsDropdown.vue'
 
 @Component({
-  components: { Icon, Item },
+  components: { SettingsDropdown, Icon, Item },
 })
 export default class Navbar extends Vue {
+  public settingsOpen = true
+
+  public get openClass() {
+    return {
+      open: this.settingsOpen,
+    }
+  }
+
+  public toggleOpen() {
+    this.settingsOpen = !this.settingsOpen
+  }
+
   public homeOutlineSvg = mdiHomeOutline
   public settingsSvg = mdiSettingsOutline
 }
@@ -53,6 +75,15 @@ export default class Navbar extends Vue {
     fill: $white;
 
     cursor: pointer;
+
+    transition: background 0.25s, fill 0.25s, color 0.25s;
+
+    &.open {
+      background: $white;
+      color: $highlight;
+      fill: $highlight;
+      z-index: 10;
+    }
   }
 }
 
