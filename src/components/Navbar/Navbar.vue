@@ -37,7 +37,7 @@ import SettingsDropdown from './SettingsDropdown.vue'
   components: { SettingsDropdown, Icon, Item },
 })
 export default class Navbar extends Vue {
-  public settingsOpen = true
+  public settingsOpen = false
 
   public get openClass() {
     return {
