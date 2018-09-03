@@ -4,63 +4,52 @@ import { getStoreAccessors } from 'vuex-typescript'
 
 import * as crunchyroll from '@/lib/crunchyroll'
 import { RootState } from '@/state/store'
+import { userStore } from '@/lib/user'
 
-interface CrunchyrollData extends crunchyroll.User {
-  token: string
-  expires: Date
+export interface CrunchyrollData {
+  sessionId: string
+  token: string | null
+  user: crunchyroll.User | null
 }
 
 export interface AuthState {
-  sessionId: string
-  crunchyroll: CrunchyrollData | null
+  crunchyroll: CrunchyrollData
 }
 
 type AuthContext = ActionContext<AuthState, RootState>
 
-const cachedSessionId = localStorage.getItem('sessionId')
-const cachedUserString = localStorage.getItem('crunchyroll')
-
 const initialState: AuthState = {
-  sessionId: '',
-  crunchyroll: null,
-}
-
-try {
-  initialState.sessionId = JSON.parse(cachedSessionId || '""')
-} catch (e) {
-  localStorage.removeItem('sessionId')
-}
-
-try {
-  initialState.crunchyroll = JSON.parse(cachedUserString || 'null')
-} catch (e) {
-  localStorage.removeItem('crunchyroll')
+  crunchyroll: {
+    sessionId: userStore.get('crunchyroll.sessionId', ''),
+    token: userStore.get('crunchyroll.token', null),
+    user: userStore.get('crunchyroll.user', null),
+  },
 }
 
 export const auth = {
   state: { ...initialState },
 
   getters: {
-    isLoggedIn(state: AuthState) {
-      return state.crunchyroll ? state.crunchyroll.token != null : false
+    isLoggedIn(state: AuthState): boolean {
+      return state.crunchyroll.token != null
     },
 
-    getSessionId(state: AuthState) {
-      return state.sessionId
+    getSessionId(state: AuthState): string {
+      return state.crunchyroll.sessionId
     },
   },
 
   mutations: {
     setSessionId(state: AuthState, sessionId: string) {
-      state.sessionId = sessionId
+      state.crunchyroll.sessionId = sessionId
 
-      localStorage.setItem('sessionId', JSON.stringify(sessionId))
+      userStore.set('crunchyroll.sessionId', sessionId)
     },
 
     setCrunchyroll(state: AuthState, data: CrunchyrollData) {
       state.crunchyroll = data
 
-      localStorage.setItem('crunchyroll', JSON.stringify(data))
+      userStore.set('crunchyroll', data)
     },
   },
 
@@ -78,22 +67,16 @@ export const auth = {
         let data
 
         try {
-          data = await crunchyroll.login(
-            payload.user,
-            payload.pass,
-            context.state.sessionId,
-          )
+          data = await crunchyroll.login(payload.user, payload.pass)
         } catch (e) {
           return Promise.reject(e)
         }
 
-        const crunchyrollData: CrunchyrollData = {
-          ...data.user,
+        setCrunchyroll(context, {
+          sessionId: context.state.crunchyroll.sessionId,
           token: data.auth,
-          expires: data.expires,
-        }
-
-        setCrunchyroll(context, crunchyrollData)
+          user: data.user,
+        })
       } catch (err) {
         return
       }
@@ -102,7 +85,11 @@ export const auth = {
     async logOutCrunchyroll(context: AuthContext) {
       if (!context.state.crunchyroll) return
 
-      setCrunchyroll(context, null as any)
+      setCrunchyroll(context, {
+        sessionId: '',
+        token: null,
+        user: null,
+      })
       await createSession(context)
     },
   },

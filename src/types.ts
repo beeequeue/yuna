@@ -1,4 +1,9 @@
-import { AnimeState } from '@/state/user'
+export enum AnimeState {
+  PLANNING,
+  WATCHING,
+  REWATCHING,
+  COMPLETED,
+}
 
 export interface StreamData {
   subLanguage: string
@@ -33,7 +38,7 @@ export interface Anime {
   name: string
   romajiName?: string
   description: string
-  episodes: number
+  length: number
   landscapeImage: ImageSet
   portraitImage: ImageSet
 

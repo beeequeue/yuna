@@ -1,31 +1,21 @@
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
+
 import { RootState } from '@/state/store'
 import { fetchQueue } from '@/lib/crunchyroll'
-import { Anime, Episode } from '@/types'
-
-export enum AnimeState {
-  PLANNING,
-  WATCHING,
-  REWATCHING,
-  COMPLETED,
-}
-
-export interface QueueItem {
-  episode: Episode
-  series: Anime
-}
+import { userStore } from '@/lib/user'
+import { Episode } from '@/types'
 
 export interface UserState {
   episode: Episode | null
-  queue: QueueItem[]
+  queue: string[]
 }
 
 type UserContext = ActionContext<UserState, RootState>
 
 const initialState: UserState = {
   episode: null,
-  queue: [],
+  queue: userStore.get('queue', []),
 }
 
 export const user = {
@@ -46,14 +36,16 @@ export const user = {
       state.episode = episode
     },
 
-    setQueue(state: UserState, queue: QueueItem[]) {
+    setQueue(state: UserState, queue: string[]) {
       state.queue = queue
+
+      userStore.set('queue', queue)
     },
   },
 
   actions: {
     async updateQueue(context: UserContext) {
-      setQueue(context, await fetchQueue(context.rootState.auth.sessionId))
+      setQueue(context, await fetchQueue())
     },
   },
 }
