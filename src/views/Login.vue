@@ -33,6 +33,11 @@ export default class Login extends Vue {
     }
 
     if (this.isLoggedIn) {
+      if ((window as any).initialLogin) {
+        (window as any).initialLogin = false
+        return this.$router.push('/')
+      }
+
       this.$router.back()
     }
   }

@@ -46,6 +46,7 @@ export default class App extends Vue {
     }
 
     if (!this.isLoggedIn) {
+      (window as any).initialLogin = true
       return this.$router.push('login')
     }
   }
