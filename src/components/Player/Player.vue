@@ -32,6 +32,7 @@ import { mdiPlayCircle } from '@mdi/js'
 import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
 import { Episode } from '../../types'
+import { fetchStream } from '../../lib/crunchyroll'
 
 @Component({
   components: { Controls, Icon },
@@ -53,9 +54,7 @@ export default class Player extends Vue {
     player: HTMLVideoElement
   }
 
-  public get streamUrl() {
-    return this.episode.crunchyroll.streamData.streams[0].url
-  }
+  public streamUrl: string = ''
 
   public async mounted() {
     if (Hls.isSupported()) {
@@ -104,7 +103,8 @@ export default class Player extends Vue {
   }
 
   @Watch('episode')
-  public onNewStream() {
+  public async onNewEpisode() {
+    this.streamUrl = (await fetchStream(this.episode.crunchyroll.id)).streams[0].url
     if (!this.streamUrl) return
 
     this.initiated = false
