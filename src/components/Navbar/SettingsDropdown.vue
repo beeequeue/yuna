@@ -3,11 +3,14 @@
   <div v-if="open" class="fader" @click="toggleOpen"/>
 
   <div class="menu" :class="{ open }" @click="toggleOpen">
-
     <div class="item log-out" @click="logOut">
       <icon :icon="logOutSvg"/>
-
       <span>Log out</span>
+    </div>
+
+    <div class="item clear-cache" @click="clearCache">
+      <span/>
+      <span>Clear cache</span>
     </div>
   </div>
 </div>
@@ -19,13 +22,17 @@ import { mdiLogout, mdiSettingsOutline } from '@mdi/js'
 
 import Icon from '../Icon.vue'
 import { logOutCrunchyroll } from '../../state/auth'
+import { AnimeCache } from '../../lib/cache'
 
 @Component({
   components: { Icon },
 })
 export default class SettingsDropdown extends Vue {
-  @Prop(Boolean) open!: boolean
-  @Prop() toggleOpen!: () => any
+  @Prop(Boolean) public open!: boolean
+  @Prop() public toggleOpen!: () => any
+
+  public settingsSvg = mdiSettingsOutline
+  public logOutSvg = mdiLogout
 
   public logOut() {
     logOutCrunchyroll(this.$store)
@@ -33,8 +40,9 @@ export default class SettingsDropdown extends Vue {
     this.$router.push('login')
   }
 
-  public settingsSvg = mdiSettingsOutline
-  public logOutSvg = mdiLogout
+  public clearCache() {
+    AnimeCache.clear()
+  }
 }
 </script>
 

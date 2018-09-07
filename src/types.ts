@@ -21,7 +21,7 @@ export interface Episode {
   description: string
   index: number
   duration: number
-  progress: number
+  progress: number | null
   image: ImageSet
   animeName: string
 
@@ -30,7 +30,6 @@ export interface Episode {
     url: string
     seriesId: string
     collection: string
-    streamData: StreamData
   }
 }
 

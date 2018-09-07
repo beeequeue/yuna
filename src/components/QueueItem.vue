@@ -16,7 +16,7 @@
     </a>
 
     <p class="episode-name">
-      {{item.episode.progress > 0 ? 'Current' : 'Next'}} episode:
+      {{item.episode.progress > 0 ? 'Current' : 'Next'}} episode {{item.episode.index}}:
       {{item.episode.name}}
     </p>
   </div>
@@ -43,11 +43,11 @@ import { Episode } from '../types'
 export default class QueueItem extends Vue {
   @Prop() public item!: QueueItem
 
+  public playSvg = mdiPlayCircleOutline
+
   public setEpisode(episode: Episode) {
     setCurrentEpisode(this.$store, episode)
   }
-
-  public playSvg = mdiPlayCircleOutline
 }
 </script>
 

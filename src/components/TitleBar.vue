@@ -28,6 +28,9 @@ export default class TitleBar extends Vue {
 
   public browserWindow = electron.remote.BrowserWindow.getFocusedWindow()
 
+  public minimizeSvg = mdiMinus
+  public closeSvg = mdiClose
+
   public minimize() {
     this.browserWindow.minimize();
   }
@@ -35,9 +38,6 @@ export default class TitleBar extends Vue {
   public close() {
     this.browserWindow.close();
   }
-
-  public minimizeSvg = mdiMinus
-  public closeSvg = mdiClose
 }
 </script>
 

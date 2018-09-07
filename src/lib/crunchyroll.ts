@@ -1,11 +1,13 @@
 /* tslint:disable:class-name */
 import superagent from 'superagent/superagent'
+import { map } from 'rambda'
 import uuid from 'uuid/v4'
 
-import { RequestError, RequestSuccess } from '@/utils'
-import { QueueItem } from '@/state/user'
 import { Anime, Episode, ImageSet, StreamData } from '@/types'
+import { RequestError, RequestSuccess } from '@/utils'
+import { QueueItem, userStore } from '@/lib/user'
 
+const LOCALE = 'enUS'
 const API_URL = 'api.crunchyroll.com'
 const VERSION = '0'
 const accessToken = process.env.ACCESS_TOKEN
@@ -100,7 +102,7 @@ interface _Media {
   free_available_time: string
   free_unavailable_time: string
   created: string
-  stream_data: _StreamData
+  playhead: number
 }
 
 interface _Series {
@@ -171,9 +173,12 @@ const responseIsError = (
   return res.body.error === true
 }
 
+let _sessionId: string = userStore.get('crunchyroll.sessionId', '')
+
 export const createSession = async () => {
   const response = (await superagent.post(getUrl('start_session')).query({
     access_token: accessToken,
+    locale: LOCALE,
     device_type: 'com.crunchyroll.windows.desktop',
     device_id: `NANI-${uuid()}`,
   })) as CrunchyrollResponse<{ session_id: string }>
@@ -182,11 +187,13 @@ export const createSession = async () => {
     throw new Error(response.body.message)
   }
 
+  _sessionId = response.body.data.session_id
   return response.body.data.session_id
 }
 
 const mediaFields = [
   'most_likely_media',
+  'media',
   'media.name',
   'media.description',
   'media.episode_number',
@@ -207,19 +214,16 @@ const seriesFields = [
   'series.series_id',
   'series.url',
   'series.media_count',
+  'series.collection_count',
   'series.landscape_image',
   'series.portrait_image',
 ]
 
-export const login = async (
-  username: string,
-  password: string,
-  sessionId: string,
-) => {
+export const login = async (username: string, password: string) => {
   const data = new FormData()
   data.append('account', username)
   data.append('password', password)
-  data.append('session_id', sessionId)
+  data.append('session_id', _sessionId)
 
   const response = (await superagent
     .post(getUrl('login'))
@@ -232,26 +236,85 @@ export const login = async (
   return response.body.data
 }
 
-export const fetchQueue = async (sessionId: string) => {
+export const fetchQueue = async (): Promise<QueueItem[]> => {
   const response = (await superagent.get(getUrl('queue')).query({
     media_types: 'anime',
-    session_id: sessionId,
-    fields: [...mediaFields, ...seriesFields].join(','),
+    locale: LOCALE,
+    session_id: _sessionId,
+    fields: [
+      'most_likely_media',
+      'most_likely_media.media_id',
+      'series',
+      'series.series_id',
+      'series.collection_count',
+    ].join(','),
   })) as CrunchyrollResponse<_QueueEntry[]>
 
   if (responseIsError(response)) {
     throw new Error(response.body.message)
   }
 
-  return response.body.data.map(queueEntryToQueueItem)
+  return response.body.data.map(
+    entry =>
+      ({
+        nextEpisode: entry.most_likely_media.media_id,
+        crunchyroll: entry.series.series_id,
+      } as QueueItem),
+  )
 }
 
-export const fetchStream = async (sessionId: string, episode: Episode) => {
-  if (!episode.crunchyroll) throw new Error('No crunchyroll data!')
-
+export const fetchAnime = async (seriesId: string): Promise<Anime> => {
   const response = (await superagent.get(getUrl('info')).query({
-    session_id: sessionId,
-    media_id: episode.crunchyroll.id,
+    session_id: _sessionId,
+    locale: LOCALE,
+    series_id: seriesId,
+    fields: seriesFields.join(','),
+  })) as CrunchyrollResponse<_Series>
+
+  if (responseIsError(response)) {
+    throw new Error(response.body.message)
+  }
+
+  return seriesToAnime(response.body.data)
+}
+
+export const fetchEpisodesOfAnime = async (
+  seriesId: string,
+): Promise<Episode[]> => {
+  const response = (await superagent.get(getUrl('list_media')).query({
+    session_id: _sessionId,
+    locale: LOCALE,
+    series_id: seriesId,
+    fields: mediaFields.join(','),
+  })) as CrunchyrollResponse<_Media[]>
+
+  if (responseIsError(response)) {
+    throw new Error(response.body.message)
+  }
+
+  return map(mediaToEpisode, response.body.data)
+}
+
+export const fetchEpisode = async (mediaId: string): Promise<Episode> => {
+  const response = (await superagent.get(getUrl('info')).query({
+    session_id: _sessionId,
+    locale: LOCALE,
+    media_id: mediaId,
+    fields: mediaFields.join(','),
+  })) as CrunchyrollResponse<_Media>
+
+  if (responseIsError(response)) {
+    throw new Error(response.body.message)
+  }
+
+  return mediaToEpisode(response.body.data)
+}
+
+export const fetchStream = async (mediaId: string): Promise<StreamData> => {
+  const response = (await superagent.get(getUrl('info')).query({
+    session_id: _sessionId,
+    locale: LOCALE,
+    media_id: mediaId,
     fields: 'media.stream_data',
   })) as CrunchyrollResponse<{ stream_data: _StreamData }>
 
@@ -281,28 +344,25 @@ const convertStreamData = (streamData: _StreamData): StreamData => ({
   })),
 })
 
-const mediaToEpisode = (
-  {
-    name,
-    description,
-    episode_number,
-    duration,
-    screenshot_image,
-    media_id,
-    series_id,
-    series_name,
-    collection_id,
-    url,
-    stream_data,
-  }: _Media,
-  playhead: number,
-): Episode => ({
+const mediaToEpisode = ({
+  name,
+  description,
+  episode_number,
+  duration,
+  screenshot_image,
+  media_id,
+  series_id,
+  series_name,
+  collection_id,
+  url,
+  playhead,
+}: _Media): Episode => ({
   name,
   description,
   animeName: series_name,
   index: Number(episode_number),
   duration,
-  progress: playhead,
+  progress: playhead || null,
   image: convertImageSet(screenshot_image),
 
   crunchyroll: {
@@ -310,13 +370,13 @@ const mediaToEpisode = (
     seriesId: series_id,
     collection: collection_id,
     url,
-    streamData: convertStreamData(stream_data),
   },
 })
 
 const seriesToAnime = ({
   name,
   description,
+  media_count,
   series_id,
   url,
   landscape_image,
@@ -325,20 +385,11 @@ const seriesToAnime = ({
   name,
   romajiName: name,
   description,
-  episodes: 12,
+  length: media_count,
   crunchyroll: {
     id: series_id,
     url,
   },
   landscapeImage: convertImageSet(landscape_image),
   portraitImage: convertImageSet(portrait_image),
-})
-
-const queueEntryToQueueItem = ({
-  most_likely_media,
-  most_likely_media_playhead,
-  series,
-}: _QueueEntry): QueueItem => ({
-  episode: mediaToEpisode(most_likely_media, most_likely_media_playhead),
-  series: seriesToAnime(series),
 })

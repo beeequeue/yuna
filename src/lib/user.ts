@@ -2,11 +2,12 @@ import Store from 'electron-store'
 import { CrunchyrollData } from '@/state/auth'
 
 export interface QueueItem {
-  crunchyroll?: string
+  nextEpisode: string | null
+  crunchyroll: string | null
 }
 
 interface UserStore {
-  queue: string[]
+  queue: QueueItem[]
   crunchyroll: CrunchyrollData
 }
 

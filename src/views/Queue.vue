@@ -3,7 +3,7 @@
     <div class="queue">
       <transition-group name="fade">
         <queue-item
-          v-for="item in queue"
+          v-for="item in queueWithData"
           :item="item"
           :key="item.series.crunchyroll.id"
           class="anime"
@@ -38,18 +38,50 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import { map } from 'rambda'
 
 import QueueItem from '../components/QueueItem.vue'
 import RaisedButton from '../components/RaisedButton.vue'
-import { setQueue, updateQueue } from '../state/user'
+import { getQueue, setQueue, updateQueue } from '../state/user'
+import { Anime, Episode } from '../types'
+import { AnimeCache } from '../lib/cache'
+
+interface ItemData {
+  episode: Episode
+  series: Anime
+}
 
 @Component({
   components: { QueueItem, RaisedButton },
 })
 export default class Queue extends Vue {
+  public queueWithData: ItemData[] = []
+
   public get queue() {
-    return this.$store.state.user.queue
+    return getQueue(this.$store)
+  }
+
+  public mounted() {
+    this.getQueueData()
+  }
+
+  @Watch('queue')
+  public async getQueueData() {
+    const animes = (await Promise.all(
+      map(item => AnimeCache.getAnime(item.crunchyroll), this.queue),
+    )) as Anime[]
+
+    const episodes = (await Promise.all(
+      animes.map((anime, i) =>
+        AnimeCache.getEpisode(this.queue[i].nextEpisode),
+      ),
+    )) as Episode[]
+
+    this.queueWithData = animes.map((anime, i) => ({
+      series: anime,
+      episode: episodes[i],
+    }))
   }
 
   public importQueue() {

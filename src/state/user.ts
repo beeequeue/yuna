@@ -3,12 +3,12 @@ import { getStoreAccessors } from 'vuex-typescript'
 
 import { RootState } from '@/state/store'
 import { fetchQueue } from '@/lib/crunchyroll'
-import { userStore } from '@/lib/user'
+import { QueueItem, userStore } from '@/lib/user'
 import { Episode } from '@/types'
 
 export interface UserState {
   episode: Episode | null
-  queue: string[]
+  queue: QueueItem[]
 }
 
 type UserContext = ActionContext<UserState, RootState>
@@ -36,7 +36,7 @@ export const user = {
       state.episode = episode
     },
 
-    setQueue(state: UserState, queue: string[]) {
+    setQueue(state: UserState, queue: QueueItem[]) {
       state.queue = queue
 
       userStore.set('queue', queue)

@@ -37,20 +37,20 @@ import SettingsDropdown from './SettingsDropdown.vue'
   components: { SettingsDropdown, Icon, Item },
 })
 export default class Navbar extends Vue {
-  public settingsOpen = false
-
   public get openClass() {
     return {
       open: this.settingsOpen,
     }
   }
 
-  public toggleOpen() {
-    this.settingsOpen = !this.settingsOpen
-  }
+  public settingsOpen = false
 
   public homeOutlineSvg = mdiHomeOutline
   public settingsSvg = mdiSettingsOutline
+
+  public toggleOpen() {
+    this.settingsOpen = !this.settingsOpen
+  }
 }
 </script>
 

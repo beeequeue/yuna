@@ -50,6 +50,10 @@ import { Episode } from '../../types'
   components: { ProgressBar, Icon },
 })
 export default class Controls extends Vue {
+
+  public get isPlayerMaximized() {
+    return this.$route.path === '/player-big'
+  }
   @Prop() public episode!: Episode
   @Prop(Boolean) public paused!: boolean
   @Prop(Number) public progressInSeconds!: number
@@ -59,18 +63,14 @@ export default class Controls extends Vue {
   @Prop() public pause!: () => void
   @Prop() public onSetTime!: (e: Event) => void
 
-  public get isPlayerMaximized() {
-    return this.$route.path === '/player-big'
-  }
-
-  public maximizePlayer() {
-    this.$router.push('/player-big')
-  }
-
   public playSvg = mdiPlay
   public pauseSvg = mdiPause
   public maximizeSvg = mdiArrowExpand
   public minimizeSvg = mdiArrowCollapse
+
+  public maximizePlayer() {
+    this.$router.push('/player-big')
+  }
 }
 </script>
 
