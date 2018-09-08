@@ -26,10 +26,23 @@
       </transition>
     </span>
 
+    <volume-slider
+      :muted="muted"
+      :volume="volume"
+      :onChange="onSetVolume"
+      :onToggleMute="onToggleMute"
+    />
+
+    <transition name="fade">
+      <span v-if="isPlayerMaximized" class="time">
+        {{secondsToTimeString(progressInSeconds)}} / {{secondsToTimeString(episode.duration)}}
+      </span>
+    </transition>
+
     <span class="separator"/>
 
     <span class="button-collapser">
-      <transition>
+      <transition name="fade">
         <icon v-if="!isPlayerMaximized" key="max" class="button" :icon="maximizeSvg" @click.native="maximizePlayer"/>
         <icon v-else class="button" key="min" :icon="minimizeSvg" @click.native="$router.back()"/>
       </transition>
@@ -41,27 +54,33 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiArrowCollapse, mdiArrowExpand, mdiPause, mdiPlay } from '@mdi/js'
+import { secondsToTimeString } from '@/utils'
 
 import Icon from '../Icon.vue'
 import ProgressBar from './ProgressBar.vue'
+import VolumeSlider from './VolumeSlider.vue'
 import { Episode } from '../../types'
 
 @Component({
-  components: { ProgressBar, Icon },
+  components: { VolumeSlider, ProgressBar, Icon },
 })
 export default class Controls extends Vue {
-
   public get isPlayerMaximized() {
     return this.$route.path === '/player-big'
   }
+
   @Prop() public episode!: Episode
   @Prop(Boolean) public paused!: boolean
+  @Prop(Boolean) public muted!: boolean
+  @Prop(Number) public volume!: number
   @Prop(Number) public progressInSeconds!: number
   @Prop(Number) public progressPercentage!: number
   @Prop(Number) public loadedPercentage!: number
   @Prop() public play!: () => void
   @Prop() public pause!: () => void
   @Prop() public onSetTime!: (e: Event) => void
+  @Prop() public onSetVolume!: (e: Event) => void
+  @Prop() public onToggleMute!: (e: Event) => void
 
   public playSvg = mdiPlay
   public pauseSvg = mdiPause
@@ -70,6 +89,10 @@ export default class Controls extends Vue {
 
   public maximizePlayer() {
     this.$router.push('/player-big')
+  }
+
+  private secondsToTimeString(input: number) {
+    return secondsToTimeString(input)
   }
 }
 </script>
@@ -85,6 +108,7 @@ $buttonSize: 45px;
   height: 100%;
   width: 100%;
   opacity: 0;
+  user-select: none;
   transition: opacity 0.15s;
   transition-delay: 0.5s;
 
@@ -103,6 +127,7 @@ $buttonSize: 45px;
     font-size: 26px;
     text-align: left;
     text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.85);
+    user-select: initial;
 
     & > h1 {
       margin: 5px 15px;
@@ -126,7 +151,6 @@ $buttonSize: 45px;
   position: absolute;
   bottom: 0;
   width: 100%;
-  padding: 0 5px 0;
   display: flex;
   align-items: center;
 
@@ -141,12 +165,29 @@ $buttonSize: 45px;
     width: 100%;
   }
 
+  & > *:not(.progress) {
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.75));
+  }
+
+  & > .progress {
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.75));
+  }
+
+  & > .time {
+    margin: 0 5px 3px;
+    font-weight: 400;
+    font-size: 1.5em;
+    white-space: nowrap;
+    cursor: default;
+  }
+
   & > .button-collapser {
     position: relative;
     display: inline-block;
     flex-shrink: 0;
     height: $buttonSize;
     width: $buttonSize;
+    margin: 0 5px;
 
     & > .button {
       position: absolute;

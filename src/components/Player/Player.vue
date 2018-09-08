@@ -2,7 +2,7 @@
   <div class="player">
     <video
       preload
-      muted
+      :muted="muted"
       :poster="episode.image.large"
       ref="player"
     />
@@ -14,10 +14,14 @@
     <controls
       :episode="episode"
       :paused="paused"
+      :muted="muted"
+      :volume="volume"
       :progressPercentage="progressPercentage"
       :progressInSeconds="progressInSeconds"
       :loadedPercentage="loadedPercentage"
       :onSetTime="onSetTime"
+      :onSetVolume="onSetVolume"
+      :onToggleMute="onToggleMute"
       :play="play"
       :pause="pause"
     />
@@ -42,6 +46,8 @@ export default class Player extends Vue {
   public initiated = false
   public loaded = false
   public paused = true
+  public muted = false
+  public volume = Number(localStorage.getItem('volume') || 75)
   public progressPercentage = 0
   public progressInSeconds = 0
   public loadedSeconds = 0
@@ -100,6 +106,19 @@ export default class Player extends Vue {
     const element = e.target as HTMLInputElement
 
     this.$refs.player.currentTime = Number(element.value)
+  }
+
+  public onSetVolume(e: Event) {
+    const element = e.target as HTMLInputElement
+
+    this.volume = Number(element.value)
+    localStorage.setItem('volume', element.value)
+
+    this.$refs.player.volume = Number(element.value) / 100
+  }
+
+  public onToggleMute() {
+    this.muted = !this.muted
   }
 
   @Watch('episode')

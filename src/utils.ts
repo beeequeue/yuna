@@ -11,3 +11,12 @@ export interface RequestError<B extends object> extends Response {
   ok: false
   body: B
 }
+
+export const secondsToTimeString = (input: number) => {
+  const minutes = Math.floor(input / 60)
+  const seconds = input - minutes * 60
+
+  return `${minutes < 10 ? '0' : ''}${minutes}:${
+    seconds < 9 ? '0' : ''
+  }${seconds}`
+}
