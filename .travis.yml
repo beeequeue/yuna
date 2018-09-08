@@ -50,5 +50,6 @@ deploy:
   api_key: $GITHUB_API_KEY
   file_glob: true
   file: dist_electron/*
+  skip_cleanup: true
   on:
     tags: true
