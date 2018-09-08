@@ -39,7 +39,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { map } from 'rambda'
+import { complement, filter, map, propEq } from 'rambda'
 
 import QueueItem from '../components/QueueItem.vue'
 import RaisedButton from '../components/RaisedButton.vue'
@@ -50,6 +50,11 @@ import { AnimeCache } from '../lib/cache'
 interface ItemData {
   episode: Episode
   series: Anime
+}
+
+interface SafeQueueItem {
+  crunchyroll: string
+  nextEpisode: string
 }
 
 @Component({
@@ -68,14 +73,16 @@ export default class Queue extends Vue {
 
   @Watch('queue')
   public async getQueueData() {
+    const onlyCR: SafeQueueItem[] = filter(
+      complement(propEq('crunchyroll', null)),
+    )(this.queue)
+
     const animes = (await Promise.all(
-      map(item => AnimeCache.getAnime(item.crunchyroll), this.queue),
+      map(item => AnimeCache.getAnime(item.crunchyroll), onlyCR),
     )) as Anime[]
 
     const episodes = (await Promise.all(
-      animes.map((anime, i) =>
-        AnimeCache.getEpisode(this.queue[i].nextEpisode),
-      ),
+      animes.map((_anime, i) => AnimeCache.getEpisode(onlyCR[i].nextEpisode)),
     )) as Episode[]
 
     this.queueWithData = animes.map((anime, i) => ({

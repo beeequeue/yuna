@@ -94,6 +94,7 @@ export default class VolumeSlider extends Vue {
       position: absolute;
       background: $white;
       height: 4px;
+      pointer-events: none;
     }
   }
 }

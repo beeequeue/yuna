@@ -26,18 +26,18 @@
       </transition>
     </span>
 
+    <transition name="fade">
+      <span v-if="isPlayerMaximized" class="time">
+        {{secondsToTimeString(progressInSeconds)}} / {{secondsToTimeString(episode.duration)}}
+      </span>
+    </transition>
+
     <volume-slider
       :muted="muted"
       :volume="volume"
       :onChange="onSetVolume"
       :onToggleMute="onToggleMute"
     />
-
-    <transition name="fade">
-      <span v-if="isPlayerMaximized" class="time">
-        {{secondsToTimeString(progressInSeconds)}} / {{secondsToTimeString(episode.duration)}}
-      </span>
-    </transition>
 
     <span class="separator"/>
 
@@ -91,7 +91,7 @@ export default class Controls extends Vue {
     this.$router.push('/player-big')
   }
 
-  private secondsToTimeString(input: number) {
+  public secondsToTimeString(input: number) {
     return secondsToTimeString(input)
   }
 }

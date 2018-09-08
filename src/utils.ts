@@ -17,6 +17,6 @@ export const secondsToTimeString = (input: number) => {
   const seconds = input - minutes * 60
 
   return `${minutes < 10 ? '0' : ''}${minutes}:${
-    seconds < 9 ? '0' : ''
+    seconds < 10 ? '0' : ''
   }${seconds}`
 }
