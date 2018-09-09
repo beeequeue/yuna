@@ -8,6 +8,7 @@
     @keydown.m="onToggleMute"
     @keydown.right="skipBySeconds(5)"
     @keydown.left="skipBySeconds(-5)"
+    @wheel.capture="onScroll"
   >
     <video
       preload
@@ -135,6 +136,12 @@ export default class Player extends Vue {
 
   public onToggleMute() {
     this.muted = !this.muted
+  }
+
+  public onScroll(e: WheelEvent) {
+    const direction = e.deltaY / -100
+
+    this.increaseVolume(10 * direction)
   }
 
   @Watch('episode')
