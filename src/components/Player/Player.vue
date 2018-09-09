@@ -72,19 +72,10 @@ export default class Player extends Vue {
     player: HTMLVideoElement
   }
 
-  public streamUrl: string = ''
+  public streamUrl: string | null = null
 
-  public async mounted() {
-    if (Hls.isSupported()) {
-      const hls = new Hls()
-
-      hls.attachMedia(this.$refs.player)
-      hls.loadSource(this.streamUrl)
-
-      this.hls = hls
-    }
-
-    this.registerEvents()
+  public mounted() {
+    this.onNewEpisode()
   }
 
   public registerEvents() {
@@ -201,9 +192,10 @@ export default class Player extends Vue {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    height: 50%;
+    height: 40%;
     fill: $white;
+    filter: drop-shadow(1px 2px 3px black);
+    transform: translate(-50%, -50%);
     z-index: 1;
     pointer-events: none;
   }
@@ -212,7 +204,7 @@ export default class Player extends Vue {
     position: absolute;
     top: 50%;
     left: 50%;
-    height: 50%;
+    height: 40%;
     pointer-events: none;
     fill: $white;
     filter: drop-shadow(1px 2px 3px black);
