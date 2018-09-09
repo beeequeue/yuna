@@ -26,18 +26,18 @@
       </transition>
     </span>
 
-    <transition name="fade">
-      <span v-if="isPlayerMaximized" class="time">
-        {{secondsToTimeString(progressInSeconds)}} / {{secondsToTimeString(episode.duration)}}
-      </span>
-    </transition>
-
     <volume-slider
       :muted="muted"
       :volume="volume"
       :onChange="onSetVolume"
       :onToggleMute="onToggleMute"
     />
+
+    <transition name="fade">
+      <span v-if="isPlayerMaximized" class="time">
+        {{secondsToTimeString(progressInSeconds)}} / {{secondsToTimeString(episode.duration)}}
+      </span>
+    </transition>
 
     <span class="separator"/>
 
@@ -107,7 +107,7 @@ $buttonSize: 45px;
   top: 0;
   height: 100%;
   width: 100%;
-  opacity: 0;
+  /*opacity: 0;*/
   user-select: none;
   transition: opacity 0.15s;
   transition-delay: 0.5s;

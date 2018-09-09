@@ -54,7 +54,7 @@ export default class VolumeSlider extends Vue {
   display: flex;
   align-items: center;
   height: 100%;
-  margin-right: 15px;
+  margin-right: 5px;
 
   & > .icon {
     fill: $white;
@@ -62,15 +62,21 @@ export default class VolumeSlider extends Vue {
     width: 35px;
     cursor: pointer;
     margin-right: 5px;
+    flex-shrink: 0;
   }
 
   & > .slider-container {
     position: relative;
     display: flex;
     align-items: center;
+    opacity: 0;
+    width: 0;
+
+    will-change: opacity, width;
+    transition: opacity 0.15s, width 0.2s;
 
     & > input {
-      width: 75px;
+      width: 100%;
       height: 4px;
     }
 
@@ -95,6 +101,13 @@ export default class VolumeSlider extends Vue {
       background: $white;
       height: 4px;
       pointer-events: none;
+    }
+  }
+
+  &:hover {
+    & > .slider-container {
+      opacity: 1;
+      width: 75px;
     }
   }
 }
