@@ -1,5 +1,14 @@
 <template>
-  <div class="player">
+  <div
+    class="player"
+    tabindex="0"
+    @keydown.space="paused ? play() : pause()"
+    @keydown.up="increaseVolume(5)"
+    @keydown.down="increaseVolume(-5)"
+    @keydown.m="onToggleMute"
+    @keydown.right="skipBySeconds(5)"
+    @keydown.left="skipBySeconds(-5)"
+  >
     <video
       preload
       :muted="muted"
@@ -160,6 +169,18 @@ export default class Player extends Vue {
 
   public pause() {
     if (!this.paused) this.$refs.player.pause()
+  }
+
+  public increaseVolume(n: number) {
+    this.onSetVolume({
+      target: {
+        value: Math.min(100, Math.max(0, this.volume + n)),
+      },
+    } as any)
+  }
+
+  public skipBySeconds(n: number) {
+    this.$refs.player.currentTime += n
   }
 }
 </script>
