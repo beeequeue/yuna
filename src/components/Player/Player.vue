@@ -11,8 +11,18 @@
       <icon v-if="!initiated && loaded" class="uninitiated-icon" :icon="playCircleSvg"/>
     </transition>
 
+    <transition name="fade">
+      <span class="loading-spinner">
+        <icon
+          v-if="loading"
+          :icon="loadingSvg"
+        />
+      </span>
+    </transition>
+
     <controls
       :episode="episode"
+      :loading="loading"
       :paused="paused"
       :muted="muted"
       :volume="volume"
@@ -31,7 +41,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import Hls from 'hls.js'
-import { mdiPlayCircle } from '@mdi/js'
+import { mdiLoading, mdiPlayCircle } from '@mdi/js'
 
 import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
@@ -45,6 +55,7 @@ export default class Player extends Vue {
   @Prop() public episode!: Episode
   public initiated = false
   public loaded = false
+  public loading = false
   public paused = true
   public muted = false
   public volume = Number(localStorage.getItem('volume') || 75)
@@ -55,6 +66,7 @@ export default class Player extends Vue {
   public hls = new Hls()
 
   public playCircleSvg = mdiPlayCircle
+  public loadingSvg = mdiLoading
 
   public $refs!: {
     player: HTMLVideoElement
@@ -82,12 +94,16 @@ export default class Player extends Vue {
     this.$refs.player.onpause = () => {
       this.paused = true
     }
+    this.$refs.player.oncanplay = () => {
+      this.loading = false
+      this.loaded = true
+    }
+    this.$refs.player.onwaiting = () => {
+      this.loading = true
+    }
+
     this.$refs.player.onprogress = this.onLoadedProgress
     this.$refs.player.ontimeupdate = this.onTimeUpdate
-
-    this.hls.on('hlsFragLoaded', () => {
-      this.loaded = true
-    })
   }
 
   public onLoadedProgress(e: Event) {
@@ -123,11 +139,15 @@ export default class Player extends Vue {
 
   @Watch('episode')
   public async onNewEpisode() {
-    this.streamUrl = (await fetchStream(this.episode.crunchyroll.id)).streams[0].url
-    if (!this.streamUrl) return
-
     this.initiated = false
     this.paused = true
+    this.loading = true
+    this.loaded = false
+
+    this.streamUrl = (await fetchStream(
+      this.episode.crunchyroll.id,
+    )).streams[0].url
+    if (!this.streamUrl) return
 
     const hls = new Hls()
 
@@ -156,6 +176,15 @@ export default class Player extends Vue {
 <style scoped lang="scss">
 @import '../../colors';
 
+@keyframes spin {
+  from {
+    transform: rotateZ(0deg);
+  }
+  to {
+    transform: rotateZ(360deg);
+  }
+}
+
 .player {
   position: relative;
   width: 100%;
@@ -177,6 +206,24 @@ export default class Player extends Vue {
     fill: $white;
     z-index: 1;
     pointer-events: none;
+  }
+
+  & > .loading-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 50%;
+    pointer-events: none;
+    fill: $white;
+    filter: drop-shadow(1px 2px 3px black);
+    transform: translate(-50%, -50%);
+
+    & > .icon {
+      height: 100%;
+      width: 100%;
+      animation: spin 1s linear;
+      animation-iteration-count: infinite;
+    }
   }
 }
 </style>
