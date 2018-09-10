@@ -17,3 +17,9 @@ declare module 'superagent/superagent' {
   import request from 'superagent'
   export = request
 }
+
+declare interface Window {
+  initialLogin: boolean
+  isFullscreen: boolean
+  toggleFullscreen: () => void
+}

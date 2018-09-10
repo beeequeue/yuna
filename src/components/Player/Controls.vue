@@ -1,6 +1,6 @@
 <template>
 <div class="controls">
-  <div class="cover" @click="paused ? play() : pause()"/>
+  <div class="cover" @click="debounceCoverClick"/>
 
   <transition name="fade">
     <div v-if="isPlayerMaximized" class="episode-info">
@@ -53,6 +53,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { contains } from 'rambda'
 import { mdiArrowCollapse, mdiArrowExpand, mdiPause, mdiPlay } from '@mdi/js'
 import { secondsToTimeString } from '@/utils'
 
@@ -66,7 +67,7 @@ import { Episode } from '../../types'
 })
 export default class Controls extends Vue {
   public get isPlayerMaximized() {
-    return this.$route.path === '/player-big'
+    return contains(this.$route.path, ['/player-big', '/player-full'])
   }
 
   @Prop() public episode!: Episode
@@ -78,6 +79,7 @@ export default class Controls extends Vue {
   @Prop(Number) public loadedPercentage!: number
   @Prop() public play!: () => void
   @Prop() public pause!: () => void
+  @Prop() public onDoubleClick!: () => void
   @Prop() public onSetTime!: (e: Event) => void
   @Prop() public onSetVolume!: (e: Event) => void
   @Prop() public onToggleMute!: (e: Event) => void
@@ -86,6 +88,32 @@ export default class Controls extends Vue {
   public pauseSvg = mdiPause
   public maximizeSvg = mdiArrowExpand
   public minimizeSvg = mdiArrowCollapse
+
+  private clickTimeout: number | null = null
+
+  public debounceCoverClick() {
+    this.handleCoverClick()
+
+    if (!this.clickTimeout) {
+      this.clickTimeout = window.setTimeout(() => {
+        this.clickTimeout = null
+      }, 175)
+    } else {
+      clearTimeout(this.clickTimeout)
+      this.clickTimeout = null
+
+      this.handleCoverClick()
+      this.onDoubleClick()
+    }
+  }
+
+  public handleCoverClick() {
+    if (this.paused) {
+      this.play()
+    } else {
+      this.pause()
+    }
+  }
 
   public maximizePlayer() {
     this.$router.push('/player-big')

@@ -605,6 +605,10 @@
   dependencies:
     "@types/node" "*"
 
+"@types/electron-util@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@types/electron-util/-/electron-util-0.2.0.tgz#a15854ded5fdcf4215f4e7cdebb010875340f06e"
+
 "@types/hls.js@^0.10.1":
   version "0.10.1"
   resolved "https://registry.yarnpkg.com/@types/hls.js/-/hls.js-0.10.1.tgz#24ecc333aa6d24f2fd6278bd86985088beb5d34a"
@@ -2929,6 +2933,12 @@ electron-store@^2.0.0:
 electron-to-chromium@^1.3.47, electron-to-chromium@^1.3.61:
   version "1.3.62"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.62.tgz#2e8e2dc070c800ec8ce23ff9dfcceb585d6f9ed8"
+
+electron-util@^0.9.1:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/electron-util/-/electron-util-0.9.1.tgz#b69a0615375808ef08b89cadb82804fbcf205997"
+  dependencies:
+    electron-is-dev "^0.3.0"
 
 electron@^2.0.2:
   version "2.0.8"

@@ -1,9 +1,9 @@
 <template>
 <div id="app" :style="`background-image: url(${backgroundImage})`">
-  <title-bar v-if="isElectron"/>
+  <title-bar v-if="!isFullscreen"/>
 
   <transition>
-    <navbar v-if="isLoggedIn"/>
+    <navbar v-if="isLoggedIn && !isFullscreen"/>
   </transition>
 
   <transition>
@@ -17,6 +17,7 @@
 <script lang="ts">
 import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
+import { activeWindow } from 'electron-util'
 
 import Navbar from './components/Navbar/Navbar.vue'
 import PlayerContainer from './components/Player/Container.vue'
@@ -36,17 +37,38 @@ export default class App extends Vue {
     return isLoggedIn(this.$store)
   }
 
+  public isFullscreen = false
+
   public backgroundImage = requireBg(
     backgrounds[Math.floor(Math.random() * backgrounds.length)],
   )
 
   public async mounted() {
+    /*
+      We use window properties for fullscreen setting, since we have to change a bunch
+      of stuff in the window and need this information at the top level for the title bar
+    */
+    window.isFullscreen = false
+    window.toggleFullscreen = () => {
+      const browserWindow = activeWindow()
+
+      if (!window.isFullscreen) {
+        this.$router.push('/player-full')
+      } else {
+        this.$router.back()
+      }
+
+      browserWindow.setFullScreen(!window.isFullscreen)
+      this.isFullscreen = !window.isFullscreen
+      window.isFullscreen = !window.isFullscreen
+    }
+
     if (getSessionId(this.$store).length < 1 || !this.isLoggedIn) {
       await createSession(this.$store)
     }
 
     if (!this.isLoggedIn) {
-      (window as any).initialLogin = true
+      window.initialLogin = true
       return this.$router.push('login')
     }
   }
