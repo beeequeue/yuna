@@ -6,7 +6,7 @@
     <navbar v-if="isLoggedIn && !isFullscreen"/>
   </transition>
 
-  <transition>
+  <transition name="route">
     <router-view/>
   </transition>
 

@@ -160,8 +160,8 @@ export default class Queue extends Vue {
   }
 }
 
-.v-enter-active,
-.v-leave-active {
+.route-enter-active,
+.route-leave-active {
   transition: none 0.5s; // Required for Vue to realize there are transitions
 
   & > .queue,
@@ -170,8 +170,8 @@ export default class Queue extends Vue {
   }
 }
 
-.v-enter,
-.v-leave-to {
+.route-enter,
+.route-leave-to {
   & > .queue {
     transform: translateX(-100%);
   }
