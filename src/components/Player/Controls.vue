@@ -41,10 +41,17 @@
 
     <span class="separator"/>
 
-    <span class="button-collapser">
+    <span v-if="!isFullscreen" class="button-collapser">
       <transition name="fade">
         <icon v-if="!isPlayerMaximized" key="max" class="button" :icon="maximizeSvg" @click.native="maximizePlayer"/>
         <icon v-else class="button" key="min" :icon="minimizeSvg" @click.native="$router.back()"/>
+      </transition>
+    </span>
+
+    <span class="button-collapser">
+      <transition name="fade">
+        <icon v-if="!isFullscreen" key="fullscreen" class="button" :icon="fullscreenSvg" @click.native="_toggleFullscreen"/>
+        <icon v-else class="button" key="fullscreenExit" :icon="fullscreenExitSvg" @click.native="_toggleFullscreen"/>
       </transition>
     </span>
   </div>
@@ -54,13 +61,22 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { contains } from 'rambda'
-import { mdiArrowCollapse, mdiArrowExpand, mdiPause, mdiPlay } from '@mdi/js'
-import { secondsToTimeString } from '@/utils'
+import {
+  mdiArrowCollapse,
+  mdiArrowExpand,
+  mdiFullscreen,
+  mdiFullscreenExit,
+  mdiPause,
+  mdiPlay,
+} from '@mdi/js'
 
+import { Episode } from '@/types'
+import { getIsFullscreen } from '@/state/app'
+import { secondsToTimeString } from '@/utils'
 import Icon from '../Icon.vue'
 import ProgressBar from './ProgressBar.vue'
 import VolumeSlider from './VolumeSlider.vue'
-import { Episode } from '../../types'
+import { toggleFullscreen } from '../../state/app'
 
 @Component({
   components: { VolumeSlider, ProgressBar, Icon },
@@ -68,6 +84,10 @@ import { Episode } from '../../types'
 export default class Controls extends Vue {
   public get isPlayerMaximized() {
     return contains(this.$route.path, ['/player-big', '/player-full'])
+  }
+
+  public get isFullscreen() {
+    return getIsFullscreen(this.$store)
   }
 
   @Prop() public episode!: Episode
@@ -79,7 +99,7 @@ export default class Controls extends Vue {
   @Prop(Number) public loadedPercentage!: number
   @Prop() public play!: () => void
   @Prop() public pause!: () => void
-  @Prop() public onDoubleClick!: () => void
+  @Prop() public toggleFullscreen!: () => void
   @Prop() public onSetTime!: (e: Event) => void
   @Prop() public onSetVolume!: (e: Event) => void
   @Prop() public onToggleMute!: (e: Event) => void
@@ -88,6 +108,8 @@ export default class Controls extends Vue {
   public pauseSvg = mdiPause
   public maximizeSvg = mdiArrowExpand
   public minimizeSvg = mdiArrowCollapse
+  public fullscreenSvg = mdiFullscreen
+  public fullscreenExitSvg = mdiFullscreenExit
 
   private clickTimeout: number | null = null
 
@@ -103,7 +125,7 @@ export default class Controls extends Vue {
       this.clickTimeout = null
 
       this.handleCoverClick()
-      this.onDoubleClick()
+      toggleFullscreen(this.$store)
     }
   }
 
@@ -117,6 +139,10 @@ export default class Controls extends Vue {
 
   public maximizePlayer() {
     this.$router.push('/player-big')
+  }
+
+  public _toggleFullscreen() {
+    toggleFullscreen(this.$store)
   }
 
   public secondsToTimeString(input: number) {

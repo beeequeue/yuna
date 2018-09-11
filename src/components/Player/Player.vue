@@ -45,7 +45,6 @@
       :onToggleMute="onToggleMute"
       :play="play"
       :pause="pause"
-      :onDoubleClick="toggleFullscreen"
     />
   </div>
 </template>
@@ -190,10 +189,6 @@ export default class Player extends Vue {
 
   public skipBySeconds(n: number) {
     this.$refs.player.currentTime += n
-  }
-
-  public toggleFullscreen() {
-    window.toggleFullscreen()
   }
 }
 </script>

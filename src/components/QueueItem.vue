@@ -34,7 +34,7 @@ import Component from 'vue-class-component'
 import { mdiPlayCircleOutline } from '@mdi/js'
 
 import Icon from './Icon.vue'
-import { setCurrentEpisode } from '../state/user'
+import { setCurrentEpisode } from '@/state/app'
 import { Episode } from '../types'
 
 @Component({

@@ -20,6 +20,4 @@ declare module 'superagent/superagent' {
 
 declare interface Window {
   initialLogin: boolean
-  isFullscreen: boolean
-  toggleFullscreen: () => void
 }

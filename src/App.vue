@@ -17,12 +17,12 @@
 <script lang="ts">
 import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
-import { activeWindow } from 'electron-util'
 
 import Navbar from './components/Navbar/Navbar.vue'
 import PlayerContainer from './components/Player/Container.vue'
 import TitleBar from './components/TitleBar.vue'
-import { createSession, getSessionId, isLoggedIn } from './state/auth'
+import { createSession, getIsLoggedIn, getSessionId } from './state/auth'
+import { getIsFullscreen } from './state/app'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys()
@@ -34,35 +34,18 @@ export default class App extends Vue {
   public isElectron = process.env.IS_ELECTRON
 
   get isLoggedIn() {
-    return isLoggedIn(this.$store)
+    return getIsLoggedIn(this.$store)
   }
 
-  public isFullscreen = false
+  get isFullscreen() {
+    return getIsFullscreen(this.$store)
+  }
 
   public backgroundImage = requireBg(
     backgrounds[Math.floor(Math.random() * backgrounds.length)],
   )
 
   public async mounted() {
-    /*
-      We use window properties for fullscreen setting, since we have to change a bunch
-      of stuff in the window and need this information at the top level for the title bar
-    */
-    window.isFullscreen = false
-    window.toggleFullscreen = () => {
-      const browserWindow = activeWindow()
-
-      if (!window.isFullscreen) {
-        this.$router.push('/player-full')
-      } else {
-        this.$router.back()
-      }
-
-      browserWindow.setFullScreen(!window.isFullscreen)
-      this.isFullscreen = !window.isFullscreen
-      window.isFullscreen = !window.isFullscreen
-    }
-
     if (getSessionId(this.$store).length < 1 || !this.isLoggedIn) {
       await createSession(this.$store)
     }

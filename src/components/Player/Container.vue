@@ -11,7 +11,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import Player from './Player.vue'
-import { getCurrentEpisode } from '../../state/user'
+import { getCurrentEpisode } from '@/state/app'
 
 @Component({
   components: { Player },
