@@ -10,7 +10,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import Logo from '@/assets/logo.svg'
 import LoginForm from '@/components/LoginForm.vue'
-import { isLoggedIn, loginCrunchyroll } from '../state/auth'
+import { getIsLoggedIn, loginCrunchyroll } from '@/state/auth'
 
 @Component({
   components: {
@@ -43,7 +43,7 @@ export default class Login extends Vue {
   }
 
   get isLoggedIn() {
-    return isLoggedIn(this.$store)
+    return getIsLoggedIn(this.$store)
   }
 }
 </script>

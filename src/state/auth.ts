@@ -97,7 +97,7 @@ export const auth = {
 
 const { commit, dispatch, read } = getStoreAccessors<AuthState, RootState>('')
 
-export const isLoggedIn = read(auth.getters.isLoggedIn)
+export const getIsLoggedIn = read(auth.getters.isLoggedIn)
 export const getSessionId = read(auth.getters.getSessionId)
 
 const setSessionId = commit(auth.mutations.setSessionId)
