@@ -18,6 +18,11 @@ declare module 'superagent/superagent' {
   export = request
 }
 
+declare module 'vuedraggable' {
+  import Vue from 'vue'
+  export default Vue
+}
+
 declare interface Window {
   initialLogin: boolean
 }

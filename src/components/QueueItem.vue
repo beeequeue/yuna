@@ -65,6 +65,15 @@ export default class QueueItem extends Vue {
   margin-bottom: 10px;
   border-radius: 5px;
   overflow: hidden;
+  cursor: -webkit-grab;
+
+  &.sortable-ghost {
+    opacity: 0;
+  }
+
+  &.v-move {
+    transition: 0.5s;
+  }
 
   & .image {
     object-fit: cover;
@@ -106,6 +115,7 @@ export default class QueueItem extends Vue {
     position: relative;
     justify-self: end;
     background: black;
+    padding: 0;
     border: 0;
     cursor: pointer;
 

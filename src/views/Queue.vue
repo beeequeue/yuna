@@ -1,14 +1,16 @@
 <template>
   <div class="container">
     <div class="queue">
-      <transition-group name="fade">
-        <queue-item
-          v-for="item in queueWithData"
-          :item="item"
-          :key="item.series.crunchyroll.id"
-          class="anime"
-        />
-      </transition-group>
+      <draggable v-model="queue">
+        <transition-group>
+          <queue-item
+            v-for="item in queueWithData"
+            :item="item"
+            :key="item.series.crunchyroll.id"
+            class="anime"
+          />
+        </transition-group>
+      </draggable>
 
       <transition name="fade">
         <div v-if="queue.length < 1" class="empty-message">
@@ -39,6 +41,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
+import Draggable from 'vuedraggable'
 import { complement, filter, map, propEq } from 'rambda'
 
 import QueueItem from '../components/QueueItem.vue'
@@ -46,6 +49,7 @@ import RaisedButton from '../components/RaisedButton.vue'
 import { getQueue, setQueue, updateQueue } from '../state/user'
 import { Anime, Episode } from '../types'
 import { AnimeCache } from '../lib/cache'
+import { QueueItem as IQueueItem } from '../lib/user'
 
 interface ItemData {
   episode: Episode
@@ -58,13 +62,17 @@ interface SafeQueueItem {
 }
 
 @Component({
-  components: { QueueItem, RaisedButton },
+  components: { Draggable, QueueItem, RaisedButton },
 })
 export default class Queue extends Vue {
   public queueWithData: ItemData[] = []
 
   public get queue() {
     return getQueue(this.$store)
+  }
+
+  public set queue(value: IQueueItem[]) {
+    setQueue(this.$store, value)
   }
 
   public mounted() {
