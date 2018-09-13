@@ -1,5 +1,5 @@
 import Store from 'electron-store'
-import { CrunchyrollData } from '@/state/auth'
+import { AnilistData, CrunchyrollData } from '@/state/auth'
 
 export interface QueueItem {
   nextEpisode: string | null
@@ -9,6 +9,7 @@ export interface QueueItem {
 interface UserStore {
   queue: QueueItem[]
   crunchyroll: CrunchyrollData
+  anilist: AnilistData
 }
 
 export const userStore = new Store<UserStore>({ name: 'user' })

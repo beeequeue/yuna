@@ -21,7 +21,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiLogout, mdiSettingsOutline } from '@mdi/js'
 
 import Icon from '../Icon.vue'
-import { logOutCrunchyroll } from '../../state/auth'
+import { logOut } from '../../state/auth'
 import { AnimeCache } from '../../lib/cache'
 
 @Component({
@@ -35,7 +35,7 @@ export default class SettingsDropdown extends Vue {
   public logOutSvg = mdiLogout
 
   public logOut() {
-    logOutCrunchyroll(this.$store)
+    logOut(this.$store)
 
     this.$router.push('login')
   }

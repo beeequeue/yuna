@@ -3,14 +3,14 @@
   <title-bar v-if="!isFullscreen"/>
 
   <transition>
-    <navbar v-if="isLoggedIn && !isFullscreen"/>
+    <navbar v-if="isLoggedIn.all && !isFullscreen"/>
   </transition>
 
   <transition name="route">
     <router-view/>
   </transition>
 
-  <player-container v-if="isLoggedIn"/>
+  <player-container v-if="isLoggedIn.all"/>
 </div>
 </template>
 
@@ -46,13 +46,19 @@ export default class App extends Vue {
   )
 
   public async mounted() {
-    if (getSessionId(this.$store).length < 1 || !this.isLoggedIn) {
+    if (getSessionId(this.$store).length < 1 || !this.isLoggedIn.crunchyroll) {
       await createSession(this.$store)
     }
 
-    if (!this.isLoggedIn) {
+    if (!this.isLoggedIn.all) {
+      let query = ''
+      const indexOfAccessToken = this.$route.fullPath.indexOf('access_token')
+      if (indexOfAccessToken > -1) {
+        query = '?' + this.$route.fullPath.substr(indexOfAccessToken)
+      }
+
       window.initialLogin = true
-      return this.$router.push('login')
+      return this.$router.push('login' + query)
     }
   }
 }

@@ -12,8 +12,15 @@ export interface CrunchyrollData {
   user: crunchyroll.User | null
 }
 
+export interface AnilistData {
+  token: string | null
+  expires: number | null
+  // user: anilist.User | null
+}
+
 export interface AuthState {
   crunchyroll: CrunchyrollData
+  anilist: AnilistData
 }
 
 type AuthContext = ActionContext<AuthState, RootState>
@@ -24,14 +31,27 @@ const initialState: AuthState = {
     token: userStore.get('crunchyroll.token', null),
     user: userStore.get('crunchyroll.user', null),
   },
+  anilist: {
+    token: userStore.get('anilist.token', null),
+    expires: Number(userStore.get('anilist.expires', null)),
+  },
 }
 
 export const auth = {
   state: { ...initialState },
 
   getters: {
-    isLoggedIn(state: AuthState): boolean {
-      return state.crunchyroll.token != null
+    isLoggedIn(
+      state: AuthState,
+    ): { anilist: boolean; crunchyroll: boolean; all: boolean } {
+      const anilist = state.anilist.token != null
+      const _crunchyroll = state.crunchyroll.token != null
+
+      return {
+        anilist,
+        crunchyroll: _crunchyroll,
+        all: anilist && _crunchyroll,
+      }
     },
 
     getSessionId(state: AuthState): string {
@@ -50,6 +70,12 @@ export const auth = {
       state.crunchyroll = data
 
       userStore.set('crunchyroll', data)
+    },
+
+    setAnilist(state: AuthState, data: AnilistData) {
+      state.anilist = data
+
+      userStore.set('anilist', data)
     },
   },
 
@@ -82,14 +108,21 @@ export const auth = {
       }
     },
 
-    async logOutCrunchyroll(context: AuthContext) {
-      if (!context.state.crunchyroll) return
+    async logOut(context: AuthContext) {
+      if (!context.state.crunchyroll.token && !context.state.anilist.token) {
+        return
+      }
 
       setCrunchyroll(context, {
         sessionId: '',
         token: null,
         user: null,
       })
+      setAnilist(context, {
+        token: null,
+        expires: null,
+      })
+
       await createSession(context)
     },
   },
@@ -102,7 +135,9 @@ export const getSessionId = read(auth.getters.getSessionId)
 
 const setSessionId = commit(auth.mutations.setSessionId)
 const setCrunchyroll = commit(auth.mutations.setCrunchyroll)
+export const setAnilist = commit(auth.mutations.setAnilist)
 
 export const createSession = dispatch(auth.actions.createSession)
 export const loginCrunchyroll = dispatch(auth.actions.loginCrunchyroll)
-export const logOutCrunchyroll = dispatch(auth.actions.logOutCrunchyroll)
+
+export const logOut = dispatch(auth.actions.logOut)

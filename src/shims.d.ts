@@ -26,3 +26,15 @@ declare module 'vuedraggable' {
 declare interface Window {
   initialLogin: boolean
 }
+
+declare module 'vue-cli-plugin-apollo/graphql-client' {
+  export const createApolloClient: (
+    options: any,
+  ) => {
+    apolloClient: any
+    wsClient: any
+    stateLink: any
+  }
+
+  export const restartWebsockets: (a: any) => void
+}
