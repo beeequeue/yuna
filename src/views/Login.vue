@@ -35,8 +35,7 @@ import { mdiCheck } from '@mdi/js'
 import Logo from '@/assets/logo.svg'
 import Icon from '@/components/Icon.vue'
 import LoginForm from '@/components/LoginForm.vue'
-import { getIsLoggedIn, loginCrunchyroll } from '@/state/auth'
-import { setAnilist } from '@/state/auth'
+import { getIsLoggedIn, loginCrunchyroll, setAnilist } from '@/state/auth'
 
 @Component({
   components: {
@@ -53,7 +52,7 @@ export default class Login extends Vue {
       this.$router.back()
     }
 
-    if(this.$route.query.access_token) {
+    if (this.$route.query.access_token) {
       this.saveAnilistData()
     }
   }

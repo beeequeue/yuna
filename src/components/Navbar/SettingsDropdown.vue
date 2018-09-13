@@ -20,9 +20,9 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiLogout, mdiSettingsOutline } from '@mdi/js'
 
+import { logOut } from '@/state/auth'
+import { AnimeCache } from '@/lib/cache'
 import Icon from '../Icon.vue'
-import { logOut } from '../../state/auth'
-import { AnimeCache } from '../../lib/cache'
 
 @Component({
   components: { Icon },
