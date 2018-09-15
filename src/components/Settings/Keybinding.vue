@@ -8,11 +8,11 @@
       :key="key"
       :icon="getIconForKey(key)"
       :title="key === ' ' ? 'Spacebar' : key"
-      :content="getIconForKey(key) ? null : key"
-      @click=""
+      :content="getIconForKey(key) ? null : key.toUpperCase()"
+      @click.native="unbindKey({key, action})"
     />
 
-    <raised-button v-if="keys.length < 2" @click="" :icon="plusSvg"/>
+    <raised-button v-if="keys.length < 2" @click.native="openKeybindModal(action)" :icon="plusSvg"/>
   </div>
 </div>
 </template>
@@ -21,11 +21,15 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Key } from 'ts-key-enum'
 import {
+  mdiAppleKeyboardShift,
   mdiArrowDownBold,
   mdiArrowLeftBold,
   mdiArrowRightBold,
   mdiArrowUpBold,
-  mdiColorHelper, mdiPlus,
+  mdiColorHelper,
+  mdiKeyboardTab,
+  mdiPlus,
+  mdiSubdirectoryArrowLeft,
 } from '@mdi/js'
 
 import { getKeysForAction, KeybindingAction } from '../../state/settings'
@@ -36,6 +40,11 @@ import RaisedButton from '../RaisedButton.vue'
 })
 export default class Keybinding extends Vue {
   @Prop(String) public action!: KeybindingAction
+  @Prop(Function)
+  public unbindKey!: (
+    opts: { key: Key | string; action: KeybindingAction },
+  ) => void
+  @Prop(Function) public openKeybindModal!: (action: KeybindingAction) => void
 
   public plusSvg = mdiPlus
 
@@ -80,6 +89,12 @@ export default class Keybinding extends Vue {
         return mdiArrowDownBold
       case ' ':
         return mdiColorHelper
+      case Key.Shift:
+        return mdiAppleKeyboardShift
+      case Key.Tab:
+        return mdiKeyboardTab
+      case Key.Enter:
+        return mdiSubdirectoryArrowLeft
       default:
         return null
     }

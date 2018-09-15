@@ -59,6 +59,7 @@
       "git add"
     ],
     "*.vue": [
+      "prettier --write",
       "git add"
     ]
   },

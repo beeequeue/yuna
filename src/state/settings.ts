@@ -1,9 +1,10 @@
-import { ActionContext } from 'vuex'
+import Vue from 'vue'
 import { getStoreAccessors } from 'vuex-typescript'
-
-import { RootState } from '@/state/store'
 import Store from 'electron-store'
 import { Key } from 'ts-key-enum'
+import { complement, equals, filter } from 'rambda'
+
+import { RootState } from '@/state/store'
 
 export enum KeybindingAction {
   PAUSE = 'PAUSE',
@@ -25,8 +26,6 @@ export interface SettingsState {
 
 const settingsStore = new Store<SettingsState>({ name: 'settings' })
 
-type SettingsContext = ActionContext<SettingsState, RootState>
-
 const {
   PAUSE_PLAY,
   VOLUME_UP,
@@ -41,14 +40,14 @@ const defaultBindings = {
   ' ': [PAUSE_PLAY],
   [Key.ArrowUp]: [VOLUME_UP],
   [Key.ArrowDown]: [VOLUME_DOWN],
-  M: [TOGGLE_MUTED],
+  m: [TOGGLE_MUTED],
   [Key.ArrowRight]: [SKIP_FORWARD],
   [Key.ArrowLeft]: [SKIP_BACK],
-  F: [TOGGLE_FULLSCREEN],
+  f: [TOGGLE_FULLSCREEN],
 }
 
 const initialState: SettingsState = {
-  keybindings: settingsStore.get('keybindings', defaultBindings),
+  keybindings: settingsStore.get('keybindings', { ...defaultBindings }),
 }
 
 export const settings = {
@@ -84,54 +83,65 @@ export const settings = {
     addKeybinding(
       state: SettingsState,
       options: {
-        key: Key
+        key: Key | string
         action: KeybindingAction
       },
     ) {
-      const storedKey = state.keybindings[options.key]
-
-      if (storedKey.includes(options.action)) {
+      const storedActions = state.keybindings[options.key]
+      if (storedActions && storedActions.includes(options.action)) {
         return
       }
 
-      storedKey.push(options.action)
+      let newActions = []
 
-      settingsStore.set(`keybindings.${options.key}`, storedKey)
+      if (!storedActions) {
+        newActions = [options.action]
+      } else {
+        newActions = [...storedActions, options.action]
+      }
+
+      Vue.set(state.keybindings, options.key, newActions)
+
+      settingsStore.set(`keybindings.${options.key}`, newActions)
     },
 
     removeKeybinding(
       state: SettingsState,
       options: {
-        key: Key
+        key: Key | string
         action: KeybindingAction
       },
     ) {
-      const storedKey = state.keybindings[options.key]
-
-      if (!storedKey.includes(options.action)) {
+      const storedActions = state.keybindings[options.key]
+      if (!storedActions || !storedActions.includes(options.action)) {
         return
       }
 
-      const index = storedKey.findIndex(action => action === options.action)
+      const newActions = filter(
+        complement(equals(options.action)),
+        storedActions,
+      )
 
-      storedKey.splice(index, 1)
+      Vue.set(state.keybindings, options.key, newActions)
 
-      settingsStore.set(`keybindings.${options.key}`, storedKey)
+      if (newActions.length > 0) {
+        settingsStore.set(`keybindings.${options.key}`, newActions)
+      } else {
+        settingsStore.delete(`keybindings.${options.key}`)
+      }
     },
 
     resetKeybindings(state: SettingsState) {
-      state.keybindings = defaultBindings
+      state.keybindings = { ...defaultBindings }
 
-      settingsStore.set('keybindings', defaultBindings)
+      settingsStore.set('keybindings', state.keybindings)
     },
   },
 
   actions: {},
 }
 
-const { read, commit, dispatch } = getStoreAccessors<SettingsState, RootState>(
-  '',
-)
+const { read, commit } = getStoreAccessors<SettingsState, RootState>('')
 
 export const getSettings = read(settings.getters.getSettings)
 export const getKeybindings = read(settings.getters.getKeybindings)

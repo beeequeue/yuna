@@ -50,5 +50,3 @@ export class AnimeCache {
     episodeCache.clear()
   }
 }
-
-export const get = async () => {}

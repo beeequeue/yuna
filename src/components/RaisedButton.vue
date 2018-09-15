@@ -22,8 +22,8 @@ export default class RaisedButton extends Vue {
 
   public get classes() {
     return {
-      [this.type]: !!this.type,
-      'with-icon': !!this.icon
+      [this.type as string]: !!this.type,
+      'with-icon': !!this.icon,
     }
   }
 }
