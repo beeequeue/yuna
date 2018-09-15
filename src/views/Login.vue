@@ -35,7 +35,8 @@ import { mdiCheck } from '@mdi/js'
 import Logo from '@/assets/logo.svg'
 import Icon from '@/components/Icon.vue'
 import LoginForm from '@/components/LoginForm.vue'
-import { getIsLoggedIn, loginCrunchyroll, setAnilist } from '@/state/auth'
+import { getIsLoggedIn, loginCrunchyroll, setAnilist } from '../state/auth'
+import { loginAnilist } from '../lib/anilist'
 
 @Component({
   components: {
@@ -51,19 +52,6 @@ export default class Login extends Vue {
     if (this.isLoggedIn.all) {
       this.$router.back()
     }
-
-    if (this.$route.query.access_token) {
-      this.saveAnilistData()
-    }
-  }
-
-  public saveAnilistData() {
-    const { query } = this.$route
-
-    setAnilist(this.$store, {
-      token: query.access_token,
-      expires: Date.now() + Number(query.expires_in),
-    })
   }
 
   public async loginCR(user: string, pass: string) {
@@ -84,9 +72,16 @@ export default class Login extends Vue {
   }
 
   public async authAnilist() {
-    window.location.href = `https://anilist.co/api/v2/oauth/authorize?client_id=${
-      process.env.ANILIST_ID
-    }&response_type=token`
+    loginAnilist(newUrl => {
+      const matches = newUrl.match(
+        /access_token=(.*)&.*&expires_in=(\d+)/,
+      ) as RegExpMatchArray
+
+      setAnilist(this.$store, {
+        token: matches[1],
+        expires: Date.now() + Number(matches[2]),
+      })
+    })
   }
 
   get isLoggedIn() {

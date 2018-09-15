@@ -31,8 +31,6 @@ const backgrounds = requireBg.keys()
   components: { TitleBar, PlayerContainer, Navbar },
 })
 export default class App extends Vue {
-  public isElectron = process.env.IS_ELECTRON
-
   get isLoggedIn() {
     return getIsLoggedIn(this.$store)
   }
