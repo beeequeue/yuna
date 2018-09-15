@@ -36,7 +36,7 @@ import Logo from '@/assets/logo.svg'
 import Icon from '@/components/Icon.vue'
 import LoginForm from '@/components/LoginForm.vue'
 import { getIsLoggedIn, loginCrunchyroll, setAnilist } from '../state/auth'
-import { loginAnilist } from '../lib/anilist'
+import { loginAnilist, isValidToken } from '../lib/anilist'
 
 @Component({
   components: {
@@ -71,11 +71,17 @@ export default class Login extends Vue {
     }
   }
 
-  public async authAnilist() {
-    loginAnilist(newUrl => {
+  public authAnilist() {
+    loginAnilist(async newUrl => {
       const matches = newUrl.match(
         /access_token=(.*)&.*&expires_in=(\d+)/,
       ) as RegExpMatchArray
+
+      const validToken = await isValidToken(matches[1])
+
+      if (!validToken) {
+        throw new Error('invalid token')
+      }
 
       setAnilist(this.$store, {
         token: matches[1],

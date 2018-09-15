@@ -1,8 +1,11 @@
 import electron from 'electron'
+import request from 'superagent/superagent'
 
 type BrowserWindow = electron.BrowserWindow
 let authWindow: BrowserWindow | null
 const { BrowserWindow } = electron.remote
+
+const GQL_ENDPOINT = 'https://graphql.anilist.co'
 
 export const loginAnilist = (callback: (newUrl: string) => void) => {
   authWindow = new BrowserWindow({
@@ -33,3 +36,17 @@ export const loginAnilist = (callback: (newUrl: string) => void) => {
   )
   authWindow.show()
 }
+
+export const isValidToken = async (token: string) =>
+  request
+    .post(GQL_ENDPOINT)
+    .auth(token, { type: 'bearer' })
+    .send({
+      query: `query { Viewer { name } }`,
+    })
+    .then(() => true)
+    .catch(err => {
+      // tslint:disable-next-line:no-console
+      console.error(err)
+      return false
+    })
