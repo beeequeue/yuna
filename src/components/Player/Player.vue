@@ -8,7 +8,8 @@
     @keydown.m="onToggleMute"
     @keydown.right="skipBySeconds(5)"
     @keydown.left="skipBySeconds(-5)"
-    @keydown.f="toggleFullscreen"
+    @keydown.f="_toggleFullscreen"
+    @keydown.escape="isFullscreen ? _toggleFullscreen() : null"
     @wheel.capture="onScroll"
   >
     <video
@@ -58,6 +59,7 @@ import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
 import { Episode } from '../../types'
 import { fetchStream } from '../../lib/crunchyroll'
+import { getIsFullscreen, toggleFullscreen } from '../../state/app'
 
 @Component({
   components: { Controls, Icon },
@@ -189,6 +191,14 @@ export default class Player extends Vue {
 
   public skipBySeconds(n: number) {
     this.$refs.player.currentTime += n
+  }
+
+  public get isFullscreen() {
+    return getIsFullscreen(this.$store)
+  }
+
+  public _toggleFullscreen() {
+    toggleFullscreen(this.$store)
   }
 }
 </script>
