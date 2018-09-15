@@ -44,6 +44,7 @@ export default class RaisedButton extends Vue {
 .button {
   position: relative;
   display: inline-flex;
+  justify-content: center;
   align-items: center;
   padding: 5px;
   border: none;

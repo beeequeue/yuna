@@ -28,13 +28,9 @@
     </div>
 
     <div class="sidebar">
-      <raised-button class="cr-import" @click.native="importQueue">
-        Import from Crunchyroll
-      </raised-button>
+      <raised-button class="cr-import" content="Import from Crunchyroll" @click.native="importQueue"/>
 
-      <raised-button type="danger" @click.native="clearQueue">
-        Clear queue
-      </raised-button>
+      <raised-button type="danger" content="Clear queue" @click.native="clearQueue"/>
     </div>
   </div>
 </template>
