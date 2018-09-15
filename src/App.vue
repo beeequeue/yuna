@@ -49,14 +49,8 @@ export default class App extends Vue {
     }
 
     if (!this.isLoggedIn.all) {
-      let query = ''
-      const indexOfAccessToken = this.$route.fullPath.indexOf('access_token')
-      if (indexOfAccessToken > -1) {
-        query = '?' + this.$route.fullPath.substr(indexOfAccessToken)
-      }
-
       window.initialLogin = true
-      return this.$router.push('login' + query)
+      return this.$router.push('login')
     }
   }
 }
