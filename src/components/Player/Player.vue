@@ -2,14 +2,8 @@
   <div
     class="player"
     tabindex="0"
-    @keydown.space="paused ? play() : pause()"
-    @keydown.up="increaseVolume(5)"
-    @keydown.down="increaseVolume(-5)"
-    @keydown.m="onToggleMute"
-    @keydown.right="skipBySeconds(5)"
-    @keydown.left="skipBySeconds(-5)"
-    @keydown.f="_toggleFullscreen"
-    @keydown.escape="isFullscreen ? _toggleFullscreen() : null"
+    @keydown="onKeyDown"
+    @keydown.escape.prevent="isFullscreen ? toggleFullscreen() : null"
     @wheel.capture="onScroll"
   >
     <video
@@ -60,6 +54,7 @@ import Controls from './Controls.vue'
 import { Episode } from '../../types'
 import { fetchStream } from '../../lib/crunchyroll'
 import { getIsFullscreen, toggleFullscreen } from '../../state/app'
+import { getKeydownHandler, KeybindingAction } from '../../state/settings'
 
 @Component({
   components: { Controls, Icon },
@@ -141,6 +136,29 @@ export default class Player extends Vue {
     this.muted = !this.muted
   }
 
+  private get actionFunctionMap() {
+    return {
+      [KeybindingAction.PAUSE]: () => this.pause(),
+      [KeybindingAction.PLAY]: () => this.pause(),
+      [KeybindingAction.PAUSE_PLAY]: () =>
+        this.paused ? this.play() : this.pause(),
+      [KeybindingAction.SKIP_BACK]: () => this.skipBySeconds(-5),
+      [KeybindingAction.SKIP_FORWARD]: () => this.skipBySeconds(5),
+      [KeybindingAction.VOLUME_DOWN]: () => this.increaseVolume(-10),
+      [KeybindingAction.VOLUME_UP]: () => this.increaseVolume(10),
+      [KeybindingAction.TOGGLE_MUTED]: () => this.onToggleMute(),
+      [KeybindingAction.TOGGLE_FULLSCREEN]: () => this.toggleFullscreen(),
+    }
+  }
+
+  private get keyDownHandler() {
+    return getKeydownHandler(this.$store)(this.actionFunctionMap)
+  }
+
+  public onKeyDown(e: KeyboardEvent) {
+    return this.keyDownHandler(e.key)
+  }
+
   public onScroll(e: WheelEvent) {
     const direction = e.deltaY / -100
 
@@ -197,7 +215,7 @@ export default class Player extends Vue {
     return getIsFullscreen(this.$store)
   }
 
-  public _toggleFullscreen() {
+  public toggleFullscreen() {
     toggleFullscreen(this.$store)
   }
 }

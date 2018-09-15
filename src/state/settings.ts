@@ -77,6 +77,21 @@ export const settings = {
         return keysWithAction as Key[]
       }
     },
+
+    getKeydownHandler(state: SettingsState) {
+      return (actionFunctionMap: { [key: string]: () => any }) => (
+        key: Key | string,
+      ) => {
+        const actions = state.keybindings[key]
+        if (!actions) return
+
+        actions.forEach(action => {
+          if (actionFunctionMap[action]) {
+            actionFunctionMap[action]()
+          }
+        })
+      }
+    },
   },
 
   mutations: {
@@ -146,6 +161,7 @@ const { read, commit } = getStoreAccessors<SettingsState, RootState>('')
 export const getSettings = read(settings.getters.getSettings)
 export const getKeybindings = read(settings.getters.getKeybindings)
 export const getKeysForAction = read(settings.getters.getKeysForAction)
+export const getKeydownHandler = read(settings.getters.getKeydownHandler)
 
 export const addKeybinding = commit(settings.mutations.addKeybinding)
 export const removeKeybinding = commit(settings.mutations.removeKeybinding)
