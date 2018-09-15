@@ -3,7 +3,7 @@ module.exports = {
     sourceMap: true,
   },
   configureWebpack: {
-    target: process.env.IS_ELECTRON ? 'electron-renderer' : 'web',
+    target: 'electron-renderer',
   },
   lintOnSave: false,
   chainWebpack: config => {
@@ -25,11 +25,10 @@ module.exports = {
     config.plugin('define').tap(() => [
       {
         'process.env': {
-          NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-          BASE_URL: '"/"',
           ACCESS_TOKEN: JSON.stringify(process.env.ACCESS_TOKEN),
           ANILIST_ID: JSON.stringify(process.env.ANILIST_ID),
-          IS_ELECTRON: JSON.stringify(process.env.IS_ELECTRON || false),
+          IS_ELECTRON: JSON.stringify(true),
+          NODE_ENV: JSON.stringify(process.env.NODE_ENV),
         },
         'global.GENTLY': false,
       },

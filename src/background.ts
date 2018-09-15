@@ -29,7 +29,6 @@ function createMainWindow() {
   const window = new BrowserWindow({
     width: 1200,
     height: 750,
-    center: true,
     maximizable: false,
     frame: false,
   })

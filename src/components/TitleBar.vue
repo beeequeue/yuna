@@ -11,14 +11,10 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import electron from 'electron'
 import { mdiClose, mdiMinus } from '@mdi/js'
 
 import Icon from './Icon.vue'
-
-let electron: any
-if (process.env.IS_ELECTRON) {
-  electron = (window as any).require('electron')
-}
 
 @Component({
   components: { Icon },
@@ -32,11 +28,11 @@ export default class TitleBar extends Vue {
   public closeSvg = mdiClose
 
   public minimize() {
-    this.browserWindow.minimize();
+    this.browserWindow.minimize()
   }
 
   public close() {
-    this.browserWindow.close();
+    this.browserWindow.close()
   }
 }
 </script>
