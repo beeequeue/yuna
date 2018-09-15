@@ -1,6 +1,6 @@
 {
   "name": "crunch",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "dependencies": {
     "@mdi/js": "^2.7.94",
     "@types/electron-debug": "^1.1.0",
