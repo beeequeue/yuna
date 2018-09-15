@@ -3,14 +3,19 @@
   <div v-if="open" class="fader" @click="toggleOpen"/>
 
   <div class="menu" :class="{ open }" @click="toggleOpen">
-    <div class="item log-out" @click="logOut">
-      <icon :icon="logOutSvg"/>
-      <span>Log out</span>
+    <div class="item open-settings" @click="openSettings">
+      <icon :icon="settingsSvg"/>
+      <span>Open Settings</span>
     </div>
 
     <div class="item clear-cache" @click="clearCache">
-      <span/>
+      <icon :icon="clearSvg"/>
       <span>Clear cache</span>
+    </div>
+
+    <div class="item log-out" @click="logOut">
+      <icon :icon="logOutSvg"/>
+      <span>Log out</span>
     </div>
   </div>
 </div>
@@ -18,7 +23,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mdiLogout, mdiSettingsOutline } from '@mdi/js'
+import { mdiCached, mdiLogout, mdiSettingsOutline } from '@mdi/js'
 
 import { logOut } from '@/state/auth'
 import { AnimeCache } from '@/lib/cache'
@@ -33,6 +38,7 @@ export default class SettingsDropdown extends Vue {
 
   public settingsSvg = mdiSettingsOutline
   public logOutSvg = mdiLogout
+  public clearSvg = mdiCached
 
   public logOut() {
     logOut(this.$store)
@@ -42,6 +48,10 @@ export default class SettingsDropdown extends Vue {
 
   public clearCache() {
     AnimeCache.clear()
+  }
+
+  public openSettings() {
+    this.$router.push('/settings')
   }
 }
 </script>

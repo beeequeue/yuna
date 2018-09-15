@@ -1,23 +1,30 @@
 <template>
-<button class="button" :class="typeClass">
-  <slot/>
+<button class="button" :class="classes">
+  <icon v-if="icon != null" :icon="icon"/>
+
+  <span v-if="content" class="content">
+    {{content}}
+  </span>
 </button>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import Icon from './Icon.vue'
 
-export enum Type {
-  NORMAL = 'normal',
-  DANGER = 'danger',
-}
-
-@Component
+@Component({
+  components: { Icon },
+})
 export default class RaisedButton extends Vue {
-  @Prop(String) public type?: Type
+  @Prop() public content?: any
+  @Prop(String) public type?: 'normal' | 'danger'
+  @Prop(String) public icon?: string
 
-  public get typeClass() {
-    return this.type
+  public get classes() {
+    return {
+      [this.type]: !!this.type,
+      'with-icon': !!this.icon
+    }
   }
 }
 </script>
@@ -35,7 +42,10 @@ export default class RaisedButton extends Vue {
 }
 
 .button {
-  padding: 6px 15px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px;
   border: none;
   border-radius: 3px;
   background: $highlight;
@@ -45,6 +55,19 @@ export default class RaisedButton extends Vue {
   transition: background 0.1s;
 
   @include buttonEvents($highlight);
+
+  & > .icon {
+    width: 25px;
+    height: 25px;
+    fill: $white;
+  }
+
+  & > .content {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2px 5px;
+  }
 
   &.danger {
     background: $danger;

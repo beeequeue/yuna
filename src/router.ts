@@ -27,5 +27,11 @@ export const router = new Router({
       component: () =>
         import(/* webpackChunkName: "list" */ './views/List.vue'),
     },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () =>
+        import(/* webpackChunkName: "settings" */ './views/Settings.vue'),
+    },
   ],
 })
