@@ -20,9 +20,11 @@
 
           or try to<br/><br/>
 
-          <raised-button class="cr-import" @click.native="importQueue">
-            Import from Crunchyroll
-          </raised-button>
+          <raised-button
+            class="cr-import"
+            @click.native="importQueue"
+            content="Import from Crunchyroll"
+          />
         </div>
       </transition>
     </div>

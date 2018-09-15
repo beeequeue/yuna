@@ -7,15 +7,12 @@ import { RootState } from '@/state/store'
 import { userStore } from '@/lib/user'
 
 export interface CrunchyrollData {
-  sessionId: string
-  token: string | null
-  user: crunchyroll.User | null
+  isLoggedIn: boolean
 }
 
 export interface AnilistData {
   token: string | null
   expires: number | null
-  // user: anilist.User | null
 }
 
 export interface AuthState {
@@ -27,9 +24,7 @@ type AuthContext = ActionContext<AuthState, RootState>
 
 const initialState: AuthState = {
   crunchyroll: {
-    sessionId: userStore.get('crunchyroll.sessionId', ''),
-    token: userStore.get('crunchyroll.token', null),
-    user: userStore.get('crunchyroll.user', null),
+    isLoggedIn: !!userStore.get('crunchyroll.token', false),
   },
   anilist: {
     token: userStore.get('anilist.token', null),
@@ -45,7 +40,7 @@ export const auth = {
       state: AuthState,
     ): { anilist: boolean; crunchyroll: boolean; all: boolean } {
       const anilist = state.anilist.token != null
-      const _crunchyroll = state.crunchyroll.token != null
+      const _crunchyroll = state.crunchyroll.isLoggedIn
 
       return {
         anilist,
@@ -53,23 +48,15 @@ export const auth = {
         all: anilist && _crunchyroll,
       }
     },
-
-    getSessionId(state: AuthState): string {
-      return state.crunchyroll.sessionId
-    },
   },
 
   mutations: {
-    setSessionId(state: AuthState, sessionId: string) {
-      state.crunchyroll.sessionId = sessionId
-
+    setSessionId(_state: AuthState, sessionId: string) {
       userStore.set('crunchyroll.sessionId', sessionId)
     },
 
-    setCrunchyroll(state: AuthState, data: CrunchyrollData) {
-      state.crunchyroll = data
-
-      userStore.set('crunchyroll', data)
+    setCrunchyroll(state: AuthState, loggedIn: boolean) {
+      state.crunchyroll.isLoggedIn = loggedIn
     },
 
     setAnilist(state: AuthState, data: AnilistData) {
@@ -90,34 +77,28 @@ export const auth = {
       payload: { user: string; pass: string },
     ) {
       try {
-        let data
-
         try {
-          data = await crunchyroll.login(payload.user, payload.pass)
+          await crunchyroll.login(payload.user, payload.pass)
         } catch (e) {
           return Promise.reject(e)
         }
 
-        setCrunchyroll(context, {
-          sessionId: context.state.crunchyroll.sessionId,
-          token: data.auth,
-          user: data.user,
-        })
+        setCrunchyroll(context, true)
       } catch (err) {
         return
       }
     },
 
     async logOut(context: AuthContext) {
-      if (!context.state.crunchyroll.token && !context.state.anilist.token) {
+      if (
+        !context.state.crunchyroll.isLoggedIn &&
+        !context.state.anilist.token
+      ) {
         return
       }
 
-      setCrunchyroll(context, {
-        sessionId: '',
-        token: null,
-        user: null,
-      })
+      crunchyroll.logout()
+      setCrunchyroll(context, false)
       setAnilist(context, {
         token: null,
         expires: null,
@@ -131,7 +112,6 @@ export const auth = {
 const { commit, dispatch, read } = getStoreAccessors<AuthState, RootState>('')
 
 export const getIsLoggedIn = read(auth.getters.isLoggedIn)
-export const getSessionId = read(auth.getters.getSessionId)
 
 const setSessionId = commit(auth.mutations.setSessionId)
 const setCrunchyroll = commit(auth.mutations.setCrunchyroll)

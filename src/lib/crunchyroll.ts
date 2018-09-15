@@ -177,6 +177,7 @@ let _sessionId: string = userStore.get('crunchyroll.sessionId', '')
 
 export const createSession = async () => {
   const response = (await superagent.post(getUrl('start_session')).query({
+    auth: userStore.get('crunchyroll.token', null),
     access_token: accessToken,
     locale: LOCALE,
     device_type: 'com.crunchyroll.windows.desktop',
@@ -233,7 +234,18 @@ export const login = async (username: string, password: string) => {
     throw new Error(response.body.message)
   }
 
+  userStore.set('crunchyroll', {
+    username,
+    password,
+    sessionId: _sessionId,
+    token: response.body.data.auth,
+  })
+
   return response.body.data
+}
+
+export const logout = () => {
+  userStore.delete('crunchyroll')
 }
 
 export const fetchQueue = async (): Promise<QueueItem[]> => {
