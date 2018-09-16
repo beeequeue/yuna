@@ -235,8 +235,6 @@ export const login = async (username: string, password: string) => {
   }
 
   userStore.set('crunchyroll', {
-    username,
-    password,
     sessionId: _sessionId,
     token: response.body.data.auth,
   })

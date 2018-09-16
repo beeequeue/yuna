@@ -7,8 +7,6 @@ export interface QueueItem {
 }
 
 interface CachedCRData {
-  username: string | null
-  password: string | null
   sessionId: string | null
   token: string | null
 }
@@ -21,5 +19,4 @@ interface UserStore {
 
 export const userStore = new Store<UserStore>({
   name: 'user',
-  encryptionKey: 'just_so_we_dont_store_the_password_in_plaintext',
 })
