@@ -5,6 +5,7 @@ import { getStoreAccessors } from 'vuex-typescript'
 import * as crunchyroll from '@/lib/crunchyroll'
 import { RootState } from '@/state/store'
 import { userStore } from '@/lib/user'
+import { logoutAnilist } from '@/lib/anilist'
 
 export interface CrunchyrollData {
   isLoggedIn: boolean
@@ -97,6 +98,7 @@ export const auth = {
         return
       }
 
+      logoutAnilist()
       crunchyroll.logout()
       setCrunchyroll(context, false)
       setAnilist(context, {
