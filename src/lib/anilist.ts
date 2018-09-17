@@ -29,9 +29,6 @@ export const loginAnilist = (callback: (newUrl: string) => void) => {
 
         authWindow.close()
         authWindow = null as any
-      } else {
-        authWindow.close()
-        throw new Error('Couldn\'t get access token')
       }
     },
   )
