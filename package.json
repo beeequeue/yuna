@@ -1,18 +1,23 @@
 {
   "name": "crunch",
-  "version": "0.0.5a",
+  "description": "An anime player that integrates with Crunchyroll, AniList, Masterani",
+  "version": "0.0.5",
+  "author": "BeeeQueue",
   "dependencies": {
     "@mdi/js": "^2.7.94",
     "@types/electron-debug": "^1.1.0",
     "@types/electron-store": "^1.3.0",
     "@types/electron-util": "^0.2.0",
     "@types/hls.js": "^0.10.1",
+    "@types/semver": "^5.5.0",
     "@types/superagent": "^3.8.4",
     "@types/uuid": "^3.4.4",
     "@types/webpack-env": "^1.13.6",
     "apollo-boost": "^0.1.16",
     "electron-debug": "^2.0.0",
+    "electron-log": "^2.2.17",
     "electron-store": "^2.0.0",
+    "electron-updater": "^3.1.2",
     "electron-util": "^0.9.1",
     "hls.js": "^0.11.0",
     "normalize.css": "^8.0.0",
@@ -35,6 +40,7 @@
     "@vue/cli-service": "^3.0.3",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "electron": "^2.0.9",
+    "electron-builder": "19.54.0",
     "graphql-tag": "^2.9.2",
     "lint-staged": "^7.2.2",
     "node-sass": "^4.9.3",
@@ -65,11 +71,15 @@
   },
   "main": "dist_electron/bundled/background.js",
   "private": true,
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/BeeeQueue/crunch"
+  },
   "scripts": {
     "build": "yarn run build:electron",
     "build:electron": "vue-cli-service build:electron",
     "lint": "vue-cli-service lint",
-    "postinstall": "electron-builder install-app-deps",
+    "postinstall": "yarn electron-builder install-app-deps",
     "serve": "yarn run serve:electron",
     "serve:electron": "vue-cli-service serve:electron"
   }

@@ -17,6 +17,7 @@
     "object-literal-sort-keys": false,
     "no-consecutive-blank-lines": false,
     "strict-type-predicates": false,
-    "no-use-before-declare": false
+    "no-use-before-declare": false,
+    "no-floating-promises": false
   }
 }

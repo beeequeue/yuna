@@ -11,6 +11,8 @@
   </transition>
 
   <player-container v-if="isLoggedIn.all"/>
+
+  <toast-overlay/>
 </div>
 </template>
 
@@ -18,9 +20,10 @@
 import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 
+import TitleBar from './components/TitleBar.vue'
 import Navbar from './components/Navbar/Navbar.vue'
 import PlayerContainer from './components/Player/Container.vue'
-import TitleBar from './components/TitleBar.vue'
+import ToastOverlay from './components/ToastOverlay.vue'
 import { createSession, getIsLoggedIn } from './state/auth'
 import { getIsFullscreen } from './state/app'
 
@@ -28,7 +31,7 @@ const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys()
 
 @Component({
-  components: { TitleBar, PlayerContainer, Navbar },
+  components: { TitleBar, PlayerContainer, Navbar, ToastOverlay },
 })
 export default class App extends Vue {
   get isLoggedIn() {

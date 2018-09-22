@@ -38,3 +38,38 @@ declare module 'vue-cli-plugin-apollo/graphql-client' {
 
   export const restartWebsockets: (a: any) => void
 }
+
+declare module '*/package.json' {
+  const content: {
+    version: string
+    [key: string]: any
+  }
+  export = content
+}
+
+declare module 'vue-notifications' {
+  import { PluginFunction } from 'vue'
+
+  export type NotificationTypes = 'success' | 'info' | 'warning' | 'error'
+
+  export interface NotificationFunctionOptions<T> {
+    title: string
+    message: string
+    type: T
+    timeout?: number
+    consoleMessage?: string
+  }
+
+  export interface NotificationPluginOptions {
+    type?: NotificationTypes
+    timeout?: number
+    success?: (options: NotificationFunctionOptions<'success'>) => void
+    info?: (options: NotificationFunctionOptions<'info'>) => void
+    warning?: (options: NotificationFunctionOptions<'warning'>) => void
+    error?: (options: NotificationFunctionOptions<'error'>) => void
+  }
+
+  const plugin: PluginFunction<NotificationPluginOptions>
+
+  export default plugin
+}

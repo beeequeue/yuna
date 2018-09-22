@@ -1,6 +1,6 @@
 <template>
 <div class="title-bar">
-  <span>Crunch</span>
+  <span class="title">Crunch v{{version}}</span>
 
   <span class="separator"/>
 
@@ -15,6 +15,7 @@ import electron from 'electron'
 import { mdiClose, mdiMinus } from '@mdi/js'
 
 import Icon from './Icon.vue'
+import { version } from '../../package.json'
 
 @Component({
   components: { Icon },
@@ -23,6 +24,8 @@ export default class TitleBar extends Vue {
   @Prop(String) public icon!: string
 
   public browserWindow = electron.remote.BrowserWindow.getFocusedWindow()
+
+  public version = version
 
   public minimizeSvg = mdiMinus
   public closeSvg = mdiClose
@@ -54,11 +57,18 @@ export default class TitleBar extends Vue {
   -webkit-app-region: drag;
   z-index: 100;
 
+  & > * {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
   & > .separator {
+    flex-shrink: 1;
     width: 100%;
   }
 
-  & > .icon {
+  & .icon {
     fill: $white;
     height: 30px;
     padding: 2px;

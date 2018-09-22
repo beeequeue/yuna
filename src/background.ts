@@ -8,6 +8,7 @@ import {
   createProtocol,
   installVueDevtools,
 } from 'vue-cli-plugin-electron-builder/lib'
+import { initCheckForUpdates } from './updater'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 if (isDevelopment) {
@@ -32,6 +33,8 @@ function createMainWindow() {
     maximizable: false,
     frame: false,
   })
+
+  setTimeout(() => initCheckForUpdates(window), 2500)
 
   if (isDevelopment) {
     // Load the url of the dev server if in development mode
