@@ -52,6 +52,7 @@ export default class RaisedButton extends Vue {
   background: $highlight;
   color: $white;
   cursor: pointer;
+  user-select: none;
 
   transition: background 0.1s;
 

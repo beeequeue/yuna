@@ -65,6 +65,7 @@ export default class Navbar extends Vue {
   align-items: center;
   background: $dark;
   z-index: 10;
+  user-select: none;
 
   & .button {
     display: flex;
