@@ -13,6 +13,11 @@ declare module '*.png' {
   export default content
 }
 
+declare module '*.graphql' {
+  const content: any
+  export default content
+}
+
 declare module 'superagent/superagent' {
   import request from 'superagent'
   export = request

@@ -7,7 +7,7 @@
   </transition>
 
   <transition name="route">
-    <router-view/>
+    <router-view class="route"/>
   </transition>
 
   <player-container v-if="isLoggedIn.all"/>
@@ -80,6 +80,10 @@ body,
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
+
+  & > .route {
+    z-index: 1;
+  }
 
   & * {
     box-sizing: border-box;

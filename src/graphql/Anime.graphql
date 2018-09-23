@@ -1,0 +1,42 @@
+query GetAnime($id: Int){
+  Media(id: $id) {
+    id
+    idMal
+    title {
+      english
+      native
+      romaji
+      userPreferred
+    }
+    description
+    duration
+    episodes
+    genres
+    status
+    isFavourite
+    favourites
+    averageScore
+    siteUrl
+    bannerImage
+    coverImage {
+      large
+    }
+    relations {
+      edges {
+        relationType
+      }
+      nodes {
+        id
+        title {
+          userPreferred
+        }
+      }
+    }
+    mediaListEntry {
+      id
+      progress
+      status
+      score
+    }
+  }
+}

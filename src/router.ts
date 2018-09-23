@@ -26,6 +26,12 @@ export const router = new Router({
         import(/* webpackChunkName: "list" */ './views/List.vue'),
     },
     {
+      path: '/anime/:id',
+      name: 'anime',
+      component: () =>
+        import(/* webpackChunkName: "anime" */ './views/Anime.vue'),
+    },
+    {
       path: '/settings',
       name: 'settings',
       component: () =>

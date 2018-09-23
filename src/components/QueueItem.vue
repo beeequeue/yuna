@@ -1,19 +1,17 @@
 <template>
 <div class="anime">
-  <a
+  <router-link
     class="anime-name"
-    :href="item.series.crunchyroll.url"
-    target="_blank">
+    :to="`/anime/${item.series.crunchyroll.id}`">
     <img class="image" :src="item.series.landscapeImage.large"/>
-  </a>
+  </router-link>
 
   <div class="details">
-    <a
+    <router-link
       class="anime-name"
-      :href="item.series.crunchyroll.url"
-      target="_blank">
+      :to="`/anime/${item.series.crunchyroll.id}`">
       {{item.series.name}}
-    </a>
+    </router-link>
 
     <p class="episode-name">
       {{item.episode.progress > 0 ? 'Current' : 'Next'}} episode {{item.episode.index}}:
@@ -51,7 +49,7 @@ export default class QueueItem extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import '../colors';
 
 .anime {
