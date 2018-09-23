@@ -4,10 +4,10 @@
 import { MediaStatus, MediaRelation, MediaListStatus } from "./..\\graphql-types";
 
 // ====================================================
-// GraphQL query operation: GetAnime
+// GraphQL query operation: AnimePage
 // ====================================================
 
-export interface GetAnime_Media_title {
+export interface AnimePage_Media_title {
   __typename: "MediaTitle";
   /**
    * The official english title
@@ -27,7 +27,7 @@ export interface GetAnime_Media_title {
   userPreferred: string | null;
 }
 
-export interface GetAnime_Media_coverImage {
+export interface AnimePage_Media_coverImage {
   __typename: "MediaCoverImage";
   /**
    * The cover image of media at its largest size
@@ -35,7 +35,7 @@ export interface GetAnime_Media_coverImage {
   large: string | null;
 }
 
-export interface GetAnime_Media_relations_edges {
+export interface AnimePage_Media_relations_edges {
   __typename: "MediaEdge";
   /**
    * The type of relation to the parent model
@@ -43,7 +43,7 @@ export interface GetAnime_Media_relations_edges {
   relationType: MediaRelation | null;
 }
 
-export interface GetAnime_Media_relations_nodes_title {
+export interface AnimePage_Media_relations_nodes_title {
   __typename: "MediaTitle";
   /**
    * The currently authenticated users preferred title language. Default romaji for non-authenticated
@@ -51,7 +51,7 @@ export interface GetAnime_Media_relations_nodes_title {
   userPreferred: string | null;
 }
 
-export interface GetAnime_Media_relations_nodes {
+export interface AnimePage_Media_relations_nodes {
   __typename: "Media";
   /**
    * The id of the media
@@ -60,16 +60,16 @@ export interface GetAnime_Media_relations_nodes {
   /**
    * The official titles of the media in various languages
    */
-  title: GetAnime_Media_relations_nodes_title | null;
+  title: AnimePage_Media_relations_nodes_title | null;
 }
 
-export interface GetAnime_Media_relations {
+export interface AnimePage_Media_relations {
   __typename: "MediaConnection";
-  edges: (GetAnime_Media_relations_edges | null)[] | null;
-  nodes: (GetAnime_Media_relations_nodes | null)[] | null;
+  edges: (AnimePage_Media_relations_edges | null)[] | null;
+  nodes: (AnimePage_Media_relations_nodes | null)[] | null;
 }
 
-export interface GetAnime_Media_mediaListEntry {
+export interface AnimePage_Media_mediaListEntry {
   __typename: "MediaList";
   /**
    * The id of the list entry
@@ -89,7 +89,7 @@ export interface GetAnime_Media_mediaListEntry {
   score: number | null;
 }
 
-export interface GetAnime_Media {
+export interface AnimePage_Media {
   __typename: "Media";
   /**
    * The id of the media
@@ -102,7 +102,7 @@ export interface GetAnime_Media {
   /**
    * The official titles of the media in various languages
    */
-  title: GetAnime_Media_title | null;
+  title: AnimePage_Media_title | null;
   /**
    * Short description of the media's story and characters
    */
@@ -146,24 +146,24 @@ export interface GetAnime_Media {
   /**
    * The cover images of the media
    */
-  coverImage: GetAnime_Media_coverImage | null;
+  coverImage: AnimePage_Media_coverImage | null;
   /**
    * Other media in the same or connecting franchise
    */
-  relations: GetAnime_Media_relations | null;
+  relations: AnimePage_Media_relations | null;
   /**
    * The authenticated user's media list entry for the media
    */
-  mediaListEntry: GetAnime_Media_mediaListEntry | null;
+  mediaListEntry: AnimePage_Media_mediaListEntry | null;
 }
 
-export interface GetAnime {
+export interface AnimePage {
   /**
    * Media query
    */
-  Media: GetAnime_Media | null;
+  Media: AnimePage_Media | null;
 }
 
-export interface GetAnimeVariables {
+export interface AnimePageVariables {
   id?: number | null;
 }

@@ -1,6 +1,6 @@
 <template>
 <transition name="fade">
-  <div class="title">
+  <div v-if="!loading" class="title">
     <div class="english" :class="preferredStyle(english)">
       {{ english }}
     </div>
@@ -18,12 +18,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { PropOptions, Prop as IProp } from 'vue/types/options'
 
-const prop = (type: IProp<any>, required?: boolean): PropOptions => ({
-  type,
-  required: !!required,
-})
+import { prop } from '../../utils'
 
 @Component
 export default class AnimeTitle extends Vue {

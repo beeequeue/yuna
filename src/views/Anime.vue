@@ -1,7 +1,12 @@
 <template>
 <ApolloQuery class="anime" :query="animeQuery" :variables="{ id }">
   <template v-if="data && data.Media" slot-scope="{ result: { loading, error, data } }">
-    <img :src="data.Media.coverImage.large" class="cover-image slide-down"/>
+    <cover-image
+      :loading="loading"
+      :mediaListStatus="data.Media.mediaListEntry.status"
+      :src="data.Media.coverImage.large"
+      class="slide-down"
+    />
 
     <div class="buttons slide-up">
       <raised-button
@@ -35,19 +40,22 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 import AnimeTitle from '../components/Anime/Title.vue'
+import CoverImage from '../components/Anime/CoverImage.vue'
 import RaisedButton from '../components/RaisedButton.vue'
-import AnimeQuery from '../graphql/Anime.graphql'
+
+import AnimePageQuery from '../graphql/AnimePage.graphql'
+import { AnimePage } from '../graphql/AnimePage'
 
 @Component({
-  components: { AnimeTitle, RaisedButton },
+  components: { CoverImage, AnimeTitle, RaisedButton },
 })
 export default class Anime extends Vue {
   public get id() {
     return 7791 || Number(this.$route.params.id)
   }
 
-  animeQuery = AnimeQuery
-  data: any
+  animeQuery = AnimePageQuery
+  data?: AnimePage
 }
 </script>
 
@@ -75,9 +83,6 @@ $shadow: 1px 5px 15px rgba(0, 0, 0, 0.5);
   & > .cover-image {
     grid-column: 1 / span 1;
     grid-row: 1 / span 2;
-    width: 100%;
-    border-radius: 5px;
-    box-shadow: $shadow;
     will-change: transform, opacity;
   }
 
@@ -111,6 +116,7 @@ $shadow: 1px 5px 15px rgba(0, 0, 0, 0.5);
     border-radius: 5px;
     text-align: left;
     box-shadow: $shadow;
+    user-select: initial;
   }
 }
 

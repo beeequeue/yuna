@@ -1,4 +1,5 @@
 import { Response } from 'superagent'
+import { Prop as IProp, PropOptions } from 'vue/types/options'
 
 export interface RequestSuccess<B extends object> extends Response {
   status: 200
@@ -20,3 +21,8 @@ export const secondsToTimeString = (input: number) => {
     seconds < 10 ? '0' : ''
   }${seconds}`
 }
+
+export const prop = (type: IProp<any>, required?: boolean): PropOptions => ({
+  type,
+  required: !!required,
+})
