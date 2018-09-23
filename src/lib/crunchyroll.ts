@@ -269,6 +269,7 @@ export const fetchQueue = async (): Promise<QueueItem[]> => {
       ({
         nextEpisode: entry.most_likely_media.media_id,
         crunchyroll: entry.series.series_id,
+        anilist: 7791, // TODO: FIX
       } as QueueItem),
   )
 }

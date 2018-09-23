@@ -1,19 +1,17 @@
 <template>
-<transition name="fade">
-  <div v-if="!loading" class="title">
-    <div class="english" :class="preferredStyle(english)">
-      {{ english }}
-    </div>
-
-    <div class="romaji" :class="preferredStyle(romaji)">
-      {{ romaji }}
-    </div>
-
-    <div class="native" :class="preferredStyle(native)">
-      {{ native }}
-    </div>
+<div class="title">
+  <div class="english" :class="preferredStyle(english)">
+    {{ english }}
   </div>
-</transition>
+
+  <div class="romaji" :class="preferredStyle(romaji)">
+    {{ romaji }}
+  </div>
+
+  <div class="native" :class="preferredStyle(native)">
+    {{ native }}
+  </div>
+</div>
 </template>
 
 <script lang="ts">

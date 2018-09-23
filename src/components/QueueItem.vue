@@ -2,14 +2,14 @@
 <div class="anime">
   <router-link
     class="anime-name"
-    :to="`/anime/${item.series.crunchyroll.id}`">
+    :to="`/anime/${item.anilist}`">
     <img class="image" :src="item.series.landscapeImage.large"/>
   </router-link>
 
   <div class="details">
     <router-link
       class="anime-name"
-      :to="`/anime/${item.series.crunchyroll.id}`">
+      :to="`/anime/${item.anilist}`">
       {{item.series.name}}
     </router-link>
 
@@ -34,12 +34,13 @@ import { mdiPlayCircleOutline } from '@mdi/js'
 import Icon from './Icon.vue'
 import { setCurrentEpisode } from '@/state/app'
 import { Episode } from '../types'
+import { QueueItem as IQueueItem } from '../lib/user'
 
 @Component({
   components: { Icon },
 })
 export default class QueueItem extends Vue {
-  @Prop() public item!: QueueItem
+  @Prop() public item!: IQueueItem
 
   public playSvg = mdiPlayCircleOutline
 

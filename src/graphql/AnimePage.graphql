@@ -1,5 +1,5 @@
 query AnimePage($id: Int){
-  Media(id: $id) {
+  Media(id: $id, type: ANIME) {
     id
     idMal
     title {

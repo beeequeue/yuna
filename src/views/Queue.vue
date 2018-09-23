@@ -52,11 +52,13 @@ import { QueueItem as IQueueItem } from '../lib/user'
 interface ItemData {
   episode: Episode
   series: Anime
+  anilist: number
 }
 
 interface SafeQueueItem {
   crunchyroll: string
   nextEpisode: string
+  anilist: number
 }
 
 @Component({
@@ -94,6 +96,7 @@ export default class Queue extends Vue {
     this.queueWithData = animes.map((anime, i) => ({
       series: anime,
       episode: episodes[i],
+      anilist: onlyCR[i].anilist,
     }))
   }
 

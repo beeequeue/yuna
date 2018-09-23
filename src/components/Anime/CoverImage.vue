@@ -1,17 +1,15 @@
 <template>
-<transition name="fade">
-  <div v-if="!loading" class="cover-image">
-    <img :src="src" class="cover-image slide-down"/>
+<div class="cover-image">
+  <img :src="src" class="cover-image slide-down"/>
 
-    <span
-      v-if="mediaListStatus"
-      class="status"
-      :class="{ [lowercaseStatus]: !!mediaListStatus }"
-    >
-      {{ statusString }}
-    </span>
-  </div>
-</transition>
+  <span
+    v-if="mediaListStatus"
+    class="status"
+    :class="{ [lowercaseStatus]: !!mediaListStatus }"
+  >
+    {{ statusString }}
+  </span>
+</div>
 </template>
 
 <script lang="ts">
@@ -60,6 +58,7 @@ export default class CoverImage extends Vue {
 @import '../../colors';
 
 .cover-image {
+  display: block;
   position: relative;
   width: 100%;
   border-radius: 5px;
@@ -67,7 +66,7 @@ export default class CoverImage extends Vue {
 
   & > .status {
     position: absolute;
-    bottom: 35px;
+    bottom: 25px;
     left: 0;
     right: 0;
     font-family: 'Raleway', sans-serif;

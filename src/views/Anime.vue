@@ -18,7 +18,13 @@
       />
 
       <raised-button
-        content="Add to planning"
+        @click.native="$router.push('/anime/10165')"
+        content="Go to Nichijou"
+      />
+
+      <raised-button
+        @click.native="$router.push(`/anime/${Math.floor(Math.random() * 80000)}`)"
+        content="Go to Whatever"
       />
     </div>
 
@@ -52,7 +58,7 @@ import { AnimePage } from '../graphql/AnimePage'
 })
 export default class Anime extends Vue {
   public get id() {
-    return 64 || Number(this.$route.params.id)
+    return Number(this.$route.params.id)
   }
 
   public getMediaListStatus(data: AnimePage) {
@@ -128,11 +134,11 @@ $shadow: 1px 5px 15px rgba(0, 0, 0, 0.5);
 .route-enter-active,
 .route-leave-active {
   will-change: background-color;
-  transition: background-color 0.5s;
+  transition: background-color 0.75s;
 
   & .slide-up,
   & .slide-down {
-    transition: transform 0.5s, opacity 0.5s;
+    transition: transform 0.75s, opacity 0.75s;
   }
 }
 
