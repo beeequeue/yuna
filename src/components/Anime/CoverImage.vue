@@ -3,7 +3,11 @@
   <div v-if="!loading" class="cover-image">
     <img :src="src" class="cover-image slide-down"/>
 
-    <span class="status" :class="{ [mediaListStatus.toString().toLowerCase()]: !!mediaListStatus }">
+    <span
+      v-if="mediaListStatus"
+      class="status"
+      :class="{ [lowercaseStatus]: !!mediaListStatus }"
+    >
       {{ statusString }}
     </span>
   </div>
@@ -24,6 +28,12 @@ export default class CoverImage extends Vue {
   public src!: string
   @Prop(prop(String))
   public mediaListStatus!: MediaListStatus | null
+
+  public get lowercaseStatus() {
+    if (!this.mediaListStatus) return null
+
+    return this.mediaListStatus.toString().toLowerCase()
+  }
 
   public get statusString(): string | null {
     if (!this.mediaListStatus) return null

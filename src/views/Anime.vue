@@ -3,7 +3,7 @@
   <template v-if="data && data.Media" slot-scope="{ result: { loading, error, data } }">
     <cover-image
       :loading="loading"
-      :mediaListStatus="data.Media.mediaListEntry.status"
+      :mediaListStatus="getMediaListStatus(data)"
       :src="data.Media.coverImage.large"
       class="slide-down"
     />
@@ -38,6 +38,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { pathOr } from 'rambda'
 
 import AnimeTitle from '../components/Anime/Title.vue'
 import CoverImage from '../components/Anime/CoverImage.vue'
@@ -51,7 +52,11 @@ import { AnimePage } from '../graphql/AnimePage'
 })
 export default class Anime extends Vue {
   public get id() {
-    return 7791 || Number(this.$route.params.id)
+    return 64 || Number(this.$route.params.id)
+  }
+
+  public getMediaListStatus(data: AnimePage) {
+    return pathOr(null, ['Media', 'mediaListEntry', 'status'], data)
   }
 
   animeQuery = AnimePageQuery
