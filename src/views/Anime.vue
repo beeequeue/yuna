@@ -31,10 +31,7 @@
     <anime-title
       class="slide-down"
       :loading="loading"
-      :english="data.Media.title.english"
-      :romaji="data.Media.title.romaji"
-      :native="data.Media.title.native"
-      :preferred="data.Media.title.userPreferred"
+      :title="data.Media.title"
     />
 
     <div class="description slide-up" v-html="data.Media.description"/>
