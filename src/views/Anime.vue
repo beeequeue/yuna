@@ -2,31 +2,18 @@
 <ApolloQuery class="anime" :query="animeQuery" :variables="{ id }">
   <template v-if="data && data.Media" slot-scope="{ result: { loading, error, data } }">
     <cover-image
-      :loading="loading"
-      :mediaListStatus="getMediaListStatus(data)"
-      :src="data.Media.coverImage.large"
       class="slide-down"
+      :loading="loading"
+      :src="data.Media.coverImage.large"
+      :mediaListEntry="getMediaListEntry(data)"
+      :length="data.Media.episodes"
     />
 
-    <div class="buttons slide-up">
-      <raised-button
-        content="Set as Planning"
-      />
-
-      <raised-button
-        content="Add to Queue"
-      />
-
-      <raised-button
-        @click.native="$router.push('/anime/10165')"
-        content="Go to Nichijou"
-      />
-
-      <raised-button
-        @click.native="$router.push(`/anime/404}`)"
-        content="Go to 404"
-      />
-    </div>
+    <actions
+      class="slide-up"
+      :loading="loading"
+      :mediaListStatus="getMediaListStatus(data)"
+    />
 
     <anime-title
       class="slide-down"
@@ -44,6 +31,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { pathOr } from 'rambda'
 
 import AnimeTitle from '../components/Anime/Title.vue'
+import Actions from '../components/Anime/Actions.vue'
 import CoverImage from '../components/Anime/CoverImage.vue'
 import RaisedButton from '../components/RaisedButton.vue'
 
@@ -51,11 +39,15 @@ import AnimePageQuery from '../graphql/AnimePage.graphql'
 import { AnimePage } from '../graphql/AnimePage'
 
 @Component({
-  components: { CoverImage, AnimeTitle, RaisedButton },
+  components: { Actions, CoverImage, AnimeTitle, RaisedButton },
 })
 export default class Anime extends Vue {
   public get id() {
     return Number(this.$route.params.id)
+  }
+
+  public getMediaListEntry(data: AnimePage) {
+    return pathOr(null, ['Media', 'mediaListEntry'], data)
   }
 
   public getMediaListStatus(data: AnimePage) {
@@ -94,20 +86,10 @@ $shadow: 1px 5px 15px rgba(0, 0, 0, 0.5);
     will-change: transform, opacity;
   }
 
-  & > .buttons {
+  & > .actions {
     grid-column: 1 / span 1;
     grid-row: 3 / span 1;
     align-self: stretch;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
-
-    & > .button {
-      margin-bottom: 10px;
-      box-shadow: $shadow;
-    }
   }
 
   & > .title {

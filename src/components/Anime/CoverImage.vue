@@ -15,6 +15,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { pathOr } from 'rambda'
 import {
   mdiCheckboxMarkedCircleOutline,
   mdiClockOutline,
@@ -26,6 +27,7 @@ import {
 import Icon from '../Icon.vue'
 import { prop } from '../../utils'
 import { MediaListStatus } from '../../graphql-types'
+import { AnimePage_Media_mediaListEntry } from '../../graphql/AnimePage'
 
 @Component({
   components: { Icon },
@@ -35,8 +37,14 @@ export default class CoverImage extends Vue {
   public loading!: boolean
   @Prop(prop(String, true))
   public src!: string
-  @Prop(prop(String))
-  public mediaListStatus!: MediaListStatus | null
+  @Prop(prop(Object))
+  public mediaListEntry!: AnimePage_Media_mediaListEntry | null
+  @Prop(prop(Number))
+  public length!: number | null
+
+  public get mediaListStatus(): MediaListStatus | null {
+    return pathOr(null, ['status'], this.mediaListEntry)
+  }
 
   public get lowercaseStatus() {
     if (!this.mediaListStatus) return null
@@ -51,7 +59,9 @@ export default class CoverImage extends Vue {
       case MediaListStatus.COMPLETED:
         return 'Completed'
       case MediaListStatus.CURRENT:
-        return 'Watching'
+        return `Watching ${pathOr(0, ['progress'], this.mediaListEntry)}/${
+          this.length
+        }`
       case MediaListStatus.DROPPED:
         return 'Dropped'
       case MediaListStatus.PAUSED:

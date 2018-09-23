@@ -59,8 +59,8 @@ export default class RaisedButton extends Vue {
   @include buttonEvents($highlight);
 
   & > .icon {
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     fill: $white;
   }
 
