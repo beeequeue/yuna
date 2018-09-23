@@ -1,15 +1,24 @@
 <template>
 <ApolloQuery class="anime" :query="animeQuery" :variables="{ id }">
   <template v-if="data && data.Media" slot-scope="{ result: { loading, error, data } }">
-    <img :src="data.Media.coverImage.large" class="cover-image"/>
+    <img :src="data.Media.coverImage.large" class="cover-image slide-down"/>
 
-    <div class="buttons">
-      <raised-button content="Set as Planning"/>
-      <raised-button content="Add to Queue"/>
-      <raised-button content="Add to planning"/>
+    <div class="buttons slide-up">
+      <raised-button
+        content="Set as Planning"
+      />
+
+      <raised-button
+        content="Add to Queue"
+      />
+
+      <raised-button
+        content="Add to planning"
+      />
     </div>
 
     <anime-title
+      class="slide-down"
       :loading="loading"
       :english="data.Media.title.english"
       :romaji="data.Media.title.romaji"
@@ -17,7 +26,7 @@
       :preferred="data.Media.title.userPreferred"
     />
 
-    <div class="description" v-html="data.Media.description"/>
+    <div class="description slide-up" v-html="data.Media.description"/>
   </template>
 </ApolloQuery>
 </template>
@@ -45,9 +54,7 @@ export default class Anime extends Vue {
 <style scoped lang="scss">
 @import '../colors';
 
-@mixin boxShadow {
-  box-shadow: 1px 5px 15px rgba(0, 0, 0, 0.5);
-}
+$shadow: 1px 5px 15px rgba(0, 0, 0, 0.5);
 
 .anime {
   position: absolute;
@@ -70,7 +77,8 @@ export default class Anime extends Vue {
     grid-row: 1 / span 2;
     width: 100%;
     border-radius: 5px;
-    @include boxShadow;
+    box-shadow: $shadow;
+    will-change: transform, opacity;
   }
 
   & > .buttons {
@@ -85,7 +93,7 @@ export default class Anime extends Vue {
 
     & > .button {
       margin-bottom: 10px;
-      @include boxShadow;
+      box-shadow: $shadow;
     }
   }
 
@@ -102,17 +110,34 @@ export default class Anime extends Vue {
     background: $dark;
     border-radius: 5px;
     text-align: left;
-    @include boxShadow;
+    box-shadow: $shadow;
   }
 }
 
 .route-enter-active,
 .route-leave-active {
+  will-change: background-color;
   transition: background-color 0.5s;
+
+  & .slide-up,
+  & .slide-down {
+    transition: transform 0.5s, opacity 0.5s;
+  }
 }
 
 .route-enter,
 .route-leave-to {
   background-color: transparent;
+
+  & .slide- {
+    &down {
+      opacity: 0;
+      transform: translateY(-10%);
+    }
+    &up {
+      opacity: 0;
+      transform: translateY(10%);
+    }
+  }
 }
 </style>
