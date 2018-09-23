@@ -38,6 +38,7 @@
     "@vue/cli-plugin-babel": "^3.0.3",
     "@vue/cli-plugin-typescript": "^3.0.3",
     "@vue/cli-service": "^3.0.3",
+    "apollo": "^1.9.2",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "electron": "^2.0.9",
     "electron-builder": "19.54.0",
@@ -76,6 +77,8 @@
     "url": "https://github.com/BeeeQueue/crunch"
   },
   "scripts": {
+    "graphql:update-schema": "yarn apollo schema:download --endpoint https://graphql.anilist.co graphql.schema.json",
+    "graphql:types": "yarn apollo codegen:generate --addTypename --schema graphql.schema.json --queries src/**/*.graphql --target typescript --globalTypesFile=src/graphql-types.ts .",
     "build": "yarn run build:electron",
     "build:electron": "vue-cli-service build:electron",
     "lint": "vue-cli-service lint",

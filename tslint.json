@@ -6,7 +6,7 @@
     "tslint-config-prettier"
   ],
   "linterOptions": {
-    "exclude": ["node_modules/**"]
+    "exclude": ["node_modules/**", "src/graphql-types.ts", "src/graphql/*.ts"]
   },
   "rules": {
     "deprecation": false,

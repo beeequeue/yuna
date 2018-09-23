@@ -1,15 +1,9 @@
 {
+
   "README_schema":
     "Specifies how to load the GraphQL schema that completion, error highlighting, and documentation is based on in the IDE",
   "schema": {
-    "request": {
-      "url": "https://graphql.anilist.co",
-      "method": "POST",
-      "postIntrospectionQuery": true,
-      "README_options":
-        "See the 'Options' section at https://github.com/then/then-request",
-      "options": {}
-    }
+    "file": "graphql.schema.json"
   },
 
   "README_endpoints":
