@@ -1,4 +1,3 @@
-import { MediaListStatus } from '../../graphql-types'
 <template>
 <transition name="fade">
   <div class="actions">
@@ -7,7 +6,6 @@ import { MediaListStatus } from '../../graphql-types'
       :icon="addToListSvg"
       content="Set as Planning"
     />
-
 
     <div v-if="isWatching" class="multi-button">
       <raised-button
@@ -28,10 +26,11 @@ import { MediaListStatus } from '../../graphql-types'
         content="Drop"
       />
     </div>
+
     <raised-button
-      v-else
+      v-if="isCompleted"
       :icon="setToRepeatSvg"
-      content="Set as Rewatching"
+      content="Set as Repeating"
     />
 
     <raised-button
@@ -90,7 +89,8 @@ export default class Actions extends Vue {
   }
 
   public get isWatching() {
-    return this.mediaListStatus === MediaListStatus.CURRENT
+    return [MediaListStatus.CURRENT, MediaListStatus.REPEATING].includes(this
+      .mediaListStatus as MediaListStatus)
   }
 
   public get isCompleted() {
