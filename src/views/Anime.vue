@@ -23,8 +23,8 @@
       />
 
       <raised-button
-        @click.native="$router.push(`/anime/${Math.floor(Math.random() * 80000)}`)"
-        content="Go to Whatever"
+        @click.native="$router.push(`/anime/404}`)"
+        content="Go to 404"
       />
     </div>
 

@@ -7,7 +7,7 @@
   </transition>
 
   <transition name="route">
-    <router-view class="route"/>
+    <router-view :key="$route.params.id ? $route.params.id : $route.path" class="route"/>
   </transition>
 
   <player-container v-if="isLoggedIn.all"/>

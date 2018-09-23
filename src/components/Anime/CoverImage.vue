@@ -7,6 +7,7 @@
     class="status"
     :class="{ [lowercaseStatus]: !!mediaListStatus }"
   >
+    <icon v-if="statusIcon" :icon="statusIcon"/>
     {{ statusString }}
   </span>
 </div>
@@ -14,11 +15,21 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import {
+  mdiCheckboxMarkedCircleOutline,
+  mdiClockOutline,
+  mdiCloseCircleOutline,
+  mdiPauseCircleOutline,
+  mdiRepeat,
+} from '@mdi/js'
 
+import Icon from '../Icon.vue'
 import { prop } from '../../utils'
 import { MediaListStatus } from '../../graphql-types'
 
-@Component
+@Component({
+  components: { Icon },
+})
 export default class CoverImage extends Vue {
   @Prop(prop(Boolean, true))
   public loading!: boolean
@@ -51,6 +62,25 @@ export default class CoverImage extends Vue {
         return 'Repeating'
     }
   }
+
+  public get statusIcon() {
+    if (!this.mediaListStatus) return null
+
+    switch (this.mediaListStatus) {
+      case MediaListStatus.COMPLETED:
+        return mdiCheckboxMarkedCircleOutline
+      case MediaListStatus.CURRENT:
+        return null
+      case MediaListStatus.DROPPED:
+        return mdiCloseCircleOutline
+      case MediaListStatus.PAUSED:
+        return mdiPauseCircleOutline
+      case MediaListStatus.PLANNING:
+        return mdiClockOutline
+      case MediaListStatus.REPEATING:
+        return mdiRepeat
+    }
+  }
 }
 </script>
 
@@ -69,10 +99,20 @@ export default class CoverImage extends Vue {
     bottom: 25px;
     left: 0;
     right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-family: 'Raleway', sans-serif;
-    font-weight: 500;
+    font-weight: 300;
     background-color: $dark;
     padding: 6px 0;
+
+    & > .icon {
+      height: 1em;
+      width: 1em;
+      margin-right: 5px;
+      fill: $white;
+    }
   }
 }
 </style>
