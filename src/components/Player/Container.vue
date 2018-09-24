@@ -1,11 +1,16 @@
 <template>
-  <div class="player-container" :class="classFromRoute">
+<transition name="fade">
+  <div
+    v-if="episode"
+    class="player-container"
+    :class="classFromRoute"
+  >
     <player
-      v-if="episode"
       key="player"
       :episode="episode"
     />
   </div>
+</transition>
 </template>
 
 <script lang="ts">
