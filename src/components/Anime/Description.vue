@@ -58,7 +58,7 @@ export default class Description extends Vue {
 
   public doHeightChecks() {
     this.realMaxHeight = this.$refs.content.clientHeight + 10
-    this.isContentTooBig = this.realMaxHeight > 300
+    this.isContentTooBig = this.realMaxHeight > 200
   }
 
   public toggleOpen() {
@@ -82,7 +82,7 @@ export default class Description extends Vue {
   transition: max-height 0.5s;
 
   & > .content {
-    padding: 15px 20px 25px 15px;
+    padding: 15px 20px;
     text-align: left;
     box-shadow: $shadow;
     user-select: initial;

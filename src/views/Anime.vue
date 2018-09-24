@@ -22,6 +22,7 @@
     />
 
     <center-container
+      class="slide-up"
       :loading="loading"
       :content="data.Media.description"
     />
@@ -118,7 +119,6 @@ $shadow: 1px 5px 15px rgba(0, 0, 0, 0.5);
   & > .center-container {
     grid-column: 2 / span 1;
     grid-row: 2 / span 2;
-    /*align-self: stretch;*/
   }
 
   & > .relations {
