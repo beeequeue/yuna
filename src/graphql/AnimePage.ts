@@ -35,15 +35,7 @@ export interface AnimePage_Media_coverImage {
   large: string | null;
 }
 
-export interface AnimePage_Media_relations_edges {
-  __typename: "MediaEdge";
-  /**
-   * The type of relation to the parent model
-   */
-  relationType: MediaRelation | null;
-}
-
-export interface AnimePage_Media_relations_nodes_title {
+export interface AnimePage_Media_relations_edges_node_title {
   __typename: "MediaTitle";
   /**
    * The currently authenticated users preferred title language. Default romaji for non-authenticated
@@ -51,7 +43,7 @@ export interface AnimePage_Media_relations_nodes_title {
   userPreferred: string | null;
 }
 
-export interface AnimePage_Media_relations_nodes {
+export interface AnimePage_Media_relations_edges_node {
   __typename: "Media";
   /**
    * The id of the media
@@ -60,13 +52,25 @@ export interface AnimePage_Media_relations_nodes {
   /**
    * The official titles of the media in various languages
    */
-  title: AnimePage_Media_relations_nodes_title | null;
+  title: AnimePage_Media_relations_edges_node_title | null;
+  /**
+   * The banner image of the media
+   */
+  bannerImage: string | null;
+}
+
+export interface AnimePage_Media_relations_edges {
+  __typename: "MediaEdge";
+  /**
+   * The type of relation to the parent model
+   */
+  relationType: MediaRelation | null;
+  node: AnimePage_Media_relations_edges_node | null;
 }
 
 export interface AnimePage_Media_relations {
   __typename: "MediaConnection";
   edges: (AnimePage_Media_relations_edges | null)[] | null;
-  nodes: (AnimePage_Media_relations_nodes | null)[] | null;
 }
 
 export interface AnimePage_Media_mediaListEntry {

@@ -22,6 +22,12 @@
     />
 
     <div class="description slide-up" v-html="data.Media.description"/>
+
+    <relations
+      class="slide-left"
+      :loading="loading"
+      :relations="data.Media.relations"
+    />
   </template>
 </ApolloQuery>
 </template>
@@ -33,13 +39,14 @@ import { pathOr } from 'rambda'
 import AnimeTitle from '../components/Anime/Title.vue'
 import Actions from '../components/Anime/Actions.vue'
 import CoverImage from '../components/Anime/CoverImage.vue'
+import Relations from '../components/Anime/Relations.vue'
 import RaisedButton from '../components/RaisedButton.vue'
 
 import AnimePageQuery from '../graphql/AnimePage.graphql'
 import { AnimePage } from '../graphql/AnimePage'
 
 @Component({
-  components: { Actions, CoverImage, AnimeTitle, RaisedButton },
+  components: { Relations, Actions, CoverImage, AnimeTitle, RaisedButton },
 })
 export default class Anime extends Vue {
   public get id() {
@@ -108,6 +115,12 @@ $shadow: 1px 5px 15px rgba(0, 0, 0, 0.5);
     box-shadow: $shadow;
     user-select: initial;
   }
+
+  & > .relations {
+    grid-column: 3 / span 1;
+    grid-row: 2 / 4;
+    align-self: flex-start;
+  }
 }
 
 .route-enter-active,
@@ -116,7 +129,8 @@ $shadow: 1px 5px 15px rgba(0, 0, 0, 0.5);
   transition: background-color 0.75s;
 
   & .slide-up,
-  & .slide-down {
+  & .slide-down,
+  & .slide-left {
     transition: transform 0.75s, opacity 0.75s;
   }
 }
@@ -133,6 +147,10 @@ $shadow: 1px 5px 15px rgba(0, 0, 0, 0.5);
     &up {
       opacity: 0;
       transform: translateY(10%);
+    }
+    &left {
+      opacity: 0;
+      transform: translateX(10%);
     }
   }
 }

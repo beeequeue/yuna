@@ -24,11 +24,12 @@ query AnimePage($id: Int){
     relations {
       edges {
         relationType
-      }
-      nodes {
-        id
-        title {
-          userPreferred
+        node {
+          id
+          title {
+            userPreferred
+          }
+          bannerImage
         }
       }
     }
