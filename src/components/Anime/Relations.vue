@@ -25,10 +25,11 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import * as R from 'rambda'
 import { mdiArrowLeftBold, mdiArrowRightBold } from '@mdi/js'
 
-import { prop } from '../../utils'
+import Icon from '../Icon.vue'
 import { AnimePage_Media_relations } from '../../graphql/AnimePage'
 import { MediaRelation } from '../../graphql-types'
-import Icon from '../Icon'
+import { prop } from '../../utils'
+
 @Component({
   components: { Icon },
 })
@@ -43,6 +44,7 @@ export default class Relations extends Vue {
 
     return R.filter(
       edge =>
+        edge != null &&
         R.contains(edge.relationType, [
           MediaRelation.PREQUEL,
           MediaRelation.SEQUEL,

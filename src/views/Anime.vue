@@ -21,7 +21,10 @@
       :title="data.Media.title"
     />
 
-    <div class="description slide-up" v-html="data.Media.description"/>
+    <center-container
+      :loading="loading"
+      :content="data.Media.description"
+    />
 
     <relations
       class="slide-left"
@@ -40,13 +43,21 @@ import AnimeTitle from '../components/Anime/Title.vue'
 import Actions from '../components/Anime/Actions.vue'
 import CoverImage from '../components/Anime/CoverImage.vue'
 import Relations from '../components/Anime/Relations.vue'
+import CenterContainer from '../components/Anime/CenterContainer.vue'
 import RaisedButton from '../components/RaisedButton.vue'
 
 import AnimePageQuery from '../graphql/AnimePage.graphql'
 import { AnimePage } from '../graphql/AnimePage'
 
 @Component({
-  components: { Relations, Actions, CoverImage, AnimeTitle, RaisedButton },
+  components: {
+    CenterContainer,
+    Relations,
+    Actions,
+    CoverImage,
+    AnimeTitle,
+    RaisedButton,
+  },
 })
 export default class Anime extends Vue {
   public get id() {
@@ -104,16 +115,10 @@ $shadow: 1px 5px 15px rgba(0, 0, 0, 0.5);
     grid-row: 1 / span 1;
   }
 
-  & > .description {
+  & > .center-container {
     grid-column: 2 / span 1;
-    grid-row: 2 / 4;
-    align-self: flex-start;
-    padding: 15px 20px;
-    background: $dark;
-    border-radius: 5px;
-    text-align: left;
-    box-shadow: $shadow;
-    user-select: initial;
+    grid-row: 2 / span 2;
+    /*align-self: stretch;*/
   }
 
   & > .relations {

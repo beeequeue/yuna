@@ -8,10 +8,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { prop } from '../utils'
 
 @Component
 export default class Icon extends Vue {
-  @Prop(String) public icon!: string
+  @Prop(prop(String, true))
+  public icon!: string
 }
 </script>
 
