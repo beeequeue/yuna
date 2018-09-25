@@ -22,8 +22,6 @@ import { AnimePage_Media_title } from '../../graphql/AnimePage'
 
 @Component
 export default class AnimeTitle extends Vue {
-  @Prop(prop(Boolean, true))
-  public loading!: boolean
   @Prop(prop(Object))
   public title?: AnimePage_Media_title
 

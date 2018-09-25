@@ -73,8 +73,6 @@ import { getQueue } from '../../state/user'
   components: { RaisedButton },
 })
 export default class Actions extends Vue {
-  @Prop(prop(Boolean, true))
-  public loading!: boolean
   @Prop(prop(String))
   public mediaListStatus!: MediaListStatus | null
 

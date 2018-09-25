@@ -1,7 +1,6 @@
 <template>
 <div class="center-container">
   <description
-    :loading="loading"
     :content="content"
   />
 </div>
@@ -18,8 +17,6 @@ import { prop } from '../../utils'
   components: { Description, Icon },
 })
 export default class CenterContainer extends Vue {
-  @Prop(prop(Boolean, true))
-  public loading!: boolean
   @Prop(prop(String))
   public content!: string | null
 }

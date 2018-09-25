@@ -34,8 +34,6 @@ import { prop } from '../../utils'
   components: { Icon },
 })
 export default class Relations extends Vue {
-  @Prop(prop(Boolean, true))
-  public loading!: boolean
   @Prop(prop(Object))
   public relations!: AnimePage_Media_relations | null
 

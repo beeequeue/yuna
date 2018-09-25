@@ -33,8 +33,6 @@ import { AnimePage_Media_mediaListEntry } from '../../graphql/AnimePage'
   components: { Icon },
 })
 export default class CoverImage extends Vue {
-  @Prop(prop(Boolean, true))
-  public loading!: boolean
   @Prop(prop(String, true))
   public src!: string
   @Prop(prop(Object))

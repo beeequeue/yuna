@@ -3,7 +3,6 @@
   <template v-if="data && data.Media" slot-scope="{ result: { loading, error, data } }">
     <cover-image
       class="slide-down"
-      :loading="loading"
       :src="data.Media.coverImage.large"
       :mediaListEntry="getMediaListEntry(data)"
       :length="data.Media.episodes"
@@ -11,25 +10,21 @@
 
     <actions
       class="slide-up"
-      :loading="loading"
       :mediaListStatus="getMediaListStatus(data)"
     />
 
     <anime-title
       class="slide-down"
-      :loading="loading"
       :title="data.Media.title"
     />
 
     <center-container
       class="slide-up"
-      :loading="loading"
       :content="data.Media.description"
     />
 
     <relations
       class="slide-left"
-      :loading="loading"
       :relations="data.Media.relations"
     />
   </template>
