@@ -1,13 +1,15 @@
+import { MediaListStatus } from '../../graphql-types'
 <template>
 <transition name="fade">
-  <div class="actions">
+  <transition-group class="actions" tag="div">
     <raised-button
       v-if="!isOnList || (!isPlanning && !isWatching && !isCompleted)"
+      key="addEntry"
       :icon="addToListSvg"
       content="Set as Planning"
     />
 
-    <div v-if="isWatching" class="multi-button">
+    <div v-if="isWatching" class="multi-button" key="isWatchingProgress">
       <raised-button
         content="+"
       />
@@ -16,9 +18,9 @@
         content="-"
       />
     </div>
-    <div v-if="isWatching" class="multi-button">
+    <div v-if="isWatching" class="multi-button" key="isWatching">
       <raised-button
-        content="Complete"
+        content="Edit"
       />
 
       <raised-button
@@ -29,27 +31,31 @@
 
     <raised-button
       v-if="isCompleted"
+      key="setToRepeating"
       :icon="setToRepeatSvg"
       content="Set as Repeating"
     />
 
     <raised-button
       v-if="!isInQueue"
+      key="addToQueue"
       :icon="addToQueueSvg"
       content="Add to Queue"
     />
 
     <raised-button
+      key="goToNichijou"
       @click.native="$router.push('/anime/10165')"
       content="Go to Nichijou"
     />
 
     <raised-button
+      key="goTo404"
       @click.native="$router.push(`/anime/404}`)"
       type="danger"
       content="Go to 404"
     />
-  </div>
+  </transition-group>
 </transition>
 </template>
 
@@ -116,6 +122,23 @@ export default class Actions extends Vue {
   & > .multi-button {
     margin-bottom: 10px;
     box-shadow: $shadow;
+    will-change: transform, opacity;
+
+    &.v-move,
+    &.v-enter-active {
+      transition: transform 0.5s, opacity 0.5s;
+    }
+
+    &.v-leave-active {
+      position: absolute;
+      transition: transform 0.5s;
+    }
+
+    &.v-enter,
+    &.v-leave-to {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
   }
 
   & > .multi-button {
