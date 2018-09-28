@@ -74,7 +74,8 @@ export default class Description extends Vue {
   flex-direction: column;
   background: $dark;
   border-radius: 5px;
-  max-height: 200px;
+  max-height: 180px;
+  box-shadow: $shadow;
   overflow: hidden;
   will-change: max-height;
   transition: max-height 0.5s;

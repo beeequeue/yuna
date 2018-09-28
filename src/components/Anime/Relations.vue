@@ -80,6 +80,7 @@ export default class Relations extends Vue {
     border-radius: 5px;
     overflow: hidden;
     cursor: pointer;
+    box-shadow: $shadow;
 
     & > .title {
       display: flex;

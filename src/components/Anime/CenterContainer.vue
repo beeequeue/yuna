@@ -28,5 +28,10 @@ export default class CenterContainer extends Vue {
 .center-container {
   position: relative;
   overflow: auto;
+  pointer-events: none;
+
+  & > * {
+    pointer-events: all;
+  }
 }
 </style>
