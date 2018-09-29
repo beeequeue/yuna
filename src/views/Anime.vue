@@ -23,6 +23,12 @@
       :content="data.Media.description"
     />
 
+    <episodes
+      v-if="data.Media.streamingEpisodes.length > 0"
+      class="slide-up"
+      :episodes="data.Media.streamingEpisodes"
+    />
+
     <relations
       class="slide-left"
       :relations="data.Media.relations"
@@ -35,11 +41,12 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { pathOr } from 'rambda'
 
+import CoverImage from '../components/Anime/CoverImage.vue'
 import AnimeTitle from '../components/Anime/Title.vue'
 import Actions from '../components/Anime/Actions.vue'
-import CoverImage from '../components/Anime/CoverImage.vue'
-import Relations from '../components/Anime/Relations.vue'
 import CenterContainer from '../components/Anime/CenterContainer.vue'
+import Episodes from '../components/Anime/Episodes.vue'
+import Relations from '../components/Anime/Relations.vue'
 import RaisedButton from '../components/RaisedButton.vue'
 
 import AnimePageQuery from '../graphql/AnimePage.graphql'
@@ -47,6 +54,7 @@ import { AnimePage } from '../graphql/AnimePage'
 
 @Component({
   components: {
+    Episodes,
     CenterContainer,
     Relations,
     Actions,
@@ -76,8 +84,6 @@ export default class Anime extends Vue {
 <style scoped lang="scss">
 @import '../colors';
 
-$shadow: 1px 5px 15px rgba(0, 0, 0, 0.5);
-
 .anime {
   position: absolute;
   top: 80px;
@@ -94,10 +100,13 @@ $shadow: 1px 5px 15px rgba(0, 0, 0, 0.5);
   user-select: none;
   z-index: 0 !important;
 
+  & > * {
+    will-change: opacity, transform;
+  }
+
   & > .cover-image {
     grid-column: 1 / span 1;
     grid-row: 1 / span 2;
-    will-change: transform, opacity;
   }
 
   & > .actions {
@@ -114,6 +123,12 @@ $shadow: 1px 5px 15px rgba(0, 0, 0, 0.5);
   & > .center-container {
     grid-column: 2 / span 1;
     grid-row: 2 / span 2;
+  }
+
+  & > .episodes {
+    grid-column: 2 / span 2;
+    grid-row: 3 / span 1;
+    align-self: flex-start;
   }
 
   & > .relations {

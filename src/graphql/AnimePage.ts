@@ -93,6 +93,26 @@ export interface AnimePage_Media_mediaListEntry {
   score: number | null;
 }
 
+export interface AnimePage_Media_streamingEpisodes {
+  __typename: "MediaStreamingEpisode";
+  /**
+   * Title of the episode
+   */
+  title: string | null;
+  /**
+   * The site location of the streaming episodes
+   */
+  site: string | null;
+  /**
+   * The url of the episode
+   */
+  url: string | null;
+  /**
+   * Url of episode image thumbnail
+   */
+  thumbnail: string | null;
+}
+
 export interface AnimePage_Media {
   __typename: "Media";
   /**
@@ -159,6 +179,10 @@ export interface AnimePage_Media {
    * The authenticated user's media list entry for the media
    */
   mediaListEntry: AnimePage_Media_mediaListEntry | null;
+  /**
+   * Data and links to legal streaming episodes on external sites
+   */
+  streamingEpisodes: (AnimePage_Media_streamingEpisodes | null)[] | null;
 }
 
 export interface AnimePage {
