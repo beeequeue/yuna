@@ -7,25 +7,30 @@ import { MediaListStatus } from '../../graphql-types'
       key="addEntry"
       :icon="addToListSvg"
       content="Set as Planning"
+      @click.native="sendNotImplementedToast"
     />
 
     <div v-if="isWatching" class="multi-button" key="isWatchingProgress">
       <raised-button
         content="+"
+        @click.native="sendNotImplementedToast"
       />
 
       <raised-button
         content="-"
+        @click.native="sendNotImplementedToast"
       />
     </div>
     <div v-if="isWatching" class="multi-button" key="isWatching">
       <raised-button
         content="Edit"
+        @click.native="sendNotImplementedToast"
       />
 
       <raised-button
         type="danger"
         content="Drop"
+        @click.native="sendNotImplementedToast"
       />
     </div>
 
@@ -34,6 +39,7 @@ import { MediaListStatus } from '../../graphql-types'
       key="setToRepeating"
       :icon="setToRepeatSvg"
       content="Set as Repeating"
+      @click.native="sendNotImplementedToast"
     />
 
     <raised-button
@@ -41,6 +47,7 @@ import { MediaListStatus } from '../../graphql-types'
       key="addToQueue"
       :icon="addToQueueSvg"
       content="Add to Queue"
+      @click.native="sendNotImplementedToast"
     />
 
     <raised-button
@@ -68,6 +75,7 @@ import RaisedButton from '../RaisedButton.vue'
 import { prop } from '../../utils'
 import { MediaListStatus } from '../../graphql-types'
 import { getQueue } from '../../state/user'
+import { sendNotImplementedToast } from '../../state/app'
 
 @Component({
   components: { RaisedButton },
@@ -103,6 +111,10 @@ export default class Actions extends Vue {
 
   public get isInQueue() {
     return any(propEq('anilist', this.id))(getQueue(this.$store))
+  }
+
+  public sendNotImplementedToast() {
+    sendNotImplementedToast(this.$store)
   }
 }
 </script>

@@ -4,7 +4,7 @@ import {
   NotificationFunctionOptions,
   NotificationTypes,
 } from 'vue-notifications'
-import { propEq, reject } from 'rambda'
+import { merge, propEq, reject } from 'rambda'
 import { activeWindow } from 'electron-util'
 
 import { RootState } from '@/state/store'
@@ -28,6 +28,8 @@ interface Toast {
   message: string
   type: NotificationTypes
 }
+
+type ToastOptions = NotificationFunctionOptions<NotificationTypes>
 
 type AddToastMutationOptions = NotificationFunctionOptions<
   NotificationTypes
@@ -106,20 +108,32 @@ export const app = {
       new Notification('New version downloaded, restart to start using it!')
     },
 
-    sendToast(
-      context: AppContext,
-      options: NotificationFunctionOptions<NotificationTypes>,
-    ) {
-      const id = generateId()
-      addToast(context, { id, ...options })
+    sendToast(context: AppContext, options: ToastOptions) {
+      const realOptions = merge(
+        {
+          timeout: 4000,
+        },
+        options,
+      )
 
-      if (options.consoleMessage && (console as any)[options.type]) {
-        ;(console as any)[options.type](options.consoleMessage)
+      const id = generateId()
+      addToast(context, { id, ...realOptions })
+
+      if (realOptions.consoleMessage && (console as any)[realOptions.type]) {
+        ;(console as any)[realOptions.type](realOptions.consoleMessage)
       }
 
       setTimeout(() => {
         removeToast(context, id)
-      }, options.timeout)
+      }, realOptions.timeout)
+    },
+
+    sendNotImplementedToast(context: AppContext) {
+      sendToast(context, {
+        type: 'error',
+        title: 'Not implemented',
+        message: 'This has not been added yet!',
+      })
     },
 
     toggleFullscreen(context: AppContext) {
@@ -153,4 +167,7 @@ const setFullscreen = commit(app.mutations.setFullscreen)
 
 export const toggleFullscreen = dispatch(app.actions.toggleFullscreen)
 export const sendToast = dispatch(app.actions.sendToast)
+export const sendNotImplementedToast = dispatch(
+  app.actions.sendNotImplementedToast,
+)
 export const notifyDownloadDone = dispatch(app.actions.notifyDownloadDone)

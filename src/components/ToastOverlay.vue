@@ -51,6 +51,7 @@ export default class ToastOverlay extends Vue {
   right: 20px;
   pointer-events: none;
   width: 750px;
+  z-index: 100;
 
   & > span {
     position: absolute;
