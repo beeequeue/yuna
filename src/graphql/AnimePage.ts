@@ -91,6 +91,10 @@ export interface AnimePage_Media_mediaListEntry {
    * The score of the entry
    */
   score: number | null;
+  /**
+   * The amount of times the user has rewatched/read the media
+   */
+  repeat: number | null;
 }
 
 export interface AnimePage_Media_streamingEpisodes {

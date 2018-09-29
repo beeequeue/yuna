@@ -1,6 +1,6 @@
 <template>
 <div class="cover-image">
-  <img :src="src" class="cover-image slide-down"/>
+  <img :src="src" class="image"/>
 
   <span
     v-if="mediaListStatus"
@@ -9,6 +9,13 @@
   >
     <icon v-if="statusIcon" :icon="statusIcon"/>
     {{ statusString }}
+
+    <icon
+      v-if="repeatedTimes > 0"
+      class="repeat"
+      :icon="repeatSvg"
+    />
+    {{repeatedTimes > 0 ? repeatedTimes : null}}
   </span>
 </div>
 </template>
@@ -40,8 +47,14 @@ export default class CoverImage extends Vue {
   @Prop(prop(Number))
   public length!: number | null
 
+  public repeatSvg = mdiRepeat
+
   public get mediaListStatus(): MediaListStatus | null {
     return pathOr(null, ['status'], this.mediaListEntry)
+  }
+
+  public get repeatedTimes(): number {
+    return pathOr(0, ['repeat'], this.mediaListEntry)
   }
 
   public get lowercaseStatus() {
@@ -99,8 +112,16 @@ export default class CoverImage extends Vue {
   display: block;
   position: relative;
   width: 100%;
+  height: 280px;
   border-radius: 5px;
   box-shadow: $shadow;
+  overflow: hidden;
+
+  & > .image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
   & > .status {
     position: absolute;
@@ -118,8 +139,12 @@ export default class CoverImage extends Vue {
     & > .icon {
       height: 1em;
       width: 1em;
-      margin-right: 5px;
+      margin: 0 5px;
       fill: $white;
+
+      &.repeat {
+        margin-right: 1px;
+      }
     }
   }
 }

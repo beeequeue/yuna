@@ -38,6 +38,7 @@ query AnimePage($id: Int){
       progress
       status
       score
+      repeat
     }
     streamingEpisodes {
       title
