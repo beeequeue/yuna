@@ -237,7 +237,7 @@ export default class Player extends Vue {
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  box-shadow: $shadow;
 
   & > video {
     background: #050505;
