@@ -1,24 +1,39 @@
-import { MediaListStatus } from '../../graphql-types'
 <template>
 <transition name="fade">
   <transition-group class="actions" tag="div">
     <raised-button
-      v-if="!isOnList || (!isPlanning && !isWatching && !isCompleted)"
+      v-if="!isOnList || (!isPlanning && !isWatching && !isCompleted && !isDropped)"
       key="addEntry"
       :icon="addToListSvg"
       content="Set as Planning"
-      @click.native="sendNotImplementedToast"
+      @click.native="addEntryMutation(MediaListStatus.PLANNING)"
+    />
+
+    <raised-button
+      v-if="isPlanning"
+      key="startEntry"
+      :icon="addToQueueSvg"
+      content="Set as Watching"
+      @click.native="statusMutation(MediaListStatus.CURRENT)"
+    />
+
+    <raised-button
+      v-if="isDropped"
+      key="resumeEntry"
+      :icon="setToRepeatSvg"
+      content="Resume"
+      @click.native="statusMutation(MediaListStatus.CURRENT)"
     />
 
     <div v-if="isWatching" class="multi-button" key="isWatchingProgress">
       <raised-button
         content="+"
-        @click.native="sendNotImplementedToast"
+        @click.native="progressMutation(mediaListEntry.progress + 1)"
       />
 
       <raised-button
         content="-"
-        @click.native="sendNotImplementedToast"
+        @click.native="progressMutation(mediaListEntry.progress - 1)"
       />
     </div>
     <div v-if="isWatching" class="multi-button" key="isWatching">
@@ -30,7 +45,7 @@ import { MediaListStatus } from '../../graphql-types'
       <raised-button
         type="danger"
         content="Drop"
-        @click.native="sendNotImplementedToast"
+        @click.native="statusMutation(MediaListStatus.DROPPED)"
       />
     </div>
 
@@ -39,7 +54,7 @@ import { MediaListStatus } from '../../graphql-types'
       key="setToRepeating"
       :icon="setToRepeatSvg"
       content="Set as Repeating"
-      @click.native="sendNotImplementedToast"
+      @click.native="statusMutation(MediaListStatus.REPEATING)"
     />
 
     <raised-button
@@ -68,22 +83,35 @@ import { MediaListStatus } from '../../graphql-types'
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { any, propEq } from 'rambda'
+import { any, pathOr, propEq } from 'rambda'
 import { mdiPlaylistPlay, mdiPlaylistPlus, mdiRepeat } from '@mdi/js'
 
 import RaisedButton from '../RaisedButton.vue'
-import { prop } from '../../utils'
-import { MediaListStatus } from '../../graphql-types'
 import { getQueue } from '../../state/user'
 import { sendNotImplementedToast } from '../../state/app'
+import { AnimePageQuery_Media_mediaListEntry } from '../../graphql/AnimePageQuery'
+import {
+  addEntryMutation,
+  setProgressMutation,
+  setStatusMutation,
+} from '../../graphql/mutations'
+import { MediaListStatus } from '../../graphql-types'
+import { prop } from '../../utils'
 
 @Component({
   components: { RaisedButton },
 })
 export default class Actions extends Vue {
-  @Prop(prop(String))
-  public mediaListStatus!: MediaListStatus | null
+  @Prop(prop(Number))
+  public mediaId!: number | null
+  @Prop(prop(Object))
+  public mediaListEntry!: AnimePageQuery_Media_mediaListEntry | null
 
+  public get mediaListStatus(): MediaListStatus | null {
+    return pathOr(null, ['status'], this.mediaListEntry)
+  }
+
+  public MediaListStatus = MediaListStatus
   public addToListSvg = mdiPlaylistPlus
   public addToQueueSvg = mdiPlaylistPlay
   public setToRepeatSvg = mdiRepeat
@@ -93,7 +121,7 @@ export default class Actions extends Vue {
   }
 
   public get isOnList() {
-    return this.mediaListStatus !== null
+    return this.mediaListStatus != null
   }
 
   public get isPlanning() {
@@ -109,12 +137,40 @@ export default class Actions extends Vue {
     return this.mediaListStatus === MediaListStatus.COMPLETED
   }
 
+  public get isDropped() {
+    return this.mediaListStatus === MediaListStatus.DROPPED
+  }
+
   public get isInQueue() {
     return any(propEq('anilist', this.id))(getQueue(this.$store))
   }
 
   public sendNotImplementedToast() {
     sendNotImplementedToast(this.$store)
+  }
+
+  public async statusMutation(status: MediaListStatus) {
+    if (!this.mediaListEntry) {
+      return console.error('No entry found')
+    }
+
+    await setStatusMutation(this.$apollo, this.mediaListEntry.id, status)
+  }
+
+  public async progressMutation(progress: number) {
+    if (!this.mediaListEntry) {
+      return console.error('No entry found')
+    }
+
+    await setProgressMutation(this.$apollo, this.mediaListEntry.id, progress)
+  }
+
+  public async addEntryMutation(status: MediaListStatus) {
+    if (!this.mediaId) {
+      return console.error('No media found')
+    }
+
+    await addEntryMutation(this.$apollo, this.mediaId, status)
   }
 }
 </script>

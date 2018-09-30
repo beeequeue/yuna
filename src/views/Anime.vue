@@ -10,7 +10,8 @@
 
     <actions
       class="slide-up"
-      :mediaListStatus="getMediaListStatus(data)"
+      :mediaId="data.Media.id"
+      :mediaListEntry="data.Media.mediaListEntry"
     />
 
     <anime-title
