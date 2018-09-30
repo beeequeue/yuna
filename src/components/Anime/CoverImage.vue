@@ -34,7 +34,7 @@ import {
 import Icon from '../Icon.vue'
 import { prop } from '../../utils'
 import { MediaListStatus } from '../../graphql-types'
-import { AnimePage_Media_mediaListEntry } from '../../graphql/AnimePage'
+import { AnimePageQuery_Media_mediaListEntry } from '../../graphql/AnimePageQuery'
 
 @Component({
   components: { Icon },
@@ -43,7 +43,7 @@ export default class CoverImage extends Vue {
   @Prop(prop(String, true))
   public src!: string
   @Prop(prop(Object))
-  public mediaListEntry!: AnimePage_Media_mediaListEntry | null
+  public mediaListEntry!: AnimePageQuery_Media_mediaListEntry | null
   @Prop(prop(Number))
   public length!: number | null
 

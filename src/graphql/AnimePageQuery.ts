@@ -4,10 +4,10 @@
 import { MediaStatus, MediaRelation, MediaListStatus } from "./..\\graphql-types";
 
 // ====================================================
-// GraphQL query operation: AnimePage
+// GraphQL query operation: AnimePageQuery
 // ====================================================
 
-export interface AnimePage_Media_title {
+export interface AnimePageQuery_Media_title {
   __typename: "MediaTitle";
   /**
    * The official english title
@@ -27,7 +27,7 @@ export interface AnimePage_Media_title {
   userPreferred: string | null;
 }
 
-export interface AnimePage_Media_coverImage {
+export interface AnimePageQuery_Media_coverImage {
   __typename: "MediaCoverImage";
   /**
    * The cover image of media at its largest size
@@ -35,7 +35,7 @@ export interface AnimePage_Media_coverImage {
   large: string | null;
 }
 
-export interface AnimePage_Media_relations_edges_node_title {
+export interface AnimePageQuery_Media_relations_edges_node_title {
   __typename: "MediaTitle";
   /**
    * The currently authenticated users preferred title language. Default romaji for non-authenticated
@@ -43,7 +43,7 @@ export interface AnimePage_Media_relations_edges_node_title {
   userPreferred: string | null;
 }
 
-export interface AnimePage_Media_relations_edges_node {
+export interface AnimePageQuery_Media_relations_edges_node {
   __typename: "Media";
   /**
    * The id of the media
@@ -52,28 +52,28 @@ export interface AnimePage_Media_relations_edges_node {
   /**
    * The official titles of the media in various languages
    */
-  title: AnimePage_Media_relations_edges_node_title | null;
+  title: AnimePageQuery_Media_relations_edges_node_title | null;
   /**
    * The banner image of the media
    */
   bannerImage: string | null;
 }
 
-export interface AnimePage_Media_relations_edges {
+export interface AnimePageQuery_Media_relations_edges {
   __typename: "MediaEdge";
   /**
    * The type of relation to the parent model
    */
   relationType: MediaRelation | null;
-  node: AnimePage_Media_relations_edges_node | null;
+  node: AnimePageQuery_Media_relations_edges_node | null;
 }
 
-export interface AnimePage_Media_relations {
+export interface AnimePageQuery_Media_relations {
   __typename: "MediaConnection";
-  edges: (AnimePage_Media_relations_edges | null)[] | null;
+  edges: (AnimePageQuery_Media_relations_edges | null)[] | null;
 }
 
-export interface AnimePage_Media_mediaListEntry {
+export interface AnimePageQuery_Media_mediaListEntry {
   __typename: "MediaList";
   /**
    * The id of the list entry
@@ -97,7 +97,7 @@ export interface AnimePage_Media_mediaListEntry {
   repeat: number | null;
 }
 
-export interface AnimePage_Media_streamingEpisodes {
+export interface AnimePageQuery_Media_streamingEpisodes {
   __typename: "MediaStreamingEpisode";
   /**
    * Title of the episode
@@ -117,7 +117,7 @@ export interface AnimePage_Media_streamingEpisodes {
   thumbnail: string | null;
 }
 
-export interface AnimePage_Media {
+export interface AnimePageQuery_Media {
   __typename: "Media";
   /**
    * The id of the media
@@ -130,7 +130,7 @@ export interface AnimePage_Media {
   /**
    * The official titles of the media in various languages
    */
-  title: AnimePage_Media_title | null;
+  title: AnimePageQuery_Media_title | null;
   /**
    * Short description of the media's story and characters
    */
@@ -174,28 +174,28 @@ export interface AnimePage_Media {
   /**
    * The cover images of the media
    */
-  coverImage: AnimePage_Media_coverImage | null;
+  coverImage: AnimePageQuery_Media_coverImage | null;
   /**
    * Other media in the same or connecting franchise
    */
-  relations: AnimePage_Media_relations | null;
+  relations: AnimePageQuery_Media_relations | null;
   /**
    * The authenticated user's media list entry for the media
    */
-  mediaListEntry: AnimePage_Media_mediaListEntry | null;
+  mediaListEntry: AnimePageQuery_Media_mediaListEntry | null;
   /**
    * Data and links to legal streaming episodes on external sites
    */
-  streamingEpisodes: (AnimePage_Media_streamingEpisodes | null)[] | null;
+  streamingEpisodes: (AnimePageQuery_Media_streamingEpisodes | null)[] | null;
 }
 
-export interface AnimePage {
+export interface AnimePageQuery {
   /**
    * Media query
    */
-  Media: AnimePage_Media | null;
+  Media: AnimePageQuery_Media | null;
 }
 
-export interface AnimePageVariables {
+export interface AnimePageQueryVariables {
   id?: number | null;
 }

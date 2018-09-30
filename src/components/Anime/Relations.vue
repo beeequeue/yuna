@@ -26,7 +26,7 @@ import * as R from 'rambda'
 import { mdiArrowLeftBold, mdiArrowRightBold } from '@mdi/js'
 
 import Icon from '../Icon.vue'
-import { AnimePage_Media_relations } from '../../graphql/AnimePage'
+import { AnimePageQuery_Media_relations } from '../../graphql/AnimePageQuery'
 import { MediaRelation } from '../../graphql-types'
 import { prop } from '../../utils'
 
@@ -35,7 +35,7 @@ import { prop } from '../../utils'
 })
 export default class Relations extends Vue {
   @Prop(prop(Object))
-  public relations!: AnimePage_Media_relations | null
+  public relations!: AnimePageQuery_Media_relations | null
 
   public get relevantRelations() {
     if (!this.relations || !this.relations.edges) return []

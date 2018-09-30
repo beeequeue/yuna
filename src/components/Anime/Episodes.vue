@@ -35,13 +35,13 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { path } from 'rambda'
 import { Key } from 'ts-key-enum'
 
-import { AnimePage_Media_streamingEpisodes as StreamingEpisodes } from '../../graphql/AnimePage'
+import { AnimePageQuery_Media_streamingEpisodes as StreamingEpisodes } from '../../graphql/AnimePageQuery'
 import { setCurrentEpisode } from '../../state/app'
 import { fetchEpisode } from '../../lib/crunchyroll'
 import { prop } from '../../utils'
 
-interface Episode {
-  __typename: 'MediaStreamingEpisode'
+// Cause we can't use Required on x | null types :(
+interface Episode extends StreamingEpisodes {
   title: string
   site: string
   url: string

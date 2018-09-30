@@ -49,8 +49,8 @@ import Episodes from '../components/Anime/Episodes.vue'
 import Relations from '../components/Anime/Relations.vue'
 import RaisedButton from '../components/RaisedButton.vue'
 
-import AnimePageQuery from '../graphql/AnimePage.graphql'
-import { AnimePage } from '../graphql/AnimePage'
+import ANIME_PAGE_QUERY from '../graphql/AnimePageQuery.graphql'
+import { AnimePageQuery } from '../graphql/AnimePageQuery'
 
 @Component({
   components: {
@@ -68,16 +68,16 @@ export default class Anime extends Vue {
     return Number(this.$route.params.id)
   }
 
-  public getMediaListEntry(data: AnimePage) {
+  public getMediaListEntry(data: AnimePageQuery) {
     return pathOr(null, ['Media', 'mediaListEntry'], data)
   }
 
-  public getMediaListStatus(data: AnimePage) {
+  public getMediaListStatus(data: AnimePageQuery) {
     return pathOr(null, ['Media', 'mediaListEntry', 'status'], data)
   }
 
-  animeQuery = AnimePageQuery
-  data?: AnimePage
+  animeQuery = ANIME_PAGE_QUERY
+  data?: AnimePageQuery
 }
 </script>
 

@@ -1,4 +1,4 @@
-query AnimePage($id: Int){
+query AnimePageQuery($id: Int){
   Media(id: $id, type: ANIME) {
     id
     idMal
