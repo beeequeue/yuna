@@ -33,8 +33,14 @@ export default class Item extends Vue {
   font-size: 1.25em;
   color: $white;
   text-decoration: none;
-
   cursor: pointer;
+
+  &.align-right {
+    justify-self: flex-end;
+  }
+  &.align-left {
+    justify-self: flex-start;
+  }
 
   & > .text {
     position: relative;
@@ -58,6 +64,10 @@ export default class Item extends Vue {
   }
 
   &:hover > .text > .underline {
+    width: 80%;
+  }
+
+  &.router-link-active > .text > .underline {
     width: 120%;
   }
 }

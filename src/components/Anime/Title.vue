@@ -42,16 +42,19 @@ export default class AnimeTitle extends Vue {
 
   & > div {
     font-family: 'Raleway', sans-serif;
-    margin: 5px 0;
+    padding: 5px 0;
     font-weight: 500;
     color: darken($white, 10%);
     text-align: left;
     text-shadow: 0 0 10px rgba(0, 0, 0, 0.75);
     user-select: initial;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
     order: 2;
 
     &.preferred {
-      margin: 0;
+      padding-top: 0;
       font-size: 2em;
       font-weight: 300;
       color: $white;
