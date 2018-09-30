@@ -1,39 +1,65 @@
 <template>
 <ApolloQuery class="anime" :query="animeQuery" :variables="{ id }">
-  <template v-if="data && data.Media" slot-scope="{ result: { loading, error, data } }">
-    <cover-image
-      class="slide-down"
-      :src="data.Media.coverImage.large"
-      :mediaListEntry="getMediaListEntry(data)"
-      :length="data.Media.episodes"
-    />
+  <template slot-scope="{ result: { loading, error, data } }">
+    <transition-group tag="span">
+      <div
+        v-if="error"
+        key="error"
+        class="error-container slide-down"
+      >
+        <h1>{{ error.graphQLErrors[0].message }}</h1>
 
-    <actions
-      class="slide-up"
-      :mediaId="data.Media.id"
-      :mediaListEntry="data.Media.mediaListEntry"
-    />
+        <raised-button
+          content="Go back"
+          @click.native="$router.back()"
+        />
+      </div>
 
-    <anime-title
-      class="slide-down"
-      :title="data.Media.title"
-    />
+      <cover-image
+        v-if="data && data.Media"
+        key="cover-image"
+        class="slide-down"
+        :src="data.Media.coverImage.large"
+        :mediaListEntry="getMediaListEntry(data)"
+        :length="data.Media.episodes"
+      />
 
-    <center-container
-      class="slide-up"
-      :content="data.Media.description"
-    />
+      <actions
+        v-if="data && data.Media"
+        key="actions"
+        class="slide-up"
+        :mediaId="data.Media.id"
+        :mediaListEntry="data.Media.mediaListEntry"
+      />
 
-    <episodes
-      v-if="data.Media.streamingEpisodes.length > 0"
-      class="slide-up"
-      :episodes="data.Media.streamingEpisodes"
-    />
+      <anime-title
+        v-if="data && data.Media"
+        key="title"
+        class="slide-down"
+        :title="data.Media.title"
+      />
 
-    <relations
-      class="slide-left"
-      :relations="data.Media.relations"
-    />
+      <center-container
+        v-if="data && data.Media"
+        key="center"
+        class="slide-up"
+        :content="data.Media.description"
+      />
+
+      <episodes
+        key="episodes"
+        v-if="data && data.Media && data.Media.streamingEpisodes.length > 0"
+        class="slide-up"
+        :episodes="data.Media.streamingEpisodes"
+      />
+
+      <relations
+        v-if="data && data.Media"
+        key="relations"
+        class="slide-left"
+        :relations="data.Media.relations"
+      />
+    </transition-group>
   </template>
 </ApolloQuery>
 </template>
@@ -91,51 +117,100 @@ export default class Anime extends Vue {
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 25px;
-  display: grid;
   background-color: rgba(0, 0, 0, 0.65);
-  cursor: auto;
-  grid-template-columns: 200px 600px 1fr;
-  grid-template-rows: 82px auto 1fr;
-  grid-gap: 20px;
-  user-select: none;
-  z-index: 0 !important;
 
-  & > * {
-    will-change: opacity, transform;
-  }
+  & > span {
+    position: relative;
+    padding: 25px;
+    display: grid;
+    cursor: auto;
+    grid-template-columns: 200px 600px 1fr;
+    grid-template-rows: 82px auto 1fr;
+    grid-gap: 20px;
+    user-select: none;
+    z-index: 0 !important;
 
-  & > .cover-image {
-    grid-column: 1 / span 1;
-    grid-row: 1 / span 2;
-  }
+    & > * {
+      will-change: opacity, transform;
 
-  & > .actions {
-    grid-column: 1 / span 1;
-    grid-row: 3 / span 1;
-    align-self: stretch;
-  }
+      /*
+        Need to duplicate enter animations here
+        due to initial data loading slightly after entering the route
+      */
 
-  & > .title {
-    grid-column: 2 / span 1;
-    grid-row: 1 / span 1;
-  }
+      &.v-enter-active {
+        transition: transform 0.75s, opacity 0.75s;
+      }
 
-  & > .center-container {
-    grid-column: 2 / span 1;
-    grid-row: 2 / span 2;
-  }
+      &.v-enter {
+        &.slide- {
+          &down {
+            opacity: 0;
+            transform: translateY(-10%);
+          }
+          &up {
+            opacity: 0;
+            transform: translateY(10%);
+          }
+          &left {
+            opacity: 0;
+            transform: translateX(10%);
+          }
+        }
+      }
+    }
 
-  & > .episodes {
-    grid-column: 2 / span 2;
-    grid-row: 3 / span 1;
-    align-self: flex-start;
-  }
+    & > .error-container {
+      position: fixed;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      text-shadow: 0 0 5px black;
 
-  & > .relations {
-    grid-column: 3 / span 1;
-    grid-row: 2 / 4;
-    align-self: flex-start;
+      & > h1 {
+        font-family: 'Raleway', sans-serif;
+      }
+
+      & > .button {
+        font-size: 1.5em;
+      }
+    }
+
+    & > .cover-image {
+      grid-column: 1 / span 1;
+      grid-row: 1 / span 2;
+    }
+
+    & > .actions {
+      grid-column: 1 / span 1;
+      grid-row: 3 / span 1;
+      align-self: stretch;
+    }
+
+    & > .title {
+      grid-column: 2 / span 1;
+      grid-row: 1 / span 1;
+    }
+
+    & > .center-container {
+      grid-column: 2 / span 1;
+      grid-row: 2 / span 2;
+    }
+
+    & > .episodes {
+      grid-column: 2 / span 2;
+      grid-row: 3 / span 1;
+      align-self: flex-start;
+    }
+
+    & > .relations {
+      grid-column: 3 / span 1;
+      grid-row: 2 / 4;
+      align-self: flex-start;
+    }
   }
 }
 

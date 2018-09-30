@@ -38,7 +38,7 @@
     </div>
     <div v-if="isWatching" class="multi-button" key="isWatching">
       <raised-button
-        content="Edit"
+        content=""
         @click.native="sendNotImplementedToast"
       />
 
@@ -66,16 +66,10 @@
     />
 
     <raised-button
-      key="goToNichijou"
-      @click.native="$router.push('/anime/10165')"
-      content="Go to Nichijou"
-    />
-
-    <raised-button
-      key="goTo404"
-      @click.native="$router.push(`/anime/404}`)"
-      type="danger"
-      content="Go to 404"
+      v-if="isOnList"
+      key="editItem"
+      content="Edit"
+      @click.native="sendNotImplementedToast"
     />
   </transition-group>
 </transition>
