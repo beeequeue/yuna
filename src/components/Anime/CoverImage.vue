@@ -74,7 +74,9 @@ export default class CoverImage extends Vue {
           this.length
         }`
       case MediaListStatus.DROPPED:
-        return 'Dropped'
+        return `Dropped ${pathOr(0, ['progress'], this.mediaListEntry)}/${
+          this.length
+        }`
       case MediaListStatus.PAUSED:
         return 'Paused'
       case MediaListStatus.PLANNING:
