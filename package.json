@@ -28,7 +28,7 @@
     "vue": "^2.5.17",
     "vue-apollo": "^3.0.0-beta.25",
     "vue-class-component": "^6.2.0",
-    "vue-property-decorator": "^7.0.0",
+    "vue-property-decorator": "^7.1.1",
     "vue-router": "^3.0.1",
     "vuedraggable": "^2.16.0",
     "vuex": "^3.0.1",
@@ -43,18 +43,18 @@
     "electron": "^2.0.9",
     "electron-builder": "20.28.4",
     "graphql-tag": "^2.9.2",
-    "lint-staged": "^7.2.2",
+    "lint-staged": "^7.3.0",
     "node-sass": "^4.9.3",
     "sass-loader": "^7.1.0",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.15.0",
     "tslint-config-standard": "^8.0.1",
-    "typescript": "^3.0.3",
-    "vue-cli-plugin-apollo": "^0.16.4",
+    "typescript": "^3.1.1",
+    "vue-cli-plugin-apollo": "^0.17.0",
     "vue-cli-plugin-electron-builder": "^1.0.0-rc.3",
-    "vue-svg-loader": "^0.9.0",
+    "vue-svg-loader": "^0.10.0",
     "vue-template-compiler": "^2.5.17",
-    "webpack": "^4.19.0"
+    "webpack": "^4.20.2"
   },
   "gitHooks": {
     "pre-commit": "lint-staged"
