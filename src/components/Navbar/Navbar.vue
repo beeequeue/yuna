@@ -4,14 +4,14 @@
     <icon class="button" :icon="homeOutlineSvg"/>
   </router-link>
 
-  <item text="Queue" path="/queue"/>
+  <item text="Queue" path="/queue" class="align-right"/>
 
-  <span>Search goes here</span>
+  <search/>
 
-  <item text="List" path="/list"/>
+  <item text="List" path="/list" class="align-left"/>
 
   <icon
-    class="button"
+    class="button align-left"
     :class="openClass"
     :icon="settingsSvg"
     @click.native="toggleOpen"
@@ -31,10 +31,11 @@ import { mdiHomeOutline, mdiSettingsOutline } from '@mdi/js'
 
 import Item from './Item.vue'
 import Icon from '../Icon.vue'
+import Search from '../Search/Search.vue'
 import SettingsDropdown from './SettingsDropdown.vue'
 
 @Component({
-  components: { SettingsDropdown, Icon, Item },
+  components: { Search, SettingsDropdown, Icon, Item },
 })
 export default class Navbar extends Vue {
   public get openClass() {
@@ -60,7 +61,8 @@ export default class Navbar extends Vue {
 .container {
   position: relative;
   display: grid;
-  grid-template-columns: 50px 1fr auto 1fr 50px;
+  grid-template-columns: 50px 1fr 1.5fr 1fr 50px;
+  grid-gap: 50px;
   justify-items: center;
   align-items: center;
   background: $dark;
@@ -74,7 +76,6 @@ export default class Navbar extends Vue {
     height: 50px;
     padding: 10px;
     fill: $white;
-
     cursor: pointer;
 
     transition: background 0.25s, fill 0.25s, color 0.25s;

@@ -191,7 +191,7 @@ export default class Actions extends Vue {
 
     &.v-leave-active {
       position: absolute;
-      transition: transform 0.5s;
+      transition: opacity 0.5s;
     }
 
     &.v-enter,
