@@ -24,7 +24,7 @@ let mainWindow: any
 protocol.registerStandardSchemes(['app'], { secure: true })
 
 // Register extra stuff
-electronDebug({ enabled: process.env.NODE_ENV === 'production' })
+electronDebug()
 
 function createMainWindow() {
   const window = new BrowserWindow({

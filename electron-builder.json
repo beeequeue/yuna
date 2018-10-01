@@ -2,5 +2,8 @@
   "productName": "Crunch",
   "linux": {
     "category": "Video"
+  },
+  "mac": {
+    "category": "public.app-category.entertainment"
   }
 }
