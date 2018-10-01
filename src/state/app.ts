@@ -128,6 +128,14 @@ export const app = {
       }, realOptions.timeout)
     },
 
+    sendErrorToast(context: AppContext, error: string) {
+      sendToast(context, {
+        type: 'error',
+        title: 'An error occurred!',
+        message: error,
+      })
+    },
+
     sendNotImplementedToast(context: AppContext) {
       sendToast(context, {
         type: 'error',
@@ -167,6 +175,7 @@ const setFullscreen = commit(app.mutations.setFullscreen)
 
 export const toggleFullscreen = dispatch(app.actions.toggleFullscreen)
 export const sendToast = dispatch(app.actions.sendToast)
+export const sendErrorToast = dispatch(app.actions.sendErrorToast)
 export const sendNotImplementedToast = dispatch(
   app.actions.sendNotImplementedToast,
 )

@@ -53,7 +53,11 @@ import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
 import { Episode } from '../../types'
 import { fetchStream } from '../../lib/crunchyroll'
-import { getIsFullscreen, toggleFullscreen } from '../../state/app'
+import {
+  getIsFullscreen,
+  sendErrorToast,
+  toggleFullscreen,
+} from '../../state/app'
 import { getKeydownHandler, KeybindingAction } from '../../state/settings'
 
 @Component({
@@ -172,9 +176,14 @@ export default class Player extends Vue {
     this.loading = true
     this.loaded = false
 
-    this.streamUrl = (await fetchStream(
-      this.episode.crunchyroll.id,
-    )).streams[0].url
+    try {
+      this.streamUrl = (await fetchStream(
+        this.episode.crunchyroll.id,
+      )).streams[0].url
+    } catch (e) {
+      return sendErrorToast(this.$store, e)
+    }
+
     if (!this.streamUrl) return
 
     const hls = new Hls()

@@ -36,8 +36,9 @@ import { path } from 'rambda'
 import { Key } from 'ts-key-enum'
 
 import { AnimePageQuery_Media_streamingEpisodes as StreamingEpisodes } from '../../graphql/AnimePageQuery'
-import { setCurrentEpisode } from '../../state/app'
+import { sendErrorToast, setCurrentEpisode } from '../../state/app'
 import { fetchEpisode } from '../../lib/crunchyroll'
+import { Episode as IEpisode } from '../../types'
 import { prop } from '../../utils'
 
 // Cause we can't use Required on x | null types :(
@@ -132,7 +133,15 @@ export default class Episodes extends Vue {
   }
 
   public async setCurrentEpisode(id: string) {
-    setCurrentEpisode(this.$store, await fetchEpisode(id))
+    let episode: IEpisode
+
+    try {
+      episode = await fetchEpisode(id)
+    } catch (e) {
+      return sendErrorToast(this.$store, e)
+    }
+
+    setCurrentEpisode(this.$store, episode)
   }
 }
 </script>

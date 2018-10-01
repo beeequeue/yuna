@@ -185,7 +185,7 @@ export const createSession = async () => {
   })) as CrunchyrollResponse<{ session_id: string }>
 
   if (responseIsError(response)) {
-    throw new Error(response.body.message)
+    return Promise.reject(response.body.message)
   }
 
   _sessionId = response.body.data.session_id
@@ -231,7 +231,7 @@ export const login = async (username: string, password: string) => {
     .send(data)) as CrunchyrollResponse<LoginSuccess>
 
   if (responseIsError(response)) {
-    throw new Error(response.body.message)
+    return Promise.reject(response.body.message)
   }
 
   userStore.set('crunchyroll', {
@@ -261,7 +261,7 @@ export const fetchQueue = async (): Promise<QueueItem[]> => {
   })) as CrunchyrollResponse<_QueueEntry[]>
 
   if (responseIsError(response)) {
-    throw new Error(response.body.message)
+    return Promise.reject(response.body.message)
   }
 
   return response.body.data.map(
@@ -283,7 +283,7 @@ export const fetchAnime = async (seriesId: string): Promise<Anime> => {
   })) as CrunchyrollResponse<_Series>
 
   if (responseIsError(response)) {
-    throw new Error(response.body.message)
+    return Promise.reject(response.body.message)
   }
 
   return seriesToAnime(response.body.data)
@@ -300,7 +300,7 @@ export const fetchEpisodesOfAnime = async (
   })) as CrunchyrollResponse<_Media[]>
 
   if (responseIsError(response)) {
-    throw new Error(response.body.message)
+    return Promise.reject(response.body.message)
   }
 
   return map(mediaToEpisode, response.body.data)
@@ -315,7 +315,7 @@ export const fetchEpisode = async (mediaId: string): Promise<Episode> => {
   })) as CrunchyrollResponse<_Media>
 
   if (responseIsError(response)) {
-    throw new Error(response.body.message)
+    return Promise.reject(response.body.message)
   }
 
   return mediaToEpisode(response.body.data)
@@ -330,7 +330,7 @@ export const fetchStream = async (mediaId: string): Promise<StreamData> => {
   })) as CrunchyrollResponse<{ stream_data: _StreamData }>
 
   if (responseIsError(response)) {
-    throw new Error(response.body.message)
+    return Promise.reject(response.body.message)
   }
 
   return convertStreamData(response.body.data.stream_data)
