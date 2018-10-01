@@ -98,7 +98,7 @@ export default class Relations extends Vue {
     & > .banner {
       display: block;
       width: 100%;
-      height: 50px;
+      height: 45px;
       object-fit: cover;
     }
   }
