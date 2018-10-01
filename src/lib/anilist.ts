@@ -19,19 +19,16 @@ export const loginAnilist = (callback: (newUrl: string) => void) => {
     title: 'AniList Login',
   })
 
-  authWindow.webContents.on(
-    'did-get-redirect-request',
-    (_event: any, _oldUrl: string, newUrl: string) => {
-      if (!authWindow) return
+  authWindow.webContents.on('did-navigate', (_event: Event, url: string) => {
+    if (!authWindow) return
 
-      if (newUrl.includes('access_token')) {
-        callback(newUrl)
+    if (url.includes('access_token')) {
+      callback(url)
 
-        authWindow.close()
-        authWindow = null as any
-      }
-    },
-  )
+      authWindow.close()
+      authWindow = null as any
+    }
+  })
 
   authWindow.loadURL(
     `https://anilist.co/api/v2/oauth/authorize?client_id=913&response_type=token`,

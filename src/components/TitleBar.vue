@@ -23,7 +23,7 @@ import { version } from '../../package.json'
 export default class TitleBar extends Vue {
   @Prop(String) public icon!: string
 
-  public browserWindow = electron.remote.BrowserWindow.getFocusedWindow()
+  public browserWindow = electron.remote.BrowserWindow.getFocusedWindow() as Electron.BrowserWindow
 
   public version = version
 

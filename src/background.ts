@@ -24,7 +24,7 @@ let mainWindow: any
 protocol.registerStandardSchemes(['app'], { secure: true })
 
 // Register extra stuff
-electronDebug()
+electronDebug({})
 
 function createMainWindow() {
   const window = new BrowserWindow({
