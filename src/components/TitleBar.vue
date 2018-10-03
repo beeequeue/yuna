@@ -1,6 +1,6 @@
 <template>
 <div class="title-bar">
-  <span class="title">Crunch v{{version}}</span>
+  <span class="title">{{name}} | v{{version}}</span>
 
   <span class="separator"/>
 
@@ -24,11 +24,17 @@ export default class TitleBar extends Vue {
   @Prop(String) public icon!: string
 
   public browserWindow = electron.remote.BrowserWindow.getFocusedWindow() as Electron.BrowserWindow
-
   public version = version
 
   public minimizeSvg = mdiMinus
   public closeSvg = mdiClose
+
+  public get name() {
+    const shouldUseSillyName = Math.random() <= 0.1
+    if (!shouldUseSillyName) return 'Crunch'
+
+    return ['cromch', '(○^ω^)_旦 '][Math.round(Math.random())]
+  }
 
   public minimize() {
     this.browserWindow.minimize()
