@@ -26,7 +26,7 @@ export interface User {
   created: string
 }
 
-interface _ImageSet {
+export interface _ImageSet {
   thumb_url: string
   small_url: string
   medium_url: string
@@ -40,7 +40,7 @@ interface _ImageSet {
   height: string
 }
 
-interface _StreamData {
+export interface _StreamData {
   hardsub_lang: string
   audio_lang: string
   format: 'hls'
@@ -73,7 +73,7 @@ interface _StreamData {
   ]
 }
 
-interface _Media {
+export interface _Media {
   class: string
   media_id: string
   etp_guid: string
@@ -105,7 +105,7 @@ interface _Media {
   playhead: number
 }
 
-interface _Series {
+export interface _Series {
   class: 'series'
   media_type: 'anime'
   series_id: string
@@ -118,7 +118,7 @@ interface _Series {
   portrait_image: _ImageSet
 }
 
-interface _QueueEntry {
+export interface _QueueEntry {
   last_watched_media: _Media
   most_likely_media: _Media
   ordering: number
@@ -246,27 +246,6 @@ export const logout = () => {
   userStore.delete('crunchyroll')
 }
 
-export const fetchQueue = async () => {
-  const response = (await superagent.get(getUrl('queue')).query({
-    media_types: 'anime',
-    locale: LOCALE,
-    // session_id: _sessionId,
-    fields: [
-      'most_likely_media',
-      'most_likely_media.media_id',
-      'series',
-      'series.series_id',
-      'series.collection_count',
-    ].join(','),
-  })) as CrunchyrollResponse<_QueueEntry[]>
-
-  if (responseIsError(response)) {
-    throw new Error(response.body.message)
-  }
-
-  return response.body.data
-}
-
 export const fetchAnime = async (seriesId: string): Promise<Anime> => {
   const response = (await superagent.get(getUrl('info')).query({
     session_id: _sessionId,
@@ -357,10 +336,6 @@ const mediaToEpisode = ({
   duration,
   progress: playhead || null,
   thumbnail: screenshot_image.full_url,
-
-  anilist: {
-    id: '',
-  },
 
   crunchyroll: {
     id: media_id,
