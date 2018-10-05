@@ -2,11 +2,10 @@ import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
 
 import { RootState } from '@/state/store'
-import { fetchQueue } from '@/lib/crunchyroll'
-import { QueueItem, userStore } from '@/lib/user'
+import { userStore } from '@/lib/user'
 
 export interface UserState {
-  queue: QueueItem[]
+  queue: number[]
 }
 
 type UserContext = ActionContext<UserState, RootState>
@@ -25,16 +24,28 @@ export const user = {
   },
 
   mutations: {
-    setQueue(state: UserState, queue: QueueItem[]) {
+    setQueue(state: UserState, queue: number[]) {
       state.queue = queue
 
       userStore.set('queue', queue)
     },
+
+    addToQueue(state: UserState, id: number) {
+      state.queue = [...state.queue, id]
+
+      userStore.set('queue', state.queue)
+    },
+
+    removeFromQueue(state: UserState, index: number) {
+      state.queue.splice(index, 1)
+
+      userStore.set('queue', state.queue)
+    },
   },
 
   actions: {
-    async updateQueue(context: UserContext) {
-      setQueue(context, await fetchQueue())
+    async updateQueue(_context: UserContext) {
+      // noop
     },
   },
 }
@@ -44,5 +55,7 @@ const { read, commit, dispatch } = getStoreAccessors<UserState, RootState>('')
 export const getQueue = read(user.getters.getQueue)
 
 export const setQueue = commit(user.mutations.setQueue)
+export const addToQueue = commit(user.mutations.addToQueue)
+export const removeFromQueue = commit(user.mutations.removeFromQueue)
 
 export const updateQueue = dispatch(user.actions.updateQueue)

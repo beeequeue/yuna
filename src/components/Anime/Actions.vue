@@ -1,3 +1,4 @@
+import { MediaListStatus } from '../../graphql-types'
 <template>
 <transition name="fade">
   <transition-group class="actions" tag="div">
@@ -62,7 +63,14 @@
       key="addToQueue"
       :icon="addToQueueSvg"
       content="Add to Queue"
-      @click.native="sendNotImplementedToast"
+      @click.native="addToQueue"
+    />
+    <raised-button
+      v-else
+      key="removeFromQueue"
+      :icon="removeFromQueueSvg"
+      content="Remove from Queue"
+      @click.native="removeFromQueue"
     />
 
     <raised-button
@@ -77,12 +85,17 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { any, pathOr, propEq } from 'rambda'
-import { mdiPlaylistPlay, mdiPlaylistPlus, mdiRepeat } from '@mdi/js'
+import { contains, equals, findIndex, pathOr } from 'rambda'
+import {
+  mdiPlaylistMinus,
+  mdiPlaylistPlay,
+  mdiPlaylistPlus,
+  mdiRepeat,
+} from '@mdi/js'
 
 import RaisedButton from '../RaisedButton.vue'
-import { getQueue } from '../../state/user'
-import { sendNotImplementedToast } from '../../state/app'
+import { addToQueue, getQueue, removeFromQueue } from '../../state/user'
+import { sendErrorToast, sendNotImplementedToast } from '../../state/app'
 import { AnimePageQuery_Media_mediaListEntry } from '../../graphql/AnimePageQuery'
 import {
   addEntryMutation,
@@ -108,6 +121,7 @@ export default class Actions extends Vue {
   public MediaListStatus = MediaListStatus
   public addToListSvg = mdiPlaylistPlus
   public addToQueueSvg = mdiPlaylistPlay
+  public removeFromQueueSvg = mdiPlaylistMinus
   public setToRepeatSvg = mdiRepeat
 
   public get id() {
@@ -136,16 +150,39 @@ export default class Actions extends Vue {
   }
 
   public get isInQueue() {
-    return any(propEq('anilist', this.id))(getQueue(this.$store))
+    return contains(this.mediaId, getQueue(this.$store))
   }
 
   public sendNotImplementedToast() {
     sendNotImplementedToast(this.$store)
   }
 
+  public async addToQueue() {
+    if (!this.mediaId) {
+      return sendErrorToast(this.$store, 'No entry found..?')
+    }
+
+    if (!this.mediaListEntry) {
+      await this.addEntryMutation(MediaListStatus.PLANNING)
+    }
+
+    addToQueue(this.$store, this.mediaId)
+  }
+
+  public async removeFromQueue() {
+    if (!this.mediaId) {
+      return sendErrorToast(this.$store, 'No entry found..?')
+    }
+
+    removeFromQueue(
+      this.$store,
+      findIndex(equals(this.mediaId), getQueue(this.$store)),
+    )
+  }
+
   public async statusMutation(status: MediaListStatus) {
     if (!this.mediaListEntry) {
-      return console.error('No entry found')
+      return sendErrorToast(this.$store, 'No entry found..?')
     }
 
     await setStatusMutation(this.$apollo, this.mediaListEntry.id, status)
@@ -153,7 +190,7 @@ export default class Actions extends Vue {
 
   public async progressMutation(progress: number) {
     if (!this.mediaListEntry) {
-      return console.error('No entry found')
+      return sendErrorToast(this.$store, 'No entry found..?')
     }
 
     await setProgressMutation(this.$apollo, this.mediaListEntry.id, progress)
@@ -161,7 +198,7 @@ export default class Actions extends Vue {
 
   public async addEntryMutation(status: MediaListStatus) {
     if (!this.mediaId) {
-      return console.error('No media found')
+      return sendErrorToast(this.$store, 'No entry found..?')
     }
 
     await addEntryMutation(this.$apollo, this.mediaId, status)
@@ -190,12 +227,12 @@ export default class Actions extends Vue {
     }
 
     &.v-leave-active {
+      display: none;
       position: absolute;
-      transition: opacity 0.5s;
+      transition: none;
     }
 
-    &.v-enter,
-    &.v-leave-to {
+    &.v-enter {
       transform: translateX(-100%);
       opacity: 0;
     }

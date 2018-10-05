@@ -47,7 +47,6 @@ import RaisedButton from '../components/RaisedButton.vue'
 import { getQueue, setQueue, updateQueue } from '../state/user'
 import { Anime, Episode } from '../types'
 import { AnimeCache } from '../lib/cache'
-import { QueueItem as IQueueItem } from '../lib/user'
 
 interface ItemData {
   episode: Episode
@@ -71,7 +70,7 @@ export default class Queue extends Vue {
     return getQueue(this.$store)
   }
 
-  public set queue(value: IQueueItem[]) {
+  public set queue(value: number[]) {
     setQueue(this.$store, value)
   }
 

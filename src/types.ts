@@ -22,8 +22,7 @@ export interface Episode {
   index: number
   duration: number
   progress: number | null
-  image: ImageSet
-  animeName: string
+  thumbnail: string
 
   crunchyroll: {
     id: string
@@ -38,8 +37,8 @@ export interface Anime {
   romajiName?: string
   description: string
   length: number
-  landscapeImage: ImageSet
-  portraitImage: ImageSet
+  landscapeImage: string
+  portraitImage: string
 
   user?: {
     state: AnimeState
@@ -49,12 +48,4 @@ export interface Anime {
     id: string
     url: string
   }
-}
-
-export interface ImageSet {
-  small: string
-  large: string
-  wide: string
-  width: number
-  height: number
 }

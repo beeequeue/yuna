@@ -3,9 +3,9 @@ import superagent from 'superagent/superagent'
 import { map } from 'rambda'
 import uuid from 'uuid/v4'
 
-import { Anime, Episode, ImageSet, StreamData } from '@/types'
+import { Anime, Episode, StreamData } from '@/types'
 import { RequestError, RequestSuccess } from '@/utils'
-import { QueueItem, userStore } from '@/lib/user'
+import { userStore } from '@/lib/user'
 
 const LOCALE = 'enUS'
 const API_URL = 'api.crunchyroll.com'
@@ -246,11 +246,11 @@ export const logout = () => {
   userStore.delete('crunchyroll')
 }
 
-export const fetchQueue = async (): Promise<QueueItem[]> => {
+export const fetchQueue = async () => {
   const response = (await superagent.get(getUrl('queue')).query({
     media_types: 'anime',
     locale: LOCALE,
-    session_id: _sessionId,
+    // session_id: _sessionId,
     fields: [
       'most_likely_media',
       'most_likely_media.media_id',
@@ -261,17 +261,10 @@ export const fetchQueue = async (): Promise<QueueItem[]> => {
   })) as CrunchyrollResponse<_QueueEntry[]>
 
   if (responseIsError(response)) {
-    return Promise.reject(response.body.message)
+    throw new Error(response.body.message)
   }
 
-  return response.body.data.map(
-    entry =>
-      ({
-        nextEpisode: entry.most_likely_media.media_id,
-        crunchyroll: entry.series.series_id,
-        anilist: 7791, // TODO: FIX
-      } as QueueItem),
-  )
+  return response.body.data
 }
 
 export const fetchAnime = async (seriesId: string): Promise<Anime> => {
@@ -336,15 +329,6 @@ export const fetchStream = async (mediaId: string): Promise<StreamData> => {
   return convertStreamData(response.body.data.stream_data)
 }
 
-// Mapping functions
-const convertImageSet = (imgSet: _ImageSet): ImageSet => ({
-  small: imgSet.medium_url,
-  large: imgSet.full_url,
-  wide: imgSet.fwide_url,
-  height: Number(imgSet.height),
-  width: Number(imgSet.width),
-})
-
 const convertStreamData = (streamData: _StreamData): StreamData => ({
   subLanguage: streamData.hardsub_lang,
   audioLanguage: streamData.audio_lang,
@@ -363,18 +347,20 @@ const mediaToEpisode = ({
   screenshot_image,
   media_id,
   series_id,
-  series_name,
   collection_id,
   url,
   playhead,
 }: _Media): Episode => ({
   name,
   description,
-  animeName: series_name,
   index: Number(episode_number),
   duration,
   progress: playhead || null,
-  image: convertImageSet(screenshot_image),
+  thumbnail: screenshot_image.full_url,
+
+  anilist: {
+    id: '',
+  },
 
   crunchyroll: {
     id: media_id,
@@ -401,6 +387,6 @@ const seriesToAnime = ({
     id: series_id,
     url,
   },
-  landscapeImage: convertImageSet(landscape_image),
-  portraitImage: convertImageSet(portrait_image),
+  landscapeImage: landscape_image.full_url,
+  portraitImage: portrait_image.full_url,
 })

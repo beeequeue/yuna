@@ -1,11 +1,7 @@
 import Store from 'electron-store'
 import { AnilistData } from '@/state/auth'
 
-export interface QueueItem {
-  anilist: number
-  nextEpisode: string | null
-  crunchyroll: string | null
-}
+const CURRENT_VERSION = 1
 
 interface CachedCRData {
   sessionId: string | null
@@ -13,7 +9,8 @@ interface CachedCRData {
 }
 
 interface UserStore {
-  queue: QueueItem[]
+  __version: number
+  queue: number[]
   crunchyroll: CachedCRData
   anilist: AnilistData
 }
@@ -21,3 +18,9 @@ interface UserStore {
 export const userStore = new Store<UserStore>({
   name: 'user',
 })
+
+// Ultra primitive migration
+if (userStore.get('__version') !== CURRENT_VERSION) {
+  userStore.clear()
+  userStore.set('__version', CURRENT_VERSION)
+}
