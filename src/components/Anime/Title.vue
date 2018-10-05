@@ -1,14 +1,26 @@
 <template>
 <div class="title">
-  <div class="english" :class="preferredStyle(title.english)">
+  <div
+    class="english"
+    :class="preferredStyle(title.english)"
+    :title="title.english"
+  >
     {{ title.english }}
   </div>
 
-  <div class="romaji" :class="preferredStyle(title.romaji)">
+  <div
+    class="romaji"
+    :class="preferredStyle(title.romaji)"
+    :title="title.romaji"
+  >
     {{ title.romaji }}
   </div>
 
-  <div class="native" :class="preferredStyle(title.native)">
+  <div
+    class="native"
+    :class="preferredStyle(title.native)"
+    :title="title.native"
+  >
     {{ title.native }}
   </div>
 </div>
