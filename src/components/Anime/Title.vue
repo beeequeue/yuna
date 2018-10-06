@@ -2,7 +2,7 @@
 <div class="title">
   <div
     class="english"
-    :class="preferredStyle(title.english)"
+    :class="preferredStyle.english"
     :title="title.english"
   >
     {{ title.english }}
@@ -10,7 +10,7 @@
 
   <div
     class="romaji"
-    :class="preferredStyle(title.romaji)"
+    :class="preferredStyle.romaji"
     :title="title.romaji"
   >
     {{ title.romaji }}
@@ -18,7 +18,7 @@
 
   <div
     class="native"
-    :class="preferredStyle(title.native)"
+    :class="preferredStyle.native"
     :title="title.native"
   >
     {{ title.native }}
@@ -37,10 +37,26 @@ export default class AnimeTitle extends Vue {
   @Prop(prop(Object))
   public title?: AnimePageQuery_Media_title
 
-  public preferredStyle(str: string) {
-    if (!this.title) return null
+  public get preferredStyle() {
+    if (!this.title) return { english: false, native: false, romaji: false }
+    let alreadyExists = false
 
-    return str === this.title.userPreferred ? 'preferred' : null
+    const ifPreferred = (str: string) => {
+      const classname =
+        str === this.title.userPreferred && !alreadyExists ? 'preferred' : null
+
+      if (classname !== null) {
+        alreadyExists = true
+      }
+
+      return classname
+    }
+
+    return {
+      english: ifPreferred(this.title.english),
+      romaji: ifPreferred(this.title.romaji),
+      native: ifPreferred(this.title.native),
+    }
   }
 }
 </script>

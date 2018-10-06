@@ -114,7 +114,7 @@ export default class CoverImage extends Vue {
   display: block;
   position: relative;
   width: 100%;
-  height: 280px;
+  height: 290px;
   border-radius: 5px;
   box-shadow: $shadow;
   overflow: hidden;

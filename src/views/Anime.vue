@@ -125,7 +125,7 @@ export default class Anime extends Vue {
     display: grid;
     cursor: auto;
     grid-template-columns: 200px 600px 1fr;
-    grid-template-rows: 82px auto 1fr;
+    grid-template-rows: 90px auto 1fr;
     grid-gap: 20px;
     user-select: none;
     z-index: 0 !important;
