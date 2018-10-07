@@ -42,6 +42,8 @@ export default class AnimeTitle extends Vue {
     let alreadyExists = false
 
     const ifPreferred = (str: string) => {
+      if (!this.title) return null
+
       const classname =
         str === this.title.userPreferred && !alreadyExists ? 'preferred' : null
 
@@ -53,9 +55,9 @@ export default class AnimeTitle extends Vue {
     }
 
     return {
-      english: ifPreferred(this.title.english),
-      romaji: ifPreferred(this.title.romaji),
-      native: ifPreferred(this.title.native),
+      english: ifPreferred(this.title.english || ''),
+      romaji: ifPreferred(this.title.romaji || ''),
+      native: ifPreferred(this.title.native || ''),
     }
   }
 }
