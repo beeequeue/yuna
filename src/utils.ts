@@ -1,5 +1,6 @@
 import { Response } from 'superagent'
 import { Prop as IProp, PropOptions } from 'vue/types/options'
+import { MediaListStatus } from '@/graphql-types'
 
 export interface RequestSuccess<B extends object> extends Response {
   status: 200
@@ -26,3 +27,29 @@ export const prop = (type: IProp<any>, required?: boolean): PropOptions => ({
   type,
   required: !!required,
 })
+
+interface MediaListEntry {
+  status: MediaListStatus | null
+  progress: number | null
+}
+export const humanizeMediaListStatus = (
+  entry: MediaListEntry,
+  episodes: number,
+) => {
+  switch (entry.status) {
+    case MediaListStatus.COMPLETED:
+      return 'Completed'
+    case MediaListStatus.CURRENT:
+      return `Watching ${entry.progress || 0}/${episodes}`
+    case MediaListStatus.DROPPED:
+      return `Dropped ${entry.progress || 0}/${episodes}`
+    case MediaListStatus.PAUSED:
+      return 'Paused'
+    case MediaListStatus.PLANNING:
+      return 'Planning'
+    case MediaListStatus.REPEATING:
+      return 'Repeating'
+    default:
+      return 'Error'
+  }
+}

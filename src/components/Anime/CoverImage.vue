@@ -32,7 +32,7 @@ import {
 } from '@mdi/js'
 
 import Icon from '../Icon.vue'
-import { prop } from '../../utils'
+import { humanizeMediaListStatus, prop } from '../../utils'
 import { MediaListStatus } from '../../graphql-types'
 import { AnimePageQuery_Media_mediaListEntry } from '../../graphql/AnimePageQuery'
 
@@ -64,26 +64,12 @@ export default class CoverImage extends Vue {
   }
 
   public get statusString(): string | null {
-    if (!this.mediaListStatus) return null
+    if (!this.mediaListEntry) return 'Not in List'
 
-    switch (this.mediaListStatus) {
-      case MediaListStatus.COMPLETED:
-        return 'Completed'
-      case MediaListStatus.CURRENT:
-        return `Watching ${pathOr(0, ['progress'], this.mediaListEntry)}/${
-          this.length
-        }`
-      case MediaListStatus.DROPPED:
-        return `Dropped ${pathOr(0, ['progress'], this.mediaListEntry)}/${
-          this.length
-        }`
-      case MediaListStatus.PAUSED:
-        return 'Paused'
-      case MediaListStatus.PLANNING:
-        return 'Planning'
-      case MediaListStatus.REPEATING:
-        return 'Repeating'
-    }
+    return humanizeMediaListStatus(
+      this.mediaListEntry as AnimePageQuery_Media_mediaListEntry,
+      this.length as number,
+    )
   }
 
   public get statusIcon() {
