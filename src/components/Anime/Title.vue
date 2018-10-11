@@ -76,7 +76,7 @@ export default class AnimeTitle extends Vue {
     font-weight: 500;
     color: darken($white, 10%);
     text-align: left;
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.75);
+    text-shadow: 2px 2px 4px black;
     user-select: initial;
     white-space: nowrap;
     text-overflow: ellipsis;

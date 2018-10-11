@@ -1,4 +1,3 @@
-import { MediaListStatus } from '../../graphql-types'
 <template>
 <transition name="fade">
   <transition-group class="actions" tag="div">

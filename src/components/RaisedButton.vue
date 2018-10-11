@@ -17,7 +17,7 @@ import Icon from './Icon.vue'
 })
 export default class RaisedButton extends Vue {
   @Prop() public content?: any
-  @Prop(String) public type?: 'normal' | 'danger'
+  @Prop(String) public type?: 'normal' | 'success' | 'warning' | 'danger'
   @Prop(String) public icon?: string
 
   public get classes() {
@@ -69,6 +69,16 @@ export default class RaisedButton extends Vue {
     justify-content: center;
     align-items: center;
     padding: 2px 5px;
+  }
+
+  &.success {
+    background: $success;
+    @include buttonEvents($success);
+  }
+
+  &.warning {
+    background: $warning;
+    @include buttonEvents($warning);
   }
 
   &.danger {

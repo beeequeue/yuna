@@ -1,9 +1,14 @@
-/* RGB */
 $dark: rgb(21, 23, 36);
 $main: rgb(27, 45, 104);
 $highlight: rgb(50, 68, 122);
 $gray: rgba(206, 204, 206, 1);
 $white: rgba(229, 229, 229, 1);
+$success: rgb(63, 141, 61);
+$warning: rgb(179, 112, 31);
 $danger: rgb(170, 44, 44);
 
 $shadow: 1px 4px 10px rgba(0, 0, 0, 0.4);
+$outline: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+
+$outline-light: -1px -1px 0 rgba(0, 0, 0, 0.5), 1px -1px 0 rgba(0, 0, 0, 0.5),
+  -1px 1px 0 rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(0, 0, 0, 0.5);
