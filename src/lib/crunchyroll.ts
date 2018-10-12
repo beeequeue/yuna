@@ -3,7 +3,7 @@ import superagent from 'superagent/superagent'
 import { map } from 'rambda'
 import uuid from 'uuid/v4'
 
-import { Anime, Episode, StreamData } from '@/types'
+import { Episode, StreamData } from '@/types'
 import { RequestError, RequestSuccess } from '@/utils'
 import { userStore } from '@/lib/user'
 
@@ -208,17 +208,6 @@ const mediaFields = [
   'media.url',
   'media.stream_data',
 ]
-const seriesFields = [
-  'series',
-  'series.name',
-  'series.description',
-  'series.series_id',
-  'series.url',
-  'series.media_count',
-  'series.collection_count',
-  'series.landscape_image',
-  'series.portrait_image',
-]
 
 export const login = async (username: string, password: string) => {
   const data = new FormData()
@@ -244,38 +233,6 @@ export const login = async (username: string, password: string) => {
 
 export const logout = () => {
   userStore.delete('crunchyroll')
-}
-
-export const fetchAnime = async (seriesId: string): Promise<Anime> => {
-  const response = (await superagent.get(getUrl('info')).query({
-    session_id: _sessionId,
-    locale: LOCALE,
-    series_id: seriesId,
-    fields: seriesFields.join(','),
-  })) as CrunchyrollResponse<_Series>
-
-  if (responseIsError(response)) {
-    return Promise.reject(response.body.message)
-  }
-
-  return seriesToAnime(response.body.data)
-}
-
-export const fetchEpisodesOfAnime = async (
-  seriesId: string,
-): Promise<Episode[]> => {
-  const response = (await superagent.get(getUrl('list_media')).query({
-    session_id: _sessionId,
-    locale: LOCALE,
-    series_id: seriesId,
-    fields: mediaFields.join(','),
-  })) as CrunchyrollResponse<_Media[]>
-
-  if (responseIsError(response)) {
-    return Promise.reject(response.body.message)
-  }
-
-  return map(mediaToEpisode, response.body.data)
 }
 
 export const fetchEpisodesOfCollection = async (
@@ -368,25 +325,4 @@ const mediaToEpisode = ({
     collection: collection_id,
     url,
   },
-})
-
-const seriesToAnime = ({
-  name,
-  description,
-  media_count,
-  series_id,
-  url,
-  landscape_image,
-  portrait_image,
-}: _Series): Anime => ({
-  title: name,
-  romajiTitle: name,
-  description,
-  length: media_count,
-  crunchyroll: {
-    id: series_id,
-    url,
-  },
-  landscapeImage: landscape_image.full_url,
-  portraitImage: portrait_image.full_url,
 })

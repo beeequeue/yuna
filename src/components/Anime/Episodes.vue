@@ -33,7 +33,6 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { path } from 'rambda'
 import { Key } from 'ts-key-enum'
 
 import { AnimePageQuery_Media_streamingEpisodes as StreamingEpisodes } from '../../graphql/AnimePageQuery'
@@ -119,10 +118,6 @@ export default class Episodes extends Vue {
         behavior: 'smooth',
       })
     }
-  }
-
-  public get crunchyrollIds() {
-    return this._episodes.map(e => path<string>([1], e.url.match(/-(\d+)$/)))
   }
 }
 </script>

@@ -44,4 +44,9 @@ export interface Anime {
     id: string
     url: string
   }
+
+  anilist: {
+    id: number
+    listEntryId?: number
+  }
 }

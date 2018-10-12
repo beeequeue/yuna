@@ -3,9 +3,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { mdiLoading } from '@mdi/js'
-import Icon from './Icon'
+import Icon from './Icon.vue'
 
 @Component({
   components: { Icon },

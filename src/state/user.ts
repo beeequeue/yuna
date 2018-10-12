@@ -1,5 +1,6 @@
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
+import { propEq } from 'rambda'
 
 import { RootState } from '@/state/store'
 import { userStore } from '@/lib/user'
@@ -36,8 +37,14 @@ export const user = {
       userStore.set('queue', state.queue)
     },
 
-    removeFromQueue(state: UserState, index: number) {
+    removeFromQueueByIndex(state: UserState, index: number) {
       state.queue.splice(index, 1)
+
+      userStore.set('queue', state.queue)
+    },
+
+    removeFromQueueById(state: UserState, id: number) {
+      state.queue.splice(state.queue.findIndex(propEq('id', id)), 1)
 
       userStore.set('queue', state.queue)
     },
@@ -56,6 +63,9 @@ export const getQueue = read(user.getters.getQueue)
 
 export const setQueue = commit(user.mutations.setQueue)
 export const addToQueue = commit(user.mutations.addToQueue)
-export const removeFromQueue = commit(user.mutations.removeFromQueue)
+export const removeFromQueueByIndex = commit(
+  user.mutations.removeFromQueueByIndex,
+)
+export const removeFromQueueById = commit(user.mutations.removeFromQueueById)
 
 export const updateQueue = dispatch(user.actions.updateQueue)
