@@ -44,7 +44,7 @@ export const humanizeMediaListStatus = (
     case MediaListStatus.DROPPED:
       return `Dropped ${entry.progress || 0}/${episodes}`
     case MediaListStatus.PAUSED:
-      return 'Paused'
+      return `Paused ${entry.progress || 0}/${episodes}`
     case MediaListStatus.PLANNING:
       return 'Planning'
     case MediaListStatus.REPEATING:
