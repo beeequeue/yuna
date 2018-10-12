@@ -4,7 +4,7 @@
 
   <transition name="fade">
     <div v-if="isPlayerMaximized" class="episode-info">
-      <h1>Episode {{episode.index}}: {{episode.name}}</h1>
+      <h1>Episode {{episode.index}}: {{episode.title}}</h1>
 
       <h3>{{episode.animeName}}</h3>
     </div>

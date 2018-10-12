@@ -2,35 +2,37 @@
   <div class="container">
     <div class="queue">
       <draggable v-model="queue">
-        <transition-group>
+        <!--<transition-group>-->
           <queue-item
-            v-for="item in queueWithData"
-            :item="item"
-            :key="item.series.crunchyroll.id"
+            v-for="id in queue"
+            :id="id"
+            :key="id"
             class="anime"
           />
-        </transition-group>
+        <!--</transition-group>-->
       </draggable>
 
       <transition name="fade">
         <div v-if="queue.length < 1" class="empty-message">
           Seems your queue is empty!<br/>
 
-          <strike>You can add some from your list or by searching,<br/></strike>
-
-          or try to<br/><br/>
-
-          <raised-button
-            class="cr-import"
-            @click.native="importQueue"
-            content="Import from Crunchyroll"
-          />
+          You can add some from your list or by searching for one!<br/>
         </div>
       </transition>
     </div>
 
     <div class="sidebar">
-      <raised-button class="cr-import" content="Import from Crunchyroll" @click.native="importQueue"/>
+      <span class="fill"/>
+
+      <raised-button
+        content="Import Watching from List"
+        @click.native="sendNotImplementedToast"
+      />
+
+      <raised-button
+        content="Import from Crunchyroll"
+        @click.native="sendNotImplementedToast"
+      />
 
       <raised-button type="danger" content="Clear queue" @click.native="clearQueue"/>
     </div>
@@ -38,34 +40,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import Draggable from 'vuedraggable'
-import { complement, filter, map, propEq } from 'rambda'
 
 import QueueItem from '../components/QueueItem.vue'
 import RaisedButton from '../components/RaisedButton.vue'
-import { getQueue, setQueue, updateQueue } from '../state/user'
-import { Anime, Episode } from '../types'
-import { AnimeCache } from '../lib/cache'
-
-interface ItemData {
-  episode: Episode
-  series: Anime
-  anilist: number
-}
-
-interface SafeQueueItem {
-  crunchyroll: string
-  nextEpisode: string
-  anilist: number
-}
+import { getQueue, setQueue } from '../state/user'
+import { sendNotImplementedToast } from '../state/app'
 
 @Component({
   components: { Draggable, QueueItem, RaisedButton },
 })
 export default class Queue extends Vue {
-  public queueWithData: ItemData[] = []
-
   public get queue() {
     return getQueue(this.$store)
   }
@@ -74,37 +60,12 @@ export default class Queue extends Vue {
     setQueue(this.$store, value)
   }
 
-  public mounted() {
-    this.getQueueData()
-  }
-
-  @Watch('queue')
-  public async getQueueData() {
-    const onlyCR: SafeQueueItem[] = filter(
-      complement(propEq('crunchyroll', null)),
-    )(this.queue)
-
-    const animes = (await Promise.all(
-      map(item => AnimeCache.getAnime(item.crunchyroll), onlyCR),
-    )) as Anime[]
-
-    const episodes = (await Promise.all(
-      animes.map((_anime, i) => AnimeCache.getEpisode(onlyCR[i].nextEpisode)),
-    )) as Episode[]
-
-    this.queueWithData = animes.map((anime, i) => ({
-      series: anime,
-      episode: episodes[i],
-      anilist: onlyCR[i].anilist,
-    }))
-  }
-
-  public importQueue() {
-    updateQueue(this.$store)
-  }
-
   public clearQueue() {
     setQueue(this.$store, [])
+  }
+
+  public sendNotImplementedToast() {
+    sendNotImplementedToast(this.$store)
   }
 }
 </script>
@@ -160,10 +121,11 @@ export default class Queue extends Vue {
 
     & > .button {
       margin: 8px 0;
+      flex-shrink: 0;
     }
 
-    & > .cr-import {
-      margin-top: auto;
+    & > .fill {
+      height: 100%;
     }
   }
 }

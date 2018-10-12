@@ -278,6 +278,23 @@ export const fetchEpisodesOfAnime = async (
   return map(mediaToEpisode, response.body.data)
 }
 
+export const fetchEpisodesOfCollection = async (
+  collectionId: string,
+): Promise<Episode[]> => {
+  const response = (await superagent.get(getUrl('list_media')).query({
+    session_id: _sessionId,
+    locale: LOCALE,
+    collection_id: collectionId,
+    fields: mediaFields.join(','),
+  })) as CrunchyrollResponse<_Media[]>
+
+  if (responseIsError(response)) {
+    return Promise.reject(response.body.message)
+  }
+
+  return map(mediaToEpisode, response.body.data)
+}
+
 export const fetchEpisode = async (mediaId: string): Promise<Episode> => {
   const response = (await superagent.get(getUrl('info')).query({
     session_id: _sessionId,
@@ -291,6 +308,14 @@ export const fetchEpisode = async (mediaId: string): Promise<Episode> => {
   }
 
   return mediaToEpisode(response.body.data)
+}
+
+export const fetchSeasonFromEpisode = async (
+  mediaId: string,
+): Promise<Episode[]> => {
+  const episode = await fetchEpisode(mediaId)
+
+  return fetchEpisodesOfCollection(episode.crunchyroll.collection)
 }
 
 export const fetchStream = async (mediaId: string): Promise<StreamData> => {
@@ -330,7 +355,7 @@ const mediaToEpisode = ({
   url,
   playhead,
 }: _Media): Episode => ({
-  name,
+  title: `Episode ${episode_number} - ${name}`,
   description,
   index: Number(episode_number),
   duration,
@@ -354,8 +379,8 @@ const seriesToAnime = ({
   landscape_image,
   portrait_image,
 }: _Series): Anime => ({
-  name,
-  romajiName: name,
+  title: name,
+  romajiTitle: name,
   description,
   length: media_count,
   crunchyroll: {

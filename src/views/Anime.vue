@@ -51,6 +51,8 @@
         v-if="data && data.Media && data.Media.streamingEpisodes.length > 0"
         class="slide-up"
         :episodes="data.Media.streamingEpisodes"
+        :clickEpisode="setCurrentEpisode"
+        showScroller
       />
 
       <relations
@@ -78,6 +80,9 @@ import RaisedButton from '../components/RaisedButton.vue'
 
 import ANIME_PAGE_QUERY from '../graphql/AnimePageQuery.graphql'
 import { AnimePageQuery } from '../graphql/AnimePageQuery'
+import { fetchEpisode } from '../lib/crunchyroll'
+import { Episode } from '../types'
+import { sendErrorToast, setCurrentEpisode } from '../state/app'
 
 @Component({
   components: {
@@ -105,6 +110,18 @@ export default class Anime extends Vue {
 
   animeQuery = ANIME_PAGE_QUERY
   data?: AnimePageQuery
+
+  public async setCurrentEpisode(id: string) {
+    let episode: Episode
+
+    try {
+      episode = await fetchEpisode(id)
+    } catch (e) {
+      return sendErrorToast(this.$store, e)
+    }
+
+    setCurrentEpisode(this.$store, episode)
+  }
 }
 </script>
 

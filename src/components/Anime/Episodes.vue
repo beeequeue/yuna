@@ -4,14 +4,14 @@
     ref="episodeContainer"
     class="episode-container"
     :class="containerClasses"
-    @wheel.capture="handleScroll"
+    @wheel.prevent="handleScroll"
     @scroll="updateContainerClasses"
   >
     <div
       v-for="(episode, i) in _episodes"
       class="episode"
-      :class="{ active: i === Number(scrollerValue) - 1 }"
-      @click="setCurrentEpisode(crunchyrollIds[i])"
+      :class="{ active: i === Number(scrollerValue) - 1, small }"
+      @click="clickEpisode"
     >
       <span class="title" v-html="episode.title"/>
 
@@ -20,6 +20,7 @@
   </div>
 
   <input
+    v-if="showScroller"
     class="scroller"
     :maxlength="_episodes.length.toString().length"
     :value="scrollerValue"
@@ -36,23 +37,17 @@ import { path } from 'rambda'
 import { Key } from 'ts-key-enum'
 
 import { AnimePageQuery_Media_streamingEpisodes as StreamingEpisodes } from '../../graphql/AnimePageQuery'
-import { sendErrorToast, setCurrentEpisode } from '../../state/app'
-import { fetchEpisode } from '../../lib/crunchyroll'
-import { Episode as IEpisode } from '../../types'
 import { prop } from '../../utils'
-
-// Cause we can't use Required on x | null types :(
-interface Episode extends StreamingEpisodes {
-  title: string
-  site: string
-  url: string
-  thumbnail: string
-}
+import { Episode } from '../../types'
 
 @Component
 export default class Episodes extends Vue {
-  @Prop(prop(Array))
-  public episodes!: StreamingEpisodes[]
+  @Prop(Array) public episodes!: StreamingEpisodes[]
+  @Prop(prop(Function, true))
+  public clickEpisode!: () => any
+  @Prop(Number) public current?: number
+  @Prop(Boolean) public showScroller?: boolean
+  @Prop(Boolean) public small?: boolean
 
   public scrollerValue = ''
 
@@ -68,12 +63,10 @@ export default class Episodes extends Vue {
   public get _episodes(): Episode[] {
     if (!this.episodes) return []
 
-    return this.episodes
-      .filter(e => e != null && e.site === 'Crunchyroll')
-      .map((e: any) => ({
-        ...(e as Episode),
-        title: e.title.replace(' - ', '<br/>'),
-      }))
+    return this.episodes.filter(e => e != null).map((e: any) => ({
+      ...(e as Episode),
+      title: e.title.replace(' - ', '<br/>'),
+    }))
   }
 
   public updateContainerClasses() {
@@ -131,18 +124,6 @@ export default class Episodes extends Vue {
   public get crunchyrollIds() {
     return this._episodes.map(e => path<string>([1], e.url.match(/-(\d+)$/)))
   }
-
-  public async setCurrentEpisode(id: string) {
-    let episode: IEpisode
-
-    try {
-      episode = await fetchEpisode(id)
-    } catch (e) {
-      return sendErrorToast(this.$store, e)
-    }
-
-    setCurrentEpisode(this.$store, episode)
-  }
 }
 </script>
 
@@ -184,10 +165,10 @@ export default class Episodes extends Vue {
       display: none;
     }
 
-    & > .episode {
+    .episode {
       position: relative;
       flex-shrink: 0;
-      width: 250px;
+      width: 300px;
       margin: 0 10px;
       border-radius: 8px;
       box-shadow: 1px 0 5px rgba(0, 0, 0, 0.5);
@@ -199,10 +180,19 @@ export default class Episodes extends Vue {
       transition: width 0.25s;
       transition-delay: 0.25s;
 
+      &.small {
+        width: 200px;
+      }
+
       &.active {
-        width: 275px;
+        width: 325px;
         transition-delay: 0s;
       }
+
+      /*&:hover {
+        width: 350px;
+        transition-delay: 0s;
+      }*/
 
       &:first-child {
         margin-left: 0;
@@ -212,12 +202,12 @@ export default class Episodes extends Vue {
         position: absolute;
         top: 10px;
         left: 10px;
-        width: calc(100% - 10px);
+        width: calc(100% - 20px);
         text-align: left;
         font-family: 'Raleway', sans-serif;
         font-weight: 600;
         font-size: 1.1em;
-        text-shadow: 1px 1px 1px black;
+        text-shadow: $outline;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;

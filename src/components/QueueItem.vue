@@ -1,28 +1,78 @@
 <template>
-<div class="anime">
+<div v-if="anime" class="anime">
   <router-link
-    class="anime-name"
-    :to="`/anime/${item.anilist}`">
-    <img class="image" :src="item.series.landscapeImage.large"/>
+    class="title-container"
+    :to="`/anime/${id}`">
+    <img class="image" :src="anime.landscapeImage"/>
+    <span class="title">{{anime.title}}</span>
   </router-link>
 
-  <div class="details">
-    <router-link
-      class="anime-name"
-      :to="`/anime/${item.anilist}`">
-      {{item.series.name}}
-    </router-link>
+  <div class="content-container">
+    <div>
+      <span class="state">
+        {{humanizedStatus}}
+      </span>
 
-    <p class="episode-name">
-      {{item.episode.progress > 0 ? 'Current' : 'Next'}} episode {{item.episode.index}}:
-      {{item.episode.name}}
-    </p>
+      <span :style="{width: '100%'}"/>
+
+      <div class="buttons">
+        <raised-button
+          v-if="isStatus(MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+          class="small"
+          content="+"
+        />
+
+        <raised-button
+          v-if="isStatus(MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+          class="small"
+          content="-"
+        />
+
+        <raised-button
+          v-if="isStatus(MediaListStatus.PAUSED, MediaListStatus.DROPPED)"
+          type="success"
+          content="Resume"
+        />
+
+        <raised-button
+          v-if="isStatus(MediaListStatus.COMPLETED)"
+          type="success"
+          content="Rewatch"
+        />
+
+        <raised-button
+          v-if="isStatus(MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+          type="warning"
+          content="Pause"
+        />
+
+        <raised-button
+          v-if="isStatus(MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+          type="danger"
+          content="Drop"
+        />
+
+        <raised-button
+          v-if="isStatus(MediaListStatus.DROPPED, MediaListStatus.PAUSED, MediaListStatus.COMPLETED)"
+          class="large"
+          content="Remove from Queue"
+        />
+      </div>
+    </div>
+
+    <loader v-if="!anime.episodes"/>
+
+    <div
+      v-else-if="anime.episodes.length > 0"
+      class="episode-container"
+    >
+      <episodes
+        :episodes="anime.episodes"
+        :clickEpisode="() => {}"
+        small
+      />
+    </div>
   </div>
-
-  <button class="episode" @click="setEpisode(item.episode)">
-    <img class="image" :src="item.episode.image.large"/>
-    <icon class="play-button" :icon="playSvg"/>
-  </button>
 </div>
 </template>
 
@@ -32,19 +82,106 @@ import Component from 'vue-class-component'
 import { mdiPlayCircleOutline } from '@mdi/js'
 
 import Icon from './Icon.vue'
-import { setCurrentEpisode } from '@/state/app'
-import { Episode } from '../types'
-import { QueueItem as IQueueItem } from '../lib/user'
+import Loader from './Loader.vue'
+import RaisedButton from './RaisedButton.vue'
+import Episodes from './Anime/Episodes.vue'
+import ANIME_QUEUE_QUERY from '../graphql/AnimeQueueQuery.graphql'
+import { AnimeQueueQuery } from '../graphql/AnimeQueueQuery'
+import { setCurrentEpisode } from '../state/app'
+import { Anime, Episode as IEpisode } from '../types'
+import { prop, humanizeMediaListStatus } from '../utils'
+import { MediaListStatus } from '../graphql-types'
+import { AnimeCache } from '../lib/cache'
+
+interface IAnime extends Anime {
+  anilistId: number
+  episodes: IEpisode[] | null
+}
 
 @Component({
-  components: { Icon },
+  components: { Loader, Episodes, RaisedButton, Icon },
+  apollo: {
+    getAnime: {
+      query: ANIME_QUEUE_QUERY,
+      variables() {
+        return {
+          id: this.id,
+        }
+      },
+      result(result: any) {
+        ;(this as any).getCrunchyrollData(result)
+      },
+    },
+  },
 })
 export default class QueueItem extends Vue {
-  @Prop() public item!: IQueueItem
+  @Prop(prop(Number, true))
+  public id!: number
+
+  public anime: IAnime | null = null
+
+  public get humanizedStatus() {
+    if (!this.anime || !this.anime.user) return 'Error'
+
+    if (!this.anime.user.state) return 'Not in List'
+
+    return humanizeMediaListStatus(
+      {
+        status: this.anime.user.state,
+        progress: this.anime.user.progress,
+      },
+      this.anime.length,
+    )
+  }
+
+  public isStatus(...statuses: MediaListStatus[]) {
+    if (!this.anime || !this.anime.user || !this.anime.user.state) return false
+
+    return statuses.includes(this.anime.user.state)
+  }
 
   public playSvg = mdiPlayCircleOutline
+  public MediaListStatus = MediaListStatus
 
-  public setEpisode(episode: Episode) {
+  private fethedEpisodes = false
+
+  public async getCrunchyrollData(result: { data: AnimeQueueQuery }) {
+    if (
+      this.fethedEpisodes ||
+      !result.data ||
+      !result.data.Media ||
+      !result.data.Media.title ||
+      !result.data.Media.coverImage ||
+      !result.data.Media.mediaListEntry
+      // !result.data.Media.coverImage ||
+    ) {
+      return
+    }
+
+    this.fethedEpisodes = true
+
+    this.anime = {
+      anilistId: result.data.Media.id as number,
+      title: result.data.Media.title.userPreferred as string,
+      description: '',
+      length: result.data.Media.episodes as number,
+      portraitImage: result.data.Media.coverImage.large as string,
+      landscapeImage: result.data.Media.bannerImage as string,
+
+      user: {
+        progress: result.data.Media.mediaListEntry.progress as number,
+        state: result.data.Media.mediaListEntry.status as MediaListStatus,
+      },
+
+      episodes: null,
+    }
+
+    this.anime.episodes = await AnimeCache.getSeasonFromMedia(
+      result.data.Media.idMal.toString(),
+    )
+  }
+
+  public setEpisode(episode: IEpisode) {
     setCurrentEpisode(this.$store, episode)
   }
 }
@@ -54,14 +191,12 @@ export default class QueueItem extends Vue {
 @import '../colors';
 
 .anime {
-  display: grid;
-  grid-template-columns: [anime] 200px [details] 1fr [episode] auto;
-  grid-auto-rows: 100px;
+  display: flex;
+  flex-direction: column;
 
   position: relative;
   width: 100%;
-  background: rgba(0, 0, 0, 0.35);
-  margin-bottom: 10px;
+  margin-bottom: 25px;
   border-radius: 5px;
   overflow: hidden;
   cursor: -webkit-grab;
@@ -74,68 +209,85 @@ export default class QueueItem extends Vue {
     transition: 0.5s;
   }
 
-  & .image {
-    object-fit: cover;
-    width: 200px;
-    height: 100px;
+  & > .title-container {
+    position: relative;
+    height: 75px;
+
+    & > .image {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+    }
+
+    & > .title {
+      position: absolute;
+      top: 0;
+      left: 10%;
+      height: 100%;
+      width: 80%;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      font-family: 'Raleway', sans-serif;
+      font-weight: 700;
+      font-size: 1.5em;
+      color: $white;
+      text-shadow: $outline;
+      filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.75));
+    }
   }
 
-  & > .details {
+  & > .content-container {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    padding: 10px 15px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.35);
 
-    & > .anime-name {
-      margin: 0;
+    & > div {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
 
-      color: $white;
-      text-align: left;
-      text-decoration: none;
-      font-family: 'Raleway', sans-serif;
-      font-weight: 300;
+      & > .state {
+        margin-bottom: -1px;
+        padding: 0 15px;
+        flex-shrink: 0;
+        font-family: 'Raleway', sans-serif;
+      }
 
-      &:hover {
-        text-decoration: underline;
+      & > .buttons {
+        flex-shrink: 0;
+
+        & > .button {
+          width: 85px;
+          border-radius: 0;
+
+          &:first-child {
+            border-bottom-left-radius: 5px;
+          }
+
+          &.small {
+            width: 50px;
+          }
+
+          &.large {
+            width: auto;
+            min-width: 100px;
+          }
+        }
       }
     }
 
-    & > .episode-name {
+    & > .episode-container {
+      position: relative;
       width: 100%;
-      margin: auto 0 0;
+      padding: 15px;
 
-      text-align: right;
-      font-family: 'Raleway', sans-serif;
-      font-weight: 300;
-    }
-  }
-
-  & > .episode {
-    position: relative;
-    justify-self: end;
-    background: black;
-    padding: 0;
-    border: 0;
-    cursor: pointer;
-
-    & > .image {
-      opacity: 0.65;
-      transition: opacity 0.1s;
-    }
-
-    & > .play-button {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      height: 50px;
-      width: 50px;
-      fill: $white;
-    }
-
-    &:hover {
-      & > .image {
-        opacity: 0.8;
+      & > .episodes {
+        z-index: 1;
+        width: 100%;
       }
     }
   }

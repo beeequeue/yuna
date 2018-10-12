@@ -1,52 +1,36 @@
 import Store from 'electron-store'
 
-import * as crunchyroll from '@/lib/crunchyroll'
+import { fetchEpisodesOfSeries } from '@/lib/myanimelist'
 import { Anime, Episode } from '@/types'
 
-interface EpisodeCacheSchema {
-  [key: string]: Episode
+interface SeasonCacheSchema {
+  [key: string]: Episode[]
 }
 
 interface AnimeCacheSchema {
   [key: string]: Anime
 }
 
-const episodeCache = new Store<EpisodeCacheSchema>({ name: 'episodeCache' })
+const seasonCache = new Store<SeasonCacheSchema>({ name: 'seasonCache' })
 const animeCache = new Store<AnimeCacheSchema>({ name: 'animeCache' })
 
 export class AnimeCache {
-  public static async getAnime(id: string): Promise<Anime> {
-    const hit = animeCache.has(id)
+  public static async getSeasonFromMedia(malId: string): Promise<Episode[]> {
+    const hit = seasonCache.has(malId)
 
     if (!hit) {
-      const fetchedAnime = await crunchyroll.fetchAnime(id)
-      const fetchedEpisodes = await crunchyroll.fetchEpisodesOfAnime(id)
+      const episodes = await fetchEpisodesOfSeries(malId)
 
-      animeCache.set(id, fetchedAnime)
-      fetchedEpisodes.forEach(ep => animeCache.set(ep.crunchyroll.id, ep))
+      seasonCache.set(malId, episodes)
 
-      return fetchedAnime
+      return episodes
     }
 
-    return animeCache.get(id)
-  }
-
-  public static async getEpisode(mediaId: string): Promise<Episode> {
-    const hit = episodeCache.has(mediaId)
-
-    if (!hit) {
-      const episode = await crunchyroll.fetchEpisode(mediaId)
-
-      episodeCache.set(episode.crunchyroll.id, episode)
-
-      return episode
-    }
-
-    return episodeCache.get(mediaId)
+    return seasonCache.get(malId)
   }
 
   public static clear() {
     animeCache.clear()
-    episodeCache.clear()
+    seasonCache.clear()
   }
 }

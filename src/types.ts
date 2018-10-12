@@ -1,9 +1,4 @@
-export enum AnimeState {
-  PLANNING,
-  WATCHING,
-  REWATCHING,
-  COMPLETED,
-}
+import { MediaListStatus } from '@/graphql-types'
 
 export interface StreamData {
   subLanguage: string
@@ -17,7 +12,7 @@ export interface StreamData {
 }
 
 export interface Episode {
-  name: string
+  title: string
   description: string
   index: number
   duration: number
@@ -33,15 +28,16 @@ export interface Episode {
 }
 
 export interface Anime {
-  name: string
-  romajiName?: string
+  title: string
+  romajiTitle?: string
   description: string
   length: number
   landscapeImage: string
   portraitImage: string
 
   user?: {
-    state: AnimeState
+    state: MediaListStatus
+    progress: number
   }
 
   crunchyroll?: {

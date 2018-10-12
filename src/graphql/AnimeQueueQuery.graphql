@@ -1,0 +1,22 @@
+query AnimeQueueQuery($id: Int){
+  Media(id: $id, type: ANIME) {
+    id
+    idMal
+    title {
+      userPreferred
+    }
+    episodes
+    status
+    siteUrl
+    bannerImage
+    coverImage {
+      large
+    }
+    mediaListEntry {
+      id
+      progress
+      status
+      repeat
+    }
+  }
+}
