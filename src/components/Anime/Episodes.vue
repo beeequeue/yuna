@@ -12,6 +12,7 @@
       class="episode"
       :class="{ active: i === Number(scrollerValue) - 1, small }"
       @click="clickEpisode"
+      :key="episode.crunchyroll.id"
     >
       <span class="title" v-html="episode.title"/>
 
@@ -35,13 +36,12 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Key } from 'ts-key-enum'
 
-import { AnimePageQuery_Media_streamingEpisodes as StreamingEpisodes } from '../../graphql/AnimePageQuery'
-import { prop } from '../../utils'
 import { Episode } from '../../types'
+import { prop } from '../../utils'
 
 @Component
 export default class Episodes extends Vue {
-  @Prop(Array) public episodes!: StreamingEpisodes[]
+  @Prop(Array) public episodes!: Episode[]
   @Prop(prop(Function, true))
   public clickEpisode!: () => any
   @Prop(Number) public current?: number

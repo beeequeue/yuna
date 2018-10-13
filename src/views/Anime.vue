@@ -1,5 +1,10 @@
 <template>
-<ApolloQuery class="anime" :query="animeQuery" :variables="{ id }">
+<ApolloQuery
+  class="anime"
+  :query="ANIME_PAGE_QUERY"
+  :variables="{ id }"
+  @result="fetchEpisodes"
+>
   <template slot-scope="{ result: { loading, error, data } }">
     <transition-group tag="span">
       <div
@@ -16,50 +21,50 @@
       </div>
 
       <cover-image
-        v-if="data && data.Media"
+        v-if="data && data.anime"
         key="cover-image"
         class="slide-down"
-        :src="data.Media.coverImage.large"
+        :src="data.anime.coverImage.large"
         :mediaListEntry="getMediaListEntry(data)"
-        :length="data.Media.episodes"
+        :length="data.anime.episodes"
       />
 
       <actions
-        v-if="data && data.Media"
+        v-if="data && data.anime"
         key="actions"
         class="slide-up"
-        :mediaId="data.Media.id"
-        :mediaListEntry="data.Media.mediaListEntry"
+        :mediaId="data.anime.id"
+        :mediaListEntry="data.anime.mediaListEntry"
       />
 
       <anime-title
-        v-if="data && data.Media"
+        v-if="data && data.anime"
         key="title"
         class="slide-down"
-        :title="data.Media.title"
+        :title="data.anime.title"
       />
 
       <center-container
-        v-if="data && data.Media"
+        v-if="data && data.anime"
         key="center"
         class="slide-up"
-        :content="data.Media.description"
+        :content="data.anime.description"
       />
 
       <episodes
         key="episodes"
-        v-if="data && data.Media && data.Media.streamingEpisodes.length > 0"
+        v-if="episodes && episodes.length > 0"
         class="slide-up"
-        :episodes="data.Media.streamingEpisodes"
+        :episodes="episodes"
         :clickEpisode="setCurrentEpisode"
         showScroller
       />
 
       <relations
-        v-if="data && data.Media"
+        v-if="data && data.anime"
         key="relations"
         class="slide-left"
-        :relations="data.Media.relations"
+        :relations="data.anime.relations"
       />
     </transition-group>
   </template>
@@ -68,7 +73,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { pathOr } from 'rambda'
+import { pathOr, path } from 'rambda'
 
 import CoverImage from '../components/Anime/CoverImage.vue'
 import AnimeTitle from '../components/Anime/Title.vue'
@@ -81,6 +86,7 @@ import RaisedButton from '../components/RaisedButton.vue'
 import ANIME_PAGE_QUERY from '../graphql/AnimePageQuery.graphql'
 import { AnimePageQuery } from '../graphql/AnimePageQuery'
 import { fetchEpisode } from '../lib/crunchyroll'
+import { AnimeCache } from '../lib/cache'
 import { Episode } from '../types'
 import { sendErrorToast, setCurrentEpisode } from '../state/app'
 
@@ -96,6 +102,12 @@ import { sendErrorToast, setCurrentEpisode } from '../state/app'
   },
 })
 export default class Anime extends Vue {
+  public episodes: Episode[] | null = null
+  public episodesError: string | null = null
+
+  ANIME_PAGE_QUERY = ANIME_PAGE_QUERY
+  data?: AnimePageQuery
+
   public get id() {
     return Number(this.$route.params.id)
   }
@@ -108,8 +120,18 @@ export default class Anime extends Vue {
     return pathOr(null, ['Media', 'mediaListEntry', 'status'], data)
   }
 
-  animeQuery = ANIME_PAGE_QUERY
-  data?: AnimePageQuery
+  public async fetchEpisodes({ data }: { data: AnimePageQuery }) {
+    const malId = path<number>('anime.idMal', data)
+
+    if (!malId) return
+
+    try {
+      this.episodes = await AnimeCache.getSeasonFromMalId(malId.toString())
+    } catch (e) {
+      this.episodesError = e
+      sendErrorToast(this.$store, e)
+    }
+  }
 
   public async setCurrentEpisode(id: string) {
     let episode: Episode

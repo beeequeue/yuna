@@ -34,7 +34,7 @@ import {
 import Icon from '../Icon.vue'
 import { humanizeMediaListStatus, prop } from '../../utils'
 import { MediaListStatus } from '../../graphql-types'
-import { AnimePageQuery_Media_mediaListEntry } from '../../graphql/AnimePageQuery'
+import { AnimePageQuery_anime_mediaListEntry } from '../../graphql/AnimePageQuery'
 
 @Component({
   components: { Icon },
@@ -43,7 +43,7 @@ export default class CoverImage extends Vue {
   @Prop(prop(String, true))
   public src!: string
   @Prop(prop(Object))
-  public mediaListEntry!: AnimePageQuery_Media_mediaListEntry | null
+  public mediaListEntry!: AnimePageQuery_anime_mediaListEntry | null
   @Prop(prop(Number))
   public length!: number | null
 
@@ -67,7 +67,7 @@ export default class CoverImage extends Vue {
     if (!this.mediaListEntry) return 'Not in List'
 
     return humanizeMediaListStatus(
-      this.mediaListEntry as AnimePageQuery_Media_mediaListEntry,
+      this.mediaListEntry as AnimePageQuery_anime_mediaListEntry,
       this.length as number,
     )
   }

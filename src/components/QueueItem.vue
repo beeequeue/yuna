@@ -136,7 +136,7 @@ export default class QueueItem extends Vue {
   public id!: number
 
   public episodes: Episode[] | null = null
-  public episodeError: boolean = false
+  public episodeError: string | null = null
 
   public getHumanizedStatus(data?: AnimeQueueQuery) {
     const length = path<number>(['anime', 'episodes'], data)
@@ -162,21 +162,15 @@ export default class QueueItem extends Vue {
   public MediaListStatus = MediaListStatus
   public ANIME_QUEUE_QUERY = ANIME_QUEUE_QUERY
 
-  private fetchedEpisodes = false
-
   public async fetchEpisodes({ data }: { data: AnimeQueueQuery }) {
-    const listEntryId = path<number>('anime.idMal', data)
+    const malId = path<number>('anime.idMal', data)
 
-    if (this.fetchedEpisodes || !listEntryId) return
-
-    this.fetchedEpisodes = true
+    if (!malId) return
 
     try {
-      this.episodes = await AnimeCache.getSeasonFromMedia(
-        listEntryId.toString(),
-      )
+      this.episodes = await AnimeCache.getSeasonFromMalId(malId.toString())
     } catch (e) {
-      this.episodeError = true
+      this.episodeError = e
       sendErrorToast(this.$store, e)
     }
   }

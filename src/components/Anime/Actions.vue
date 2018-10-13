@@ -95,7 +95,7 @@ import {
 import RaisedButton from '../RaisedButton.vue'
 import { addToQueue, getQueue, removeFromQueueByIndex } from '../../state/user'
 import { sendErrorToast, sendNotImplementedToast } from '../../state/app'
-import { AnimePageQuery_Media_mediaListEntry } from '../../graphql/AnimePageQuery'
+import { AnimePageQuery_anime_mediaListEntry } from '../../graphql/AnimePageQuery'
 import {
   addEntryMutation,
   setProgressMutation,
@@ -111,7 +111,7 @@ export default class Actions extends Vue {
   @Prop(prop(Number))
   public mediaId!: number | null
   @Prop(prop(Object))
-  public mediaListEntry!: AnimePageQuery_Media_mediaListEntry | null
+  public mediaListEntry!: AnimePageQuery_anime_mediaListEntry | null
 
   public get mediaListStatus(): MediaListStatus | null {
     return pathOr(null, ['status'], this.mediaListEntry)

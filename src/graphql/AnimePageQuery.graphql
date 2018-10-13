@@ -1,5 +1,5 @@
 query AnimePageQuery($id: Int){
-  Media(id: $id, type: ANIME) {
+  anime: Media(id: $id, type: ANIME) {
     id
     idMal
     title {
@@ -39,12 +39,6 @@ query AnimePageQuery($id: Int){
       status
       score
       repeat
-    }
-    streamingEpisodes {
-      title
-      site
-      url
-      thumbnail
     }
   }
 }

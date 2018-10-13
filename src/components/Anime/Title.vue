@@ -30,12 +30,12 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import { prop } from '../../utils'
-import { AnimePageQuery_Media_title } from '../../graphql/AnimePageQuery'
+import { AnimePageQuery_anime_title } from '../../graphql/AnimePageQuery'
 
 @Component
 export default class AnimeTitle extends Vue {
   @Prop(prop(Object))
-  public title?: AnimePageQuery_Media_title
+  public title?: AnimePageQuery_anime_title
 
   public get preferredStyle() {
     if (!this.title) return { english: false, native: false, romaji: false }
