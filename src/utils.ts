@@ -48,7 +48,7 @@ export const humanizeMediaListStatus = (
     case MediaListStatus.PLANNING:
       return 'Planning'
     case MediaListStatus.REPEATING:
-      return 'Repeating'
+      return `Repeating ${entry.progress || 0}/${episodes}`
     default:
       return 'Error'
   }

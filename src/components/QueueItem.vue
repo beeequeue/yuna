@@ -26,12 +26,14 @@
             v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
             class="small"
             content="+"
+            @click.native="incrementProgress(result.data, 1)"
           />
 
           <raised-button
             v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
             class="small"
             content="-"
+            @click.native="incrementProgress(result.data, -1)"
           />
 
           <raised-button
@@ -116,7 +118,7 @@ import { humanizeMediaListStatus, prop } from '../utils'
 import { MediaListStatus } from '../graphql-types'
 import { AnimeCache } from '../lib/cache'
 import { removeFromQueueById } from '../state/user'
-import { setStatusMutation } from '../graphql/mutations'
+import { setProgressMutation, setStatusMutation } from '../graphql/mutations'
 
 @Component({
   components: { Loader, Episodes, RaisedButton, Icon },
@@ -154,7 +156,6 @@ export default class QueueItem extends Vue {
   private fetchedEpisodes = false
 
   public async fetchEpisodes({ data }: { data: AnimeQueueQuery }) {
-    console.log(data)
     const listEntryId = path<number>('anime.idMal', data)
 
     if (this.fetchedEpisodes || !listEntryId) return
@@ -178,6 +179,25 @@ export default class QueueItem extends Vue {
     await setStatusMutation(this.$apollo, listEntryId, status)
   }
 
+  public async incrementProgress(data: AnimeQueueQuery, amount: number) {
+    const listEntryId = path<number>('anime.mediaListEntry.id', data)
+    const progress = path<number>('anime.mediaListEntry.progress', data) || 0
+    if (!listEntryId) {
+      return sendErrorToast(this.$store, 'No entry found..?')
+    }
+
+    if (progress + amount > data.anime.episodes || progress + amount < 0) {
+      return
+    }
+
+    await setProgressMutation(
+      this.$apollo,
+      listEntryId,
+      progress + amount,
+      data.anime.mediaListEntry,
+    )
+  }
+
   // public setEpisode(episode: IEpisode) {
   //   setCurrentEpisode(this.$store, episode)
   // }
@@ -193,7 +213,7 @@ export default class QueueItem extends Vue {
 
   position: relative;
   width: 100%;
-  margin-bottom: 25px;
+  margin-bottom: 35px;
   border-radius: 5px;
   overflow: hidden;
   cursor: -webkit-grab;
@@ -210,7 +230,6 @@ export default class QueueItem extends Vue {
   & > .title-container {
     position: relative;
     height: 75px;
-    background: $dark;
 
     & > .image {
       object-fit: cover;
@@ -219,7 +238,7 @@ export default class QueueItem extends Vue {
       transition: filter 500ms;
 
       &.faded {
-        filter: grayscale(0.75);
+        filter: grayscale(0.5) opacity(0.5) brightness(0.75);
       }
     }
 
@@ -247,7 +266,7 @@ export default class QueueItem extends Vue {
     display: flex;
     flex-direction: column;
     width: 100%;
-    background: $dark;
+    background: lighten($dark, 5%);
 
     & > div {
       display: flex;

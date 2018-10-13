@@ -192,7 +192,12 @@ export default class Actions extends Vue {
       return sendErrorToast(this.$store, 'No entry found..?')
     }
 
-    await setProgressMutation(this.$apollo, this.mediaListEntry.id, progress)
+    await setProgressMutation(
+      this.$apollo,
+      this.mediaListEntry.id,
+      progress,
+      this.mediaListEntry,
+    )
   }
 
   public async addEntryMutation(status: MediaListStatus) {
