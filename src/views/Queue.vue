@@ -2,14 +2,14 @@
   <div class="container">
     <div class="queue">
       <draggable v-model="queue">
-        <!--<transition-group>-->
+        <transition-group>
           <queue-item
             v-for="id in queue"
             :id="id"
             :key="id"
             class="anime"
           />
-        <!--</transition-group>-->
+        </transition-group>
       </draggable>
 
       <transition name="fade">

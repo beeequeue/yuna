@@ -13,8 +13,8 @@ export const setProgressMutation = async (
   id: number,
   progress: number,
   oldValues: {
-    repeat?: number
-    status?: MediaListStatus
+    repeat?: number | null
+    status?: MediaListStatus | null
   } = {},
 ) => {
   return apollo.mutate({

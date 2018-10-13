@@ -1,81 +1,82 @@
 <template>
 <ApolloQuery class="anime" :query="ANIME_QUEUE_QUERY" :variables="{ id }" @result="fetchEpisodes">
   <template slot-scope="{ result }">
-    <router-link
-      class="title-container"
-      :to="`/anime/${id}`">
-      <img
-        class="image"
-        :class="{faded: !getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)}"
-        :src="result.data.anime.bannerImage"
-      />
+    <span v-if="result && result.data" class="container">
+      <router-link
+        class="title-container"
+        :to="`/anime/${id}`">
+        <img
+          class="image"
+          :class="{faded: !getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)}"
+          :src="result.data.anime.bannerImage"
+        />
 
-      <span class="title">{{result.data.anime.title.userPreferred}}</span>
-    </router-link>
+        <span class="title">{{result.data.anime.title.userPreferred}}</span>
+      </router-link>
 
-    <div class="content-container">
-      <div>
-        <span class="state">
-          {{getHumanizedStatus(result.data)}}
-        </span>
+      <div class="content-container">
+        <div>
+          <span class="state">
+            {{getHumanizedStatus(result.data)}}
+          </span>
 
-        <span :style="{width: '100%'}"/>
+          <span :style="{width: '100%'}"/>
 
-        <div class="buttons">
-          <raised-button
-            v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
-            class="small"
-            content="+"
-            @click.native="incrementProgress(result.data, 1)"
-          />
+          <div class="buttons">
+            <raised-button
+              v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+              class="small"
+              content="+"
+              @click.native="incrementProgress(result.data, 1)"
+            />
 
-          <raised-button
-            v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
-            class="small"
-            content="-"
-            @click.native="incrementProgress(result.data, -1)"
-          />
+            <raised-button
+              v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+              class="small"
+              content="-"
+              @click.native="incrementProgress(result.data, -1)"
+            />
 
-          <raised-button
-            v-if="getIsStatus(result.data, MediaListStatus.PLANNING)"
-            type="success"
-            content="Start"
-            @click.native="statusMutation(result.data, MediaListStatus.CURRENT)"
-          />
+            <raised-button
+              v-if="getIsStatus(result.data, MediaListStatus.PLANNING)"
+              type="success"
+              content="Start"
+              @click.native="statusMutation(result.data, MediaListStatus.CURRENT)"
+            />
 
-          <raised-button
-            v-if="getIsStatus(result.data, MediaListStatus.PAUSED, MediaListStatus.DROPPED)"
-            type="success"
-            content="Resume"
-            @click.native="statusMutation(result.data, MediaListStatus.CURRENT)"
-          />
+            <raised-button
+              v-if="getIsStatus(result.data, MediaListStatus.PAUSED, MediaListStatus.DROPPED)"
+              type="success"
+              content="Resume"
+              @click.native="statusMutation(result.data, MediaListStatus.CURRENT)"
+            />
 
-          <raised-button
-            v-if="getIsStatus(result.data, MediaListStatus.COMPLETED)"
-            type="success"
-            content="Rewatch"
-            @click.native="statusMutation(result.data, MediaListStatus.REPEATING)"
-          />
+            <raised-button
+              v-if="getIsStatus(result.data, MediaListStatus.COMPLETED)"
+              type="success"
+              content="Rewatch"
+              @click.native="statusMutation(result.data, MediaListStatus.REPEATING)"
+            />
 
-          <raised-button
-            v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
-            type="warning"
-            content="Pause"
-            @click.native="statusMutation(result.data, MediaListStatus.PAUSED)"
-          />
+            <raised-button
+              v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+              type="warning"
+              content="Pause"
+              @click.native="statusMutation(result.data, MediaListStatus.PAUSED)"
+            />
 
-          <raised-button
-            v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
-            type="danger"
-            content="Drop"
-            @click.native="statusMutation(result.data, MediaListStatus.DROPPED)"
-          />
+            <raised-button
+              v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+              type="danger"
+              content="Drop"
+              @click.native="statusMutation(result.data, MediaListStatus.DROPPED)"
+            />
 
-          <raised-button
-            v-if="getIsStatus(result.data, MediaListStatus.DROPPED, MediaListStatus.PAUSED, MediaListStatus.COMPLETED, MediaListStatus.PLANNING)"
-            class="large"
-            content="Remove from Queue"
-            @click.native="removeFromQueue(id)"
+            <raised-button
+              v-if="getIsStatus(result.data, MediaListStatus.DROPPED, MediaListStatus.PAUSED, MediaListStatus.COMPLETED, MediaListStatus.PLANNING)"
+              class="large"
+              content="Remove from Queue"
+              @click.native="removeFromQueue(id)"
           />
         </div>
       </div>
@@ -99,6 +100,7 @@
         </div>
       </transition>
     </div>
+    </span>
   </template>
 </ApolloQuery>
 </template>
@@ -196,11 +198,17 @@ export default class QueueItem extends Vue {
   public async incrementProgress(data: AnimeQueueQuery, amount: number) {
     const listEntryId = path<number>('anime.mediaListEntry.id', data)
     const progress = path<number>('anime.mediaListEntry.progress', data) || 0
+    const episodes = path<number>('anime.episodes', data)
+    const mediaListEntry = path<AnimeQueueQuery_anime_mediaListEntry>(
+      'anime.mediaListEntry',
+      data,
+    )
+
     if (!listEntryId) {
       return sendErrorToast(this.$store, 'No entry found..?')
     }
 
-    if (progress + amount > data.anime.episodes || progress + amount < 0) {
+    if (progress + amount > episodes || progress + amount < 0) {
       return
     }
 
@@ -208,7 +216,7 @@ export default class QueueItem extends Vue {
       this.$apollo,
       listEntryId,
       progress + amount,
-      data.anime.mediaListEntry,
+      mediaListEntry,
     )
   }
 
@@ -222,17 +230,6 @@ export default class QueueItem extends Vue {
 @import '../colors';
 
 .anime {
-  display: flex;
-  flex-direction: column;
-
-  position: relative;
-  width: 100%;
-  margin-bottom: 35px;
-  border-radius: 5px;
-  overflow: hidden;
-  cursor: -webkit-grab;
-  box-shadow: $shadow;
-
   &:last-child {
     margin-bottom: 15px;
   }
@@ -245,116 +242,138 @@ export default class QueueItem extends Vue {
     transition: 0.5s;
   }
 
-  & > .title-container {
-    position: relative;
-    height: 75px;
-
-    & > .image {
-      object-fit: cover;
-      width: 100%;
-      height: 100%;
-      transition: filter 500ms;
-
-      &.faded {
-        filter: grayscale(0.5) opacity(0.5) brightness(0.75);
-      }
-    }
-
-    & > .title {
-      position: absolute;
-      top: 0;
-      left: 10%;
-      height: 100%;
-      width: 80%;
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      font-family: 'Raleway', sans-serif;
-      font-weight: 700;
-      font-size: 1.5em;
-      color: $white;
-      text-shadow: $outline;
-      filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.75));
-    }
+  &.v-leave-active {
+    position: absolute;
+    transition: transform 0.5s;
   }
 
-  & > .content-container {
+  &.v-leave-to {
+    transform: translateX(-125%);
+  }
+
+  & > .container {
     display: flex;
     flex-direction: column;
+
+    position: relative;
     width: 100%;
-    background: lighten($dark, 5%);
+    margin-bottom: 35px;
+    border-radius: 5px;
+    overflow: hidden;
+    cursor: -webkit-grab;
+    box-shadow: $shadow;
 
-    & > div {
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
+    & > .title-container {
+      position: relative;
+      height: 75px;
 
-      & > .state {
-        margin-bottom: -1px;
-        padding: 0 15px;
-        flex-shrink: 0;
-        font-family: 'Raleway', sans-serif;
+      & > .image {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+        transition: filter 500ms;
+
+        &.faded {
+          filter: grayscale(0.5) opacity(0.5) brightness(0.75);
+        }
       }
 
-      & > .buttons {
-        flex-shrink: 0;
+      & > .title {
+        position: absolute;
+        top: 0;
+        left: 10%;
+        height: 100%;
+        width: 80%;
 
-        & > .button {
-          width: 85px;
-          border-radius: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-          &:first-child {
-            border-bottom-left-radius: 5px;
-          }
+        font-family: 'Raleway', sans-serif;
+        font-weight: 700;
+        font-size: 1.5em;
+        color: $white;
+        text-shadow: $outline;
+        filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.75));
+      }
+    }
 
-          &.small {
-            width: 50px;
-          }
+    & > .content-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      background: lighten($dark, 5%);
 
-          &.large {
-            width: auto;
-            min-width: 100px;
+      & > div {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        & > .state {
+          margin-bottom: -1px;
+          padding: 0 15px;
+          flex-shrink: 0;
+          font-family: 'Raleway', sans-serif;
+        }
+
+        & > .buttons {
+          flex-shrink: 0;
+
+          & > .button {
+            width: 85px;
+            border-radius: 0;
+
+            &:first-child {
+              border-bottom-left-radius: 5px;
+            }
+
+            &.small {
+              width: 50px;
+            }
+
+            &.large {
+              width: auto;
+              min-width: 100px;
+            }
           }
         }
       }
-    }
 
-    & > .episode-error {
-      font-family: 'Raleway', sans-serif;
-      font-weight: 300;
-      font-size: 1.15em;
-      margin: 10px 0;
-    }
+      & > .episode-error {
+        font-family: 'Raleway', sans-serif;
+        font-weight: 300;
+        font-size: 1.15em;
+        margin: 10px 0;
+      }
 
-    & > .episode-container {
-      position: relative;
-      width: 100%;
-      padding: 15px;
-      overflow-y: hidden;
-      will-change: padding, max-height;
-
-      & > .episodes {
-        z-index: 1;
+      & > .episode-container {
+        position: relative;
         width: 100%;
-      }
-
-      &.v-enter-active,
-      &.v-leave-active {
-        transition: padding, 750ms, max-height 750ms;
-      }
-
-      &.v-enter,
-      &.v-leave-to {
-        max-height: 0;
-        padding: 0 15px;
-      }
-
-      &.v-enter-to,
-      &.v-leave {
         padding: 15px;
-        max-height: 150px;
+        overflow-y: hidden;
+        will-change: padding, max-height;
+
+        & > .episodes {
+          z-index: 1;
+          width: 100%;
+        }
+
+        &.v-enter-active,
+        &.v-leave-active {
+          transition: padding, 750ms, max-height 750ms;
+        }
+
+        &.v-enter,
+        &.v-leave-to {
+          max-height: 0;
+          padding: 0 15px;
+        }
+
+        &.v-enter-to,
+        &.v-leave {
+          padding: 15px;
+          max-height: 150px;
+        }
       }
     }
   }
