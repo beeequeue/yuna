@@ -80,18 +80,24 @@
         </div>
       </div>
 
-      <loader v-if="!episodes"/>
+      <loader v-if="!episodes && !episodeError"/>
 
-      <div
-        v-else-if="episodes.length > 0"
-        class="episode-container"
-      >
-        <episodes
-          :episodes="episodes"
-          :clickEpisode="() => {}"
-          small
-        />
-      </div>
+      <span v-if="episodeError" class="episode-error">
+        This show is not available in your region. :(
+      </span>
+
+      <transition>
+        <div
+          v-if="episodes && episodes.length > 0 && getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+          class="episode-container"
+        >
+          <episodes
+            :episodes="episodes"
+            :clickEpisode="() => {}"
+            small
+          />
+        </div>
+      </transition>
     </div>
   </template>
 </ApolloQuery>
@@ -128,6 +134,7 @@ export default class QueueItem extends Vue {
   public id!: number
 
   public episodes: Episode[] | null = null
+  public episodeError: boolean = false
 
   public getHumanizedStatus(data?: AnimeQueueQuery) {
     const length = path<number>(['anime', 'episodes'], data)
@@ -162,7 +169,14 @@ export default class QueueItem extends Vue {
 
     this.fetchedEpisodes = true
 
-    this.episodes = await AnimeCache.getSeasonFromMedia(listEntryId.toString())
+    try {
+      this.episodes = await AnimeCache.getSeasonFromMedia(
+        listEntryId.toString(),
+      )
+    } catch (e) {
+      this.episodeError = true
+      sendErrorToast(this.$store, e)
+    }
   }
 
   public removeFromQueue(id: number) {
@@ -218,6 +232,10 @@ export default class QueueItem extends Vue {
   overflow: hidden;
   cursor: -webkit-grab;
   box-shadow: $shadow;
+
+  &:last-child {
+    margin-bottom: 15px;
+  }
 
   &.sortable-ghost {
     opacity: 0;
@@ -303,14 +321,40 @@ export default class QueueItem extends Vue {
       }
     }
 
+    & > .episode-error {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 300;
+      font-size: 1.15em;
+      margin: 10px 0;
+    }
+
     & > .episode-container {
       position: relative;
       width: 100%;
       padding: 15px;
+      overflow-y: hidden;
+      will-change: padding, max-height;
 
       & > .episodes {
         z-index: 1;
         width: 100%;
+      }
+
+      &.v-enter-active,
+      &.v-leave-active {
+        transition: padding, 750ms, max-height 750ms;
+      }
+
+      &.v-enter,
+      &.v-leave-to {
+        max-height: 0;
+        padding: 0 15px;
+      }
+
+      &.v-enter-to,
+      &.v-leave {
+        padding: 15px;
+        max-height: 150px;
       }
     }
   }

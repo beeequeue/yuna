@@ -21,7 +21,13 @@ export class AnimeCache {
     const hit = seasonCache.has(malId)
 
     if (!hit) {
-      const episodes = await fetchEpisodesOfSeries(malId)
+      let episodes
+
+      try {
+        episodes = await fetchEpisodesOfSeries(malId)
+      } catch (e) {
+        return Promise.reject(e)
+      }
 
       seasonCache.set(malId, episodes)
 

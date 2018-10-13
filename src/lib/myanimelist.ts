@@ -15,9 +15,14 @@ export const fetchEpisodesOfSeries = async (
     corsAnywhere + episodeResponse.body.episodes[0].video_url,
   )
 
-  const match = /media_id=(\d+)/gm.exec(response.text)
+  const match = /"provider_episode_id":\s?(\d+)/m.exec(response.text)
 
-  if (!match || !match[1]) return []
+  if (!match || !match[1]) {
+    // tslint:disable-next-line:no-console quotemark
+    console.error("Couldn't find media_id for " + id)
+
+    return []
+  }
 
   return fetchSeasonFromEpisode(match[1])
 }

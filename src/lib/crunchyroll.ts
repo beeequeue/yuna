@@ -242,6 +242,7 @@ export const fetchEpisodesOfCollection = async (
     session_id: _sessionId,
     locale: LOCALE,
     collection_id: collectionId,
+    limit: 1000,
     fields: mediaFields.join(','),
   })) as CrunchyrollResponse<_Media[]>
 
