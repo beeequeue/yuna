@@ -53,27 +53,47 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { filter, propEq, pathOr } from 'rambda'
 import { mdiClose, mdiLoading } from '@mdi/js'
 
 import Icon from '../Icon.vue'
-import { searchQuery } from '../../graphql/query'
-import { SearchQuery_anime_results } from '../../graphql/SearchQuery'
+import SEARCH_QUERY from '../../graphql/SearchQuery.graphql'
+import {
+  SearchQuery,
+  SearchQuery_anime_results,
+} from '../../graphql/SearchQuery'
 import crIcon from '../../assets/crunchyroll.png'
 
 interface Result extends SearchQuery_anime_results {
   isOnCrunchyroll: boolean
 }
 
-@Component({
+@Component<Search>({
   components: { Icon },
+  apollo: {
+    search: {
+      query: SEARCH_QUERY,
+      variables() {
+        return {
+          search: this.searchString,
+        }
+      },
+      skip: true,
+      deep: true,
+      loadingKey: 'isLoading',
+      debounce: 750,
+      result(result: any) {
+        this.handleResults(result.data)
+      },
+      notifyOnNetworkStatusChange: true,
+      fetchPolicy: 'network-only',
+    },
+  },
 })
 export default class Search extends Vue {
   public isOpen = false
   public isLoading = false
   public searchString = ''
   public results: Result[] = []
-  private debouncedFetch: number | null = null
 
   public emptySvg = mdiClose
   public loadingSvg = mdiLoading
@@ -85,45 +105,37 @@ export default class Search extends Vue {
   }
 
   public setSearchString(e: KeyboardEvent) {
-    const { value } = e.currentTarget as HTMLInputElement
-    this.searchString = value
-    this.isLoading = true
+    const { value: search } = e.currentTarget as HTMLInputElement
+    this.searchString = search
 
-    if (this.debouncedFetch) {
-      window.clearTimeout(this.debouncedFetch)
-    }
-
-    if (value.length < 1) {
+    if (search.length < 1) {
       this.results = []
+      this.$apollo.queries.search.stop()
       this.isLoading = false
 
       return
     }
 
-    window.setTimeout(() => {
-      this.fetchResults()
-    }, 750)
+    this.isLoading = true
+
+    if (this.$apollo.queries.search.skip) {
+      this.$apollo.queries.search.start()
+    } else {
+      this.$apollo.queries.search.refetch()
+    }
   }
 
-  public async fetchResults() {
-    const { data } = await searchQuery(this.$apollo, this.searchString)
+  public async handleResults(result: SearchQuery) {
+    if (!result.anime || !result.anime.results) return
 
-    this.isLoading = false
-
-    if (!data || !data.anime || !data.anime.results) {
-      this.results = []
-
-      return
-    }
-
-    this.results = data.anime.results.map<any>(result => ({
+    this.results = result.anime.results.map<any>(result => ({
       ...result,
-      isOnCrunchyroll:
-        filter(
-          propEq('site', 'Crunchyroll'),
-          pathOr([], ['streamingEpisodes'], result),
-        ).length > 0,
+      isOnCrunchyroll: false,
     }))
+
+    setTimeout(() => {
+      this.isLoading = false
+    }, 250)
   }
 }
 </script>
