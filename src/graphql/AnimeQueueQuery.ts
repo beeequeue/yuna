@@ -7,7 +7,7 @@ import { MediaStatus, MediaListStatus } from "./..\\graphql-types";
 // GraphQL query operation: AnimeQueueQuery
 // ====================================================
 
-export interface AnimeQueueQuery_Media_title {
+export interface AnimeQueueQuery_anime_title {
   __typename: "MediaTitle";
   /**
    * The currently authenticated users preferred title language. Default romaji for non-authenticated
@@ -15,7 +15,7 @@ export interface AnimeQueueQuery_Media_title {
   userPreferred: string | null;
 }
 
-export interface AnimeQueueQuery_Media_coverImage {
+export interface AnimeQueueQuery_anime_coverImage {
   __typename: "MediaCoverImage";
   /**
    * The cover image of media at its largest size
@@ -23,7 +23,7 @@ export interface AnimeQueueQuery_Media_coverImage {
   large: string | null;
 }
 
-export interface AnimeQueueQuery_Media_mediaListEntry {
+export interface AnimeQueueQuery_anime_mediaListEntry {
   __typename: "MediaList";
   /**
    * The id of the list entry
@@ -43,7 +43,7 @@ export interface AnimeQueueQuery_Media_mediaListEntry {
   repeat: number | null;
 }
 
-export interface AnimeQueueQuery_Media {
+export interface AnimeQueueQuery_anime {
   __typename: "Media";
   /**
    * The id of the media
@@ -56,7 +56,7 @@ export interface AnimeQueueQuery_Media {
   /**
    * The official titles of the media in various languages
    */
-  title: AnimeQueueQuery_Media_title | null;
+  title: AnimeQueueQuery_anime_title | null;
   /**
    * The amount of episodes the anime has when complete
    */
@@ -76,18 +76,18 @@ export interface AnimeQueueQuery_Media {
   /**
    * The cover images of the media
    */
-  coverImage: AnimeQueueQuery_Media_coverImage | null;
+  coverImage: AnimeQueueQuery_anime_coverImage | null;
   /**
    * The authenticated user's media list entry for the media
    */
-  mediaListEntry: AnimeQueueQuery_Media_mediaListEntry | null;
+  mediaListEntry: AnimeQueueQuery_anime_mediaListEntry | null;
 }
 
 export interface AnimeQueueQuery {
   /**
    * Media query
    */
-  Media: AnimeQueueQuery_Media | null;
+  anime: AnimeQueueQuery_anime | null;
 }
 
 export interface AnimeQueueQueryVariables {

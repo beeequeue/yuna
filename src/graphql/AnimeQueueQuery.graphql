@@ -1,5 +1,5 @@
 query AnimeQueueQuery($id: Int){
-  Media(id: $id, type: ANIME) {
+  anime: Media(id: $id, type: ANIME) {
     id
     idMal
     title {
