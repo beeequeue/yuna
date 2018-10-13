@@ -69,7 +69,7 @@
       key="removeFromQueue"
       :icon="removeFromQueueSvg"
       content="Remove from Queue"
-      @click.native="removeFromQueue"
+      @click.native="removeFromQueueByIndex"
     />
 
     <raised-button
@@ -93,7 +93,7 @@ import {
 } from '@mdi/js'
 
 import RaisedButton from '../RaisedButton.vue'
-import { addToQueue, getQueue, removeFromQueue } from '../../state/user'
+import { addToQueue, getQueue, removeFromQueueByIndex } from '../../state/user'
 import { sendErrorToast, sendNotImplementedToast } from '../../state/app'
 import { AnimePageQuery_Media_mediaListEntry } from '../../graphql/AnimePageQuery'
 import {
@@ -173,7 +173,7 @@ export default class Actions extends Vue {
       return sendErrorToast(this.$store, 'No entry found..?')
     }
 
-    removeFromQueue(
+    removeFromQueueByIndex(
       this.$store,
       findIndex(equals(this.mediaId), getQueue(this.$store)),
     )

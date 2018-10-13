@@ -15,7 +15,9 @@ const seasonCache = new Store<SeasonCacheSchema>({ name: 'seasonCache' })
 const animeCache = new Store<AnimeCacheSchema>({ name: 'animeCache' })
 
 export class AnimeCache {
-  public static async getSeasonFromMedia(malId: string): Promise<Episode[]> {
+  public static async getSeasonFromMedia(
+    malId: string | number,
+  ): Promise<Episode[]> {
     const hit = seasonCache.has(malId)
 
     if (!hit) {

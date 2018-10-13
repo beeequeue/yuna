@@ -1,6 +1,6 @@
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
-import { propEq } from 'rambda'
+import { equals } from 'rambda'
 
 import { RootState } from '@/state/store'
 import { userStore } from '@/lib/user'
@@ -44,7 +44,7 @@ export const user = {
     },
 
     removeFromQueueById(state: UserState, id: number) {
-      state.queue.splice(state.queue.findIndex(propEq('id', id)), 1)
+      state.queue.splice(state.queue.findIndex(equals(id)), 1)
 
       userStore.set('queue', state.queue)
     },
