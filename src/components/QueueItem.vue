@@ -114,7 +114,7 @@ import { mdiPlayCircleOutline } from '@mdi/js'
 import Icon from './Icon.vue'
 import Loader from './Loader.vue'
 import RaisedButton from './RaisedButton.vue'
-import Episodes from './Anime/Episodes.vue'
+import Episodes from './Episodes.vue'
 import ANIME_QUEUE_QUERY from '../graphql/AnimeQueueQuery.graphql'
 import {
   AnimeQueueQuery,

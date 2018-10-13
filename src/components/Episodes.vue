@@ -36,8 +36,8 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Key } from 'ts-key-enum'
 
-import { Episode } from '../../types'
-import { prop } from '../../utils'
+import { Episode } from '../types'
+import { prop } from '../utils'
 
 @Component
 export default class Episodes extends Vue {
@@ -123,7 +123,7 @@ export default class Episodes extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import '../colors';
 
 .episodes {
   position: relative;
