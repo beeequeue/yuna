@@ -8,6 +8,7 @@
     <player
       key="player"
       :episode="episode"
+      :animeName="playerData.animeName"
     />
   </div>
 </transition>
@@ -16,12 +17,16 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import Player from './Player.vue'
-import { getCurrentEpisode } from '@/state/app'
+import { getCurrentEpisode, getPlayerData } from '@/state/app'
 
 @Component({
   components: { Player },
 })
 export default class PlayerContainer extends Vue {
+  get playerData() {
+    return getPlayerData(this.$store)
+  }
+
   get episode() {
     return getCurrentEpisode(this.$store)
   }

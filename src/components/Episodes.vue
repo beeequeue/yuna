@@ -61,6 +61,8 @@ export default class Episodes extends Vue {
   public id!: number
   @Prop(prop(Number, true))
   public idMal!: number
+  @Prop(prop(String, true))
+  public animeName!: string
   @Prop(prop(Object))
   public listEntry?: ListEntry | null
   @Prop(Number) public current?: number
@@ -178,6 +180,7 @@ export default class Episodes extends Vue {
     } else {
       setPlaylist(this.$store, {
         id: this.id,
+        animeName: this.animeName,
         listEntry: this.listEntry,
         episodes: this.episodes,
         current: index,

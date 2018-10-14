@@ -28,6 +28,7 @@
 
     <controls
       :episode="episode"
+      :animeName="animeName"
       :loading="loading"
       :paused="paused"
       :muted="muted"
@@ -64,7 +65,8 @@ import { getKeydownHandler, KeybindingAction } from '../../state/settings'
   components: { Controls, Icon },
 })
 export default class Player extends Vue {
-  @Prop() public episode!: Episode
+  @Prop(Object) public episode!: Episode
+  @Prop(String) public animeName!: string
   public initiated = false
   public loaded = false
   public loading = false

@@ -4,9 +4,9 @@
 
   <transition name="fade">
     <div v-if="isPlayerMaximized" class="episode-info">
-      <h1>Episode {{episode.index}}: {{episode.title}}</h1>
+      <h1>{{episode.title}}</h1>
 
-      <h3>{{episode.animeName}}</h3>
+      <h3>{{animeName}}</h3>
     </div>
   </transition>
 
@@ -71,12 +71,11 @@ import {
 } from '@mdi/js'
 
 import { Episode } from '@/types'
-import { getIsFullscreen } from '@/state/app'
+import { getIsFullscreen, toggleFullscreen } from '@/state/app'
 import { secondsToTimeString } from '@/utils'
 import Icon from '../Icon.vue'
 import ProgressBar from './ProgressBar.vue'
 import VolumeSlider from './VolumeSlider.vue'
-import { toggleFullscreen } from '../../state/app'
 
 @Component({
   components: { VolumeSlider, ProgressBar, Icon },
@@ -90,7 +89,8 @@ export default class Controls extends Vue {
     return getIsFullscreen(this.$store)
   }
 
-  @Prop() public episode!: Episode
+  @Prop(Object) public episode!: Episode
+  @Prop(String) public animeName!: string
   @Prop(Boolean) public paused!: boolean
   @Prop(Boolean) public muted!: boolean
   @Prop(Number) public volume!: number

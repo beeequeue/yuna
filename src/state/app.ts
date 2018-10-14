@@ -44,6 +44,7 @@ export interface ListEntry {
 
 interface PlayerOptions {
   id: number
+  animeName: string
   listEntry?: ListEntry | null
   episodes: Episode[]
   current: number
@@ -75,6 +76,10 @@ export const app = {
 
     getToasts(state: AppState) {
       return state.toasts
+    },
+
+    getPlayerData(state: AppState) {
+      return state.player
     },
 
     getPlaylistAnimeId(state: AppState) {
@@ -204,6 +209,7 @@ const { read, commit, dispatch } = getStoreAccessors<AppState, RootState>('')
 
 export const getIsUpdateAvailable = read(app.getters.getIsUpdateAvailable)
 export const getToasts = read(app.getters.getToasts)
+export const getPlayerData = read(app.getters.getPlayerData)
 export const getPlaylistAnimeId = read(app.getters.getPlaylistAnimeId)
 export const getPlaylistEntry = read(app.getters.getPlaylistEntry)
 export const getPlaylist = read(app.getters.getPlaylist)

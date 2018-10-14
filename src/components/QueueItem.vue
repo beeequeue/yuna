@@ -89,6 +89,7 @@
           <episodes
             :idMal="result.data.anime.idMal"
             :id="result.data.anime.id"
+            :animeName="result.data.anime.title.userPreferred"
             :listEntry="result.data.anime.mediaListEntry"
             :current="getCurrentEpisode(result.data)"
             small
