@@ -153,7 +153,6 @@ export default class Episodes extends Vue {
     if (this.current) {
       this.$refs.episodeContainer.scroll({
         left: this.getScrollPositionOfEpisode(this.current),
-        behavior: 'smooth',
       })
     }
   }
@@ -223,17 +222,13 @@ export default class Episodes extends Vue {
 
       &.small {
         width: 200px;
+        font-size: 0.85em;
       }
 
       &.active {
         width: 325px;
         transition-delay: 0s;
       }
-
-      /*&:hover {
-        width: 350px;
-        transition-delay: 0s;
-      }*/
 
       &:first-child {
         margin-left: 0;
