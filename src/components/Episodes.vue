@@ -17,7 +17,7 @@
       v-for="(episode, i) in episodes"
       class="episode"
       :class="{ active: i === Number(scrollerValue) - 1, small }"
-      @click="() => {}"
+      @click="setCurrentEpisode(i)"
       :key="episode.crunchyroll.id"
     >
       <span class="title" v-html="episode.title.replace(' - ', '<br/>')"/>
@@ -39,20 +39,30 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { Key } from 'ts-key-enum'
 
 import Loader from './Loader.vue'
 import { AnimeCache } from '../lib/cache'
 import { Episode } from '../types'
 import { prop } from '../utils'
+import {
+  getPlaylistAnimeId,
+  setPlaylist,
+  setCurrentEpisode,
+  ListEntry,
+} from '../state/app'
 
 @Component({
   components: { Loader },
 })
 export default class Episodes extends Vue {
   @Prop(prop(Number, true))
+  public id!: number
+  @Prop(prop(Number, true))
   public idMal!: number
+  @Prop(prop(Object))
+  public listEntry?: ListEntry | null
   @Prop(Number) public current?: number
   @Prop(Boolean) public showScroller?: boolean
   @Prop(Boolean) public small?: boolean
@@ -149,10 +159,28 @@ export default class Episodes extends Vue {
     }
   }
 
+  @Watch('current')
   public scrollToCurrentEpisode() {
     if (this.current) {
       this.$refs.episodeContainer.scroll({
         left: this.getScrollPositionOfEpisode(this.current),
+      })
+    }
+  }
+
+  public setCurrentEpisode(index: number) {
+    if (!this.episodes) return
+
+    const currentPlaylist = getPlaylistAnimeId(this.$store)
+
+    if (currentPlaylist === this.id) {
+      setCurrentEpisode(this.$store, index)
+    } else {
+      setPlaylist(this.$store, {
+        id: this.id,
+        listEntry: this.listEntry,
+        episodes: this.episodes,
+        current: index,
       })
     }
   }

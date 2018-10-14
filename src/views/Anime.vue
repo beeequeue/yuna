@@ -54,7 +54,9 @@
         key="episodes"
         v-if="data && data.anime && data.anime.idMal"
         class="slide-up"
+        :id="data.anime.id"
         :idMal="data.anime.idMal"
+        :listEntry="data.anime.mediaListEntry"
         showScroller
       />
 

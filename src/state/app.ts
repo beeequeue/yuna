@@ -1,14 +1,15 @@
-import { ActionContext } from 'vuex'
-import { getStoreAccessors } from 'vuex-typescript'
+import { activeWindow } from 'electron-util'
+import { merge, propEq, reject } from 'rambda'
 import {
   NotificationFunctionOptions,
   NotificationTypes,
 } from 'vue-notifications'
-import { merge, propEq, reject } from 'rambda'
-import { activeWindow } from 'electron-util'
+import { ActionContext } from 'vuex'
+import { getStoreAccessors } from 'vuex-typescript'
 
-import { RootState } from '@/state/store'
+import { MediaListStatus } from '@/graphql-types'
 import { router } from '@/router'
+import { RootState } from '@/state/store'
 import { Episode } from '@/types'
 
 const generateId = () => {
@@ -35,11 +36,24 @@ type AddToastMutationOptions = NotificationFunctionOptions<
   NotificationTypes
 > & { id: string }
 
+export interface ListEntry {
+  id: number
+  status: MediaListStatus
+  progress: number
+}
+
+interface PlayerOptions {
+  id: number
+  listEntry?: ListEntry | null
+  episodes: Episode[]
+  current: number
+}
+
 export interface AppState {
   isUpdateAvailable: boolean
   toasts: Toast[]
-  episode: Episode | null
   isFullscreen: boolean
+  player: PlayerOptions | null
 }
 
 type AppContext = ActionContext<AppState, RootState>
@@ -47,7 +61,7 @@ type AppContext = ActionContext<AppState, RootState>
 const initialState: AppState = {
   isUpdateAvailable: false,
   toasts: [],
-  episode: null,
+  player: null,
   isFullscreen: false,
 }
 
@@ -63,8 +77,28 @@ export const app = {
       return state.toasts
     },
 
+    getPlaylistAnimeId(state: AppState) {
+      if (!state.player) return null
+
+      return state.player.id
+    },
+
+    getPlaylistEntry(state: AppState) {
+      if (!state.player) return null
+
+      return state.player.listEntry
+    },
+
+    getPlaylist(state: AppState) {
+      if (!state.player) return null
+
+      return state.player.episodes
+    },
+
     getCurrentEpisode(state: AppState) {
-      return state.episode
+      if (!state.player) return null
+
+      return state.player.episodes[state.player.current]
     },
 
     getIsFullscreen(state: AppState) {
@@ -93,8 +127,14 @@ export const app = {
       state.toasts = reject(propEq('id', id), state.toasts)
     },
 
-    setCurrentEpisode(state: AppState, episode: Episode) {
-      state.episode = episode
+    setPlaylist(state: AppState, options: PlayerOptions) {
+      state.player = options
+    },
+
+    setCurrentEpisode(state: AppState, index: number) {
+      if (!state.player) return
+
+      state.player.current = index
     },
 
     setFullscreen(state: AppState, b: boolean) {
@@ -164,12 +204,16 @@ const { read, commit, dispatch } = getStoreAccessors<AppState, RootState>('')
 
 export const getIsUpdateAvailable = read(app.getters.getIsUpdateAvailable)
 export const getToasts = read(app.getters.getToasts)
+export const getPlaylistAnimeId = read(app.getters.getPlaylistAnimeId)
+export const getPlaylistEntry = read(app.getters.getPlaylistEntry)
+export const getPlaylist = read(app.getters.getPlaylist)
 export const getCurrentEpisode = read(app.getters.getCurrentEpisode)
 export const getIsFullscreen = read(app.getters.getIsFullscreen)
 
 export const setIsUpdateAvailable = commit(app.mutations.setIsUpdateAvailable)
 const addToast = commit(app.mutations.addToast)
 export const removeToast = commit(app.mutations.removeToast)
+export const setPlaylist = commit(app.mutations.setPlaylist)
 export const setCurrentEpisode = commit(app.mutations.setCurrentEpisode)
 const setFullscreen = commit(app.mutations.setFullscreen)
 

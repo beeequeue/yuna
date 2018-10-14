@@ -9,7 +9,7 @@
     <video
       preload
       :muted="muted"
-      :poster="episode.image.large"
+      :poster="episode.thumbnail"
       ref="player"
     />
 
