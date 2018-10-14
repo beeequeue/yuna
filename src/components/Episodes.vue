@@ -20,7 +20,7 @@
       @click="() => {}"
       :key="episode.crunchyroll.id"
     >
-      <span class="title" v-html="episode.title"/>
+      <span class="title" v-html="episode.title.replace(' - ', '<br/>')"/>
 
       <img class="thumbnail" :src="episode.thumbnail"/>
     </div>
@@ -105,27 +105,30 @@ export default class Episodes extends Vue {
     }
   }
 
-  public handleScrollerChange(e: KeyboardEvent) {
+  private getScrollPositionOfEpisode(index: number) {
     const container = this.$refs.episodeContainer
+    const episode = container.querySelector(
+      `.episode:nth-child(${index})`,
+    ) as HTMLElement | null
+
+    if (!episode) return 0
+
+    return (
+      episode.offsetLeft - container.clientWidth / 2 + episode.clientWidth / 2
+    )
+  }
+
+  public handleScrollerChange(e: KeyboardEvent) {
     const episodeIdx = (e.currentTarget as HTMLInputElement).value.trim()
 
     this.scrollerValue = episodeIdx
 
     if (episodeIdx === '') return
 
-    const episode = container.querySelector(
-      `.episode:nth-child(${episodeIdx})`,
-    ) as HTMLElement | null
-
-    if (episode) {
-      this.$refs.episodeContainer.scroll({
-        left:
-          episode.offsetLeft -
-          container.clientWidth / 2 +
-          episode.clientWidth / 2,
-        behavior: 'smooth',
-      })
-    }
+    this.$refs.episodeContainer.scroll({
+      left: this.getScrollPositionOfEpisode(Number(episodeIdx)),
+      behavior: 'smooth',
+    })
   }
 
   public async fetchEpisodes() {
@@ -137,10 +140,21 @@ export default class Episodes extends Vue {
       this.episodes = await AnimeCache.getSeasonFromMalId(this.idMal)
 
       this.loading = false
+
+      setTimeout(this.scrollToCurrentEpisode, 150)
     } catch (e) {
       console.error(e)
       this.error = e
       this.loading = false
+    }
+  }
+
+  public scrollToCurrentEpisode() {
+    if (this.current) {
+      this.$refs.episodeContainer.scroll({
+        left: this.getScrollPositionOfEpisode(this.current),
+        behavior: 'smooth',
+      })
     }
   }
 }

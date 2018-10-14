@@ -88,6 +88,7 @@
         >
           <episodes
             :idMal="result.data.anime.idMal"
+            :current="getCurrentEpisode(result.data)"
             small
           />
         </div>
@@ -144,6 +145,17 @@ export default class QueueItem extends Vue {
     return statuses.includes(
       path<MediaListStatus>(['anime', 'mediaListEntry', 'status'], data),
     )
+  }
+
+  public getCurrentEpisode(data?: AnimeQueueQuery) {
+    const lastEpisode = path<number>(
+      ['anime', 'mediaListEntry', 'progress'],
+      data,
+    )
+
+    if (!lastEpisode) return null
+
+    return lastEpisode + 1
   }
 
   public playSvg = mdiPlayCircleOutline
