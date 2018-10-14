@@ -104,11 +104,11 @@ export default class Anime extends Vue {
   }
 
   public getMediaListEntry(data: AnimePageQuery) {
-    return pathOr(null, ['Media', 'mediaListEntry'], data)
+    return pathOr(null, ['anime', 'mediaListEntry'], data)
   }
 
   public getMediaListStatus(data: AnimePageQuery) {
-    return pathOr(null, ['Media', 'mediaListEntry', 'status'], data)
+    return pathOr(null, ['anime', 'mediaListEntry', 'status'], data)
   }
 }
 </script>
