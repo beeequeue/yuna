@@ -73,7 +73,7 @@
             />
 
             <raised-button
-              v-if="getIsStatus(result.data, MediaListStatus.DROPPED, MediaListStatus.PAUSED, MediaListStatus.COMPLETED, MediaListStatus.PLANNING)"
+              v-if="!getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
               class="large"
               content="Remove from Queue"
               @click.native="removeFromQueue(id)"
