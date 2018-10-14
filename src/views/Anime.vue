@@ -3,7 +3,6 @@
   class="anime"
   :query="ANIME_PAGE_QUERY"
   :variables="{ id }"
-  @result="fetchEpisodes"
 >
   <template slot-scope="{ result: { loading, error, data } }">
     <transition-group tag="span">
@@ -53,10 +52,9 @@
 
       <episodes
         key="episodes"
-        v-if="episodes && episodes.length > 0"
+        v-if="data && data.anime && data.anime.idMal"
         class="slide-up"
-        :episodes="episodes"
-        :clickEpisode="setCurrentEpisode"
+        :idMal="data.anime.idMal"
         showScroller
       />
 
@@ -73,7 +71,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { pathOr, path } from 'rambda'
+import { pathOr } from 'rambda'
 
 import CoverImage from '../components/Anime/CoverImage.vue'
 import AnimeTitle from '../components/Anime/Title.vue'
@@ -85,10 +83,6 @@ import RaisedButton from '../components/RaisedButton.vue'
 
 import ANIME_PAGE_QUERY from '../graphql/AnimePageQuery.graphql'
 import { AnimePageQuery } from '../graphql/AnimePageQuery'
-import { fetchEpisode } from '../lib/crunchyroll'
-import { AnimeCache } from '../lib/cache'
-import { Episode } from '../types'
-import { sendErrorToast, setCurrentEpisode } from '../state/app'
 
 @Component({
   components: {
@@ -102,9 +96,6 @@ import { sendErrorToast, setCurrentEpisode } from '../state/app'
   },
 })
 export default class Anime extends Vue {
-  public episodes: Episode[] | null = null
-  public episodesError: string | null = null
-
   ANIME_PAGE_QUERY = ANIME_PAGE_QUERY
   data?: AnimePageQuery
 
@@ -118,31 +109,6 @@ export default class Anime extends Vue {
 
   public getMediaListStatus(data: AnimePageQuery) {
     return pathOr(null, ['Media', 'mediaListEntry', 'status'], data)
-  }
-
-  public async fetchEpisodes({ data }: { data: AnimePageQuery }) {
-    const malId = path<number>('anime.idMal', data)
-
-    if (!malId) return
-
-    try {
-      this.episodes = await AnimeCache.getSeasonFromMalId(malId.toString())
-    } catch (e) {
-      this.episodesError = e
-      sendErrorToast(this.$store, e)
-    }
-  }
-
-  public async setCurrentEpisode(id: string) {
-    let episode: Episode
-
-    try {
-      episode = await fetchEpisode(id)
-    } catch (e) {
-      return sendErrorToast(this.$store, e)
-    }
-
-    setCurrentEpisode(this.$store, episode)
   }
 }
 </script>

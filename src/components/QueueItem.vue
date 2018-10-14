@@ -1,5 +1,5 @@
 <template>
-<ApolloQuery class="anime" :query="ANIME_QUEUE_QUERY" :variables="{ id }" @result="fetchEpisodes">
+<ApolloQuery class="anime" :query="ANIME_QUEUE_QUERY" :variables="{ id }">
   <template slot-scope="{ result }">
     <span v-if="result && result.data" class="container">
       <router-link
@@ -81,20 +81,13 @@
         </div>
       </div>
 
-      <loader v-if="!episodes && !episodeError"/>
-
-      <span v-if="episodeError" class="episode-error">
-        This show is not available in your region. :(
-      </span>
-
       <transition>
         <div
-          v-if="episodes && episodes.length > 0 && getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+          v-if="result.data.anime.idMal && getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
           class="episode-container"
         >
           <episodes
-            :episodes="episodes"
-            :clickEpisode="() => {}"
+            :idMal="result.data.anime.idMal"
             small
           />
         </div>
@@ -121,10 +114,8 @@ import {
   AnimeQueueQuery_anime_mediaListEntry,
 } from '../graphql/AnimeQueueQuery'
 import { sendErrorToast } from '../state/app'
-import { Episode } from '../types'
 import { humanizeMediaListStatus, prop } from '../utils'
 import { MediaListStatus } from '../graphql-types'
-import { AnimeCache } from '../lib/cache'
 import { removeFromQueueById } from '../state/user'
 import { setProgressMutation, setStatusMutation } from '../graphql/mutations'
 
@@ -134,9 +125,6 @@ import { setProgressMutation, setStatusMutation } from '../graphql/mutations'
 export default class QueueItem extends Vue {
   @Prop(prop(Number, true))
   public id!: number
-
-  public episodes: Episode[] | null = null
-  public episodeError: string | null = null
 
   public getHumanizedStatus(data?: AnimeQueueQuery) {
     const length = path<number>(['anime', 'episodes'], data)
@@ -161,19 +149,6 @@ export default class QueueItem extends Vue {
   public playSvg = mdiPlayCircleOutline
   public MediaListStatus = MediaListStatus
   public ANIME_QUEUE_QUERY = ANIME_QUEUE_QUERY
-
-  public async fetchEpisodes({ data }: { data: AnimeQueueQuery }) {
-    const malId = path<number>('anime.idMal', data)
-
-    if (!malId) return
-
-    try {
-      this.episodes = await AnimeCache.getSeasonFromMalId(malId.toString())
-    } catch (e) {
-      this.episodeError = e
-      sendErrorToast(this.$store, e)
-    }
-  }
 
   public removeFromQueue(id: number) {
     removeFromQueueById(this.$store, id)
@@ -213,10 +188,6 @@ export default class QueueItem extends Vue {
       mediaListEntry,
     )
   }
-
-  // public setEpisode(episode: IEpisode) {
-  //   setCurrentEpisode(this.$store, episode)
-  // }
 }
 </script>
 

@@ -1,6 +1,12 @@
 <template>
 <div class="episodes">
+  <div v-if="loading" class="loading">
+    <loader/>
+    Looking for episodes...
+  </div>
+
   <div
+    v-if="episodes && episodes.length > 0 && !loading"
     ref="episodeContainer"
     class="episode-container"
     :class="containerClasses"
@@ -8,10 +14,10 @@
     @scroll="updateContainerClasses"
   >
     <div
-      v-for="(episode, i) in _episodes"
+      v-for="(episode, i) in episodes"
       class="episode"
       :class="{ active: i === Number(scrollerValue) - 1, small }"
-      @click="clickEpisode"
+      @click="() => {}"
       :key="episode.crunchyroll.id"
     >
       <span class="title" v-html="episode.title"/>
@@ -21,9 +27,9 @@
   </div>
 
   <input
-    v-if="showScroller"
+    v-if="showScroller && episodes && episodes.length > 0 && !loading"
     class="scroller"
-    :maxlength="_episodes.length.toString().length"
+    :maxlength="episodes.length.toString().length"
     :value="scrollerValue"
     placeholder="1"
     @keydown.capture="handleScrollerKeydown"
@@ -36,18 +42,25 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Key } from 'ts-key-enum'
 
+import Loader from './Loader.vue'
+import { AnimeCache } from '../lib/cache'
 import { Episode } from '../types'
 import { prop } from '../utils'
 
-@Component
+@Component({
+  components: { Loader },
+})
 export default class Episodes extends Vue {
-  @Prop(Array) public episodes!: Episode[]
-  @Prop(prop(Function, true))
-  public clickEpisode!: () => any
+  @Prop(prop(Number, true))
+  public idMal!: number
   @Prop(Number) public current?: number
   @Prop(Boolean) public showScroller?: boolean
   @Prop(Boolean) public small?: boolean
 
+  public episodes: Episode[] | null = null
+  public fetched = false
+  public loading = true
+  public error: string | null = null
   public scrollerValue = ''
 
   public containerClasses = {
@@ -59,13 +72,8 @@ export default class Episodes extends Vue {
     episodeContainer: HTMLDivElement
   }
 
-  public get _episodes(): Episode[] {
-    if (!this.episodes) return []
-
-    return this.episodes.filter(e => e != null).map((e: any) => ({
-      ...(e as Episode),
-      title: e.title.replace(' - ', '<br/>'),
-    }))
+  public mounted() {
+    this.fetchEpisodes()
   }
 
   public updateContainerClasses() {
@@ -119,6 +127,22 @@ export default class Episodes extends Vue {
       })
     }
   }
+
+  public async fetchEpisodes() {
+    if (this.fetched || !this.idMal) return
+
+    try {
+      this.fetched = true
+
+      this.episodes = await AnimeCache.getSeasonFromMalId(this.idMal)
+
+      this.loading = false
+    } catch (e) {
+      console.error(e)
+      this.error = e
+      this.loading = false
+    }
+  }
 }
 </script>
 
@@ -129,9 +153,17 @@ export default class Episodes extends Vue {
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: flex-start;
   z-index: -1;
+
+  & > .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-shadow: $outline;
+    filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
+  }
 
   & > .episode-container {
     display: flex;

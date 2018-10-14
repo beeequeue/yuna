@@ -15,26 +15,24 @@ const seasonCache = new Store<SeasonCacheSchema>({ name: 'seasonCache' })
 const animeCache = new Store<AnimeCacheSchema>({ name: 'animeCache' })
 
 export class AnimeCache {
-  public static async getSeasonFromMalId(
-    malId: string | number,
-  ): Promise<Episode[]> {
-    const hit = seasonCache.has(malId)
+  public static async getSeasonFromMalId(idMal: number): Promise<Episode[]> {
+    const hit = seasonCache.has(idMal.toString())
 
     if (!hit) {
       let episodes
 
       try {
-        episodes = await fetchEpisodesOfSeries(malId)
+        episodes = await fetchEpisodesOfSeries(idMal)
       } catch (e) {
         return Promise.reject(e)
       }
 
-      seasonCache.set(malId, episodes)
+      seasonCache.set(idMal.toString(), episodes)
 
       return episodes
     }
 
-    return seasonCache.get(malId)
+    return seasonCache.get(idMal.toString())
   }
 
   public static clear() {

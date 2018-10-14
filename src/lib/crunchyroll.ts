@@ -1,6 +1,5 @@
 /* tslint:disable:class-name */
 import superagent from 'superagent/superagent'
-import { map } from 'rambda'
 import uuid from 'uuid/v4'
 
 import { Episode, StreamData } from '@/types'
@@ -250,7 +249,7 @@ export const fetchEpisodesOfCollection = async (
     return Promise.reject(response.body.message)
   }
 
-  return map(mediaToEpisode, response.body.data)
+  return response.body.data.map(mediaToEpisode).filter(removeExtraEpisodes)
 }
 
 export const fetchEpisode = async (mediaId: string): Promise<Episode> => {
@@ -327,3 +326,5 @@ const mediaToEpisode = ({
     url,
   },
 })
+
+const removeExtraEpisodes = ({ index }: Episode) => index % 1 === 0

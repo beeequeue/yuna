@@ -1,5 +1,6 @@
 import request from 'superagent/superagent'
 import { fetchSeasonFromEpisode } from '@/lib/crunchyroll'
+import { RequestResponse, responseIsError } from '@/utils'
 import { Episode } from '@/types'
 
 const corsAnywhere = 'https://cors-anywhere.herokuapp.com/'
@@ -7,9 +8,21 @@ const corsAnywhere = 'https://cors-anywhere.herokuapp.com/'
 export const fetchEpisodesOfSeries = async (
   id: string | number,
 ): Promise<Episode[]> => {
-  const episodeResponse = await request.get(
-    `https://api.jikan.moe/v3/anime/${id}/episodes`,
-  )
+  const episodeResponse = (await request
+    .get(`https://api.jikan.moe/v3/anime/${id}/episodes`)
+    .ok(() => true)) as RequestResponse
+
+  if (responseIsError(episodeResponse)) {
+    if (episodeResponse.status === 404) {
+      return []
+    }
+
+    if (episodeResponse.status === 429) {
+      return Promise.reject('Too many requests, try again later.')
+    }
+
+    return Promise.reject('Something went wrong!')
+  }
 
   const response = await request.get(
     corsAnywhere + episodeResponse.body.episodes[0].video_url,

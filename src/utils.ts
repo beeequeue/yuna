@@ -1,5 +1,7 @@
+import { path } from 'rambda'
 import { Response } from 'superagent'
 import { Prop as IProp, PropOptions } from 'vue/types/options'
+
 import { MediaListStatus } from '@/graphql-types'
 
 export interface RequestSuccess<B extends object> extends Response {
@@ -9,9 +11,19 @@ export interface RequestSuccess<B extends object> extends Response {
 }
 
 export interface RequestError<B extends object> extends Response {
-  status: 200 | 400 | 401 | 404 | 500 | 502
+  status: 200 | 400 | 401 | 404 | 500 | 502 | 429
   ok: false
   body: B
+}
+
+export type RequestResponse<D extends object = any, E extends object = any> =
+  | RequestSuccess<D>
+  | RequestError<E>
+
+export const responseIsError = (
+  res: RequestResponse,
+): res is RequestError<any> => {
+  return path('body.error', res) != null || path<boolean>('error', res)
 }
 
 export const secondsToTimeString = (input: number) => {
