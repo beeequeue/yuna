@@ -57,6 +57,7 @@
         :id="data.anime.id"
         :idMal="data.anime.idMal"
         :listEntry="data.anime.mediaListEntry"
+        :animeName="data.anime.title.userPreferred"
         showScroller
       />
 

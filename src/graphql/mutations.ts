@@ -1,12 +1,12 @@
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 
+import { MediaListStatus } from '@/graphql-types'
+
+import { UpdateProgressMutation } from './UpdateProgressMutation'
 import ANIME_PAGE_QUERY from './AnimePageQuery.graphql'
 import UPDATE_PROGRESS_MUTATION from './UpdateProgressMutation.graphql'
 import SET_STATUS_MUTATION from './SetStatusMutation.graphql'
 import ADD_ENTRY_MUTATION from './AddEntryMutation.graphql'
-
-import { MediaListStatus } from '@/graphql-types'
-import { UpdateProgressMutation } from '@/graphql/UpdateProgressMutation'
 
 export const setProgressMutation = async (
   apollo: DollarApollo<any>,
@@ -58,7 +58,7 @@ export const addEntryMutation = async (
         variables: { id: mediaId },
       })
 
-      cache.Media.mediaListEntry = data.SaveMediaListEntry
+      cache.anime.mediaListEntry = data.SaveMediaListEntry
 
       store.writeQuery({ query: ANIME_PAGE_QUERY, data: cache })
     },

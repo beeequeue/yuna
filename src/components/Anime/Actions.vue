@@ -2,7 +2,7 @@
 <transition name="fade">
   <transition-group class="actions" tag="div">
     <raised-button
-      v-if="!isOnList || (!isPlanning && !isWatching && !isCompleted && !isDropped)"
+      v-if="!isOnList || (!isPlanning && !isWatching && !isCompleted && !isDropped && !isPaused)"
       key="addEntry"
       :icon="addToListSvg"
       content="Set as Planning"
@@ -18,7 +18,7 @@
     />
 
     <raised-button
-      v-if="isDropped"
+      v-if="isDropped || isPaused"
       key="resumeEntry"
       :icon="setToRepeatSvg"
       content="Resume"
@@ -38,8 +38,9 @@
     </div>
     <div v-if="isWatching" class="multi-button" key="isWatching">
       <raised-button
-        content=""
-        @click.native="sendNotImplementedToast"
+        type="warning"
+        content="Pause"
+        @click.native="statusMutation(MediaListStatus.PAUSED)"
       />
 
       <raised-button
@@ -146,6 +147,10 @@ export default class Actions extends Vue {
 
   public get isDropped() {
     return this.mediaListStatus === MediaListStatus.DROPPED
+  }
+
+  public get isPaused() {
+    return this.mediaListStatus === MediaListStatus.PAUSED
   }
 
   public get isInQueue() {

@@ -1,7 +1,9 @@
+import { path } from 'rambda'
 import request from 'superagent/superagent'
+
 import { fetchSeasonFromEpisode } from '@/lib/crunchyroll'
-import { RequestResponse, responseIsError } from '@/utils'
 import { Episode } from '@/types'
+import { RequestResponse, responseIsError } from '@/utils'
 
 const corsAnywhere = 'https://cors-anywhere.herokuapp.com/'
 
@@ -22,6 +24,10 @@ export const fetchEpisodesOfSeries = async (
     }
 
     return Promise.reject('Something went wrong!')
+  }
+
+  if (!path('episodes.0.video_url', episodeResponse.body)) {
+    return []
   }
 
   const response = await request.get(
