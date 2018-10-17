@@ -8,27 +8,37 @@
     <player
       key="player"
       :episode="episode"
+      :nextEpisode="delayedNextEpisode"
       :animeName="playerData.animeName"
+      :episodesInAnime="playerData.episodes.length"
     />
   </div>
 </transition>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import Player from './Player.vue'
-import { getCurrentEpisode, getPlayerData } from '@/state/app'
+
+import { getCurrentEpisode, getNextEpisode, getPlayerData } from '@/state/app'
+import { Episode } from '@/types'
 
 @Component({
   components: { Player },
 })
 export default class PlayerContainer extends Vue {
+  delayedNextEpisode!: Episode
+
   get playerData() {
     return getPlayerData(this.$store)
   }
 
   get episode() {
     return getCurrentEpisode(this.$store)
+  }
+
+  get nextEpisode() {
+    return getNextEpisode(this.$store)
   }
 
   get classFromRoute() {
@@ -43,6 +53,19 @@ export default class PlayerContainer extends Vue {
       default:
         return 'small'
     }
+  }
+
+  public mounted() {
+    this.delayedNextEpisode = this.nextEpisode as Episode
+  }
+
+  @Watch('nextEpisode')
+  public updateDelayedNextEpisode() {
+    setTimeout(() => {
+      if (!this.nextEpisode) return
+
+      this.delayedNextEpisode = this.nextEpisode
+    }, 1000)
   }
 }
 </script>

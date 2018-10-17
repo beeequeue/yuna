@@ -106,6 +106,15 @@ export const app = {
       return state.player.episodes[state.player.current]
     },
 
+    getNextEpisode(state: AppState) {
+      if (!state.player) return null
+
+      const nextIndex = state.player.current + 1
+      if (nextIndex >= state.player.episodes.length) return null
+
+      return state.player.episodes[nextIndex]
+    },
+
     getIsFullscreen(state: AppState) {
       return state.isFullscreen
     },
@@ -214,6 +223,7 @@ export const getPlaylistAnimeId = read(app.getters.getPlaylistAnimeId)
 export const getPlaylistEntry = read(app.getters.getPlaylistEntry)
 export const getPlaylist = read(app.getters.getPlaylist)
 export const getCurrentEpisode = read(app.getters.getCurrentEpisode)
+export const getNextEpisode = read(app.getters.getNextEpisode)
 export const getIsFullscreen = read(app.getters.getIsFullscreen)
 
 export const setIsUpdateAvailable = commit(app.mutations.setIsUpdateAvailable)

@@ -60,7 +60,6 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { contains } from 'rambda'
 import {
   mdiArrowCollapse,
   mdiArrowExpand,
@@ -81,10 +80,6 @@ import VolumeSlider from './VolumeSlider.vue'
   components: { VolumeSlider, ProgressBar, Icon },
 })
 export default class Controls extends Vue {
-  public get isPlayerMaximized() {
-    return contains(this.$route.path, ['/player-big', '/player-full'])
-  }
-
   public get isFullscreen() {
     return getIsFullscreen(this.$store)
   }
@@ -93,6 +88,7 @@ export default class Controls extends Vue {
   @Prop(String) public animeName!: string
   @Prop(Boolean) public paused!: boolean
   @Prop(Boolean) public muted!: boolean
+  @Prop(Boolean) public isPlayerMaximized!: boolean
   @Prop(Number) public volume!: number
   @Prop(Number) public progressInSeconds!: number
   @Prop(Number) public progressPercentage!: number
@@ -180,7 +176,8 @@ $buttonSize: 45px;
     color: $white;
     font-size: 26px;
     text-align: left;
-    text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.85);
+    text-shadow: $outline;
+    filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.25));
     user-select: initial;
 
     & > h1 {

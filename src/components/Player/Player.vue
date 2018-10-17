@@ -11,6 +11,7 @@
       :muted="muted"
       :poster="episode.thumbnail"
       ref="player"
+      :class="{ ended }"
     />
 
     <transition name="fade">
@@ -31,6 +32,7 @@
       :animeName="animeName"
       :loading="loading"
       :paused="paused"
+      :isPlayerMaximized="isPlayerMaximized"
       :muted="muted"
       :volume="volume"
       :progressPercentage="progressPercentage"
@@ -42,16 +44,26 @@
       :play="play"
       :pause="pause"
     />
+
+    <next-episode-overlay
+      v-if="ended"
+      :nextEpisode="nextEpisode"
+      :episodesInAnime="episodesInAnime"
+      :isPlayerMaximized="isPlayerMaximized"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import Hls from 'hls.js'
+import { contains } from 'rambda'
 import { mdiLoading, mdiPlayCircle } from '@mdi/js'
 
+import { prop } from '@/utils'
 import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
+import NextEpisodeOverlay from './NextEpisodeOverlay.vue'
 import { Episode } from '../../types'
 import { fetchStream } from '../../lib/crunchyroll'
 import {
@@ -62,12 +74,16 @@ import {
 import { getKeydownHandler, KeybindingAction } from '../../state/settings'
 
 @Component({
-  components: { Controls, Icon },
+  components: { Controls, Icon, NextEpisodeOverlay },
 })
 export default class Player extends Vue {
   @Prop(Object) public episode!: Episode
+  @Prop(Object) public nextEpisode!: Episode
   @Prop(String) public animeName!: string
+  @Prop(prop(Number, true))
+  public episodesInAnime!: number
   public initiated = false
+  public ended = false
   public loaded = false
   public loading = false
   public paused = true
@@ -81,6 +97,10 @@ export default class Player extends Vue {
 
   public playCircleSvg = mdiPlayCircle
   public loadingSvg = mdiLoading
+
+  public get isPlayerMaximized() {
+    return contains(this.$route.path, ['/player-big', '/player-full'])
+  }
 
   public $refs!: {
     player: HTMLVideoElement
@@ -109,6 +129,7 @@ export default class Player extends Vue {
 
     this.$refs.player.onprogress = this.onLoadedProgress
     this.$refs.player.ontimeupdate = this.onTimeUpdate
+    this.$refs.player.addEventListener('ended', this.onEnded)
   }
 
   public onLoadedProgress(e: Event) {
@@ -119,8 +140,17 @@ export default class Player extends Vue {
 
   public onTimeUpdate(e: Event) {
     const element = e.target as HTMLVideoElement
+
+    if (this.ended) {
+      this.ended = false
+    }
+
     this.progressInSeconds = Math.round(element.currentTime)
     this.progressPercentage = element.currentTime / this.episode.duration
+  }
+
+  public onEnded() {
+    this.ended = true
   }
 
   public onSetTime(e: Event) {
@@ -173,6 +203,7 @@ export default class Player extends Vue {
 
   @Watch('episode')
   public async onNewEpisode() {
+    this.ended = false
     this.initiated = false
     this.paused = true
     this.loading = true
@@ -249,11 +280,17 @@ export default class Player extends Vue {
   width: 100%;
   height: 100%;
   box-shadow: $shadow;
+  overflow: hidden;
 
   & > video {
     background: #050505;
     width: 100%;
     height: 100%;
+    transition: filter 1s;
+
+    &.ended {
+      filter: blur(10px);
+    }
   }
 
   & > .uninitiated-icon {
