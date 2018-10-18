@@ -23,56 +23,56 @@
           <span :style="{width: '100%'}"/>
 
           <div class="buttons">
-            <raised-button
+            <c-button
               v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
               class="small"
               content="+"
               @click.native="incrementProgress(result.data, 1)"
             />
 
-            <raised-button
+            <c-button
               v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
               class="small"
               content="-"
               @click.native="incrementProgress(result.data, -1)"
             />
 
-            <raised-button
+            <c-button
               v-if="getIsStatus(result.data, MediaListStatus.PLANNING)"
               type="success"
               content="Start"
               @click.native="statusMutation(result.data, MediaListStatus.CURRENT)"
             />
 
-            <raised-button
+            <c-button
               v-if="getIsStatus(result.data, MediaListStatus.PAUSED, MediaListStatus.DROPPED)"
               type="success"
               content="Resume"
               @click.native="statusMutation(result.data, MediaListStatus.CURRENT)"
             />
 
-            <raised-button
+            <c-button
               v-if="getIsStatus(result.data, MediaListStatus.COMPLETED)"
               type="success"
               content="Rewatch"
               @click.native="statusMutation(result.data, MediaListStatus.REPEATING)"
             />
 
-            <raised-button
+            <c-button
               v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
               type="warning"
               content="Pause"
               @click.native="statusMutation(result.data, MediaListStatus.PAUSED)"
             />
 
-            <raised-button
+            <c-button
               v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
               type="danger"
               content="Drop"
               @click.native="statusMutation(result.data, MediaListStatus.DROPPED)"
             />
 
-            <raised-button
+            <c-button
               v-if="!getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
               class="large"
               content="Remove from Queue"
@@ -110,7 +110,7 @@ import { mdiPlayCircleOutline } from '@mdi/js'
 
 import Icon from './Icon.vue'
 import Loader from './Loader.vue'
-import RaisedButton from './RaisedButton.vue'
+import CButton from './CButton.vue'
 import Episodes from './Episodes.vue'
 import ANIME_QUEUE_QUERY from '../graphql/AnimeQueueQuery.graphql'
 import {
@@ -124,7 +124,7 @@ import { removeFromQueueById } from '../state/user'
 import { setProgressMutation, setStatusMutation } from '../graphql/mutations'
 
 @Component({
-  components: { Loader, Episodes, RaisedButton, Icon },
+  components: { Loader, Episodes, CButton, Icon },
 })
 export default class QueueItem extends Vue {
   @Prop(prop(Number, true))

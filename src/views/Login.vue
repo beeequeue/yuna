@@ -18,9 +18,9 @@
         <br/>
         <br/>
 
-        <button v-if="!isLoggedIn.anilist" @click="authAnilist">
+        <c-button v-if="!isLoggedIn.anilist" @click="authAnilist">
           Link Account
-        </button>
+        </c-button>
         <icon v-else :icon="checkSvg"/>
       </div>
 

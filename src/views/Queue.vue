@@ -24,17 +24,17 @@
     <div class="sidebar">
       <span class="fill"/>
 
-      <raised-button
+      <c-button
         content="Import Watching from List"
         @click.native="sendNotImplementedToast"
       />
 
-      <raised-button
+      <c-button
         content="Import from Crunchyroll"
         @click.native="sendNotImplementedToast"
       />
 
-      <raised-button type="danger" content="Clear queue" @click.native="clearQueue"/>
+      <c-button type="danger" content="Clear queue" @click.native="clearQueue"/>
     </div>
   </div>
 </template>
@@ -44,12 +44,12 @@ import { Component, Vue } from 'vue-property-decorator'
 import Draggable from 'vuedraggable'
 
 import QueueItem from '../components/QueueItem.vue'
-import RaisedButton from '../components/RaisedButton.vue'
+import CButton from '../components/CButton.vue'
 import { getQueue, setQueue } from '../state/user'
 import { sendNotImplementedToast } from '../state/app'
 
 @Component({
-  components: { Draggable, QueueItem, RaisedButton },
+  components: { Draggable, QueueItem, CButton },
 })
 export default class Queue extends Vue {
   public get queue() {

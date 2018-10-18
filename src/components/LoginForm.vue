@@ -7,7 +7,7 @@
   <input :value="password" @input="updatePassword" type="password" placeholder="Password" />
   <br/>
   <br/>
-  <button @click="handleLogin">Login</button>
+  <c-button @click="handleLogin">Login</c-button>
 </div>
 </template>
 

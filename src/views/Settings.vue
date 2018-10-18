@@ -13,7 +13,7 @@
       :openKeybindModal="openKeybindModal"
     />
 
-    <raised-button
+    <c-button
       type="danger"
       content="Reset keybindings to default"
       :icon="resetSvg"
@@ -55,10 +55,10 @@ import {
   SettingsState,
 } from '../state/settings'
 import Keybinding from '../components/Settings/Keybinding.vue'
-import RaisedButton from '../components/RaisedButton.vue'
+import CButton from '../components/CButton.vue'
 
 @Component({
-  components: { RaisedButton, Keybinding },
+  components: { CButton, Keybinding },
 })
 export default class Settings extends Vue {
   public actionToBind: KeybindingAction | null = null

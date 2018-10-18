@@ -1,7 +1,7 @@
 <template>
 <transition name="fade">
   <transition-group class="actions" tag="div">
-    <raised-button
+    <c-button
       v-if="!isOnList || (!isPlanning && !isWatching && !isCompleted && !isDropped && !isPaused)"
       key="addEntry"
       :icon="addToListSvg"
@@ -9,7 +9,7 @@
       @click.native="addEntryMutation(MediaListStatus.PLANNING)"
     />
 
-    <raised-button
+    <c-button
       v-if="isPlanning"
       key="startEntry"
       :icon="addToQueueSvg"
@@ -17,7 +17,7 @@
       @click.native="statusMutation(MediaListStatus.CURRENT)"
     />
 
-    <raised-button
+    <c-button
       v-if="isDropped || isPaused"
       key="resumeEntry"
       :icon="setToRepeatSvg"
@@ -26,31 +26,31 @@
     />
 
     <div v-if="isWatching" class="multi-button" key="isWatchingProgress">
-      <raised-button
+      <c-button
         content="+"
         @click.native="progressMutation(mediaListEntry.progress + 1)"
       />
 
-      <raised-button
+      <c-button
         content="-"
         @click.native="progressMutation(mediaListEntry.progress - 1)"
       />
     </div>
     <div v-if="isWatching" class="multi-button" key="isWatching">
-      <raised-button
+      <c-button
         type="warning"
         content="Pause"
         @click.native="statusMutation(MediaListStatus.PAUSED)"
       />
 
-      <raised-button
+      <c-button
         type="danger"
         content="Drop"
         @click.native="statusMutation(MediaListStatus.DROPPED)"
       />
     </div>
 
-    <raised-button
+    <c-button
       v-if="isCompleted"
       key="setToRepeating"
       :icon="setToRepeatSvg"
@@ -58,14 +58,14 @@
       @click.native="statusMutation(MediaListStatus.REPEATING)"
     />
 
-    <raised-button
+    <c-button
       v-if="!isInQueue"
       key="addToQueue"
       :icon="addToQueueSvg"
       content="Add to Queue"
       @click.native="addToQueue"
     />
-    <raised-button
+    <c-button
       v-else
       key="removeFromQueue"
       :icon="removeFromQueueSvg"
@@ -73,7 +73,7 @@
       @click.native="removeFromQueueByIndex"
     />
 
-    <raised-button
+    <c-button
       v-if="isOnList"
       key="editItem"
       content="Edit"
@@ -93,7 +93,7 @@ import {
   mdiRepeat,
 } from '@mdi/js'
 
-import RaisedButton from '../RaisedButton.vue'
+import CButton from '../CButton.vue'
 import { addToQueue, getQueue, removeFromQueueByIndex } from '../../state/user'
 import { sendErrorToast, sendNotImplementedToast } from '../../state/app'
 import { AnimePageQuery_anime_mediaListEntry } from '../../graphql/AnimePageQuery'
@@ -106,7 +106,7 @@ import { MediaListStatus } from '../../graphql-types'
 import { prop } from '../../utils'
 
 @Component({
-  components: { RaisedButton },
+  components: { CButton },
 })
 export default class Actions extends Vue {
   @Prop(prop(Number))

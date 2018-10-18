@@ -3,7 +3,7 @@
   <div class="action-name">{{getPrettyActionName(action)}}:</div>
 
   <div class="actions">
-    <raised-button
+    <c-button
       v-for="key in keys"
       :key="key"
       :icon="getIconForKey(key)"
@@ -12,7 +12,7 @@
       @click.native="unbindKey({key, action})"
     />
 
-    <raised-button v-if="keys.length < 2" @click.native="openKeybindModal(action)" :icon="plusSvg"/>
+    <c-button v-if="keys.length < 2" @click.native="openKeybindModal(action)" :icon="plusSvg"/>
   </div>
 </div>
 </template>
@@ -33,10 +33,10 @@ import {
 } from '@mdi/js'
 
 import { getKeysForAction, KeybindingAction } from '../../state/settings'
-import RaisedButton from '../RaisedButton.vue'
+import CButton from '../CButton.vue'
 
 @Component({
-  components: { RaisedButton },
+  components: { CButton },
 })
 export default class Keybinding extends Vue {
   @Prop(String) public action!: KeybindingAction

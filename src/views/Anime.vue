@@ -13,7 +13,7 @@
       >
         <h1>{{ error.graphQLErrors[0].message }}</h1>
 
-        <raised-button
+        <c-button
           content="Go back"
           @click.native="$router.back()"
         />
@@ -82,7 +82,7 @@ import Actions from '../components/Anime/Actions.vue'
 import CenterContainer from '../components/Anime/CenterContainer.vue'
 import Relations from '../components/Anime/Relations.vue'
 import Episodes from '../components/Episodes.vue'
-import RaisedButton from '../components/RaisedButton.vue'
+import CButton from '../components/CButton.vue'
 
 import ANIME_PAGE_QUERY from '../graphql/AnimePageQuery.graphql'
 import { AnimePageQuery } from '../graphql/AnimePageQuery'
@@ -95,7 +95,7 @@ import { AnimePageQuery } from '../graphql/AnimePageQuery'
     Actions,
     CoverImage,
     AnimeTitle,
-    RaisedButton,
+    CButton,
   },
 })
 export default class Anime extends Vue {
