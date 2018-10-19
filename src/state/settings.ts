@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import { getStoreAccessors } from 'vuex-typescript'
 import Store from 'electron-store'
-import { Key } from 'ts-key-enum'
 import { complement, equals, filter } from 'rambda'
+import { Key } from 'ts-key-enum'
 
 import { RootState } from '@/state/store'
 
@@ -19,6 +19,7 @@ export enum KeybindingAction {
 }
 
 export interface SettingsState {
+  autoPlay: boolean
   keybindings: {
     [key: string]: KeybindingAction[]
   }
@@ -47,6 +48,7 @@ const defaultBindings = {
 }
 
 const initialState: SettingsState = {
+  autoPlay: true,
   keybindings: settingsStore.get('keybindings', { ...defaultBindings }),
 }
 
@@ -56,6 +58,10 @@ export const settings = {
   getters: {
     getSettings(state: SettingsState) {
       return state
+    },
+
+    getShouldAutoPlay(state: SettingsState) {
+      return state.autoPlay
     },
 
     getKeybindings(state: SettingsState) {
@@ -159,6 +165,7 @@ export const settings = {
 const { read, commit } = getStoreAccessors<SettingsState, RootState>('')
 
 export const getSettings = read(settings.getters.getSettings)
+export const getShouldAutoPlay = read(settings.getters.getShouldAutoPlay)
 export const getKeybindings = read(settings.getters.getKeybindings)
 export const getKeysForAction = read(settings.getters.getKeysForAction)
 export const getKeydownHandler = read(settings.getters.getKeydownHandler)

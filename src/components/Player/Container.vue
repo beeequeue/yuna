@@ -11,6 +11,7 @@
       :nextEpisode="delayedNextEpisode"
       :animeName="playerData.animeName"
       :episodesInAnime="playerData.episodes.length"
+      :shouldAutoPlay="shouldAutoPlay"
     />
   </div>
 </transition>
@@ -22,12 +23,13 @@ import Player from './Player.vue'
 
 import { getCurrentEpisode, getNextEpisode, getPlayerData } from '@/state/app'
 import { Episode } from '@/types'
+import { getShouldAutoPlay } from '@/state/settings'
 
 @Component({
   components: { Player },
 })
 export default class PlayerContainer extends Vue {
-  delayedNextEpisode!: Episode
+  public delayedNextEpisode: Episode | null = null
 
   get playerData() {
     return getPlayerData(this.$store)
@@ -39,6 +41,10 @@ export default class PlayerContainer extends Vue {
 
   get nextEpisode() {
     return getNextEpisode(this.$store)
+  }
+
+  get shouldAutoPlay() {
+    return getShouldAutoPlay(this.$store)
   }
 
   get classFromRoute() {

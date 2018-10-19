@@ -9,6 +9,7 @@
     <video
       preload
       :muted="muted"
+      :autoplay="shouldAutoPlay"
       :poster="episode.thumbnail"
       ref="player"
       :class="{ ended }"
@@ -46,10 +47,11 @@
     />
 
     <next-episode-overlay
-      v-if="ended"
+      v-if="ended && nextEpisode"
       :nextEpisode="nextEpisode"
       :episodesInAnime="episodesInAnime"
       :isPlayerMaximized="isPlayerMaximized"
+      :shouldAutoPlay="shouldAutoPlay"
     />
   </div>
 </template>
@@ -82,12 +84,13 @@ export default class Player extends Vue {
   @Prop(String) public animeName!: string
   @Prop(prop(Number, true))
   public episodesInAnime!: number
-  public initiated = false
+  @Prop(Boolean) public shouldAutoPlay?: boolean
+  public initiated = !!this.shouldAutoPlay
   public ended = false
   public loaded = false
   public loading = false
   public paused = true
-  public muted = false
+  public muted = !!localStorage.getItem('muted')
   public volume = Number(localStorage.getItem('volume') || 75)
   public progressPercentage = 0
   public progressInSeconds = 0
@@ -170,6 +173,8 @@ export default class Player extends Vue {
 
   public onToggleMute() {
     this.muted = !this.muted
+
+    localStorage.setItem('muted', this.muted.toString())
   }
 
   private get actionFunctionMap() {
@@ -204,7 +209,7 @@ export default class Player extends Vue {
   @Watch('episode')
   public async onNewEpisode() {
     this.ended = false
-    this.initiated = false
+    this.initiated = !!this.shouldAutoPlay
     this.paused = true
     this.loading = true
     this.loaded = false
