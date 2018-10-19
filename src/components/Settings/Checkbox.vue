@@ -1,0 +1,92 @@
+<template>
+<div class="checkbox-container">
+  <input
+    v-show="false"
+    :id="setting"
+    type="checkbox"
+    @change="handleChange"
+    :checked="checked"
+  />
+
+  <label :for="setting">
+    <div class="checkbox" :class="{ checked }">
+      <icon :icon="checkSvg"/>
+    </div>
+
+    {{ text }}
+  </label>
+</div>
+</template>
+
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import { mdiCheck } from '@mdi/js'
+
+import { prop } from '@/utils'
+import CButton from '../CButton.vue'
+import Icon from '../Icon.vue'
+
+@Component({
+  components: { CButton, Icon },
+})
+export default class Checkbox extends Vue {
+  @Prop(prop(String, true))
+  public text!: string
+  @Prop(prop(String, true))
+  public setting!: string
+  @Prop(prop(Boolean, true))
+  public checked!: boolean
+  @Prop(prop(Function, true))
+  public onChange!: (value: boolean) => any
+
+  public checkSvg = mdiCheck
+
+  public handleChange(e: Event) {
+    const target = e.target as HTMLInputElement
+
+    this.onChange(target.checked)
+  }
+}
+</script>
+
+<style scoped lang="scss">
+@import '../../colors';
+
+.checkbox-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+
+  & > label {
+    display: flex;
+    align-items: center;
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.9em;
+    font-weight: 300;
+    cursor: pointer;
+
+    & > .checkbox {
+      height: 25px;
+      width: 25px;
+      padding: 2px;
+      margin-right: 8px;
+      background: $white;
+      border-radius: 3px;
+      overflow: hidden;
+      transition: background 0.1s;
+
+      &.checked {
+        background: $success;
+      }
+
+      & > .icon {
+        fill: $white;
+        filter: drop-shadow(0 0 1px $white);
+      }
+    }
+  }
+}
+</style>

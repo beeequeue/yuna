@@ -1,6 +1,15 @@
 <template>
 <div class="settings">
   <section class="category" id="keybindings">
+    <h1>Player</h1>
+
+    <checkbox
+      setting="autoPlay"
+      text="AutoPlay next epsiode"
+      :checked="settings.autoPlay"
+      :onChange="value => setSetting('autoPlay', value)"
+    />
+
     <h3>Keybindings</h3>
 
     <span>Click a binding to remove it</span>
@@ -52,13 +61,15 @@ import {
   KeybindingAction,
   removeKeybinding,
   resetKeybindings,
+  setSetting,
   SettingsState,
-} from '../state/settings'
+} from '@/state/settings'
 import Keybinding from '../components/Settings/Keybinding.vue'
+import Checkbox from '../components/Settings/Checkbox.vue'
 import CButton from '../components/CButton.vue'
 
 @Component({
-  components: { CButton, Keybinding },
+  components: { CButton, Checkbox, Keybinding },
 })
 export default class Settings extends Vue {
   public actionToBind: KeybindingAction | null = null
@@ -73,6 +84,13 @@ export default class Settings extends Vue {
 
   public get settings(): SettingsState {
     return getSettings(this.$store)
+  }
+
+  public setSetting(
+    setting: keyof SettingsState,
+    value: SettingsState[typeof setting],
+  ) {
+    setSetting(this.$store, { setting, value })
   }
 
   public openKeybindModal(action: KeybindingAction) {
@@ -114,11 +132,18 @@ export default class Settings extends Vue {
   background: darken($dark, 2%);
   height: 100%;
   min-width: 400px;
+  user-select: none;
 
-  & h3 {
+  & h1,
+  & h2,
+  & h3,
+  & h4 {
     font-family: 'Raleway', sans-serif;
     font-weight: 500;
-    margin-top: 10px;
+
+    &:first-child {
+      margin-top: 5px;
+    }
   }
 
   & > .category {

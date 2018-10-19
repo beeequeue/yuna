@@ -157,6 +157,16 @@ export const settings = {
 
       settingsStore.set('keybindings', state.keybindings)
     },
+
+    setSetting(
+      state: SettingsState,
+      options: {
+        setting: keyof SettingsState
+        value: SettingsState[typeof options.setting]
+      },
+    ) {
+      state[options.setting] = options.value
+    },
   },
 
   actions: {},
@@ -173,3 +183,4 @@ export const getKeydownHandler = read(settings.getters.getKeydownHandler)
 export const addKeybinding = commit(settings.mutations.addKeybinding)
 export const removeKeybinding = commit(settings.mutations.removeKeybinding)
 export const resetKeybindings = commit(settings.mutations.resetKeybindings)
+export const setSetting = commit(settings.mutations.setSetting)
