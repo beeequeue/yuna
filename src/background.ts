@@ -34,7 +34,9 @@ function createMainWindow() {
     frame: false,
   })
 
-  setTimeout(() => initCheckForUpdates(window), 2500)
+  if (process.env.NODE_ENV === 'production') {
+    setTimeout(() => initCheckForUpdates(window), 2500)
+  }
 
   if (isDevelopment) {
     // Load the url of the dev server if in development mode
