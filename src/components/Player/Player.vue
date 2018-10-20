@@ -89,6 +89,7 @@ export default class Player extends Vue {
   public episodesInAnime!: number
   @Prop(Object) public listEntry?: ListEntry
   @Prop(Boolean) public shouldAutoPlay?: boolean
+  @Prop(Boolean) public getShouldAutoMarkWatched?: boolean
   @Prop(prop(Function, true))
   public setProgress!: (p: number) => any
 
@@ -286,7 +287,13 @@ export default class Player extends Vue {
   }
 
   public updateProgressIfNecessary() {
-    if (!this.listEntry || this.listEntry.progress >= this.episode.index) return
+    if (
+      !this.listEntry ||
+      !this.getShouldAutoMarkWatched ||
+      this.listEntry.progress >= this.episode.index
+    ) {
+      return
+    }
 
     this.setProgress(this.episode.index)
   }

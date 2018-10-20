@@ -13,6 +13,7 @@
       :episodesInAnime="playerData.episodes.length"
       :listEntry="playerData.listEntry"
       :shouldAutoPlay="shouldAutoPlay"
+      :getShouldAutoMarkWatched="getShouldAutoMarkWatched"
       :setProgress="setProgress"
     />
   </div>
@@ -25,7 +26,7 @@ import Player from './Player.vue'
 
 import { getCurrentEpisode, getNextEpisode, getPlayerData } from '@/state/app'
 import { setProgressMutation } from '@/graphql/mutations'
-import { getShouldAutoPlay } from '@/state/settings'
+import { getShouldAutoPlay, getShouldAutoMarkWatched } from '@/state/settings'
 import { Episode } from '@/types'
 
 @Component({
@@ -48,6 +49,10 @@ export default class PlayerContainer extends Vue {
 
   get shouldAutoPlay() {
     return getShouldAutoPlay(this.$store)
+  }
+
+  get getShouldAutoMarkWatched() {
+    return getShouldAutoMarkWatched(this.$store)
   }
 
   get classFromRoute() {

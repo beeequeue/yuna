@@ -10,6 +10,13 @@
       :onChange="value => setSetting('autoPlay', value)"
     />
 
+    <checkbox
+      setting="autoMarkWatched"
+      text="Automatically mark episodes as watched"
+      :checked="settings.autoMarkWatched"
+      :onChange="value => setSetting('autoMarkWatched', value)"
+    />
+
     <h3>Keybindings</h3>
 
     <span>Click a binding to remove it</span>

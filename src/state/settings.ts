@@ -20,6 +20,7 @@ export enum KeybindingAction {
 
 export interface SettingsState {
   autoPlay: boolean
+  autoMarkWatched: boolean
   keybindings: {
     [key: string]: KeybindingAction[]
   }
@@ -48,7 +49,8 @@ const defaultBindings = {
 }
 
 const initialState: SettingsState = {
-  autoPlay: true,
+  autoPlay: settingsStore.get('autoPlay', true),
+  autoMarkWatched: settingsStore.get('autoMarkWatched', true),
   keybindings: settingsStore.get('keybindings', { ...defaultBindings }),
 }
 
@@ -62,6 +64,10 @@ export const settings = {
 
     getShouldAutoPlay(state: SettingsState) {
       return state.autoPlay
+    },
+
+    getShouldAutoMarkWatched(state: SettingsState) {
+      return state.autoMarkWatched
     },
 
     getKeybindings(state: SettingsState) {
@@ -165,7 +171,14 @@ export const settings = {
         value: SettingsState[typeof options.setting]
       },
     ) {
+      if (!Object.keys(state).includes(options.setting)) {
+        // tslint:disable-next-line:no-console
+        console.error('Tried to set unknown setting: ' + options.setting)
+      }
+
       state[options.setting] = options.value
+
+      settingsStore.set(options.setting, options.value)
     },
   },
 
@@ -176,6 +189,9 @@ const { read, commit } = getStoreAccessors<SettingsState, RootState>('')
 
 export const getSettings = read(settings.getters.getSettings)
 export const getShouldAutoPlay = read(settings.getters.getShouldAutoPlay)
+export const getShouldAutoMarkWatched = read(
+  settings.getters.getShouldAutoMarkWatched,
+)
 export const getKeybindings = read(settings.getters.getKeybindings)
 export const getKeysForAction = read(settings.getters.getKeysForAction)
 export const getKeydownHandler = read(settings.getters.getKeydownHandler)
