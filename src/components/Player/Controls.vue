@@ -200,7 +200,7 @@ export default class Controls extends Vue {
 <style scoped lang="scss">
 @import '../../colors';
 
-$buttonSize: 45px;
+$buttonSize: 50px;
 
 .controls {
   position: absolute;
@@ -322,7 +322,7 @@ $buttonSize: 45px;
   & .button {
     height: $buttonSize;
     width: $buttonSize;
-    padding: 5px;
+    padding: 6px;
 
     fill: white;
     cursor: pointer;
