@@ -94,6 +94,8 @@ export default class Player extends Vue {
 
   public initiated = !!this.shouldAutoPlay
   public ended = false
+  // Gotten to the 'soft end' - e.g. 80% of the way
+  public softEnded = false
   public loaded = false
   public loading = false
   public paused = true
@@ -180,10 +182,19 @@ export default class Player extends Vue {
 
     this.progressInSeconds = Math.round(element.currentTime)
     this.progressPercentage = element.currentTime / this.episode.duration
+
+    if (!this.softEnded && this.progressPercentage >= 0.8) {
+      this.softEnded = true
+
+      this.updateProgressIfNecessary()
+    }
   }
 
   public onEnded() {
     this.ended = true
+    this.softEnded = true
+
+    this.updateProgressIfNecessary()
   }
 
   public onSetTime(e: Event) {
@@ -220,6 +231,7 @@ export default class Player extends Vue {
   @Watch('episode')
   public async onNewEpisode() {
     this.ended = false
+    this.softEnded = false
     this.initiated = !!this.shouldAutoPlay
     this.paused = true
     this.loading = true
@@ -271,6 +283,12 @@ export default class Player extends Vue {
 
   public toggleFullscreen() {
     toggleFullscreen(this.$store)
+  }
+
+  public updateProgressIfNecessary() {
+    if (!this.listEntry || this.listEntry.progress >= this.episode.index) return
+
+    this.setProgress(this.episode.index)
   }
 }
 </script>
