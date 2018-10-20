@@ -59,6 +59,7 @@ export default class App extends Vue {
 
 <style lang="scss">
 @import 'colors';
+@import 'tooltip';
 
 html,
 body,

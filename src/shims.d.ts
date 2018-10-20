@@ -78,3 +78,11 @@ declare module 'vue-notifications' {
 
   export default plugin
 }
+
+declare module 'v-tooltip' {
+  import { PluginObject } from 'vue'
+
+  const plugin: PluginObject<{}>
+
+  export = plugin
+}

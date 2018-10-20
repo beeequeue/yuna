@@ -50,6 +50,7 @@
             key="max"
             class="button"
             :icon="bookmarkSvg"
+            v-tooltip.top="'Mark as watched'"
             @click.native="setProgress(episode.index)"
           />
           <icon
@@ -57,6 +58,7 @@
             class="button"
             key="min"
             :icon="bookmarkRemoveSvg"
+            v-tooltip.top="'Unmark as watched'"
             @click.native="setProgress(Math.max(0, episode.index - 1))"
           />
         </transition>
@@ -208,7 +210,7 @@ $buttonSize: 50px;
   top: 0;
   height: 100%;
   width: 100%;
-  /* opacity: 0; */
+  opacity: 0;
   user-select: none;
   transition: opacity 0.15s;
   transition-delay: 0.5s;
