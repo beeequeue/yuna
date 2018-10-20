@@ -35,7 +35,7 @@
 
     <transition name="fade">
       <span v-if="isPlayerMaximized" class="time">
-        {{secondsToTimeString(progressInSeconds)}} / {{secondsToTimeString(episode.duration)}}
+        {{timeString}}
       </span>
     </transition>
 
@@ -80,10 +80,6 @@ import VolumeSlider from './VolumeSlider.vue'
   components: { VolumeSlider, ProgressBar, Icon },
 })
 export default class Controls extends Vue {
-  public get isFullscreen() {
-    return getIsFullscreen(this.$store)
-  }
-
   @Prop(Object) public episode!: Episode
   @Prop(String) public animeName!: string
   @Prop(Boolean) public paused!: boolean
@@ -99,6 +95,19 @@ export default class Controls extends Vue {
   @Prop() public onSetTime!: (e: Event) => void
   @Prop() public onSetVolume!: (e: Event) => void
   @Prop() public onToggleMute!: (e: Event) => void
+
+  public get timeString() {
+    const current = secondsToTimeString(
+      Math.min(this.progressInSeconds, this.episode.duration),
+    )
+    const duration = secondsToTimeString(this.episode.duration)
+
+    return `${current} / ${duration}`
+  }
+
+  public get isFullscreen() {
+    return getIsFullscreen(this.$store)
+  }
 
   public playSvg = mdiPlay
   public pauseSvg = mdiPause
