@@ -32,6 +32,10 @@ function createMainWindow() {
     height: 750,
     maximizable: false,
     frame: false,
+    webPreferences: {
+      webSecurity: false,
+      allowRunningInsecureContent: false,
+    },
   })
 
   if (process.env.NODE_ENV === 'production') {

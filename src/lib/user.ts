@@ -5,6 +5,7 @@ const CURRENT_VERSION = 1
 
 interface CachedCRData {
   sessionId: string | null
+  userId: string | null
   token: string | null
 }
 

@@ -52,10 +52,6 @@ export const auth = {
   },
 
   mutations: {
-    setSessionId(_state: AuthState, sessionId: string) {
-      userStore.set('crunchyroll.sessionId', sessionId)
-    },
-
     setCrunchyroll(state: AuthState, loggedIn: boolean) {
       state.crunchyroll.isLoggedIn = loggedIn
     },
@@ -68,11 +64,6 @@ export const auth = {
   },
 
   actions: {
-    async createSession(context: AuthContext) {
-      const sessionId = await crunchyroll.createSession()
-      setSessionId(context, sessionId)
-    },
-
     async loginCrunchyroll(
       context: AuthContext,
       payload: { user: string; pass: string },
@@ -106,7 +97,7 @@ export const auth = {
         expires: null,
       })
 
-      await createSession(context)
+      await crunchyroll.createSession()
     },
   },
 }
@@ -115,11 +106,9 @@ const { commit, dispatch, read } = getStoreAccessors<AuthState, RootState>('')
 
 export const getIsLoggedIn = read(auth.getters.isLoggedIn)
 
-const setSessionId = commit(auth.mutations.setSessionId)
 const setCrunchyroll = commit(auth.mutations.setCrunchyroll)
 export const setAnilist = commit(auth.mutations.setAnilist)
 
-export const createSession = dispatch(auth.actions.createSession)
 export const loginCrunchyroll = dispatch(auth.actions.loginCrunchyroll)
 
 export const logOut = dispatch(auth.actions.logOut)

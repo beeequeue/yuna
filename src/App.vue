@@ -24,8 +24,9 @@ import TitleBar from './components/TitleBar.vue'
 import Navbar from './components/Navbar/Navbar.vue'
 import PlayerContainer from './components/Player/Container.vue'
 import ToastOverlay from './components/ToastOverlay.vue'
-import { createSession, getIsLoggedIn } from './state/auth'
+import { getIsLoggedIn } from './state/auth'
 import { getIsFullscreen } from './state/app'
+import { createSession } from './lib/crunchyroll'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys()
@@ -47,7 +48,7 @@ export default class App extends Vue {
   )
 
   public async mounted() {
-    await createSession(this.$store)
+    await createSession()
 
     if (!this.isLoggedIn.all) {
       window.initialLogin = true

@@ -18,9 +18,11 @@
         <br/>
         <br/>
 
-        <c-button v-if="!isLoggedIn.anilist" @click="authAnilist">
-          Link Account
-        </c-button>
+        <c-button
+          v-if="!isLoggedIn.anilist"
+          content="Link Account"
+          @click.native="authAnilist"
+        />
         <icon v-else :icon="checkSvg"/>
       </div>
 
@@ -34,12 +36,14 @@ import { mdiCheck } from '@mdi/js'
 
 import Logo from '@/assets/logo.svg'
 import Icon from '@/components/Icon.vue'
+import CButton from '@/components/CButton.vue'
 import LoginForm from '@/components/LoginForm.vue'
 import { getIsLoggedIn, loginCrunchyroll, setAnilist } from '../state/auth'
 import { loginAnilist, isValidToken } from '../lib/anilist'
 
 @Component({
   components: {
+    CButton,
     Icon,
     Logo,
     LoginForm,

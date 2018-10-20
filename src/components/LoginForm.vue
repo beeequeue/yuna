@@ -7,14 +7,16 @@
   <input :value="password" @input="updatePassword" type="password" placeholder="Password" />
   <br/>
   <br/>
-  <c-button @click="handleLogin">Login</c-button>
+  <c-button content="Login" @click.native="handleLogin"/>
 </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-@Component
+import CButton from '@/components/CButton.vue'
+
+@Component({ components: { CButton } })
 export default class LoginForm extends Vue {
   @Prop() public login!: (user: string, pass: string) => Promise<void>
   public username = ''

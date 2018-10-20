@@ -6,10 +6,14 @@ import { Episode, StreamData } from '@/types'
 import { RequestError, RequestSuccess } from '@/utils'
 import { userStore } from '@/lib/user'
 
-const LOCALE = 'enUS'
+const CR_UNBLOCKER_URL = 'api2.cr-unblocker.com'
 const API_URL = 'api.crunchyroll.com'
 const VERSION = '0'
-const accessToken = process.env.ACCESS_TOKEN
+const locale = 'enUS'
+// tslint:disable-next-line:variable-name
+const device_type = 'com.crunchyroll.windows.desktop'
+// tslint:disable-next-line:variable-name
+const access_token = process.env.ACCESS_TOKEN
 
 export interface User {
   class: 'user'
@@ -175,20 +179,25 @@ const responseIsError = (
 let _sessionId: string = userStore.get('crunchyroll.sessionId', '')
 
 export const createSession = async () => {
-  const response = (await superagent.post(getUrl('start_session')).query({
-    auth: userStore.get('crunchyroll.token', null),
-    access_token: accessToken,
-    locale: LOCALE,
-    device_type: 'com.crunchyroll.windows.desktop',
-    device_id: `NANI-${uuid()}`,
-  })) as CrunchyrollResponse<{ session_id: string }>
+  const response = (await superagent
+    .get(`https://${CR_UNBLOCKER_URL}/start_session`)
+    .query({
+      auth: userStore.get('crunchyroll.token', null),
+      locale,
+      device_type,
+      device_id: `${uuid()}`,
+      version: '1.1',
+      access_token,
+      user_id: userStore.get('crunchyroll.userId', ''),
+    })) as CrunchyrollResponse<{ session_id: string }>
 
   if (responseIsError(response)) {
     return Promise.reject(response.body.message)
   }
 
   _sessionId = response.body.data.session_id
-  return response.body.data.session_id
+
+  userStore.set('crunchyroll.sessionId', _sessionId)
 }
 
 const mediaFields = [
@@ -224,6 +233,7 @@ export const login = async (username: string, password: string) => {
 
   userStore.set('crunchyroll', {
     sessionId: _sessionId,
+    userId: response.body.data.user.user_id,
     token: response.body.data.auth,
   })
 
@@ -239,7 +249,7 @@ export const fetchEpisodesOfCollection = async (
 ): Promise<Episode[]> => {
   const response = (await superagent.get(getUrl('list_media')).query({
     session_id: _sessionId,
-    locale: LOCALE,
+    locale,
     collection_id: collectionId,
     limit: 1000,
     fields: mediaFields.join(','),
@@ -255,7 +265,7 @@ export const fetchEpisodesOfCollection = async (
 export const fetchEpisode = async (mediaId: string): Promise<Episode> => {
   const response = (await superagent.get(getUrl('info')).query({
     session_id: _sessionId,
-    locale: LOCALE,
+    locale,
     media_id: mediaId,
     fields: mediaFields.join(','),
   })) as CrunchyrollResponse<_Media>
@@ -278,7 +288,7 @@ export const fetchSeasonFromEpisode = async (
 export const fetchStream = async (mediaId: string): Promise<StreamData> => {
   const response = (await superagent.get(getUrl('info')).query({
     session_id: _sessionId,
-    locale: LOCALE,
+    locale,
     media_id: mediaId,
     fields: 'media.stream_data',
   })) as CrunchyrollResponse<{ stream_data: _StreamData }>
