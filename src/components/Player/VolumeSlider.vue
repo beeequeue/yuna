@@ -6,7 +6,7 @@
       @click.native="onToggleMute"
     />
 
-    <span class="slider-container">
+    <span class="slider-container" :class="{ open }">
       <input
         type="range"
         min="0"
@@ -36,8 +36,9 @@ import Icon from '../Icon.vue'
 export default class VolumeSlider extends Vue {
   @Prop(Boolean) public muted!: boolean
   @Prop(Number) public volume!: number
-  @Prop() public onChange!: (e: Event) => void
-  @Prop() public onToggleMute!: (e: Event) => void
+  @Prop(Boolean) public open!: number
+  @Prop(Function) public onChange!: (e: Event) => void
+  @Prop(Function) public onToggleMute!: (e: Event) => void
 
   public initialVolume = Number(localStorage.getItem('volume') || 75)
 
@@ -74,6 +75,11 @@ export default class VolumeSlider extends Vue {
 
     will-change: opacity, width;
     transition: opacity 0.15s, width 0.2s;
+
+    &.open {
+      opacity: 1;
+      width: 75px;
+    }
 
     & > input {
       width: 100%;

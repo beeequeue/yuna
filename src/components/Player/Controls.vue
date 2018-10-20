@@ -31,6 +31,7 @@
       :volume="volume"
       :onChange="onSetVolume"
       :onToggleMute="onToggleMute"
+      :open="isPlayerMaximized"
     />
 
     <transition name="shrink">
