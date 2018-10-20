@@ -1,12 +1,16 @@
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 
+import { store } from '@/state/store'
+import { updatePlaylistListEntry } from '@/state/app'
 import { MediaListStatus } from '@/graphql-types'
 
-import { UpdateProgressMutation } from './UpdateProgressMutation'
 import ANIME_PAGE_QUERY from './AnimePageQuery.graphql'
 import UPDATE_PROGRESS_MUTATION from './UpdateProgressMutation.graphql'
+import { UpdateProgressMutation } from './UpdateProgressMutation'
 import SET_STATUS_MUTATION from './SetStatusMutation.graphql'
+import { SetStatusMutation } from './SetStatusMutation'
 import ADD_ENTRY_MUTATION from './AddEntryMutation.graphql'
+import { AddEntryMutation } from './AddEntryMutation'
 
 export const setProgressMutation = async (
   apollo: DollarApollo<any>,
@@ -17,7 +21,7 @@ export const setProgressMutation = async (
     status?: MediaListStatus | null
   } = {},
 ) => {
-  return apollo.mutate({
+  return apollo.mutate<UpdateProgressMutation>({
     mutation: UPDATE_PROGRESS_MUTATION,
     variables: { id, progress },
     optimisticResponse: {
@@ -29,6 +33,11 @@ export const setProgressMutation = async (
         status: oldValues.status || MediaListStatus.CURRENT,
       },
     } as UpdateProgressMutation,
+    update: (_cache, { data }) => {
+      if (!data) return
+
+      updatePlaylistListEntry(store, data.SaveMediaListEntry)
+    }
   })
 }
 
@@ -37,7 +46,7 @@ export const setStatusMutation = async (
   id: number,
   status: MediaListStatus,
 ) =>
-  apollo.mutate({
+  apollo.mutate<SetStatusMutation>({
     mutation: SET_STATUS_MUTATION,
     variables: { id, status },
   })
@@ -47,19 +56,19 @@ export const addEntryMutation = async (
   mediaId: number,
   status: MediaListStatus,
 ) =>
-  apollo.mutate({
+  apollo.mutate<AddEntryMutation>({
     mutation: ADD_ENTRY_MUTATION,
     variables: { mediaId, status },
-    update: (store, { data }) => {
+    update: (cache, { data }) => {
       if (!data) return
 
-      const cache: any = store.readQuery({
+      const cachedData: any = cache.readQuery({
         query: ANIME_PAGE_QUERY,
         variables: { id: mediaId },
       })
 
-      cache.anime.mediaListEntry = data.SaveMediaListEntry
+      cachedData.anime.mediaListEntry = data.SaveMediaListEntry
 
-      store.writeQuery({ query: ANIME_PAGE_QUERY, data: cache })
+      cache.writeQuery({ query: ANIME_PAGE_QUERY, data: cachedData })
     },
   })

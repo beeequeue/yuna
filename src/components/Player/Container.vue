@@ -11,7 +11,9 @@
       :nextEpisode="delayedNextEpisode"
       :animeName="playerData.animeName"
       :episodesInAnime="playerData.episodes.length"
+      :listEntry="playerData.listEntry"
       :shouldAutoPlay="shouldAutoPlay"
+      :setProgress="setProgress"
     />
   </div>
 </transition>
@@ -22,8 +24,9 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import Player from './Player.vue'
 
 import { getCurrentEpisode, getNextEpisode, getPlayerData } from '@/state/app'
-import { Episode } from '@/types'
+import { setProgressMutation } from '@/graphql/mutations'
 import { getShouldAutoPlay } from '@/state/settings'
+import { Episode } from '@/types'
 
 @Component({
   components: { Player },
@@ -72,6 +75,12 @@ export default class PlayerContainer extends Vue {
 
       this.delayedNextEpisode = this.nextEpisode
     }, 1000)
+  }
+
+  public setProgress(progress: number) {
+    if (!this.playerData || !this.playerData.listEntry) return
+
+    setProgressMutation(this.$apollo, this.playerData.listEntry.id, progress)
   }
 }
 </script>

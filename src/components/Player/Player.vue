@@ -31,6 +31,7 @@
     <controls
       :episode="episode"
       :animeName="animeName"
+      :listEntry="listEntry"
       :loading="loading"
       :paused="paused"
       :isPlayerMaximized="isPlayerMaximized"
@@ -44,6 +45,7 @@
       :onToggleMute="onToggleMute"
       :play="play"
       :pause="pause"
+      :setProgress="setProgress"
     />
 
     <next-episode-overlay
@@ -72,6 +74,7 @@ import {
   getIsFullscreen,
   sendErrorToast,
   toggleFullscreen,
+  ListEntry,
 } from '../../state/app'
 import { getKeydownHandler, KeybindingAction } from '../../state/settings'
 
@@ -84,7 +87,11 @@ export default class Player extends Vue {
   @Prop(String) public animeName!: string
   @Prop(prop(Number, true))
   public episodesInAnime!: number
+  @Prop(Object) public listEntry?: ListEntry
   @Prop(Boolean) public shouldAutoPlay?: boolean
+  @Prop(prop(Function, true))
+  public setProgress!: (p: number) => any
+
   public initiated = !!this.shouldAutoPlay
   public ended = false
   public loaded = false
@@ -103,6 +110,29 @@ export default class Player extends Vue {
 
   public get isPlayerMaximized() {
     return contains(this.$route.path, ['/player-big', '/player-full'])
+  }
+
+  private get actionFunctionMap() {
+    return {
+      [KeybindingAction.PAUSE]: () => this.pause(),
+      [KeybindingAction.PLAY]: () => this.pause(),
+      [KeybindingAction.PAUSE_PLAY]: () =>
+        this.paused ? this.play() : this.pause(),
+      [KeybindingAction.SKIP_BACK]: () => this.skipBySeconds(-5),
+      [KeybindingAction.SKIP_FORWARD]: () => this.skipBySeconds(5),
+      [KeybindingAction.VOLUME_DOWN]: () => this.increaseVolume(-10),
+      [KeybindingAction.VOLUME_UP]: () => this.increaseVolume(10),
+      [KeybindingAction.TOGGLE_MUTED]: () => this.onToggleMute(),
+      [KeybindingAction.TOGGLE_FULLSCREEN]: () => this.toggleFullscreen(),
+    }
+  }
+
+  private get keyDownHandler() {
+    return getKeydownHandler(this.$store)(this.actionFunctionMap)
+  }
+
+  public get isFullscreen() {
+    return getIsFullscreen(this.$store)
   }
 
   public $refs!: {
@@ -177,25 +207,6 @@ export default class Player extends Vue {
     localStorage.setItem('muted', this.muted.toString())
   }
 
-  private get actionFunctionMap() {
-    return {
-      [KeybindingAction.PAUSE]: () => this.pause(),
-      [KeybindingAction.PLAY]: () => this.pause(),
-      [KeybindingAction.PAUSE_PLAY]: () =>
-        this.paused ? this.play() : this.pause(),
-      [KeybindingAction.SKIP_BACK]: () => this.skipBySeconds(-5),
-      [KeybindingAction.SKIP_FORWARD]: () => this.skipBySeconds(5),
-      [KeybindingAction.VOLUME_DOWN]: () => this.increaseVolume(-10),
-      [KeybindingAction.VOLUME_UP]: () => this.increaseVolume(10),
-      [KeybindingAction.TOGGLE_MUTED]: () => this.onToggleMute(),
-      [KeybindingAction.TOGGLE_FULLSCREEN]: () => this.toggleFullscreen(),
-    }
-  }
-
-  private get keyDownHandler() {
-    return getKeydownHandler(this.$store)(this.actionFunctionMap)
-  }
-
   public onKeyDown(e: KeyboardEvent) {
     return this.keyDownHandler(e.key)
   }
@@ -256,10 +267,6 @@ export default class Player extends Vue {
 
   public skipBySeconds(n: number) {
     this.$refs.player.currentTime += n
-  }
-
-  public get isFullscreen() {
-    return getIsFullscreen(this.$store)
   }
 
   public toggleFullscreen() {

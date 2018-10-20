@@ -145,6 +145,12 @@ export const app = {
       state.player = options
     },
 
+    updatePlaylistListEntry(state: AppState, listEntry: ListEntry) {
+      if (!state.player) return
+
+      state.player.listEntry = listEntry
+    },
+
     setCurrentEpisode(state: AppState, index: number) {
       if (!state.player) return
 
@@ -230,6 +236,9 @@ export const setIsUpdateAvailable = commit(app.mutations.setIsUpdateAvailable)
 const addToast = commit(app.mutations.addToast)
 export const removeToast = commit(app.mutations.removeToast)
 export const setPlaylist = commit(app.mutations.setPlaylist)
+export const updatePlaylistListEntry = commit(
+  app.mutations.updatePlaylistListEntry,
+)
 export const setCurrentEpisode = commit(app.mutations.setCurrentEpisode)
 const setFullscreen = commit(app.mutations.setFullscreen)
 

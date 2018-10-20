@@ -19,7 +19,7 @@
       :onSetTime="onSetTime"
     />
 
-    <span class="button-collapser">
+    <span class="play-pause button-collapser">
       <transition>
         <icon v-if="paused" key="play" class="button" :icon="playSvg" @click.native="play"/>
         <icon v-else class="button" key="pause" :icon="pauseSvg" @click.native="pause"/>
@@ -33,7 +33,7 @@
       :onToggleMute="onToggleMute"
     />
 
-    <transition name="fade">
+    <transition name="shrink">
       <span v-if="isPlayerMaximized" class="time">
         {{timeString}}
       </span>
@@ -41,14 +41,35 @@
 
     <span class="separator"/>
 
-    <span v-if="!isFullscreen" class="button-collapser">
+    <transition name="shrink">
+      <span v-if="isPlayerMaximized && listEntry" class="completed button-collapser">
+        <transition name="fade">
+          <icon
+            v-if="listEntry.progress < episode.index"
+            key="max"
+            class="button"
+            :icon="bookmarkSvg"
+            @click.native="setProgress(episode.index)"
+          />
+          <icon
+            v-else
+            class="button"
+            key="min"
+            :icon="bookmarkRemoveSvg"
+            @click.native="setProgress(Math.max(0, episode.index - 1))"
+          />
+        </transition>
+      </span>
+    </transition>
+
+    <span v-if="!isFullscreen" class="maximize button-collapser">
       <transition name="fade">
         <icon v-if="!isPlayerMaximized" key="max" class="button" :icon="maximizeSvg" @click.native="maximizePlayer"/>
         <icon v-else class="button" key="min" :icon="minimizeSvg" @click.native="$router.back()"/>
       </transition>
     </span>
 
-    <span class="button-collapser">
+    <span class="fullscreen button-collapser">
       <transition name="fade">
         <icon v-if="!isFullscreen" key="fullscreen" class="button" :icon="fullscreenSvg" @click.native="_toggleFullscreen"/>
         <icon v-else class="button" key="fullscreenExit" :icon="fullscreenExitSvg" @click.native="_toggleFullscreen"/>
@@ -67,11 +88,13 @@ import {
   mdiFullscreenExit,
   mdiPause,
   mdiPlay,
+  mdiBookmark,
+  mdiBookmarkRemove,
 } from '@mdi/js'
 
 import { Episode } from '@/types'
-import { getIsFullscreen, toggleFullscreen } from '@/state/app'
-import { secondsToTimeString } from '@/utils'
+import { getIsFullscreen, toggleFullscreen, ListEntry } from '@/state/app'
+import { prop, secondsToTimeString } from '@/utils'
 import Icon from '../Icon.vue'
 import ProgressBar from './ProgressBar.vue'
 import VolumeSlider from './VolumeSlider.vue'
@@ -80,21 +103,37 @@ import VolumeSlider from './VolumeSlider.vue'
   components: { VolumeSlider, ProgressBar, Icon },
 })
 export default class Controls extends Vue {
-  @Prop(Object) public episode!: Episode
-  @Prop(String) public animeName!: string
-  @Prop(Boolean) public paused!: boolean
-  @Prop(Boolean) public muted!: boolean
-  @Prop(Boolean) public isPlayerMaximized!: boolean
-  @Prop(Number) public volume!: number
-  @Prop(Number) public progressInSeconds!: number
-  @Prop(Number) public progressPercentage!: number
-  @Prop(Number) public loadedPercentage!: number
-  @Prop() public play!: () => void
-  @Prop() public pause!: () => void
-  @Prop() public toggleFullscreen!: () => void
-  @Prop() public onSetTime!: (e: Event) => void
-  @Prop() public onSetVolume!: (e: Event) => void
-  @Prop() public onToggleMute!: (e: Event) => void
+  @Prop(prop(Object, true))
+  public episode!: Episode
+  @Prop(prop(String, true))
+  public animeName!: string
+  @Prop(Object) public listEntry?: ListEntry
+  @Prop(prop(Boolean, true))
+  public paused!: boolean
+  @Prop(prop(Boolean, true))
+  public muted!: boolean
+  @Prop(prop(Boolean, true))
+  public isPlayerMaximized!: boolean
+  @Prop(prop(Number, true))
+  public volume!: number
+  @Prop(prop(Number, true))
+  public progressInSeconds!: number
+  @Prop(prop(Number, true))
+  public progressPercentage!: number
+  @Prop(prop(Number, true))
+  public loadedPercentage!: number
+  @Prop(prop(Function, true))
+  public play!: () => void
+  @Prop(prop(Function, true))
+  public pause!: () => void
+  @Prop(prop(Function, true))
+  public onSetTime!: (e: Event) => void
+  @Prop(prop(Function, true))
+  public onSetVolume!: (e: Event) => void
+  @Prop(prop(Function, true))
+  public onToggleMute!: (e: Event) => void
+  @Prop(prop(Function, true))
+  public setProgress!: (progress: number) => any
 
   public get timeString() {
     const current = secondsToTimeString(
@@ -111,6 +150,8 @@ export default class Controls extends Vue {
 
   public playSvg = mdiPlay
   public pauseSvg = mdiPause
+  public bookmarkSvg = mdiBookmark
+  public bookmarkRemoveSvg = mdiBookmarkRemove
   public maximizeSvg = mdiArrowExpand
   public minimizeSvg = mdiArrowCollapse
   public fullscreenSvg = mdiFullscreen
@@ -166,7 +207,7 @@ $buttonSize: 45px;
   top: 0;
   height: 100%;
   width: 100%;
-  opacity: 0;
+  /* opacity: 0; */
   user-select: none;
   transition: opacity 0.15s;
   transition-delay: 0.5s;
@@ -221,8 +262,25 @@ $buttonSize: 45px;
     rgba(0, 0, 0, 0) 100%
   );
 
+  & > * {
+    &.shrink-enter-active,
+    &.shrink-leave-active {
+      transition: opacity 0.5s, max-width 0.5s !important;
+    }
+
+    &.shrink-enter,
+    &.shrink-leave-to {
+      opacity: 0 !important;
+      max-width: 0 !important;
+    }
+  }
+
   & > .separator {
     width: 100%;
+  }
+
+  & > *:not(.separator) {
+    flex-shrink: 0;
   }
 
   & > *:not(.progress) {
@@ -235,9 +293,12 @@ $buttonSize: 45px;
 
   & > .time {
     margin: 0 5px 3px;
+    max-width: 150px;
+    opacity: 1;
+    overflow: hidden;
+    white-space: nowrap;
     font-weight: 400;
     font-size: 1.5em;
-    white-space: nowrap;
     cursor: default;
   }
 
@@ -247,7 +308,9 @@ $buttonSize: 45px;
     flex-shrink: 0;
     height: $buttonSize;
     width: $buttonSize;
+    max-width: $buttonSize;
     margin: 0 5px;
+    overflow: hidden;
 
     & > .button {
       position: absolute;
