@@ -1,15 +1,17 @@
-import { path } from 'rambda'
 import request from 'superagent/superagent'
 
 import { fetchSeasonFromEpisode } from '@/lib/crunchyroll'
 import { Episode } from '@/types'
 import { RequestResponse, responseIsError } from '@/utils'
 
+const CRUNCHYROLL_PROVIDER_ID = '1'
+
 export const fetchEpisodesOfSeries = async (
   id: string | number,
 ): Promise<Episode[]> => {
+  const baseUrl = `https://myanimelist.net/anime/${id}`
   const episodeResponse = (await request
-    .get(`https://api.jikan.moe/v3/anime/${id}/episodes`)
+    .get(baseUrl)
     .ok(() => true)) as RequestResponse
 
   if (responseIsError(episodeResponse)) {
@@ -24,20 +26,28 @@ export const fetchEpisodesOfSeries = async (
     return Promise.reject('Something went wrong!')
   }
 
-  if (!path('episodes.0.video_url', episodeResponse.body)) {
+  const episodesLinkMatch = episodeResponse.text.match(
+    `(${baseUrl}\/.*\/episode)`,
+  )
+  if (!episodesLinkMatch || !episodesLinkMatch[1]) {
     return []
   }
 
-  const response = await request.get(episodeResponse.body.episodes[0].video_url)
+  const videoUrl = episodesLinkMatch[0] + '/1'
+  const response = await request.get(videoUrl)
 
-  const match = /"provider_episode_id":\s?(\d+)/m.exec(response.text)
+  const providerMatch = /"provider_id":(\d)/m.exec(response.text)
+  if (!providerMatch || providerMatch[1] !== CRUNCHYROLL_PROVIDER_ID) {
+    return []
+  }
 
-  if (!match || !match[1]) {
+  const mediaIdMatch = /"provider_episode_id":\s?(\d+)/m.exec(response.text)
+  if (!mediaIdMatch || !mediaIdMatch[1]) {
     // tslint:disable-next-line:no-console quotemark
     console.error("Couldn't find media_id for " + id)
 
     return []
   }
 
-  return fetchSeasonFromEpisode(match[1])
+  return fetchSeasonFromEpisode(mediaIdMatch[1])
 }
