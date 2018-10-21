@@ -67,6 +67,8 @@ const initialState: AppState = {
 }
 
 export const app = {
+  namespaced: true,
+
   state: { ...initialState },
 
   getters: {
@@ -220,7 +222,7 @@ export const app = {
   },
 }
 
-const { read, commit, dispatch } = getStoreAccessors<AppState, RootState>('')
+const { read, commit, dispatch } = getStoreAccessors<AppState, RootState>('app')
 
 export const getIsUpdateAvailable = read(app.getters.getIsUpdateAvailable)
 export const getToasts = read(app.getters.getToasts)

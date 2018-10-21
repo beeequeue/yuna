@@ -55,6 +55,8 @@ const initialState: SettingsState = {
 }
 
 export const settings = {
+  namespaced: true,
+
   state: { ...initialState },
 
   getters: {
@@ -185,7 +187,7 @@ export const settings = {
   actions: {},
 }
 
-const { read, commit } = getStoreAccessors<SettingsState, RootState>('')
+const { read, commit } = getStoreAccessors<SettingsState, RootState>('settings')
 
 export const getSettings = read(settings.getters.getSettings)
 export const getShouldAutoPlay = read(settings.getters.getShouldAutoPlay)

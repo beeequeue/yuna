@@ -16,6 +16,8 @@ const initialState: UserState = {
 }
 
 export const user = {
+  namespaced: true,
+
   state: { ...initialState },
 
   getters: {
@@ -57,7 +59,9 @@ export const user = {
   },
 }
 
-const { read, commit, dispatch } = getStoreAccessors<UserState, RootState>('')
+const { read, commit, dispatch } = getStoreAccessors<UserState, RootState>(
+  'user',
+)
 
 export const getQueue = read(user.getters.getQueue)
 
