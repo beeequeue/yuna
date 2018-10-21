@@ -16,13 +16,21 @@
     <div
       v-for="(episode, i) in episodes"
       class="episode"
-      :class="{ active: i === Number(scrollerValue) - 1, small }"
+      :class="getEpisodeClasses(episode.index)"
       @click="setCurrentEpisode(i)"
       :key="episode.crunchyroll.id"
     >
       <span class="title" v-html="episode.title.replace(' - ', '<br/>')"/>
 
       <img class="thumbnail" :src="episode.thumbnail"/>
+
+      <transition>
+        <icon
+          v-if="getIsEpisodeWatched(episode.index)"
+          :icon="checkSvg"
+          class="check"
+        />
+      </transition>
     </div>
   </div>
 
@@ -41,7 +49,9 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { Key } from 'ts-key-enum'
+import { mdiCheckCircleOutline } from '@mdi/js'
 
+import Icon from './Icon.vue'
 import Loader from './Loader.vue'
 import { AnimeCache } from '../lib/cache'
 import { Episode } from '../types'
@@ -53,9 +63,7 @@ import {
   ListEntry,
 } from '../state/app'
 
-@Component({
-  components: { Loader },
-})
+@Component({ components: { Icon, Loader } })
 export default class Episodes extends Vue {
   @Prop(prop(Number, true))
   public id!: number
@@ -74,6 +82,8 @@ export default class Episodes extends Vue {
   public loading = true
   public error: string | null = null
   public scrollerValue = ''
+
+  public checkSvg = mdiCheckCircleOutline
 
   public containerClasses = {
     'furthest-left': true,
@@ -153,7 +163,7 @@ export default class Episodes extends Vue {
 
       this.loading = false
 
-      setTimeout(this.scrollToCurrentEpisode, 150)
+      setTimeout(() => this.scrollToCurrentEpisode(true), 150)
     } catch (e) {
       console.error(e)
       this.error = e
@@ -162,10 +172,11 @@ export default class Episodes extends Vue {
   }
 
   @Watch('current')
-  public scrollToCurrentEpisode() {
+  public scrollToCurrentEpisode(instant?: boolean | number) {
     if (this.current) {
       this.$refs.episodeContainer.scroll({
         left: this.getScrollPositionOfEpisode(this.current),
+        behavior: instant === true ? 'instant' : 'smooth',
       })
     }
   }
@@ -185,6 +196,21 @@ export default class Episodes extends Vue {
         episodes: this.episodes,
         current: index,
       })
+    }
+  }
+
+  public getIsEpisodeWatched(index: number) {
+    return this.listEntry != null && this.listEntry.progress >= index
+  }
+
+  public getEpisodeClasses(index: number) {
+    if (!this.listEntry) return {}
+
+    return {
+      watched: this.getIsEpisodeWatched(index),
+      current: this.listEntry.progress + 1 === index,
+      active: Number(this.scrollerValue) === index,
+      small: this.small,
     }
   }
 }
@@ -211,6 +237,7 @@ export default class Episodes extends Vue {
 
   & > .episode-container {
     display: flex;
+    align-items: flex-start;
     width: 100%;
     overflow: scroll;
 
@@ -259,6 +286,38 @@ export default class Episodes extends Vue {
       &.active {
         width: 325px;
         transition-delay: 0s;
+      }
+
+      & > .check {
+        display: block;
+        position: absolute;
+        bottom: -30px;
+        right: -35px;
+        height: 25px;
+        width: 100px;
+        fill: $white;
+        background: $success;
+        transform-origin: 0% 0%;
+        transform: rotateZ(-45deg);
+
+        &.v-enter-active,
+        &.v-leave-active {
+          transition: transform 0.5s;
+        }
+
+        &.v-enter,
+        &.v-leave-to {
+          transform: rotateZ(-45deg) translateX(100%);
+        }
+
+        &.v-enter-to,
+        &.v-leave {
+          transform: rotateZ(-45deg) translateX(0);
+        }
+
+        & /deep/ svg {
+          transform: rotateZ(45deg);
+        }
       }
 
       &:first-child {
