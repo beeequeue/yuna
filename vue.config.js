@@ -12,15 +12,8 @@ module.exports = {
     svgRules.uses.clear()
 
     svgRules
-      .use('vue-svg-loader')
-      .loader('vue-svg-loader')
-      .tap(() => {
-        return {
-          svgo: {
-            plugins: [{ removeDoctype: true }, { removeComments: true }],
-          },
-        }
-      })
+      .use('raw-loader')
+      .loader('raw-loader')
 
     config.plugin('define').tap(() => [
       {

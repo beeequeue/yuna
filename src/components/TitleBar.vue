@@ -2,6 +2,12 @@
 <div class="title-bar">
   <span class="title">{{name}} | v{{version}}</span>
 
+  <span
+    v-html="flag"
+    class="flag"
+    v-tooltip.bottom="`Using ${country} Crunchyroll`"
+  />
+
   <span class="separator"/>
 
   <icon :icon="minimizeSvg" @click.native="minimize"/>
@@ -10,19 +16,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import electron from 'electron'
 import { mdiClose, mdiMinus } from '@mdi/js'
 
+import { getCrunchyrollCountry } from '@/state/auth'
 import Icon from './Icon.vue'
 import { version } from '../../package.json'
 
-@Component({
+const flagContext = require.context('svg-country-flags/svg')
+
+@Component<TitleBar>({
   components: { Icon },
 })
 export default class TitleBar extends Vue {
-  @Prop(String) public icon!: string
-
   public browserWindow = electron.remote.BrowserWindow.getFocusedWindow() as Electron.BrowserWindow
   public version = version
 
@@ -43,10 +50,28 @@ export default class TitleBar extends Vue {
   public close() {
     this.browserWindow.close()
   }
+
+  public get country() {
+    return getCrunchyrollCountry(this.$store)
+  }
+
+  public get flag() {
+    if (!this.country) return null
+
+    let flagSvg: any = null
+
+    try {
+      flagSvg = flagContext(`./${this.country.toLowerCase()}.svg`)
+    } catch (e) {
+      return null
+    }
+
+    return flagSvg
+  }
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import '../colors';
 
 .title-bar {
@@ -67,6 +92,16 @@ export default class TitleBar extends Vue {
     flex-shrink: 0;
     display: flex;
     align-items: center;
+  }
+
+  & > .flag {
+    height: 100%;
+    margin-left: 10px;
+    -webkit-app-region: no-drag;
+
+    & > svg {
+      height: 12px;
+    }
   }
 
   & > .separator {

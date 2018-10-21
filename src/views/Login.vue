@@ -1,7 +1,5 @@
 <template>
   <div class="login">
-    <Logo class="logo"/>
-
     <div class="steps">
       <div>
         Crunchyroll
@@ -34,7 +32,6 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiCheck } from '@mdi/js'
 
-import Logo from '@/assets/logo.svg'
 import Icon from '@/components/Icon.vue'
 import CButton from '@/components/CButton.vue'
 import LoginForm from '@/components/LoginForm.vue'
@@ -45,7 +42,6 @@ import { loginAnilist, isValidToken } from '../lib/anilist'
   components: {
     CButton,
     Icon,
-    Logo,
     LoginForm,
   },
 })
@@ -111,7 +107,7 @@ export default class Login extends Vue {
   padding: 35px 50px;
   background: $dark;
   border-radius: 5px;
-  box-shadow: 0 5px 6px $shadow;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 1);
   will-change: transform, opacity;
 
   & > .logo {

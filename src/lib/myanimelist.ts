@@ -5,8 +5,6 @@ import { fetchSeasonFromEpisode } from '@/lib/crunchyroll'
 import { Episode } from '@/types'
 import { RequestResponse, responseIsError } from '@/utils'
 
-const corsAnywhere = 'https://cors-anywhere.herokuapp.com/'
-
 export const fetchEpisodesOfSeries = async (
   id: string | number,
 ): Promise<Episode[]> => {
@@ -30,9 +28,7 @@ export const fetchEpisodesOfSeries = async (
     return []
   }
 
-  const response = await request.get(
-    corsAnywhere + episodeResponse.body.episodes[0].video_url,
-  )
+  const response = await request.get(episodeResponse.body.episodes[0].video_url)
 
   const match = /"provider_episode_id":\s?(\d+)/m.exec(response.text)
 

@@ -1,8 +1,15 @@
+import { error } from 'electron-log'
 import { path } from 'rambda'
 import { Response } from 'superagent'
 import { Prop as IProp, PropOptions } from 'vue/types/options'
+import { ActionContext, Store } from 'vuex'
 
 import { MediaListStatus } from '@/graphql-types'
+import {
+  createSession,
+  createUnblockedSession,
+  SessionResponse,
+} from '@/lib/crunchyroll'
 
 export interface RequestSuccess<B extends object> extends Response {
   status: 200
@@ -64,4 +71,23 @@ export const humanizeMediaListStatus = (
     default:
       return 'Error'
   }
+}
+
+export const createBothSessions = async (
+  store: Store<any> | ActionContext<any, any>,
+) => {
+  let data: SessionResponse
+
+  try {
+    data = await createUnblockedSession()
+  } catch (e) {
+    error(e)
+    store.dispatch('app/sendErrorToast', 'Could not create US session. 😞', {
+      root: true,
+    })
+
+    data = await createSession()
+  }
+
+  return data
 }

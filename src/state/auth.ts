@@ -6,9 +6,11 @@ import * as crunchyroll from '@/lib/crunchyroll'
 import { RootState } from '@/state/store'
 import { userStore } from '@/lib/user'
 import { logoutAnilist } from '@/lib/anilist'
+import { createBothSessions } from '@/utils'
 
 export interface CrunchyrollData {
   isLoggedIn: boolean
+  country: string | null
 }
 
 export interface AnilistData {
@@ -26,6 +28,7 @@ type AuthContext = ActionContext<AuthState, RootState>
 const initialState: AuthState = {
   crunchyroll: {
     isLoggedIn: !!userStore.get('crunchyroll.token', false),
+    country: null,
   },
   anilist: {
     token: userStore.get('anilist.token', null),
@@ -34,6 +37,8 @@ const initialState: AuthState = {
 }
 
 export const auth = {
+  namespaced: true,
+
   state: { ...initialState },
 
   getters: {
@@ -49,11 +54,19 @@ export const auth = {
         all: anilist && _crunchyroll,
       }
     },
+
+    getCrunchyrollCountry(state: AuthState) {
+      return state.crunchyroll.country
+    },
   },
 
   mutations: {
     setCrunchyroll(state: AuthState, loggedIn: boolean) {
       state.crunchyroll.isLoggedIn = loggedIn
+    },
+
+    setCrunchyrollCountry(state: AuthState, countryCode: string) {
+      state.crunchyroll.country = countryCode
     },
 
     setAnilist(state: AuthState, data: AnilistData) {
@@ -97,16 +110,23 @@ export const auth = {
         expires: null,
       })
 
-      await crunchyroll.createSession()
+      const data = await createBothSessions(context)
+      setCrunchyrollCountry(context, data.country_code)
     },
   },
 }
 
-const { commit, dispatch, read } = getStoreAccessors<AuthState, RootState>('')
+const { commit, dispatch, read } = getStoreAccessors<AuthState, RootState>(
+  'auth',
+)
 
 export const getIsLoggedIn = read(auth.getters.isLoggedIn)
+export const getCrunchyrollCountry = read(auth.getters.getCrunchyrollCountry)
 
 const setCrunchyroll = commit(auth.mutations.setCrunchyroll)
+export const setCrunchyrollCountry = commit(
+  auth.mutations.setCrunchyrollCountry,
+)
 export const setAnilist = commit(auth.mutations.setAnilist)
 
 export const loginCrunchyroll = dispatch(auth.actions.loginCrunchyroll)

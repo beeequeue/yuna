@@ -2,7 +2,7 @@ $bg: rgba(5, 5, 5, 0.975);
 
 .tooltip {
   display: block !important;
-  z-index: 10;
+  z-index: 10000;
 
   .tooltip-inner {
     background: $bg;

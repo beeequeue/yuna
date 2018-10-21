@@ -1,5 +1,6 @@
 /* tslint:disable:class-name */
 import superagent from 'superagent/superagent'
+import { T } from 'rambda'
 import uuid from 'uuid/v4'
 
 import { Episode, StreamData } from '@/types'
@@ -178,9 +179,15 @@ const responseIsError = (
 
 let _sessionId: string = userStore.get('crunchyroll.sessionId', '')
 
+export interface SessionResponse {
+  session_id: string
+  country_code: string
+}
+
 export const createSession = async () => {
   const response = (await superagent
-    .get(`https://${CR_UNBLOCKER_URL}/start_session`)
+    .get(getUrl('start_session'))
+    .ok(T)
     .query({
       auth: userStore.get('crunchyroll.token', null),
       locale,
@@ -188,8 +195,8 @@ export const createSession = async () => {
       device_id: `${uuid()}`,
       version: '1.1',
       access_token,
-      user_id: userStore.get('crunchyroll.userId', ''),
-    })) as CrunchyrollResponse<{ session_id: string }>
+      user_id: userStore.get('crunchyroll.userId', null),
+    })) as CrunchyrollResponse<SessionResponse>
 
   if (responseIsError(response)) {
     return Promise.reject(response.body.message)
@@ -198,6 +205,31 @@ export const createSession = async () => {
   _sessionId = response.body.data.session_id
 
   userStore.set('crunchyroll.sessionId', _sessionId)
+  userStore.set('crunchyroll.country', response.body.data.country_code)
+
+  return response.body.data
+}
+
+export const createUnblockedSession = async () => {
+  const response = (await superagent
+    .get(`https://${CR_UNBLOCKER_URL}/start_session`)
+    .ok(T)
+    .query({
+      auth: userStore.get('crunchyroll.token', null),
+      version: '1.1',
+      user_id: userStore.get('crunchyroll.userId', null),
+    })) as CrunchyrollResponse<SessionResponse>
+
+  if (responseIsError(response)) {
+    return Promise.reject(response.body.message)
+  }
+
+  _sessionId = response.body.data.session_id
+
+  userStore.set('crunchyroll.sessionId', _sessionId)
+  userStore.set('crunchyroll.country', response.body.data.country_code)
+
+  return response.body.data
 }
 
 const mediaFields = [
