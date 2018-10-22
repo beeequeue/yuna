@@ -19,12 +19,30 @@
       :onSetTime="onSetTime"
     />
 
+    <transition name="shrink">
+      <icon
+        v-if="isPlayerMaximized"
+        class="button"
+        :icon="prevSvg"
+        @click.native="go(-1)"
+      />
+    </transition>
+
     <span class="play-pause button-collapser">
       <transition>
         <icon v-if="paused" key="play" class="button" :icon="playSvg" @click.native="play"/>
         <icon v-else class="button" key="pause" :icon="pauseSvg" @click.native="pause"/>
       </transition>
     </span>
+
+    <transition name="shrink">
+      <icon
+        v-if="isPlayerMaximized"
+        class="button"
+        :icon="nextSvg"
+        @click.native="go(1)"
+      />
+    </transition>
 
     <volume-slider
       :muted="muted"
@@ -93,10 +111,17 @@ import {
   mdiPlay,
   mdiBookmark,
   mdiBookmarkRemove,
+  mdiSkipNext,
+  mdiSkipPrevious,
 } from '@mdi/js'
 
 import { Episode } from '@/types'
-import { getIsFullscreen, toggleFullscreen, ListEntry } from '@/state/app'
+import {
+  getIsFullscreen,
+  toggleFullscreen,
+  ListEntry,
+  setCurrentEpisode,
+} from '@/state/app'
 import { prop, secondsToTimeString } from '@/utils'
 import Icon from '../Icon.vue'
 import ProgressBar from './ProgressBar.vue'
@@ -108,6 +133,8 @@ import VolumeSlider from './VolumeSlider.vue'
 export default class Controls extends Vue {
   @Prop(prop(Object, true))
   public episode!: Episode
+  @Prop(prop(Object))
+  public nextEpisode!: Episode | null
   @Prop(prop(String, true))
   public animeName!: string
   @Prop(Object) public listEntry?: ListEntry
@@ -153,6 +180,8 @@ export default class Controls extends Vue {
 
   public playSvg = mdiPlay
   public pauseSvg = mdiPause
+  public prevSvg = mdiSkipPrevious
+  public nextSvg = mdiSkipNext
   public bookmarkSvg = mdiBookmark
   public bookmarkRemoveSvg = mdiBookmarkRemove
   public maximizeSvg = mdiArrowExpand
@@ -196,6 +225,10 @@ export default class Controls extends Vue {
 
   public secondsToTimeString(input: number) {
     return secondsToTimeString(input)
+  }
+
+  public go(amount: number) {
+    setCurrentEpisode(this.$store, this.episode.index + amount)
   }
 }
 </script>
@@ -266,15 +299,20 @@ $buttonSize: 50px;
   );
 
   & > * {
-    &.shrink-enter-active,
+    &.shrink-enter-active {
+      transition: opacity 0.5s ease-in-out, max-width 0.5s ease-in-out,
+        padding 0.5s ease-in-out !important;
+    }
     &.shrink-leave-active {
-      transition: opacity 0.5s, max-width 0.5s !important;
+      transition: opacity 0.25s, max-width 0.25s, padding 0.25s !important;
     }
 
     &.shrink-enter,
     &.shrink-leave-to {
       opacity: 0 !important;
       max-width: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
     }
   }
 
@@ -287,7 +325,7 @@ $buttonSize: 50px;
   }
 
   & > *:not(.progress) {
-    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.75));
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 1));
   }
 
   & > .progress {
@@ -295,7 +333,8 @@ $buttonSize: 50px;
   }
 
   & > .time {
-    margin: 0 5px 3px;
+    padding: 0 12px;
+    margin-bottom: 4px;
     max-width: 150px;
     opacity: 1;
     overflow: hidden;
@@ -312,7 +351,6 @@ $buttonSize: 50px;
     height: $buttonSize;
     width: $buttonSize;
     max-width: $buttonSize;
-    margin: 0 5px;
     overflow: hidden;
 
     & > .button {
@@ -325,11 +363,11 @@ $buttonSize: 50px;
   & .button {
     height: $buttonSize;
     width: $buttonSize;
-    padding: 6px;
+    max-width: $buttonSize;
+    padding: 5px;
 
     fill: white;
     cursor: pointer;
-    filter: drop-shadow(0 0 1px black);
 
     &.v-enter-active,
     &.v-leave-active {
