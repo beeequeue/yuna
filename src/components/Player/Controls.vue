@@ -1,5 +1,5 @@
 <template>
-<div class="controls">
+<div class="controls" :class="{ visible }" @mousemove="handleMouseOver" @mouseout="handleMouseLeave">
   <div class="cover" @click="debounceCoverClick"/>
 
   <transition name="fade">
@@ -165,6 +165,9 @@ export default class Controls extends Vue {
   @Prop(prop(Function, true))
   public setProgress!: (progress: number) => any
 
+  public visible = false
+  public visibleTimeout: number | null = null
+
   public get timeString() {
     const current = secondsToTimeString(
       Math.min(this.progressInSeconds, this.episode.duration),
@@ -215,6 +218,23 @@ export default class Controls extends Vue {
     }
   }
 
+  public handleMouseOver() {
+    this.visible = true
+
+    if (this.visibleTimeout) window.clearTimeout(this.visibleTimeout)
+
+    this.visibleTimeout = window.setTimeout(() => {
+      this.visible = false
+      this.visibleTimeout = null
+    }, 1000)
+  }
+
+  public handleMouseLeave() {
+    this.visible = false
+
+    if (this.visibleTimeout) window.clearTimeout(this.visibleTimeout)
+  }
+
   public maximizePlayer() {
     this.$router.push('/player-big')
   }
@@ -244,9 +264,9 @@ $buttonSize: 50px;
   height: 100%;
   width: 100%;
   opacity: 0;
+  cursor: none;
   user-select: none;
   transition: opacity 0.15s;
-  transition-delay: 0.5s;
 
   & > .cover {
     position: absolute;
@@ -278,9 +298,9 @@ $buttonSize: 50px;
     }
   }
 
-  &:hover {
+  &.visible {
     opacity: 1;
-    transition-delay: 0s;
+    cursor: default;
   }
 }
 
