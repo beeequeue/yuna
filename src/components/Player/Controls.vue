@@ -226,7 +226,7 @@ export default class Controls extends Vue {
     this.visibleTimeout = window.setTimeout(() => {
       this.visible = false
       this.visibleTimeout = null
-    }, 1000)
+    }, 2000)
   }
 
   public handleMouseLeave() {
