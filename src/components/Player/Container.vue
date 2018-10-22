@@ -76,8 +76,6 @@ export default class PlayerContainer extends Vue {
   @Watch('nextEpisode')
   public updateDelayedNextEpisode() {
     setTimeout(() => {
-      if (!this.nextEpisode) return
-
       this.delayedNextEpisode = this.nextEpisode
     }, 1000)
   }

@@ -49,7 +49,7 @@
     />
 
     <next-episode-overlay
-      v-if="ended && nextEpisode"
+      v-if="ended"
       :nextEpisode="nextEpisode"
       :episodesInAnime="episodesInAnime"
       :isPlayerMaximized="isPlayerMaximized"

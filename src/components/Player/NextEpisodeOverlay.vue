@@ -1,6 +1,6 @@
 <template>
 <transition>
-  <div class="next-episode-container">
+  <div v-if="nextEpisode" class="next-episode-container">
     <transition>
       <div
         v-if="isPlayerMaximized"
@@ -51,8 +51,8 @@ import Icon from '../Icon.vue'
   components: { CButton, Icon },
 })
 export default class NextEpisodeOverlay extends Vue {
-  @Prop(prop(Object, true))
-  public nextEpisode!: Episode
+  @Prop(prop(Object))
+  public nextEpisode!: Episode | null
   @Prop(prop(Number, true))
   public episodesInAnime!: number
   @Prop(prop(Boolean, true))
@@ -62,6 +62,8 @@ export default class NextEpisodeOverlay extends Vue {
   public timeoutId: number | null = null
 
   public get indexString() {
+    if (!this.nextEpisode) return null
+
     return this.nextEpisode.title.substr(
       0,
       this.nextEpisode.title.indexOf(' - '),
@@ -69,6 +71,8 @@ export default class NextEpisodeOverlay extends Vue {
   }
 
   public get title() {
+    if (!this.nextEpisode) return null
+
     return this.nextEpisode.title.substr(
       this.nextEpisode.title.indexOf(' - ') + 3,
     )
@@ -77,7 +81,7 @@ export default class NextEpisodeOverlay extends Vue {
   public playSvg = mdiPlay
 
   public mounted() {
-    if (this.shouldAutoPlay) {
+    if (this.nextEpisode && this.shouldAutoPlay) {
       this.timeoutId = window.setTimeout(() => {
         this.timeoutId = null
 
@@ -98,6 +102,8 @@ export default class NextEpisodeOverlay extends Vue {
   }
 
   public setToNextEpisode() {
+    if (!this.nextEpisode) return
+
     setCurrentEpisode(this.$store, this.nextEpisode.index - 1)
   }
 }
@@ -126,6 +132,7 @@ export default class NextEpisodeOverlay extends Vue {
   justify-content: center;
   align-items: center;
   pointer-events: none;
+  user-select: none;
 
   & > .text {
     font-size: 1.25em;
