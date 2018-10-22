@@ -15,6 +15,7 @@ export interface Episode {
   title: string
   description: string
   index: number
+  episodeNumber: number
   duration: number
   progress: number | null
   thumbnail: string

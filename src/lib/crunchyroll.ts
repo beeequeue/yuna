@@ -291,7 +291,7 @@ export const fetchEpisodesOfCollection = async (
     return Promise.reject(response.body.message)
   }
 
-  return response.body.data.map(mediaToEpisode).filter(removeExtraEpisodes)
+  return response.body.data.filter(removeExtraEpisodes).map(mediaToEpisode)
 }
 
 export const fetchEpisode = async (mediaId: string): Promise<Episode> => {
@@ -306,7 +306,10 @@ export const fetchEpisode = async (mediaId: string): Promise<Episode> => {
     return Promise.reject(response.body.message)
   }
 
-  return mediaToEpisode(response.body.data)
+  return mediaToEpisode(
+    response.body.data,
+    Number(response.body.data.episode_number),
+  )
 }
 
 export const fetchSeasonFromEpisode = async (
@@ -342,21 +345,24 @@ const convertStreamData = (streamData: _StreamData): StreamData => ({
   })),
 })
 
-const mediaToEpisode = ({
-  name,
+const mediaToEpisode = (
+  {
+    name,
+    description,
+    duration,
+    screenshot_image,
+    media_id,
+    series_id,
+    collection_id,
+    url,
+    playhead,
+  }: _Media,
+  index: number,
+): Episode => ({
+  title: `Episode ${index + 1} - ${name}`,
   description,
-  episode_number,
-  duration,
-  screenshot_image,
-  media_id,
-  series_id,
-  collection_id,
-  url,
-  playhead,
-}: _Media): Episode => ({
-  title: `Episode ${episode_number} - ${name}`,
-  description,
-  index: Number(episode_number),
+  index,
+  episodeNumber: index + 1,
   duration,
   progress: playhead || null,
   thumbnail: screenshot_image.full_url,
@@ -369,4 +375,5 @@ const mediaToEpisode = ({
   },
 })
 
-const removeExtraEpisodes = ({ index }: Episode) => index % 1 === 0
+const removeExtraEpisodes = ({ episode_number }: _Media) =>
+  Number(episode_number) % 1 === 0

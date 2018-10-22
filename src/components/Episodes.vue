@@ -16,7 +16,7 @@
     <div
       v-for="(episode, i) in episodes"
       class="episode"
-      :class="getEpisodeClasses(episode.index)"
+      :class="getEpisodeClasses(episode.episodeNumber)"
       @click="setCurrentEpisode(i)"
       :key="episode.crunchyroll.id"
     >
@@ -26,7 +26,7 @@
 
       <transition>
         <icon
-          v-if="getIsEpisodeWatched(episode.index)"
+          v-if="getIsEpisodeWatched(episode.episodeNumber)"
           :icon="checkSvg"
           class="check"
         />
@@ -209,7 +209,7 @@ export default class Episodes extends Vue {
     return {
       watched: this.getIsEpisodeWatched(index),
       current: this.listEntry.progress + 1 === index,
-      active: Number(this.scrollerValue) === index,
+      active: !this.small && Number(this.scrollerValue) === index,
       small: this.small,
     }
   }
