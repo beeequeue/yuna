@@ -24,6 +24,20 @@
 
       <img class="thumbnail" :src="episode.thumbnail"/>
 
+      <transition name="fade">
+        <c-button
+          v-if="!getIsEpisodeWatched(episode.episodeNumber)"
+          :icon="bookmarkSvg"
+          @click.native.prevent="setProgress(episode.episodeNumber)"
+        />
+        <c-button
+          v-else
+          type="danger"
+          :icon="unbookmarkSvg"
+          @click.native.prevent="setProgress(episode.episodeNumber - 1)"
+        />
+      </transition>
+
       <transition>
         <icon
           v-if="getIsEpisodeWatched(episode.episodeNumber)"
@@ -49,8 +63,9 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { Key } from 'ts-key-enum'
-import { mdiCheckCircleOutline } from '@mdi/js'
+import { mdiCheckCircleOutline, mdiBookmark, mdiBookmarkRemove } from '@mdi/js'
 
+import CButton from './CButton.vue'
 import Icon from './Icon.vue'
 import Loader from './Loader.vue'
 import { AnimeCache } from '../lib/cache'
@@ -62,8 +77,9 @@ import {
   setCurrentEpisode,
   ListEntry,
 } from '../state/app'
+import { setProgressMutation } from '@/graphql/mutations'
 
-@Component({ components: { Icon, Loader } })
+@Component({ components: { CButton, Icon, Loader } })
 export default class Episodes extends Vue {
   @Prop(prop(Number, true))
   public id!: number
@@ -83,6 +99,8 @@ export default class Episodes extends Vue {
   public error: string | null = null
   public scrollerValue = ''
 
+  public bookmarkSvg = mdiBookmark
+  public unbookmarkSvg = mdiBookmarkRemove
   public checkSvg = mdiCheckCircleOutline
 
   public containerClasses = {
@@ -213,6 +231,17 @@ export default class Episodes extends Vue {
       small: this.small,
     }
   }
+
+  public setProgress(progress: number) {
+    if (!this.listEntry) return
+
+    setProgressMutation(
+      this.$apollo,
+      this.listEntry.id,
+      progress,
+      this.listEntry,
+    )
+  }
 }
 </script>
 
@@ -286,6 +315,20 @@ export default class Episodes extends Vue {
       &.active {
         width: 325px;
         transition-delay: 0s;
+      }
+
+      & > .button {
+        position: absolute;
+        left: 0;
+        bottom: -30px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 0;
+        transition: bottom 0.15s;
+      }
+
+      &:hover > .button {
+        bottom: 0;
       }
 
       & > .check {
