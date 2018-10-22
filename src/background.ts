@@ -29,7 +29,7 @@ electronDebug({})
 function createMainWindow() {
   const window = new BrowserWindow({
     width: 1200,
-    height: 750,
+    height: 755,
     maximizable: false,
     frame: false,
     webPreferences: {
