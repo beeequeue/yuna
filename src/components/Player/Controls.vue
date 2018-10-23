@@ -64,12 +64,12 @@
       <span v-if="isPlayerMaximized && listEntry" class="completed button-collapser">
         <transition name="fade">
           <icon
-            v-if="listEntry.progress < episode.index"
+            v-if="listEntry.progress < episode.episodeNumber"
             key="max"
             class="button"
             :icon="bookmarkSvg"
             v-tooltip.top="'Mark as watched'"
-            @click.native="setProgress(episode.index)"
+            @click.native="setProgress(episode.episodeNumber)"
           />
           <icon
             v-else
@@ -77,7 +77,7 @@
             key="min"
             :icon="bookmarkRemoveSvg"
             v-tooltip.top="'Unmark as watched'"
-            @click.native="setProgress(Math.max(0, episode.index - 1))"
+            @click.native="setProgress(Math.max(0, episode.episodeNumber - 1))"
           />
         </transition>
       </span>

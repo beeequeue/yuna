@@ -2,10 +2,7 @@
 <transition>
   <div v-if="nextEpisode" class="next-episode-container">
     <transition>
-      <div
-        v-if="isPlayerMaximized"
-        class="text"
-      >
+      <div v-if="isPlayerMaximized" class="text">
         <div>Up next...</div>
         <div>{{indexString}}/{{episodesInAnime}}</div>
         <div>{{title}}</div>

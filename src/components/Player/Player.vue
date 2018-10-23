@@ -290,12 +290,12 @@ export default class Player extends Vue {
     if (
       !this.listEntry ||
       !this.getShouldAutoMarkWatched ||
-      this.listEntry.progress >= this.episode.index
+      this.listEntry.progress >= this.episode.episodeNumber
     ) {
       return
     }
 
-    this.setProgress(this.episode.index)
+    this.setProgress(this.episode.episodeNumber)
   }
 }
 </script>
