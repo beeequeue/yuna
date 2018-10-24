@@ -1,9 +1,18 @@
 <template>
-<button class="button" :class="classes">
-  <icon v-if="icon != null" :icon="icon"/>
+<button class="button" :class="classes" @click="handleClick">
+  <icon
+    v-if="icon != null && !confirmTimeout"
+    :icon="icon"
+  />
+
+  <icon
+    v-if="confirmTimeout"
+    class="alert"
+    :icon="alertSvg"
+  />
 
   <span v-if="content" class="content">
-    {{content}}
+    {{confirm && confirmTimeout ? confirmText || 'Confirm' : content}}
   </span>
 </button>
 </template>
@@ -11,15 +20,23 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Icon from './Icon.vue'
+import { mdiAlertCircleOutline } from '@mdi/js'
 
 @Component({ components: { Icon } })
 export default class CButton extends Vue {
+  @Prop(Function) public click?: () => any
   @Prop(String) public content?: string
   @Prop(String)
   public type?: 'normal' | 'success' | 'warning' | 'danger' | 'white'
   @Prop(String) public icon?: string
   @Prop(Boolean) public raised?: boolean
   @Prop(Boolean) public flat?: boolean
+  @Prop(Boolean) public confirm?: boolean
+  @Prop(String) public confirmText?: string
+
+  public confirmTimeout: number | null = null
+
+  public alertSvg = mdiAlertCircleOutline
 
   public get classes() {
     return {
@@ -27,6 +44,23 @@ export default class CButton extends Vue {
       'with-icon': !!this.icon,
       raised: this.raised || (!this.flat && !this.raised),
       flat: this.flat,
+    }
+  }
+
+  public handleClick() {
+    if (!this.click) return
+
+    if (!this.confirm) return this.click()
+
+    if (!this.confirmTimeout) {
+      this.confirmTimeout = window.setTimeout(() => {
+        this.confirmTimeout = null
+      }, 2500)
+    } else {
+      window.clearTimeout(this.confirmTimeout)
+      this.confirmTimeout = null
+
+      this.click()
     }
   }
 }
@@ -70,6 +104,18 @@ export default class CButton extends Vue {
 
   & > .icon {
     fill: $color;
+  }
+}
+
+@keyframes growBounce {
+  0% {
+    transform: scale(0.5);
+  }
+  35% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 
@@ -139,6 +185,16 @@ export default class CButton extends Vue {
   & > .icon {
     width: 20px;
     height: 20px;
+
+    &.alert {
+      animation: growBounce 0.75s, shake 0.75s;
+      animation-iteration-count: 1;
+    }
+
+    &.shake {
+      animation: shake 0.25s;
+      animation-iteration-count: 2;
+    }
   }
 
   & > .content {

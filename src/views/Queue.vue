@@ -26,15 +26,21 @@
 
       <c-button
         content="Import Watching from List"
-        @click.native="sendNotImplementedToast"
+        :click="sendNotImplementedToast"
       />
 
       <c-button
         content="Import from Crunchyroll"
-        @click.native="sendNotImplementedToast"
+        :click="sendNotImplementedToast"
       />
 
-      <c-button type="danger" content="Clear queue" @click.native="clearQueue"/>
+      <c-button
+        type="danger"
+        confirm
+        :icon="clearListSvg"
+        content="Clear queue"
+        :click="clearQueue"
+      />
     </div>
   </div>
 </template>
@@ -42,6 +48,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import Draggable from 'vuedraggable'
+import { mdiPlaylistRemove } from '@mdi/js'
 
 import QueueItem from '../components/QueueItem.vue'
 import CButton from '../components/CButton.vue'
@@ -52,6 +59,8 @@ import { sendNotImplementedToast } from '../state/app'
   components: { Draggable, QueueItem, CButton },
 })
 export default class Queue extends Vue {
+  public clearListSvg = mdiPlaylistRemove
+
   public get queue() {
     return getQueue(this.$store)
   }
