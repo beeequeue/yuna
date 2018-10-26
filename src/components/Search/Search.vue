@@ -128,10 +128,15 @@ export default class Search extends Vue {
   public async handleResults(result: SearchQuery) {
     if (!result.anime || !result.anime.results) return
 
-    this.results = result.anime.results.map<any>(result => ({
-      ...result,
-      isOnCrunchyroll: false,
-    }))
+    this.results = result.anime.results
+      .filter((r): r is SearchQuery_anime_results => r != null)
+      .map(result => {
+        return {
+          ...result,
+          isOnCrunchyroll:
+            !!result.streamingEpisodes && result.streamingEpisodes.length > 0,
+        }
+      })
 
     setTimeout(() => {
       this.isLoading = false
