@@ -2,7 +2,10 @@
 <ApolloQuery class="anime" :query="ANIME_QUEUE_QUERY" :variables="{ id }">
   <template slot-scope="{ result }">
     <span v-if="result && result.data" class="container">
-      <anime-banner :anime="result.data.anime"/>
+      <anime-banner
+        :anime="result.data.anime"
+        :faded="!getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+      />
 
       <div class="content-container">
         <div>

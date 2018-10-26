@@ -4,6 +4,7 @@
   :to="`/anime/${anime.id}`">
   <img
     class="image"
+    :class="{ faded }"
     :src="anime.bannerImage"
   />
 
@@ -17,6 +18,7 @@ import { prop } from '../utils'
 
 @Component
 export default class AnimeBanner extends Vue {
+  @Prop(Boolean) faded!: boolean | null
   @Prop(prop(Object, true))
   public anime!: {
     id: number
