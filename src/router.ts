@@ -8,6 +8,12 @@ export const router = new Router({
   base: '/',
   routes: [
     {
+      path: '/',
+      name: 'dashboard',
+      component: () =>
+        import(/* webpackChunkName: "list" */ './views/List.vue'),
+    },
+    {
       path: '/login',
       name: 'login',
       component: () =>
