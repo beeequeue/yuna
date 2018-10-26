@@ -49,11 +49,18 @@
     />
 
     <next-episode-overlay
-      v-if="ended"
+      v-if="ended && nextEpisode"
       :nextEpisode="nextEpisode"
       :episodesInAnime="episodesInAnime"
       :isPlayerMaximized="isPlayerMaximized"
       :shouldAutoPlay="shouldAutoPlay"
+    />
+
+    <end-of-season-overlay
+      v-if="ended && !nextEpisode"
+      :sequels="sequels"
+      :episodesInAnime="episodesInAnime"
+      :isPlayerMaximized="isPlayerMaximized"
     />
   </div>
 </template>
@@ -68,6 +75,7 @@ import { prop } from '@/utils'
 import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
 import NextEpisodeOverlay from './NextEpisodeOverlay.vue'
+import EndOfSeasonOverlay from './EndOfSeasonOverlay.vue'
 import { Episode } from '../../types'
 import { fetchStream } from '../../lib/crunchyroll'
 import {
@@ -75,15 +83,18 @@ import {
   sendErrorToast,
   toggleFullscreen,
   ListEntry,
+  Sequel,
 } from '../../state/app'
 import { getKeydownHandler, KeybindingAction } from '../../state/settings'
 
 @Component({
-  components: { Controls, Icon, NextEpisodeOverlay },
+  components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
 })
 export default class Player extends Vue {
   @Prop(Object) public episode!: Episode
   @Prop(Object) public nextEpisode!: Episode
+  @Prop(prop(Array, true))
+  public sequels!: Sequel[]
   @Prop(String) public animeName!: string
   @Prop(prop(Number, true))
   public episodesInAnime!: number

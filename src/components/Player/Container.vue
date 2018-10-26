@@ -9,6 +9,7 @@
       key="player"
       :episode="episode"
       :nextEpisode="delayedNextEpisode"
+      :sequels="sequels"
       :animeName="playerData.animeName"
       :episodesInAnime="playerData.episodes.length"
       :listEntry="playerData.listEntry"
@@ -45,6 +46,12 @@ export default class PlayerContainer extends Vue {
 
   get nextEpisode() {
     return getNextEpisode(this.$store)
+  }
+
+  get sequels() {
+    if (!this.playerData) return []
+
+    return this.playerData.sequels
   }
 
   get shouldAutoPlay() {

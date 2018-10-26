@@ -42,12 +42,19 @@ export interface ListEntry {
   progress: number
 }
 
+export interface Sequel {
+  id: number
+  title: string
+  bannerImage: string
+}
+
 interface PlayerOptions {
   id: number
   animeName: string
   listEntry?: ListEntry | null
   episodes: Episode[]
   current: number
+  sequels: Sequel[]
 }
 
 export interface AppState {

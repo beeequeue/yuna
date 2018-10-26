@@ -58,6 +58,7 @@
         :idMal="data.anime.idMal"
         :listEntry="data.anime.mediaListEntry"
         :animeName="data.anime.title.userPreferred"
+        :sequels="getSequels(data)"
         showScroller
       />
 
@@ -84,8 +85,14 @@ import Relations from '../components/Anime/Relations.vue'
 import Episodes from '../components/Episodes.vue'
 import CButton from '../components/CButton.vue'
 
+import { Sequel } from '../state/app'
+import { MediaRelation } from '../graphql-types'
 import ANIME_PAGE_QUERY from '../graphql/AnimePageQuery.graphql'
-import { AnimePageQuery } from '../graphql/AnimePageQuery'
+import {
+  AnimePageQuery,
+  AnimePageQuery_anime_relations_edges,
+  AnimePageQuery_anime_relations_edges_node,
+} from '../graphql/AnimePageQuery'
 
 @Component({
   components: {
@@ -112,6 +119,28 @@ export default class Anime extends Vue {
 
   public getMediaListStatus(data: AnimePageQuery) {
     return pathOr(null, ['anime', 'mediaListEntry', 'status'], data)
+  }
+
+  public getSequels(data?: AnimePageQuery): Sequel[] {
+    if (!data) return []
+
+    const edges: AnimePageQuery_anime_relations_edges[] = pathOr(
+      [],
+      ['anime', 'relations', 'edges'],
+      data,
+    )
+
+    const nodes = edges.filter(
+      node => node.relationType === MediaRelation.SEQUEL,
+    )
+
+    return nodes
+      .map(edge => edge.node as AnimePageQuery_anime_relations_edges_node)
+      .map(node => ({
+        id: node.id as number,
+        title: pathOr('TITLE', ['title', 'userPreferred'], node),
+        bannerImage: node.bannerImage as string,
+      }))
   }
 }
 </script>

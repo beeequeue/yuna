@@ -1,4 +1,4 @@
-query AnimeQueueQuery($id: Int){
+query AnimeQueueQuery($id: Int) {
   anime: Media(id: $id, type: ANIME) {
     id
     idMal
@@ -17,6 +17,18 @@ query AnimeQueueQuery($id: Int){
       progress
       status
       repeat
+    }
+    relations {
+      edges {
+        relationType
+        node {
+          id
+          title {
+            userPreferred
+          }
+          bannerImage
+        }
+      }
     }
   }
 }

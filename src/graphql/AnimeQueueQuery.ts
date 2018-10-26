@@ -1,7 +1,7 @@
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { MediaStatus, MediaListStatus } from "./..\\graphql-types";
+import { MediaStatus, MediaListStatus, MediaRelation } from "./..\\graphql-types";
 
 // ====================================================
 // GraphQL query operation: AnimeQueueQuery
@@ -43,6 +43,44 @@ export interface AnimeQueueQuery_anime_mediaListEntry {
   repeat: number | null;
 }
 
+export interface AnimeQueueQuery_anime_relations_edges_node_title {
+  __typename: "MediaTitle";
+  /**
+   * The currently authenticated users preferred title language. Default romaji for non-authenticated
+   */
+  userPreferred: string | null;
+}
+
+export interface AnimeQueueQuery_anime_relations_edges_node {
+  __typename: "Media";
+  /**
+   * The id of the media
+   */
+  id: number;
+  /**
+   * The official titles of the media in various languages
+   */
+  title: AnimeQueueQuery_anime_relations_edges_node_title | null;
+  /**
+   * The banner image of the media
+   */
+  bannerImage: string | null;
+}
+
+export interface AnimeQueueQuery_anime_relations_edges {
+  __typename: "MediaEdge";
+  /**
+   * The type of relation to the parent model
+   */
+  relationType: MediaRelation | null;
+  node: AnimeQueueQuery_anime_relations_edges_node | null;
+}
+
+export interface AnimeQueueQuery_anime_relations {
+  __typename: "MediaConnection";
+  edges: (AnimeQueueQuery_anime_relations_edges | null)[] | null;
+}
+
 export interface AnimeQueueQuery_anime {
   __typename: "Media";
   /**
@@ -81,6 +119,10 @@ export interface AnimeQueueQuery_anime {
    * The authenticated user's media list entry for the media
    */
   mediaListEntry: AnimeQueueQuery_anime_mediaListEntry | null;
+  /**
+   * Other media in the same or connecting franchise
+   */
+  relations: AnimeQueueQuery_anime_relations | null;
 }
 
 export interface AnimeQueueQuery {

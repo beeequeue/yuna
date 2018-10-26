@@ -2,17 +2,7 @@
 <ApolloQuery class="anime" :query="ANIME_QUEUE_QUERY" :variables="{ id }">
   <template slot-scope="{ result }">
     <span v-if="result && result.data" class="container">
-      <router-link
-        class="title-container"
-        :to="`/anime/${id}`">
-        <img
-          class="image"
-          :class="{faded: !getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)}"
-          :src="result.data.anime.bannerImage"
-        />
-
-        <span class="title">{{result.data.anime.title.userPreferred}}</span>
-      </router-link>
+      <anime-banner :anime="result.data.anime"/>
 
       <div class="content-container">
         <div>
@@ -23,20 +13,6 @@
           <span :style="{width: '100%'}"/>
 
           <div class="buttons">
-            <c-button
-              v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
-              class="small"
-              content="+"
-              @click.native="incrementProgress(result.data, 1)"
-            />
-
-            <c-button
-              v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
-              class="small"
-              content="-"
-              @click.native="incrementProgress(result.data, -1)"
-            />
-
             <c-button
               v-if="getIsStatus(result.data, MediaListStatus.PLANNING)"
               type="success"
@@ -92,6 +68,7 @@
             :animeName="result.data.anime.title.userPreferred"
             :listEntry="result.data.anime.mediaListEntry"
             :current="getCurrentEpisode(result.data)"
+            :sequels="getSequels(result.data)"
             small
           />
         </div>
@@ -105,9 +82,10 @@
 <script lang="ts">
 import { Prop, Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
-import { path } from 'rambda'
+import { path, pathOr } from 'rambda'
 import { mdiPlayCircleOutline } from '@mdi/js'
 
+import AnimeBanner from './AnimeBanner.vue'
 import Icon from './Icon.vue'
 import Loader from './Loader.vue'
 import CButton from './CButton.vue'
@@ -116,15 +94,17 @@ import ANIME_QUEUE_QUERY from '../graphql/AnimeQueueQuery.graphql'
 import {
   AnimeQueueQuery,
   AnimeQueueQuery_anime_mediaListEntry,
+  AnimeQueueQuery_anime_relations_edges,
+  AnimeQueueQuery_anime_relations_edges_node,
 } from '../graphql/AnimeQueueQuery'
-import { sendErrorToast } from '../state/app'
+import { sendErrorToast, Sequel } from '../state/app'
 import { humanizeMediaListStatus, prop } from '../utils'
-import { MediaListStatus } from '../graphql-types'
+import { MediaListStatus, MediaRelation } from '../graphql-types'
 import { removeFromQueueById } from '../state/user'
 import { setProgressMutation, setStatusMutation } from '../graphql/mutations'
 
 @Component({
-  components: { Loader, Episodes, CButton, Icon },
+  components: { AnimeBanner, Loader, Episodes, CButton, Icon },
 })
 export default class QueueItem extends Vue {
   @Prop(prop(Number, true))
@@ -159,6 +139,28 @@ export default class QueueItem extends Vue {
     if (!lastEpisode) return null
 
     return lastEpisode + 1
+  }
+
+  public getSequels(data?: AnimeQueueQuery): Sequel[] {
+    if (!data) return []
+
+    const edges: AnimeQueueQuery_anime_relations_edges[] = pathOr(
+      [],
+      ['anime', 'relations', 'edges'],
+      data,
+    )
+
+    const nodes = edges.filter(
+      node => node.relationType === MediaRelation.SEQUEL,
+    )
+
+    return nodes
+      .map(edge => edge.node as AnimeQueueQuery_anime_relations_edges_node)
+      .map(node => ({
+        id: node.id as number,
+        title: pathOr('TITLE', ['title', 'userPreferred'], node),
+        bannerImage: node.bannerImage as string,
+      }))
   }
 
   public playSvg = mdiPlayCircleOutline
@@ -242,41 +244,6 @@ export default class QueueItem extends Vue {
     overflow: hidden;
     cursor: -webkit-grab;
     box-shadow: $shadow;
-
-    & > .title-container {
-      position: relative;
-      height: 75px;
-
-      & > .image {
-        object-fit: cover;
-        width: 100%;
-        height: 100%;
-        transition: filter 500ms;
-
-        &.faded {
-          filter: grayscale(0.5) opacity(0.5) brightness(0.75);
-        }
-      }
-
-      & > .title {
-        position: absolute;
-        top: 0;
-        left: 10%;
-        height: 100%;
-        width: 80%;
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        font-family: 'Raleway', sans-serif;
-        font-weight: 700;
-        font-size: 1.5em;
-        color: $white;
-        text-shadow: $outline;
-        filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.75));
-      }
-    }
 
     & > .content-container {
       display: flex;

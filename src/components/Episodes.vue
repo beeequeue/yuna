@@ -76,6 +76,7 @@ import {
   setPlaylist,
   setCurrentEpisode,
   ListEntry,
+  Sequel,
 } from '../state/app'
 import { setProgressMutation } from '@/graphql/mutations'
 
@@ -89,9 +90,11 @@ export default class Episodes extends Vue {
   public animeName!: string
   @Prop(prop(Object))
   public listEntry?: ListEntry | null
-  @Prop(Number) public current?: number
-  @Prop(Boolean) public showScroller?: boolean
-  @Prop(Boolean) public small?: boolean
+  @Prop(prop(Array, true))
+  public sequels!: Sequel[]
+  @Prop(Number) public current!: number | null
+  @Prop(Boolean) public showScroller!: boolean | null
+  @Prop(Boolean) public small!: boolean | null
 
   public episodes: Episode[] | null = null
   public fetched = false
@@ -213,6 +216,7 @@ export default class Episodes extends Vue {
         listEntry: this.listEntry,
         episodes: this.episodes,
         current: index,
+        sequels: this.sequels,
       })
     }
   }
