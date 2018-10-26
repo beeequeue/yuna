@@ -1,4 +1,5 @@
 <template>
+<div class="login-container">
   <div class="login">
     <div class="steps">
       <div>
@@ -23,9 +24,19 @@
         />
         <icon v-else :icon="checkSvg"/>
       </div>
-
     </div>
+
+    <br/>
+
+    <c-button
+      type="danger"
+      confirm
+      content="Reset Login"
+      v-tooltip.bottom="'In case logging in goes terribly wrong'"
+      :click="reset"
+    />
   </div>
+</div>
 </template>
 
 <script lang="ts">
@@ -35,8 +46,14 @@ import { mdiCheck } from '@mdi/js'
 import Icon from '@/components/Icon.vue'
 import CButton from '@/components/CButton.vue'
 import LoginForm from '@/components/LoginForm.vue'
-import { getIsLoggedIn, loginCrunchyroll, setAnilist } from '../state/auth'
-import { loginAnilist, isValidToken } from '../lib/anilist'
+import {
+  getIsLoggedIn,
+  loginCrunchyroll,
+  setAnilist,
+  setCrunchyroll,
+} from '@/state/auth'
+import { loginAnilist, isValidToken, logoutAnilist } from '@/lib/anilist'
+import { logout } from '@/lib/crunchyroll'
 
 @Component({
   components: {
@@ -54,13 +71,7 @@ export default class Login extends Vue {
     }
   }
 
-  public async loginCR(user: string, pass: string) {
-    try {
-      await loginCrunchyroll(this.$store, { user, pass })
-    } catch (e) {
-      return Promise.reject(e)
-    }
-
+  public onSuccessfullLogin() {
     if (this.isLoggedIn.all) {
       if (window.initialLogin) {
         window.initialLogin = false
@@ -69,6 +80,16 @@ export default class Login extends Vue {
 
       this.$router.back()
     }
+  }
+
+  public async loginCR(user: string, pass: string) {
+    try {
+      await loginCrunchyroll(this.$store, { user, pass })
+    } catch (e) {
+      return Promise.reject(e)
+    }
+
+    this.onSuccessfullLogin()
   }
 
   public authAnilist() {
@@ -87,6 +108,19 @@ export default class Login extends Vue {
         token: matches[1],
         expires: Date.now() + Number(matches[2]),
       })
+
+      this.onSuccessfullLogin()
+    })
+  }
+
+  public reset() {
+    logout()
+    setCrunchyroll(this.$store, false)
+
+    logoutAnilist()
+    setAnilist(this.$store, {
+      token: null,
+      expires: null,
     })
   }
 
@@ -99,47 +133,55 @@ export default class Login extends Vue {
 <style scoped lang="scss">
 @import '../colors';
 
-.login {
+.login-container {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 35px 50px;
-  background: $dark;
-  border-radius: 5px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 1);
-  will-change: transform, opacity;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-  & > .logo {
-    height: 100px;
-    fill: $main;
-  }
+  .login {
+    padding: 25px 50px;
+    background: $dark;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 1);
+    filter: blur(0);
+    will-change: transform, opacity;
 
-  & > .steps {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    & > * {
-      margin: 0 15px;
+    & > .logo {
+      height: 100px;
+      fill: $main;
     }
 
-    & .icon {
-      height: 50px;
-      width: 50px;
-      fill: greenyellow;
+    & > .steps {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      & > * {
+        margin: 0 15px;
+      }
+
+      & .icon {
+        height: 50px;
+        width: 50px;
+        fill: greenyellow;
+      }
     }
   }
 }
 
-.v-enter-active,
-.v-leave-active {
+.route-enter-active,
+.route-leave-active {
   transition: transform 0.5s, opacity 0.5s;
 }
 
-.v-enter,
-.v-leave-to {
+.route-enter,
+.route-leave-to {
   opacity: 0;
-  transform: translate(-50%, -45%);
+  transform: translateY(-5%);
 }
 </style>

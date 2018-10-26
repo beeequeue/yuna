@@ -123,7 +123,7 @@ const { commit, dispatch, read } = getStoreAccessors<AuthState, RootState>(
 export const getIsLoggedIn = read(auth.getters.isLoggedIn)
 export const getCrunchyrollCountry = read(auth.getters.getCrunchyrollCountry)
 
-const setCrunchyroll = commit(auth.mutations.setCrunchyroll)
+export const setCrunchyroll = commit(auth.mutations.setCrunchyroll)
 export const setCrunchyrollCountry = commit(
   auth.mutations.setCrunchyrollCountry,
 )
