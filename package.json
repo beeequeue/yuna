@@ -1,7 +1,7 @@
 {
   "name": "crunch",
   "description": "An anime player that integrates with Crunchyroll, AniList, Masterani",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "author": "BeeeQueue",
   "dependencies": {
     "@mdi/js": "^2.8.94",
