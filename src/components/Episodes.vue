@@ -17,12 +17,15 @@
       v-for="(episode, i) in episodes"
       class="episode"
       :class="getEpisodeClasses(episode.episodeNumber)"
-      @click="setCurrentEpisode(i)"
       :key="episode.crunchyroll.id"
     >
       <span class="title" v-html="episode.title.replace(' - ', '<br/>')"/>
 
-      <img class="thumbnail" :src="episode.thumbnail"/>
+      <img
+        class="thumbnail"
+        :src="episode.thumbnail"
+        @click="setCurrentEpisode(i)"
+      />
 
       <transition name="fade">
         <c-button
@@ -311,6 +314,10 @@ export default class Episodes extends Vue {
       transition: width 0.25s;
       transition-delay: 0.25s;
 
+      &:first-child {
+        margin-left: 0;
+      }
+
       &.small {
         width: 200px;
         font-size: 0.85em;
@@ -321,6 +328,10 @@ export default class Episodes extends Vue {
         transition-delay: 0s;
       }
 
+      & > * {
+        pointer-events: none;
+      }
+
       & > .button {
         position: absolute;
         left: 0;
@@ -329,6 +340,7 @@ export default class Episodes extends Vue {
         border-top-right-radius: 5px;
         border-bottom-right-radius: 0;
         transition: bottom 0.15s;
+        pointer-events: all;
       }
 
       &:hover > .button {
@@ -367,10 +379,6 @@ export default class Episodes extends Vue {
         }
       }
 
-      &:first-child {
-        margin-left: 0;
-      }
-
       & > .title {
         position: absolute;
         top: 10px;
@@ -390,6 +398,7 @@ export default class Episodes extends Vue {
         display: block;
         width: 100%;
         border-radius: 5px;
+        pointer-events: all;
       }
     }
   }
