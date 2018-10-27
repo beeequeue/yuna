@@ -32,6 +32,7 @@ function createMainWindow() {
     height: 755,
     maximizable: false,
     frame: false,
+    darkTheme: true,
     webPreferences: {
       webSecurity: false,
       allowRunningInsecureContent: false,
