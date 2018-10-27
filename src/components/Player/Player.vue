@@ -242,12 +242,7 @@ export default class Player extends Vue {
 
   @Watch('episode')
   public async onNewEpisode() {
-    this.ended = false
-    this.softEnded = false
-    this.initiated = !!this.shouldAutoPlay
-    this.paused = true
-    this.loading = true
-    this.loaded = false
+    this.pause()
 
     try {
       this.streamUrl = (await fetchStream(
@@ -258,6 +253,15 @@ export default class Player extends Vue {
     }
 
     if (!this.streamUrl) return
+
+    this.progressInSeconds = 0
+    this.progressPercentage = 0
+    this.ended = false
+    this.softEnded = false
+    this.initiated = !!this.shouldAutoPlay
+    this.paused = true
+    this.loading = true
+    this.loaded = false
 
     const hls = new Hls()
 
