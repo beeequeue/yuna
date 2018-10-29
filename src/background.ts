@@ -85,6 +85,7 @@ app.on('activate', () => {
   // on macOS it is common to re-create a window even after all windows have been closed
   if (mainWindow === null) {
     mainWindow = createMainWindow()
+    mainWindow.show()
   }
 })
 
@@ -96,4 +97,5 @@ app.on('ready', async () => {
   }
 
   mainWindow = createMainWindow()
+  mainWindow.show()
 })
