@@ -185,6 +185,7 @@ export default class CButton extends Vue {
   & > .icon {
     width: 20px;
     height: 20px;
+    flex-shrink: 0;
 
     &.alert {
       animation: growBounce 0.75s, shake 0.75s;

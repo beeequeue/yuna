@@ -32,9 +32,10 @@
 
       <c-button
         type="danger"
+        confirm
         content="Reset keybindings to default"
         :icon="resetSvg"
-        @click.native="resetKeybindings"
+        :click="resetKeybindings"
       />
     </section>
   </section>
