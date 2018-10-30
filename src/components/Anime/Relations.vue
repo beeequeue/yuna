@@ -22,13 +22,13 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import * as R from 'rambda'
+import { filter, contains } from 'rambda'
 import { mdiArrowLeftBold, mdiArrowRightBold } from '@mdi/js'
 
+import { AnimePageQuery_anime_relations } from '@/graphql/AnimePageQuery'
+import { MediaRelation, MediaType } from '@/graphql-types'
+import { prop } from '@/utils'
 import Icon from '../Icon.vue'
-import { AnimePageQuery_anime_relations } from '../../graphql/AnimePageQuery'
-import { MediaRelation } from '../../graphql-types'
-import { prop } from '../../utils'
 
 @Component({
   components: { Icon },
@@ -40,13 +40,15 @@ export default class Relations extends Vue {
   public get relevantRelations() {
     if (!this.relations || !this.relations.edges) return []
 
-    return R.filter(
+    return filter(
       edge =>
         edge != null &&
-        R.contains(edge.relationType, [
+        edge.node != null &&
+        contains(edge.relationType, [
           MediaRelation.PREQUEL,
           MediaRelation.SEQUEL,
-        ]),
+        ]) &&
+        contains(edge.node.type, [MediaType.ANIME]),
       this.relations.edges,
     )
   }
@@ -68,10 +70,15 @@ export default class Relations extends Vue {
 .relations {
   display: flex;
   flex-direction: column;
+  border-radius: 5px;
+  padding-right: 5px;
+  max-height: 180px;
+  overflow-y: auto;
 
   & > .relation {
     display: flex;
     flex-direction: column;
+    flex-shrink: 0;
     position: relative;
     font-family: 'Raleway', sans-serif;
     margin-bottom: 10px;
@@ -81,6 +88,10 @@ export default class Relations extends Vue {
     overflow: hidden;
     cursor: pointer;
     box-shadow: $shadow;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
 
     & > .title {
       display: flex;

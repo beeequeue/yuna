@@ -92,6 +92,17 @@ body,
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent !important;
     outline: none !important;
+
+    &::-webkit-scrollbar {
+      width: 12px;
+      background-color: none;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+      background-color: darken($highlight, 5%);
+    }
   }
 }
 
