@@ -7,6 +7,10 @@
         :faded="!getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
       />
 
+      <div class="handle">
+        <icon :icon="listSvg" />
+      </div>
+
       <div class="content-container">
         <div>
           <span class="state">
@@ -86,7 +90,7 @@
 import { Prop, Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 import { path, pathOr } from 'rambda'
-import { mdiPlayCircleOutline } from '@mdi/js'
+import { mdiPlayCircleOutline, mdiMenu } from '@mdi/js'
 
 import AnimeBanner from './AnimeBanner.vue'
 import Icon from './Icon.vue'
@@ -112,6 +116,8 @@ import { setProgressMutation, setStatusMutation } from '../graphql/mutations'
 export default class QueueItem extends Vue {
   @Prop(prop(Number, true))
   public id!: number
+
+  public listSvg = mdiMenu
 
   public getHumanizedStatus(data?: AnimeQueueQuery) {
     const length = path<number>(['anime', 'episodes'], data)
@@ -223,10 +229,6 @@ export default class QueueItem extends Vue {
     opacity: 0;
   }
 
-  &.v-move {
-    transition: 0.5s;
-  }
-
   &.v-leave-active {
     position: absolute;
     transition: transform 0.5s;
@@ -247,6 +249,21 @@ export default class QueueItem extends Vue {
     overflow: hidden;
     cursor: -webkit-grab;
     box-shadow: $shadow;
+
+    & > .handle {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 75px;
+      width: 45px;
+      display: flex;
+      align-items: center;
+      background: $dark;
+
+      & > .icon {
+        fill: desaturate($highlight, 15%);
+      }
+    }
 
     & > .content-container {
       display: flex;

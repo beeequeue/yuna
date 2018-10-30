@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <div class="queue">
-      <draggable v-model="queue">
-        <transition-group>
+      <draggable v-model="queue" :options="draggableOptions">
+        <transition-group type="transition">
           <queue-item
             v-for="id in queue"
             :id="id"
@@ -60,6 +60,11 @@ import { sendNotImplementedToast } from '../state/app'
 })
 export default class Queue extends Vue {
   public clearListSvg = mdiPlaylistRemove
+
+  public draggableOptions = {
+    animation: 150,
+    handle: '.handle',
+  }
 
   public get queue() {
     return getQueue(this.$store)
