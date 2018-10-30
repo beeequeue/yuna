@@ -1,6 +1,6 @@
 <template>
 <div class="settings">
-  <section class="category" id="keybindings">
+  <section class="category" id="player">
     <h1>Player</h1>
 
     <checkbox
@@ -17,24 +17,26 @@
       :onChange="value => setSetting('autoMarkWatched', value)"
     />
 
-    <h3>Keybindings</h3>
+    <section class="category" id="keybindings">
+      <h3>Keybindings</h3>
 
-    <span>Click a binding to remove it</span>
+      <span>Click a binding to remove it</span>
 
-    <keybinding
-      v-for="action in keybindingActions"
-      :key="action"
-      :action="action"
-      :unbindKey="unbindKey"
-      :openKeybindModal="openKeybindModal"
-    />
+      <keybinding
+        v-for="action in keybindingActions"
+        :key="action"
+        :action="action"
+        :unbindKey="unbindKey"
+        :openKeybindModal="openKeybindModal"
+      />
 
-    <c-button
-      type="danger"
-      content="Reset keybindings to default"
-      :icon="resetSvg"
-      @click.native="resetKeybindings"
-    />
+      <c-button
+        type="danger"
+        content="Reset keybindings to default"
+        :icon="resetSvg"
+        @click.native="resetKeybindings"
+      />
+    </section>
   </section>
 
   <transition name="fade">
@@ -137,9 +139,10 @@ export default class Settings extends Vue {
   position: absolute;
   top: 80px;
   background: darken($dark, 2%);
-  height: 100%;
-  min-width: 400px;
+  height: calc(100% - 80px);
+  min-width: 425px;
   user-select: none;
+  overflow-y: auto;
 
   & h1,
   & h2,
