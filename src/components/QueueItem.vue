@@ -225,8 +225,11 @@ export default class QueueItem extends Vue {
     margin-bottom: 15px;
   }
 
-  &.sortable-ghost {
-    opacity: 0;
+  &.sortable-drag {
+    height: 75px;
+    width: 100%;
+    overflow: hidden;
+    opacity: 0.99;
   }
 
   &.v-leave-active {
