@@ -250,7 +250,6 @@ export default class QueueItem extends Vue {
     margin-bottom: 35px;
     border-radius: 5px;
     overflow: hidden;
-    cursor: -webkit-grab;
     box-shadow: $shadow;
 
     & > .handle {
@@ -262,6 +261,7 @@ export default class QueueItem extends Vue {
       display: flex;
       align-items: center;
       background: $dark;
+      cursor: -webkit-grab;
 
       & > .icon {
         fill: desaturate($highlight, 15%);
