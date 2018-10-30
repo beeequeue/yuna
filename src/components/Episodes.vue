@@ -98,6 +98,7 @@ export default class Episodes extends Vue {
   @Prop(Number) public current!: number | null
   @Prop(Boolean) public showScroller!: boolean | null
   @Prop(Boolean) public small!: boolean | null
+  @Prop(Boolean) public rightPadding!: boolean | null
 
   public episodes: Episode[] | null = null
   public fetched = false
@@ -236,6 +237,7 @@ export default class Episodes extends Vue {
       current: this.listEntry.progress + 1 === index,
       active: !this.small && Number(this.scrollerValue) === index,
       small: this.small,
+      'right-padding': this.rightPadding,
     }
   }
 
@@ -275,7 +277,7 @@ export default class Episodes extends Vue {
     display: flex;
     align-items: flex-start;
     width: 100%;
-    overflow: scroll;
+    overflow-x: auto;
 
     &:not(.furthest-left) {
       mask-image: linear-gradient(90deg, transparent, black 5%);
@@ -302,11 +304,10 @@ export default class Episodes extends Vue {
     .episode {
       position: relative;
       flex-shrink: 0;
-      width: 300px;
+      height: 175px;
       margin: 0 10px;
       border-radius: 8px;
       box-shadow: 1px 0 5px rgba(0, 0, 0, 0.5);
-      cursor: pointer;
       box-sizing: border-box;
       overflow: hidden;
 
@@ -319,13 +320,21 @@ export default class Episodes extends Vue {
       }
 
       &.small {
-        width: 200px;
+        height: 125px;
         font-size: 0.85em;
       }
 
       &.active {
         width: 325px;
         transition-delay: 0s;
+      }
+
+      &.right-padding:last-child {
+        width: 650px;
+
+        &.small {
+          width: 350px;
+        }
       }
 
       & > * {
@@ -341,10 +350,6 @@ export default class Episodes extends Vue {
         border-bottom-right-radius: 0;
         transition: bottom 0.15s;
         pointer-events: all;
-      }
-
-      &:hover > .button {
-        bottom: 0;
       }
 
       & > .check {
@@ -396,9 +401,14 @@ export default class Episodes extends Vue {
 
       & > .thumbnail {
         display: block;
-        width: 100%;
+        height: 100%;
         border-radius: 5px;
+        cursor: pointer;
         pointer-events: all;
+
+        &:hover + .button {
+          bottom: 0;
+        }
       }
     }
   }

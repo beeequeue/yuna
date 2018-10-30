@@ -60,6 +60,7 @@
         :animeName="data.anime.title.userPreferred"
         :sequels="getSequels(data)"
         showScroller
+        rightPadding
       />
 
       <relations

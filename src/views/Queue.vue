@@ -21,7 +21,7 @@
       </transition>
     </div>
 
-    <div class="sidebar">
+    <div class="sidebar" :class="{ small: isPlayerOpen }">
       <span class="fill"/>
 
       <c-button
@@ -53,7 +53,7 @@ import { mdiPlaylistRemove } from '@mdi/js'
 import QueueItem from '../components/QueueItem.vue'
 import CButton from '../components/CButton.vue'
 import { getQueue, setQueue } from '../state/user'
-import { sendNotImplementedToast } from '../state/app'
+import { sendNotImplementedToast, getCurrentEpisode } from '../state/app'
 
 @Component({
   components: { Draggable, QueueItem, CButton },
@@ -64,6 +64,10 @@ export default class Queue extends Vue {
   public draggableOptions = {
     animation: 150,
     handle: '.handle',
+  }
+
+  public get isPlayerOpen() {
+    return !!getCurrentEpisode(this.$store)
   }
 
   public get queue() {
@@ -125,13 +129,17 @@ export default class Queue extends Vue {
   }
 
   .sidebar {
-    grid-area: sidebar;
+    grid-area: sidebar / sidebar / player / player;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     padding: 20px 25px;
 
     background: #1a1b29;
+
+    &.small {
+      grid-area: sidebar;
+    }
 
     & > .button {
       margin: 8px 0;
