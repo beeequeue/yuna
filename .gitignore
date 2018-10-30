@@ -3,6 +3,7 @@
 !.gitkeep
 dist/*
 graphql.config.json
+graphql.schema.json
 
 # Cached builds
 .awcache

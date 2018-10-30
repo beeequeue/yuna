@@ -15,14 +15,6 @@ export interface AnimeQueueQuery_anime_title {
   userPreferred: string | null;
 }
 
-export interface AnimeQueueQuery_anime_coverImage {
-  __typename: "MediaCoverImage";
-  /**
-   * The cover image of media at its largest size
-   */
-  large: string | null;
-}
-
 export interface AnimeQueueQuery_anime_mediaListEntry {
   __typename: "MediaList";
   /**
@@ -111,10 +103,6 @@ export interface AnimeQueueQuery_anime {
    * The banner image of the media
    */
   bannerImage: string | null;
-  /**
-   * The cover images of the media
-   */
-  coverImage: AnimeQueueQuery_anime_coverImage | null;
   /**
    * The authenticated user's media list entry for the media
    */

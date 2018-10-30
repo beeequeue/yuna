@@ -1,4 +1,4 @@
-query AnimePageQuery($id: Int){
+query AnimePageQuery($id: Int) {
   anime: Media(id: $id, type: ANIME) {
     id
     idMal
@@ -19,7 +19,7 @@ query AnimePageQuery($id: Int){
     siteUrl
     bannerImage
     coverImage {
-      large
+      extraLarge
     }
     relations {
       edges {
@@ -30,6 +30,7 @@ query AnimePageQuery($id: Int){
             userPreferred
           }
           bannerImage
+          type
         }
       }
     }

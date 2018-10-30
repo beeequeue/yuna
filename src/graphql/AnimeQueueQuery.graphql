@@ -9,9 +9,6 @@ query AnimeQueueQuery($id: Int) {
     status
     siteUrl
     bannerImage
-    coverImage {
-      large
-    }
     mediaListEntry {
       id
       progress

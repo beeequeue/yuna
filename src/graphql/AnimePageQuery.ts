@@ -1,7 +1,7 @@
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { MediaStatus, MediaRelation, MediaListStatus } from "./..\\graphql-types";
+import { MediaStatus, MediaRelation, MediaType, MediaListStatus } from "./..\\graphql-types";
 
 // ====================================================
 // GraphQL query operation: AnimePageQuery
@@ -30,9 +30,9 @@ export interface AnimePageQuery_anime_title {
 export interface AnimePageQuery_anime_coverImage {
   __typename: "MediaCoverImage";
   /**
-   * The cover image of media at its largest size
+   * The cover image url of the media at its largest size. If this size isn't available, large will be provided instead.
    */
-  large: string | null;
+  extraLarge: string | null;
 }
 
 export interface AnimePageQuery_anime_relations_edges_node_title {
@@ -57,6 +57,10 @@ export interface AnimePageQuery_anime_relations_edges_node {
    * The banner image of the media
    */
   bannerImage: string | null;
+  /**
+   * The type of the media; anime or manga
+   */
+  type: MediaType | null;
 }
 
 export interface AnimePageQuery_anime_relations_edges {

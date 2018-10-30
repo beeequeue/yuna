@@ -23,7 +23,7 @@
         v-if="data && data.anime"
         key="cover-image"
         class="slide-down"
-        :src="data.anime.coverImage.large"
+        :src="data.anime.coverImage.extraLarge"
         :mediaListEntry="getMediaListEntry(data)"
         :length="data.anime.episodes"
       />
@@ -246,7 +246,7 @@ export default class Anime extends Vue {
 
     & > .relations {
       grid-column: 3 / span 1;
-      grid-row: 2 / 4;
+      grid-row: 2 / span 2;
       align-self: flex-start;
     }
   }

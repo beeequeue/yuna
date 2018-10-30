@@ -26,7 +26,7 @@ export interface SearchQuery_anime_results_title {
 export interface SearchQuery_anime_results_coverImage {
   __typename: "MediaCoverImage";
   /**
-   * The cover image of media at medium size
+   * The cover image url of the media at medium size
    */
   medium: string | null;
 }
