@@ -79,13 +79,22 @@ body,
   background-position: center, center;
 
   color: $white;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
 
   & > .route {
     z-index: 1;
+  }
+
+  & h1,
+  & h2,
+  & h3,
+  & h4 {
+    font-family: 'Raleway', sans-serif;
+    font-weight: 300;
   }
 
   & * {
@@ -95,13 +104,14 @@ body,
 
     &::-webkit-scrollbar {
       width: 12px;
-      background-color: none;
+      border-radius: 5px;
+      background-color: rgba(0, 0, 0, 0.25);
     }
 
     &::-webkit-scrollbar-thumb {
-      border-radius: 10px;
+      border-radius: 5px;
       box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
-      background-color: darken($highlight, 5%);
+      background-color: desaturate($main, 20%);
     }
   }
 }
