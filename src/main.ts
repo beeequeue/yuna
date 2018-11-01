@@ -1,5 +1,6 @@
-import Vue from 'vue'
+import { shell } from 'electron'
 import Tooltip from 'v-tooltip'
+import Vue from 'vue'
 
 import App from './App.vue'
 import { router } from './router'
@@ -11,6 +12,20 @@ import 'normalize.css'
 Vue.config.productionTip = false
 
 Vue.use(Tooltip)
+
+// Handle outside links
+document.addEventListener('click', event => {
+  // Did we click a link? Find one in hierarchy
+  const linkElement = (event as any).path.find(
+    (el: HTMLElement) => el.tagName === 'A',
+  )
+
+  // If there is one, check that the link isn't to our own app
+  if (linkElement != null && linkElement.host !== window.location.host) {
+    event.preventDefault()
+    return shell.openExternal(linkElement.href)
+  }
+})
 
 new Vue({
   router,
