@@ -20,6 +20,7 @@
     "electron-updater": "^3.1.5",
     "electron-util": "^0.10.1",
     "hls.js": "^0.11.0",
+    "marked": "^0.5.1",
     "normalize.css": "^8.0.0",
     "rambda": "^1.2.6",
     "raw-loader": "^0.5.1",
@@ -38,6 +39,7 @@
     "vuex-typescript": "^3.0.2"
   },
   "devDependencies": {
+    "@types/marked": "^0.4.2",
     "@vue/cli-plugin-babel": "^3.0.5",
     "@vue/cli-plugin-typescript": "^3.0.5",
     "@vue/cli-service": "^3.0.5",

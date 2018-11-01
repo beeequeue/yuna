@@ -104,7 +104,8 @@ body,
 
     &::-webkit-scrollbar {
       width: 12px;
-      border-radius: 5px;
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
       background-color: rgba(0, 0, 0, 0.25);
     }
 

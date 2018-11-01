@@ -11,7 +11,7 @@ export const router = new Router({
       path: '/',
       name: 'dashboard',
       component: () =>
-        import(/* webpackChunkName: "list" */ './views/List.vue'),
+        import(/* webpackChunkName: "dashboard" */ './views/Dashboard.vue'),
     },
     {
       path: '/login',
