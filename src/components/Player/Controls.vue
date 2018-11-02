@@ -1,5 +1,10 @@
 <template>
-<div class="controls" :class="{ visible }" @mousemove="handleMouseOver" @mouseout="handleMouseLeave">
+<div
+  class="controls"
+  :class="{ visible }"
+  @mousemove="goVisible"
+  @click="goVisible"
+  @mouseout="handleMouseLeave">
   <div class="cover" @click="debounceCoverClick"/>
 
   <transition name="fade">
@@ -218,7 +223,7 @@ export default class Controls extends Vue {
     }
   }
 
-  public handleMouseOver() {
+  public goVisible() {
     this.visible = true
 
     if (this.visibleTimeout) window.clearTimeout(this.visibleTimeout)
