@@ -360,7 +360,7 @@ $buttonSize: 50px;
   & > .time {
     padding: 0 12px;
     margin-bottom: 4px;
-    max-width: 150px;
+    max-width: 175px;
     opacity: 1;
     overflow: hidden;
     white-space: nowrap;
