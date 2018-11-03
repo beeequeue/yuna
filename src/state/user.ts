@@ -34,6 +34,8 @@ export const user = {
     },
 
     addToQueue(state: UserState, id: number) {
+      if (state.queue.includes(id)) return
+
       state.queue = [...state.queue, id]
 
       userStore.set('queue', state.queue)
@@ -46,6 +48,8 @@ export const user = {
     },
 
     removeFromQueueById(state: UserState, id: number) {
+      if (!state.queue.includes(id)) return
+
       state.queue.splice(state.queue.findIndex(equals(id)), 1)
 
       userStore.set('queue', state.queue)

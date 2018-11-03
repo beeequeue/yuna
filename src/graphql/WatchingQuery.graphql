@@ -1,0 +1,16 @@
+query WatchingQuery($userId: Int!) {
+  listCollection: MediaListCollection(
+    userId: $userId
+    status_in: [CURRENT, REPEATING]
+    type: ANIME
+  ) {
+    lists {
+      isCustomList
+      entries {
+        info: media {
+          id
+        }
+      }
+    }
+  }
+}

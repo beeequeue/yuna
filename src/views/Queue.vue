@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="queue">
+    <div ref="queue" class="queue">
       <draggable v-model="queue" :options="draggableOptions">
         <transition-group type="transition">
           <queue-item
@@ -26,12 +26,17 @@
 
       <c-button
         content="Import Watching from List"
-        :click="sendNotImplementedToast"
+        :click="importQueueFromAnilist"
       />
 
       <c-button
         content="Import from Crunchyroll"
         :click="sendNotImplementedToast"
+      />
+
+      <c-button
+        content="Backup Queue"
+        :click="exportQueue"
       />
 
       <c-button
@@ -48,22 +53,44 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import Draggable from 'vuedraggable'
+import { shell } from 'electron'
+import { api } from 'electron-util'
+import { writeFileSync, mkdirSync, existsSync } from 'fs'
+import { resolve } from 'path'
+import { complement, path } from 'rambda'
 import { mdiPlaylistRemove } from '@mdi/js'
 
 import QueueItem from '../components/QueueItem.vue'
 import CButton from '../components/CButton.vue'
-import { getQueue, setQueue } from '../state/user'
-import { sendNotImplementedToast, getCurrentEpisode } from '../state/app'
+import { getQueue, setQueue, addToQueue } from '../state/user'
+import {
+  sendNotImplementedToast,
+  getCurrentEpisode,
+  sendErrorToast,
+  sendToast,
+} from '@/state/app'
+import { watchingQuery } from '@/graphql/query'
+import { getAnilistUserId, getAnilistUsername } from '@/state/auth'
+import {
+  WatchingQuery_listCollection_lists_entries,
+  WatchingQuery_listCollection_lists,
+} from '@/graphql/WatchingQuery'
 
-@Component({
-  components: { Draggable, QueueItem, CButton },
-})
+@Component({ components: { Draggable, QueueItem, CButton } })
 export default class Queue extends Vue {
   public clearListSvg = mdiPlaylistRemove
 
   public draggableOptions = {
     animation: 150,
     handle: '.handle',
+  }
+
+  public $refs!: {
+    queue: HTMLDivElement
+  }
+
+  public get anilistUserId() {
+    return getAnilistUserId(this.$store)
   }
 
   public get isPlayerOpen() {
@@ -76,6 +103,81 @@ export default class Queue extends Vue {
 
   public set queue(value: number[]) {
     setQueue(this.$store, value)
+  }
+
+  public async importQueueFromAnilist() {
+    if (!this.anilistUserId) return
+
+    const queueBefore = [...this.queue]
+
+    const { data, errors } = await watchingQuery(
+      this.$apollo,
+      this.anilistUserId,
+    )
+
+    const lists = path<WatchingQuery_listCollection_lists[] | null>(
+      'listCollection.lists',
+      data,
+    )
+
+    if (!lists || lists.length < 1) {
+      return sendErrorToast(this.$store, "Couldn't find any lists!")
+    }
+
+    const list = lists.find(complement(path<boolean>('isCustomList')))
+
+    const entries = path<WatchingQuery_listCollection_lists_entries[]>(
+      'entries',
+      list,
+    )
+
+    if (errors || !entries || entries.length < 1) {
+      return sendErrorToast(
+        this.$store,
+        "Couldn't find any current or repeating shows in your list!",
+      )
+    }
+
+    entries
+      .map(path<number>('info.id'))
+      .forEach(id => addToQueue(this.$store, id))
+
+    const diff = queueBefore.length - this.queue.length
+
+    sendToast(this.$store, {
+      type: 'success',
+      title: `Imported ${diff} show${diff === 1 ? '' : 's'} into the Queue!`,
+      message: '',
+    })
+
+    if (diff > 0) {
+      this.$refs.queue.scrollTo({
+        top: 100000,
+        behavior: 'smooth',
+      })
+    }
+  }
+
+  public exportQueue() {
+    const folderPath = resolve(api.app.getPath('userData'), 'backups')
+    const filePath = resolve(
+      folderPath,
+      `queue-${getAnilistUsername(this.$store)}-${Date.now()}.json`,
+    )
+
+    if (!existsSync(folderPath)) {
+      mkdirSync(folderPath)
+    }
+
+    writeFileSync(filePath, JSON.stringify(this.queue))
+
+    sendToast(this.$store, {
+      type: 'success',
+      title: 'Exported Queue!',
+      message: `Click this to see the file!`,
+      timeout: 6000,
+      click: () => shell.showItemInFolder(filePath),
+    })
   }
 
   public clearQueue() {

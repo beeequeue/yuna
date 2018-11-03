@@ -68,6 +68,10 @@ export const auth = {
     getAnilistUserId(state: AuthState) {
       return state.anilist.user && state.anilist.user.id
     },
+
+    getAnilistUsername(state: AuthState) {
+      return state.anilist.user && state.anilist.user.name
+    },
   },
 
   mutations: {
@@ -133,6 +137,8 @@ const { commit, dispatch, read } = getStoreAccessors<AuthState, RootState>(
 
 export const getIsLoggedIn = read(auth.getters.isLoggedIn)
 export const getCrunchyrollCountry = read(auth.getters.getCrunchyrollCountry)
+export const getAnilistUserId = read(auth.getters.getAnilistUserId)
+export const getAnilistUsername = read(auth.getters.getAnilistUsername)
 
 export const setCrunchyroll = commit(auth.mutations.setCrunchyroll)
 export const setCrunchyrollCountry = commit(

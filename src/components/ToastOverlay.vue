@@ -7,12 +7,15 @@
       class="toast"
       :class="{[toast.type]: true}"
       :style="{top: i * 75 + 'px'}"
-      @click="close(toast.id)"
+      @click="e => handleClick(e, toast)"
     >
       <div class="title">{{toast.title}}</div>
       <div class="message">{{toast.message}}</div>
 
-      <icon :icon="closeSvg" class="close"/>
+      <icon
+        class="close"
+        :icon="closeSvg"
+      />
     </div>
   </transition-group>
 </div>
@@ -23,7 +26,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { mdiClose } from '@mdi/js'
 
 import Icon from './Icon.vue'
-import { getToasts, removeToast } from '../state/app'
+import { getToasts, removeToast, Toast } from '../state/app'
 
 @Component({
   components: { Icon },
@@ -34,6 +37,17 @@ export default class ToastOverlay extends Vue {
   }
 
   public closeSvg = mdiClose
+
+  public handleClick(e: any, toast: Toast) {
+    const clickedOnClose = e.path.some(
+      (el: HTMLElement) =>
+        el.className && el.className.toString().includes('close'),
+    )
+
+    if (!clickedOnClose && toast.click) toast.click()
+
+    this.close(toast.id)
+  }
 
   public close(id: string) {
     removeToast(this.$store, id)
@@ -104,10 +118,11 @@ export default class ToastOverlay extends Vue {
 
     & > .close {
       position: absolute;
-      top: 16px;
-      right: 15px;
-      height: 15px;
-      width: 15px;
+      top: 0;
+      right: 0;
+      height: 35px;
+      width: 35px;
+      padding: 6px;
     }
 
     &.v-move,

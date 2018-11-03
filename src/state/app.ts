@@ -23,18 +23,21 @@ const generateId = () => {
   return id
 }
 
-interface Toast {
+export interface Toast {
   id: string
   title: string
   message: string
   type: NotificationTypes
+  click?: (...a: any[]) => any
 }
 
-type ToastOptions = NotificationFunctionOptions<NotificationTypes>
+type ToastOptions = NotificationFunctionOptions<NotificationTypes> & {
+  click?: (...a: any[]) => any
+}
 
 type AddToastMutationOptions = NotificationFunctionOptions<
   NotificationTypes
-> & { id: string }
+> & { id: string; click?: (...a: any[]) => any }
 
 export interface ListEntry {
   id: number
@@ -142,6 +145,7 @@ export const app = {
           title: payload.title,
           message: payload.message,
           type: payload.type,
+          click: payload.click,
         },
       ]
     },

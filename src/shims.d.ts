@@ -28,6 +28,13 @@ declare module 'vuedraggable' {
   export default Vue
 }
 
+declare module 'electron-util' {
+  import { App, BrowserWindow } from 'electron'
+
+  export const api: { app: App }
+  export const activeWindow: () => BrowserWindow
+}
+
 declare interface Window {
   initialLogin: boolean
 }
