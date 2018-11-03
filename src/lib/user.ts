@@ -1,7 +1,7 @@
 import Store from 'electron-store'
 import { AnilistData } from '@/state/auth'
 
-const CURRENT_VERSION = 1
+const CURRENT_VERSION = 2
 
 interface CachedCRData {
   sessionId: string | null
@@ -21,7 +21,14 @@ export const userStore = new Store<UserStore>({
 })
 
 // Ultra primitive migration
-if (userStore.get('__version') !== CURRENT_VERSION) {
-  userStore.clear()
-  userStore.set('__version', CURRENT_VERSION)
+const oldVersion = userStore.get('__version')
+
+if (oldVersion !== CURRENT_VERSION) {
+  if (oldVersion === 1) {
+    userStore.set('anilist', null)
+    userStore.set('__version', 2)
+  } else {
+    userStore.clear()
+    userStore.set('__version', CURRENT_VERSION)
+  }
 }

@@ -46,14 +46,14 @@ import { mdiCheck } from '@mdi/js'
 import Icon from '@/components/Icon.vue'
 import CButton from '@/components/CButton.vue'
 import LoginForm from '@/components/LoginForm.vue'
+import { sendErrorToast } from '@/state/app'
 import {
   getIsLoggedIn,
   loginCrunchyroll,
+  logOut,
   setAnilist,
-  setCrunchyroll,
 } from '@/state/auth'
-import { loginAnilist, isValidToken, logoutAnilist } from '@/lib/anilist'
-import { logout } from '@/lib/crunchyroll'
+import { loginAnilist, getAnilistData } from '@/lib/anilist'
 
 @Component({
   components: {
@@ -98,30 +98,23 @@ export default class Login extends Vue {
         /access_token=(.*)&.*&expires_in=(\d+)/,
       ) as RegExpMatchArray
 
-      const validToken = await isValidToken(matches[1])
-
-      if (!validToken) {
-        throw new Error('invalid token')
-      }
-
-      setAnilist(this.$store, {
+      const anilistData = await getAnilistData({
         token: matches[1],
         expires: Date.now() + Number(matches[2]),
       })
+
+      if (!anilistData) {
+        sendErrorToast(this.$store, 'Invalid Anilist token')
+      }
+
+      setAnilist(this.$store, anilistData)
 
       this.onSuccessfullLogin()
     })
   }
 
   public reset() {
-    logout()
-    setCrunchyroll(this.$store, false)
-
-    logoutAnilist()
-    setAnilist(this.$store, {
-      token: null,
-      expires: null,
-    })
+    logOut(this.$store)
   }
 
   get isLoggedIn() {

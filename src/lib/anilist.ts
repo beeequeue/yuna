@@ -2,6 +2,10 @@ import electron from 'electron'
 import { log } from 'electron-log'
 import request from 'superagent/superagent'
 
+import { AnilistData } from '@/state/auth'
+
+import { userStore } from './user'
+
 type BrowserWindow = electron.BrowserWindow
 let authWindow: BrowserWindow
 const { BrowserWindow } = electron.remote
@@ -91,16 +95,27 @@ export const logoutAnilist = () => {
   /* tslint:enable no-empty */
 }
 
-export const isValidToken = async (token: string) =>
+interface Parameters {
+  token: string
+  expires: number
+}
+export const getAnilistData = async ({ token, expires }: Parameters) =>
   request
     .post(GQL_ENDPOINT)
     .auth(token, { type: 'bearer' })
-    .send({
-      query: `query { Viewer { name } }`,
-    })
-    .then(() => true)
-    .catch(err => {
-      // tslint:disable-next-line:no-console
-      console.error(err)
-      return false
-    })
+    .send({ query: `query { user: Viewer { id name siteUrl } }` })
+    .then(
+      (data): AnilistData => {
+        const user = data.body.data.user
+
+        if (!user) throw new Error('Could not get logged in user')
+
+        userStore.set('anilist', { user, token, expires })
+
+        return {
+          user,
+          token,
+          expires,
+        }
+      },
+    )

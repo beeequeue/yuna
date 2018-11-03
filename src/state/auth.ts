@@ -3,9 +3,9 @@ import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
 
 import * as crunchyroll from '@/lib/crunchyroll'
-import { RootState } from '@/state/store'
-import { userStore } from '@/lib/user'
 import { logoutAnilist } from '@/lib/anilist'
+import { userStore } from '@/lib/user'
+import { RootState } from '@/state/store'
 import { createBothSessions } from '@/utils'
 
 export interface CrunchyrollData {
@@ -14,6 +14,11 @@ export interface CrunchyrollData {
 }
 
 export interface AnilistData {
+  user: {
+    id: number
+    name: string
+    url: string
+  } | null
   token: string | null
   expires: number | null
 }
@@ -31,6 +36,7 @@ const initialState: AuthState = {
     country: null,
   },
   anilist: {
+    user: userStore.get('anilist.user', null),
     token: userStore.get('anilist.token', null),
     expires: Number(userStore.get('anilist.expires', null)),
   },
@@ -57,6 +63,10 @@ export const auth = {
 
     getCrunchyrollCountry(state: AuthState) {
       return state.crunchyroll.country
+    },
+
+    getAnilistUserId(state: AuthState) {
+      return state.anilist.user && state.anilist.user.id
     },
   },
 
@@ -106,6 +116,7 @@ export const auth = {
       crunchyroll.logout()
       setCrunchyroll(context, false)
       setAnilist(context, {
+        user: null,
         token: null,
         expires: null,
       })
