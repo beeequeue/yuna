@@ -71,21 +71,22 @@ import Hls from 'hls.js'
 import { contains } from 'rambda'
 import { mdiLoading, mdiPlayCircle } from '@mdi/js'
 
-import { prop } from '@/utils'
-import Icon from '../Icon.vue'
-import Controls from './Controls.vue'
-import NextEpisodeOverlay from './NextEpisodeOverlay.vue'
-import EndOfSeasonOverlay from './EndOfSeasonOverlay.vue'
-import { Episode } from '../../types'
-import { fetchStream } from '../../lib/crunchyroll'
+import { fetchStream, setProgressOfEpisode } from '@/lib/crunchyroll'
 import {
   getIsFullscreen,
   sendErrorToast,
   toggleFullscreen,
   ListEntry,
   Sequel,
-} from '../../state/app'
-import { getKeydownHandler, KeybindingAction } from '../../state/settings'
+} from '@/state/app'
+import { getKeydownHandler, KeybindingAction } from '@/state/settings'
+import { Episode } from '@/types'
+import { prop } from '@/utils'
+
+import Icon from '../Icon.vue'
+import Controls from './Controls.vue'
+import NextEpisodeOverlay from './NextEpisodeOverlay.vue'
+import EndOfSeasonOverlay from './EndOfSeasonOverlay.vue'
 
 @Component({
   components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
@@ -117,6 +118,10 @@ export default class Player extends Vue {
   public progressInSeconds = 0
   public loadedSeconds = 0
   public loadedPercentage = 0
+
+  // Crunchyroll scrobbling
+  private lastScrobble = 0
+
   public hls = new Hls()
 
   public playCircleSvg = mdiPlayCircle
@@ -195,9 +200,20 @@ export default class Player extends Vue {
     this.progressInSeconds = Math.round(element.currentTime)
     this.progressPercentage = element.currentTime / this.episode.duration
 
+    if (
+      this.progressInSeconds % 10 === 0 &&
+      this.lastScrobble < this.progressInSeconds
+    ) {
+      this.lastScrobble = this.progressInSeconds
+
+      setProgressOfEpisode(this.episode.crunchyroll.id, this.progressInSeconds)
+    }
+
     if (!this.softEnded && this.progressPercentage >= 0.8) {
       this.softEnded = true
+      this.lastScrobble = this.episode.duration
 
+      setProgressOfEpisode(this.episode.crunchyroll.id, this.episode.duration)
       this.updateProgressIfNecessary()
     }
   }

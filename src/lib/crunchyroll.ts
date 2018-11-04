@@ -335,6 +335,24 @@ export const fetchStream = async (mediaId: string): Promise<StreamData> => {
   return convertStreamData(response.body.data.stream_data)
 }
 
+export const setProgressOfEpisode = async (
+  mediaId: string,
+  progressInSeconds: number,
+) => {
+  const response = (await superagent.get(getUrl('log')).query({
+    session_id: _sessionId,
+    locale,
+    event: 'playback_status',
+    media_id: mediaId,
+    playhead: progressInSeconds,
+    fields: mediaFields.join(','),
+  })) as CrunchyrollResponse
+
+  if (responseIsError(response)) {
+    throw new Error('Could not update progress of episode!')
+  }
+}
+
 const convertStreamData = (streamData: _StreamData): StreamData => ({
   subLanguage: streamData.hardsub_lang,
   audioLanguage: streamData.audio_lang,
