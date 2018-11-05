@@ -101,7 +101,7 @@ export default class NextEpisodeOverlay extends Vue {
   public setToNextEpisode() {
     if (!this.nextEpisode) return
 
-    setCurrentEpisode(this.$store, this.nextEpisode.index - 1)
+    setCurrentEpisode(this.$store, this.nextEpisode.index)
   }
 }
 </script>
