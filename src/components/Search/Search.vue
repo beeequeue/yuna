@@ -1,12 +1,14 @@
 <template>
 <div class="search">
   <input
+    ref="searchbar"
     placeholder="Search..."
     @focus="isOpen = true"
     @blur="isOpen = false"
     @mouseup.left="selectAllInInput"
     :value="searchString"
     @input="setSearchString"
+    @keydown.esc.capture="$refs.searchbar.blur()"
   />
 
   <transition name="fade">
