@@ -4,12 +4,18 @@
   :class="{ visible }"
   @mousemove="goVisible"
   @click="goVisible"
-  @mouseout="handleMouseLeave">
+  @mouseout="handleMouseLeave"
+>
   <div class="cover" @click="debounceCoverClick"/>
 
   <transition name="fade">
     <div v-if="isPlayerMaximized" class="episode-info">
-      <h1>{{episode.title}}</h1>
+      <div class="episode-title-container">
+        <h1 class="episode-number">Episode {{episode.episodeNumber}}</h1>
+        <h1 class="title" :class="{ blur: listEntry.progress < episode.episodeNumber }">
+          - {{episode.title}}
+        </h1>
+      </div>
 
       <h3>{{animeName}}</h3>
     </div>
@@ -291,11 +297,30 @@ $buttonSize: 50px;
     filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.25));
     user-select: initial;
 
-    & > h1 {
-      margin: 5px 15px;
-      font-size: 1em;
-      font-weight: 400;
+    & > .episode-title-container {
+      display: flex;
+
+      & > h1 {
+        margin: 5px 15px;
+        font-size: 1em;
+        font-weight: 400;
+
+        transition: opacity 0.5s, transform 0.5s;
+
+        &:first-child {
+          margin-right: 0;
+        }
+        &:last-child {
+          margin-left: 8px;
+        }
+
+        &.blur {
+          opacity: 0;
+          transform: translateX(10%);
+        }
+      }
     }
+
     & > h3 {
       margin: 5px 15px;
       font-size: 0.8em;
