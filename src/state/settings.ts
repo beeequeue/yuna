@@ -18,12 +18,28 @@ export enum KeybindingAction {
   TOGGLE_FULLSCREEN = 'TOGGLE_FULLSCREEN',
 }
 
+interface KeybingingSettings {
+  [key: string]: KeybindingAction[]
+}
+
+interface SpoilerSettings {
+  anime: {
+    coverImage: boolean
+    bannerImage: boolean
+    description: boolean
+    relations: boolean
+  }
+  episode: {
+    name: boolean
+    thumbnail: boolean
+  }
+}
+
 export interface SettingsState {
   autoPlay: boolean
   autoMarkWatched: boolean
-  keybindings: {
-    [key: string]: KeybindingAction[]
-  }
+  keybindings: KeybingingSettings
+  spoilers: SpoilerSettings
 }
 
 const settingsStore = new Store<SettingsState>({ name: 'settings' })
@@ -38,7 +54,7 @@ const {
   TOGGLE_FULLSCREEN,
 } = KeybindingAction
 
-const defaultBindings = {
+const defaultBindings: KeybingingSettings = {
   ' ': [PAUSE_PLAY],
   [Key.ArrowUp]: [VOLUME_UP],
   [Key.ArrowDown]: [VOLUME_DOWN],
@@ -48,10 +64,24 @@ const defaultBindings = {
   f: [TOGGLE_FULLSCREEN],
 }
 
+const defaultSpoilers: SpoilerSettings = {
+  anime: {
+    bannerImage: false,
+    coverImage: false,
+    description: false,
+    relations: false,
+  },
+  episode: {
+    name: true,
+    thumbnail: true,
+  },
+}
+
 const initialState: SettingsState = {
   autoPlay: settingsStore.get('autoPlay', true),
   autoMarkWatched: settingsStore.get('autoMarkWatched', true),
   keybindings: settingsStore.get('keybindings', { ...defaultBindings }),
+  spoilers: settingsStore.get('spoilers', { ...defaultSpoilers }),
 }
 
 export const settings = {
@@ -105,6 +135,10 @@ export const settings = {
           }
         })
       }
+    },
+
+    getSpoilerSettings(state: SettingsState) {
+      return state.spoilers
     },
   },
 
@@ -197,6 +231,7 @@ export const getShouldAutoMarkWatched = read(
 export const getKeybindings = read(settings.getters.getKeybindings)
 export const getKeysForAction = read(settings.getters.getKeysForAction)
 export const getKeydownHandler = read(settings.getters.getKeydownHandler)
+export const getSpoilerSettings = read(settings.getters.getSpoilerSettings)
 
 export const addKeybinding = commit(settings.mutations.addKeybinding)
 export const removeKeybinding = commit(settings.mutations.removeKeybinding)

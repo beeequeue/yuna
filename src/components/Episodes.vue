@@ -19,13 +19,16 @@
       :class="getEpisodeClasses(episode.episodeNumber)"
       :key="episode.crunchyroll.id"
     >
-      <span class="title" v-html="episode.title.replace(' - ', '<br/>')"/>
-
       <img
         class="thumbnail"
         :src="episode.thumbnail"
         @click="setCurrentEpisode(i)"
       />
+
+      <div class="title-container">
+        <div class="episode-number">Episode {{episode.episodeNumber}}</div>
+        <div class="title">{{episode.title}}</div>
+      </div>
 
       <transition name="fade">
         <c-button
@@ -49,6 +52,8 @@
         />
       </transition>
     </div>
+
+    <div class="episode space-filler" :class="getEpisodeClasses(-1)" />
   </div>
 
   <input
@@ -68,20 +73,22 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { Key } from 'ts-key-enum'
 import { mdiCheckCircleOutline, mdiBookmark, mdiBookmarkRemove } from '@mdi/js'
 
-import CButton from './CButton.vue'
-import Icon from './Icon.vue'
-import Loader from './Loader.vue'
-import { AnimeCache } from '../lib/cache'
-import { Episode } from '../types'
-import { prop } from '../utils'
+import { setProgressMutation } from '@/graphql/mutations'
+import { getSpoilerSettings, SettingsState } from '@/state/settings'
 import {
   getPlaylistAnimeId,
   setPlaylist,
   setCurrentEpisode,
   ListEntry,
   Sequel,
-} from '../state/app'
-import { setProgressMutation } from '@/graphql/mutations'
+} from '@/state/app'
+import { AnimeCache } from '@/lib/cache'
+import { Episode } from '@/types'
+import { prop } from '@/utils'
+
+import CButton from './CButton.vue'
+import Icon from './Icon.vue'
+import Loader from './Loader.vue'
 
 @Component({ components: { CButton, Icon, Loader } })
 export default class Episodes extends Vue {
@@ -95,10 +102,10 @@ export default class Episodes extends Vue {
   public listEntry?: ListEntry | null
   @Prop(prop(Array, true))
   public sequels!: Sequel[]
-  @Prop(Number) public current!: number | null
   @Prop(Boolean) public showScroller!: boolean | null
   @Prop(Boolean) public small!: boolean | null
   @Prop(Boolean) public rightPadding!: boolean | null
+  @Prop(Boolean) public scrollToCurrentEpisode!: boolean | null
 
   public episodes: Episode[] | null = null
   public fetched = false
@@ -117,6 +124,10 @@ export default class Episodes extends Vue {
 
   public $refs!: {
     episodeContainer: HTMLDivElement
+  }
+
+  public get current() {
+    return this.listEntry && this.listEntry.progress + 1
   }
 
   public mounted() {
@@ -188,7 +199,7 @@ export default class Episodes extends Vue {
 
       this.loading = false
 
-      setTimeout(() => this.scrollToCurrentEpisode(true), 150)
+      setTimeout(() => this._scrollToCurrentEpisode(true), 150)
     } catch (e) {
       console.error(e)
       this.error = e
@@ -197,8 +208,8 @@ export default class Episodes extends Vue {
   }
 
   @Watch('current')
-  public scrollToCurrentEpisode(instant?: boolean | number) {
-    if (this.current) {
+  public _scrollToCurrentEpisode(instant?: boolean | number) {
+    if (this.scrollToCurrentEpisode && this.current) {
       this.$refs.episodeContainer.scroll({
         left: this.getScrollPositionOfEpisode(this.current),
         behavior: instant === true ? 'instant' : 'smooth',
@@ -229,6 +240,18 @@ export default class Episodes extends Vue {
     return this.listEntry != null && this.listEntry.progress >= index
   }
 
+  public getShouldBlur(
+    epNumber: number,
+  ): Required<SettingsState['spoilers']['episode']> {
+    const shouldBlur = !!this.current && epNumber >= this.current
+    const settings = getSpoilerSettings(this.$store).episode
+
+    return {
+      name: shouldBlur && settings.name,
+      thumbnail: shouldBlur && settings.thumbnail,
+    }
+  }
+
   public getEpisodeClasses(index: number) {
     if (!this.listEntry) return {}
 
@@ -238,6 +261,8 @@ export default class Episodes extends Vue {
       active: !this.small && Number(this.scrollerValue) === index,
       small: this.small,
       'right-padding': this.rightPadding,
+      'blur-title': this.getShouldBlur(index).name,
+      'blur-thumbnail': this.getShouldBlur(index).thumbnail,
     }
   }
 
@@ -319,6 +344,10 @@ export default class Episodes extends Vue {
         margin-left: 0;
       }
 
+      &:hover > .button {
+        bottom: 0;
+      }
+
       &.small {
         height: 125px;
         font-size: 0.85em;
@@ -329,11 +358,21 @@ export default class Episodes extends Vue {
         transition-delay: 0s;
       }
 
-      &.right-padding:last-child {
-        width: 650px;
+      &.blur {
+        &-thumbnail > .thumbnail {
+          filter: blur(15px);
+        }
+        &-title > .title-container > .title {
+          opacity: 0;
+          transform: translateX(25%);
+        }
+      }
+
+      &.right-padding.space-filler {
+        width: 300px;
 
         &.small {
-          width: 350px;
+          width: 200px;
         }
       }
 
@@ -384,19 +423,29 @@ export default class Episodes extends Vue {
         }
       }
 
-      & > .title {
+      & > .title-container {
         position: absolute;
         top: 10px;
         left: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
         width: calc(100% - 20px);
-        text-align: left;
-        font-family: 'Raleway', sans-serif;
-        font-weight: 600;
-        font-size: 1.1em;
-        text-shadow: $outline;
         overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+
+        & > div {
+          width: 100%;
+          text-align: left;
+          font-family: 'Raleway', sans-serif;
+          font-weight: 600;
+          font-size: 1.1em;
+          text-shadow: $outline;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          transition: opacity 0.75s, transform 0.75s;
+        }
       }
 
       & > .thumbnail {
@@ -405,10 +454,7 @@ export default class Episodes extends Vue {
         border-radius: 5px;
         cursor: pointer;
         pointer-events: all;
-
-        &:hover + .button {
-          bottom: 0;
-        }
+        transition: filter 0.75s;
       }
     }
   }

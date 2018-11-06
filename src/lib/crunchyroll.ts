@@ -377,7 +377,7 @@ const mediaToEpisode = (
   }: _Media,
   index: number,
 ): Episode => ({
-  title: `Episode ${index + 1} - ${name}`,
+  title: name,
   description,
   index,
   episodeNumber: index + 1,

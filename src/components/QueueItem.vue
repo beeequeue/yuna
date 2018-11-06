@@ -60,27 +60,27 @@
               class="large"
               content="Remove from Queue"
               @click.native="removeFromQueue(id)"
-          />
+            />
+          </div>
         </div>
-      </div>
 
-      <transition>
-        <div
-          v-if="result.data.anime.idMal && getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
-          class="episode-container"
-        >
-          <episodes
-            :idMal="result.data.anime.idMal"
-            :id="result.data.anime.id"
-            :animeName="result.data.anime.title.userPreferred"
-            :listEntry="result.data.anime.mediaListEntry"
-            :current="getCurrentEpisode(result.data)"
-            :sequels="getSequels(result.data)"
-            small
-          />
-        </div>
-      </transition>
-    </div>
+        <transition>
+          <div
+            v-if="result.data.anime.idMal && getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+            class="episode-container"
+          >
+            <episodes
+              :idMal="result.data.anime.idMal"
+              :id="result.data.anime.id"
+              :animeName="result.data.anime.title.userPreferred"
+              :listEntry="result.data.anime.mediaListEntry"
+              :sequels="getSequels(result.data)"
+              scrollToCurrentEpisode
+              small
+            />
+          </div>
+        </transition>
+      </div>
     </span>
   </template>
 </ApolloQuery>
