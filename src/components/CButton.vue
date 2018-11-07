@@ -1,5 +1,9 @@
 <template>
-<button class="button" :class="classes" @click="handleClick">
+<button
+  class="button"
+  :class="classes"
+  @click="handleClick"
+>
   <icon
     v-if="icon != null && !confirmTimeout"
     :icon="icon"
@@ -29,6 +33,7 @@ export default class CButton extends Vue {
   @Prop(String)
   public type?: 'normal' | 'success' | 'warning' | 'danger' | 'white'
   @Prop(String) public icon?: string
+  @Prop(Boolean) public disabled?: boolean
   @Prop(Boolean) public raised?: boolean
   @Prop(Boolean) public flat?: boolean
   @Prop(Boolean) public confirm?: boolean
@@ -44,11 +49,12 @@ export default class CButton extends Vue {
       'with-icon': !!this.icon,
       raised: this.raised || (!this.flat && !this.raised),
       flat: this.flat,
+      disabled: this.disabled,
     }
   }
 
   public handleClick() {
-    if (!this.click) return
+    if (!this.click || this.disabled) return
 
     if (!this.confirm) return this.click()
 
@@ -87,6 +93,15 @@ export default class CButton extends Vue {
   &:active {
     background: darken($color, 4%);
   }
+  &.disabled {
+    background: mix($color, #333) !important;
+    color: darken($white, 25%);
+    cursor: default;
+
+    & > .icon {
+      fill: darken($white, 25%);
+    }
+  }
 
   & > .icon {
     fill: $white;
@@ -97,6 +112,15 @@ export default class CButton extends Vue {
   background: transparent;
   color: $color;
   text-shadow: 0 0 1px transparentize($color, 0.65);
+
+  &.disabled {
+    color: mix($color, #333) !important;
+    cursor: default;
+
+    & > .icon {
+      fill: darken($white, 25%);
+    }
+  }
 
   &:active {
     background: rgba(0, 0, 0, 0.1);

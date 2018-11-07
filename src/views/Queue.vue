@@ -31,6 +31,7 @@
 
       <c-button
         content="Import from Crunchyroll"
+        disabled
         :click="sendNotImplementedToast"
       />
 
