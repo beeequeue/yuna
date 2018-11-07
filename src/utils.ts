@@ -91,3 +91,5 @@ export const createBothSessions = async (
 
   return data
 }
+
+export const hasKey = (obj: any, value: any) => Object.keys(obj).includes(value)

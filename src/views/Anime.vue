@@ -124,7 +124,7 @@ export default class Anime extends Vue {
     const settings = getSpoilerSettings(this.$store).anime
     const shouldBlur =
       this.getMediaListEntry(data).progress <
-      (data.anime.episodes as number) * 0.25
+      Math.ceil((data.anime.episodes as number) * 0.33)
 
     return shouldBlur && settings.description
   }

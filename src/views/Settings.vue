@@ -1,44 +1,79 @@
 <template>
-<div class="settings">
-  <section class="category" id="player">
-    <h1>Player</h1>
+<div class="container">
+  <div class="settings">
+    <section class="category" id="spoilers">
+      <h1>Spoiler Hiding</h1>
 
-    <checkbox
-      setting="autoPlay"
-      text="AutoPlay next epsiode"
-      :checked="settings.autoPlay"
-      :onChange="value => setSetting('autoPlay', value)"
-    />
+      <h3>Anime Info</h3>
+      <span>These spoilers will stop being hidden after watching one third of the season's episodes.</span>
 
-    <checkbox
-      setting="autoMarkWatched"
-      text="Automatically mark episodes as watched"
-      :checked="settings.autoMarkWatched"
-      :onChange="value => setSetting('autoMarkWatched', value)"
-    />
-
-    <section class="category" id="keybindings">
-      <h3>Keybindings</h3>
-
-      <span>Click a binding to remove it</span>
-
-      <keybinding
-        v-for="action in keybindingActions"
-        :key="action"
-        :action="action"
-        :unbindKey="unbindKey"
-        :openKeybindModal="openKeybindModal"
+      <checkbox
+        setting="spoiler-descriptions"
+        text="Descriptions"
+        :checked="settings.spoilers.anime.description"
+        :onChange="checked => setSpoiler('anime.description', checked)"
       />
 
-      <c-button
-        type="danger"
-        confirm
-        content="Reset keybindings to default"
-        :icon="resetSvg"
-        :click="resetKeybindings"
+      <h3>Episode Info</h3>
+      <span>These spoilers will stop being hidden after watching the episode.</span>
+
+      <checkbox
+        setting="spoiler-episode-title"
+        text="Titles"
+        :checked="settings.spoilers.episode.name"
+        :onChange="checked => setSpoiler('episode.name', checked)"
+      />
+
+      <checkbox
+        setting="spoiler-episode-thumbnail"
+        text="Thumbnails"
+        :checked="settings.spoilers.episode.thumbnail"
+        :onChange="checked => setSpoiler('episode.thumbnail', checked)"
       />
     </section>
-  </section>
+
+    <section class="category" id="player">
+      <h1>Player</h1>
+
+      <checkbox
+        setting="autoPlay"
+        text="AutoPlay next epsiode"
+        :checked="settings.autoPlay"
+        :onChange="checked => setSetting('autoPlay', checked)"
+      />
+
+      <checkbox
+        setting="autoMarkWatched"
+        text="Automatically mark episodes as watched"
+        :checked="settings.autoMarkWatched"
+        :onChange="checked => setSetting('autoMarkWatched', checked)"
+      />
+
+      <section class="category" id="keybindings">
+        <h3>Keybindings</h3>
+
+        <span>Click a binding to remove it</span>
+
+        <keybinding
+          v-for="action in keybindingActions"
+          :key="action"
+          :action="action"
+          :unbindKey="unbindKey"
+          :openKeybindModal="openKeybindModal"
+        />
+
+        <c-button
+          type="danger"
+          confirm
+          content="Reset keybindings to default"
+          :icon="resetSvg"
+          :click="resetKeybindings"
+        />
+      </section>
+    </section>
+  </div>
+
+  <div class="info-container"></div>
 
   <transition name="fade">
     <div
@@ -73,6 +108,7 @@ import {
   resetKeybindings,
   setSetting,
   SettingsState,
+  setSpoiler,
 } from '@/state/settings'
 import Keybinding from '../components/Settings/Keybinding.vue'
 import Checkbox from '../components/Settings/Checkbox.vue'
@@ -101,6 +137,13 @@ export default class Settings extends Vue {
     value: SettingsState[typeof setting],
   ) {
     setSetting(this.$store, { setting, value })
+  }
+
+  public setSpoiler(key: string, value: boolean) {
+    setSpoiler(this.$store, {
+      path: key.split('.') as any,
+      value,
+    })
   }
 
   public openKeybindModal(action: KeybindingAction) {
@@ -136,30 +179,63 @@ export default class Settings extends Vue {
 <style scoped lang="scss">
 @import '../colors';
 
-.settings {
+.container {
   position: absolute;
   top: 80px;
-  background: darken($dark, 2%);
-  height: calc(100% - 80px);
-  min-width: 425px;
-  user-select: none;
-  overflow-y: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
 
-  & h1,
-  & h2,
-  & h3,
-  & h4 {
-    font-family: 'Raleway', sans-serif;
-    font-weight: 500;
+  & > .settings {
+    background: darken($dark, 2%);
+    min-width: 425px;
+    padding-bottom: 20px;
+    user-select: none;
+    overflow-y: auto;
 
-    &:first-child {
-      margin-top: 5px;
+    & h1,
+    & h2,
+    & h3,
+    & h4 {
+      font-family: 'Raleway', sans-serif;
+      font-weight: 500;
+
+      &:first-child {
+        margin-top: 15px;
+      }
+    }
+
+    & > .category {
+      width: 100%;
+      padding: 15px;
     }
   }
 
-  & > .category {
+  & > .info-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
-    padding: 15px;
+    height: 100%;
+
+    & > .spoiler-window {
+      height: 350px;
+      width: 300px;
+      background: $dark;
+      box-shadow: $shadow;
+
+      &.v-enter-active,
+      &.v-leave-active {
+        transition: transform 0.25s, opacity 0.25s;
+      }
+
+      &.v-enter,
+      &.v-leave-to {
+        transform: translateY(2.5%);
+        opacity: 0;
+      }
+    }
   }
 }
 

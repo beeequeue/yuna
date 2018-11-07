@@ -5,6 +5,7 @@ import { complement, equals, filter } from 'rambda'
 import { Key } from 'ts-key-enum'
 
 import { RootState } from '@/state/store'
+import { hasKey } from '@/utils'
 
 export enum KeybindingAction {
   PAUSE = 'PAUSE',
@@ -76,6 +77,10 @@ const initialState: SettingsState = {
   autoMarkWatched: settingsStore.get('autoMarkWatched', true),
   keybindings: settingsStore.get('keybindings', { ...defaultBindings }),
   spoilers: settingsStore.get('spoilers', { ...defaultSpoilers }),
+}
+
+if (settingsStore.get('autoMarkWatched', null) === null) {
+  settingsStore.set(initialState)
 }
 
 export const settings = {
@@ -194,6 +199,25 @@ export const settings = {
       settingsStore.set('keybindings', state.keybindings)
     },
 
+    setSpoiler(
+      state: SettingsState,
+      payload: {
+        path: [keyof SettingsState['spoilers'], string]
+        value: boolean
+      },
+    ) {
+      if (!hasKey(state.spoilers[payload.path[0]], payload.path[1])) {
+        // tslint:disable-next-line:no-console
+        return console.error(
+          'Tried to set unknown setting: ' + payload.path.join('.'),
+        )
+      }
+
+      ;(state.spoilers[payload.path[0]] as any)[payload.path[1]] = payload.value
+
+      settingsStore.set(['spoilers', ...payload.path].join('.'), payload.value)
+    },
+
     setSetting(
       state: SettingsState,
       options: {
@@ -201,9 +225,9 @@ export const settings = {
         value: SettingsState[typeof options.setting]
       },
     ) {
-      if (!Object.keys(state).includes(options.setting)) {
+      if (!hasKey(state, options.setting)) {
         // tslint:disable-next-line:no-console
-        console.error('Tried to set unknown setting: ' + options.setting)
+        return console.error('Tried to set unknown setting: ' + options.setting)
       }
 
       state[options.setting] = options.value
@@ -230,4 +254,5 @@ export const getSpoilerSettings = read(settings.getters.getSpoilerSettings)
 export const addKeybinding = commit(settings.mutations.addKeybinding)
 export const removeKeybinding = commit(settings.mutations.removeKeybinding)
 export const resetKeybindings = commit(settings.mutations.resetKeybindings)
+export const setSpoiler = commit(settings.mutations.setSpoiler)
 export const setSetting = commit(settings.mutations.setSetting)

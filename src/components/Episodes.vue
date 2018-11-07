@@ -81,6 +81,7 @@ import {
   setCurrentEpisode,
   ListEntry,
   Sequel,
+  sendErrorToast,
 } from '@/state/app'
 import { AnimeCache } from '@/lib/cache'
 import { Episode } from '@/types'
@@ -201,7 +202,11 @@ export default class Episodes extends Vue {
 
       setTimeout(() => this._scrollToCurrentEpisode(true), 150)
     } catch (e) {
-      console.error(e)
+      sendErrorToast(
+        this.$store,
+        `Could not fetch any episodes for ${this.animeName} - (${e.status})`,
+      )
+
       this.error = e
       this.loading = false
     }
