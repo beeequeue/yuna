@@ -364,7 +364,7 @@ export default class Episodes extends Vue {
         }
         &-title > .title-container > .title {
           opacity: 0;
-          transform: translateX(25%);
+          transform: translateX(10%);
         }
       }
 

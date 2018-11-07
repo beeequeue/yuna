@@ -2,6 +2,7 @@
 <div class="center-container">
   <description
     :content="content"
+    :blur="blurDescription"
   />
 </div>
 </template>
@@ -11,14 +12,13 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import Description from './Description.vue'
 import Icon from '../Icon.vue'
-import { prop } from '../../utils'
 
 @Component({
   components: { Description, Icon },
 })
 export default class CenterContainer extends Vue {
-  @Prop(prop(String))
-  public content!: string | null
+  @Prop(String) public content!: string | null
+  @Prop(Boolean) public blurDescription!: boolean | null
 }
 </script>
 

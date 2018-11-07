@@ -24,10 +24,7 @@ interface KeybingingSettings {
 
 interface SpoilerSettings {
   anime: {
-    coverImage: boolean
-    bannerImage: boolean
     description: boolean
-    relations: boolean
   }
   episode: {
     name: boolean
@@ -66,10 +63,7 @@ const defaultBindings: KeybingingSettings = {
 
 const defaultSpoilers: SpoilerSettings = {
   anime: {
-    bannerImage: false,
-    coverImage: false,
-    description: false,
-    relations: false,
+    description: true,
   },
   episode: {
     name: true,

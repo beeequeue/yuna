@@ -7,6 +7,7 @@
   <transition>
     <span
       class="content"
+      :class="{ blur }"
       ref="content"
       v-html="content"
     />
@@ -27,14 +28,13 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiChevronDown } from '@mdi/js'
 
 import Icon from '../Icon.vue'
-import { prop } from '../../utils'
 
 @Component({
   components: { Icon },
 })
 export default class Description extends Vue {
-  @Prop(prop(String))
-  public content!: string | null
+  @Prop(String) public content!: string | null
+  @Prop(Boolean) public blur!: boolean | null
 
   $refs!: {
     content: HTMLElement
@@ -85,6 +85,11 @@ export default class Description extends Vue {
     text-align: left;
     box-shadow: $shadow;
     user-select: initial;
+    transition: filter 0.15s;
+  }
+
+  &:not(:hover) > .content.blur {
+    filter: blur(4px);
   }
 
   & > .fade-overlay {

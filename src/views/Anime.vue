@@ -48,6 +48,7 @@
         key="center"
         class="slide-up"
         :content="data.anime.description"
+        :blurDescription="getShouldBlurDescription(data)"
       />
 
       <episodes
@@ -94,6 +95,7 @@ import {
   AnimePageQuery_anime_relations_edges,
   AnimePageQuery_anime_relations_edges_node,
 } from '../graphql/AnimePageQuery'
+import { getSpoilerSettings } from '@/state/settings'
 
 @Component({
   components: {
@@ -112,6 +114,19 @@ export default class Anime extends Vue {
 
   public get id() {
     return Number(this.$route.params.id)
+  }
+
+  public getShouldBlurDescription(data: AnimePageQuery) {
+    if (!data || !data.anime) {
+      return false
+    }
+
+    const settings = getSpoilerSettings(this.$store).anime
+    const shouldBlur =
+      this.getMediaListEntry(data).progress <
+      (data.anime.episodes as number) * 0.25
+
+    return shouldBlur && settings.description
   }
 
   public getMediaListEntry(data: AnimePageQuery) {
