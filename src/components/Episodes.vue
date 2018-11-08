@@ -341,9 +341,8 @@ export default class Episodes extends Vue {
       box-sizing: border-box;
       overflow: hidden;
 
-      will-change: width;
-      transition: width 0.25s;
-      transition-delay: 0.25s;
+      will-change: height;
+      transition: height 0.25s;
 
       &:first-child {
         margin-left: 0;
@@ -359,8 +358,7 @@ export default class Episodes extends Vue {
       }
 
       &.active {
-        width: 325px;
-        transition-delay: 0s;
+        height: 200px;
       }
 
       &.blur {
