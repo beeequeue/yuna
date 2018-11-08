@@ -275,17 +275,21 @@ export default class Settings extends Vue {
   }
 }
 
-.route-enter-active,
-.route-leave-active {
-  &.settings {
-    transition: transform 0.5s;
-  }
-}
+.container.route {
+  &-enter-active,
+  &-leave-active {
+    transition: none 0.5s;
 
-.route-enter,
-.route-leave-to {
-  &.settings {
-    transform: translateX(-100%);
+    & > .settings {
+      transition: transform 0.5s;
+    }
+  }
+
+  &-enter,
+  &-leave-to {
+    & > .settings {
+      transform: translateX(-100%);
+    }
   }
 }
 </style>
