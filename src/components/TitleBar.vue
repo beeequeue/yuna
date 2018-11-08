@@ -1,6 +1,22 @@
 <template>
 <div class="title-bar">
-  <span class="title">{{name}} | v{{version}}</span>
+  <button class="nav-button" @click="goBack">
+    <icon
+      class="back"
+      :icon="backSvg"
+    />
+  </button>
+
+  <button class="nav-button" @click="goForward">
+    <icon
+      class="forward"
+      :icon="forwardSvg"
+    />
+  </button>
+
+  <span class="title">
+    {{name}} | v{{version}}
+  </span>
 
   <span
     v-html="flag"
@@ -18,7 +34,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import electron from 'electron'
-import { mdiClose, mdiMinus } from '@mdi/js'
+import { mdiClose, mdiMinus, mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 
 import { getCrunchyrollCountry } from '@/state/auth'
 import Icon from './Icon.vue'
@@ -33,6 +49,8 @@ export default class TitleBar extends Vue {
   public browserWindow = electron.remote.BrowserWindow.getFocusedWindow() as Electron.BrowserWindow
   public version = version
 
+  public backSvg = mdiChevronLeft
+  public forwardSvg = mdiChevronRight
   public minimizeSvg = mdiMinus
   public closeSvg = mdiClose
 
@@ -41,14 +59,6 @@ export default class TitleBar extends Vue {
     if (!shouldUseSillyName) return 'Crunch'
 
     return ['cromch', '(○^ω^)_旦 '][Math.round(Math.random())]
-  }
-
-  public minimize() {
-    this.browserWindow.minimize()
-  }
-
-  public close() {
-    this.browserWindow.close()
   }
 
   public get country() {
@@ -68,6 +78,22 @@ export default class TitleBar extends Vue {
 
     return flagSvg
   }
+
+  public minimize() {
+    this.browserWindow.minimize()
+  }
+
+  public close() {
+    this.browserWindow.close()
+  }
+
+  public goBack() {
+    history.back()
+  }
+
+  public goForward() {
+    history.forward()
+  }
 }
 </script>
 
@@ -80,7 +106,6 @@ export default class TitleBar extends Vue {
   align-items: center;
   width: 100%;
   height: 30px;
-  padding-left: 10px;
   flex-shrink: 0;
   background: rgb(21, 21, 26);
   user-select: none;
@@ -92,6 +117,27 @@ export default class TitleBar extends Vue {
     flex-shrink: 0;
     display: flex;
     align-items: center;
+  }
+
+  & > .nav-button {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+
+    transition: background 0.15s;
+
+    &:hover {
+      background: rgba(150, 150, 150, 0.05);
+    }
+
+    &:active {
+      background: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  & > .title {
+    padding-left: 5px;
   }
 
   & > .flag {
