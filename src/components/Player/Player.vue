@@ -31,6 +31,7 @@
     <controls
       :episode="episode"
       :animeName="animeName"
+      :animeId="animeId"
       :listEntry="listEntry"
       :loading="loading"
       :paused="paused"
@@ -96,6 +97,7 @@ export default class Player extends Vue {
   @Prop(Object) public nextEpisode!: Episode
   @Prop(prop(Array, true))
   public sequels!: Sequel[]
+  @Prop(Number) public animeId!: number
   @Prop(String) public animeName!: string
   @Prop(prop(Number, true))
   public episodesInAnime!: number

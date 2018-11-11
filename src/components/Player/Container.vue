@@ -11,6 +11,7 @@
       :nextEpisode="delayedNextEpisode"
       :sequels="sequels"
       :animeName="playerData.animeName"
+      :animeId="playerData.id"
       :episodesInAnime="playerData.episodes.length"
       :listEntry="playerData.listEntry"
       :shouldAutoPlay="shouldAutoPlay"

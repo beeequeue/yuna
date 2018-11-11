@@ -17,7 +17,11 @@
         </h1>
       </div>
 
-      <h3>{{animeName}}</h3>
+      <router-link :to="`/anime/${animeId}`">
+        <h3>
+          {{animeName}}
+        </h3>
+      </router-link>
     </div>
   </transition>
 
@@ -148,6 +152,8 @@ export default class Controls extends Vue {
   public nextEpisode!: Episode | null
   @Prop(prop(String, true))
   public animeName!: string
+  @Prop(prop(Number, true))
+  public animeId!: number
   @Prop(Object) public listEntry?: ListEntry
   @Prop(prop(Boolean, true))
   public paused!: boolean
@@ -297,10 +303,16 @@ $buttonSize: 50px;
     filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.25));
     user-select: initial;
 
+    & a {
+      color: $white;
+      text-decoration: none;
+    }
+
     & > .episode-title-container {
       display: flex;
+      color: $white;
 
-      & > h1 {
+      & h1 {
         margin: 5px 15px;
         font-size: 1em;
         font-weight: 400;
@@ -321,7 +333,7 @@ $buttonSize: 50px;
       }
     }
 
-    & > h3 {
+    & h3 {
       margin: 5px 15px;
       font-size: 0.8em;
       font-weight: 500;
