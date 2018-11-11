@@ -4,8 +4,8 @@
     <transition>
       <div v-if="isPlayerMaximized" class="text">
         <div>Up next...</div>
-        <div>{{indexString}}/{{episodesInAnime}}</div>
-        <div>{{title}}</div>
+        <div>{{nextEpisode.episodeNumber}}/{{episodesInAnime}}</div>
+        <div>{{nextEpisode.title}}</div>
       </div>
     </transition>
 
@@ -57,23 +57,6 @@ export default class NextEpisodeOverlay extends Vue {
   @Prop(Boolean) public shouldAutoPlay?: boolean
 
   public timeoutId: number | null = null
-
-  public get indexString() {
-    if (!this.nextEpisode) return null
-
-    return this.nextEpisode.title.substr(
-      0,
-      this.nextEpisode.title.indexOf(' - '),
-    )
-  }
-
-  public get title() {
-    if (!this.nextEpisode) return null
-
-    return this.nextEpisode.title.substr(
-      this.nextEpisode.title.indexOf(' - ') + 3,
-    )
-  }
 
   public playSvg = mdiPlay
 

@@ -7,7 +7,7 @@
 
     <transition>
       <div v-for="sequel in sequels" v-if="isPlayerMaximized" :key="sequel.id" class="sequel">
-        <h1 class="text">Next season{{sequels.length > 1 ? 's' : ''}}:</h1>
+        <h1 class="text">Sequel{{sequels.length > 1 ? 's' : ''}}:</h1>
 
         <anime-banner class="banner" :anime="sequel"/>
       </div>
