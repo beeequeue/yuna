@@ -33,6 +33,9 @@ declare module 'electron-util' {
 
   export const api: { app: App }
   export const activeWindow: () => BrowserWindow
+
+  export const electronVersion: string
+  export const chromeVersion: string
 }
 
 declare interface Window {

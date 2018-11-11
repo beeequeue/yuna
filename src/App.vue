@@ -13,6 +13,12 @@
   <player-container v-if="isLoggedIn.all"/>
 
   <toast-overlay/>
+
+  <about-modal
+    :visible="showAboutModal"
+    :toggleModal="toggleAboutModal"
+    :version="version"
+  />
 </div>
 </template>
 
@@ -20,19 +26,25 @@
 import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 
+import { createBothSessions } from '@/utils'
 import TitleBar from './components/TitleBar.vue'
 import Navbar from './components/Navbar/Navbar.vue'
 import PlayerContainer from './components/Player/Container.vue'
 import ToastOverlay from './components/ToastOverlay.vue'
+import AboutModal from './components/AboutModal.vue'
 import { getIsLoggedIn, setCrunchyrollCountry } from './state/auth'
-import { getIsFullscreen } from './state/app'
-import { createBothSessions } from '@/utils'
+import {
+  getIsFullscreen,
+  toggleShowAboutModal,
+  getShowAboutModal,
+} from './state/app'
+import { version } from '../package.json'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys()
 
 @Component({
-  components: { TitleBar, PlayerContainer, Navbar, ToastOverlay },
+  components: { TitleBar, PlayerContainer, Navbar, ToastOverlay, AboutModal },
 })
 export default class App extends Vue {
   get isLoggedIn() {
@@ -42,6 +54,12 @@ export default class App extends Vue {
   get isFullscreen() {
     return getIsFullscreen(this.$store)
   }
+
+  get showAboutModal() {
+    return getShowAboutModal(this.$store)
+  }
+
+  public version = version
 
   public backgroundImage = requireBg(
     backgrounds[Math.floor(Math.random() * backgrounds.length)],
@@ -55,6 +73,10 @@ export default class App extends Vue {
       window.initialLogin = true
       return this.$router.push('login')
     }
+  }
+
+  public toggleAboutModal() {
+    toggleShowAboutModal(this.$store)
   }
 }
 </script>

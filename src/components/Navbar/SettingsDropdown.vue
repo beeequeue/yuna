@@ -13,6 +13,11 @@
       <span>Clear cache</span>
     </div>
 
+    <div class="item open-about" @click="showAboutModal">
+      <icon :icon="infoSvg"/>
+      <span>About</span>
+    </div>
+
     <div class="item log-out" @click="logOut">
       <icon :icon="logOutSvg"/>
       <span>Log out</span>
@@ -23,10 +28,16 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mdiCached, mdiLogout, mdiSettingsOutline } from '@mdi/js'
+import {
+  mdiCached,
+  mdiLogout,
+  mdiSettingsOutline,
+  mdiInformationOutline,
+} from '@mdi/js'
 
-import { logOut } from '@/state/auth'
 import { AnimeCache } from '@/lib/cache'
+import { logOut } from '@/state/auth'
+import { toggleShowAboutModal } from '@/state/app'
 import Icon from '../Icon.vue'
 
 @Component({
@@ -37,8 +48,9 @@ export default class SettingsDropdown extends Vue {
   @Prop() public toggleOpen!: () => any
 
   public settingsSvg = mdiSettingsOutline
-  public logOutSvg = mdiLogout
   public clearSvg = mdiCached
+  public infoSvg = mdiInformationOutline
+  public logOutSvg = mdiLogout
 
   public logOut() {
     logOut(this.$store)
@@ -52,6 +64,10 @@ export default class SettingsDropdown extends Vue {
 
   public openSettings() {
     this.$router.push('/settings')
+  }
+
+  public showAboutModal() {
+    toggleShowAboutModal(this.$store)
   }
 }
 </script>

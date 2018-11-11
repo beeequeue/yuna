@@ -64,6 +64,7 @@ export interface AppState {
   isUpdateAvailable: boolean
   toasts: Toast[]
   isFullscreen: boolean
+  showAboutModal: boolean
   player: PlayerOptions | null
 }
 
@@ -73,6 +74,7 @@ const initialState: AppState = {
   isUpdateAvailable: false,
   toasts: [],
   player: null,
+  showAboutModal: false,
   isFullscreen: false,
 }
 
@@ -127,6 +129,10 @@ export const app = {
       return state.player.episodes[nextIndex]
     },
 
+    getShowAboutModal(state: AppState) {
+      return state.showAboutModal
+    },
+
     getIsFullscreen(state: AppState) {
       return state.isFullscreen
     },
@@ -168,6 +174,10 @@ export const app = {
       if (!state.player) return
 
       state.player.current = index
+    },
+
+    toggleShowAboutModal(state: AppState) {
+      state.showAboutModal = !state.showAboutModal
     },
 
     setFullscreen(state: AppState, b: boolean) {
@@ -243,6 +253,7 @@ export const getPlaylistEntry = read(app.getters.getPlaylistEntry)
 export const getPlaylist = read(app.getters.getPlaylist)
 export const getCurrentEpisode = read(app.getters.getCurrentEpisode)
 export const getNextEpisode = read(app.getters.getNextEpisode)
+export const getShowAboutModal = read(app.getters.getShowAboutModal)
 export const getIsFullscreen = read(app.getters.getIsFullscreen)
 
 export const setIsUpdateAvailable = commit(app.mutations.setIsUpdateAvailable)
@@ -253,6 +264,7 @@ export const updatePlaylistListEntry = commit(
   app.mutations.updatePlaylistListEntry,
 )
 export const setCurrentEpisode = commit(app.mutations.setCurrentEpisode)
+export const toggleShowAboutModal = commit(app.mutations.toggleShowAboutModal)
 const setFullscreen = commit(app.mutations.setFullscreen)
 
 export const toggleFullscreen = dispatch(app.actions.toggleFullscreen)
