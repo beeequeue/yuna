@@ -47,6 +47,9 @@
         v-if="data && data.anime"
         key="center"
         class="slide-up"
+        :id="data.anime.id"
+        :idMal="data.anime.idMal"
+        :rating="data.anime.averageScore"
         :content="data.anime.description"
         :blurDescription="getShouldBlurDescription(data)"
       />

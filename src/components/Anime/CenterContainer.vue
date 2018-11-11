@@ -1,5 +1,11 @@
 <template>
 <div class="center-container">
+  <info
+    :id="id"
+    :idMal="idMal"
+    :rating="rating"
+  />
+
   <description
     :content="content"
     :blur="blurDescription"
@@ -11,14 +17,18 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import Description from './Description.vue'
+import Info from './Info.vue'
 import Icon from '../Icon.vue'
 
 @Component({
-  components: { Description, Icon },
+  components: { Description, Icon, Info },
 })
 export default class CenterContainer extends Vue {
   @Prop(String) public content!: string | null
   @Prop(Boolean) public blurDescription!: boolean | null
+  @Prop(Number) public id!: number | null
+  @Prop(Number) public rating!: number | null
+  @Prop(Number) public idMal!: number | null
 }
 </script>
 
@@ -27,7 +37,6 @@ export default class CenterContainer extends Vue {
 
 .center-container {
   position: relative;
-  overflow: auto;
   pointer-events: none;
 
   & > * {

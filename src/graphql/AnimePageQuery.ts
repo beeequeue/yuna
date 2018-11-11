@@ -1,7 +1,7 @@
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
-import { MediaStatus, MediaRelation, MediaType, MediaListStatus } from "./..\\graphql-types";
+import { MediaRelation, MediaType, MediaListStatus } from "./..\\graphql-types";
 
 // ====================================================
 // GraphQL query operation: AnimePageQuery
@@ -128,29 +128,13 @@ export interface AnimePageQuery_anime {
    */
   episodes: number | null;
   /**
-   * The genres of the media
-   */
-  genres: (string | null)[] | null;
-  /**
-   * The current releasing status of the media
-   */
-  status: MediaStatus | null;
-  /**
    * If the media is marked as favourite by the current authenticated user
    */
   isFavourite: boolean;
   /**
-   * The amount of user's who have favourited the media
-   */
-  favourites: number | null;
-  /**
    * A weighted average score of all the user's scores of the media
    */
   averageScore: number | null;
-  /**
-   * The url for the media page on the AniList website
-   */
-  siteUrl: string | null;
   /**
    * The banner image of the media
    */

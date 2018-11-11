@@ -11,12 +11,8 @@ query AnimePageQuery($id: Int) {
     description
     duration
     episodes
-    genres
-    status
     isFavourite
-    favourites
     averageScore
-    siteUrl
     bannerImage
     coverImage {
       extraLarge
