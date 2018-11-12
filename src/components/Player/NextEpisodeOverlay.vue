@@ -2,10 +2,16 @@
 <transition>
   <div v-if="nextEpisode" class="next-episode-container">
     <transition>
-      <div v-if="isPlayerMaximized" class="text">
+      <div
+        v-if="isPlayerMaximized"
+        class="text"
+        :class="{ 'hide-title': shouldHide.title }"
+      >
         <div>Up next...</div>
+
         <div>{{nextEpisode.episodeNumber}}/{{episodesInAnime}}</div>
-        <div>{{nextEpisode.title}}</div>
+
+        <div v-if="!shouldHide.title">{{nextEpisode.title}}</div>
       </div>
     </transition>
 
@@ -13,6 +19,7 @@
       <img
         :src="nextEpisode.thumbnail"
         class="thumbnail"
+        :class="{ blur: shouldHide.thumbnail }"
       />
 
       <icon :icon="playSvg" />
@@ -43,6 +50,7 @@ import { prop } from '@/utils'
 
 import CButton from '../CButton.vue'
 import Icon from '../Icon.vue'
+import { getSpoilerSettings } from '@/state/settings'
 
 @Component({
   components: { CButton, Icon },
@@ -52,6 +60,7 @@ export default class NextEpisodeOverlay extends Vue {
   public nextEpisode!: Episode | null
   @Prop(prop(Number, true))
   public episodesInAnime!: number
+  @Prop(Number) public progress!: number | null
   @Prop(prop(Boolean, true))
   public isPlayerMaximized!: boolean
   @Prop(Boolean) public shouldAutoPlay?: boolean
@@ -59,6 +68,18 @@ export default class NextEpisodeOverlay extends Vue {
   public timeoutId: number | null = null
 
   public playSvg = mdiPlay
+
+  public get shouldHide() {
+    if (!this.nextEpisode || !this.progress) return false
+
+    const settings = getSpoilerSettings(this.$store).episode
+    const shouldHide = this.nextEpisode.episodeNumber > this.progress
+
+    return {
+      title: settings.name && shouldHide,
+      thumbnail: settings.thumbnail && shouldHide,
+    }
+  }
 
   public mounted() {
     if (this.nextEpisode && this.shouldAutoPlay) {
@@ -120,6 +141,10 @@ export default class NextEpisodeOverlay extends Vue {
     height: 75px;
     overflow: hidden;
 
+    &.hide-title {
+      height: 55px;
+    }
+
     & > * {
       white-space: nowrap;
       font-family: 'Raleway', sans-serif;
@@ -151,6 +176,8 @@ export default class NextEpisodeOverlay extends Vue {
     box-shadow: $shadow;
     cursor: pointer;
     pointer-events: all;
+    border-radius: 5px;
+    overflow: hidden;
 
     & > .icon {
       display: block;
@@ -169,7 +196,10 @@ export default class NextEpisodeOverlay extends Vue {
     & > .thumbnail {
       display: block;
       width: 100%;
-      border-radius: 5px;
+
+      &.blur {
+        filter: blur(12px);
+      }
     }
 
     & > .countdown-line {
