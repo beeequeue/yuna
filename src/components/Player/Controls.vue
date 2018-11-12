@@ -38,6 +38,7 @@
       <icon
         v-if="isPlayerMaximized"
         class="button"
+        :class="{ disabled: episode.index < 1 }"
         :icon="prevSvg"
         @click.native="go(-1)"
       />
@@ -54,6 +55,7 @@
       <icon
         v-if="isPlayerMaximized"
         class="button"
+        :class="{ disabled: nextEpisode == null }"
         :icon="nextSvg"
         @click.native="go(1)"
       />
@@ -430,6 +432,11 @@ $buttonSize: 50px;
 
     fill: white;
     cursor: pointer;
+
+    &.disabled {
+      pointer-events: none;
+      opacity: 0.25;
+    }
 
     &.v-enter-active,
     &.v-leave-active {

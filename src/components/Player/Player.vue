@@ -30,6 +30,7 @@
 
     <controls
       :episode="episode"
+      :nextEpisode="nextEpisode"
       :animeName="animeName"
       :animeId="animeId"
       :listEntry="listEntry"
