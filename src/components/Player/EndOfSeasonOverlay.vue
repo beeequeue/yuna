@@ -1,6 +1,6 @@
 <template>
 <transition>
-  <div class="next-episode-container">
+  <div class="end-of-season-container">
     <h1 class="text">
       The End!
     </h1>
@@ -32,6 +32,8 @@ import Icon from '../Icon.vue'
 export default class EndOfSeasonOverlay extends Vue {
   @Prop(prop(Array, true))
   public sequels!: Sequel[]
+  @Prop(prop(Number, true))
+  public episodesInAnime!: number
   @Prop(prop(Boolean, true))
   public isPlayerMaximized!: boolean
 }
@@ -49,29 +51,7 @@ export default class EndOfSeasonOverlay extends Vue {
   }
 }
 
-.text {
-  font-size: 1.25em;
-  padding: 5px;
-  overflow: hidden;
-  font-family: 'Raleway', sans-serif;
-  text-shadow: $outline;
-  font-weight: 600;
-  margin: 0;
-  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.35));
-
-  &.v-enter-active,
-  &.v-leave-active {
-    transition: 0.5s;
-  }
-
-  &.v-enter,
-  &.v-leave-to {
-    height: 0;
-    padding: 0;
-  }
-}
-
-.next-episode-container {
+.end-of-season-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -83,6 +63,28 @@ export default class EndOfSeasonOverlay extends Vue {
   align-items: center;
   pointer-events: none;
   user-select: none;
+
+  & > .text {
+    font-size: 1.25em;
+    padding: 5px;
+    overflow: hidden;
+    font-family: 'Raleway', sans-serif;
+    text-shadow: $outline;
+    font-weight: 600 !important;
+    margin: 0;
+    filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.35));
+
+    &.v-enter-active,
+    &.v-leave-active {
+      transition: 0.5s;
+    }
+
+    &.v-enter,
+    &.v-leave-to {
+      height: 0;
+      padding: 0;
+    }
+  }
 
   & > .sequel {
     height: 150px;
