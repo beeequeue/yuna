@@ -167,7 +167,10 @@ export const app = {
     updatePlaylistListEntry(state: AppState, listEntry: ListEntry) {
       if (!state.player) return
 
-      state.player.listEntry = listEntry
+      state.player.listEntry = {
+        ...state.player.listEntry,
+        ...listEntry,
+      }
     },
 
     setCurrentEpisode(state: AppState, index: number) {

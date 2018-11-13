@@ -61,6 +61,7 @@
 
     <end-of-season-overlay
       v-if="ended && !nextEpisode"
+      :listEntry="listEntry"
       :sequels="sequels"
       :episodesInAnime="episodesInAnime"
       :isPlayerMaximized="isPlayerMaximized"

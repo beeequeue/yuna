@@ -1,0 +1,9 @@
+mutation UpdateScoreMutation($id: Int, $score: Float) {
+  SaveMediaListEntry(id: $id, score: $score) {
+    id
+    score
+    progress
+    status
+    repeat
+  }
+}

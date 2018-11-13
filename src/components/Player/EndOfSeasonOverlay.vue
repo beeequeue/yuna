@@ -6,6 +6,26 @@
     </h1>
 
     <transition>
+      <div v-if="isPlayerMaximized" class="scores-container">
+        <div
+          v-for="(s, index) in scores"
+          :key="index"
+          class="score"
+          @click="updateScore(s)"
+        >
+          <icon
+            v-if="listEntry.score >= s"
+            :icon="starSvg"
+          />
+          <icon
+            v-else
+            :icon="hollowStarSvg"
+          />
+        </div>
+      </div>
+    </transition>
+
+    <transition>
       <div v-for="sequel in sequels" v-if="isPlayerMaximized" :key="sequel.id" class="sequel">
         <h1 class="text">Sequel{{sequels.length > 1 ? 's' : ''}}:</h1>
 
@@ -18,8 +38,10 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { mdiStar, mdiStarOutline } from '@mdi/js'
 
-import { Sequel } from '@/state/app'
+import { Sequel, ListEntry } from '@/state/app'
+import { setScoreMutation } from '@/graphql/mutations'
 import { prop } from '@/utils'
 
 import AnimeBanner from '../AnimeBanner.vue'
@@ -30,12 +52,29 @@ import Icon from '../Icon.vue'
   components: { AnimeBanner, CButton, Icon },
 })
 export default class EndOfSeasonOverlay extends Vue {
+  @Prop(Object) public listEntry!: ListEntry | null
   @Prop(prop(Array, true))
   public sequels!: Sequel[]
   @Prop(prop(Number, true))
   public episodesInAnime!: number
   @Prop(prop(Boolean, true))
   public isPlayerMaximized!: boolean
+
+  public scores = [0, 25, 50, 75, 100]
+
+  public starSvg = mdiStar
+  public hollowStarSvg = mdiStarOutline
+
+  public async updateScore(score: number) {
+    if (!this.listEntry) return
+
+    await setScoreMutation(
+      this.$apollo,
+      this.listEntry.id,
+      score,
+      this.listEntry,
+    )
+  }
 }
 </script>
 
@@ -86,17 +125,66 @@ export default class EndOfSeasonOverlay extends Vue {
     }
   }
 
+  & > .scores-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    pointer-events: all;
+    overflow: hidden;
+    filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.5));
+    transition: height 0.25s, opacity 0.25s;
+
+    & > .score {
+      position: relative;
+      margin: 0 5px;
+      height: 50px;
+      width: 50px;
+      cursor: pointer;
+      pointer-events: all;
+      transition: transform 0.15s;
+
+      & > .icon {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        top: 0;
+        left: 0;
+        fill: gold;
+      }
+
+      &:hover {
+        transform: scale(1.1);
+      }
+
+      &:first-child {
+        margin-left: 0;
+      }
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    &.v-enter,
+    &.v-leave-to {
+      height: 0;
+      opacity: 0;
+    }
+  }
+
   & > .sequel {
     height: 150px;
+    overflow: hidden;
+    text-shadow: $outline !important;
+    filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.5));
 
     & > .button {
       position: relative;
       pointer-events: all;
-      text-shadow: $outline !important;
       padding: 0.35em 2em 0.5em;
       font-size: 1.25em;
       height: 45px;
-      overflow: hidden;
 
       &.v-enter-active {
         transition: 0.5s;
@@ -125,7 +213,7 @@ export default class EndOfSeasonOverlay extends Vue {
       pointer-events: all;
       overflow: hidden;
       border-radius: 5px;
-      box-shadow: $shadow;
+      filter: drop-shadow(1px 2px 5px rgba(0, 0, 0, 0.5));
     }
 
     &.v-enter-active {

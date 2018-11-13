@@ -6,20 +6,18 @@ import { MediaListStatus } from '@/graphql-types'
 
 import ANIME_PAGE_QUERY from './AnimePageQuery.graphql'
 import UPDATE_PROGRESS_MUTATION from './UpdateProgressMutation.graphql'
-import { UpdateProgressMutation } from './UpdateProgressMutation'
+import { UpdateProgressMutation, UpdateProgressMutation_SaveMediaListEntry } from './UpdateProgressMutation'
 import SET_STATUS_MUTATION from './SetStatusMutation.graphql'
 import { SetStatusMutation } from './SetStatusMutation'
 import ADD_ENTRY_MUTATION from './AddEntryMutation.graphql'
 import { AddEntryMutation } from './AddEntryMutation'
+import { UpdateScoreMutation } from './UpdateScoreMutation';
 
 export const setProgressMutation = async (
   apollo: DollarApollo<any>,
   id: number,
   progress: number,
-  oldValues: {
-    repeat?: number | null
-    status?: MediaListStatus | null
-  } = {},
+  oldValues: Partial<UpdateProgressMutation_SaveMediaListEntry> = {},
 ) => {
   return apollo.mutate<UpdateProgressMutation>({
     mutation: UPDATE_PROGRESS_MUTATION,
@@ -72,3 +70,30 @@ export const addEntryMutation = async (
       cache.writeQuery({ query: ANIME_PAGE_QUERY, data: cachedData })
     },
   })
+
+  export const setScoreMutation = async (
+    apollo: DollarApollo<any>,
+    id: number,
+    score: number,
+    oldValues: Partial<UpdateProgressMutation_SaveMediaListEntry> = {}
+  ) => {
+    return apollo.mutate<UpdateScoreMutation>({
+      mutation: UPDATE_PROGRESS_MUTATION,
+      variables: { id, score },
+      optimisticResponse: {
+        SaveMediaListEntry: {
+          __typename: 'MediaList',
+          id,
+          score,
+          progress: oldValues.progress || 0,
+          repeat: oldValues.repeat || 0,
+          status: oldValues.status || MediaListStatus.CURRENT,
+        },
+      } as UpdateScoreMutation,
+      update: (_cache, { data }) => {
+        if (!data) return
+
+        updatePlaylistListEntry(store, data.SaveMediaListEntry)
+      }
+    })
+  }

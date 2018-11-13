@@ -33,6 +33,10 @@ export interface AnimeQueueQuery_anime_mediaListEntry {
    * The amount of times the user has rewatched/read the media
    */
   repeat: number | null;
+  /**
+   * The score of the entry
+   */
+  score: number | null;
 }
 
 export interface AnimeQueueQuery_anime_relations_edges_node_title {
