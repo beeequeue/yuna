@@ -1,7 +1,7 @@
 <template>
 <div
   class="controls"
-  :class="{ visible }"
+  :class="{ visible: true }"
   @mousemove="goVisible"
   @click="goVisible"
   @mouseout="handleMouseLeave"
@@ -396,9 +396,12 @@ $buttonSize: 50px;
     filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.75));
   }
 
+  & > .volume-slider {
+    margin-top: 5px;
+  }
+
   & > .time {
     padding: 0 12px;
-    margin-bottom: 4px;
     max-width: 175px;
     opacity: 1;
     overflow: hidden;

@@ -34,7 +34,7 @@ export default class ProgressBar extends Vue {
   @Prop(Function) public onSetTime!: (e: Event) => void
 
   public publicProgress = this.progressInSeconds
-  public shouldUpdateProgress = false
+  public shouldUpdateProgress = true
 
   public handleMouseDown() {
     this.shouldUpdateProgress = false
