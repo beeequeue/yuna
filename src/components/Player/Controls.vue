@@ -416,8 +416,10 @@ $buttonSize: 50px;
     width: $buttonSize;
     max-width: $buttonSize;
     overflow: hidden;
+    margin-top: 5px;
 
     & > .button {
+      margin: 0;
       position: absolute;
       top: 0;
       left: 0;
@@ -429,6 +431,7 @@ $buttonSize: 50px;
     width: $buttonSize;
     max-width: $buttonSize;
     padding: 5px;
+    margin-top: 5px;
 
     fill: white;
     cursor: pointer;

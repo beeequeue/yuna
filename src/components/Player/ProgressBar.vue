@@ -41,17 +41,18 @@ export default class ProgressBar extends Vue {
   top: -15px;
   left: 0;
   width: 100%;
+  z-index: 1;
 
   & > input {
     width: 100%;
-    height: 6px;
+    height: 8px;
   }
 
   & > .played,
   & > .loaded {
     position: absolute;
-    top: 9px;
-    height: 6px;
+    top: 6px;
+    height: 8px;
     background: $highlight;
     pointer-events: none;
   }
@@ -67,11 +68,12 @@ export default class ProgressBar extends Vue {
     &::-webkit-slider-thumb {
       position: relative;
       -webkit-appearance: none;
-      height: 20px;
-      width: 20px;
+      height: 25px;
+      width: 25px;
       border-radius: 100%;
       background: $highlight;
       z-index: 1;
+      margin-top: -2px;
     }
   }
 }
