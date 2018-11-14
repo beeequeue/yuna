@@ -9,8 +9,10 @@
     type="range"
     min="0"
     :max="duration"
-    :value="progressInSeconds"
-    @change="onSetTime"
+    :value="publicProgress"
+    @mousedown="handleMouseDown"
+    @mouseup="handleMouseUp"
+    @input.prevent="handleChange"
   />
 
   <div
@@ -21,7 +23,7 @@
 
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 
 @Component
 export default class ProgressBar extends Vue {
@@ -29,7 +31,30 @@ export default class ProgressBar extends Vue {
   @Prop(Number) public progressInSeconds!: number
   @Prop(Number) public progressPercentage!: number
   @Prop(Number) public loadedPercentage!: number
-  @Prop() public onSetTime!: (e: Event) => void
+  @Prop(Function) public onSetTime!: (e: Event) => void
+
+  public publicProgress = this.progressInSeconds
+  public shouldUpdateProgress = false
+
+  public handleMouseDown() {
+    this.shouldUpdateProgress = false
+  }
+
+  public handleChange(e: any) {
+    this.onSetTime(e)
+    this.publicProgress = e.target.value
+  }
+
+  public handleMouseUp() {
+    this.shouldUpdateProgress = true
+  }
+
+  @Watch('progressInSeconds')
+  public updatePublicProgress() {
+    if (!this.shouldUpdateProgress) return
+
+    this.publicProgress = this.progressInSeconds
+  }
 }
 </script>
 
