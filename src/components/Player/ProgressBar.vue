@@ -1,5 +1,5 @@
 <template>
-<div class="progress">
+<div class="progress" @mousemove="handleMouseOver" @mouseleave="hovering = false">
   <div
     class="played"
     :style="{ left: 0, right: (100 - progressPercentage * 100) + '%' }"
@@ -19,11 +19,18 @@
     class="loaded"
     :style="{ left: (progressPercentage * 100) + '%', right: (100 - loadedPercentage * 100) + '%' }"
   />
+
+  <div
+    class="time-tooltip"
+    v-tooltip="tooltip"
+    :style="{ left: `${mousePosition * 100}%` }"
+  />
 </div>
 
 </template>
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { secondsToTimeString } from '@/utils'
 
 @Component
 export default class ProgressBar extends Vue {
@@ -33,8 +40,28 @@ export default class ProgressBar extends Vue {
   @Prop(Number) public loadedPercentage!: number
   @Prop(Function) public onSetTime!: (e: Event) => void
 
+  public hovering = false
+  public mousePosition = 0
+
   public publicProgress = this.progressInSeconds
   public shouldUpdateProgress = true
+
+  public get tooltip() {
+    return {
+      content: this.hoverTime,
+      placement: 'top',
+      show: this.hovering,
+    }
+  }
+
+  public get hoverTime() {
+    return secondsToTimeString(Math.round(this.mousePosition * this.duration))
+  }
+
+  public handleMouseOver(e: MouseEvent) {
+    this.hovering = true
+    this.mousePosition = e.pageX / window.outerWidth
+  }
 
   public handleMouseDown() {
     this.shouldUpdateProgress = false
@@ -100,6 +127,11 @@ export default class ProgressBar extends Vue {
       z-index: 1;
       margin-top: -2px;
     }
+  }
+
+  & > .time-tooltip {
+    position: absolute;
+    top: 0;
   }
 }
 </style>
