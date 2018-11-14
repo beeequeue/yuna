@@ -1,7 +1,7 @@
 <template>
 <div
   class="controls"
-  :class="{ visible: true }"
+  :class="{ visible }"
   @mousemove="goVisible"
   @click="goVisible"
   @mouseout="handleMouseLeave"
