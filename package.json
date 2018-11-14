@@ -14,6 +14,7 @@
     "@types/uuid": "^3.4.4",
     "@types/webpack-env": "^1.13.6",
     "apollo-boost": "^0.1.18",
+    "date-fns": "^2.0.0-alpha.25",
     "electron-debug": "^2.0.0",
     "electron-log": "^2.2.17",
     "electron-store": "^2.0.0",
@@ -39,6 +40,7 @@
     "vuex-typescript": "^3.0.2"
   },
   "devDependencies": {
+    "@types/date-fns": "^2.6.0",
     "@types/marked": "^0.4.2",
     "@vue/cli-plugin-babel": "^3.0.5",
     "@vue/cli-plugin-typescript": "^3.0.5",

@@ -35,6 +35,18 @@ export interface AnimePageQuery_anime_coverImage {
   extraLarge: string | null;
 }
 
+export interface AnimePageQuery_anime_nextAiringEpisode {
+  __typename: "AiringSchedule";
+  /**
+   * The time the episode airs at
+   */
+  airingAt: number;
+  /**
+   * Seconds until episode starts airing
+   */
+  timeUntilAiring: number;
+}
+
 export interface AnimePageQuery_anime_relations_edges_node_title {
   __typename: "MediaTitle";
   /**
@@ -143,6 +155,10 @@ export interface AnimePageQuery_anime {
    * The cover images of the media
    */
   coverImage: AnimePageQuery_anime_coverImage | null;
+  /**
+   * The media's next episode airing schedule
+   */
+  nextAiringEpisode: AnimePageQuery_anime_nextAiringEpisode | null;
   /**
    * Other media in the same or connecting franchise
    */

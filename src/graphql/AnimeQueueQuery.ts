@@ -15,6 +15,18 @@ export interface AnimeQueueQuery_anime_title {
   userPreferred: string | null;
 }
 
+export interface AnimeQueueQuery_anime_nextAiringEpisode {
+  __typename: "AiringSchedule";
+  /**
+   * The time the episode airs at
+   */
+  airingAt: number;
+  /**
+   * Seconds until episode starts airing
+   */
+  timeUntilAiring: number;
+}
+
 export interface AnimeQueueQuery_anime_mediaListEntry {
   __typename: "MediaList";
   /**
@@ -107,6 +119,10 @@ export interface AnimeQueueQuery_anime {
    * The banner image of the media
    */
   bannerImage: string | null;
+  /**
+   * The media's next episode airing schedule
+   */
+  nextAiringEpisode: AnimeQueueQuery_anime_nextAiringEpisode | null;
   /**
    * The authenticated user's media list entry for the media
    */

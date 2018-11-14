@@ -2,8 +2,16 @@
 <transition>
   <div class="end-of-season-container">
     <h1 class="text">
-      The End!
+      {{endMessage}}
     </h1>
+
+    <transition>
+      <h2 v-if="!isFinalEpisode && isPlayerMaximized" class="text two-lines">
+        The next episode airs in {{nextEpisodeDistanceString}}
+        <br/>
+        {{nextEpisodeDateString}}
+      </h2>
+    </transition>
 
     <transition>
       <div v-if="isPlayerMaximized" class="scores-container">
@@ -26,7 +34,12 @@
     </transition>
 
     <transition>
-      <div v-for="sequel in sequels" v-if="isPlayerMaximized" :key="sequel.id" class="sequel">
+      <div
+        v-for="sequel in sequels"
+        v-if="isFinalEpisode && isPlayerMaximized"
+        :key="sequel.id"
+        class="sequel"
+      >
         <h1 class="text">Sequel{{sequels.length > 1 ? 's' : ''}}:</h1>
 
         <anime-banner class="banner" :anime="sequel"/>
@@ -38,9 +51,11 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { format, formatDistance } from 'date-fns'
 import { mdiStar, mdiStarOutline } from '@mdi/js'
 
 import { Sequel, ListEntry } from '@/state/app'
+import { AnimePageQuery_anime_nextAiringEpisode } from '@/graphql/AnimePageQuery'
 import { setScoreMutation } from '@/graphql/mutations'
 import { prop } from '@/utils'
 
@@ -56,7 +71,11 @@ export default class EndOfSeasonOverlay extends Vue {
   @Prop(prop(Array, true))
   public sequels!: Sequel[]
   @Prop(prop(Number, true))
+  public episodeNumber!: number
+  @Prop(prop(Number, true))
   public episodesInAnime!: number
+  @Prop(Object)
+  public nextAiringEpisode!: AnimePageQuery_anime_nextAiringEpisode | null
   @Prop(prop(Boolean, true))
   public isPlayerMaximized!: boolean
 
@@ -64,6 +83,26 @@ export default class EndOfSeasonOverlay extends Vue {
 
   public starSvg = mdiStar
   public hollowStarSvg = mdiStarOutline
+
+  public get isFinalEpisode() {
+    return this.episodeNumber >= this.episodesInAnime
+  }
+
+  public get nextEpisodeDateString() {
+    if (!this.nextAiringEpisode) return null
+
+    return format(this.nextAiringEpisode.airingAt * 1000, 'iii do MMM - kk:mm')
+  }
+
+  public get nextEpisodeDistanceString() {
+    if (!this.nextAiringEpisode) return null
+
+    return formatDistance(new Date(), this.nextAiringEpisode.airingAt * 1000)
+  }
+
+  public get endMessage() {
+    return `The end${this.isFinalEpisode ? '!' : ' for now!'}`
+  }
 
   public async updateScore(score: number) {
     if (!this.listEntry) return
@@ -103,7 +142,8 @@ export default class EndOfSeasonOverlay extends Vue {
   pointer-events: none;
   user-select: none;
 
-  & > .text {
+  & .text {
+    height: 35px;
     font-size: 1.25em;
     padding: 5px;
     overflow: hidden;
@@ -113,9 +153,13 @@ export default class EndOfSeasonOverlay extends Vue {
     margin: 0;
     filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.35));
 
+    &.two-lines {
+      height: 60px;
+    }
+
     &.v-enter-active,
     &.v-leave-active {
-      transition: 0.5s;
+      transition: 0.25s;
     }
 
     &.v-enter,

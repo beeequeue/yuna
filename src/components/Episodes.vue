@@ -83,6 +83,7 @@ import {
   Sequel,
   sendErrorToast,
 } from '@/state/app'
+import { AnimePageQuery_anime_nextAiringEpisode } from '@/graphql/AnimePageQuery'
 import { AnimeCache } from '@/lib/cache'
 import { Episode } from '@/types'
 import { prop } from '@/utils'
@@ -99,6 +100,10 @@ export default class Episodes extends Vue {
   public idMal!: number
   @Prop(prop(String, true))
   public animeName!: string
+  @Prop(prop(Number, true))
+  public episodesInAnime!: number
+  @Prop(Object)
+  public nextAiringEpisode!: AnimePageQuery_anime_nextAiringEpisode | null
   @Prop(prop(Object))
   public listEntry?: ListEntry | null
   @Prop(prop(Array, true))
@@ -231,12 +236,16 @@ export default class Episodes extends Vue {
       setCurrentEpisode(this.$store, index)
     } else {
       setPlaylist(this.$store, {
-        id: this.id,
-        animeName: this.animeName,
+        anime: {
+          id: this.id,
+          title: this.animeName,
+          episodes: this.episodesInAnime,
+          sequels: this.sequels,
+          nextAiringEpisode: this.nextAiringEpisode,
+        },
         listEntry: this.listEntry,
         episodes: this.episodes,
         current: index,
-        sequels: this.sequels,
       })
     }
   }

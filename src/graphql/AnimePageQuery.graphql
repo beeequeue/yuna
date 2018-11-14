@@ -17,6 +17,10 @@ query AnimePageQuery($id: Int) {
     coverImage {
       extraLarge
     }
+    nextAiringEpisode {
+      airingAt
+      timeUntilAiring
+    }
     relations {
       edges {
         relationType

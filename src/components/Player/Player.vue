@@ -31,9 +31,9 @@
     <controls
       :episode="episode"
       :nextEpisode="nextEpisode"
-      :animeName="animeName"
-      :animeId="animeId"
-      :listEntry="listEntry"
+      :animeName="playerData.anime.title"
+      :animeId="playerData.anime.id"
+      :listEntry="playerData.listEntry"
       :loading="loading"
       :paused="paused"
       :isPlayerMaximized="isPlayerMaximized"
@@ -53,17 +53,19 @@
     <next-episode-overlay
       v-if="ended && nextEpisode"
       :nextEpisode="nextEpisode"
-      :episodesInAnime="episodesInAnime"
-      :progress="listEntry.progress"
+      :episodesInAnime="playerData.anime.episodes"
+      :progress="playerData.listEntry.progress"
       :isPlayerMaximized="isPlayerMaximized"
       :shouldAutoPlay="shouldAutoPlay"
     />
 
     <end-of-season-overlay
       v-if="ended && !nextEpisode"
-      :listEntry="listEntry"
-      :sequels="sequels"
-      :episodesInAnime="episodesInAnime"
+      :listEntry="playerData.listEntry"
+      :sequels="playerData.anime.sequels"
+      :episodeNumber="episode.episodeNumber"
+      :episodesInAnime="playerData.anime.episodes"
+      :nextAiringEpisode="playerData.anime.nextAiringEpisode"
       :isPlayerMaximized="isPlayerMaximized"
     />
   </div>
@@ -80,8 +82,7 @@ import {
   getIsFullscreen,
   sendErrorToast,
   toggleFullscreen,
-  ListEntry,
-  Sequel,
+  PlayerData,
 } from '@/state/app'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
 import { Episode } from '@/types'
@@ -98,14 +99,9 @@ import EndOfSeasonOverlay from './EndOfSeasonOverlay.vue'
 export default class Player extends Vue {
   @Prop(Object) public episode!: Episode
   @Prop(Object) public nextEpisode!: Episode
-  @Prop(prop(Array, true))
-  public sequels!: Sequel[]
-  @Prop(Number) public animeId!: number
-  @Prop(String) public animeName!: string
-  @Prop(prop(Number, true))
-  public episodesInAnime!: number
-  @Prop(Object) public listEntry?: ListEntry
-  @Prop(Boolean) public shouldAutoPlay?: boolean
+  @Prop(prop(Object, true))
+  public playerData!: PlayerData
+  @Prop(Boolean) public shouldAutoPlay!: boolean | null
   @Prop(Boolean) public getShouldAutoMarkWatched?: boolean
   @Prop(prop(Function, true))
   public setProgress!: (p: number) => any
@@ -324,9 +320,9 @@ export default class Player extends Vue {
 
   public updateProgressIfNecessary() {
     if (
-      !this.listEntry ||
+      !this.playerData.listEntry ||
       !this.getShouldAutoMarkWatched ||
-      this.listEntry.progress >= this.episode.episodeNumber
+      this.playerData.listEntry.progress >= this.episode.episodeNumber
     ) {
       return
     }

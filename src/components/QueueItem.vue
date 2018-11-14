@@ -73,6 +73,8 @@
               :idMal="result.data.anime.idMal"
               :id="result.data.anime.id"
               :animeName="result.data.anime.title.userPreferred"
+              :episodesInAnime="result.data.anime.episodes"
+              :nextAiringEpisode="result.data.anime.nextAiringEpisode"
               :listEntry="result.data.anime.mediaListEntry"
               :sequels="getSequels(result.data)"
               scrollToCurrentEpisode

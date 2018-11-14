@@ -9,11 +9,7 @@
       key="player"
       :episode="episode"
       :nextEpisode="delayedNextEpisode"
-      :sequels="sequels"
-      :animeName="playerData.animeName"
-      :animeId="playerData.id"
-      :episodesInAnime="playerData.episodes.length"
-      :listEntry="playerData.listEntry"
+      :playerData="playerData"
       :shouldAutoPlay="shouldAutoPlay"
       :getShouldAutoMarkWatched="getShouldAutoMarkWatched"
       :setProgress="setProgress"
@@ -52,7 +48,7 @@ export default class PlayerContainer extends Vue {
   get sequels() {
     if (!this.playerData) return []
 
-    return this.playerData.sequels
+    return this.playerData.anime.sequels
   }
 
   get shouldAutoPlay() {

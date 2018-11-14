@@ -9,6 +9,10 @@ query AnimeQueueQuery($id: Int) {
     status
     siteUrl
     bannerImage
+    nextAiringEpisode {
+      airingAt
+      timeUntilAiring
+    }
     mediaListEntry {
       id
       progress

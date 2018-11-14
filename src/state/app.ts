@@ -51,13 +51,20 @@ export interface Sequel {
   bannerImage: string
 }
 
-interface PlayerOptions {
-  id: number
-  animeName: string
+export interface PlayerData {
+  anime: {
+    id: number
+    title: string
+    episodes: number
+    nextAiringEpisode: null | {
+      airingAt: number
+      timeUntilAiring: number
+    }
+    sequels: Sequel[]
+  }
   listEntry?: ListEntry | null
   episodes: Episode[]
   current: number
-  sequels: Sequel[]
 }
 
 export interface AppState {
@@ -65,7 +72,7 @@ export interface AppState {
   toasts: Toast[]
   isFullscreen: boolean
   showAboutModal: boolean
-  player: PlayerOptions | null
+  player: PlayerData | null
 }
 
 type AppContext = ActionContext<AppState, RootState>
@@ -99,7 +106,7 @@ export const app = {
     getPlaylistAnimeId(state: AppState) {
       if (!state.player) return null
 
-      return state.player.id
+      return state.player.anime.id
     },
 
     getPlaylistEntry(state: AppState) {
@@ -160,7 +167,7 @@ export const app = {
       state.toasts = reject(propEq('id', id), state.toasts)
     },
 
-    setPlaylist(state: AppState, options: PlayerOptions) {
+    setPlaylist(state: AppState, options: PlayerData) {
       state.player = options
     },
 
