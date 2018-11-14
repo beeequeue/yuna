@@ -31,7 +31,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { formatDistance, format } from 'date-fns'
 import { mdiChevronDown } from '@mdi/js'
 
-import malLogo from '@/assets/myanimelist.png'
+import malLogo from '@/assets/myanimelist.webp'
 import alLogo from '@/assets/anilist.svg'
 import { AnimePageQuery_anime_nextAiringEpisode } from '@/graphql/AnimePageQuery'
 import { sendErrorToast } from '@/state/app'

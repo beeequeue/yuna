@@ -63,7 +63,7 @@ import {
   SearchQuery,
   SearchQuery_anime_results,
 } from '../../graphql/SearchQuery'
-import crIcon from '../../assets/crunchyroll.png'
+import crIcon from '../../assets/crunchyroll.webp'
 
 interface Result extends SearchQuery_anime_results {
   isOnCrunchyroll: boolean
