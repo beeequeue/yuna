@@ -21,6 +21,16 @@
     <strong>We're sorry but crunch doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
   </noscript>
   <div id="app"></div>
+
+  <script>
+    navigator.serviceWorker.register('service-worker.js', {
+      scope: './'
+    }).then(function(sw) {
+      console.log("Registered service worker!");
+    }).catch(function(err) {
+      console.log("Error registering service worker.", err);
+    });
+  </script>
   <!-- built files will be auto injected -->
 </body>
 

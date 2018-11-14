@@ -60,6 +60,7 @@ export default class SettingsDropdown extends Vue {
 
   public clearCache() {
     AnimeCache.clear()
+    caches.delete('images')
   }
 
   public openSettings() {
