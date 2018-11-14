@@ -143,7 +143,7 @@ export default class Queue extends Vue {
       .map(path<number>('info.id'))
       .forEach(id => addToQueue(this.$store, id))
 
-    const diff = queueBefore.length - this.queue.length
+    const diff = this.queue.length - queueBefore.length
 
     sendToast(this.$store, {
       type: 'success',
