@@ -6,7 +6,10 @@
     </h1>
 
     <transition>
-      <h2 v-if="!isFinalEpisode && isPlayerMaximized" class="text two-lines">
+      <h2
+        v-if="nextAiringEpisode != null && !isFinalEpisode && isPlayerMaximized"
+        class="text two-lines"
+      >
         The next episode airs in {{nextEpisodeDistanceString}}
         <br/>
         {{nextEpisodeDateString}}

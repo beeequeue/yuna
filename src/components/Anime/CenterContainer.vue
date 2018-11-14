@@ -4,6 +4,7 @@
     :id="id"
     :idMal="idMal"
     :rating="rating"
+    :nextAiringEpisode="nextAiringEpisode"
   />
 
   <description
@@ -16,6 +17,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
+import { AnimePageQuery_anime_nextAiringEpisode } from '@/graphql/AnimePageQuery'
 import Description from './Description.vue'
 import Info from './Info.vue'
 import Icon from '../Icon.vue'
@@ -29,6 +31,8 @@ export default class CenterContainer extends Vue {
   @Prop(Number) public id!: number | null
   @Prop(Number) public rating!: number | null
   @Prop(Number) public idMal!: number | null
+  @Prop(Object)
+  public nextAiringEpisode!: AnimePageQuery_anime_nextAiringEpisode | null
 }
 </script>
 

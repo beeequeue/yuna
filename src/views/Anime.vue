@@ -51,6 +51,7 @@
         :idMal="data.anime.idMal"
         :rating="data.anime.averageScore"
         :content="data.anime.description"
+        :nextAiringEpisode="data.anime.nextAiringEpisode"
         :blurDescription="getShouldBlurDescription(data)"
       />
 
@@ -99,6 +100,7 @@ import {
   AnimePageQuery,
   AnimePageQuery_anime_relations_edges,
   AnimePageQuery_anime_relations_edges_node,
+  AnimePageQuery_anime_mediaListEntry,
 } from '../graphql/AnimePageQuery'
 import { getSpoilerSettings } from '@/state/settings'
 
@@ -126,15 +128,17 @@ export default class Anime extends Vue {
       return false
     }
 
-    const settings = getSpoilerSettings(this.$store).anime
+    const progress = pathOr(0, ['progress'], this.getMediaListEntry(data))
+    const setting = getSpoilerSettings(this.$store).anime.description
     const shouldBlur =
-      this.getMediaListEntry(data).progress <
-      Math.ceil((data.anime.episodes as number) * 0.33)
+      progress < Math.ceil((data.anime.episodes as number) * 0.33)
 
-    return shouldBlur && settings.description
+    return shouldBlur && setting
   }
 
-  public getMediaListEntry(data: AnimePageQuery) {
+  public getMediaListEntry(
+    data: AnimePageQuery,
+  ): AnimePageQuery_anime_mediaListEntry | null {
     return pathOr(null, ['anime', 'mediaListEntry'], data)
   }
 

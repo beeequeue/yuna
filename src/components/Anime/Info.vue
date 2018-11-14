@@ -15,18 +15,28 @@
       {{malRating || '...'}}
     </span>
   </a>
+
+  <div
+    v-if="nextAiringEpisode"
+    class="item next-episode"
+    v-tooltip.top="nextEpisodeDateString"
+  >
+    New episode in {{nextEpisodeDistanceString}}
+  </div>
 </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { formatDistance, format } from 'date-fns'
 import { mdiChevronDown } from '@mdi/js'
 
 import malLogo from '@/assets/myanimelist.png'
 import alLogo from '@/assets/anilist.svg'
+import { AnimePageQuery_anime_nextAiringEpisode } from '@/graphql/AnimePageQuery'
 import { sendErrorToast } from '@/state/app'
-import Icon from '../Icon.vue'
 import { AnimeCache } from '@/lib/cache'
+import Icon from '../Icon.vue'
 
 @Component({
   components: { Icon },
@@ -35,6 +45,8 @@ export default class Info extends Vue {
   @Prop(Number) public id!: number | null
   @Prop(Number) public rating!: number | null
   @Prop(Number) public idMal!: number | null
+  @Prop(Object)
+  public nextAiringEpisode!: AnimePageQuery_anime_nextAiringEpisode | null
 
   $refs!: {
     content: HTMLElement
@@ -52,6 +64,21 @@ export default class Info extends Vue {
 
   public get malLink() {
     return `https://myanimelist.net/anime/${this.idMal}`
+  }
+
+  public get nextEpisodeDateString() {
+    if (!this.nextAiringEpisode) return null
+
+    return format(
+      this.nextAiringEpisode.airingAt * 1000,
+      'iiii, do MMM - kk:mm',
+    )
+  }
+
+  public get nextEpisodeDistanceString() {
+    if (!this.nextAiringEpisode) return null
+
+    return formatDistance(new Date(), this.nextAiringEpisode.airingAt * 1000)
   }
 
   public mounted() {
@@ -92,6 +119,11 @@ export default class Info extends Vue {
     align-items: center;
     color: $white;
     text-decoration: none;
+
+    &.next-episode {
+      font-weight: 600;
+      padding: 0 10px;
+    }
 
     & > .logo {
       position: relative;
