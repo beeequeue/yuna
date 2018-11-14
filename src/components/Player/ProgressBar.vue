@@ -51,7 +51,7 @@ export default class ProgressBar extends Vue {
   & > .played,
   & > .loaded {
     position: absolute;
-    top: 6px;
+    top: 7px;
     height: 8px;
     background: $highlight;
     pointer-events: none;
