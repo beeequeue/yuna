@@ -1,7 +1,7 @@
 <template>
 <div
   class="controls"
-  :class="{ visible }"
+  :class="{ visible: settingsOpen || visible }"
   @mousemove="goVisible"
   @click="goVisible"
   @mouseout="handleMouseLeave"
@@ -100,6 +100,12 @@
       </span>
     </transition>
 
+    <transition name="shrink">
+      <span v-if="isPlayerMaximized" class="settings button-collapser" :class="{ open: settingsOpen }">
+        <icon class="button" :icon="settingSvg" @click.native="toggleSettingsMenu"/>
+      </span>
+    </transition>
+
     <span v-if="!isFullscreen" class="maximize button-collapser">
       <transition name="fade">
         <icon v-if="!isPlayerMaximized" key="max" class="button" :icon="maximizeSvg" @click.native="maximizePlayer"/>
@@ -114,6 +120,21 @@
       </transition>
     </span>
   </div>
+
+  <transition>
+    <div v-if="settingsOpen" class="settings-menu">
+      <label>
+        Speed:
+        <select  @input="onChangeSpeed" :value="speed">
+          <option :value="0.25">0.25x</option>
+          <option :value="0.5">0.5x</option>
+          <option :value="1">1x</option>
+          <option :value="1.5">1.5x</option>
+          <option :value="2">2x</option>
+        </select>
+      </label>
+    </div>
+  </transition>
 </div>
 </template>
 
@@ -130,16 +151,18 @@ import {
   mdiBookmarkRemove,
   mdiSkipNext,
   mdiSkipPrevious,
+  mdiSettingsOutline,
 } from '@mdi/js'
 
-import { Episode } from '@/types'
 import {
   getIsFullscreen,
   toggleFullscreen,
   ListEntry,
   setCurrentEpisode,
 } from '@/state/app'
+import { Episode } from '@/types'
 import { prop, secondsToTimeString } from '@/utils'
+
 import Icon from '../Icon.vue'
 import ProgressBar from './ProgressBar.vue'
 import VolumeSlider from './VolumeSlider.vue'
@@ -171,6 +194,8 @@ export default class Controls extends Vue {
   public progressPercentage!: number
   @Prop(prop(Number, true))
   public loadedPercentage!: number
+  @Prop(prop(Number, true))
+  public speed!: number
   @Prop(prop(Function, true))
   public play!: () => void
   @Prop(prop(Function, true))
@@ -182,10 +207,15 @@ export default class Controls extends Vue {
   @Prop(prop(Function, true))
   public onToggleMute!: (e: Event) => void
   @Prop(prop(Function, true))
+  public onChangeSpeed!: (e: Event) => void
+  @Prop(prop(Function, true))
   public setProgress!: (progress: number) => any
 
-  public visible = false
+  public settingsOpen = false
+  public visible = this.settingsOpen || false
   public visibleTimeout: number | null = null
+
+  public settingSvg = mdiSettingsOutline
 
   public get timeString() {
     const current = secondsToTimeString(
@@ -212,6 +242,10 @@ export default class Controls extends Vue {
   public fullscreenExitSvg = mdiFullscreenExit
 
   private clickTimeout: number | null = null
+
+  public toggleSettingsMenu() {
+    this.settingsOpen = !this.settingsOpen
+  }
 
   public debounceCoverClick() {
     this.handleCoverClick()
@@ -346,6 +380,37 @@ $buttonSize: 50px;
     opacity: 1;
     cursor: default;
   }
+
+  & .settings-menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 75px;
+    right: 0;
+    padding: 10px 15px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    background: rgba(0, 0, 0, 0.85);
+    transition: transform 0.35s;
+
+    & label {
+      font-weight: 500;
+    }
+
+    & select {
+      margin-left: 5px;
+      background: $main;
+      border: none;
+      color: $white;
+      padding: 3px;
+    }
+
+    &.v-enter,
+    &.v-leave-to {
+      transform: translateX(100%);
+    }
+  }
 }
 
 .toolbar {
@@ -454,6 +519,14 @@ $buttonSize: 50px;
     &.v-leave-to {
       opacity: 0;
       transform: scale(0.5);
+    }
+  }
+
+  & .settings {
+    transition: transform 0.35s;
+
+    &.open {
+      transform: rotate(-50deg);
     }
   }
 }

@@ -63,7 +63,6 @@ export default class PlayerContainer extends Vue {
     const pathWithoutSlash = this.$route.path.substr(1)
 
     switch (pathWithoutSlash) {
-      case 'login':
       case 'queue':
       case 'player-big':
       case 'player-full':
@@ -115,17 +114,9 @@ $anim-speed: 0.5s;
   }
 }
 
-.login {
-  opacity: 0;
-
-  & * {
-    pointer-events: none !important;
-  }
-}
-
 .queue {
-  max-height: 170px;
-  max-width: 300px;
+  max-height: 183px;
+  max-width: 325px;
   right: 0;
   bottom: 0;
 }

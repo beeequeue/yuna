@@ -20,11 +20,8 @@
     </transition>
 
     <transition name="fade">
-      <span class="loading-spinner">
-        <icon
-          v-if="loading"
-          :icon="loadingSvg"
-        />
+      <span v-if="loading" class="loading-spinner">
+        <icon :icon="loadingSvg"/>
       </span>
     </transition>
 
@@ -42,9 +39,11 @@
       :progressPercentage="progressPercentage"
       :progressInSeconds="progressInSeconds"
       :loadedPercentage="loadedPercentage"
+      :speed="speed"
       :onSetTime="onSetTime"
       :onSetVolume="onSetVolume"
       :onToggleMute="onToggleMute"
+      :onChangeSpeed="onChangeSpeed"
       :play="play"
       :pause="pause"
       :setProgress="setProgress"
@@ -115,6 +114,7 @@ export default class Player extends Vue {
   public paused = true
   public muted = !!localStorage.getItem('muted')
   public volume = Number(localStorage.getItem('volume') || 75)
+  public speed = Number(localStorage.getItem('speed') || 1)
   public progressPercentage = 0
   public progressInSeconds = 0
   public loadedSeconds = 0
@@ -245,6 +245,13 @@ export default class Player extends Vue {
     this.muted = !this.muted
 
     localStorage.setItem('muted', this.muted.toString())
+  }
+
+  public onChangeSpeed(e: Event) {
+    const { value } = e.target as HTMLSelectElement
+
+    this.speed = Number(value)
+    this.$refs.player.playbackRate = this.speed
   }
 
   public onKeyDown(e: KeyboardEvent) {
