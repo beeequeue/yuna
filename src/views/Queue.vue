@@ -48,7 +48,12 @@
       />
 
       <c-button
-        content="Backup Queue"
+        content="Import Exported Queue"
+        :click="importQueueFromBackup"
+      />
+
+      <c-button
+        content="Export Queue"
         :click="exportQueue"
       />
 
@@ -66,9 +71,9 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import Draggable from 'vuedraggable'
-import { shell } from 'electron'
-import { api } from 'electron-util'
-import { writeFileSync, mkdirSync, existsSync } from 'fs'
+import { shell, remote } from 'electron'
+import { api, activeWindow } from 'electron-util'
+import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'fs'
 import { resolve } from 'path'
 import { complement, path } from 'rambda'
 import { mdiPlaylistRemove, mdiPause, mdiPlay, mdiClockOutline } from '@mdi/js'
@@ -94,6 +99,8 @@ import Modal from '../components/Modal.vue'
 @Component({ components: { Draggable, CButton, QueueItem, Modal } })
 export default class Queue extends Vue {
   public isAnilistImportModalOpen = false
+  private defaultBackupPath = resolve(api.app.getPath('userData'), 'backups')
+  private jsonFilter = { extensions: ['json'], name: '*' }
 
   public draggableOptions = {
     animation: 150,
@@ -206,25 +213,64 @@ export default class Queue extends Vue {
   }
 
   public exportQueue() {
-    const folderPath = resolve(api.app.getPath('userData'), 'backups')
     const filePath = resolve(
-      folderPath,
+      this.defaultBackupPath,
       `queue-${getAnilistUsername(this.$store)}-${Date.now()}.json`,
     )
 
-    if (!existsSync(folderPath)) {
-      mkdirSync(folderPath)
+    if (!existsSync(this.defaultBackupPath)) {
+      mkdirSync(this.defaultBackupPath)
+
+      writeFileSync(filePath, JSON.stringify(this.queue))
     }
 
-    writeFileSync(filePath, JSON.stringify(this.queue))
+    const savePath: string | null = remote.dialog.showSaveDialog(
+      activeWindow(),
+      {
+        title: 'Export Queue...',
+        buttonLabel: 'Export',
+        defaultPath: filePath,
+        showsTagField: false,
+        filters: [this.jsonFilter],
+      },
+    )
+
+    if (!savePath) return
+
+    writeFileSync(savePath, JSON.stringify(this.queue))
 
     sendToast(this.$store, {
       type: 'success',
       title: 'Exported Queue!',
       message: `Click this to see the file!`,
       timeout: 6000,
-      click: () => shell.showItemInFolder(filePath),
+      click: () => shell.showItemInFolder(savePath),
     })
+  }
+
+  public importQueueFromBackup() {
+    const openPaths: string[] | null = remote.dialog.showOpenDialog({
+      title: 'Import Backup...',
+      buttonLabel: 'Import',
+      defaultPath: this.defaultBackupPath,
+      filters: [this.jsonFilter],
+      properties: ['openFile'],
+    })
+
+    if (!openPaths || openPaths.length < 1) return
+    const openPath = openPaths[0]
+
+    try {
+      const data = JSON.parse(readFileSync(openPath).toString())
+
+      if (typeof data !== 'object' || !Array.isArray(data)) throw new Error()
+
+      if (data.some(item => typeof item !== 'number')) throw new Error()
+
+      data.forEach(id => addToQueue(this.$store, id))
+    } catch (err) {
+      sendErrorToast(this.$store, 'Could not parse backup file!')
+    }
   }
 
   public clearQueue() {
@@ -243,7 +289,7 @@ export default class Queue extends Vue {
 .container {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr 300px;
+  grid-template-columns: 1fr 325px;
   grid-template-rows: 1fr 170px;
   grid-template-areas:
     'queue sidebar'

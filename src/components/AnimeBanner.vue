@@ -39,6 +39,7 @@ export default class AnimeBanner extends Vue {
   display: inline-block;
   position: relative;
   height: 75px;
+  background: black;
 
   & > .image {
     object-fit: cover;
