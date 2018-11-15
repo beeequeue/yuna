@@ -1,0 +1,16 @@
+query PlanningQuery($userId: Int!) {
+  listCollection: MediaListCollection(
+    userId: $userId
+    status_in: [PLANNING]
+    type: ANIME
+  ) {
+    lists {
+      isCustomList
+      entries {
+        info: media {
+          id
+        }
+      }
+    }
+  }
+}

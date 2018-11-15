@@ -26,13 +26,25 @@
 
       <c-button
         content="Import Watching from List"
-        :click="importQueueFromAnilist"
+        :icon="currentSvg"
+        :click="importWatching"
+      />
+
+      <c-button
+        content="Import Random from Planning"
+        :icon="planningSvg"
+        :click="importRandomFromPlanning"
+      />
+
+      <c-button
+        content="Import Random from Paused"
+        :icon="pausedSvg"
+        :click="importRandomFromPaused"
       />
 
       <c-button
         content="Import from Crunchyroll"
         disabled
-        :click="sendNotImplementedToast"
       />
 
       <c-button
@@ -59,27 +71,29 @@ import { api } from 'electron-util'
 import { writeFileSync, mkdirSync, existsSync } from 'fs'
 import { resolve } from 'path'
 import { complement, path } from 'rambda'
-import { mdiPlaylistRemove } from '@mdi/js'
+import { mdiPlaylistRemove, mdiPause, mdiPlay, mdiClockOutline } from '@mdi/js'
 
-import QueueItem from '../components/QueueItem.vue'
-import CButton from '../components/CButton.vue'
-import { getQueue, setQueue, addToQueue } from '../state/user'
+import { getQueue, setQueue, addToQueue } from '@/state/user'
 import {
   sendNotImplementedToast,
   getCurrentEpisode,
   sendErrorToast,
   sendToast,
 } from '@/state/app'
-import { watchingQuery } from '@/graphql/query'
+import { watchingQuery, planningQuery, pausedQuery } from '@/graphql/query'
 import { getAnilistUserId, getAnilistUsername } from '@/state/auth'
 import {
   WatchingQuery_listCollection_lists_entries,
   WatchingQuery_listCollection_lists,
 } from '@/graphql/WatchingQuery'
 
-@Component({ components: { Draggable, QueueItem, CButton } })
+import CButton from '../components/CButton.vue'
+import QueueItem from '../components/QueueItem.vue'
+import Modal from '../components/Modal.vue'
+
+@Component({ components: { Draggable, CButton, QueueItem, Modal } })
 export default class Queue extends Vue {
-  public clearListSvg = mdiPlaylistRemove
+  public isAnilistImportModalOpen = false
 
   public draggableOptions = {
     animation: 150,
@@ -89,6 +103,11 @@ export default class Queue extends Vue {
   public $refs!: {
     queue: HTMLDivElement
   }
+
+  public currentSvg = mdiPlay
+  public planningSvg = mdiClockOutline
+  public pausedSvg = mdiPause
+  public clearListSvg = mdiPlaylistRemove
 
   public get anilistUserId() {
     return getAnilistUserId(this.$store)
@@ -106,15 +125,15 @@ export default class Queue extends Vue {
     setQueue(this.$store, value)
   }
 
-  public async importQueueFromAnilist() {
+  public async importFromQuery(
+    query: typeof watchingQuery | typeof planningQuery | typeof pausedQuery,
+    random: boolean = false,
+  ) {
     if (!this.anilistUserId) return
 
     const queueBefore = [...this.queue]
 
-    const { data, errors } = await watchingQuery(
-      this.$apollo,
-      this.anilistUserId,
-    )
+    const { data, errors } = await query(this.$apollo, this.anilistUserId)
 
     const lists = path<WatchingQuery_listCollection_lists[] | null>(
       'listCollection.lists',
@@ -135,28 +154,55 @@ export default class Queue extends Vue {
     if (errors || !entries || entries.length < 1) {
       return sendErrorToast(
         this.$store,
-        "Couldn't find any current or repeating shows in your list!",
+        "Couldn't find any applicable shows in your List!",
       )
     }
 
-    entries
-      .map(path<number>('info.id'))
-      .forEach(id => addToQueue(this.$store, id))
+    const ids = entries.map(path<number>('info.id'))
+
+    if (random) {
+      const randomIdx = Math.floor(Math.random() * ids.length)
+      addToQueue(this.$store, ids[randomIdx])
+    } else {
+      ids.forEach(id => addToQueue(this.$store, id))
+    }
 
     const diff = this.queue.length - queueBefore.length
 
-    sendToast(this.$store, {
-      type: 'success',
-      title: `Imported ${diff} show${diff === 1 ? '' : 's'} into the Queue!`,
-      message: '',
-    })
+    if (diff < 1) {
+      return sendToast(this.$store, {
+        type: 'error',
+        title: "Couldn't find any applicable shows in your List!",
+        message: "At least none that aren't already in the Queue",
+      })
+    }
 
-    if (diff > 0) {
+    if (!random) {
+      sendToast(this.$store, {
+        type: 'success',
+        title: `Imported ${diff} show${diff === 1 ? '' : 's'} into the Queue!`,
+        message: '',
+      })
+    }
+
+    setTimeout(() => {
       this.$refs.queue.scrollTo({
         top: 100000,
         behavior: 'smooth',
       })
-    }
+    }, 0)
+  }
+
+  public async importWatching() {
+    this.importFromQuery(watchingQuery)
+  }
+
+  public async importRandomFromPlanning() {
+    this.importFromQuery(planningQuery, true)
+  }
+
+  public async importRandomFromPaused() {
+    this.importFromQuery(pausedQuery, true)
   }
 
   public exportQueue() {

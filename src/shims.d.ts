@@ -14,7 +14,8 @@ declare module '*.webp' {
 }
 
 declare module '*.graphql' {
-  const content: any
+  import { DocumentNode } from 'graphql'
+  const content: DocumentNode
   export default content
 }
 
