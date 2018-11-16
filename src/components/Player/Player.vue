@@ -112,7 +112,7 @@ export default class Player extends Vue {
   public loaded = false
   public loading = false
   public paused = true
-  public muted = !!localStorage.getItem('muted')
+  public muted = localStorage.getItem('muted') === 'true'
   public volume = Number(localStorage.getItem('volume') || 75)
   public speed = Number(localStorage.getItem('speed') || 1)
   public progressPercentage = 0
