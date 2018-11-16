@@ -198,10 +198,15 @@ export default class Episodes extends Vue {
   public async fetchEpisodes() {
     if (this.fetched || !this.idMal) return
 
+    const { idMal, nextAiringEpisode } = this
+
     try {
       this.fetched = true
 
-      this.episodes = await AnimeCache.getSeasonFromMalId(this.idMal)
+      this.episodes = await AnimeCache.getSeasonFromMalId({
+        idMal,
+        nextAiringEpisode,
+      })
 
       this.loading = false
 

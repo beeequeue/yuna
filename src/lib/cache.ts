@@ -1,32 +1,47 @@
 import Store from 'electron-store'
 
 import { fetchEpisodesOfSeries, fetchRating } from '@/lib/myanimelist'
-import { Anime, Episode } from '@/types'
+import { Episode } from '@/types'
 
 interface SeasonCacheSchema {
   [key: string]: {
     updatedAt: number
     episodes: Episode[]
     rating: string | null
+    nextEpisodeAt: number | null
   }
 }
 
-interface AnimeCacheSchema {
-  [key: string]: Anime
-}
-
 const seasonCache = new Store<SeasonCacheSchema>({ name: 'seasonCache' })
-const animeCache = new Store<AnimeCacheSchema>({ name: 'animeCache' })
 
 const DAY = 1000 * 60 * 60 * 24
 const WEEK = DAY * 7
 
-const isStale = ({ updatedAt }: { updatedAt: number }, time: number) => {
-  return updatedAt + time < Date.now()
+interface IsStaleOptions {
+  updatedAt: number
+  nextEpisodeAt: number | null
+}
+
+const isStale = (
+  { updatedAt, nextEpisodeAt }: IsStaleOptions,
+  time: number,
+) => {
+  const normalStale = updatedAt + time < Date.now()
+  const newEpisodeCameOut = (nextEpisodeAt || Infinity) < Date.now()
+
+  return newEpisodeCameOut || normalStale
+}
+
+interface GetSeasonOptions {
+  idMal: number
+  nextAiringEpisode: { timeUntilAiring: number } | null
 }
 
 export class AnimeCache {
-  public static async getSeasonFromMalId(idMal: number): Promise<Episode[]> {
+  public static async getSeasonFromMalId({
+    idMal,
+    nextAiringEpisode,
+  }: GetSeasonOptions): Promise<Episode[]> {
     const hit = seasonCache.get(idMal.toString())
 
     if (!hit || isStale(hit, DAY)) {
@@ -38,9 +53,14 @@ export class AnimeCache {
         throw new Error(e)
       }
 
+      const nextEpisodeAt =
+        nextAiringEpisode &&
+        Date.now() + nextAiringEpisode.timeUntilAiring * 1000
+
       seasonCache.set(idMal.toString(), {
         updatedAt: Date.now(),
         episodes,
+        nextEpisodeAt,
       })
 
       return episodes
@@ -64,7 +84,6 @@ export class AnimeCache {
   }
 
   public static clear() {
-    animeCache.clear()
     seasonCache.clear()
   }
 
