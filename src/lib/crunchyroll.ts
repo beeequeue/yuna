@@ -246,7 +246,6 @@ const mediaFields = [
   'media.series_name',
   'media.collection_id',
   'media.url',
-  'media.stream_data',
 ]
 
 export const login = async (username: string, password: string) => {
