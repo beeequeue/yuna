@@ -29,7 +29,6 @@
     <progress-bar
       :duration="episode.duration"
       :progressPercentage="progressPercentage"
-      :progressInSeconds="progressInSeconds"
       :loadedPercentage="loadedPercentage"
       :onSetTime="onSetTime"
     />

@@ -1,23 +1,21 @@
 <template>
-<div class="progress" @mousemove="handleMouseOver" @mouseleave="hovering = false">
-  <div
-    class="played"
-    :style="{ left: 0, right: (100 - progressPercentage * 100) + '%' }"
-  />
-
-  <input
-    type="range"
-    min="0"
-    :max="duration"
-    :value="publicProgress"
-    @mousedown="handleMouseDown"
-    @mouseup="handleMouseUp"
-    @input.prevent="handleChange"
-  />
+<div
+  class="progress"
+  ref="progressBar"
+  @mousemove="handleMouseOver"
+  @mouseleave="hovering = false"
+  @mousedown="handleClick"
+>
+  <div class="background"/>
 
   <div
     class="loaded"
-    :style="{ left: (progressPercentage * 100) + '%', right: (100 - loadedPercentage * 100) + '%' }"
+    :style="{ left: (progressPercentage * 100 - 1.5) + '%', right: (100 - loadedPercentage * 100) + '%' }"
+  />
+
+  <div
+    class="played"
+    :style="{ right: (100 - progressPercentage * 100) + '%' }"
   />
 
   <div
@@ -29,22 +27,24 @@
 
 </template>
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import { secondsToTimeString } from '@/utils'
 
 @Component
 export default class ProgressBar extends Vue {
   @Prop(Number) public duration!: number
-  @Prop(Number) public progressInSeconds!: number
   @Prop(Number) public progressPercentage!: number
   @Prop(Number) public loadedPercentage!: number
-  @Prop(Function) public onSetTime!: (e: Event) => void
+  @Prop(Function) public onSetTime!: (value: number) => void
 
   public hovering = false
   public mousePosition = 0
 
-  public publicProgress = this.progressInSeconds
   public shouldUpdateProgress = true
+
+  $refs!: {
+    progressBar: HTMLInputElement
+  }
 
   public get tooltip() {
     return {
@@ -60,27 +60,21 @@ export default class ProgressBar extends Vue {
 
   public handleMouseOver(e: MouseEvent) {
     this.hovering = true
-    this.mousePosition = e.pageX / window.outerWidth
+    this.mousePosition = e.layerX / this.$refs.progressBar.clientWidth
   }
 
   public handleMouseDown() {
     this.shouldUpdateProgress = false
   }
 
-  public handleChange(e: any) {
-    this.onSetTime(e)
-    this.publicProgress = e.target.value
+  public handleClick() {
+    const newProgress = Math.round(this.mousePosition * this.duration)
+
+    this.onSetTime(newProgress)
   }
 
   public handleMouseUp() {
     this.shouldUpdateProgress = true
-  }
-
-  @Watch('progressInSeconds')
-  public updatePublicProgress() {
-    if (!this.shouldUpdateProgress) return
-
-    this.publicProgress = this.progressInSeconds
   }
 }
 </script>
@@ -93,40 +87,32 @@ export default class ProgressBar extends Vue {
   top: -15px;
   left: 0;
   width: 100%;
+  padding: 6px 0;
   z-index: 1;
 
-  & > input {
+  & > .background {
     width: 100%;
     height: 8px;
+    background: rgba(0.25, 0.25, 0.25, 0.5);
   }
 
   & > .played,
   & > .loaded {
     position: absolute;
-    top: 7px;
+    top: 6px;
     height: 8px;
     background: $highlight;
     pointer-events: none;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+  }
+
+  & > .played {
+    left: 0;
   }
 
   & > .loaded {
     background: rgba(255, 255, 255, 0.35);
-  }
-
-  & > input[type='range'] {
-    -webkit-appearance: none;
-    background: rgba(0.25, 0.25, 0.25, 0.5);
-
-    &::-webkit-slider-thumb {
-      position: relative;
-      -webkit-appearance: none;
-      height: 25px;
-      width: 25px;
-      border-radius: 100%;
-      background: $highlight;
-      z-index: 1;
-      margin-top: -2px;
-    }
   }
 
   & > .time-tooltip {

@@ -226,10 +226,8 @@ export default class Player extends Vue {
     this.updateProgressIfNecessary()
   }
 
-  public onSetTime(e: Event) {
-    const element = e.target as HTMLInputElement
-
-    this.$refs.player.currentTime = Number(element.value)
+  public onSetTime(value: number) {
+    this.$refs.player.currentTime = value
   }
 
   public onSetVolume(e: Event) {
