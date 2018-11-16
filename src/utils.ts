@@ -93,3 +93,6 @@ export const createBothSessions = async (
 }
 
 export const hasKey = (obj: any, value: any) => Object.keys(obj).includes(value)
+
+export const clamp = (x: number, min: number, max: number) =>
+  Math.max(min, Math.min(x, max))

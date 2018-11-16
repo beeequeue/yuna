@@ -85,7 +85,7 @@ import {
 } from '@/state/app'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
 import { Episode } from '@/types'
-import { prop } from '@/utils'
+import { prop, clamp } from '@/utils'
 
 import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
@@ -113,7 +113,7 @@ export default class Player extends Vue {
   public loading = false
   public paused = true
   public muted = localStorage.getItem('muted') === 'true'
-  public volume = Number(localStorage.getItem('volume') || 75)
+  public volume = Number(localStorage.getItem('volume') || 0.7)
   public speed = Number(localStorage.getItem('speed') || 1)
   public progressPercentage = 0
   public progressInSeconds = 0
@@ -124,6 +124,9 @@ export default class Player extends Vue {
   private lastScrobble = 0
 
   public hls = new Hls()
+
+  // Volume
+  private gainNode: GainNode | null = null
 
   public playCircleSvg = mdiPlayCircle
   public loadingSvg = mdiLoading
@@ -140,8 +143,8 @@ export default class Player extends Vue {
         this.paused ? this.play() : this.pause(),
       [KeybindingAction.SKIP_BACK]: () => this.skipBySeconds(-5),
       [KeybindingAction.SKIP_FORWARD]: () => this.skipBySeconds(5),
-      [KeybindingAction.VOLUME_DOWN]: () => this.increaseVolume(-10),
-      [KeybindingAction.VOLUME_UP]: () => this.increaseVolume(10),
+      [KeybindingAction.VOLUME_DOWN]: () => this.increaseVolume(-0.1),
+      [KeybindingAction.VOLUME_UP]: () => this.increaseVolume(0.1),
       [KeybindingAction.TOGGLE_MUTED]: () => this.onToggleMute(),
       [KeybindingAction.TOGGLE_FULLSCREEN]: () => this.toggleFullscreen(),
     }
@@ -163,6 +166,16 @@ export default class Player extends Vue {
 
   public mounted() {
     this.onNewEpisode()
+
+    const audioContext = new AudioContext()
+    this.gainNode = audioContext.createGain()
+    this.gainNode.gain.value = this.volume
+
+    audioContext
+      .createMediaElementSource(this.$refs.player)
+      .connect(this.gainNode)
+
+    this.gainNode.connect(audioContext.destination)
   }
 
   public registerEvents() {
@@ -231,12 +244,16 @@ export default class Player extends Vue {
   }
 
   public onSetVolume(e: Event) {
+    if (!this.gainNode) return
+
     const element = e.target as HTMLInputElement
 
-    this.volume = Number(element.value)
-    localStorage.setItem('volume', element.value)
+    const value = clamp(+Number(element.value).toFixed(2), 0, 2)
 
-    this.$refs.player.volume = Number(element.value) / 100
+    this.volume = value
+    localStorage.setItem('volume', value.toString())
+
+    this.gainNode.gain.value = value
   }
 
   public onToggleMute() {
@@ -257,9 +274,9 @@ export default class Player extends Vue {
   }
 
   public onScroll(e: WheelEvent) {
-    const direction = e.deltaY / -100
+    const direction = Math.sign(-e.deltaY)
 
-    this.increaseVolume(10 * direction)
+    this.increaseVolume(direction / 10)
   }
 
   @Watch('episode')

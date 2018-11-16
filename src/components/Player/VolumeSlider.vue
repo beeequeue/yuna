@@ -8,16 +8,24 @@
 
     <span class="slider-container" :class="{ open }">
       <input
+        :class="{ red: volume >= 2 }"
         type="range"
         min="0"
-        max="100"
-        :value="volume"
+        max="1"
+        step="0.01"
+        :value="clampedVolume"
         @input="onChange"
       />
 
       <span
         class="filler"
-        :style="{ width: volume + '%' }"
+        :style="{ width: clampedVolume * 100 + '%' }"
+      />
+
+      <span
+        v-if="volume > 1"
+        class="filler red"
+        :style="{ width: (volume - 1) * 100 + '%' }"
       />
     </span>
   </div>
@@ -44,6 +52,10 @@ export default class VolumeSlider extends Vue {
 
   public volumeHighSvg = mdiVolumeHigh
   public mutedSvg = mdiVolumeMute
+
+  public get clampedVolume() {
+    return Math.min(this.volume, 1)
+  }
 }
 </script>
 
@@ -100,6 +112,11 @@ export default class VolumeSlider extends Vue {
         border-radius: 100%;
         background: $white;
         z-index: 1;
+        transition: background 0.15s;
+      }
+
+      &.red::-webkit-slider-thumb {
+        background: $danger;
       }
     }
 
@@ -108,6 +125,10 @@ export default class VolumeSlider extends Vue {
       background: $white;
       height: 4px;
       pointer-events: none;
+
+      &.red {
+        background: $danger;
+      }
     }
   }
 
