@@ -17,7 +17,7 @@
     </transition>
 
     <transition>
-      <div v-if="isPlayerMaximized" class="scores-container">
+      <div v-if="isFinalEpisode && isPlayerMaximized" class="scores-container">
         <div
           v-for="(s, index) in scores"
           :key="index"
