@@ -1,55 +1,48 @@
 <template>
 <transition>
-  <div class="end-of-season-container">
+  <div class="end-of-season-container" :class="{ small: !isPlayerMaximized }">
     <h1 class="text">
       {{endMessage}}
     </h1>
 
-    <transition>
-      <h2
-        v-if="nextAiringEpisode != null && !isFinalEpisode && isPlayerMaximized"
-        class="text two-lines"
+    <h2
+      v-if="!isFinalEpisode"
+      class="text two-lines"
+    >
+      The next episode airs in {{nextEpisodeDistanceString}}
+      <br/>
+      {{nextEpisodeDateString}}
+    </h2>
+
+    <div v-if="isFinalEpisode" class="scores-container">
+      <div
+        v-for="(s, index) in scores"
+        :key="index"
+        class="score"
+        @click="updateScore(s)"
       >
-        The next episode airs in {{nextEpisodeDistanceString}}
-        <br/>
-        {{nextEpisodeDateString}}
-      </h2>
-    </transition>
-
-    <transition>
-      <div v-if="isFinalEpisode && isPlayerMaximized" class="scores-container">
-        <div
-          v-for="(s, index) in scores"
-          :key="index"
-          class="score"
-          @click="updateScore(s)"
-        >
-          <icon
-            v-if="listEntry.score >= s"
-            :icon="starSvg"
-          />
-          <icon
-            v-else
-            :icon="hollowStarSvg"
-          />
-        </div>
+        <icon
+          v-if="listEntry.score >= s"
+          :icon="starSvg"
+        />
+        <icon
+          v-else
+          :icon="hollowStarSvg"
+        />
       </div>
-    </transition>
+    </div>
 
-    <transition>
-      <div class="sequel-container">
-        <h1 class="text">Sequel{{sequels.length > 1 ? 's' : ''}}:</h1>
+    <div v-if="isFinalEpisode" class="sequel-container">
+      <h1 class="text">Sequel{{sequels.length > 1 ? 's' : ''}}:</h1>
 
-        <div
-          v-for="sequel in sequels"
-          v-if="isFinalEpisode && isPlayerMaximized"
-          :key="sequel.id"
-          class="sequel"
-        >
-          <anime-banner class="banner" :anime="sequel"/>
-        </div>
+      <div
+        v-for="sequel in sequels"
+        :key="sequel.id"
+        class="sequel"
+      >
+        <anime-banner class="banner" :anime="sequel"/>
       </div>
-    </transition>
+    </div>
   </div>
 </transition>
 </template>
@@ -146,6 +139,25 @@ export default class EndOfSeasonOverlay extends Vue {
   align-items: center;
   pointer-events: none;
   user-select: none;
+  overflow: hidden;
+  transition: top 0.5s, height 0.5s, transform 0.5s;
+
+  & > * {
+    transition: opacity 0.5s;
+    flex-shrink: 0;
+  }
+
+  &.small {
+    top: 50%;
+    height: 25px;
+    transform: translateY(-50%);
+    justify-content: flex-start;
+
+    & > *:not(.text) {
+      transition: opacity 0s;
+      opacity: 0;
+    }
+  }
 
   & .text {
     height: 35px;
@@ -214,12 +226,6 @@ export default class EndOfSeasonOverlay extends Vue {
         margin-right: 0;
       }
     }
-
-    &.v-enter,
-    &.v-leave-to {
-      height: 0;
-      opacity: 0;
-    }
   }
 
   & > .sequel-container {
@@ -264,20 +270,6 @@ export default class EndOfSeasonOverlay extends Vue {
         overflow: hidden;
         border-radius: 5px;
         filter: drop-shadow(1px 2px 5px rgba(0, 0, 0, 0.5));
-      }
-
-      &.v-enter-active {
-        transition: opacity 0.5s, height 0.25s;
-      }
-
-      &.v-leave-active {
-        transition: opacity 0.25s, height 0.5s;
-      }
-
-      &.v-enter,
-      &.v-leave-to {
-        height: 0;
-        opacity: 0;
       }
     }
   }
