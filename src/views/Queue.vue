@@ -94,9 +94,8 @@ import {
 
 import CButton from '../components/CButton.vue'
 import QueueItem from '../components/QueueItem.vue'
-import Modal from '../components/Modal.vue'
 
-@Component({ components: { Draggable, CButton, QueueItem, Modal } })
+@Component({ components: { Draggable, CButton, QueueItem } })
 export default class Queue extends Vue {
   public isAnilistImportModalOpen = false
   private defaultBackupPath = resolve(api.app.getPath('userData'), 'backups')
