@@ -1,23 +1,47 @@
-import { autoUpdater } from 'electron-updater'
+import { ipcMain } from 'electron'
+import { activeWindow } from 'electron-util'
 import log from 'electron-log'
+import { autoUpdater } from 'electron-updater'
+
+import {
+  DOWNLOAD_UPDATE,
+  UPDATE_AVAILABLE,
+  UPDATE_DOWNLOADED,
+  UPDATE_ERROR,
+  CHECK_FOR_UPDATES,
+} from './messages'
 
 log.transports.file.level = 'debug'
 autoUpdater.logger = log
 autoUpdater.allowPrerelease = true
+autoUpdater.autoDownload = false
+autoUpdater.autoInstallOnAppQuit = false
 
 const timeBetweenUpdateChecks = 30 * 60 * 1000
 let mainWindow: Electron.BrowserWindow
+let updateInterval: NodeJS.Timer | null = null
 
 const setAllProgressBars = (progress: number) => {
   mainWindow.setProgressBar(progress)
 }
 
-export const initCheckForUpdates = (window: Electron.BrowserWindow) => {
+export const initAutoUpdater = () => {
+  mainWindow = activeWindow()
+
+  ipcMain.on(DOWNLOAD_UPDATE, () => {
+    autoUpdater.downloadUpdate()
+    autoUpdater.autoInstallOnAppQuit = true
+  })
+
+  ipcMain.on(CHECK_FOR_UPDATES, () => {
+    initCheckForUpdates()
+  })
+}
+
+const initCheckForUpdates = () => {
   autoUpdater.checkForUpdates()
 
-  mainWindow = window
-
-  setTimeout(() => {
+  updateInterval = setInterval(() => {
     autoUpdater.checkForUpdates()
   }, timeBetweenUpdateChecks)
 }
@@ -26,13 +50,9 @@ const sendMessage = (message: string) => {
   mainWindow.webContents.send(message)
 }
 
-const setIsUpdateAvailable = (available: boolean) => {
-  sendMessage(available ? 'UPDATE_AVAILABLE' : 'UPDATE_UNAVAILABLE')
-}
-
 autoUpdater.on('update-available', () => {
-  log.info('found update!')
-  setIsUpdateAvailable(true)
+  clearInterval(updateInterval as any)
+  sendMessage(UPDATE_AVAILABLE)
 })
 
 autoUpdater.signals.progress(progress => {
@@ -40,17 +60,16 @@ autoUpdater.signals.progress(progress => {
 })
 
 autoUpdater.signals.updateDownloaded(() => {
-  log.info('downloaded update')
   setAllProgressBars(-1)
 
-  sendMessage('UPDATE_DONE')
-  autoUpdater.autoInstallOnAppQuit = true
+  sendMessage(UPDATE_DOWNLOADED)
 })
 
 autoUpdater.on('error', info => {
   log.error(info)
 
-  sendMessage('UPDATE_ERROR')
+  clearInterval(updateInterval as any)
+  sendMessage(UPDATE_ERROR)
 
   setAllProgressBars(-1)
 })

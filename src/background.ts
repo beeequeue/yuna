@@ -1,5 +1,3 @@
-'use strict'
-
 import { app, BrowserWindow, protocol } from 'electron'
 import electronDebug from 'electron-debug'
 import * as path from 'path'
@@ -8,7 +6,8 @@ import {
   createProtocol,
   installVueDevtools,
 } from 'vue-cli-plugin-electron-builder/lib'
-import { initCheckForUpdates } from './updater'
+
+import { initAutoUpdater } from './updater'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 if (isDevelopment) {
@@ -39,9 +38,7 @@ function createMainWindow() {
     },
   })
 
-  if (process.env.NODE_ENV === 'production') {
-    setTimeout(() => initCheckForUpdates(window), 2500)
-  }
+  initAutoUpdater()
 
   if (isDevelopment) {
     // Load the url of the dev server if in development mode

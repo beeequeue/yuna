@@ -1,6 +1,24 @@
 <template>
 <div class="container">
   <div class="settings">
+    <section class="category" id="updates">
+      <h1>Updates</h1>
+
+      <checkbox
+        setting="auto-update"
+        text="Automatically update the program."
+        :checked="settings.autoUpdate"
+        :onChange="checked => setSetting('autoUpdate', checked)"
+      />
+
+      <!-- <checkbox
+        setting="beta"
+        text="Install pre-releases (beta versions)."
+        :checked="settings.beta"
+        :onChange="checked => setSetting('beta', checked)"
+      /> -->
+    </section>
+
     <section class="category" id="spoilers">
       <h1>Spoiler Hiding</h1>
 

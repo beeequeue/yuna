@@ -34,6 +34,8 @@ interface SpoilerSettings {
 }
 
 export interface SettingsState {
+  autoUpdate: boolean
+  beta: boolean
   autoPlay: boolean
   autoMarkWatched: boolean
   keybindings: KeybingingSettings
@@ -64,15 +66,17 @@ const defaultBindings: KeybingingSettings = {
 
 const defaultSpoilers: SpoilerSettings = {
   anime: {
-    description: true,
+    description: false,
   },
   episode: {
-    name: true,
-    thumbnail: true,
+    name: false,
+    thumbnail: false,
   },
 }
 
 const initialState: SettingsState = {
+  autoUpdate: settingsStore.get('autoUpdate', true),
+  beta: settingsStore.get('beta', false),
   autoPlay: settingsStore.get('autoPlay', true),
   autoMarkWatched: settingsStore.get('autoMarkWatched', true),
   keybindings: settingsStore.get('keybindings', { ...defaultBindings }),

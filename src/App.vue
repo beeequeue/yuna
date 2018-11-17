@@ -25,7 +25,9 @@
 <script lang="ts">
 import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
+import { ipcRenderer } from 'electron'
 
+import { CHECK_FOR_UPDATES } from '@/messages'
 import { createBothSessions } from '@/utils'
 import TitleBar from './components/TitleBar.vue'
 import Navbar from './components/Navbar/Navbar.vue'
@@ -72,6 +74,10 @@ export default class App extends Vue {
     if (!this.isLoggedIn.all) {
       window.initialLogin = true
       return this.$router.push('login')
+    }
+
+    if (process.env.NODE_ENV === 'production') {
+      ipcRenderer.send(CHECK_FOR_UPDATES)
     }
   }
 
