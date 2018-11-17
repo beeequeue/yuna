@@ -69,6 +69,7 @@ export default class Checkbox extends Vue {
     cursor: pointer;
 
     & > .checkbox {
+      flex-shrink: 0;
       height: 25px;
       width: 25px;
       padding: 2px;
