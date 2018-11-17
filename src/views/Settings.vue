@@ -4,6 +4,13 @@
     <section class="category" id="updates">
       <h1>Updates</h1>
 
+      <c-button
+        v-if="updateIsAvailable"
+        content="Install update!"
+        type="success"
+        :click="downloadUpdate"
+      />
+
       <checkbox
         setting="auto-update"
         text="Automatically update the program."
@@ -133,9 +140,11 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { ipcRenderer } from 'electron'
 import { Key } from 'ts-key-enum'
 import { mdiUndoVariant, mdiInformationOutline } from '@mdi/js'
 
+import { getIsUpdateAvailable } from '@/state/app'
 import {
   addKeybinding,
   getSettings,
@@ -146,6 +155,8 @@ import {
   SettingsState,
   setSpoiler,
 } from '@/state/settings'
+import { DOWNLOAD_UPDATE } from '@/messages'
+
 import Keybinding from '../components/Settings/Keybinding.vue'
 import Group from '../components/Settings/Group.vue'
 import Checkbox from '../components/Settings/Checkbox.vue'
@@ -171,6 +182,10 @@ export default class Settings extends Vue {
     return getSettings(this.$store)
   }
 
+  public get updateIsAvailable() {
+    return getIsUpdateAvailable(this.$store)
+  }
+
   public setSetting(
     setting: keyof SettingsState,
     value: SettingsState[typeof setting],
@@ -183,6 +198,10 @@ export default class Settings extends Vue {
       path: key.split('.') as any,
       value,
     })
+  }
+
+  public downloadUpdate() {
+    ipcRenderer.send(DOWNLOAD_UPDATE)
   }
 
   public openKeybindModal(action: KeybindingAction) {

@@ -42,6 +42,8 @@ ipcRenderer.on(UPDATE_AVAILABLE, () => {
 })
 
 ipcRenderer.on(UPDATE_DOWNLOADED, () => {
+  setIsUpdateAvailable(store, false)
+
   sendToast(store, {
     type: 'success',
     title: 'Update downloaded!',
