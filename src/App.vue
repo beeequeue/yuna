@@ -41,7 +41,7 @@ import {
 import { version } from '../package.json'
 
 const requireBg = require.context('@/assets/bg')
-const backgrounds = requireBg.keys().filter(name => name.includes('.jpg'))
+const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
 
 @Component({
   components: { TitleBar, PlayerContainer, Navbar, ToastOverlay, AboutModal },
