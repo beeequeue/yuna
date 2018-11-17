@@ -4,8 +4,11 @@
     <section class="category" id="spoilers">
       <h1>Spoiler Hiding</h1>
 
-      <h3>Anime Info</h3>
-      <span>These spoilers will stop being hidden after watching one third of the season's episodes.</span>
+      <h3>
+        Anime Info
+
+        <icon :icon="infoSvg" v-tooltip.right="'These spoilers will stop being<br/>hidden after watching one third<br/>of the season\'s episodes.'"/>
+      </h3>
 
       <checkbox
         setting="spoiler-descriptions"
@@ -14,8 +17,11 @@
         :onChange="checked => setSpoiler('anime.description', checked)"
       />
 
-      <h3>Episode Info</h3>
-      <span>These spoilers will stop being hidden after watching the episode.</span>
+      <h3>
+        Episode Info
+
+        <icon :icon="infoSvg" v-tooltip.right="'These spoilers will stop<br/>being hidden after watching<br/>the episode.'"/>
+      </h3>
 
       <checkbox
         setting="spoiler-episode-title"
@@ -50,17 +56,29 @@
       />
 
       <section class="category" id="keybindings">
-        <h3>Keybindings</h3>
+        <h3>
+          Keybindings
 
-        <span>Click a binding to remove it</span>
+          <icon :icon="infoSvg" v-tooltip.right="'Click a binding to remove it.'"/>
+        </h3>
 
-        <keybinding
-          v-for="action in keybindingActions"
-          :key="action"
-          :action="action"
-          :unbindKey="unbindKey"
-          :openKeybindModal="openKeybindModal"
-        />
+        <div class="keybinding-container">
+          <div class="names">
+            <div v-for="action in keybindingActions" :key="action" class="name">
+              {{getPrettyActionName(action)}}:
+            </div>
+          </div>
+
+          <div class="actions">
+            <keybinding
+              v-for="action in keybindingActions"
+              :key="action"
+              :action="action"
+              :unbindKey="unbindKey"
+              :openKeybindModal="openKeybindModal"
+            />
+          </div>
+        </div>
 
         <c-button
           type="danger"
@@ -98,7 +116,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { Key } from 'ts-key-enum'
-import { mdiUndoVariant } from '@mdi/js'
+import { mdiUndoVariant, mdiInformationOutline } from '@mdi/js'
 
 import {
   addKeybinding,
@@ -111,15 +129,18 @@ import {
   setSpoiler,
 } from '@/state/settings'
 import Keybinding from '../components/Settings/Keybinding.vue'
+import Group from '../components/Settings/Group.vue'
 import Checkbox from '../components/Settings/Checkbox.vue'
 import CButton from '../components/CButton.vue'
+import Icon from '../components/Icon.vue'
 
 @Component({
-  components: { CButton, Checkbox, Keybinding },
+  components: { CButton, Checkbox, Group, Keybinding, Icon },
 })
 export default class Settings extends Vue {
   public actionToBind: KeybindingAction | null = null
 
+  public infoSvg = mdiInformationOutline
   public resetSvg = mdiUndoVariant
 
   public get keybindingActions(): string[] {
@@ -173,6 +194,31 @@ export default class Settings extends Vue {
   public resetKeybindings() {
     resetKeybindings(this.$store)
   }
+
+  public getPrettyActionName(action: KeybindingAction) {
+    switch (action) {
+      case KeybindingAction.PAUSE:
+        return 'Pause'
+      case KeybindingAction.PLAY:
+        return 'Play'
+      case KeybindingAction.PAUSE_PLAY:
+        return 'Pause / Play'
+      case KeybindingAction.SKIP_BACK:
+        return 'Skip backwards'
+      case KeybindingAction.SKIP_FORWARD:
+        return 'Skip forwards'
+      case KeybindingAction.TOGGLE_FULLSCREEN:
+        return 'Toggle fullscreen'
+      case KeybindingAction.TOGGLE_MUTED:
+        return 'Toggle muted'
+      case KeybindingAction.VOLUME_DOWN:
+        return 'Decrease volume'
+      case KeybindingAction.VOLUME_UP:
+        return 'Increase volume'
+      default:
+        return action
+    }
+  }
 }
 </script>
 
@@ -188,27 +234,69 @@ export default class Settings extends Vue {
   display: flex;
 
   & > .settings {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
     background: darken($dark, 2%);
     min-width: 425px;
-    padding-bottom: 20px;
+    padding-bottom: 35px;
     user-select: none;
     overflow-y: auto;
+
+    & > * {
+      flex-shrink: 0;
+    }
 
     & h1,
     & h2,
     & h3,
     & h4 {
+      display: flex;
+      align-items: center;
+      position: relative;
       font-family: 'Raleway', sans-serif;
       font-weight: 500;
 
-      &:first-child {
-        margin-top: 15px;
+      & > .icon {
+        margin-left: 5px;
+        height: 20px;
+        width: 20px;
+        fill: $white;
       }
+    }
+
+    h1 {
+      margin-top: 0;
     }
 
     & > .category {
       width: 100%;
-      padding: 15px;
+      padding: 25px 50px 0;
+
+      .keybinding-container {
+        display: flex;
+
+        & > .names {
+          margin-right: 10px;
+
+          & > .name {
+            display: flex;
+            align-items: center;
+            height: 35px;
+            padding: 5px 0;
+          }
+        }
+
+        & > .names > .name,
+        & > .actions > .keybinding {
+          margin-bottom: 10px;
+
+          &:last-child {
+            margin-bottom: 20px;
+          }
+        }
+      }
     }
   }
 

@@ -1,19 +1,15 @@
 <template>
 <div class="keybinding">
-  <div class="action-name">{{getPrettyActionName(action)}}:</div>
+  <c-button
+    v-for="key in keys"
+    :key="key"
+    :icon="getIconForKey(key)"
+    :title="key === ' ' ? 'Spacebar' : key"
+    :content="getIconForKey(key) ? null : key.toUpperCase()"
+    @click.native="unbindKey({key, action})"
+  />
 
-  <div class="actions">
-    <c-button
-      v-for="key in keys"
-      :key="key"
-      :icon="getIconForKey(key)"
-      :title="key === ' ' ? 'Spacebar' : key"
-      :content="getIconForKey(key) ? null : key.toUpperCase()"
-      @click.native="unbindKey({key, action})"
-    />
-
-    <c-button v-if="keys.length < 2" @click.native="openKeybindModal(action)" :icon="plusSvg"/>
-  </div>
+  <c-button v-if="keys.length < 2" @click.native="openKeybindModal(action)" :icon="plusSvg"/>
 </div>
 </template>
 
@@ -52,31 +48,6 @@ export default class Keybinding extends Vue {
     return getKeysForAction(this.$store)(this.action)
   }
 
-  public getPrettyActionName(action: KeybindingAction) {
-    switch (action) {
-      case KeybindingAction.PAUSE:
-        return 'Pause'
-      case KeybindingAction.PLAY:
-        return 'Play'
-      case KeybindingAction.PAUSE_PLAY:
-        return 'Pause / Play'
-      case KeybindingAction.SKIP_BACK:
-        return 'Skip backwards'
-      case KeybindingAction.SKIP_FORWARD:
-        return 'Skip forwards'
-      case KeybindingAction.TOGGLE_FULLSCREEN:
-        return 'Toggle fullscreen'
-      case KeybindingAction.TOGGLE_MUTED:
-        return 'Toggle muted'
-      case KeybindingAction.VOLUME_DOWN:
-        return 'Decrease volume'
-      case KeybindingAction.VOLUME_UP:
-        return 'Increase volume'
-      default:
-        return action
-    }
-  }
-
   public getIconForKey(key: Key | string) {
     switch (key) {
       case Key.ArrowLeft:
@@ -106,34 +77,16 @@ export default class Keybinding extends Vue {
 .keybinding {
   position: relative;
   width: 100%;
-  min-height: 35px;
+  height: 35px;
   display: flex;
   align-items: center;
-  margin: 10px 0;
 
-  & > * {
-    width: 100%;
-  }
-
-  & > .action-name {
-    text-align: right;
-    margin-right: 10px;
-    font-family: 'Raleway', sans-serif;
-    font-size: 0.9em;
-    font-weight: 300;
-  }
-
-  & > .actions {
-    grid-area: keys;
-    display: flex;
-
-    & > .button {
-      margin-right: 5px;
-      font-weight: 600;
-      min-width: 35px;
-      min-height: 35px;
-      justify-content: center;
-    }
+  & > .button {
+    margin-right: 5px;
+    font-weight: 600;
+    min-width: 35px;
+    height: 35px;
+    justify-content: center;
   }
 }
 </style>

@@ -54,13 +54,13 @@ export default class Checkbox extends Vue {
 
 .checkbox-container {
   position: relative;
-  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 10px 0;
 
   & > label {
+    width: 100%;
     display: flex;
     align-items: center;
     font-family: 'Raleway', sans-serif;
