@@ -38,6 +38,7 @@ export default class ProgressBar extends Vue {
   @Prop(Function) public onSetTime!: (value: number) => void
 
   public hovering = false
+  public mouseDown = false
   public mousePosition = 0
 
   public shouldUpdateProgress = true
@@ -61,6 +62,11 @@ export default class ProgressBar extends Vue {
   public handleMouseOver(e: MouseEvent) {
     this.hovering = true
     this.mousePosition = e.layerX / this.$refs.progressBar.clientWidth
+
+    if (this.mouseDown) {
+      const newProgress = Math.round(this.mousePosition * this.duration)
+      this.onSetTime(newProgress)
+    }
   }
 
   public handleMouseDown() {
@@ -71,6 +77,12 @@ export default class ProgressBar extends Vue {
     const newProgress = Math.round(this.mousePosition * this.duration)
 
     this.onSetTime(newProgress)
+    this.mouseDown = true
+
+    window.onmouseup = () => {
+      this.mouseDown = false
+      window.onmouseup = null
+    }
   }
 
   public handleMouseUp() {
