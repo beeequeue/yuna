@@ -37,15 +37,17 @@
     </transition>
 
     <transition>
-      <div
-        v-for="sequel in sequels"
-        v-if="isFinalEpisode && isPlayerMaximized"
-        :key="sequel.id"
-        class="sequel"
-      >
+      <div class="sequel-container">
         <h1 class="text">Sequel{{sequels.length > 1 ? 's' : ''}}:</h1>
 
-        <anime-banner class="banner" :anime="sequel"/>
+        <div
+          v-for="sequel in sequels"
+          v-if="isFinalEpisode && isPlayerMaximized"
+          :key="sequel.id"
+          class="sequel"
+        >
+          <anime-banner class="banner" :anime="sequel"/>
+        </div>
       </div>
     </transition>
   </div>
@@ -82,7 +84,7 @@ export default class EndOfSeasonOverlay extends Vue {
   @Prop(prop(Boolean, true))
   public isPlayerMaximized!: boolean
 
-  public scores = [0, 25, 50, 75, 100]
+  public scores = [1, 25, 50, 75, 100]
 
   public starSvg = mdiStar
   public hollowStarSvg = mdiStarOutline
@@ -220,61 +222,63 @@ export default class EndOfSeasonOverlay extends Vue {
     }
   }
 
-  & > .sequel {
-    height: 150px;
-    overflow: hidden;
-    text-shadow: $outline !important;
-    filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.5));
+  & > .sequel-container {
+    & > .sequel {
+      margin-bottom: 15px;
+      overflow: hidden;
+      text-shadow: $outline !important;
+      filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.5));
 
-    & > .button {
-      position: relative;
-      pointer-events: all;
-      padding: 0.35em 2em 0.5em;
-      font-size: 1.25em;
-      height: 45px;
+      & > .button {
+        position: relative;
+        pointer-events: all;
+        padding: 0.35em 2em 0.5em;
+        font-size: 1.25em;
+        height: 45px;
+
+        &.v-enter-active {
+          transition: 0.5s;
+        }
+
+        &.v-leave-active {
+          transition: 0.25s;
+        }
+
+        &.v-enter,
+        &.v-leave-to {
+          height: 0;
+          padding: 0;
+        }
+
+        &.v-leave,
+        &.v-enter-to {
+          height: 45px;
+          padding: 0.35em 2em 0.5em;
+        }
+      }
+
+      & > .banner {
+        width: 750px;
+        max-width: 90%;
+        pointer-events: all;
+        overflow: hidden;
+        border-radius: 5px;
+        filter: drop-shadow(1px 2px 5px rgba(0, 0, 0, 0.5));
+      }
 
       &.v-enter-active {
-        transition: 0.5s;
+        transition: opacity 0.5s, height 0.25s;
       }
 
       &.v-leave-active {
-        transition: 0.25s;
+        transition: opacity 0.25s, height 0.5s;
       }
 
       &.v-enter,
       &.v-leave-to {
         height: 0;
-        padding: 0;
+        opacity: 0;
       }
-
-      &.v-leave,
-      &.v-enter-to {
-        height: 45px;
-        padding: 0.35em 2em 0.5em;
-      }
-    }
-
-    & > .banner {
-      width: 750px;
-      max-width: 90%;
-      pointer-events: all;
-      overflow: hidden;
-      border-radius: 5px;
-      filter: drop-shadow(1px 2px 5px rgba(0, 0, 0, 0.5));
-    }
-
-    &.v-enter-active {
-      transition: opacity 0.5s, height 0.25s;
-    }
-
-    &.v-leave-active {
-      transition: opacity 0.25s, height 0.5s;
-    }
-
-    &.v-enter,
-    &.v-leave-to {
-      height: 0;
-      opacity: 0;
     }
   }
 

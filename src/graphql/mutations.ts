@@ -1,17 +1,21 @@
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 
-import { store } from '@/state/store'
-import { updatePlaylistListEntry } from '@/state/app'
 import { MediaListStatus } from '@/graphql-types'
+import { updatePlaylistListEntry } from '@/state/app'
+import { store } from '@/state/store'
 
-import ANIME_PAGE_QUERY from './AnimePageQuery.graphql'
-import UPDATE_PROGRESS_MUTATION from './UpdateProgressMutation.graphql'
-import { UpdateProgressMutation, UpdateProgressMutation_SaveMediaListEntry } from './UpdateProgressMutation'
-import SET_STATUS_MUTATION from './SetStatusMutation.graphql'
-import { SetStatusMutation } from './SetStatusMutation'
-import ADD_ENTRY_MUTATION from './AddEntryMutation.graphql'
 import { AddEntryMutation } from './AddEntryMutation'
-import { UpdateScoreMutation } from './UpdateScoreMutation';
+import ADD_ENTRY_MUTATION from './AddEntryMutation.graphql'
+import ANIME_PAGE_QUERY from './AnimePageQuery.graphql'
+import { SetStatusMutation } from './SetStatusMutation'
+import SET_STATUS_MUTATION from './SetStatusMutation.graphql'
+import {
+  UpdateProgressMutation,
+  UpdateProgressMutation_SaveMediaListEntry,
+} from './UpdateProgressMutation'
+import UPDATE_PROGRESS_MUTATION from './UpdateProgressMutation.graphql'
+import { UpdateScoreMutation } from './UpdateScoreMutation'
+import UPDATE_SCORE_MUTATION from './UpdateScoreMutation.graphql'
 
 export const setProgressMutation = async (
   apollo: DollarApollo<any>,
@@ -78,7 +82,7 @@ export const addEntryMutation = async (
     oldValues: Partial<UpdateProgressMutation_SaveMediaListEntry> = {}
   ) => {
     return apollo.mutate<UpdateScoreMutation>({
-      mutation: UPDATE_PROGRESS_MUTATION,
+      mutation: UPDATE_SCORE_MUTATION,
       variables: { id, score },
       optimisticResponse: {
         SaveMediaListEntry: {
@@ -89,11 +93,17 @@ export const addEntryMutation = async (
           repeat: oldValues.repeat || 0,
           status: oldValues.status || MediaListStatus.CURRENT,
         },
-      } as UpdateScoreMutation,
+      },
       update: (_cache, { data }) => {
         if (!data) return
 
-        updatePlaylistListEntry(store, data.SaveMediaListEntry)
+        updatePlaylistListEntry(store, {
+          id,
+          score,
+          progress: oldValues.progress || 0,
+          repeat: oldValues.repeat || 0,
+          status: oldValues.status || MediaListStatus.CURRENT,
+        } as any)
       }
     })
   }
