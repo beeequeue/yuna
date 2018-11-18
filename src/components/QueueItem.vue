@@ -223,6 +223,9 @@ export default class QueueItem extends Vue {
 @import '../colors';
 
 .anime {
+  position: relative;
+  z-index: 2;
+
   &:last-child {
     margin-bottom: 15px;
   }
@@ -234,13 +237,13 @@ export default class QueueItem extends Vue {
     opacity: 0.99;
   }
 
-  &.v-leave-active {
-    position: absolute;
-    transition: transform 0.5s;
-  }
-
+  &.v-enter,
   &.v-leave-to {
-    transform: translateX(-125%);
+    z-index: 1;
+    opacity: 0;
+    position: absolute;
+    transform: translateY(-75%);
+    transition: 0.5s;
   }
 
   & > .container {
