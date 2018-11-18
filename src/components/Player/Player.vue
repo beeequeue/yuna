@@ -147,6 +147,7 @@ export default class Player extends Vue {
   public quality: number = Number(localStorage.getItem('quality') || -1)
   public progressPercentage = 0
   public progressInSeconds = 0
+  public playhead = 0
   public loadedSeconds = 0
   public loadedPercentage = 0
 
@@ -211,9 +212,11 @@ export default class Player extends Vue {
     this.pause()
 
     try {
-      const { url } = await fetchStream(this.episode.crunchyroll.id)
+      const { url, progress } = await fetchStream(this.episode.crunchyroll.id)
 
       this.streamUrl = url
+
+      this.playhead = progress
     } catch (e) {
       return sendErrorToast(this.$store, e)
     }
@@ -254,6 +257,11 @@ export default class Player extends Vue {
 
       this.levels = qualities
       this.hls.loadLevel = this.quality
+    })
+
+    this.hls.on('hlsMediaAttached', () => {
+      this.$refs.player.currentTime =
+        this.playhead < this.episode.duration * 0.8 ? this.playhead : 0
     })
 
     this.$refs.player.onplay = () => {

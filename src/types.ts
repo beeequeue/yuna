@@ -6,6 +6,7 @@ export interface Levels {
 
 export interface Stream {
   url: string
+  progress: number
 }
 
 export interface Episode {

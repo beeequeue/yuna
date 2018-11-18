@@ -299,26 +299,37 @@ export const fetchSeasonFromEpisode = async (
   return fetchEpisodesOfCollection(episode.crunchyroll.collection)
 }
 
-const fetchStreamData = async (mediaId: string): Promise<_StreamData> => {
+interface StreamInfo {
+  playhead: number
+  stream_data: _StreamData
+}
+const fetchStreamInfo = async (mediaId: string): Promise<StreamInfo> => {
   const response = (await superagent.get(getUrl('info')).query({
     session_id: _sessionId,
     locale,
     media_id: mediaId,
-    fields: 'media.stream_data',
-  })) as CrunchyrollResponse<{ stream_data: _StreamData }>
+    fields: ['media.stream_data', 'media.playhead'].join(','),
+  })) as CrunchyrollResponse<StreamInfo>
 
   if (responseIsError(response)) {
     return Promise.reject(response.body.message)
   }
 
-  return response.body.data.stream_data
+  const { playhead, stream_data } = response.body.data
+  return {
+    playhead,
+    stream_data,
+  }
 }
 
 export const fetchStream = async (mediaId: string): Promise<Stream> => {
-  const streamData = await fetchStreamData(mediaId)
-  const { url } = streamData.streams[0]
+  const streamInfo = await fetchStreamInfo(mediaId)
+  const { url } = streamInfo.stream_data.streams[0]
 
-  return { url }
+  return {
+    url,
+    progress: streamInfo.playhead,
+  }
 }
 
 export const setProgressOfEpisode = async (
