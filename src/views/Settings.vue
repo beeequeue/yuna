@@ -32,7 +32,7 @@
       <h3>
         Anime Info
 
-        <icon :icon="infoSvg" v-tooltip.right="'These spoilers will stop being<br/>hidden after watching one third<br/>of the season\'s episodes.'"/>
+        <icon :icon="infoSvg" v-tooltip.top="'These spoilers will stop being<br/>hidden after watching one third<br/>of the season\'s episodes.'"/>
       </h3>
 
       <checkbox
@@ -45,7 +45,7 @@
       <h3>
         Episode Info
 
-        <icon :icon="infoSvg" v-tooltip.right="'These spoilers will stop<br/>being hidden after watching<br/>the episode.'"/>
+        <icon :icon="infoSvg" v-tooltip.top="'These spoilers will stop<br/>being hidden after watching<br/>the episode.'"/>
       </h3>
 
       <checkbox
