@@ -321,13 +321,18 @@ export default class QueueItem extends Vue {
       & > .episode-container {
         position: relative;
         width: 100%;
-        padding: 15px;
         overflow-y: hidden;
         will-change: padding, max-height;
 
         & > .episodes {
           z-index: 1;
           width: 100%;
+          padding: 15px;
+          transition: padding 0.25s;
+
+          &[data-episodes='0'] {
+            padding: 0;
+          }
         }
 
         &.v-enter-active,

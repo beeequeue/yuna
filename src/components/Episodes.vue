@@ -1,5 +1,5 @@
 <template>
-<div class="episodes">
+<div class="episodes" :data-episodes="episodes ? episodes.length : -1">
   <div v-if="loading" class="loading">
     <loader/>
     Looking for episodes...
