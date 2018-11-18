@@ -34,6 +34,8 @@ interface SpoilerSettings {
 }
 
 export interface SettingsState {
+  autoMarkAsPlanning: boolean
+  useCRUnblocker: boolean
   autoUpdate: boolean
   beta: boolean
   autoPlay: boolean
@@ -75,6 +77,8 @@ const defaultSpoilers: SpoilerSettings = {
 }
 
 const initialState: SettingsState = {
+  autoMarkAsPlanning: settingsStore.get('autoMarkAsPlanning', true),
+  useCRUnblocker: settingsStore.get('useCRUnblocker', true),
   autoUpdate: settingsStore.get('autoUpdate', true),
   beta: settingsStore.get('beta', false),
   autoPlay: settingsStore.get('autoPlay', true),

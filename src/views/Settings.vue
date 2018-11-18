@@ -1,6 +1,39 @@
 <template>
 <div class="container">
   <div class="settings">
+    <section class="category" id="general">
+      <h1>General</h1>
+
+      <checkbox
+        setting="queue-auto-add-list"
+        text="Mark shows as Planning when adding them to the queue."
+        :checked="settings.autoMarkAsPlanning"
+        :onChange="checked => setSetting('autoMarkAsPlanning', checked)"
+      />
+
+
+      <h3>Crunchyroll Unblocker</h3>
+
+      <checkbox
+        setting="use-cr-unblocker"
+        text="Try to use the US catalogue."
+        :checked="settings.useCRUnblocker"
+        :onChange="handleUnblockerChange"
+      />
+
+      <div class="us-cr-failed" :class="{ visible: settings.useCRUnblocker && !isUsingUSSession }">
+        <div>
+          There seems to have been an issue creating a US session. 😟
+        </div>
+
+        <c-button
+          :icon="retrySvg"
+          content="Retry creating US session"
+          :click="createUBSession"
+        />
+      </div>
+    </section>
+
     <section class="category" id="updates">
       <h1>Updates</h1>
 
@@ -142,9 +175,10 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { ipcRenderer } from 'electron'
 import { Key } from 'ts-key-enum'
-import { mdiUndoVariant, mdiInformationOutline } from '@mdi/js'
+import { mdiUndoVariant, mdiInformationOutline, mdiRefresh } from '@mdi/js'
 
 import { getIsUpdateAvailable } from '@/state/app'
+import { setCrunchyrollCountry, getCrunchyrollCountry } from '@/state/auth'
 import {
   addKeybinding,
   getSettings,
@@ -155,7 +189,9 @@ import {
   SettingsState,
   setSpoiler,
 } from '@/state/settings'
+import { createSession, SessionResponse } from '@/lib/crunchyroll'
 import { DOWNLOAD_UPDATE } from '@/messages'
+import { createBothSessions } from '@/utils'
 
 import Keybinding from '../components/Settings/Keybinding.vue'
 import Group from '../components/Settings/Group.vue'
@@ -170,6 +206,7 @@ export default class Settings extends Vue {
   public actionToBind: KeybindingAction | null = null
 
   public infoSvg = mdiInformationOutline
+  public retrySvg = mdiRefresh
   public resetSvg = mdiUndoVariant
 
   public get keybindingActions(): string[] {
@@ -186,6 +223,10 @@ export default class Settings extends Vue {
     return getIsUpdateAvailable(this.$store)
   }
 
+  public get isUsingUSSession() {
+    return getCrunchyrollCountry(this.$store) === 'US'
+  }
+
   public setSetting(
     setting: keyof SettingsState,
     value: SettingsState[typeof setting],
@@ -198,6 +239,23 @@ export default class Settings extends Vue {
       path: key.split('.') as any,
       value,
     })
+  }
+
+  public async createUBSession() {
+    this.handleUnblockerChange(true)
+  }
+
+  public async handleUnblockerChange(checked: boolean) {
+    this.setSetting('useCRUnblocker', checked)
+    let data: SessionResponse
+
+    if (checked) {
+      data = await createBothSessions(this.$store)
+    } else {
+      data = await createSession()
+    }
+
+    setCrunchyrollCountry(this.$store, data.country_code)
   }
 
   public downloadUpdate() {
@@ -310,6 +368,26 @@ export default class Settings extends Vue {
     & > .category {
       width: 100%;
       padding: 25px 50px 0;
+
+      & .us-cr-failed {
+        color: lighten($danger, 10%);
+        height: 0;
+        padding: 0 15px;
+        font-weight: 600;
+        text-align: center;
+        overflow: hidden;
+        transition: height 0.5s;
+        transition-delay: 0s;
+
+        &.visible {
+          transition-delay: 2s;
+          height: 75px;
+        }
+
+        & > .button {
+          margin-top: 5px;
+        }
+      }
 
       .keybinding-container {
         display: flex;
