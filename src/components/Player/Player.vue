@@ -40,10 +40,13 @@
       :progressInSeconds="progressInSeconds"
       :loadedPercentage="loadedPercentage"
       :speed="speed"
+      :quality="quality"
+      :levels="levels"
       :onSetTime="onSetTime"
       :onSetVolume="onSetVolume"
       :onToggleMute="onToggleMute"
       :onChangeSpeed="onChangeSpeed"
+      :onChangeQuality="onChangeQuality"
       :play="play"
       :pause="pause"
       :setProgress="setProgress"
@@ -76,7 +79,7 @@ import Hls from 'hls.js'
 import { contains } from 'rambda'
 import { mdiLoading, mdiPlayCircle } from '@mdi/js'
 
-import { fetchStream, setProgressOfEpisode } from '@/lib/crunchyroll'
+import { setProgressOfEpisode, fetchStream } from '@/lib/crunchyroll'
 import {
   getIsFullscreen,
   sendErrorToast,
@@ -84,13 +87,36 @@ import {
   PlayerData,
 } from '@/state/app'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
-import { Episode } from '@/types'
+import { Episode, Levels } from '@/types'
 import { prop, clamp } from '@/utils'
 
 import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
 import NextEpisodeOverlay from './NextEpisodeOverlay.vue'
 import EndOfSeasonOverlay from './EndOfSeasonOverlay.vue'
+
+interface Level {
+  attrs: {
+    BANDWIDTH: number
+    CODECS: string
+    'FRAME-RATE': string
+    'PROGRAM-ID': string
+    RESOULTION: string
+  }
+  bitrate: number
+  details: {}
+  name?: string
+  height: number
+  width: number
+  level: number
+  audioCodec: string
+  videoCodec: string
+  unknownCodecs: any[]
+  urls: string[]
+  urlId: number
+  fragmentError: boolean
+  loadError: number
+}
 
 @Component({
   components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
@@ -105,6 +131,9 @@ export default class Player extends Vue {
   @Prop(prop(Function, true))
   public setProgress!: (p: number) => any
 
+  public streamUrl: string | null = null
+  public levels: Levels | null = null
+
   public initiated = !!this.shouldAutoPlay
   public ended = false
   // Gotten to the 'soft end' - e.g. 80% of the way
@@ -115,6 +144,7 @@ export default class Player extends Vue {
   public muted = localStorage.getItem('muted') === 'true'
   public volume = Number(localStorage.getItem('volume') || 0.7)
   public speed = Number(localStorage.getItem('speed') || 1)
+  public quality: number = Number(localStorage.getItem('quality') || -1)
   public progressPercentage = 0
   public progressInSeconds = 0
   public loadedSeconds = 0
@@ -130,6 +160,10 @@ export default class Player extends Vue {
 
   public playCircleSvg = mdiPlayCircle
   public loadingSvg = mdiLoading
+
+  public $refs!: {
+    player: HTMLVideoElement
+  }
 
   public get isPlayerMaximized() {
     return contains(this.$route.path, ['/player-big', '/player-full'])
@@ -158,12 +192,6 @@ export default class Player extends Vue {
     return getIsFullscreen(this.$store)
   }
 
-  public $refs!: {
-    player: HTMLVideoElement
-  }
-
-  public streamUrl: string | null = null
-
   public mounted() {
     this.onNewEpisode()
 
@@ -178,7 +206,56 @@ export default class Player extends Vue {
     this.gainNode.connect(audioContext.destination)
   }
 
+  @Watch('episode')
+  public async onNewEpisode() {
+    this.pause()
+
+    try {
+      const { url } = await fetchStream(this.episode.crunchyroll.id)
+
+      this.streamUrl = url
+    } catch (e) {
+      return sendErrorToast(this.$store, e)
+    }
+
+    if (!this.streamUrl) return
+
+    this.progressInSeconds = 0
+    this.progressPercentage = 0
+    this.ended = false
+    this.softEnded = false
+    this.initiated = !!this.shouldAutoPlay
+    this.paused = true
+    this.loading = true
+    this.loaded = false
+
+    const hls = new Hls()
+
+    hls.loadSource(this.streamUrl)
+    hls.attachMedia(this.$refs.player)
+
+    this.hls = hls
+
+    this.registerEvents()
+  }
+
   public registerEvents() {
+    this.hls.on('hlsManifestParsed', (_event, data) => {
+      let i = 0
+      const qualities = (data.levels as any).reduce(
+        (map: any, level: Level) => {
+          map[level.height.toString()] = i
+          i++
+
+          return map
+        },
+        {} as any,
+      )
+
+      this.levels = qualities
+      this.hls.loadLevel = this.quality
+    })
+
     this.$refs.player.onplay = () => {
       this.paused = false
     }
@@ -269,6 +346,12 @@ export default class Player extends Vue {
     this.$refs.player.playbackRate = this.speed
   }
 
+  public onChangeQuality(quality: number) {
+    this.quality = quality
+    this.hls.currentLevel = quality
+    localStorage.setItem('quality', quality.toString())
+  }
+
   public onKeyDown(e: KeyboardEvent) {
     return this.keyDownHandler(e.key)
   }
@@ -277,39 +360,6 @@ export default class Player extends Vue {
     const direction = Math.sign(-e.deltaY)
 
     this.increaseVolume(direction / 10)
-  }
-
-  @Watch('episode')
-  public async onNewEpisode() {
-    this.pause()
-
-    try {
-      this.streamUrl = (await fetchStream(
-        this.episode.crunchyroll.id,
-      )).streams[0].url
-    } catch (e) {
-      return sendErrorToast(this.$store, e)
-    }
-
-    if (!this.streamUrl) return
-
-    this.progressInSeconds = 0
-    this.progressPercentage = 0
-    this.ended = false
-    this.softEnded = false
-    this.initiated = !!this.shouldAutoPlay
-    this.paused = true
-    this.loading = true
-    this.loaded = false
-
-    const hls = new Hls()
-
-    hls.loadSource(this.streamUrl)
-    hls.attachMedia(this.$refs.player)
-
-    this.hls = hls
-
-    this.registerEvents()
   }
 
   public play() {

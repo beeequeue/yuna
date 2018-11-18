@@ -1,11 +1,11 @@
 /* tslint:disable:class-name */
-import superagent from 'superagent/superagent'
 import { T } from 'rambda'
+import superagent from 'superagent/superagent'
 import uuid from 'uuid/v4'
 
-import { Episode, StreamData } from '@/types'
-import { RequestError, RequestSuccess } from '@/utils'
 import { userStore } from '@/lib/user'
+import { Episode, Stream } from '@/types'
+import { RequestError, RequestSuccess } from '@/utils'
 
 const CR_UNBLOCKER_URL = 'api2.cr-unblocker.com'
 const API_URL = 'api.crunchyroll.com'
@@ -48,33 +48,13 @@ export interface _StreamData {
   hardsub_lang: string
   audio_lang: string
   format: 'hls'
-  streams: [
-    {
-      quality: 'adaptive'
-      expires: string
-      url: string
-    },
-    {
-      quality: 'low'
-      expires: string
-      url: string
-    },
-    {
-      quality: 'mid'
-      expires: string
-      url: string
-    },
-    {
-      quality: 'high'
-      expires: string
-      url: string
-    },
-    {
-      quality: 'ultra'
-      expires: string
-      url: string
-    }
-  ]
+  streams: _Stream[]
+}
+
+export interface _Stream {
+  quality: 'adaptive' | 'low' | 'mid' | 'high' | 'ultra'
+  expires: string
+  url: string
 }
 
 export interface _Media {
@@ -319,7 +299,7 @@ export const fetchSeasonFromEpisode = async (
   return fetchEpisodesOfCollection(episode.crunchyroll.collection)
 }
 
-export const fetchStream = async (mediaId: string): Promise<StreamData> => {
+const fetchStreamData = async (mediaId: string): Promise<_StreamData> => {
   const response = (await superagent.get(getUrl('info')).query({
     session_id: _sessionId,
     locale,
@@ -331,7 +311,14 @@ export const fetchStream = async (mediaId: string): Promise<StreamData> => {
     return Promise.reject(response.body.message)
   }
 
-  return convertStreamData(response.body.data.stream_data)
+  return response.body.data.stream_data
+}
+
+export const fetchStream = async (mediaId: string): Promise<Stream> => {
+  const streamData = await fetchStreamData(mediaId)
+  const { url } = streamData.streams[0]
+
+  return { url }
 }
 
 export const setProgressOfEpisode = async (
@@ -351,16 +338,6 @@ export const setProgressOfEpisode = async (
     throw new Error('Could not update progress of episode!')
   }
 }
-
-const convertStreamData = (streamData: _StreamData): StreamData => ({
-  subLanguage: streamData.hardsub_lang,
-  audioLanguage: streamData.audio_lang,
-  format: 'hls',
-  streams: streamData.streams.map((s: any) => ({
-    ...s,
-    expires: new Date(s.expires),
-  })),
-})
 
 const mediaToEpisode = (
   {

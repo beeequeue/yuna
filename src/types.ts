@@ -1,14 +1,11 @@
 import { MediaListStatus } from '@/graphql-types'
 
-export interface StreamData {
-  subLanguage: string
-  audioLanguage: string
-  format: 'hls'
-  streams: Array<{
-    quality: 'adaptive' | 'low' | 'mid' | 'high' | 'ultra'
-    expires: Date
-    url: string
-  }>
+export interface Levels {
+  [key: string]: number
+}
+
+export interface Stream {
+  url: string
 }
 
 export interface Episode {

@@ -121,9 +121,22 @@
   </div>
 
   <transition>
-    <div v-if="settingsOpen" class="settings-menu">
+    <div v-if="isPlayerMaximized && settingsOpen" class="settings-menu">
+      <label>
+        Quality:
+
+        <select  @input="handleChangeQuality" :value="quality">
+          <option :value="-1">Auto</option>
+
+          <option v-for="(level, quality) in levels" :key="level" :value="level">
+            {{quality}}p
+          </option>
+        </select>
+      </label>
+
       <label>
         Speed:
+
         <select  @input="onChangeSpeed" :value="speed">
           <option :value="0.25">0.25x</option>
           <option :value="0.5">0.5x</option>
@@ -159,7 +172,7 @@ import {
   ListEntry,
   setCurrentEpisode,
 } from '@/state/app'
-import { Episode } from '@/types'
+import { Episode, Levels } from '@/types'
 import { prop, secondsToTimeString } from '@/utils'
 
 import Icon from '../Icon.vue'
@@ -195,6 +208,10 @@ export default class Controls extends Vue {
   public loadedPercentage!: number
   @Prop(prop(Number, true))
   public speed!: number
+  @Prop(prop(Number, true))
+  public quality!: number
+  @Prop(prop(Object, true))
+  public levels!: Levels
   @Prop(prop(Function, true))
   public play!: () => void
   @Prop(prop(Function, true))
@@ -207,6 +224,8 @@ export default class Controls extends Vue {
   public onToggleMute!: (e: Event) => void
   @Prop(prop(Function, true))
   public onChangeSpeed!: (e: Event) => void
+  @Prop(prop(Function, true))
+  public onChangeQuality!: (quality: number) => void
   @Prop(prop(Function, true))
   public setProgress!: (progress: number) => any
 
@@ -268,6 +287,11 @@ export default class Controls extends Vue {
     } else {
       this.pause()
     }
+  }
+
+  public handleChangeQuality(e: Event) {
+    const element = e.target as HTMLSelectElement
+    this.onChangeQuality(Number(element.value))
   }
 
   public goVisible() {
@@ -382,6 +406,7 @@ $buttonSize: 50px;
 
   & .settings-menu {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     position: absolute;
@@ -394,11 +419,19 @@ $buttonSize: 50px;
     transition: transform 0.35s;
 
     & label {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-weight: 500;
+
+      &:not(:last-child) {
+        margin-bottom: 10px;
+      }
     }
 
     & select {
-      margin-left: 5px;
+      margin-left: 15px;
       background: $main;
       border: none;
       color: $white;
