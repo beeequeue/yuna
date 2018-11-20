@@ -13,7 +13,7 @@
       <span>Clear cache</span>
     </div>
 
-    <div class="item open-about" @click="showAboutModal">
+    <div class="item open-about" @click="toggleAboutModal">
       <icon :icon="infoSvg"/>
       <span>About</span>
     </div>
@@ -37,7 +37,7 @@ import {
 
 import { AnimeCache } from '@/lib/cache'
 import { logOut } from '@/state/auth'
-import { toggleShowAboutModal } from '@/state/app'
+import { toggleModal } from '@/state/app'
 import Icon from '../Icon.vue'
 
 @Component({
@@ -67,8 +67,8 @@ export default class SettingsDropdown extends Vue {
     this.$router.push('/settings')
   }
 
-  public showAboutModal() {
-    toggleShowAboutModal(this.$store)
+  public toggleAboutModal() {
+    toggleModal(this.$store, 'about')
   }
 }
 </script>

@@ -77,7 +77,7 @@
       v-if="isOnList"
       key="editItem"
       content="Edit"
-      @click.native="sendNotImplementedToast"
+      :click="editAnime"
     />
   </transition-group>
 </transition>
@@ -93,26 +93,34 @@ import {
   mdiRepeat,
 } from '@mdi/js'
 
-import CButton from '../CButton.vue'
-import { addToQueue, getQueue, removeFromQueueByIndex } from '../../state/user'
-import { sendErrorToast, sendNotImplementedToast } from '../../state/app'
-import { AnimePageQuery_anime_mediaListEntry } from '../../graphql/AnimePageQuery'
+import { addToQueue, getQueue, removeFromQueueByIndex } from '@/state/user'
+import {
+  sendErrorToast,
+  sendNotImplementedToast,
+  initEditModal,
+} from '@/state/app'
+import {
+  AnimePageQuery_anime_mediaListEntry,
+  AnimePageQuery_anime,
+} from '@/graphql/AnimePageQuery'
 import {
   addEntryMutation,
   setProgressMutation,
   setStatusMutation,
-} from '../../graphql/mutations'
-import { MediaListStatus } from '../../graphql-types'
-import { prop } from '../../utils'
+} from '@/graphql/mutations'
+import { MediaListStatus } from '@/graphql-types'
+import { prop } from '@/utils'
+
+import CButton from '../CButton.vue'
 
 @Component({
   components: { CButton },
 })
 export default class Actions extends Vue {
-  @Prop(prop(Number))
-  public mediaId!: number | null
   @Prop(prop(Object))
   public mediaListEntry!: AnimePageQuery_anime_mediaListEntry | null
+  @Prop(prop(Object))
+  public anime!: AnimePageQuery_anime | null
 
   public get mediaListStatus(): MediaListStatus | null {
     return pathOr(null, ['status'], this.mediaListEntry)
@@ -154,7 +162,15 @@ export default class Actions extends Vue {
   }
 
   public get isInQueue() {
-    return contains(this.mediaId, getQueue(this.$store))
+    if (!this.anime) return false
+
+    return contains(this.anime.id, getQueue(this.$store))
+  }
+
+  public editAnime() {
+    if (!this.anime) return
+
+    initEditModal(this.$store, this.anime as any)
   }
 
   public sendNotImplementedToast() {
@@ -162,25 +178,25 @@ export default class Actions extends Vue {
   }
 
   public async addToQueue() {
-    if (!this.mediaId) {
-      return sendErrorToast(this.$store, 'No entry found..?')
+    if (!this.anime) {
+      return sendErrorToast(this.$store, 'No anime found..?')
     }
 
     if (!this.mediaListEntry) {
       await this.addEntryMutation(MediaListStatus.PLANNING)
     }
 
-    addToQueue(this.$store, this.mediaId)
+    addToQueue(this.$store, this.anime.id)
   }
 
   public async removeFromQueue() {
-    if (!this.mediaId) {
-      return sendErrorToast(this.$store, 'No entry found..?')
+    if (!this.anime) {
+      return sendErrorToast(this.$store, 'No anime found..?')
     }
 
     removeFromQueueByIndex(
       this.$store,
-      findIndex(equals(this.mediaId), getQueue(this.$store)),
+      findIndex(equals(this.anime.id), getQueue(this.$store)),
     )
   }
 
@@ -206,11 +222,11 @@ export default class Actions extends Vue {
   }
 
   public async addEntryMutation(status: MediaListStatus) {
-    if (!this.mediaId) {
-      return sendErrorToast(this.$store, 'No entry found..?')
+    if (!this.anime) {
+      return sendErrorToast(this.$store, 'No anime found..?')
     }
 
-    await addEntryMutation(this.$apollo, this.mediaId, status)
+    await addEntryMutation(this.$apollo, this.anime.id, status)
   }
 }
 </script>

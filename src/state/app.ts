@@ -67,12 +67,37 @@ export interface PlayerData {
   current: number
 }
 
+interface ModalBase {
+  visible: boolean
+}
+
+export interface EditModalAnime {
+  id: number
+  title: {
+    userPreferred: string
+  }
+  bannerImage: string
+  isFavourite: boolean
+  mediaListEntry: {
+    id: number
+    progress: number
+    status: MediaListStatus
+    score: number
+    repeat: number
+  }
+}
+
 export interface AppState {
   isUpdateAvailable: boolean
   toasts: Toast[]
   isFullscreen: boolean
-  showAboutModal: boolean
   player: PlayerData | null
+  modals: {
+    about: ModalBase
+    edit: ModalBase & {
+      anime: EditModalAnime | null
+    }
+  }
 }
 
 type AppContext = ActionContext<AppState, RootState>
@@ -80,9 +105,17 @@ type AppContext = ActionContext<AppState, RootState>
 const initialState: AppState = {
   isUpdateAvailable: false,
   toasts: [],
-  player: null,
-  showAboutModal: false,
   isFullscreen: false,
+  player: null,
+  modals: {
+    about: {
+      visible: false,
+    },
+    edit: {
+      visible: false,
+      anime: null,
+    },
+  },
 }
 
 export const app = {
@@ -136,8 +169,18 @@ export const app = {
       return state.player.episodes[nextIndex]
     },
 
-    getShowAboutModal(state: AppState) {
-      return state.showAboutModal
+    getModalStates(state: AppState) {
+      return Object.keys(state.modals).reduce(
+        (map, key) => {
+          map[key] = (state.modals as any)[key].visible
+          return map
+        },
+        {} as any,
+      )
+    },
+
+    getEditingAnime(state: AppState) {
+      return state.modals.edit.anime
     },
 
     getIsFullscreen(state: AppState) {
@@ -186,8 +229,18 @@ export const app = {
       state.player.current = index
     },
 
-    toggleShowAboutModal(state: AppState) {
-      state.showAboutModal = !state.showAboutModal
+    toggleModal(state: AppState, modal: keyof AppState['modals']) {
+      state.modals[modal].visible = !state.modals[modal].visible
+    },
+
+    closeAllModals(state: AppState) {
+      Object.keys(state.modals).forEach(modal => {
+        ;(state.modals as any)[modal].visible = false
+      })
+    },
+
+    setEditingAnime(state: AppState, anime: EditModalAnime) {
+      state.modals.edit.anime = anime
     },
 
     setFullscreen(state: AppState, b: boolean) {
@@ -250,6 +303,11 @@ export const app = {
       browserWindow.setFullScreen(!isFullscreen)
       setFullscreen(context, !isFullscreen)
     },
+
+    initEditModal(context: AppContext, anime: EditModalAnime) {
+      setEditingAnime(context, anime)
+      toggleModal(context, 'edit')
+    },
   },
 }
 
@@ -263,18 +321,21 @@ export const getPlaylistEntry = read(app.getters.getPlaylistEntry)
 export const getPlaylist = read(app.getters.getPlaylist)
 export const getCurrentEpisode = read(app.getters.getCurrentEpisode)
 export const getNextEpisode = read(app.getters.getNextEpisode)
-export const getShowAboutModal = read(app.getters.getShowAboutModal)
+export const getModalStates = read(app.getters.getModalStates)
+export const getEditingAnime = read(app.getters.getEditingAnime)
 export const getIsFullscreen = read(app.getters.getIsFullscreen)
 
 export const setIsUpdateAvailable = commit(app.mutations.setIsUpdateAvailable)
-const addToast = commit(app.mutations.addToast)
+const setEditingAnime = commit(app.mutations.setEditingAnime)
 export const removeToast = commit(app.mutations.removeToast)
 export const setPlaylist = commit(app.mutations.setPlaylist)
 export const updatePlaylistListEntry = commit(
   app.mutations.updatePlaylistListEntry,
 )
 export const setCurrentEpisode = commit(app.mutations.setCurrentEpisode)
-export const toggleShowAboutModal = commit(app.mutations.toggleShowAboutModal)
+export const toggleModal = commit(app.mutations.toggleModal)
+const addToast = commit(app.mutations.addToast)
+export const closeAllModals = commit(app.mutations.closeAllModals)
 const setFullscreen = commit(app.mutations.setFullscreen)
 
 export const toggleFullscreen = dispatch(app.actions.toggleFullscreen)
@@ -284,3 +345,4 @@ export const sendNotImplementedToast = dispatch(
   app.actions.sendNotImplementedToast,
 )
 export const notifyDownloadDone = dispatch(app.actions.notifyDownloadDone)
+export const initEditModal = dispatch(app.actions.initEditModal)

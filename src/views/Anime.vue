@@ -32,7 +32,7 @@
         v-if="data && data.anime"
         key="actions"
         class="slide-up"
-        :mediaId="data.anime.id"
+        :anime="data.anime"
         :mediaListEntry="data.anime.mediaListEntry"
       />
 

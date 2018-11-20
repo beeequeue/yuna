@@ -15,9 +15,16 @@
   <toast-overlay/>
 
   <about-modal
-    :visible="showAboutModal"
-    :toggleModal="toggleAboutModal"
+    :visible="modalStates.about"
+    :toggleModal="() => toggleModal('about')"
     :version="version"
+  />
+
+  <edit-modal
+    v-if="editingAnime != null"
+    :visible="modalStates.edit"
+    :toggleVisible="() => toggleModal('edit')"
+    :anime="editingAnime"
   />
 </div>
 </template>
@@ -34,11 +41,14 @@ import Navbar from './components/Navbar/Navbar.vue'
 import PlayerContainer from './components/Player/Container.vue'
 import ToastOverlay from './components/ToastOverlay.vue'
 import AboutModal from './components/AboutModal.vue'
+import EditModal from './components/Modals/EditModal.vue'
 import { getIsLoggedIn, setCrunchyrollCountry } from './state/auth'
 import {
   getIsFullscreen,
-  toggleShowAboutModal,
-  getShowAboutModal,
+  toggleModal,
+  getModalStates,
+  AppState,
+  getEditingAnime,
 } from './state/app'
 import { version } from '../package.json'
 
@@ -46,7 +56,14 @@ const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
 
 @Component({
-  components: { TitleBar, PlayerContainer, Navbar, ToastOverlay, AboutModal },
+  components: {
+    TitleBar,
+    PlayerContainer,
+    Navbar,
+    ToastOverlay,
+    AboutModal,
+    EditModal,
+  },
 })
 export default class App extends Vue {
   get isLoggedIn() {
@@ -57,8 +74,12 @@ export default class App extends Vue {
     return getIsFullscreen(this.$store)
   }
 
-  get showAboutModal() {
-    return getShowAboutModal(this.$store)
+  get modalStates() {
+    return getModalStates(this.$store)
+  }
+
+  get editingAnime() {
+    return getEditingAnime(this.$store)
   }
 
   public version = version
@@ -81,8 +102,8 @@ export default class App extends Vue {
     }
   }
 
-  public toggleAboutModal() {
-    toggleShowAboutModal(this.$store)
+  public toggleModal(modal: keyof AppState['modals']) {
+    toggleModal(this.$store, modal)
   }
 }
 </script>
