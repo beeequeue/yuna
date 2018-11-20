@@ -16,8 +16,7 @@
 
   <about-modal
     :visible="modalStates.about"
-    :toggleModal="() => toggleModal('about')"
-    :version="version"
+    :toggleVisible="() => toggleModal('about')"
   />
 
   <edit-modal
@@ -40,7 +39,7 @@ import TitleBar from './components/TitleBar.vue'
 import Navbar from './components/Navbar/Navbar.vue'
 import PlayerContainer from './components/Player/Container.vue'
 import ToastOverlay from './components/ToastOverlay.vue'
-import AboutModal from './components/AboutModal.vue'
+import AboutModal from './components/Modals/AboutModal.vue'
 import EditModal from './components/Modals/EditModal.vue'
 import { getIsLoggedIn, setCrunchyrollCountry } from './state/auth'
 import {
@@ -50,7 +49,6 @@ import {
   AppState,
   getEditingAnime,
 } from './state/app'
-import { version } from '../package.json'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
@@ -81,8 +79,6 @@ export default class App extends Vue {
   get editingAnime() {
     return getEditingAnime(this.$store)
   }
-
-  public version = version
 
   public backgroundImage = requireBg(
     backgrounds[Math.floor(Math.random() * backgrounds.length)],
