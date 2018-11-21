@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { pathOr } from 'rambda'
+import { pathOr } from 'rambdax'
 import {
   mdiCheckboxMarkedCircleOutline,
   mdiClockOutline,

@@ -1,5 +1,5 @@
 import { error } from 'electron-log'
-import { path } from 'rambda'
+import { path } from 'rambdax'
 import { Response } from 'superagent'
 import { Prop as IProp, PropOptions } from 'vue/types/options'
 import { ActionContext, Store } from 'vuex'

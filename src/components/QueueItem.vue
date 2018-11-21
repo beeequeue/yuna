@@ -91,7 +91,7 @@
 <script lang="ts">
 import { Prop, Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
-import { path, pathOr } from 'rambda'
+import { path, pathOr } from 'rambdax'
 import { mdiPlayCircleOutline, mdiMenu } from '@mdi/js'
 
 import AnimeBanner from './AnimeBanner.vue'

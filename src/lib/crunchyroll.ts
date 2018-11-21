@@ -1,5 +1,5 @@
 /* tslint:disable:class-name */
-import { T } from 'rambda'
+import { T } from 'rambdax'
 import superagent from 'superagent/superagent'
 import uuid from 'uuid/v4'
 

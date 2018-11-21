@@ -10233,10 +10233,10 @@ qw@~1.0.1:
   resolved "https://registry.yarnpkg.com/qw/-/qw-1.0.1.tgz#efbfdc740f9ad054304426acb183412cc8b996d4"
   integrity sha1-77/cdA+a0FQwRCassYNBLMi5ltQ=
 
-rambda@^1.2.6:
-  version "1.2.6"
-  resolved "https://registry.yarnpkg.com/rambda/-/rambda-1.2.6.tgz#5feed8039369b65c389ee1e02db9527695d30e83"
-  integrity sha512-3tjeDuSMKAf8t099BejrmLgXdexAh63AsU2c2ZTcN5y/gt5njw03Wsfb+Ti9b08ZWLLDN5r0EvKynfYM91PB6g==
+rambdax@^0.23.0:
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/rambdax/-/rambdax-0.23.0.tgz#a4ffe1a6bbe0a85e164bd2e7187ac3453f60efc3"
+  integrity sha512-TquZA91VfG2he/iFExaMDfMHN/0B4U0H2LEoGwixYc7BmKMp6mj2gWfIpcjrUroPuxc6ExbXK9JvnKN5t5kgFQ==
 
 randomatic@^3.0.0:
   version "3.1.0"

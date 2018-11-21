@@ -75,7 +75,7 @@ import { shell, remote } from 'electron'
 import { api, activeWindow } from 'electron-util'
 import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'fs'
 import { resolve } from 'path'
-import { complement, path } from 'rambda'
+import { complement, path } from 'rambdax'
 import { mdiPlaylistRemove, mdiPause, mdiPlay, mdiClockOutline } from '@mdi/js'
 
 import { getQueue, setQueue, addToQueue } from '@/state/user'

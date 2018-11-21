@@ -1,6 +1,6 @@
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
-import { equals } from 'rambda'
+import { equals } from 'rambdax'
 
 import { RootState } from '@/state/store'
 import { userStore } from '@/lib/user'

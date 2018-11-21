@@ -83,7 +83,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { pathOr } from 'rambda'
+import { pathOr } from 'rambdax'
 
 import CoverImage from '../components/Anime/CoverImage.vue'
 import AnimeTitle from '../components/Anime/Title.vue'

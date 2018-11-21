@@ -85,7 +85,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { contains, equals, findIndex, pathOr } from 'rambda'
+import { contains, equals, findIndex, pathOr } from 'rambdax'
 import {
   mdiPlaylistMinus,
   mdiPlaylistPlay,

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { getStoreAccessors } from 'vuex-typescript'
 import Store from 'electron-store'
-import { complement, equals, filter } from 'rambda'
+import { complement, equals, filter } from 'rambdax'
 import { Key } from 'ts-key-enum'
 
 import { RootState } from '@/state/store'

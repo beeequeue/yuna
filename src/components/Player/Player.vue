@@ -76,7 +76,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import Hls from 'hls.js'
-import { contains } from 'rambda'
+import { contains } from 'rambdax'
 import { mdiLoading, mdiPlayCircle } from '@mdi/js'
 
 import { setProgressOfEpisode, fetchStream } from '@/lib/crunchyroll'

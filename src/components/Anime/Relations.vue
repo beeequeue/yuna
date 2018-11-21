@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { filter, contains } from 'rambda'
+import { filter, contains } from 'rambdax'
 import { mdiArrowLeftBold, mdiArrowRightBold } from '@mdi/js'
 
 import { AnimePageQuery_anime_relations } from '@/graphql/AnimePageQuery'
