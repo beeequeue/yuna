@@ -43,6 +43,13 @@ declare interface Window {
   initialLogin: boolean
 }
 
+declare interface InputEvent<
+  E extends HTMLInputElement | HTMLSelectElement = HTMLInputElement
+> {
+  currentTarget: E
+  target: E
+}
+
 declare module 'vue-cli-plugin-apollo/graphql-client' {
   export const createApolloClient: (
     options: any,
