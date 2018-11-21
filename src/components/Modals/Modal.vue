@@ -12,7 +12,7 @@
 import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component
-export default class EditModal extends Vue {
+export default class Modal extends Vue {
   @Prop(Boolean) public visible!: boolean | null
   @Prop(Function) public toggleVisible!: () => any
 }

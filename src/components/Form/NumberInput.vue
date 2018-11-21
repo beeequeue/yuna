@@ -60,7 +60,10 @@ export default class NumberInput extends Vue {
   }
 
   & > input {
+    display: flex;
+    align-items: center;
     padding: 5px 10px;
+    height: 30px;
     width: 100%;
     border: 0;
     border-radius: 5px;
