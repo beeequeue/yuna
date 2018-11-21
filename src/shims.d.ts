@@ -45,7 +45,7 @@ declare interface Window {
 
 declare interface InputEvent<
   E extends HTMLInputElement | HTMLSelectElement = HTMLInputElement
-> {
+> extends Event {
   currentTarget: E
   target: E
 }
