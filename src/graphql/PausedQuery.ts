@@ -37,7 +37,8 @@ export interface PausedQuery_listCollection {
 
 export interface PausedQuery {
   /**
-   * Media list collection query, provides list pre-grouped by status & custom lists. User ID and Media Type arguments required.
+   * Media list collection query, provides list pre-grouped by status & custom
+   * lists. User ID and Media Type arguments required.
    */
   listCollection: PausedQuery_listCollection | null;
 }

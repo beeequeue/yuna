@@ -37,7 +37,8 @@ export interface PlanningQuery_listCollection {
 
 export interface PlanningQuery {
   /**
-   * Media list collection query, provides list pre-grouped by status & custom lists. User ID and Media Type arguments required.
+   * Media list collection query, provides list pre-grouped by status & custom
+   * lists. User ID and Media Type arguments required.
    */
   listCollection: PlanningQuery_listCollection | null;
 }
