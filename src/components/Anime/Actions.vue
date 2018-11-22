@@ -25,17 +25,6 @@
       @click.native="statusMutation(MediaListStatus.CURRENT)"
     />
 
-    <div v-if="isWatching" class="multi-button" key="isWatchingProgress">
-      <c-button
-        content="+"
-        @click.native="progressMutation(mediaListEntry.progress + 1)"
-      />
-
-      <c-button
-        content="-"
-        @click.native="progressMutation(mediaListEntry.progress - 1)"
-      />
-    </div>
     <div v-if="isWatching" class="multi-button" key="isWatching">
       <c-button
         type="warning"
@@ -103,11 +92,7 @@ import {
   AnimePageQuery_anime_mediaListEntry,
   AnimePageQuery_anime,
 } from '@/graphql/AnimePageQuery'
-import {
-  addEntryMutation,
-  setProgressMutation,
-  setStatusMutation,
-} from '@/graphql/mutations'
+import { addEntryMutation, setStatusMutation } from '@/graphql/mutations'
 import { MediaListStatus } from '@/graphql-types'
 import { prop } from '@/utils'
 
@@ -206,19 +191,6 @@ export default class Actions extends Vue {
     }
 
     await setStatusMutation(this.$apollo, this.mediaListEntry.id, status)
-  }
-
-  public async progressMutation(progress: number) {
-    if (!this.mediaListEntry) {
-      return sendErrorToast(this.$store, 'No entry found..?')
-    }
-
-    await setProgressMutation(
-      this.$apollo,
-      this.mediaListEntry.id,
-      progress,
-      this.mediaListEntry,
-    )
   }
 
   public async addEntryMutation(status: MediaListStatus) {
