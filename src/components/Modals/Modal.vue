@@ -39,24 +39,31 @@ export default class Modal extends Vue {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.65);
   }
 
   &.v-enter-active,
   &.v-leave-active {
     transition: opacity 0.25s;
 
-    & > .modal {
+    & /deep/ .modal-body {
       transition: transform 0.25s;
     }
   }
 
-  &.v-enter,
+  &.v-enter {
+    opacity: 0;
+
+    & /deep/ .modal-body {
+      transform: translateY(10%);
+    }
+  }
+
   &.v-leave-to {
     opacity: 0;
 
-    & > .modal {
-      transform: translateY(10%);
+    & /deep/ .modal-body {
+      transform: translateY(-10%);
     }
   }
 }

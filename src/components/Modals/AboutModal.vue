@@ -1,6 +1,6 @@
 <template>
 <modal :visible="visible" :toggleVisible="toggleVisible">
-  <div class="about-modal">
+  <div class="modal-body about-modal">
     <h2>Crunch v{{version}}</h2>
 
     <div>Electron: {{electronVersion}}</div>
