@@ -99,3 +99,8 @@ export const clamp = (x: number, min: number, max: number) =>
 
 export const enumToArray = <T>(Enum: any): T[] =>
   Object.keys(Enum).map(key => Enum[key])
+
+export const bigFirstChar = (str: string) => {
+  const first = str.slice(0, 1).toUpperCase()
+  return first + str.slice(1).toLowerCase()
+}
