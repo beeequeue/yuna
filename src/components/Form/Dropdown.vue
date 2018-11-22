@@ -1,5 +1,9 @@
 <template>
-<label class="dropdown" :class="classes">
+<label
+  class="dropdown"
+  :class="classes"
+  v-tooltip.bottom="error"
+>
   <span>{{ label }}</span>
 
   <select

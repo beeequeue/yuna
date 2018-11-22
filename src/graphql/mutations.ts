@@ -6,7 +6,10 @@ import { store } from '@/state/store'
 
 import { AddEntryMutation } from './AddEntryMutation'
 import ADD_ENTRY_MUTATION from './AddEntryMutation.graphql'
+import { AnimePageQuery } from './AnimePageQuery'
 import ANIME_PAGE_QUERY from './AnimePageQuery.graphql'
+import { DeleteListEntryMutation } from './DeleteListEntryMutation'
+import DELETE_LIST_ENTRY_MUTATION from './DeleteListEntryMutation.graphql'
 import { SetStatusMutation } from './SetStatusMutation'
 import SET_STATUS_MUTATION from './SetStatusMutation.graphql'
 import {
@@ -107,3 +110,21 @@ export const addEntryMutation = async (
       }
     })
   }
+
+export const deleteListEntryMutation = async (
+  apollo: DollarApollo<any>,
+  animeId: number,
+  entryId:number,
+) =>
+  apollo.mutate<DeleteListEntryMutation>({
+    mutation: DELETE_LIST_ENTRY_MUTATION,
+    variables: { id: entryId },
+    update: cache => {
+      const data = cache.readQuery<AnimePageQuery>({query: ANIME_PAGE_QUERY, variables: {id: animeId}})
+      if (!data || !data.anime) return
+
+      data.anime.mediaListEntry = null
+
+      cache.writeQuery({query: ANIME_PAGE_QUERY, data })
+    }
+  })

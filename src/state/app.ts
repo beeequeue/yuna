@@ -1,5 +1,5 @@
 import { activeWindow } from 'electron-util'
-import { merge, propEq, reject } from 'rambda'
+import { merge, propEq, reject, change } from 'rambdax'
 import {
   NotificationFunctionOptions,
   NotificationTypes,
@@ -243,6 +243,22 @@ export const app = {
       state.modals.edit.anime = anime
     },
 
+    setEditingAnimeValue(
+      state: AppState,
+      payload: {
+        key: keyof EditModalAnime
+        value: any
+      },
+    ) {
+      if (!state.modals.edit.anime) return
+
+      state.modals.edit.anime = change(
+        state.modals.edit.anime,
+        payload.key,
+        payload.value,
+      ) as any
+    },
+
     setFullscreen(state: AppState, b: boolean) {
       state.isFullscreen = b
     },
@@ -327,6 +343,7 @@ export const getIsFullscreen = read(app.getters.getIsFullscreen)
 
 export const setIsUpdateAvailable = commit(app.mutations.setIsUpdateAvailable)
 const setEditingAnime = commit(app.mutations.setEditingAnime)
+export const setEditingAnimeValue = commit(app.mutations.setEditingAnimeValue)
 export const removeToast = commit(app.mutations.removeToast)
 export const setPlaylist = commit(app.mutations.setPlaylist)
 export const updatePlaylistListEntry = commit(

@@ -1,12 +1,14 @@
 <template>
-<label class="number-input" :class="classes">
+<label
+  class="number-input"
+  :class="classes"
+  v-tooltip.bottom="error"
+>
   <span>{{ label }}</span>
 
   <input
     type="number"
     :value="value"
-    :min="min"
-    :max="max"
     @input="handleChange"
     @keydown.e.prevent="() => {}"
   />
@@ -29,8 +31,6 @@ export default class NumberInput extends Vue {
   public value!: number
   @Prop(prop(Function, true))
   public onChange!: (value: number) => any
-  @Prop(Number) public min!: string | null
-  @Prop(Number) public max!: string | null
   @Prop(String) public suffix!: string | null
   @Prop(String) public error!: string | null
   @Prop(Boolean) public disabled!: boolean | null

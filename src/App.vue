@@ -20,10 +20,8 @@
   />
 
   <edit-modal
-    v-if="editingAnime != null"
     :visible="modalStates.edit"
     :toggleVisible="() => toggleModal('edit')"
-    :anime="editingAnime"
   />
 </div>
 </template>
