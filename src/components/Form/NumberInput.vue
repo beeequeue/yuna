@@ -10,6 +10,10 @@
     @input="handleChange"
     @keydown.e.prevent="() => {}"
   />
+
+  <span v-if="suffix" class="suffix">
+    {{ suffix }}
+  </span>
 </label>
 </template>
 
@@ -27,6 +31,7 @@ export default class NumberInput extends Vue {
   public onChange!: (value: number) => any
   @Prop(Number) public min!: string | null
   @Prop(Number) public max!: string | null
+  @Prop(String) public suffix!: string | null
   @Prop(String) public error!: string | null
   @Prop(Boolean) public disabled!: boolean | null
 
@@ -78,6 +83,13 @@ export default class NumberInput extends Vue {
       display: none;
       width: 0;
     }
+  }
+
+  & > .suffix {
+    position: absolute;
+    bottom: 1px;
+    right: 10px;
+    font-weight: 300;
   }
 
   &.error {
