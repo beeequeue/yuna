@@ -1,7 +1,9 @@
 <template>
 <router-link
+  :to="`/anime/${anime.id}`"
   class="anime-banner"
-  :to="`/anime/${anime.id}`">
+  :style="{ background: `url(${diagmondsWebp})` }"
+>
   <img
     class="image"
     :class="{ faded }"
@@ -14,7 +16,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { prop } from '../utils'
+
+import DiagmondsWebp from '@/assets/diagmonds.webp'
+import { prop } from '@/utils'
 
 @Component
 export default class AnimeBanner extends Vue {
@@ -29,6 +33,8 @@ export default class AnimeBanner extends Vue {
         }
     bannerImage: string
   }
+
+  public diagmondsWebp = DiagmondsWebp
 }
 </script>
 
@@ -39,13 +45,17 @@ export default class AnimeBanner extends Vue {
   display: inline-block;
   position: relative;
   height: 75px;
-  background: black;
+  width: 100%;
 
   & > .image {
     object-fit: cover;
     width: 100%;
     height: 100%;
     transition: filter 500ms;
+
+    &:not([src]) {
+      opacity: 0;
+    }
 
     &.faded {
       filter: grayscale(0.5) opacity(0.5) brightness(0.75);
@@ -55,9 +65,10 @@ export default class AnimeBanner extends Vue {
   & > .title {
     position: absolute;
     top: 0;
-    left: 10%;
+    left: 5%;
     height: 100%;
-    width: 80%;
+    width: 90%;
+    overflow: hidden;
 
     display: flex;
     justify-content: center;

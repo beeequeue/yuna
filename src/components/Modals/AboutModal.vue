@@ -6,6 +6,10 @@
     <div>Electron: {{electronVersion}}</div>
     <div>Chrome: {{chromeVersion}}</div>
 
+    <a href="https://subtlepatterns.com">
+      <div>Subtle Patterns</div>
+    </a>
+
     <a href="https://github.com/beeequeue/crunch">
       <div>Source on GitHub</div>
     </a>
@@ -50,11 +54,15 @@ export default class AboutModal extends Vue {
   box-shadow: $shadow;
   z-index: 1;
 
-  & > a:last-child {
-    margin: 10px 0 25px;
+  & > a {
+    margin: 5px 0;
     font-weight: 800;
     color: lighten($main, 20%);
     transition: color 0.15s;
+
+    &:last-child {
+      margin: 10px 0 25px;
+    }
 
     &:hover {
       color: lighten($main, 30%);
