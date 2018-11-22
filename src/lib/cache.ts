@@ -44,7 +44,7 @@ export class AnimeCache {
   }: GetSeasonOptions): Promise<Episode[]> {
     const hit = seasonCache.get(idMal.toString())
 
-    if (!hit || isStale(hit, DAY)) {
+    if (!hit || isStale(hit, WEEK * 4)) {
       let episodes
 
       try {
