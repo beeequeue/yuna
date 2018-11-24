@@ -1,71 +1,108 @@
 <template>
 <transition name="fade">
-  <transition-group class="actions" tag="div">
+  <transition-group tag="div" class="actions" :class="{ small }">
     <c-button
-      v-if="!isOnList || (!isPlanning && !isWatching && !isCompleted && !isDropped && !isPaused)"
-      key="addEntry"
+      v-if="isNotExcluded(ActionKeys.ADD) && !isOnList || (!isPlanning && !isWatching && !isCompleted && !isDropped && !isPaused)"
+      :key="ActionKeys.ADD"
       :icon="addToListSvg"
-      content="Set as Planning"
-      @click.native="addEntryMutation(MediaListStatus.PLANNING)"
+      :content="ifBig('Set as Planning')"
+      v-tooltip.right="ifSmall('Set as Planning')"
+      :click="() => addEntryMutation(MediaListStatus.PLANNING)"
     />
 
     <c-button
-      v-if="isPlanning"
-      key="startEntry"
-      :icon="addToQueueSvg"
-      content="Set as Watching"
-      @click.native="statusMutation(MediaListStatus.CURRENT)"
+      v-if="isPlanning && isNotExcluded(ActionKeys.START)"
+      :key="ActionKeys.START"
+      type="success"
+      :icon="setCurrentSvg"
+      :content="ifBig('Set as Watching')"
+      v-tooltip.right="ifSmall('Set as Watching')"
+      :click="() => statusMutation(MediaListStatus.CURRENT)"
     />
 
     <c-button
-      v-if="isDropped || isPaused"
-      key="resumeEntry"
+      v-if="isDropped || isPaused && isNotExcluded(ActionKeys.RESUME)"
+      :key="ActionKeys.RESUME"
       :icon="setToRepeatSvg"
-      content="Resume"
-      @click.native="statusMutation(MediaListStatus.CURRENT)"
+      type="success"
+      :content="ifBig('Resume')"
+      v-tooltip.right="ifSmall('Resume')"
+      :click="() => statusMutation(MediaListStatus.CURRENT)"
     />
 
-    <div v-if="isWatching" class="multi-button" key="isWatching">
+    <div v-if="isWatching && ifBig(true)" class="multi-button" key="isWatching">
       <c-button
+        v-if="isNotExcluded(ActionKeys.PAUSE)"
+        :icon="pauseSvg"
         type="warning"
-        content="Pause"
-        @click.native="statusMutation(MediaListStatus.PAUSED)"
+        :content="ifBig('Pause')"
+        v-tooltip.right="ifSmall('Pause')"
+        :click="() => statusMutation(MediaListStatus.PAUSED)"
       />
 
       <c-button
+        v-if="isNotExcluded(ActionKeys.DROP)"
+        :icon="dropSvg"
         type="danger"
-        content="Drop"
-        @click.native="statusMutation(MediaListStatus.DROPPED)"
+        :content="ifBig('Drop')"
+        v-tooltip.right="ifSmall('Drop')"
+        :click="() => statusMutation(MediaListStatus.DROPPED)"
       />
     </div>
 
     <c-button
-      v-if="isCompleted"
-      key="setToRepeating"
+      v-if="ifSmall(true) && isWatching && isNotExcluded(ActionKeys.PAUSE)"
+      :key="ActionKeys.PAUSE"
+      :icon="pauseSvg"
+      type="warning"
+      :content="ifBig('Pause')"
+      v-tooltip.right="ifSmall('Pause')"
+      :click="() => statusMutation(MediaListStatus.PAUSED)"
+    />
+
+    <c-button
+      v-if="ifSmall(true) && isWatching && isNotExcluded(ActionKeys.DROP)"
+      :icon="dropSvg"
+      :key="ActionKeys.DROP"
+      type="danger"
+      :content="ifBig('Drop')"
+      v-tooltip.right="ifSmall('Drop')"
+      :click="() => statusMutation(MediaListStatus.DROPPED)"
+    />
+
+    <c-button
+      v-if="isCompleted && isNotExcluded(ActionKeys.REPEAT)"
+      :key="ActionKeys.REPEAT"
+      type="success"
       :icon="setToRepeatSvg"
-      content="Set as Repeating"
-      @click.native="statusMutation(MediaListStatus.REPEATING)"
+      :content="ifBig('Set as Repeating')"
+      v-tooltip.right="ifSmall('Set as Repeating')"
+      :click="() => statusMutation(MediaListStatus.REPEATING)"
     />
 
     <c-button
-      v-if="!isInQueue"
-      key="addToQueue"
+      v-if="!isInQueue && isNotExcluded(ActionKeys.ADD_QUEUE)"
+      :key="ActionKeys.ADD_QUEUE"
       :icon="addToQueueSvg"
-      content="Add to Queue"
-      @click.native="addToQueue"
+      :content="ifBig('Add to Queue')"
+      v-tooltip.right="ifSmall('Add to Queue')"
+      :click="addToQueue"
     />
     <c-button
-      v-else
-      key="removeFromQueue"
+      v-else-if="isNotExcluded(ActionKeys.REMOVE_QUEUE)"
+      :key="ActionKeys.REMOVE_QUEUE"
       :icon="removeFromQueueSvg"
-      content="Remove from Queue"
-      @click.native="removeFromQueueByIndex"
+      :content="ifBig('Remove from Queue')"
+      v-tooltip.right="ifSmall('Remove from Queue')"
+      :click="removeFromQueue"
     />
 
     <c-button
-      v-if="isOnList"
-      key="editItem"
-      content="Edit"
+      v-if="isOnList && isNotExcluded(ActionKeys.EDIT)"
+      :key="ActionKeys.EDIT"
+      :icon="editSvg"
+      :content="ifBig('Edit')"
+      v-tooltip.right="ifSmall('Edit')"
       :click="editAnime"
     />
   </transition-group>
@@ -80,6 +117,10 @@ import {
   mdiPlaylistPlay,
   mdiPlaylistPlus,
   mdiRepeat,
+  mdiPlay,
+  mdiPause,
+  mdiClose,
+  mdiPencil,
 } from '@mdi/js'
 
 import { addToQueue, getQueue, removeFromQueueByIndex } from '@/state/user'
@@ -94,28 +135,46 @@ import {
 } from '@/graphql/AnimePageQuery'
 import { addEntryMutation, setStatusMutation } from '@/graphql/mutations'
 import { MediaListStatus } from '@/graphql-types'
-import { prop } from '@/utils'
 
 import CButton from '../CButton.vue'
+
+export enum ActionKeys {
+  ADD = 'addEntry',
+  START = 'startEntry',
+  RESUME = 'resumeEntry',
+  PAUSE = 'pauseEntry',
+  DROP = 'dropEntry',
+  REPEAT = 'repeatEntry',
+  ADD_QUEUE = 'addToQueue',
+  REMOVE_QUEUE = 'removeFromQueue',
+  EDIT = 'editEntry',
+}
 
 @Component({
   components: { CButton },
 })
 export default class Actions extends Vue {
-  @Prop(prop(Object))
+  @Prop(Object)
   public mediaListEntry!: AnimePageQuery_anime_mediaListEntry | null
-  @Prop(prop(Object))
-  public anime!: AnimePageQuery_anime | null
+  @Prop(Object) public anime!: AnimePageQuery_anime | null
+  @Prop(Boolean) public small!: boolean | null
+  @Prop({ type: Array, default: () => [] })
+  public exclude!: string[]
 
   public get mediaListStatus(): MediaListStatus | null {
     return pathOr(null, ['status'], this.mediaListEntry)
   }
 
+  public ActionKeys = ActionKeys
   public MediaListStatus = MediaListStatus
   public addToListSvg = mdiPlaylistPlus
   public addToQueueSvg = mdiPlaylistPlay
   public removeFromQueueSvg = mdiPlaylistMinus
   public setToRepeatSvg = mdiRepeat
+  public setCurrentSvg = mdiPlay
+  public pauseSvg = mdiPause
+  public dropSvg = mdiClose
+  public editSvg = mdiPencil
 
   public get id() {
     return Number(this.$route.params.id)
@@ -150,6 +209,18 @@ export default class Actions extends Vue {
     if (!this.anime) return false
 
     return contains(this.anime.id, getQueue(this.$store))
+  }
+
+  public isNotExcluded(key: string) {
+    return !contains(key, this.exclude)
+  }
+
+  public ifBig(value: any) {
+    return !this.small ? value : null
+  }
+
+  public ifSmall(value: any) {
+    return this.small ? value : null
   }
 
   public editAnime() {
@@ -215,6 +286,7 @@ export default class Actions extends Vue {
   & > .button,
   & > .multi-button {
     margin-bottom: 10px;
+    border-radius: 5px;
     box-shadow: $shadow;
     will-change: transform, opacity;
 
@@ -232,6 +304,13 @@ export default class Actions extends Vue {
     &.v-enter {
       transform: translateX(-100%);
       opacity: 0;
+    }
+  }
+
+  &.small {
+    & > .button,
+    & > .multi-button {
+      margin-bottom: 0;
     }
   }
 

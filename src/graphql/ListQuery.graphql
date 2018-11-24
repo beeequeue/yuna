@@ -1,0 +1,30 @@
+query ListQuery($userId: Int!) {
+  listCollection: MediaListCollection(
+    userId: $userId
+    type: ANIME
+    forceSingleCompletedList: true
+  ) {
+    lists {
+      isCustomList
+      name
+      entries {
+        id
+        status
+        progress
+        score
+        repeat
+        anime: media {
+          id
+          title {
+            userPreferred
+          }
+          coverImage {
+            large
+          }
+          isFavourite
+          episodes
+        }
+      }
+    }
+  }
+}
