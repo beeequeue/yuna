@@ -8,36 +8,43 @@
     <div class="menu">
       <text-input
         placeholder="Filter..."
-        :value="filterString"
+        value=""
         :onChange="setFilterString"
       />
     </div>
 
-    <transition-group tag="div" class="list-container">
-      <div
+    <div class="list-container">
+      <transition-group
+        tag="div"
         v-for="list in getLists(data)"
+        v-if="list.entries && list.entries.length > 0"
         :key="list.name"
         class="list"
       >
-        <h1>{{ list.name }}</h1>
+        <h1 :key="list.name">{{ list.name }}</h1>
 
         <list-entry
           v-for="entry in list.entries"
           :key="entry.id"
           :entry="entry"
         />
-      </div>
-    </transition-group>
+      </transition-group>
+    </div>
   </template>
 </ApolloQuery>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { path } from 'rambdax'
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import Fuse from 'fuse.js'
+import { debounce, path } from 'rambdax'
 
 import LIST_QUERY from '@/graphql/ListQuery.graphql'
-import { ListQuery, ListQuery_listCollection_lists } from '@/graphql/ListQuery'
+import {
+  ListQuery,
+  ListQuery_listCollection_lists,
+  ListQuery_listCollection_lists_entries,
+} from '@/graphql/ListQuery'
 import { getAnilistUserId } from '@/state/auth'
 
 import ListEntry from '@/components/ListEntry.vue'
@@ -53,12 +60,52 @@ export default class List extends Vue {
     return getAnilistUserId(this.$store)
   }
 
+  @Watch('filterString')
+  public updateFilterString() {}
+
   public getLists(data: ListQuery) {
-    return path<ListQuery_listCollection_lists[]>('listCollection.lists', data)
+    const lists = path<ListQuery_listCollection_lists[]>(
+      'listCollection.lists',
+      data,
+    )
+
+    if (!lists) return []
+
+    if (this.filterString.length < 1) {
+      return lists
+    }
+
+    const filteredLists = lists.map(list => {
+      if (!list.entries) return
+
+      const fuse = new Fuse<ListQuery_listCollection_lists_entries>(
+        list.entries as any,
+        {
+          caseSensitive: false,
+          shouldSort: false,
+          keys: [
+            'anime.title.userPreferred',
+            'anime.title.english',
+            'anime.title.romaji',
+          ] as any,
+          threshold: 0.5,
+        },
+      )
+
+      return {
+        ...list,
+        entries: fuse.search(this.filterString),
+      }
+    })
+
+    return filteredLists
   }
 
-  public setFilterString(value: string) {
-    this.filterString = value
+  // beautiful!
+  public setFilterString(filter: string) {
+    debounce((str: string) => {
+      this.filterString = str
+    }, 650)(filter)
   }
 }
 </script>
@@ -74,7 +121,7 @@ export default class List extends Vue {
   bottom: 0;
   display: flex;
   flex-direction: column;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.85);
 
   & > .menu {
     width: 100%;
@@ -106,8 +153,23 @@ export default class List extends Vue {
         margin: 5px 0 15px;
       }
 
-      & > .list-entry.v-move {
-        transition: 0.5s;
+      & > .entry {
+        &.v-move {
+          transition: 0.5s;
+        }
+
+        &.v-leave-active,
+        &.v-enter-active {
+          transition: opacity 0.35s, width 0.5s, margin 0.5s;
+        }
+
+        &.v-leave-to,
+        &.v-enter {
+          width: 0;
+          opacity: 0;
+          margin-left: 0;
+          margin-right: 0;
+        }
       }
     }
   }

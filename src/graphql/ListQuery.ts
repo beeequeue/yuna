@@ -13,6 +13,18 @@ export interface ListQuery_listCollection_lists_entries_anime_title {
    * The currently authenticated users preferred title language. Default romaji for non-authenticated
    */
   userPreferred: string | null;
+  /**
+   * The official english title
+   */
+  english: string | null;
+  /**
+   * The romanization of the native language title
+   */
+  romaji: string | null;
+  /**
+   * Official title in it's native language
+   */
+  native: string | null;
 }
 
 export interface ListQuery_listCollection_lists_entries_anime_coverImage {

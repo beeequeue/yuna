@@ -19,6 +19,7 @@
     "electron-store": "^2.0.0",
     "electron-updater": "^4.0.4",
     "electron-util": "^0.10.2",
+    "fuse.js": "^3.3.0",
     "hls.js": "^0.11.0",
     "marked": "^0.5.2",
     "normalize.css": "^8.0.1",

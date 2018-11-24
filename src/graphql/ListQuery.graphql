@@ -17,6 +17,9 @@ query ListQuery($userId: Int!) {
           id
           title {
             userPreferred
+            english
+            romaji
+            native
           }
           coverImage {
             large
