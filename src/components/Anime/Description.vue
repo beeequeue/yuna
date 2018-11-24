@@ -56,7 +56,7 @@ export default class Description extends Vue {
 
   public doHeightChecks() {
     this.realMaxHeight = this.$refs.content.clientHeight + 10
-    this.isContentTooBig = this.realMaxHeight > 200
+    this.isContentTooBig = this.realMaxHeight > 160
   }
 
   public toggleOpen() {
