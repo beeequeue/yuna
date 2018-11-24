@@ -4,7 +4,7 @@
   :class="classes"
   v-tooltip.bottom="error"
 >
-  <span>{{ label }}</span>
+  <span v-if="label != null">{{ label }}</span>
 
   <input
     type="number"
@@ -25,8 +25,7 @@ import { prop } from '@/utils'
 
 @Component
 export default class NumberInput extends Vue {
-  @Prop(prop(String, true))
-  public label!: string
+  @Prop(String) public label!: string
   @Prop(prop(Number, true))
   public value!: number
   @Prop(prop(Function, true))

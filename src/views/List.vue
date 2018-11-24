@@ -6,14 +6,29 @@
 >
   <template slot-scope="{ result: { loading, error, data } }">
     <div class="menu">
+      <a
+        class="anilist"
+        :href="`https://anilist.co/user/${userId}/animelist`"
+        v-tooltip.right="'Open in AniList'"
+      >
+        <span v-html="alLogo"/>
+      </a>
+
+      <div class="number-input-filler"/>
+
       <text-input
         placeholder="Filter..."
         value=""
         :onChange="setFilterString"
       />
+
+      <number-input
+        :value="limit"
+        :onChange="setLimit"
+      />
     </div>
 
-    <div class="list-container">
+    <transition-group tag="div" class="list-container">
       <transition-group
         tag="div"
         v-for="list in getLists(data)"
@@ -29,13 +44,13 @@
           :entry="entry"
         />
       </transition-group>
-    </div>
+    </transition-group>
   </template>
 </ApolloQuery>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import Fuse from 'fuse.js'
 import { debounce, path } from 'rambdax'
 
@@ -47,21 +62,22 @@ import {
 } from '@/graphql/ListQuery'
 import { getAnilistUserId } from '@/state/auth'
 
+import anilistLogoSvg from '@/assets/anilist.svg'
 import ListEntry from '@/components/ListEntry.vue'
 import TextInput from '@/components/Form/TextInput.vue'
+import NumberInput from '@/components/Form/NumberInput.vue'
 
-@Component({ components: { ListEntry, TextInput } })
+@Component({ components: { ListEntry, TextInput, NumberInput } })
 export default class List extends Vue {
   public filterString = ''
+  public limit = Number(localStorage.getItem('list-limit') || 25)
 
   public LIST_QUERY = LIST_QUERY
+  public alLogo = anilistLogoSvg
 
   public get userId() {
     return getAnilistUserId(this.$store)
   }
-
-  @Watch('filterString')
-  public updateFilterString() {}
 
   public getLists(data: ListQuery) {
     const lists = path<ListQuery_listCollection_lists[]>(
@@ -72,7 +88,13 @@ export default class List extends Vue {
     if (!lists) return []
 
     if (this.filterString.length < 1) {
-      return lists
+      return lists.map(list => ({
+        ...list,
+        entries: (list.entries as ListQuery_listCollection_lists_entries[]).slice(
+          0,
+          this.limit,
+        ),
+      }))
     }
 
     const filteredLists = lists.map(list => {
@@ -82,19 +104,19 @@ export default class List extends Vue {
         list.entries as any,
         {
           caseSensitive: false,
-          shouldSort: false,
+          shouldSort: true,
           keys: [
             'anime.title.userPreferred',
             'anime.title.english',
             'anime.title.romaji',
           ] as any,
-          threshold: 0.5,
+          threshold: 0.35,
         },
       )
 
       return {
         ...list,
-        entries: fuse.search(this.filterString),
+        entries: fuse.search(this.filterString).splice(0, this.limit),
       }
     })
 
@@ -105,7 +127,13 @@ export default class List extends Vue {
   public setFilterString(filter: string) {
     debounce((str: string) => {
       this.filterString = str
-    }, 650)(filter)
+    }, 350)(filter)
+  }
+
+  public setLimit(value: number) {
+    localStorage.setItem('list-limit', value.toString())
+    this.limit = value
+    this.$forceUpdate()
   }
 }
 </script>
@@ -124,13 +152,38 @@ export default class List extends Vue {
   background: rgba(0, 0, 0, 0.85);
 
   & > .menu {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     padding: 10px 0;
     background: darken($dark, 3%);
     flex-shrink: 0;
 
-    & > .text-input /deep/ input {
-      text-align: center;
+    & > .anilist {
+      position: absolute;
+      top: calc(50% + 2px);
+      left: 12px;
+      transform: translateY(-50%);
+
+      & /deep/ svg {
+        height: 26px;
+        width: 26px;
+      }
+    }
+
+    & > .text-input,
+    & > .number-input {
+      & /deep/ input {
+        text-align: center;
+      }
+    }
+
+    & > .number-input,
+    & > .number-input-filler {
+      width: 75px;
+      margin: 0 10px;
     }
   }
 
@@ -145,12 +198,34 @@ export default class List extends Vue {
       justify-content: center;
       flex-wrap: wrap;
       padding: 10px 15px;
+      overflow: hidden;
 
       & > h1 {
         width: 100%;
         font-weight: 500 !important;
         text-shadow: $outline;
         margin: 5px 0 15px;
+      }
+
+      &.v-move {
+        transition: 0.5s;
+      }
+
+      &.v-leave-active,
+      &.v-enter-active {
+        transition: opacity 0.35s, height 0.5s, padding 0.5s;
+      }
+
+      &.v-leave {
+        height: 225px;
+      }
+
+      &.v-leave-to,
+      &.v-enter {
+        height: 0;
+        opacity: 0;
+        padding-top: 0;
+        padding-bottom: 0;
       }
 
       & > .entry {
