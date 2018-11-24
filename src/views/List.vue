@@ -257,6 +257,10 @@ export default class List extends Vue {
   & > .menu {
     transition: transform 0.5s;
   }
+
+  & > .list-container {
+    transition: opacity 0.5s, transform 0.5s;
+  }
 }
 
 .route-enter,
@@ -265,6 +269,11 @@ export default class List extends Vue {
 
   & > .menu {
     transform: translateY(-100%);
+  }
+
+  & > .list-container {
+    opacity: 0;
+    transform: translateY(2%);
   }
 }
 </style>
