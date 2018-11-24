@@ -150,7 +150,7 @@ export default class CButton extends Vue {
   align-items: center;
   padding: 5px;
   border: none;
-  border-radius: 3px;
+  border-radius: 5px;
   cursor: pointer;
   user-select: none;
 

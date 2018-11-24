@@ -257,6 +257,11 @@ export default class QueueItem extends Vue {
     overflow: hidden;
     box-shadow: $shadow;
 
+    /* Fix for pixels showing behind .handle */
+    & > .anime-banner /deep/ img {
+      border-top-right-radius: 10px;
+    }
+
     & > .handle {
       position: absolute;
       top: 0;
