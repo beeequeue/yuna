@@ -51,7 +51,7 @@ renderer.text = (content: string) =>
   content.replace(
     / #(\d+) ?/g,
     (original: string, id: string) =>
-      `<a href="https://github.com/beeequeue/crunch/issues/${id}" target="_blank">${original}</a>`,
+      `<a href="https://github.com/beeequeue/yuna/issues/${id}" target="_blank">${original}</a>`,
   )
 
 @Component({ components: { CButton } })
@@ -86,7 +86,7 @@ export default class Dashboard extends Vue {
 
   private async fetchChangelog() {
     const response = (await superagent.get(
-      'https://api.github.com/repos/beeequeue/crunch/releases',
+      'https://api.github.com/repos/beeequeue/yuna/releases',
     )) as RequestResponse<GitHubRelease[]>
 
     if (responseIsError(response)) {

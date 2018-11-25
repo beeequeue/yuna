@@ -1,7 +1,7 @@
 <template>
 <modal :visible="visible" :toggleVisible="toggleVisible">
   <div class="modal-body about-modal">
-    <h2>Crunch v{{version}}</h2>
+    <h2>Yuna v{{version}}</h2>
 
     <div>Electron: {{electronVersion}}</div>
     <div>Chrome: {{chromeVersion}}</div>
@@ -10,7 +10,7 @@
       <div>Subtle Patterns</div>
     </a>
 
-    <a href="https://github.com/beeequeue/crunch">
+    <a href="https://github.com/beeequeue/yuna">
       <div>Source on GitHub</div>
     </a>
   </div>

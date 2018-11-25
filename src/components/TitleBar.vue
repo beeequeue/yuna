@@ -58,9 +58,9 @@ export default class TitleBar extends Vue {
 
   public get name() {
     const shouldUseSillyName = Math.random() <= 0.1
-    if (!shouldUseSillyName) return 'Crunch'
+    if (!shouldUseSillyName) return 'Yuna'
 
-    return ['cromch', '(○^ω^)_旦 '][Math.round(Math.random())]
+    return ['Yummy', '(○^ω^)_旦 '][Math.round(Math.random())]
   }
 
   public get country() {

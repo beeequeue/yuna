@@ -1,5 +1,5 @@
 {
-  "name": "crunch",
+  "name": "yuna",
   "description": "An anime player that integrates with Crunchyroll, AniList, Masterani",
   "version": "0.0.11",
   "author": "BeeeQueue",
@@ -81,7 +81,7 @@
   "private": true,
   "repository": {
     "type": "github",
-    "url": "https://github.com/BeeeQueue/crunch"
+    "url": "https://github.com/BeeeQueue/yuna"
   },
   "resolutions": {
     "@types/graphql": "14.0.1",
@@ -93,6 +93,6 @@
     "graphql:get-schema": "yarn apollo schema:download graphql.schema.json",
     "lint": "vue-cli-service lint",
     "postinstall": "yarn electron-builder install-app-deps",
-    "serve": "vue-cli-service electron:serve"
+    "serve": "vue-cli-service electron:serve -c.productName=yuna-dev"
   }
 }
