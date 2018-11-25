@@ -123,6 +123,7 @@ import {
   mdiPencil,
 } from '@mdi/js'
 
+import { getAnilistUserId } from '@/state/auth'
 import { addToQueue, getQueue, removeFromQueueByIndex } from '@/state/user'
 import {
   sendErrorToast,
@@ -175,6 +176,10 @@ export default class Actions extends Vue {
   public pauseSvg = mdiPause
   public dropSvg = mdiClose
   public editSvg = mdiPencil
+
+  public get userId() {
+    return getAnilistUserId(this.$store)
+  }
 
   public get id() {
     return Number(this.$route.params.id)
@@ -261,7 +266,12 @@ export default class Actions extends Vue {
       return sendErrorToast(this.$store, 'No entry found..?')
     }
 
-    await setStatusMutation(this.$apollo, this.mediaListEntry.id, status)
+    await setStatusMutation(
+      this.$apollo,
+      this.mediaListEntry.id,
+      status,
+      this.userId,
+    )
   }
 
   public async addEntryMutation(status: MediaListStatus) {
