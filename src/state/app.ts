@@ -260,7 +260,10 @@ export const app = {
     },
 
     setFullscreen(state: AppState, b: boolean) {
+      const browserWindow = activeWindow()
+
       state.isFullscreen = b
+      browserWindow.setFullScreen(b)
     },
   },
 
@@ -307,7 +310,6 @@ export const app = {
     },
 
     toggleFullscreen(context: AppContext) {
-      const browserWindow = activeWindow()
       const isFullscreen = context.state.isFullscreen
 
       if (!isFullscreen) {
@@ -316,7 +318,6 @@ export const app = {
         router.back()
       }
 
-      browserWindow.setFullScreen(!isFullscreen)
       setFullscreen(context, !isFullscreen)
     },
 
@@ -353,7 +354,7 @@ export const setCurrentEpisode = commit(app.mutations.setCurrentEpisode)
 export const toggleModal = commit(app.mutations.toggleModal)
 const addToast = commit(app.mutations.addToast)
 export const closeAllModals = commit(app.mutations.closeAllModals)
-const setFullscreen = commit(app.mutations.setFullscreen)
+export const setFullscreen = commit(app.mutations.setFullscreen)
 
 export const toggleFullscreen = dispatch(app.actions.toggleFullscreen)
 export const sendToast = dispatch(app.actions.sendToast)

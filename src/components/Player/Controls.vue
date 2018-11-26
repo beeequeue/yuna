@@ -152,6 +152,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Route } from 'vue-router'
 import {
   mdiArrowCollapse,
   mdiArrowExpand,
@@ -171,6 +172,7 @@ import {
   toggleFullscreen,
   ListEntry,
   setCurrentEpisode,
+  setFullscreen,
 } from '@/state/app'
 import { Episode, Levels } from '@/types'
 import { prop, secondsToTimeString } from '@/utils'
@@ -179,8 +181,15 @@ import Icon from '../Icon.vue'
 import ProgressBar from './ProgressBar.vue'
 import VolumeSlider from './VolumeSlider.vue'
 
-@Component({
+@Component<Controls>({
   components: { VolumeSlider, ProgressBar, Icon },
+  watch: {
+    $route(newRoute: Route) {
+      if (!newRoute.path.includes('/player-full') && this.isFullscreen) {
+        this._setFullscreen(false)
+      }
+    },
+  },
 })
 export default class Controls extends Vue {
   @Prop(prop(Object, true))
@@ -317,6 +326,10 @@ export default class Controls extends Vue {
 
   public _toggleFullscreen() {
     toggleFullscreen(this.$store)
+  }
+
+  public _setFullscreen(value: boolean) {
+    setFullscreen(this.$store, value)
   }
 
   public secondsToTimeString(input: number) {
