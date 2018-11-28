@@ -3,7 +3,7 @@
   <div class="content">
     <steps :steps="steps" :current="currentStep"/>
 
-    <transition-group tag="div" class="steps">
+    <transition-group tag="div" class="steps" :class="{ hide: hasFinishedSetup }">
       <login-al
         key="al"
         v-if="currentStep === Step.LOGIN_AL"
@@ -19,7 +19,7 @@
       <spoiler-settings
         key="s-s"
         v-if="currentStep === Step.SPOILER_SETTINGS"
-        :goToNextStep="goToNextStep"
+        :goToNextStep="finishSetup"
       />
     </transition-group>
   </div>
@@ -34,23 +34,29 @@ import LoginAl from '@/components/FirstTimeSetup/LoginAL.vue'
 import LoginCr from '@/components/FirstTimeSetup/LoginCR.vue'
 import SpoilerSettings from '@/components/FirstTimeSetup/SpoilerSettings.vue'
 
-import { enumToArray, setFinishedSetup } from '@/utils'
+import { enumToArray } from '@/utils'
 import { getIsLoggedIn, loginCrunchyroll } from '@/state/auth'
 import { loginAnilist } from '@/lib/anilist'
+import { getHasFinishedSetup, setHasFinishedSetup } from '@/state/app'
 
 export enum Step {
   LOGIN_AL,
   LOGIN_CR,
   SPOILER_SETTINGS,
-  QUEUE_TUTORIAL,
 }
 
-@Component({ components: { LoginAl, LoginCr, Steps, SpoilerSettings } })
+@Component({
+  components: { LoginAl, LoginCr, Steps, SpoilerSettings },
+})
 export default class FirstTimeSetup extends Vue {
   public currentStep: Step = 0
   public steps = enumToArray(Step)
 
   public Step = Step
+
+  public get hasFinishedSetup() {
+    return getHasFinishedSetup(this.$store)
+  }
 
   public get isLoggedIn() {
     return getIsLoggedIn(this.$store)
@@ -61,6 +67,10 @@ export default class FirstTimeSetup extends Vue {
   }
 
   public updateCurrentStep() {
+    if (this.hasFinishedSetup) {
+      return (this.currentStep = 10)
+    }
+
     if (this.isLoggedIn.all) {
       return (this.currentStep = 2)
     }
@@ -82,12 +92,9 @@ export default class FirstTimeSetup extends Vue {
     this.updateCurrentStep()
   }
 
-  public goToNextStep() {
-    this.currentStep++
-  }
-
   public finishSetup() {
-    setFinishedSetup(true)
+    this.currentStep++
+    setHasFinishedSetup(this.$store, true)
   }
 }
 </script>
@@ -114,6 +121,11 @@ export default class FirstTimeSetup extends Vue {
     & > .steps {
       position: relative;
       width: 300px;
+      transition: width 0.75s;
+
+      &.hide {
+        width: 0;
+      }
 
       & > .step {
         position: absolute;
@@ -138,6 +150,10 @@ export default class FirstTimeSetup extends Vue {
         &.v-leave-to {
           opacity: 0;
           transform: translateY(calc(-50% - 150px));
+
+          &.spoiler-settings {
+            transform: translate(50px, -50%);
+          }
         }
       }
     }

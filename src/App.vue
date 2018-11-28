@@ -3,7 +3,7 @@
   <title-bar v-if="!isFullscreen"/>
 
   <transition>
-    <navbar v-if="isLoggedIn.all && !isFullscreen && !$route.path.startsWith('/first-time-setup')"/>
+    <navbar v-if="isLoggedIn.all && hasFinishedSetup && !isFullscreen"/>
   </transition>
 
   <transition name="route">
@@ -32,7 +32,7 @@ import Component from 'vue-class-component'
 import { ipcRenderer } from 'electron'
 
 import { CHECK_FOR_UPDATES } from '@/messages'
-import { createBothSessions, hasFinishedSetup } from '@/utils'
+import { createBothSessions } from '@/utils'
 import TitleBar from './components/TitleBar.vue'
 import Navbar from './components/Navbar/Navbar.vue'
 import PlayerContainer from './components/Player/Container.vue'
@@ -43,6 +43,7 @@ import { getIsLoggedIn, setCrunchyrollCountry } from './state/auth'
 import {
   AppState,
   getEditingAnime,
+  getHasFinishedSetup,
   getIsFullscreen,
   getModalStates,
   toggleModal,
@@ -78,6 +79,10 @@ export default class App extends Vue {
     return getEditingAnime(this.$store)
   }
 
+  get hasFinishedSetup() {
+    return getHasFinishedSetup(this.$store)
+  }
+
   public backgroundImage = requireBg(
     backgrounds[Math.floor(Math.random() * backgrounds.length)],
   )
@@ -90,7 +95,7 @@ export default class App extends Vue {
       ipcRenderer.send(CHECK_FOR_UPDATES)
     }
 
-    if (!hasFinishedSetup()) {
+    if (!this.hasFinishedSetup) {
       return this.$router.push('/first-time-setup')
     }
 

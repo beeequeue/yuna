@@ -4,11 +4,21 @@
     <icon class="button" :icon="homeOutlineSvg"/>
   </router-link>
 
-  <item text="Queue" path="/queue" class="align-right"/>
+  <item
+    text="Queue"
+    path="/queue"
+    class="align-right"
+    v-tooltip="getTooltip('queue')"
+  />
 
-  <search/>
+  <search />
 
-  <item text="List" path="/list" class="align-left"/>
+  <item
+    text="List"
+    path="/list"
+    class="align-left"
+    v-tooltip="getTooltip('list')"
+  />
 
   <icon
     class="button align-left"
@@ -27,27 +37,59 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { TooltipSettings } from 'v-tooltip'
 import { mdiHomeOutline, mdiSettingsOutline } from '@mdi/js'
 
-import Item from './Item.vue'
-import Icon from '../Icon.vue'
 import Search from '../Search/Search.vue'
+import Icon from '../Icon.vue'
+import Item from './Item.vue'
 import SettingsDropdown from './SettingsDropdown.vue'
 
 @Component({
   components: { Search, SettingsDropdown, Icon, Item },
 })
 export default class Navbar extends Vue {
+  public settingsOpen = false
+  public showFirstTimetooltips = false
+
+  public homeOutlineSvg = mdiHomeOutline
+  public settingsSvg = mdiSettingsOutline
+
+  public mounted() {
+    setTimeout(() => {
+      this.showFirstTimetooltips = this.isInFirstSetup
+    }, 500)
+  }
+
   public get openClass() {
     return {
       open: this.settingsOpen,
     }
   }
 
-  public settingsOpen = false
+  public get isInFirstSetup() {
+    return this.$route.path.includes('/first-time-setup')
+  }
 
-  public homeOutlineSvg = mdiHomeOutline
-  public settingsSvg = mdiSettingsOutline
+  public getTooltip(item: 'queue' | 'list'): TooltipSettings | false {
+    let content = ''
+
+    switch (item) {
+      case 'queue':
+        content = 'Try importing your current shows from your List!'
+        break
+      case 'list':
+        content = 'Look through your List for your next show to watch!'
+        break
+    }
+
+    return {
+      content,
+      show: this.showFirstTimetooltips && this.isInFirstSetup,
+      autoHide: false,
+      trigger: 'manual',
+    }
+  }
 
   public toggleOpen() {
     this.settingsOpen = !this.settingsOpen

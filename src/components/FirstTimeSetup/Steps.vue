@@ -28,6 +28,7 @@ export default class Steps extends Vue {
   display: flex;
   align-items: center;
   flex-direction: column;
+  user-select: none;
 
   & > .step {
     display: flex;
