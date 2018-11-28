@@ -3,7 +3,7 @@
   <title-bar v-if="!isFullscreen"/>
 
   <transition>
-    <navbar v-if="isLoggedIn.all && !isFullscreen"/>
+    <navbar v-if="isLoggedIn.all && !isFullscreen && !$route.path.startsWith('/first-time-setup')"/>
   </transition>
 
   <transition name="route">
@@ -32,7 +32,7 @@ import Component from 'vue-class-component'
 import { ipcRenderer } from 'electron'
 
 import { CHECK_FOR_UPDATES } from '@/messages'
-import { createBothSessions } from '@/utils'
+import { createBothSessions, isFirstLaunch } from '@/utils'
 import TitleBar from './components/TitleBar.vue'
 import Navbar from './components/Navbar/Navbar.vue'
 import PlayerContainer from './components/Player/Container.vue'
@@ -41,11 +41,11 @@ import AboutModal from './components/Modals/AboutModal.vue'
 import EditModal from './components/Modals/EditModal.vue'
 import { getIsLoggedIn, setCrunchyrollCountry } from './state/auth'
 import {
-  getIsFullscreen,
-  toggleModal,
-  getModalStates,
   AppState,
   getEditingAnime,
+  getIsFullscreen,
+  getModalStates,
+  toggleModal,
 } from './state/app'
 
 const requireBg = require.context('@/assets/bg')
@@ -82,17 +82,21 @@ export default class App extends Vue {
     backgrounds[Math.floor(Math.random() * backgrounds.length)],
   )
 
-  public async mounted() {
+  public async created() {
     const data = await createBothSessions(this.$store)
     setCrunchyrollCountry(this.$store, data.country_code)
+
+    if (process.env.NODE_ENV === 'production') {
+      ipcRenderer.send(CHECK_FOR_UPDATES)
+    }
+
+    if (isFirstLaunch()) {
+      return this.$router.push('/first-time-setup')
+    }
 
     if (!this.isLoggedIn.all) {
       window.initialLogin = true
       return this.$router.push('login')
-    }
-
-    if (process.env.NODE_ENV === 'production') {
-      ipcRenderer.send(CHECK_FOR_UPDATES)
     }
   }
 

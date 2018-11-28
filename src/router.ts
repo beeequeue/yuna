@@ -14,6 +14,12 @@ export const router = new Router({
         import(/* webpackChunkName: "dashboard" */ './views/Dashboard.vue'),
     },
     {
+      path: '/first-time-setup',
+      name: 'first-time-setup',
+      component: () =>
+        import(/* webpackChunkName: "first-time-setup" */ './views/FirstTimeSetup.vue'),
+    },
+    {
       path: '/login',
       name: 'login',
       component: () =>
