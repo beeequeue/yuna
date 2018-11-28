@@ -88,15 +88,15 @@ export default class App extends Vue {
   )
 
   public async created() {
+    if (!this.hasFinishedSetup) {
+      return this.$router.push('/first-time-setup')
+    }
+
     const data = await createBothSessions(this.$store)
     setCrunchyrollCountry(this.$store, data.country_code)
 
     if (process.env.NODE_ENV === 'production') {
       ipcRenderer.send(CHECK_FOR_UPDATES)
-    }
-
-    if (!this.hasFinishedSetup) {
-      return this.$router.push('/first-time-setup')
     }
 
     if (!this.isLoggedIn.all) {

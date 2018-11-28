@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <div ref="queue" class="queue">
-      <draggable v-model="queue" :options="draggableOptions">
-        <transition-group type="transition">
+      <draggable v-model="queue" :options="draggableOptions" class="draggable-container">
+        <transition-group type="transition" tag="div" class="transition-group">
           <queue-item
             v-for="id in queue"
             :id="id"
@@ -43,11 +43,6 @@
       />
 
       <c-button
-        content="Import from Crunchyroll"
-        disabled
-      />
-
-      <c-button
         content="Import Exported Queue"
         :click="importQueueFromBackup"
       />
@@ -71,25 +66,20 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import Draggable from 'vuedraggable'
-import { shell, remote } from 'electron'
-import { api, activeWindow } from 'electron-util'
-import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'fs'
+import { remote, shell } from 'electron'
+import { activeWindow, api } from 'electron-util'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
 import { complement, path } from 'rambdax'
-import { mdiPlaylistRemove, mdiPause, mdiPlay, mdiClockOutline } from '@mdi/js'
+import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 
-import { getQueue, setQueue, addToQueue } from '@/state/user'
-import {
-  sendNotImplementedToast,
-  getCurrentEpisode,
-  sendErrorToast,
-  sendToast,
-} from '@/state/app'
-import { watchingQuery, planningQuery, pausedQuery } from '@/graphql/query'
+import { addToQueue, getQueue, setQueue } from '@/state/user'
+import { getCurrentEpisode, sendErrorToast, sendToast } from '@/state/app'
+import { pausedQuery, planningQuery, watchingQuery } from '@/graphql/query'
 import { getAnilistUserId, getAnilistUsername } from '@/state/auth'
 import {
-  WatchingQuery_listCollection_lists_entries,
   WatchingQuery_listCollection_lists,
+  WatchingQuery_listCollection_lists_entries,
 } from '@/graphql/WatchingQuery'
 
 import CButton from '../components/CButton.vue'
@@ -97,7 +87,6 @@ import QueueItem from '../components/QueueItem.vue'
 
 @Component({ components: { Draggable, CButton, QueueItem } })
 export default class Queue extends Vue {
-  public isAnilistImportModalOpen = false
   private defaultBackupPath = resolve(api.app.getPath('userData'), 'backups')
   private jsonFilter = { extensions: ['json'], name: '*' }
 
@@ -196,7 +185,7 @@ export default class Queue extends Vue {
         top: 100000,
         behavior: 'smooth',
       })
-    }, 0)
+    }, 350)
   }
 
   public async importWatching() {
@@ -275,10 +264,6 @@ export default class Queue extends Vue {
   public clearQueue() {
     setQueue(this.$store, [])
   }
-
-  public sendNotImplementedToast() {
-    sendNotImplementedToast(this.$store)
-  }
 }
 </script>
 
@@ -302,6 +287,7 @@ export default class Queue extends Vue {
     grid-area: queue;
     padding: 15px 25px;
     overflow-y: auto;
+    overflow-x: hidden;
 
     min-width: 800px;
     background: #10111a;
@@ -319,6 +305,10 @@ export default class Queue extends Vue {
       align-items: center;
       font-size: 1.25em;
       font-weight: 600;
+    }
+
+    & > .draggable-container > .transition-group {
+      position: relative;
     }
   }
 

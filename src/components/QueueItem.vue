@@ -1,7 +1,7 @@
 <template>
 <ApolloQuery class="anime" :query="ANIME_QUEUE_QUERY" :variables="{ id }">
   <template slot-scope="{ result }">
-    <span v-if="result && result.data" class="container">
+    <div v-if="result && result.data" class="container">
       <anime-banner
         :anime="result.data.anime"
         :faded="!getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
@@ -83,7 +83,7 @@
           </div>
         </transition>
       </div>
-    </span>
+    </div>
   </template>
 </ApolloQuery>
 </template>
@@ -224,7 +224,9 @@ export default class QueueItem extends Vue {
 
 .anime {
   position: relative;
+  width: 100%;
   z-index: 2;
+  will-change: transform, opacity;
 
   &:last-child {
     margin-bottom: 15px;
@@ -243,7 +245,7 @@ export default class QueueItem extends Vue {
     opacity: 0;
     position: absolute;
     transform: translateY(-75%);
-    transition: 0.5s;
+    transition: transform 0.5s, opacity 0.35s;
   }
 
   & > .container {

@@ -105,7 +105,7 @@ export const hasFinishedSetup = () => {
     existsSync(finishedSetupFilePath) &&
     JSON.parse(readFileSync(finishedSetupFilePath).toString()) === true
   ) {
-    return false || true
+    return true
   }
 
   setFinishedSetup(false)
