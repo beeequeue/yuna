@@ -71,8 +71,11 @@ export default class ListEntry extends Vue {
     z-index: 1;
 
     & /deep/ .button {
+      opacity: 0;
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
+      transition: opacity 0s;
+      transition-delay: 0.15s;
     }
   }
 
@@ -82,6 +85,11 @@ export default class ListEntry extends Vue {
     }
     & > .info {
       transform: translateX(15px);
+
+      & /deep/ .button {
+        opacity: 1;
+        transition-delay: 0s;
+      }
     }
   }
 }
