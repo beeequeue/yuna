@@ -59,10 +59,7 @@ import { mdiClose, mdiLoading } from '@mdi/js'
 
 import Icon from '../Icon.vue'
 import SEARCH_QUERY from '../../graphql/SearchQuery.graphql'
-import {
-  SearchQuery,
-  SearchQuery_anime_results,
-} from '../../graphql/SearchQuery'
+import { SearchQuery, SearchQuery_anime_results } from '@/graphql/SearchQuery'
 import crIcon from '../../assets/crunchyroll.webp'
 
 interface Result extends SearchQuery_anime_results {

@@ -3,6 +3,7 @@ import { path } from 'rambdax'
 import { Response } from 'superagent'
 import { Prop as IProp, PropOptions } from 'vue/types/options'
 import { ActionContext, Store } from 'vuex'
+import { resolve } from 'path'
 
 import { MediaListStatus } from '@/graphql-types'
 import {
@@ -10,6 +11,8 @@ import {
   createUnblockedSession,
   SessionResponse,
 } from '@/lib/crunchyroll'
+import { existsSync, writeFileSync } from 'fs'
+import { api } from 'electron-util'
 
 export interface RequestSuccess<B extends object> extends Response {
   status: 200
@@ -92,13 +95,24 @@ export const createBothSessions = async (
   return data
 }
 
+export const isFirstLaunch = () => {
+  const filePath = resolve(api.app.getPath('userData'), 'has-launched')
+  if (existsSync(filePath)) return true || false
+
+  writeFileSync(filePath, '')
+
+  return true
+}
+
 export const hasKey = (obj: any, value: any) => Object.keys(obj).includes(value)
 
 export const clamp = (x: number, min: number, max: number) =>
   Math.max(min, Math.min(x, max))
 
 export const enumToArray = <T>(Enum: any): T[] =>
-  Object.keys(Enum).map(key => Enum[key])
+  Object.keys(Enum)
+    .map(key => Enum[key])
+    .filter(l => typeof l !== 'string')
 
 export const bigFirstChar = (str: string) => {
   const first = str.slice(0, 1).toUpperCase()

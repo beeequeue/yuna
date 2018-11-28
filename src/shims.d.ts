@@ -33,10 +33,29 @@ declare module 'electron-util' {
   import { App, BrowserWindow } from 'electron'
 
   export const api: { app: App }
-  export const activeWindow: () => BrowserWindow
+
+  export const is: {
+    macos: boolean
+    linux: boolean
+    windows: boolean
+    main: boolean
+    renderer: boolean
+    development: boolean
+    usingAsar: boolean
+    macAppStore: boolean
+    windowsStore: boolean
+  }
 
   export const electronVersion: string
   export const chromeVersion: string
+
+  export const platform: <F1, F2, F3>(
+    opts: { macos?: F1; windows?: F2; linux?: F3 },
+  ) => F1 | F2 | F3
+
+  export const isFirstAppLaunch: () => boolean
+
+  export const activeWindow: () => BrowserWindow
 }
 
 declare interface Window {

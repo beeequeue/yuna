@@ -7,7 +7,7 @@
   <span v-if="label != null">{{ label }}</span>
 
   <input
-    type="text"
+    :type="password ? 'password' : 'text'"
     :value="value"
     :placeholder="placeholder"
     @input="handleChange"
@@ -22,13 +22,13 @@ import { prop } from '@/utils'
 @Component
 export default class TextInput extends Vue {
   @Prop(String) public label!: string
-  @Prop(prop(String, true))
-  public value!: string
+  @Prop(String) public value!: string
   @Prop(prop(Function, true))
   public onChange!: (value: string) => any
   @Prop(String) public placeholder!: string | null
   @Prop(String) public error!: string | null
   @Prop(Boolean) public disabled!: boolean | null
+  @Prop(Boolean) public password!: boolean | null
 
   public get classes() {
     return {
