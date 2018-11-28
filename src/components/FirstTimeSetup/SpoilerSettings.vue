@@ -80,8 +80,10 @@ export default class SpoilerSettings extends Vue {
 @import '../../colors';
 
 .spoiler-settings {
-  & > .checkbox-container /deep/ label {
-    width: auto;
+  & > .checkbox-container {
+    width: 120px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   & > h3 {
