@@ -6,14 +6,20 @@
     <transition-group tag="div" class="steps">
       <login-al
         key="al"
-        v-if="currentStep === 0"
+        v-if="currentStep === Step.LOGIN_AL"
         :loginAnilist="loginAnilist"
       />
 
       <login-cr
         key="cr"
-        v-if="currentStep === 1"
+        v-if="currentStep === Step.LOGIN_CR"
         :loginCrunchyroll="loginCrunchyroll"
+      />
+
+      <spoiler-settings
+        key="s-s"
+        v-if="currentStep === Step.SPOILER_SETTINGS"
+        :goToNextStep="goToNextStep"
       />
     </transition-group>
   </div>
@@ -26,21 +32,25 @@ import { Component, Vue } from 'vue-property-decorator'
 import Steps from '@/components/FirstTimeSetup/Steps.vue'
 import LoginAl from '@/components/FirstTimeSetup/LoginAL.vue'
 import LoginCr from '@/components/FirstTimeSetup/LoginCR.vue'
-import { enumToArray } from '@/utils'
+import SpoilerSettings from '@/components/FirstTimeSetup/SpoilerSettings.vue'
+
+import { enumToArray, setFinishedSetup } from '@/utils'
 import { getIsLoggedIn, loginCrunchyroll } from '@/state/auth'
 import { loginAnilist } from '@/lib/anilist'
 
 export enum Step {
   LOGIN_AL,
   LOGIN_CR,
-  QUEUE_TUTORIAL,
   SPOILER_SETTINGS,
+  QUEUE_TUTORIAL,
 }
 
-@Component({ components: { LoginAl, LoginCr, Steps } })
+@Component({ components: { LoginAl, LoginCr, Steps, SpoilerSettings } })
 export default class FirstTimeSetup extends Vue {
   public currentStep: Step = 0
   public steps = enumToArray(Step)
+
+  public Step = Step
 
   public get isLoggedIn() {
     return getIsLoggedIn(this.$store)
@@ -70,6 +80,14 @@ export default class FirstTimeSetup extends Vue {
     await loginCrunchyroll(this.$store, { user, pass })
 
     this.updateCurrentStep()
+  }
+
+  public goToNextStep() {
+    this.currentStep++
+  }
+
+  public finishSetup() {
+    setFinishedSetup(true)
   }
 }
 </script>
@@ -105,6 +123,7 @@ export default class FirstTimeSetup extends Vue {
         background: $dark;
         border-radius: 5px;
         transform: translateY(-50%);
+        box-shadow: $shadow;
 
         &.v-enter-active,
         &.v-leave-active {
