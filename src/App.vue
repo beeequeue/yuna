@@ -32,7 +32,7 @@ import Component from 'vue-class-component'
 import { ipcRenderer } from 'electron'
 
 import { CHECK_FOR_UPDATES } from '@/messages'
-import { createBothSessions, isFirstLaunch } from '@/utils'
+import { createBothSessions, hasFinishedSetup } from '@/utils'
 import TitleBar from './components/TitleBar.vue'
 import Navbar from './components/Navbar/Navbar.vue'
 import PlayerContainer from './components/Player/Container.vue'
@@ -90,7 +90,7 @@ export default class App extends Vue {
       ipcRenderer.send(CHECK_FOR_UPDATES)
     }
 
-    if (isFirstLaunch()) {
+    if (!hasFinishedSetup()) {
       return this.$router.push('/first-time-setup')
     }
 

@@ -11,7 +11,7 @@ import {
   createUnblockedSession,
   SessionResponse,
 } from '@/lib/crunchyroll'
-import { existsSync, writeFileSync } from 'fs'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { api } from 'electron-util'
 
 export interface RequestSuccess<B extends object> extends Response {
@@ -95,13 +95,26 @@ export const createBothSessions = async (
   return data
 }
 
-export const isFirstLaunch = () => {
-  const filePath = resolve(api.app.getPath('userData'), 'has-launched')
-  if (existsSync(filePath)) return true || false
+export const finishedSetupFilePath = resolve(
+  api.app.getPath('userData'),
+  '.has-setup',
+)
 
-  writeFileSync(filePath, '')
+export const hasFinishedSetup = () => {
+  if (
+    existsSync(finishedSetupFilePath) &&
+    JSON.parse(readFileSync(finishedSetupFilePath).toString()) === true
+  ) {
+    return false || true
+  }
 
-  return true
+  setFinishedSetup(false)
+
+  return false
+}
+
+export const setFinishedSetup = (b: boolean) => {
+  writeFileSync(finishedSetupFilePath, JSON.stringify(b))
 }
 
 export const hasKey = (obj: any, value: any) => Object.keys(obj).includes(value)
