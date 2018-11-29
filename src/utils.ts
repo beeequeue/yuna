@@ -123,9 +123,7 @@ export const clamp = (x: number, min: number, max: number) =>
   Math.max(min, Math.min(x, max))
 
 export const enumToArray = <T>(Enum: any): T[] =>
-  Object.keys(Enum)
-    .map(key => Enum[key])
-    .filter(l => typeof l !== 'string')
+  Object.keys(Enum).map(key => Enum[key])
 
 export const bigFirstChar = (str: string) => {
   const first = str.slice(0, 1).toUpperCase()

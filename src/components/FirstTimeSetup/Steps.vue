@@ -1,7 +1,7 @@
 <template>
 <div class="steps-container">
-  <div v-for="step in steps" class="step" :class="{ current: current === step, done: current > step }">
-    {{ step + 1 }}
+  <div v-for="(_, i) in steps" class="step" :class="{ current: current === i, done: current > i }">
+    {{ i + 1 }}
   </div>
 </div>
 </template>

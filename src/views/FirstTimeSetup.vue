@@ -6,19 +6,19 @@
     <transition-group tag="div" class="steps" :class="{ hide: hasFinishedSetup }">
       <login-al
         key="al"
-        v-if="currentStep === Step.LOGIN_AL"
+        v-if="currentStep === 0"
         :loginAnilist="loginAnilist"
       />
 
       <login-cr
         key="cr"
-        v-if="currentStep === Step.LOGIN_CR"
+        v-if="currentStep === 1"
         :loginCrunchyroll="loginCrunchyroll"
       />
 
       <spoiler-settings
         key="s-s"
-        v-if="currentStep === Step.SPOILER_SETTINGS"
+        v-if="currentStep === 2"
         :goToNextStep="finishSetup"
       />
     </transition-group>
@@ -34,25 +34,18 @@ import LoginAl from '@/components/FirstTimeSetup/LoginAL.vue'
 import LoginCr from '@/components/FirstTimeSetup/LoginCR.vue'
 import SpoilerSettings from '@/components/FirstTimeSetup/SpoilerSettings.vue'
 
-import { enumToArray } from '@/utils'
 import { getIsLoggedIn, loginCrunchyroll } from '@/state/auth'
 import { loginAnilist } from '@/lib/anilist'
 import { getHasFinishedSetup, setHasFinishedSetup } from '@/state/app'
 
-export enum Step {
-  LOGIN_AL,
-  LOGIN_CR,
-  SPOILER_SETTINGS,
-}
+export const steps = ['LOGIN_AL', 'LOGIN_CR', 'SPOILER_SETTINGS']
 
 @Component({
   components: { LoginAl, LoginCr, Steps, SpoilerSettings },
 })
 export default class FirstTimeSetup extends Vue {
-  public currentStep: Step = 0
-  public steps = enumToArray(Step)
-
-  public Step = Step
+  public currentStep: number = 0
+  public steps = steps
 
   public get hasFinishedSetup() {
     return getHasFinishedSetup(this.$store)
