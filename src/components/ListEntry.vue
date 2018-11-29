@@ -2,7 +2,7 @@
 <div class="entry" v-tooltip="entry.anime.title.userPreferred">
   <router-link :to="`/anime/${entry.anime.id}`">
     <cover-image
-      :src="entry.anime.coverImage.large"
+      :src="entry.anime.coverImage.medium"
     />
   </router-link>
 
@@ -10,8 +10,8 @@
     <actions
       :mediaListEntry="entry"
       :anime="entry.anime"
-      small
       :exclude="['editEntry']"
+      small
     />
   </div>
 </div>

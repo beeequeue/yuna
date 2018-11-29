@@ -30,9 +30,9 @@ export interface ListQuery_listCollection_lists_entries_anime_title {
 export interface ListQuery_listCollection_lists_entries_anime_coverImage {
   __typename: "MediaCoverImage";
   /**
-   * The cover image url of the media at a large size
+   * The cover image url of the media at medium size
    */
-  large: string | null;
+  medium: string | null;
 }
 
 export interface ListQuery_listCollection_lists_entries_anime {

@@ -22,7 +22,7 @@ query ListQuery($userId: Int!) {
             native
           }
           coverImage {
-            large
+            medium
           }
           isFavourite
           episodes
