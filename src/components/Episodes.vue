@@ -222,7 +222,7 @@ export default class Episodes extends Vue {
     if (this.scrollToCurrentEpisode && this.current) {
       this.$refs.episodeContainer.scroll({
         left: this.getScrollPositionOfEpisode(this.current),
-        behavior: instant === true ? 'instant' : 'smooth',
+        behavior: instant === true ? undefined : 'smooth',
       })
     }
   }

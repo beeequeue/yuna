@@ -23,7 +23,7 @@
     "hls.js": "0.11.0",
     "marked": "0.5.2",
     "normalize.css": "8.0.1",
-    "rambdax": "0.24.0",
+    "rambdax": "0.23.0",
     "raw-loader": "0.5.1",
     "superagent": "4.0.0",
     "svg-country-flags": "1.2.6",
@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "@types/date-fns": "2.6.0",
+    "@types/graphql": "14.0.1",
     "@types/marked": "0.4.2",
     "@vue/cli-plugin-babel": "3.2.0",
     "@vue/cli-plugin-typescript": "3.2.0",

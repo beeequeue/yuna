@@ -9,13 +9,12 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { Step } from '@/views/FirstTimeSetup.vue'
 import { prop } from '@/utils'
 
 @Component({ components: {} })
 export default class Steps extends Vue {
   @Prop(prop(Array, true))
-  public steps!: Step[]
+  public steps!: string[]
   @Prop(prop(Number, true))
   public current!: number
 }
