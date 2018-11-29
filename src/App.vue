@@ -89,7 +89,7 @@ export default class App extends Vue {
 
   public async created() {
     if (!this.hasFinishedSetup) {
-      return this.$router.push('/first-time-setup')
+      this.$router.push('/first-time-setup')
     }
 
     const data = await createBothSessions(this.$store)
@@ -99,7 +99,7 @@ export default class App extends Vue {
       ipcRenderer.send(CHECK_FOR_UPDATES)
     }
 
-    if (!this.isLoggedIn.all) {
+    if (!this.isLoggedIn.all && this.hasFinishedSetup) {
       window.initialLogin = true
       return this.$router.push('login')
     }
