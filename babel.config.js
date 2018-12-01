@@ -1,4 +1,4 @@
 module.exports = {
   presets: ['@vue/app'],
-  plugins: ['transform-class-properties'],
+  plugins: ['@babel/plugin-proposal-class-properties'],
 }

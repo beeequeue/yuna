@@ -40,6 +40,7 @@
     "vuex-typescript": "3.0.2"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@types/date-fns": "2.6.0",
     "@types/graphql": "14.0.1",
     "@types/marked": "0.4.2",
@@ -47,7 +48,6 @@
     "@vue/cli-plugin-typescript": "3.2.0",
     "@vue/cli-service": "3.2.0",
     "apollo": "2.1.6",
-    "babel-plugin-transform-class-properties": "6.24.1",
     "cross-env": "5.2.0",
     "electron": "3.0.10",
     "electron-builder": "20.38.2",
