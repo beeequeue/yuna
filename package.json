@@ -68,6 +68,7 @@
   "gitHooks": {
     "pre-commit": "lint-staged"
   },
+  "license": "AGPL-3.0-only",
   "lint-staged": {
     "*.ts": [
       "prettier --write",
@@ -91,8 +92,8 @@
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production vue-cli-service electron:build",
-    "graphql:types": "yarn apollo codegen:generate --addTypename --outputFlat --target=typescript --globalTypesFile=src/graphql-types.ts src/graphql",
     "graphql:get-schema": "yarn apollo schema:download graphql.schema.json",
+    "graphql:types": "yarn apollo codegen:generate --addTypename --outputFlat --target=typescript --globalTypesFile=src/graphql-types.ts src/graphql",
     "lint": "vue-cli-service lint",
     "postinstall": "yarn electron-builder install-app-deps",
     "serve": "vue-cli-service electron:serve -c.productName=yuna-dev"
