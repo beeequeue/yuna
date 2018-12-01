@@ -41,6 +41,3 @@ script:
     else
       yarn build -p onTagOrDraft
     fi
-
-before_cache:
-  - rm -rf $HOME/.cache/electron-builder/wine
