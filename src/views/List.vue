@@ -150,6 +150,7 @@ export default class List extends Vue {
   display: flex;
   flex-direction: column;
   background: rgba(0, 0, 0, 0.85);
+  user-select: none;
 
   & > .menu {
     position: relative;
