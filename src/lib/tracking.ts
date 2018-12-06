@@ -2,6 +2,7 @@ import superagent from 'superagent'
 import { T } from 'rambdax'
 
 import { getDeviceUuid } from '@/utils'
+
 import { version } from '../../package.json'
 
 // Constants
@@ -20,6 +21,7 @@ const constants = {
 }
 
 export enum Page {
+  PLAYER = 'player',
   DASHBOARD = 'dashboard',
   ANIME = 'anime',
   FIRST_TIME_SETUP = 'first-time-setup',
@@ -29,8 +31,20 @@ export enum Page {
   SETTINGS = 'settings',
 }
 
-const send = async (data: typeof constants & { t: string; dp?: string }) => {
-  // if (process.env.NODE_ENV !== 'production' || !process.env.GA_ID) return
+type Data = typeof constants &
+  (
+    | { t: 'pageview'; dp?: string }
+    | {
+        t: 'event'
+        ec: string
+        ea: string
+        el?: string
+        ev?: number
+        dp?: string
+      })
+
+const send = async (data: Data) => {
+  if (process.env.NODE_ENV !== 'production' || !process.env.GA_ID) return
 
   return superagent
     .post(url)
@@ -66,5 +80,15 @@ export const trackPageView = (
       name +
       (animeId ? `/${animeId}` : '') +
       (animeName ? `?name=${animeName}` : ''),
+  })
+}
+
+export const trackStillWatching = () => {
+  send({
+    ...constants,
+    t: 'event',
+    ec: 'player',
+    ea: 'heartbeat',
+    dp: Page.PLAYER,
   })
 }

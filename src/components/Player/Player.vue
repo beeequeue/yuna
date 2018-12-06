@@ -79,16 +79,17 @@ import Hls from 'hls.js'
 import { contains } from 'rambdax'
 import { mdiLoading, mdiPlayCircle } from '@mdi/js'
 
-import { setProgressOfEpisode, fetchStream } from '@/lib/crunchyroll'
+import { fetchStream, setProgressOfEpisode } from '@/lib/crunchyroll'
+import { trackStillWatching } from '@/lib/tracking'
 import {
   getIsFullscreen,
+  PlayerData,
   sendErrorToast,
   toggleFullscreen,
-  PlayerData,
 } from '@/state/app'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
 import { Episode, Levels } from '@/types'
-import { prop, clamp } from '@/utils'
+import { clamp, prop } from '@/utils'
 
 import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
@@ -101,7 +102,7 @@ interface Level {
     CODECS: string
     'FRAME-RATE': string
     'PROGRAM-ID': string
-    RESOULTION: string
+    RESOLUTION: string
   }
   bitrate: number
   details: {}
@@ -151,8 +152,8 @@ export default class Player extends Vue {
   public loadedSeconds = 0
   public loadedPercentage = 0
 
-  // Crunchyroll scrobbling
   private lastScrobble = 0
+  private lastHeartbeat = 0
 
   public hls = new Hls()
 
@@ -308,6 +309,15 @@ export default class Player extends Vue {
       setProgressOfEpisode(this.episode.crunchyroll.id, this.progressInSeconds)
     }
 
+    if (
+      this.progressInSeconds % 60 === 0 &&
+      this.lastHeartbeat < this.progressInSeconds
+    ) {
+      this.lastHeartbeat = this.progressInSeconds
+
+      trackStillWatching()
+    }
+
     if (!this.softEnded && this.progressPercentage >= 0.8) {
       this.softEnded = true
       this.lastScrobble = this.episode.duration
@@ -325,6 +335,8 @@ export default class Player extends Vue {
   }
 
   public onSetTime(value: number) {
+    this.lastHeartbeat = this.progressInSeconds - 30
+
     this.$refs.player.currentTime = value
   }
 
@@ -391,7 +403,7 @@ export default class Player extends Vue {
   }
 
   public skipBySeconds(n: number) {
-    this.$refs.player.currentTime += n
+    this.onSetTime(this.$refs.player.currentTime + n)
   }
 
   public toggleFullscreen() {

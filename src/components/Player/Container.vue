@@ -22,9 +22,10 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import Player from './Player.vue'
 
-import { getCurrentEpisode, getNextEpisode, getPlayerData } from '@/state/app'
 import { setProgressMutation } from '@/graphql/mutations'
-import { getShouldAutoPlay, getShouldAutoMarkWatched } from '@/state/settings'
+import { Page, trackPageView } from '@/lib/tracking'
+import { getCurrentEpisode, getNextEpisode, getPlayerData } from '@/state/app'
+import { getShouldAutoMarkWatched, getShouldAutoPlay } from '@/state/settings'
 import { Episode } from '@/types'
 
 @Component({
@@ -63,9 +64,10 @@ export default class PlayerContainer extends Vue {
     const pathWithoutSlash = this.$route.path.substr(1)
 
     switch (pathWithoutSlash) {
-      case 'queue':
       case 'player-big':
       case 'player-full':
+        trackPageView(Page.PLAYER)
+      case 'queue':
         return pathWithoutSlash
       default:
         return 'small'
