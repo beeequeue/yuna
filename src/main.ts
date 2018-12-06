@@ -1,7 +1,8 @@
 import { shell } from 'electron'
 import Tooltip from 'v-tooltip'
 import Vue from 'vue'
-import { init, Integrations } from '@sentry/browser'
+import { init, Integrations, SentryEvent } from '@sentry/browser'
+import { SentryException } from '@sentry/types'
 
 import App from './App.vue'
 import { router } from './router'
@@ -18,12 +19,42 @@ Vue.use(Tooltip)
 // Register services
 
 // Sentry
+const scrubExceptionValues = (
+  exceptions?: SentryException[],
+): SentryException[] | undefined =>
+  exceptions &&
+  exceptions.map(e => ({
+    ...e,
+    stacktrace: {
+      frames:
+        e.stacktrace &&
+        e.stacktrace.frames &&
+        e.stacktrace.frames.map(frame => ({
+          ...frame,
+          filename: '[scrubbed]',
+        })),
+    },
+  }))
+
+const scrubUrl = (event: SentryEvent): SentryEvent => ({
+  ...event,
+  exception: {
+    ...event.exception,
+    values: scrubExceptionValues(event.exception && event.exception.values),
+  },
+  request: {
+    ...event.request,
+    url: 'app.yuna.moe',
+  },
+})
+
 init({
-  enabled: process.env.NODE_ENV === 'production',
+  // enabled: process.env.NODE_ENV === 'production',
   dsn: 'https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205',
   integrations: [new Integrations.Vue({ Vue })],
   environment: process.env.NODE_ENV,
   release: `yuna-v${version}`,
+  beforeSend: scrubUrl,
 })
 
 // Handle outside links
