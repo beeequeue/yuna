@@ -11,9 +11,20 @@ import { version } from '../package.json'
 
 import 'normalize.css'
 
+// Vue config
 Vue.config.productionTip = false
-
 Vue.use(Tooltip)
+
+// Register services
+
+// Sentry
+init({
+  enabled: process.env.NODE_ENV === 'production',
+  dsn: 'https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205',
+  integrations: [new Integrations.Vue({ Vue })],
+  environment: process.env.NODE_ENV,
+  release: `yuna-v${version}`,
+})
 
 // Handle outside links
 document.addEventListener('click', event => {
@@ -35,11 +46,3 @@ new Vue({
   apolloProvider: createProvider(),
   render: h => h(App),
 }).$mount('#app')
-
-init({
-  enabled: process.env.NODE_ENV === 'production',
-  dsn: 'https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205',
-  integrations: [new Integrations.Vue({ Vue })],
-  environment: process.env.NODE_ENV,
-  release: `yuna-v${version}`,
-})

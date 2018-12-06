@@ -3,6 +3,7 @@ import { path } from 'rambdax'
 import { Response } from 'superagent'
 import { Prop as IProp, PropOptions } from 'vue/types/options'
 import { ActionContext, Store } from 'vuex'
+import uuid from 'uuid/v4'
 import { resolve } from 'path'
 
 import { MediaListStatus } from '@/graphql-types'
@@ -115,6 +116,22 @@ export const hasFinishedSetup = () => {
 
 export const setFinishedSetup = (b: boolean) => {
   writeFileSync(finishedSetupFilePath, JSON.stringify(b))
+}
+
+export const deviceUuidFilePath = resolve(
+  api.app.getPath('userData'),
+  '.device',
+)
+
+export const getDeviceUuid = (): string => {
+  if (existsSync(deviceUuidFilePath)) {
+    return readFileSync(deviceUuidFilePath).toString()
+  }
+
+  const newUuid = uuid()
+  writeFileSync(deviceUuidFilePath, newUuid)
+
+  return newUuid
 }
 
 export const hasKey = (obj: any, value: any) => Object.keys(obj).includes(value)
