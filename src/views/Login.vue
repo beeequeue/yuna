@@ -48,6 +48,7 @@ import CButton from '@/components/CButton.vue'
 import LoginForm from '@/components/LoginForm.vue'
 import { getIsLoggedIn, loginCrunchyroll, logOut } from '@/state/auth'
 import { loginAnilist } from '@/lib/anilist'
+import { Page, trackPageView } from '@/lib/tracking'
 
 @Component({
   components: {
@@ -61,8 +62,10 @@ export default class Login extends Vue {
 
   public mounted() {
     if (this.isLoggedIn.all) {
-      this.$router.back()
+      return this.$router.back()
     }
+
+    trackPageView(Page.LOGIN)
   }
 
   public onSuccessfullLogin() {

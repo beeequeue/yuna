@@ -3,6 +3,7 @@
   class="anime"
   :query="ANIME_PAGE_QUERY"
   :variables="{ id }"
+  @result="fetchedAnime"
 >
   <template slot-scope="{ result: { loading, error, data } }">
     <transition-group tag="span">
@@ -83,7 +84,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { pathOr } from 'rambdax'
+import { path, pathOr } from 'rambdax'
 
 import CoverImage from '../components/Anime/CoverImage.vue'
 import AnimeTitle from '../components/Anime/Title.vue'
@@ -93,16 +94,17 @@ import Relations from '../components/Anime/Relations.vue'
 import Episodes from '../components/Episodes.vue'
 import CButton from '../components/CButton.vue'
 
-import { Sequel } from '../state/app'
-import { MediaRelation } from '../graphql-types'
-import ANIME_PAGE_QUERY from '../graphql/AnimePageQuery.graphql'
+import { MediaRelation } from '@/graphql-types'
+import ANIME_PAGE_QUERY from '@/graphql/AnimePageQuery.graphql'
 import {
   AnimePageQuery,
   AnimePageQuery_anime_relations_edges,
   AnimePageQuery_anime_relations_edges_node,
   AnimePageQuery_anime_mediaListEntry,
-} from '../graphql/AnimePageQuery'
+} from '@/graphql/AnimePageQuery'
+import { Sequel } from '@/state/app'
 import { getSpoilerSettings } from '@/state/settings'
+import { trackPageView, Page } from '@/lib/tracking'
 
 @Component({
   components: {
@@ -118,9 +120,23 @@ import { getSpoilerSettings } from '@/state/settings'
 export default class Anime extends Vue {
   ANIME_PAGE_QUERY = ANIME_PAGE_QUERY
   data?: AnimePageQuery
+  tracked = false
 
   public get id() {
     return Number(this.$route.params.id)
+  }
+
+  public async fetchedAnime(result: { data: AnimePageQuery }) {
+    if (this.tracked) return
+
+    trackPageView(
+      Page.ANIME,
+      this.id,
+      path('data.anime.title.english', result) ||
+        path('data.anime.title.userPreferred', result),
+    )
+
+    this.tracked = true
   }
 
   public getShouldBlurDescription(data: AnimePageQuery) {

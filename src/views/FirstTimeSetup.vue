@@ -36,6 +36,7 @@ import SpoilerSettings from '@/components/FirstTimeSetup/SpoilerSettings.vue'
 
 import { getIsLoggedIn, loginCrunchyroll } from '@/state/auth'
 import { loginAnilist } from '@/lib/anilist'
+import { Page, trackPageView } from '@/lib/tracking'
 import { getHasFinishedSetup, setHasFinishedSetup } from '@/state/app'
 
 export const steps = ['LOGIN_AL', 'LOGIN_CR', 'SPOILER_SETTINGS']
@@ -57,6 +58,10 @@ export default class FirstTimeSetup extends Vue {
 
   public created() {
     this.updateCurrentStep()
+  }
+
+  public mounted() {
+    trackPageView(Page.FIRST_TIME_SETUP)
   }
 
   public updateCurrentStep() {

@@ -25,6 +25,7 @@ import marked from 'marked'
 import superagent from 'superagent'
 
 import CButton from '@/components/CButton.vue'
+import { trackPageView, Page } from '@/lib/tracking'
 import { RequestResponse, responseIsError } from '@/utils'
 
 const CHANGELOG_KEY = 'changelog'
@@ -60,7 +61,9 @@ export default class Dashboard extends Vue {
     localStorage.getItem(CHANGELOG_KEY) || '[]',
   )
 
-  public mounted() {
+  public async mounted() {
+    trackPageView(Page.DASHBOARD)
+
     const lastFetchedAt = Number(
       localStorage.getItem(CHANGELOG_LAST_FETCHED_KEY) || 0,
     )

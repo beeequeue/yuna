@@ -60,6 +60,7 @@ import {
   ListQuery_listCollection_lists,
   ListQuery_listCollection_lists_entries,
 } from '@/graphql/ListQuery'
+import { Page, trackPageView } from '@/lib/tracking'
 import { getAnilistUserId } from '@/state/auth'
 
 import anilistLogoSvg from '@/assets/anilist.svg'
@@ -77,6 +78,10 @@ export default class List extends Vue {
 
   public get userId() {
     return getAnilistUserId(this.$store)
+  }
+
+  public mounted() {
+    trackPageView(Page.LIST)
   }
 
   public getLists(data: ListQuery) {

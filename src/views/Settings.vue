@@ -198,6 +198,7 @@ import Group from '../components/Settings/Group.vue'
 import Checkbox from '../components/Settings/Checkbox.vue'
 import CButton from '../components/CButton.vue'
 import Icon from '../components/Icon.vue'
+import { Page, trackPageView } from '@/lib/tracking'
 
 @Component({
   components: { CButton, Checkbox, Group, Keybinding, Icon },
@@ -225,6 +226,10 @@ export default class Settings extends Vue {
 
   public get isUsingUSSession() {
     return getCrunchyrollCountry(this.$store) === 'US'
+  }
+
+  public mounted() {
+    trackPageView(Page.SETTINGS)
   }
 
   public setSetting(

@@ -84,6 +84,7 @@ import {
 
 import CButton from '../components/CButton.vue'
 import QueueItem from '../components/QueueItem.vue'
+import { Page, trackPageView } from '@/lib/tracking'
 
 @Component({ components: { Draggable, CButton, QueueItem } })
 export default class Queue extends Vue {
@@ -118,6 +119,10 @@ export default class Queue extends Vue {
 
   public set queue(value: number[]) {
     setQueue(this.$store, value)
+  }
+
+  public mounted() {
+    trackPageView(Page.QUEUE)
   }
 
   public async importFromQuery(
