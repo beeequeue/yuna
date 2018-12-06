@@ -122,10 +122,10 @@
 
   <transition>
     <div v-if="isPlayerMaximized && settingsOpen" class="settings-menu">
-      <label>
+      <label v-if="levels != null">
         Quality:
 
-        <select  @input="handleChangeQuality" :value="quality">
+        <select @input="handleChangeQuality" :value="quality">
           <option :value="-1">Auto</option>
 
           <option v-for="(level, quality) in levels" :key="level" :value="level">
@@ -219,8 +219,7 @@ export default class Controls extends Vue {
   public speed!: number
   @Prop(prop(Number, true))
   public quality!: number
-  @Prop(prop(Object, true))
-  public levels!: Levels
+  @Prop(Object) public levels!: Levels | null
   @Prop(prop(Function, true))
   public play!: () => void
   @Prop(prop(Function, true))
