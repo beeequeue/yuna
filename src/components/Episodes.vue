@@ -100,8 +100,7 @@ export default class Episodes extends Vue {
   public idMal!: number
   @Prop(prop(String, true))
   public animeName!: string
-  @Prop(prop(Number, true))
-  public episodesInAnime!: number
+  @Prop(Number) public episodesInAnime!: number | null
   @Prop(Object)
   public nextAiringEpisode!: AnimePageQuery_anime_nextAiringEpisode | null
   @Prop(prop(Object))

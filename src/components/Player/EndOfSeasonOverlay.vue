@@ -70,8 +70,7 @@ export default class EndOfSeasonOverlay extends Vue {
   public sequels!: Sequel[]
   @Prop(prop(Number, true))
   public episodeNumber!: number
-  @Prop(prop(Number, true))
-  public episodesInAnime!: number
+  @Prop(Number) public episodesInAnime!: number | null
   @Prop(Object)
   public nextAiringEpisode!: AnimePageQuery_anime_nextAiringEpisode | null
   @Prop(prop(Boolean, true))
@@ -83,6 +82,8 @@ export default class EndOfSeasonOverlay extends Vue {
   public hollowStarSvg = mdiStarOutline
 
   public get isFinalEpisode() {
+    if (this.episodesInAnime == null) return false
+
     return this.episodeNumber >= this.episodesInAnime
   }
 

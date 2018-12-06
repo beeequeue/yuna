@@ -68,7 +68,7 @@ export default class CoverImage extends Vue {
 
     return humanizeMediaListStatus(
       this.mediaListEntry as AnimePageQuery_anime_mediaListEntry,
-      this.length as number,
+      this.length,
     )
   }
 

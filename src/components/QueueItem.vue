@@ -128,8 +128,6 @@ export default class QueueItem extends Vue {
       data,
     )
 
-    if (!length) return 'Error'
-
     if (!listEntry) return 'Not in List'
 
     return humanizeMediaListStatus(listEntry, length)

@@ -57,23 +57,25 @@ interface MediaListEntry {
 }
 export const humanizeMediaListStatus = (
   entry: MediaListEntry,
-  episodes: number,
+  episodes: number | null,
 ) => {
+  const lengthString = episodes || '?'
+
   switch (entry.status) {
     case MediaListStatus.COMPLETED:
       return 'Completed'
     case MediaListStatus.CURRENT:
-      return `Watching ${entry.progress || 0}/${episodes}`
+      return `Watching ${entry.progress || 0}/${lengthString}`
     case MediaListStatus.DROPPED:
-      return `Dropped ${entry.progress || 0}/${episodes}`
+      return `Dropped ${entry.progress || 0}/${lengthString}`
     case MediaListStatus.PAUSED:
-      return `Paused ${entry.progress || 0}/${episodes}`
+      return `Paused ${entry.progress || 0}/${lengthString}`
     case MediaListStatus.PLANNING:
       return 'Planning'
     case MediaListStatus.REPEATING:
-      return `Repeating ${entry.progress || 0}/${episodes}`
+      return `Repeating ${entry.progress || 0}/${lengthString}`
     default:
-      return 'Error'
+      throw new Error(`Tried to humanize an unknown status: ${entry.status}`)
   }
 }
 

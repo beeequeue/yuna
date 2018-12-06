@@ -9,7 +9,7 @@
       >
         <div>Up next...</div>
 
-        <div>{{nextEpisode.episodeNumber}}/{{episodesInAnime}}</div>
+        <div>{{nextEpisode.episodeNumber}}/{{episodesInAnime || '?'}}</div>
 
         <div v-if="!shouldHide.title">{{nextEpisode.title}}</div>
       </div>
@@ -58,8 +58,7 @@ import { getSpoilerSettings } from '@/state/settings'
 export default class NextEpisodeOverlay extends Vue {
   @Prop(prop(Object))
   public nextEpisode!: Episode | null
-  @Prop(prop(Number, true))
-  public episodesInAnime!: number
+  @Prop(Number) public episodesInAnime!: number | null
   @Prop(Number) public progress!: number | null
   @Prop(prop(Boolean, true))
   public isPlayerMaximized!: boolean
@@ -70,7 +69,7 @@ export default class NextEpisodeOverlay extends Vue {
   public playSvg = mdiPlay
 
   public get shouldHide() {
-    if (!this.nextEpisode || !this.progress) return false
+    if (this.nextEpisode == null || this.progress == null) return false
 
     const settings = getSpoilerSettings(this.$store).episode
     const shouldHide = this.nextEpisode.episodeNumber > this.progress

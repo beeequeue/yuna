@@ -56,7 +56,7 @@ export interface PlayerData {
   anime: {
     id: number
     title: string
-    episodes: number
+    episodes: number | null
     nextAiringEpisode: null | {
       airingAt: number
       timeUntilAiring: number
