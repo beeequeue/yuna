@@ -60,7 +60,7 @@ export default class PlayerTitle extends Vue {
     display: flex;
     align-items: center;
     margin: 0 15px;
-    font-size: 2.25em;
+    font-size: 2.5em;
     font-family: 'Lato', sans-serif !important;
   }
 
@@ -68,7 +68,6 @@ export default class PlayerTitle extends Vue {
     position: relative;
     width: 100%;
     margin-top: 10px;
-    margin-left: 5px;
     flex-shrink: 1;
 
     & > .episode-title {
@@ -92,7 +91,7 @@ export default class PlayerTitle extends Vue {
 
     & .anime-title {
       margin: 0;
-      margin-top: 10px;
+      margin-top: 5px;
       font-size: 0.75em;
       font-weight: 600 !important;
     }
