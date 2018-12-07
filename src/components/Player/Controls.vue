@@ -9,20 +9,13 @@
   <div class="cover" @click="debounceCoverClick"/>
 
   <transition name="fade">
-    <div v-if="isPlayerMaximized" class="episode-info">
-      <div class="episode-title-container">
-        <h1 class="episode-number">Episode {{episode.episodeNumber}}</h1>
-        <h1 class="title" :class="{ blur: listEntry.progress < episode.episodeNumber }">
-          - {{episode.title}}
-        </h1>
-      </div>
-
-      <router-link :to="`/anime/${animeId}`">
-        <h3>
-          {{animeName}}
-        </h3>
-      </router-link>
-    </div>
+    <player-title
+      v-if="isPlayerMaximized"
+      :animeName="animeName"
+      :animeId="animeId"
+      :episode="episode"
+      :listEntry="listEntry"
+    />
   </transition>
 
   <div class="toolbar">
@@ -178,11 +171,12 @@ import { Episode, Levels } from '@/types'
 import { prop, secondsToTimeString } from '@/utils'
 
 import Icon from '../Icon.vue'
+import PlayerTitle from './Title.vue'
 import ProgressBar from './ProgressBar.vue'
 import VolumeSlider from './VolumeSlider.vue'
 
 @Component<Controls>({
-  components: { VolumeSlider, ProgressBar, Icon },
+  components: { PlayerTitle, VolumeSlider, ProgressBar, Icon },
   watch: {
     $route(newRoute: Route) {
       if (!newRoute.path.includes('/player-full') && this.isFullscreen) {
@@ -361,54 +355,6 @@ $buttonSize: 50px;
     top: 0;
     height: 100%;
     width: 100%;
-  }
-
-  & > .episode-info {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    color: $white;
-    font-size: 26px;
-    text-align: left;
-    text-shadow: $outline;
-    filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.25));
-    user-select: initial;
-
-    & a {
-      color: $white;
-      text-decoration: none;
-    }
-
-    & > .episode-title-container {
-      display: flex;
-      color: $white;
-
-      & h1 {
-        margin: 5px 15px;
-        font-size: 1em;
-        font-weight: 400;
-
-        transition: opacity 0.5s, transform 0.5s;
-
-        &:first-child {
-          margin-right: 0;
-        }
-        &:last-child {
-          margin-left: 8px;
-        }
-
-        &.blur {
-          opacity: 0;
-          transform: translateX(10%);
-        }
-      }
-    }
-
-    & h3 {
-      margin: 5px 15px;
-      font-size: 0.8em;
-      font-weight: 500;
-    }
   }
 
   &.visible {
