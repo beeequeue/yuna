@@ -1,19 +1,17 @@
 <template>
 <div class="episode-info">
-  <div class="episode-title-container">
-    <h1 class="episode-number">{{episode.episodeNumber}}</h1>
+  <h1 class="episode-number">{{episode.episodeNumber}}</h1>
 
-    <div class="titles">
-      <h1 class="episode-title" :class="{ blur: listEntry.progress < episode.episodeNumber }">
-        {{episode.title}}
-      </h1>
+  <div class="titles">
+    <h1 class="episode-title" :class="{ blur: listEntry.progress < episode.episodeNumber }">
+      {{episode.title}}
+    </h1>
 
-      <router-link :to="`/anime/${animeId}`">
-        <h3 class="anime-title">
-          {{animeName}}
-        </h3>
-      </router-link>
-    </div>
+    <router-link :to="`/anime/${animeId}`">
+      <h3 class="anime-title">
+        {{animeName}}
+      </h3>
+    </router-link>
   </div>
 </div>
 </template>
@@ -42,8 +40,10 @@ export default class PlayerTitle extends Vue {
 
 .episode-info {
   position: absolute;
-  top: 5px;
-  left: 5px;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
   color: $white;
   font-size: 26px;
   text-align: left;
@@ -56,41 +56,45 @@ export default class PlayerTitle extends Vue {
     text-decoration: none;
   }
 
-  & > .episode-title-container {
+  & > .episode-number {
     display: flex;
-    color: $white;
+    align-items: center;
+    margin: 0 15px;
+    font-size: 2.25em;
+    font-family: 'Lato', sans-serif !important;
+  }
 
-    & > .episode-number {
-      display: flex;
-      align-items: center;
-      margin: 0 10px;
-      font-size: 2.25em;
+  & > .titles {
+    position: relative;
+    width: 100%;
+    margin-top: 10px;
+    margin-left: 5px;
+    flex-shrink: 1;
+
+    & > .episode-title {
+      width: calc(100% - 200px);
+      height: 30px;
+      margin: 0;
+      font-size: 1em;
+      font-weight: 500 !important;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      transition: height 0.5s, opacity 0.5s, transform 0.5s;
+
+      &.blur {
+        height: 0;
+        opacity: 0;
+        transform: translateX(10%);
+      }
     }
 
-    & > .titles {
-      margin-left: 5px;
-
-      & .anime-title {
-        margin: 0;
-        font-size: 0.75em;
-        font-weight: 600 !important;
-      }
-
-      & > .episode-title {
-        height: 30px;
-        margin: 5px 0;
-        font-size: 1em;
-        font-weight: 500 !important;
-        overflow: show;
-
-        transition: height 0.5s, opacity 0.5s, transform 0.5s;
-
-        &.blur {
-          height: 0;
-          opacity: 0;
-          transform: translateX(10%);
-        }
-      }
+    & .anime-title {
+      margin: 0;
+      margin-top: 10px;
+      font-size: 0.75em;
+      font-weight: 600 !important;
     }
   }
 }
