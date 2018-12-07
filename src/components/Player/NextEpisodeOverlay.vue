@@ -11,7 +11,9 @@
 
         <div>{{nextEpisode.episodeNumber}}/{{episodesInAnime || '?'}}</div>
 
-        <div v-if="!shouldHide.title">{{nextEpisode.title}}</div>
+        <div v-if="!shouldHide.title" class="episode-title">
+          {{nextEpisode.title}}
+        </div>
       </div>
     </transition>
 
@@ -155,6 +157,12 @@ export default class NextEpisodeOverlay extends Vue {
       &:first-child {
         font-size: 0.9em;
       }
+    }
+
+    & > .episode-title {
+      max-width: 850px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     &.v-enter-active,
