@@ -14,7 +14,7 @@ const locale = 'enUS'
 // tslint:disable-next-line:variable-name
 const device_type = 'com.crunchyroll.windows.desktop'
 // tslint:disable-next-line:variable-name
-const access_token = process.env.ACCESS_TOKEN
+const access_token = process.env.VUE_APP_ACCESS_TOKEN
 
 export interface User {
   class: 'user'

@@ -75,7 +75,9 @@ export const loginAnilist = (store: Store<any>) =>
     )
 
     authWindow.loadURL(
-      `https://anilist.co/api/v2/oauth/authorize?client_id=913&response_type=token`,
+      `https://anilist.co/api/v2/oauth/authorize?client_id=${
+        process.env.VUE_APP_ANILIST_ID
+      }&response_type=token`,
     )
     authWindow.show()
   })

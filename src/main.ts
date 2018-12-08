@@ -49,10 +49,10 @@ const scrubUrl = (event: SentryEvent): SentryEvent => ({
 })
 
 init({
-  enabled: process.env.NODE_ENV === 'production',
+  enabled: process.env.VUE_APP_MODE === 'production',
   dsn: 'https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205',
   integrations: [new Integrations.Vue({ Vue })],
-  environment: process.env.NODE_ENV,
+  environment: process.env.VUE_APP_MODE,
   release: `yuna-v${version}`,
   beforeSend: scrubUrl,
 })

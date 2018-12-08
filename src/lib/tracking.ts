@@ -11,7 +11,7 @@ const deviceId = getDeviceUuid()
 
 const constants = {
   v: 1,
-  tid: process.env.GA_ID as string,
+  tid: process.env.VUE_APP_GA_ID as string,
   aip: true,
   cid: deviceId,
   an: 'yuna',
@@ -44,7 +44,9 @@ type Data = typeof constants &
       })
 
 const send = async (data: Data) => {
-  if (process.env.NODE_ENV !== 'production' || !process.env.GA_ID) return
+  if (process.env.VUE_APP_MODE !== 'production' || !process.env.VUE_APP_GA_ID) {
+    return
+  }
 
   return superagent
     .post(url)

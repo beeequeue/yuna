@@ -72,5 +72,5 @@ export interface RootState {
 
 export const store = new Vuex.Store<RootState>({
   modules,
-  strict: process.env.NODE_ENV !== 'production',
+  strict: process.env.VUE_APP_MODE !== 'production',
 })
