@@ -5,12 +5,26 @@
   <div class="menu" :class="{ open }" @click="toggleOpen">
     <div class="item open-settings" @click="openSettings">
       <icon :icon="settingsSvg"/>
-      <span>Open Settings</span>
+      <span>Settings</span>
     </div>
+
+    <a href="https://github.com/beeequeue/yuna/issues/new">
+      <div class="item report-bug">
+        <icon :icon="bugSvg"/>
+        <span>Report bug</span>
+      </div>
+    </a>
+
+    <a href="https://github.com/beeequeue/yuna">
+      <div class="item github">
+        <icon :icon="githubSvg"/>
+        <span>Source</span>
+      </div>
+    </a>
 
     <div class="item clear-cache" @click="clearCache">
       <icon :icon="clearSvg"/>
-      <span>Clear cache</span>
+      <span>Clear caches</span>
     </div>
 
     <div class="item open-about" @click="toggleAboutModal">
@@ -33,6 +47,8 @@ import {
   mdiLogout,
   mdiSettingsOutline,
   mdiInformationOutline,
+  mdiBugOutline,
+  mdiGithubCircle,
 } from '@mdi/js'
 
 import { AnimeCache } from '@/lib/cache'
@@ -48,6 +64,8 @@ export default class SettingsDropdown extends Vue {
   @Prop() public toggleOpen!: () => any
 
   public settingsSvg = mdiSettingsOutline
+  public bugSvg = mdiBugOutline
+  public githubSvg = mdiGithubCircle
   public clearSvg = mdiCached
   public infoSvg = mdiInformationOutline
   public logOutSvg = mdiLogout
@@ -107,12 +125,23 @@ export default class SettingsDropdown extends Vue {
   pointer-events: all;
   transition: transform 0.25s;
 
-  & > .item {
+  & a {
+    color: $highlight;
+    text-decoration: none;
+  }
+
+  & .item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 15px;
     cursor: pointer;
+
+    transition: background 0.15s;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.075);
+    }
 
     & > .icon {
       height: 1.15em;

@@ -23,7 +23,7 @@
   <icon
     class="button align-left"
     :class="openClass"
-    :icon="settingsSvg"
+    :icon="menuSvg"
     @click.native="toggleOpen"
   />
 
@@ -38,7 +38,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { TooltipSettings } from 'v-tooltip'
-import { mdiHomeOutline, mdiSettingsOutline } from '@mdi/js'
+import { mdiHomeOutline, mdiMenu } from '@mdi/js'
 
 import Search from '../Search/Search.vue'
 import Icon from '../Icon.vue'
@@ -53,7 +53,7 @@ export default class Navbar extends Vue {
   public showFirstTimetooltips = false
 
   public homeOutlineSvg = mdiHomeOutline
-  public settingsSvg = mdiSettingsOutline
+  public menuSvg = mdiMenu
 
   public mounted() {
     setTimeout(() => {
