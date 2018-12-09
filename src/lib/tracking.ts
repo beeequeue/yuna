@@ -15,9 +15,8 @@ const constants = {
   aip: true,
   cid: deviceId,
   an: 'yuna',
+  aid: 'app.yuna.moe',
   av: version,
-  dt: 'Yuna',
-  dh: 'app.yuna.moe',
 }
 
 export enum Page {
@@ -33,14 +32,14 @@ export enum Page {
 
 type Data = typeof constants &
   (
-    | { t: 'pageview'; dp?: string }
+    | { t: 'screenview'; cd?: string }
     | {
         t: 'event'
         ec: string
         ea: string
         el?: string
         ev?: number
-        dp?: string
+        cd?: string
       })
 
 const send = async (data: Data) => {
@@ -77,8 +76,8 @@ export const trackPageView = (
 
   return send({
     ...constants,
-    t: 'pageview',
-    dp:
+    t: 'screenview',
+    cd:
       name +
       (animeId ? `/${animeId}` : '') +
       (animeName ? `?name=${animeName}` : ''),
@@ -91,6 +90,6 @@ export const trackStillWatching = () => {
     t: 'event',
     ec: 'player',
     ea: 'heartbeat',
-    dp: Page.PLAYER,
+    cd: Page.PLAYER,
   })
 }
