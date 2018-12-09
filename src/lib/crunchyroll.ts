@@ -381,4 +381,4 @@ const mediaToEpisode = (
 })
 
 const removeExtraEpisodes = ({ episode_number, duration }: _Media) =>
-  Number(episode_number) % 1 === 0 && duration > 300
+  (Number(episode_number) % 1 === 0 && duration === 0) || duration > 300
