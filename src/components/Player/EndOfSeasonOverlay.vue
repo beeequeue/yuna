@@ -106,12 +106,7 @@ export default class EndOfSeasonOverlay extends Vue {
   public async updateScore(score: number) {
     if (!this.listEntry) return
 
-    await setScoreMutation(
-      this.$apollo,
-      this.listEntry.id,
-      score,
-      this.listEntry,
-    )
+    await setScoreMutation(this, this.listEntry.id, score, this.listEntry)
   }
 }
 </script>

@@ -69,12 +69,12 @@
             :click="deleteEntry"
           />
 
-        <c-button
-          :disabled="loading"
-          type="success"
-          :content="loading ? 'Saving...' : 'Save changes'"
-          :click="mutate"
-        />
+          <c-button
+            :disabled="loading"
+            type="success"
+            :content="loading ? 'Saving...' : 'Save changes'"
+            :click="mutate"
+          />
         </div>
       </div>
     </template>
@@ -196,7 +196,7 @@ export default class EditModal extends Vue {
     if (!this.anime || !this.anime.mediaListEntry) return
 
     await deleteListEntryMutation(
-      this.$apollo,
+      this,
       this.anime.id,
       this.anime.mediaListEntry.id,
     )

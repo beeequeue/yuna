@@ -187,7 +187,7 @@ export default class QueueItem extends Vue {
       return sendErrorToast(this.$store, 'No entry found..?')
     }
 
-    await setStatusMutation(this.$apollo, listEntryId, status)
+    await setStatusMutation(this, listEntryId, status)
   }
 
   public async incrementProgress(data: AnimeQueueQuery, amount: number) {
@@ -208,7 +208,7 @@ export default class QueueItem extends Vue {
     }
 
     await setProgressMutation(
-      this.$apollo,
+      this,
       listEntryId,
       progress + amount,
       mediaListEntry,

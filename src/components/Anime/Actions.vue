@@ -138,6 +138,7 @@ import { addEntryMutation, setStatusMutation } from '@/graphql/mutations'
 import { MediaListStatus } from '@/graphql-types'
 
 import CButton from '../CButton.vue'
+import { getSettings } from '@/state/settings'
 
 export enum ActionKeys {
   ADD = 'addEntry',
@@ -216,6 +217,10 @@ export default class Actions extends Vue {
     return contains(this.anime.id, getQueue(this.$store))
   }
 
+  public get shouldAddToListAsWell() {
+    return getSettings(this.$store).autoMarkAsPlanning
+  }
+
   public isNotExcluded(key: string) {
     return !contains(key, this.exclude)
   }
@@ -243,7 +248,7 @@ export default class Actions extends Vue {
       return sendErrorToast(this.$store, 'No anime found..?')
     }
 
-    if (!this.mediaListEntry) {
+    if (!this.mediaListEntry && this.shouldAddToListAsWell) {
       await this.addEntryMutation(MediaListStatus.PLANNING)
     }
 
@@ -266,12 +271,7 @@ export default class Actions extends Vue {
       return sendErrorToast(this.$store, 'No entry found..?')
     }
 
-    await setStatusMutation(
-      this.$apollo,
-      this.mediaListEntry.id,
-      status,
-      this.userId,
-    )
+    await setStatusMutation(this, this.mediaListEntry.id, status)
   }
 
   public async addEntryMutation(status: MediaListStatus) {
@@ -279,7 +279,7 @@ export default class Actions extends Vue {
       return sendErrorToast(this.$store, 'No anime found..?')
     }
 
-    await addEntryMutation(this.$apollo, this.anime.id, status)
+    await addEntryMutation(this, this.anime.id, status)
   }
 }
 </script>

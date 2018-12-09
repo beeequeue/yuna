@@ -88,7 +88,7 @@ export default class PlayerContainer extends Vue {
   public setProgress(progress: number) {
     if (!this.playerData || !this.playerData.listEntry) return
 
-    setProgressMutation(this.$apollo, this.playerData.listEntry.id, progress)
+    setProgressMutation(this, this.playerData.listEntry.id, progress)
   }
 }
 </script>

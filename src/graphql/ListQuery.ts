@@ -112,4 +112,5 @@ export interface ListQuery {
 
 export interface ListQueryVariables {
   userId: number;
+  statuses?: MediaListStatus[] | null;
 }

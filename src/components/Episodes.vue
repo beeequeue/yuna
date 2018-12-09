@@ -282,12 +282,7 @@ export default class Episodes extends Vue {
   public setProgress(progress: number) {
     if (!this.listEntry) return
 
-    setProgressMutation(
-      this.$apollo,
-      this.listEntry.id,
-      progress,
-      this.listEntry,
-    )
+    setProgressMutation(this, this.listEntry.id, progress, this.listEntry)
   }
 }
 </script>

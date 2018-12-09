@@ -1,8 +1,9 @@
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
+import { Store } from 'vuex'
 
 import { MediaListStatus } from '@/graphql-types'
 import { updatePlaylistListEntry } from '@/state/app'
-import { store } from '@/state/store'
+import { getAnilistUserId } from '@/state/auth'
 
 import { AddEntryMutation } from './AddEntryMutation'
 import ADD_ENTRY_MUTATION from './AddEntryMutation.graphql'
@@ -21,13 +22,31 @@ import UPDATE_PROGRESS_MUTATION from './UpdateProgressMutation.graphql'
 import { UpdateScoreMutation } from './UpdateScoreMutation'
 import UPDATE_SCORE_MUTATION from './UpdateScoreMutation.graphql'
 
+interface Instance {
+  $store: Store<any>
+  $apollo: DollarApollo<any>
+}
+
+const refetchListQuery = ($store: Store<any>) => {
+  const userId = getAnilistUserId($store)
+
+  if (!userId) return () => []
+
+  return () => [
+    {
+      query: LIST_QUERY,
+      variables: { userId },
+    },
+  ]
+}
+
 export const setProgressMutation = async (
-  apollo: DollarApollo<any>,
+  { $apollo, $store }: Instance,
   id: number,
   progress: number,
   oldValues: Partial<UpdateProgressMutation_SaveMediaListEntry> = {},
-) => {
-  return apollo.mutate<UpdateProgressMutation>({
+) =>
+  $apollo.mutate<UpdateProgressMutation>({
     mutation: UPDATE_PROGRESS_MUTATION,
     variables: { id, progress },
     optimisticResponse: {
@@ -39,43 +58,34 @@ export const setProgressMutation = async (
         status: oldValues.status || MediaListStatus.CURRENT,
       },
     } as UpdateProgressMutation,
+    refetchQueries: refetchListQuery($store),
     update: (_cache, { data }) => {
       if (!data) return
 
-      updatePlaylistListEntry(store, data.SaveMediaListEntry)
+      updatePlaylistListEntry($store, data.SaveMediaListEntry)
     },
   })
-}
 
 export const setStatusMutation = async (
-  apollo: DollarApollo<any>,
+  { $apollo, $store }: Instance,
   id: number,
   status: MediaListStatus,
-  userId?: number | null,
 ) =>
-  apollo.mutate<SetStatusMutation>({
+  $apollo.mutate<SetStatusMutation>({
     mutation: SET_STATUS_MUTATION,
     variables: { id, status },
-    refetchQueries: () => {
-      if (!userId) return []
-
-      return [
-        {
-          query: LIST_QUERY,
-          variables: { userId },
-        },
-      ]
-    },
+    refetchQueries: refetchListQuery($store),
   })
 
 export const addEntryMutation = async (
-  apollo: DollarApollo<any>,
+  { $apollo, $store }: Instance,
   mediaId: number,
   status: MediaListStatus,
 ) =>
-  apollo.mutate<AddEntryMutation>({
+  $apollo.mutate<AddEntryMutation>({
     mutation: ADD_ENTRY_MUTATION,
     variables: { mediaId, status },
+    refetchQueries: refetchListQuery($store),
     update: (cache, { data }) => {
       if (!data) return
 
@@ -91,12 +101,12 @@ export const addEntryMutation = async (
   })
 
 export const setScoreMutation = async (
-  apollo: DollarApollo<any>,
+  { $apollo, $store }: Instance,
   id: number,
   score: number,
   oldValues: Partial<UpdateProgressMutation_SaveMediaListEntry> = {},
-) => {
-  return apollo.mutate<UpdateScoreMutation>({
+) =>
+  $apollo.mutate<UpdateScoreMutation>({
     mutation: UPDATE_SCORE_MUTATION,
     variables: { id, score },
     optimisticResponse: {
@@ -112,7 +122,7 @@ export const setScoreMutation = async (
     update: (_cache, { data }) => {
       if (!data) return
 
-      updatePlaylistListEntry(store, {
+      updatePlaylistListEntry($store, {
         id,
         score,
         progress: oldValues.progress || 0,
@@ -121,16 +131,16 @@ export const setScoreMutation = async (
       } as any)
     },
   })
-}
 
 export const deleteListEntryMutation = async (
-  apollo: DollarApollo<any>,
+  { $apollo, $store }: Instance,
   animeId: number,
   entryId: number,
 ) =>
-  apollo.mutate<DeleteListEntryMutation>({
+  $apollo.mutate<DeleteListEntryMutation>({
     mutation: DELETE_LIST_ENTRY_MUTATION,
     variables: { id: entryId },
+    refetchQueries: refetchListQuery($store),
     update: cache => {
       const data = cache.readQuery<AnimePageQuery>({
         query: ANIME_PAGE_QUERY,

@@ -1,8 +1,19 @@
-query ListQuery($userId: Int!) {
+query ListQuery(
+  $userId: Int!
+  $statuses: [MediaListStatus!] = [
+    PLANNING
+    CURRENT
+    COMPLETED
+    DROPPED
+    PAUSED
+    REPEATING
+  ]
+) {
   listCollection: MediaListCollection(
     userId: $userId
     type: ANIME
     forceSingleCompletedList: true
+    status_in: $statuses
   ) {
     lists {
       isCustomList
