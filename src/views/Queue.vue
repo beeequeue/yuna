@@ -16,7 +16,13 @@
         <div v-if="queue.length < 1" class="empty-message">
           Seems your queue is empty!<br/>
 
-          You can add some from your list or by searching for one!<br/>
+          You can import shows from your list or add some by searching!<br/>
+
+          <c-button
+            content="Import Watching from List"
+            :icon="currentSvg"
+            :click="importWatching"
+          />
         </div>
       </transition>
     </div>
@@ -310,6 +316,11 @@ export default class Queue extends Vue {
       align-items: center;
       font-size: 1.25em;
       font-weight: 600;
+
+      & > .button {
+        margin-top: 10px;
+        font-size: 0.85em;
+      }
     }
 
     & > .draggable-container > .transition-group {
