@@ -1,5 +1,5 @@
-import { app, BrowserWindow, protocol } from 'electron'
-import electronDebug from 'electron-debug'
+import { app, BrowserWindow, protocol, ipcMain } from 'electron'
+import electronDebug, { openDevTools } from 'electron-debug'
 import * as path from 'path'
 import { format as formatUrl } from 'url'
 import {
@@ -7,6 +7,7 @@ import {
   installVueDevtools,
 } from 'vue-cli-plugin-electron-builder/lib'
 
+import { OPEN_DEVTOOLS } from './messages'
 import { initAutoUpdater } from './updater'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -55,6 +56,10 @@ function createMainWindow() {
       }),
     )
   }
+
+  ipcMain.on(OPEN_DEVTOOLS, () => {
+    openDevTools()
+  })
 
   window.on('closed', () => {
     mainWindow = null

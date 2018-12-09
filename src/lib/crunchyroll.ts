@@ -179,7 +179,7 @@ export const createSession = async () => {
     })) as CrunchyrollResponse<SessionResponse>
 
   if (responseIsError(response)) {
-    return Promise.reject(response.body.message)
+    throw new Error(response.body.message)
   }
 
   _sessionId = response.body.data.session_id

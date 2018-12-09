@@ -58,6 +58,26 @@ declare module 'electron-util' {
   export const activeWindow: () => BrowserWindow
 }
 
+declare module 'electron-debug' {
+  import { BrowserWindow } from 'electron'
+  /**
+   * Install keyboard shortcuts and optionally activate DevTools on each
+   * created BrowserWindow.
+   */
+  const electronDebug: (
+    options: {
+      /** Enable debug options. */
+      enabled?: boolean
+      /** Show DevTools on each created BrowserWindow. */
+      showDevTools?: boolean | 'right' | 'bottom' | 'undocked'
+    },
+  ) => void
+
+  export const openDevTools: (window?: BrowserWindow) => void
+
+  export default electronDebug
+}
+
 declare interface Window {
   initialLogin: boolean
 }
