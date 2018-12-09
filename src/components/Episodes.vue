@@ -132,7 +132,7 @@ export default class Episodes extends Vue {
   }
 
   public get current() {
-    return this.listEntry && this.listEntry.progress + 1
+    return this.listEntry != null ? this.listEntry.progress + 1 : null
   }
 
   public mounted() {
@@ -256,21 +256,21 @@ export default class Episodes extends Vue {
   public getShouldBlur(
     epNumber: number,
   ): Required<SettingsState['spoilers']['episode']> {
-    const shouldBlur = !!this.current && epNumber >= this.current
     const settings = getSpoilerSettings(this.$store).episode
+    const shouldBlur =
+      this.listEntry == null ||
+      (this.current != null && epNumber >= this.current)
 
     return {
-      name: shouldBlur && settings.name,
-      thumbnail: shouldBlur && settings.thumbnail,
+      name: settings.name && shouldBlur,
+      thumbnail: settings.thumbnail && shouldBlur,
     }
   }
 
   public getEpisodeClasses(index: number) {
-    if (!this.listEntry) return {}
-
     return {
       watched: this.getIsEpisodeWatched(index),
-      current: this.listEntry.progress + 1 === index,
+      current: this.listEntry && this.listEntry.progress + 1 === index,
       active: !this.small && Number(this.scrollerValue) === index,
       small: this.small,
       'right-padding': this.rightPadding,
