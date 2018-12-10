@@ -14,6 +14,7 @@ import {
 } from '@/lib/crunchyroll'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { api } from 'electron-util'
+import { getSettings } from '@/state/settings'
 
 export interface RequestSuccess<B extends object> extends Response {
   status: 200
@@ -82,16 +83,20 @@ export const humanizeMediaListStatus = (
 export const createBothSessions = async (
   store: Store<any> | ActionContext<any, any>,
 ) => {
-  let data: SessionResponse
+  let data: SessionResponse | null = null
 
-  try {
-    data = await createUnblockedSession()
-  } catch (e) {
-    error(e)
-    store.dispatch('app/sendErrorToast', 'Could not create US session. 😞', {
-      root: true,
-    })
+  if (getSettings(store).useCRUnblocker) {
+    try {
+      data = await createUnblockedSession()
+    } catch (e) {
+      error(e)
+      store.dispatch('app/sendErrorToast', 'Could not create US session. 😞', {
+        root: true,
+      })
+    }
+  }
 
+  if (data == null) {
     data = await createSession()
   }
 
