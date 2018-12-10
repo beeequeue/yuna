@@ -100,7 +100,7 @@ export default class App extends Vue {
     const data = await createBothSessions(this.$store)
     setCrunchyrollCountry(this.$store, data.country_code)
 
-    if (process.env.VUE_APP_MODE === 'production') {
+    if (process.env.NODE_ENV === 'production') {
       ipcRenderer.send(CHECK_FOR_UPDATES)
     }
   }

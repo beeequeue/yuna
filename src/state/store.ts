@@ -24,7 +24,7 @@ ipcRenderer.on(UPDATE_AVAILABLE, () => {
   const { autoUpdate } = store.getters['settings/getSettings']
   const message = autoUpdate
     ? 'Starting download...'
-    : 'Click this notification to download it!'
+    : 'Click this notification to install it!'
 
   setIsUpdateAvailable(store, true)
 
@@ -72,5 +72,5 @@ export interface RootState {
 
 export const store = new Vuex.Store<RootState>({
   modules,
-  strict: process.env.VUE_APP_MODE !== 'production',
+  strict: process.env.NODE_ENV !== 'production',
 })

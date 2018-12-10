@@ -43,7 +43,7 @@ type Data = typeof constants &
       })
 
 const send = async (data: Data) => {
-  if (process.env.VUE_APP_MODE !== 'production' || !process.env.VUE_APP_GA_ID) {
+  if (process.env.NODE_ENV !== 'production' || !process.env.VUE_APP_GA_ID) {
     return
   }
 
