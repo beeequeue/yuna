@@ -65,9 +65,5 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
-.env*
-
-
 #Electron-builder output
 /dist_electron
