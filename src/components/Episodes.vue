@@ -208,10 +208,10 @@ export default class Episodes extends Vue {
     } catch (e) {
       sendErrorToast(
         this.$store,
-        `Could not fetch any episodes for ${this.animeName} - (${e.status})`,
+        `Could not fetch any episodes for ${this.animeName} - (${e.message})`,
       )
 
-      this.error = e
+      this.error = e.message
       this.loading = false
     }
   }

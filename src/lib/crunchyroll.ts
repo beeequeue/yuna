@@ -1,4 +1,5 @@
 /* tslint:disable:class-name */
+import { activeWindow } from 'electron-util'
 import { T } from 'rambdax'
 import superagent from 'superagent/superagent'
 import uuid from 'uuid/v4'
@@ -120,7 +121,7 @@ interface CrunchyrollSuccess<D extends object = any> {
 }
 
 interface CrunchyrollError {
-  code: 'bad_request' | string
+  code: 'bad_request' | 'bad_session'
   error: true
   message: string
 }
@@ -267,7 +268,11 @@ export const fetchEpisodesOfCollection = async (
   })) as CrunchyrollResponse<_Media[]>
 
   if (responseIsError(response)) {
-    return Promise.reject(response.body.message)
+    if (response.body.code === 'bad_session') {
+      activeWindow().reload()
+    }
+
+    throw new Error(response.body.message)
   }
 
   return response.body.data.filter(removeExtraEpisodes).map(mediaToEpisode)
@@ -282,7 +287,11 @@ export const fetchEpisode = async (mediaId: string): Promise<Episode> => {
   })) as CrunchyrollResponse<_Media>
 
   if (responseIsError(response)) {
-    return Promise.reject(response.body.message)
+    if (response.body.code === 'bad_session') {
+      activeWindow().reload()
+    }
+
+    throw new Error(response.body.message)
   }
 
   return mediaToEpisode(
@@ -312,7 +321,11 @@ const fetchStreamInfo = async (mediaId: string): Promise<StreamInfo> => {
   })) as CrunchyrollResponse<StreamInfo>
 
   if (responseIsError(response)) {
-    return Promise.reject(response.body.message)
+    if (response.body.code === 'bad_session') {
+      activeWindow().reload()
+    }
+
+    throw new Error(response.body.message)
   }
 
   const { playhead, stream_data } = response.body.data
