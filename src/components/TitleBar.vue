@@ -33,7 +33,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import electron from 'electron'
+import { activeWindow } from 'electron-util'
 import { mdiClose, mdiMinus, mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 
 import { closeAllModals } from '@/state/app'
@@ -48,7 +48,6 @@ const flagContext = require.context('svg-country-flags/svg')
   components: { Icon },
 })
 export default class TitleBar extends Vue {
-  public browserWindow = electron.remote.BrowserWindow.getFocusedWindow() as Electron.BrowserWindow
   public version = version
 
   public backSvg = mdiChevronLeft
@@ -86,11 +85,11 @@ export default class TitleBar extends Vue {
   }
 
   public minimize() {
-    this.browserWindow.minimize()
+    activeWindow().minimize()
   }
 
   public close() {
-    this.browserWindow.close()
+    activeWindow().close()
   }
 
   public goBack() {
