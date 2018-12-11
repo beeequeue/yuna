@@ -1,32 +1,31 @@
 <template>
-<div class="toast-container">
-  <transition-group>
-    <div
-      v-for="(toast, i) in toasts"
-      :key="toast.id"
-      class="toast"
-      :class="{[toast.type]: true}"
-      :style="{top: i * 75 + 'px'}"
-      @click="e => handleClick(e, toast)"
-    >
-      <div class="title">{{toast.title}}</div>
-      <div class="message">{{toast.message}}</div>
+<transition-group class="toast-container">
+  <div
+    v-for="(toast, i) in toasts"
+    ref="toasts"
+    :key="toast.id"
+    class="toast"
+    :class="{[toast.type]: true}"
+    :style="{top: getDistanceFromTop(i) + 'px'}"
+    @click="e => handleClick(e, toast)"
+  >
+    <div class="title">{{toast.title}}</div>
+    <div class="message">{{toast.message}}</div>
 
-      <icon
-        class="close"
-        :icon="closeSvg"
-      />
-    </div>
-  </transition-group>
-</div>
+    <icon
+      class="close"
+      :icon="closeSvg"
+    />
+  </div>
+</transition-group>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiClose } from '@mdi/js'
 
+import { getToasts, removeToast, Toast } from '@/state/app'
 import Icon from './Icon.vue'
-import { getToasts, removeToast, Toast } from '../state/app'
 
 @Component({
   components: { Icon },
@@ -37,6 +36,17 @@ export default class ToastOverlay extends Vue {
   }
 
   public closeSvg = mdiClose
+  public $refs!: {
+    toasts: HTMLDivElement[]
+  }
+
+  public getDistanceFromTop(index: number) {
+    if (!this.$refs.toasts) return 0
+
+    return this.$refs.toasts
+      .slice(0, index)
+      .reduce((accum, el) => accum + el.clientHeight + 10, 0)
+  }
 
   public handleClick(e: any, toast: Toast) {
     const clickedOnClose = e.path.some(
@@ -64,26 +74,18 @@ export default class ToastOverlay extends Vue {
   bottom: 0;
   right: 20px;
   pointer-events: none;
-  width: 750px;
+  width: 350px;
   z-index: 100;
-
-  & > span {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-  }
 
   & .toast {
     display: inline-flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: flex-start;
     position: absolute;
     right: 0;
-    height: 65px;
     min-width: 150px;
+    max-width: 100%;
     width: auto;
     padding: 10px 35px 10px 20px;
     background: #888;
@@ -116,6 +118,10 @@ export default class ToastOverlay extends Vue {
       font-weight: 700;
     }
 
+    & > .message {
+      text-align: left;
+    }
+
     & > .close {
       position: absolute;
       top: 0;
@@ -128,7 +134,7 @@ export default class ToastOverlay extends Vue {
     &.v-move,
     &.v-enter-active,
     &.v-leave-active {
-      will-change: opacity;
+      will-change: transform, opacity;
       transition: transform 0.25s, opacity 0.15s;
     }
 
