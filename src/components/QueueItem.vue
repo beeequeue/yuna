@@ -351,12 +351,12 @@ export default class QueueItem extends Vue {
         &.v-enter,
         &.v-leave-to {
           max-height: 0;
-          padding: 0 15px;
+          padding-top: 0;
+          padding-bottom: 0;
         }
 
         &.v-enter-to,
         &.v-leave {
-          padding: 15px;
           max-height: 150px;
         }
       }

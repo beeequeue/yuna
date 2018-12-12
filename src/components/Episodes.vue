@@ -5,8 +5,13 @@
     Looking for episodes...
   </div>
 
+  <div v-if="error" class="error">
+    <c-button :icon="reloadSvg" type="danger" :click="refetchEpisodes"/>
+    {{ error }}
+  </div>
+
   <div
-    v-if="episodes && episodes.length > 0 && !loading"
+    v-if="!loading && !error && episodes && episodes.length > 0"
     ref="episodeContainer"
     class="episode-container"
     :class="containerClasses"
@@ -71,7 +76,12 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { Key } from 'ts-key-enum'
-import { mdiCheckCircleOutline, mdiBookmark, mdiBookmarkRemove } from '@mdi/js'
+import {
+  mdiCheckCircleOutline,
+  mdiBookmark,
+  mdiBookmarkRemove,
+  mdiCached,
+} from '@mdi/js'
 
 import { setProgressMutation } from '@/graphql/mutations'
 import { getSpoilerSettings, SettingsState } from '@/state/settings'
@@ -118,6 +128,7 @@ export default class Episodes extends Vue {
   public error: string | null = null
   public scrollerValue = ''
 
+  public reloadSvg = mdiCached
   public bookmarkSvg = mdiBookmark
   public unbookmarkSvg = mdiBookmarkRemove
   public checkSvg = mdiCheckCircleOutline
@@ -142,6 +153,12 @@ export default class Episodes extends Vue {
   public updateContainerClasses() {
     const el = this.$refs.episodeContainer
 
+    if (!el)
+      return {
+        'furthest-left': true,
+        'furthest-right': false,
+      }
+
     const width = el.scrollWidth
 
     this.containerClasses = {
@@ -150,7 +167,7 @@ export default class Episodes extends Vue {
     }
   }
 
-  public handleScroll(e: MouseWheelEvent) {
+  public handleScroll(e: WheelEvent) {
     this.$refs.episodeContainer.scrollBy(e.deltaY, 0)
   }
 
@@ -182,20 +199,32 @@ export default class Episodes extends Vue {
   }
 
   public handleScrollerChange(e: KeyboardEvent) {
+    const episodeContainer = this.$refs.episodeContainer
+
+    if (!episodeContainer) return
+
     const episodeIdx = (e.currentTarget as HTMLInputElement).value.trim()
 
     this.scrollerValue = episodeIdx
 
     if (episodeIdx === '') return
 
-    this.$refs.episodeContainer.scroll({
+    episodeContainer.scroll({
       left: this.getScrollPositionOfEpisode(Number(episodeIdx)),
       behavior: 'smooth',
     })
   }
 
+  public refetchEpisodes() {
+    this.fetched = false
+    this.error = null
+    this.fetchEpisodes()
+  }
+
   public async fetchEpisodes() {
     if (this.fetched || !this.idMal) return
+
+    this.loading = true
 
     try {
       this.fetched = true
@@ -218,8 +247,10 @@ export default class Episodes extends Vue {
 
   @Watch('current')
   public _scrollToCurrentEpisode(instant?: boolean | number) {
-    if (this.scrollToCurrentEpisode && this.current) {
-      this.$refs.episodeContainer.scroll({
+    const episodeContainer = this.$refs.episodeContainer
+
+    if (episodeContainer && this.scrollToCurrentEpisode && this.current) {
+      episodeContainer.scroll({
         left: this.getScrollPositionOfEpisode(this.current),
         behavior: instant === true ? undefined : 'smooth',
       })
@@ -302,8 +333,22 @@ export default class Episodes extends Vue {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: auto;
     text-shadow: $outline;
     filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
+  }
+
+  & > .error {
+    margin: auto;
+    color: $danger;
+    font-size: 1.05em;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+
+    & > .button {
+      margin-right: 10px;
+    }
   }
 
   & > .episode-container {
