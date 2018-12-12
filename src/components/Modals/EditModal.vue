@@ -63,6 +63,7 @@
           <c-button
             :disabled="loading"
             type="danger"
+            flat
             confirm
             content="Delete"
             :icon="deleteSvg"

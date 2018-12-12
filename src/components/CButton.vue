@@ -122,6 +122,9 @@ export default class CButton extends Vue {
     }
   }
 
+  &:hover {
+    color: lighten($color, 10%);
+  }
   &:active {
     background: rgba(0, 0, 0, 0.1);
   }
