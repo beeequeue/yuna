@@ -1,5 +1,5 @@
 <template>
-<div class="cover-image">
+<div class="cover-image" :style="{ background: color }">
   <img :src="src" class="image"/>
 
   <span
@@ -42,6 +42,7 @@ import { AnimePageQuery_anime_mediaListEntry } from '../../graphql/AnimePageQuer
 export default class CoverImage extends Vue {
   @Prop(prop(String, true))
   public src!: string
+  @Prop(String) public color!: string | null
   @Prop(prop(Object))
   public mediaListEntry!: AnimePageQuery_anime_mediaListEntry | null
   @Prop(prop(Number))

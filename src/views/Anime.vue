@@ -25,6 +25,7 @@
         key="cover-image"
         class="slide-down"
         :src="data.anime.coverImage.extraLarge"
+        :color="data.anime.coverImage.color"
         :mediaListEntry="getMediaListEntry(data)"
         :length="data.anime.episodes"
       />

@@ -16,6 +16,7 @@ query AnimePageQuery($id: Int) {
     bannerImage
     coverImage {
       extraLarge
+      color
     }
     nextAiringEpisode {
       airingAt

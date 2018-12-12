@@ -3,6 +3,7 @@
   <router-link :to="`/anime/${entry.anime.id}`">
     <cover-image
       :src="entry.anime.coverImage.medium"
+      :color="entry.anime.coverImage.color"
     />
   </router-link>
 
@@ -51,12 +52,19 @@ export default class ListEntry extends Vue {
     transition: transform 0.15s;
   }
 
-  & .cover-image {
+  & > a {
+    position: relative;
     height: 100%;
-    flex-shrink: 0;
-    margin-right: 10px;
-    box-shadow: $shadow;
-    z-index: 2;
+    width: 100%;
+
+    & > .cover-image {
+      height: 100%;
+      width: 100%;
+      flex-shrink: 0;
+      margin-right: 10px;
+      box-shadow: $shadow;
+      z-index: 2;
+    }
   }
 
   & > .info {

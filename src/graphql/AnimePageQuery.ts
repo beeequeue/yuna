@@ -33,6 +33,10 @@ export interface AnimePageQuery_anime_coverImage {
    * The cover image url of the media at its largest size. If this size isn't available, large will be provided instead.
    */
   extraLarge: string | null;
+  /**
+   * Average RGB color of cover image
+   */
+  color: string | null;
 }
 
 export interface AnimePageQuery_anime_nextAiringEpisode {

@@ -33,6 +33,10 @@ export interface ListQuery_listCollection_lists_entries_anime_coverImage {
    * The cover image url of the media at medium size
    */
   medium: string | null;
+  /**
+   * Average RGB color of cover image
+   */
+  color: string | null;
 }
 
 export interface ListQuery_listCollection_lists_entries_anime {
