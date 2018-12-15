@@ -151,7 +151,7 @@ export default class SettingsDropdown extends Vue {
   }
 
   &:not(.open) {
-    transform: translateX(100%);
+    transform: translateX(101%);
   }
 }
 </style>

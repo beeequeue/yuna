@@ -85,6 +85,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator'
+import { ApolloCache } from 'apollo-cache'
 import { change, path, propEq } from 'rambdax'
 import { mdiCloseCircle } from '@mdi/js'
 
@@ -97,6 +98,7 @@ import { MediaListStatus } from '@/graphql-types'
 import SAVE_LIST_ENTRY_MUTATION from '@/graphql/SaveListEntryMutation.graphql'
 import { SaveListEntryMutation } from '@/graphql/SaveListEntryMutation'
 import ANIME_PAGE_QUERY from '@/graphql/AnimePageQuery.graphql'
+import { deleteListEntryMutation } from '@/graphql/mutations'
 import { bigFirstChar, prop, enumToArray } from '@/utils'
 
 import Modal from './Modal.vue'
@@ -105,12 +107,11 @@ import Icon from '../Icon.vue'
 import CButton from '../CButton.vue'
 import NumberInput from '../Form/NumberInput.vue'
 import Dropdown, { DropdownItem } from '../Form/Dropdown.vue'
-import { ApolloClient, ApolloError } from 'apollo-client'
+import { ApolloError } from 'apollo-client'
 import {
   AnimePageQuery,
   AnimePageQueryVariables,
 } from '@/graphql/AnimePageQuery'
-import { deleteListEntryMutation } from '@/graphql/mutations'
 
 @Component({
   components: { Modal, AnimeBanner, Icon, NumberInput, Dropdown, CButton },
@@ -163,7 +164,7 @@ export default class EditModal extends Vue {
   }
 
   public handleUpdate(
-    cache: ApolloClient<any>,
+    cache: ApolloCache<any>,
     payload: { data: SaveListEntryMutation },
   ) {
     let data =
