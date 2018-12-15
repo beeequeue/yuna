@@ -19,16 +19,19 @@ export const watchingQuery = (apollo: DollarApollo<any>, userId: number) =>
   apollo.query<WatchingQuery>({
     query: WATCHING_QUERY,
     variables: { userId },
+    fetchPolicy: 'network-only',
   })
 
 export const planningQuery = (apollo: DollarApollo<any>, userId: number) =>
   apollo.query<PlanningQuery>({
     query: PLANNING_QUERY,
     variables: { userId },
+    fetchPolicy: 'network-only',
   })
 
 export const pausedQuery = (apollo: DollarApollo<any>, userId: number) =>
   apollo.query<PausedQuery>({
     query: PAUSED_QUERY,
     variables: { userId },
+    fetchPolicy: 'network-only',
   })
