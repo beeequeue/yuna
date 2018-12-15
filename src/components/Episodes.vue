@@ -207,7 +207,7 @@ export default class Episodes extends Vue {
 
     this.scrollerValue = episodeIdx
 
-    if (episodeIdx === '') return
+    if (!episodeContainer || episodeIdx === '') return
 
     episodeContainer.scroll({
       left: this.getScrollPositionOfEpisode(Number(episodeIdx)),
