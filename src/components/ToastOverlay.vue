@@ -113,9 +113,11 @@ export default class ToastOverlay extends Vue {
     }
 
     & > .title {
+      text-align: left;
       font-family: 'Raleway', sans-serif;
       font-size: 1.1em;
       font-weight: 700;
+      margin-bottom: 5px;
     }
 
     & > .message {

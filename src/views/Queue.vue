@@ -147,7 +147,10 @@ export default class Queue extends Vue {
     )
 
     if (!lists || lists.length < 1) {
-      return sendErrorToast(this.$store, "Couldn't find any lists!")
+      return sendErrorToast(
+        this.$store,
+        "Couldn't find any shows in that state!",
+      )
     }
 
     const list = lists.find(complement(path<boolean>('isCustomList')))
@@ -160,7 +163,7 @@ export default class Queue extends Vue {
     if (errors || !entries || entries.length < 1) {
       return sendErrorToast(
         this.$store,
-        "Couldn't find any applicable shows in your List!",
+        "Couldn't find any shows in that state!",
       )
     }
 
@@ -178,7 +181,7 @@ export default class Queue extends Vue {
     if (diff < 1) {
       return sendToast(this.$store, {
         type: 'error',
-        title: "Couldn't find any applicable shows in your List!",
+        title: "Couldn't find any shows in that state!",
         message: "At least none that aren't already in the Queue",
       })
     }
