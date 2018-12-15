@@ -3,6 +3,7 @@
   class="list-page"
   :query="LIST_QUERY"
   :variables="{ userId }"
+  fetch-policy="cache-and-network"
 >
   <template slot-scope="{ result: { loading, error, data } }">
     <div class="menu">
