@@ -1,6 +1,6 @@
 /* tslint:disable:class-name */
 import { activeWindow } from 'electron-util'
-import { T } from 'rambdax'
+import { anyPass, T, complement } from 'rambdax'
 import superagent from 'superagent/superagent'
 import uuid from 'uuid/v4'
 
@@ -275,7 +275,7 @@ export const fetchEpisodesOfCollection = async (
     throw new Error(response.body.message)
   }
 
-  return response.body.data.filter(removeExtraEpisodes).map(mediaToEpisode)
+  return response.body.data.filter(excludeExtraEpisodes).map(mediaToEpisode)
 }
 
 export const fetchEpisode = async (mediaId: string): Promise<Episode> => {
@@ -393,5 +393,14 @@ const mediaToEpisode = (
   },
 })
 
-const removeExtraEpisodes = ({ episode_number, duration }: _Media) =>
-  (Number(episode_number) % 1 === 0 && duration === 0) || duration > 300
+// Exclude episodes from episode lists
+const episodeNumberIsHalf = ({ episode_number }: _Media) =>
+  Number(episode_number) % 1 !== 0
+
+const isSpecialEpisode = ({ episode_number }: _Media) => episode_number === 'SP'
+
+const isShorterThanFiveMinutes = ({ duration }: _Media) => duration < 300
+
+const excludeExtraEpisodes = complement(
+  anyPass([episodeNumberIsHalf, isSpecialEpisode, isShorterThanFiveMinutes]),
+)
