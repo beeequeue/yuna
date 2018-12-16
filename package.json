@@ -1,7 +1,7 @@
 {
   "name": "yuna",
   "description": "An anime player that integrates with Crunchyroll, AniList, Masterani",
-  "version": "1.0.0-rc.7",
+  "version": "1.0.0",
   "author": "BeeeQueue",
   "dependencies": {
     "@mdi/js": "3.0.39",
