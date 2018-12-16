@@ -1,4 +1,8 @@
-<h1 align="center">Yuna</h1>
+<h3 align="center">
+  <a href="https://yuna.moe" target="_blank">
+    <img src="public/icons/64x64.png" alt="Yuna"/>
+  </a>
+</h3>
 
 <p align="center">
   <a href="https://github.com/BeeeQueue/yuna/releases">
@@ -7,10 +11,6 @@
 
   <a href="https://github.com/BeeeQueue/yuna/releases">
     <img src="https://img.shields.io/github/release-pre/beeequeue/yuna.svg"/>
-  </a>
-
-  <a href="https://github.com/BeeeQueue/yuna/releases">
-    <img src="https://img.shields.io/github/downloads/beeequeue/yuna/total.svg"/>
   </a>
 </p>
 
@@ -22,10 +22,36 @@
   <a href="https://travis-ci.org/BeeeQueue/yuna">
     <img src="https://travis-ci.org/BeeeQueue/yuna.svg?branch=master"/>
   </a>
+
+  <a href="https://standardjs.com">
+    <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg"/>
+  </a>
 </p>
 
-[<img src="https://giant.gfycat.com/UntriedKindEnglishpointer.gif" width="500" />](https://giant.gfycat.com/UntriedKindEnglishpointer.webm)
+<h4 align="center">
+  <a href="https://yuna.moe" target="_blank">Website</a>
+</h4>
+<h4 align="center">
+  <a href="https://github.com/BeeeQueue/yuna/projects" target="_blank">Roadmap</a>
+</h4>
+<h4 align="center">
+  <a href="https://github.com/BeeeQueue/yuna/releases" target="_blank">Download</a>
+</h4>
 
-To see current and upcoming features, for now see the [Minimum Viable Product](https://github.com/BeeeQueue/yuna/projects/1) project.
+## Tech Stack
 
-Readme will be updated when more features have been added.
+- Vue + Vuex + Apollo
+- TypeScript, SCSS
+- Electron
+
+## Development
+
+### Get Started
+
+1. Install dependencies - `yarn`
+2. Fetch the GraphQL introspection schema - `yarn graphql:get-schema`
+3. Start the development client - `yarn serve`
+
+### Generating types after changing a GraphQL file
+
+Run `yarn graphql:types`
