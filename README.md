@@ -23,8 +23,8 @@
     <img src="https://travis-ci.org/BeeeQueue/yuna.svg?branch=master"/>
   </a>
 
-  <a href="https://standardjs.com">
-    <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg"/>
+  <a href="https://github.com/prettier/prettier">
+    <img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg"/>
   </a>
 </p>
 
