@@ -3,26 +3,19 @@
   <div class="login">
     <div class="steps">
       <div>
-        Crunchyroll
+        <transition name="fade">
+          <login-c-r v-if="!isLoggedIn.crunchyroll" fullWidth :error="crunchyrollError" :loginCrunchyroll="loginCrunchyroll" />
 
-        <br/>
-
-        <LoginForm v-if="!isLoggedIn.crunchyroll" :login="loginCR"/>
-        <icon v-else :icon="checkSvg"/>
+          <icon v-else :icon="checkSvg"/>
+        </transition>
       </div>
 
       <div>
-        Anilist
+        <transition name="fade">
+          <login-a-l v-if="!isLoggedIn.anilist" :loginAnilist="loginAnilist"/>
 
-        <br/>
-        <br/>
-
-        <c-button
-          v-if="!isLoggedIn.anilist"
-          content="Link Account"
-          @click.native="authAnilist"
-        />
-        <icon v-else :icon="checkSvg"/>
+          <icon v-else :icon="checkSvg"/>
+        </transition>
       </div>
     </div>
 
@@ -46,6 +39,8 @@ import { mdiCheck } from '@mdi/js'
 import Icon from '@/components/Icon.vue'
 import CButton from '@/components/CButton.vue'
 import LoginForm from '@/components/LoginForm.vue'
+import LoginCR from '@/components/FirstTimeSetup/LoginCR.vue'
+import LoginAL from '@/components/FirstTimeSetup/LoginAL.vue'
 import { getIsLoggedIn, loginCrunchyroll, logOut } from '@/state/auth'
 import { loginAnilist } from '@/lib/anilist'
 import { Page, trackPageView } from '@/lib/tracking'
@@ -55,10 +50,14 @@ import { Page, trackPageView } from '@/lib/tracking'
     CButton,
     Icon,
     LoginForm,
+    LoginCR,
+    LoginAL,
   },
 })
 export default class Login extends Vue {
   public checkSvg = mdiCheck
+
+  public crunchyrollError: string | null = null
 
   public mounted() {
     if (this.isLoggedIn.all) {
@@ -79,17 +78,19 @@ export default class Login extends Vue {
     }
   }
 
-  public async loginCR(user: string, pass: string) {
+  public async loginCrunchyroll(user: string, pass: string) {
+    this.crunchyrollError = null
+
     try {
       await loginCrunchyroll(this.$store, { user, pass })
-    } catch (e) {
-      return Promise.reject(e)
+    } catch (err) {
+      this.crunchyrollError = err.message
     }
 
     this.onSuccessfullLogin()
   }
 
-  public async authAnilist() {
+  public async loginAnilist() {
     await loginAnilist(this.$store)
 
     this.onSuccessfullLogin()
@@ -136,8 +137,21 @@ export default class Login extends Vue {
       justify-content: space-between;
       align-items: center;
 
-      & > * {
+      & > div {
+        position: relative;
+        display: flex;
+        align-items: center;
         margin: 0 15px;
+        width: 200px;
+        height: 285px;
+
+        & > * {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 100%;
+          transform: translate(-50%, -50%);
+        }
       }
 
       & .icon {

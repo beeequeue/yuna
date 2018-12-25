@@ -4,12 +4,14 @@
 
   <text-input
     placeholder="Username"
+    :class="{ 'full-width': fullWidth }"
     :onChange="value => handleChange('username', value)"
   />
 
   <text-input
     password
     placeholder="Password"
+    :class="{ 'full-width': fullWidth }"
     :onChange="value => handleChange('password', value)"
   />
 
@@ -26,8 +28,8 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import crIcon from '@/assets/crunchyroll.webp'
 import TextInput from '@/components/Form/TextInput.vue'
-import { prop } from '@/utils'
 import CButton from '@/components/CButton.vue'
+import { prop } from '@/utils'
 
 @Component({ components: { CButton, TextInput } })
 export default class LoginCr extends Vue {
@@ -35,6 +37,7 @@ export default class LoginCr extends Vue {
   @Prop(String) public error!: string | null
   @Prop(prop(Function, true))
   public loginCrunchyroll!: (u: string, p: string) => any
+  @Prop(Boolean) public fullWidth!: boolean | null
 
   public username = ''
   public password = ''
@@ -84,5 +87,9 @@ export default class LoginCr extends Vue {
     padding: 0 20px;
     margin-bottom: 15px;
   }
+}
+
+.full-width {
+  margin: 0 0 10px !important;
 }
 </style>
