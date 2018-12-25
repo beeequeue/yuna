@@ -18,6 +18,14 @@
     />
   </transition>
 
+  <transition name="fade">
+    <icon
+      class="button close"
+      :icon="closeSvg"
+      @click.native="closePlayer"
+    />
+  </transition>
+
   <div class="toolbar">
     <progress-bar
       :duration="episode.duration"
@@ -158,12 +166,14 @@ import {
   mdiSkipNext,
   mdiSkipPrevious,
   mdiSettingsOutline,
+  mdiClose,
 } from '@mdi/js'
 
 import {
   getIsFullscreen,
   toggleFullscreen,
   ListEntry,
+  setPlaylist,
   setCurrentEpisode,
   setFullscreen,
 } from '@/state/app'
@@ -250,6 +260,7 @@ export default class Controls extends Vue {
     return getIsFullscreen(this.$store)
   }
 
+  public closeSvg = mdiClose
   public playSvg = mdiPlay
   public pauseSvg = mdiPause
   public prevSvg = mdiSkipPrevious
@@ -313,6 +324,19 @@ export default class Controls extends Vue {
     if (this.visibleTimeout) window.clearTimeout(this.visibleTimeout)
   }
 
+  public closePlayer() {
+    setPlaylist(this.$store, null)
+
+    if (this.isFullscreen) {
+      this._toggleFullscreen()
+    }
+
+    // Toggle fullscreen already goes back so we only do it on big player, not full
+    if (this.$route.path === '/player-big') {
+      this.$router.back()
+    }
+  }
+
   public maximizePlayer() {
     this.$router.push('/player-big')
   }
@@ -340,6 +364,34 @@ export default class Controls extends Vue {
 
 $buttonSize: 50px;
 
+.button {
+  height: $buttonSize;
+  width: $buttonSize;
+  max-width: $buttonSize;
+  padding: 5px;
+  margin-top: 5px;
+
+  fill: white;
+  cursor: pointer;
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.25;
+  }
+
+  &.v-enter-active,
+  &.v-leave-active {
+    will-change: opacity;
+    transition: opacity 0.1s, transform 0.1s;
+  }
+
+  &.v-enter,
+  &.v-leave-to {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
 .controls {
   position: absolute;
   top: 0;
@@ -355,6 +407,14 @@ $buttonSize: 50px;
     top: 0;
     height: 100%;
     width: 100%;
+  }
+
+  & > .button.close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 1));
   }
 
   &.visible {
@@ -481,34 +541,6 @@ $buttonSize: 50px;
       position: absolute;
       top: 0;
       left: 0;
-    }
-  }
-
-  & .button {
-    height: $buttonSize;
-    width: $buttonSize;
-    max-width: $buttonSize;
-    padding: 5px;
-    margin-top: 5px;
-
-    fill: white;
-    cursor: pointer;
-
-    &.disabled {
-      pointer-events: none;
-      opacity: 0.25;
-    }
-
-    &.v-enter-active,
-    &.v-leave-active {
-      will-change: opacity;
-      transition: opacity 0.1s, transform 0.1s;
-    }
-
-    &.v-enter,
-    &.v-leave-to {
-      opacity: 0;
-      transform: scale(0.5);
     }
   }
 

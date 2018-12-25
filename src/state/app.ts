@@ -217,7 +217,7 @@ export const app = {
       state.toasts = reject(propEq('id', id), state.toasts)
     },
 
-    setPlaylist(state: AppState, options: PlayerData) {
+    setPlaylist(state: AppState, options: PlayerData | null) {
       state.player = options
     },
 
