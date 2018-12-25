@@ -13,10 +13,11 @@
     :onChange="value => handleChange('password', value)"
   />
 
-  <c-button
-    content="Login"
-    :click="login"
-  />
+  <transition>
+    <div v-if="true" class="error">{{ error }}</div>
+  </transition>
+
+  <c-button content="Login" :click="login"/>
 </div>
 </template>
 
@@ -31,6 +32,7 @@ import CButton from '@/components/CButton.vue'
 @Component({ components: { CButton, TextInput } })
 export default class LoginCr extends Vue {
   @Prop(Boolean) public loading!: boolean | null
+  @Prop(String) public error!: string | null
   @Prop(prop(Function, true))
   public loginCrunchyroll!: (u: string, p: string) => any
 
@@ -50,6 +52,8 @@ export default class LoginCr extends Vue {
 </script>
 
 <style scoped lang="scss">
+@import '../../colors';
+
 .login-cr {
   display: flex;
   flex-direction: column;
@@ -72,6 +76,13 @@ export default class LoginCr extends Vue {
   & > .button {
     width: 100%;
     padding: 10px;
+  }
+
+  & > .error {
+    color: $danger;
+    font-weight: 700;
+    padding: 0 20px;
+    margin-bottom: 15px;
   }
 }
 </style>

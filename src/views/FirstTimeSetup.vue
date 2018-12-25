@@ -4,23 +4,16 @@
     <steps :steps="steps" :current="currentStep"/>
 
     <transition-group tag="div" class="steps" :class="{ hide: hasFinishedSetup }">
-      <login-al
-        key="al"
-        v-if="currentStep === 0"
-        :loginAnilist="loginAnilist"
-      />
+      <login-al key="al" v-if="currentStep === 0" :loginAnilist="loginAnilist"/>
 
       <login-cr
         key="cr"
         v-if="currentStep === 1"
+        :error="crunchyrollError"
         :loginCrunchyroll="loginCrunchyroll"
       />
 
-      <spoiler-settings
-        key="s-s"
-        v-if="currentStep === 2"
-        :goToNextStep="finishSetup"
-      />
+      <spoiler-settings key="s-s" v-if="currentStep === 2" :goToNextStep="finishSetup"/>
     </transition-group>
   </div>
 </div>
@@ -34,10 +27,10 @@ import LoginAl from '@/components/FirstTimeSetup/LoginAL.vue'
 import LoginCr from '@/components/FirstTimeSetup/LoginCR.vue'
 import SpoilerSettings from '@/components/FirstTimeSetup/SpoilerSettings.vue'
 
+import { getHasFinishedSetup, setHasFinishedSetup } from '@/state/app'
 import { getIsLoggedIn, loginCrunchyroll } from '@/state/auth'
 import { loginAnilist } from '@/lib/anilist'
 import { Page, trackPageView } from '@/lib/tracking'
-import { getHasFinishedSetup, setHasFinishedSetup } from '@/state/app'
 
 export const steps = ['LOGIN_AL', 'LOGIN_CR', 'SPOILER_SETTINGS']
 
@@ -47,6 +40,8 @@ export const steps = ['LOGIN_AL', 'LOGIN_CR', 'SPOILER_SETTINGS']
 export default class FirstTimeSetup extends Vue {
   public currentStep: number = 0
   public steps = steps
+
+  public crunchyrollError: string | null = null
 
   public get hasFinishedSetup() {
     return getHasFinishedSetup(this.$store)
@@ -85,7 +80,13 @@ export default class FirstTimeSetup extends Vue {
   }
 
   public async loginCrunchyroll(user: string, pass: string) {
-    await loginCrunchyroll(this.$store, { user, pass })
+    this.crunchyrollError = null
+
+    try {
+      await loginCrunchyroll(this.$store, { user, pass })
+    } catch (err) {
+      this.crunchyrollError = err.message
+    }
 
     this.updateCurrentStep()
   }

@@ -96,16 +96,12 @@ export const auth = {
       payload: { user: string; pass: string },
     ) {
       try {
-        try {
-          await crunchyroll.login(payload.user, payload.pass)
-        } catch (e) {
-          return Promise.reject(e)
-        }
-
-        setCrunchyroll(context, true)
+        await crunchyroll.login(payload.user, payload.pass)
       } catch (err) {
-        return
+        throw new Error(err)
       }
+
+      setCrunchyroll(context, true)
     },
 
     async logOut(context: AuthContext) {
