@@ -32,7 +32,7 @@
       </div>
     </div>
 
-    <div v-if="isFinalEpisode" class="sequel-container">
+    <div v-if="isFinalEpisode && sequels && sequels.length > 0" class="sequel-container">
       <h1 class="text">Sequel{{sequels.length > 1 ? 's' : ''}}:</h1>
 
       <div
