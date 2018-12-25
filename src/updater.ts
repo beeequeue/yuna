@@ -2,6 +2,7 @@ import { ipcMain } from 'electron'
 import { activeWindow } from 'electron-util'
 import log from 'electron-log'
 import { autoUpdater } from 'electron-updater'
+import Store from 'electron-store'
 
 import {
   DOWNLOAD_UPDATE,
@@ -11,9 +12,11 @@ import {
   CHECK_FOR_UPDATES,
 } from './messages'
 
+const settingsStore = new Store({ name: 'settings' })
+
 log.transports.file.level = 'debug'
 autoUpdater.logger = log
-autoUpdater.allowPrerelease = true
+autoUpdater.allowPrerelease = settingsStore.get('beta') || false
 autoUpdater.autoDownload = false
 autoUpdater.autoInstallOnAppQuit = false
 
@@ -39,9 +42,12 @@ export const initAutoUpdater = () => {
 }
 
 const initCheckForUpdates = () => {
+  autoUpdater.allowPrerelease = settingsStore.get('beta') || false
   autoUpdater.checkForUpdates()
 
   updateInterval = setInterval(() => {
+    autoUpdater.allowPrerelease = settingsStore.get('beta') || false
+
     autoUpdater.checkForUpdates()
   }, timeBetweenUpdateChecks)
 }

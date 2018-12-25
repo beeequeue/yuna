@@ -19,7 +19,7 @@ export enum KeybindingAction {
   TOGGLE_FULLSCREEN = 'TOGGLE_FULLSCREEN',
 }
 
-interface KeybingingSettings {
+interface KeybindingSettings {
   [key: string]: KeybindingAction[]
 }
 
@@ -40,7 +40,7 @@ export interface SettingsState {
   beta: boolean
   autoPlay: boolean
   autoMarkWatched: boolean
-  keybindings: KeybingingSettings
+  keybindings: KeybindingSettings
   spoilers: SpoilerSettings
 }
 
@@ -56,7 +56,7 @@ const {
   TOGGLE_FULLSCREEN,
 } = KeybindingAction
 
-const defaultBindings: KeybingingSettings = {
+const defaultBindings: KeybindingSettings = {
   ' ': [PAUSE_PLAY],
   [Key.ArrowUp]: [VOLUME_UP],
   [Key.ArrowDown]: [VOLUME_DOWN],

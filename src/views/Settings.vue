@@ -51,12 +51,12 @@
         :onChange="checked => setSetting('autoUpdate', checked)"
       />
 
-      <!-- <checkbox
+      <checkbox
         setting="beta"
         text="Install pre-releases (beta versions)."
         :checked="settings.beta"
         :onChange="checked => setSetting('beta', checked)"
-      /> -->
+      />
     </section>
 
     <section class="category" id="spoilers">
