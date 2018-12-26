@@ -1,11 +1,20 @@
 import request from 'superagent/superagent'
-import { T } from 'rambdax'
+import { T, delay } from 'rambdax'
 
 import { fetchSeasonFromEpisode } from '@/lib/crunchyroll'
 import { Episode } from '@/types'
 import { RequestResponse, responseIsError } from '@/utils'
 
+let requestsRecently = 0
 const CRUNCHYROLL_PROVIDER_ID = '1'
+
+setInterval(() => {
+  requestsRecently = 0
+}, 5000)
+
+// Waits
+const waitForRequests = async () =>
+  delay(Math.max(0, requestsRecently - 1) * 750)
 
 const handleError = (response: RequestResponse) => {
   if (response.status === 404) {
@@ -36,6 +45,9 @@ export const fetchEpisodesOfSeries = async (
     return []
   }
 
+  requestsRecently++
+  await waitForRequests()
+
   const videoUrl = episodesLinkMatch[0] + '/1'
   const response = (await request.get(videoUrl).ok(T)) as RequestResponse
 
@@ -61,6 +73,9 @@ export const fetchEpisodesOfSeries = async (
 
 export const fetchRating = async (id: string | number) => {
   let response: RequestResponse | null = null
+
+  requestsRecently++
+  await waitForRequests()
 
   try {
     response = (await request.get(
