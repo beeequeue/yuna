@@ -1,10 +1,14 @@
 import { ipcRenderer } from 'electron'
 import Store from 'electron-store'
-import { complement, equals, filter } from 'rambdax'
+import { api } from 'electron-util'
+import { existsSync } from 'fs'
+import { resolve } from 'path'
+import { complement, contains, equals, filter, path } from 'rambdax'
 import { Key } from 'ts-key-enum'
 import Vue from 'vue'
 import { getStoreAccessors } from 'vuex-typescript'
 
+import { userStore } from '@/lib/user'
 import {
   DISCORD_DISABLE_RICH_PRESENCE,
   DISCORD_ENABLE_RICH_PRESENCE,
@@ -42,6 +46,21 @@ interface DiscordSettings {
   richPresence: boolean
 }
 
+export enum SetupStep {
+  LOGIN_AL,
+  LOGIN_CR,
+  SPOILERS,
+  DISCORD,
+}
+
+export const _setupSteps = Object.keys(SetupStep)
+  .filter(a => a.match(/\d+/))
+  .map(Number) as SetupStep[]
+
+interface SetupSettings {
+  finishedSteps: SetupStep[]
+}
+
 export interface SettingsState {
   autoMarkAsPlanning: boolean
   useCRUnblocker: boolean
@@ -52,6 +71,7 @@ export interface SettingsState {
   discord: DiscordSettings
   keybindings: KeybindingSettings
   spoilers: SpoilerSettings
+  setup: SetupSettings
 }
 
 const settingsStore = new Store<SettingsState>({ name: 'settings' })
@@ -90,6 +110,14 @@ const defaultDiscord: DiscordSettings = {
   richPresence: true,
 }
 
+const defaultSteps = filter(i => i != null, [
+  userStore.get('anilist.token') != null ? SetupStep.LOGIN_AL : null,
+  userStore.get('crunchyroll.token') != null ? SetupStep.LOGIN_CR : null,
+  existsSync(resolve(api.app.getPath('userData'), '.has-setup'))
+    ? SetupStep.SPOILERS
+    : null,
+]) as SetupStep[]
+
 const initialState: SettingsState = {
   autoMarkAsPlanning: settingsStore.get('autoMarkAsPlanning', true),
   useCRUnblocker: settingsStore.get('useCRUnblocker', true),
@@ -100,11 +128,10 @@ const initialState: SettingsState = {
   discord: settingsStore.get('discord', { ...defaultDiscord }),
   keybindings: settingsStore.get('keybindings', { ...defaultBindings }),
   spoilers: settingsStore.get('spoilers', { ...defaultSpoilers }),
+  setup: settingsStore.get('setup', { finishedSteps: [...defaultSteps] }),
 }
 
-if (settingsStore.get('autoMarkWatched', null) === null) {
-  settingsStore.set(initialState)
-}
+settingsStore.set(initialState)
 
 export const settings = {
   namespaced: true,
@@ -161,6 +188,20 @@ export const settings = {
 
     getSpoilerSettings(state: SettingsState) {
       return state.spoilers
+    },
+
+    getHasFinishedSetup(state: SettingsState) {
+      return state.setup.finishedSteps.length === _setupSteps.length
+    },
+
+    getNextUnfinishedStep(state: SettingsState) {
+      const remainingSteps = _setupSteps.filter(
+        i => !contains<SetupStep>(i, state.setup.finishedSteps),
+      )
+
+      if (!remainingSteps) return null
+
+      return remainingSteps[0]
     },
   },
 
@@ -249,6 +290,8 @@ export const settings = {
       }
 
       state.discord.richPresence = enabled
+
+      settingsStore.set('discord.richPresence', enabled)
     },
 
     setSetting(
@@ -267,6 +310,16 @@ export const settings = {
 
       settingsStore.set(options.setting, options.value)
     },
+
+    addFinishedStep(state: SettingsState, step: SetupStep) {
+      const steps: SetupStep[] = path('setup.finishedSteps', state)
+
+      if (!contains(step, steps)) {
+        steps.push(step)
+
+        settingsStore.set('setup.finishedSteps', steps)
+      }
+    },
   },
 
   actions: {},
@@ -283,6 +336,10 @@ export const getKeybindings = read(settings.getters.getKeybindings)
 export const getKeysForAction = read(settings.getters.getKeysForAction)
 export const getKeydownHandler = read(settings.getters.getKeydownHandler)
 export const getSpoilerSettings = read(settings.getters.getSpoilerSettings)
+export const getHasFinishedSetup = read(settings.getters.getHasFinishedSetup)
+export const getNextUnfinishedStep = read(
+  settings.getters.getNextUnfinishedStep,
+)
 
 export const addKeybinding = commit(settings.mutations.addKeybinding)
 export const removeKeybinding = commit(settings.mutations.removeKeybinding)
@@ -292,3 +349,4 @@ export const setSetting = commit(settings.mutations.setSetting)
 export const setDiscordRichPresence = commit(
   settings.mutations.setDiscordRichPresence,
 )
+export const addFinishedStep = commit(settings.mutations.addFinishedStep)

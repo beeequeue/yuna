@@ -108,23 +108,6 @@ export const finishedSetupFilePath = resolve(
   '.has-setup',
 )
 
-export const hasFinishedSetup = () => {
-  if (
-    existsSync(finishedSetupFilePath) &&
-    JSON.parse(readFileSync(finishedSetupFilePath).toString()) === true
-  ) {
-    return true
-  }
-
-  setFinishedSetup(false)
-
-  return false
-}
-
-export const setFinishedSetup = (b: boolean) => {
-  writeFileSync(finishedSetupFilePath, JSON.stringify(b))
-}
-
 export const deviceUuidFilePath = resolve(
   api.app.getPath('userData'),
   '.device',
@@ -139,6 +122,17 @@ export const getDeviceUuid = (): string => {
   writeFileSync(deviceUuidFilePath, newUuid)
 
   return newUuid
+}
+
+export const generateId = () => {
+  const chars = 'abcdefghijklmnopqrstuvwxyz1234567890'
+  let id = ''
+
+  for (let i = 0; i < 8; i++) {
+    id += chars[Math.round(Math.random() * chars.length - 1)]
+  }
+
+  return id
 }
 
 export const hasKey = (obj: any, value: any) => Object.keys(obj).includes(value)

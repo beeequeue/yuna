@@ -1,6 +1,6 @@
 <template>
 <div class="steps-container">
-  <div v-for="(_, i) in steps" class="step" :class="{ current: current === i, done: current > i }">
+  <div v-for="(_, i) in steps" class="step" :class="{ current: current === i, done: !current || current > i }">
     {{ i + 1 }}
   </div>
 </div>
@@ -15,8 +15,7 @@ import { prop } from '@/utils'
 export default class Steps extends Vue {
   @Prop(prop(Array, true))
   public steps!: string[]
-  @Prop(prop(Number, true))
-  public current!: number
+  @Prop(Number) public current!: number | null
 }
 </script>
 

@@ -58,6 +58,7 @@ export default class Checkbox extends Vue {
   justify-content: center;
   align-items: center;
   margin: 10px 0;
+  user-select: none;
 
   & > label {
     width: 100%;

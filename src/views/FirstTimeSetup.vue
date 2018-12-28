@@ -3,17 +3,27 @@
   <div class="content">
     <steps :steps="steps" :current="currentStep"/>
 
-    <transition-group tag="div" class="steps" :class="{ hide: hasFinishedSetup }">
-      <login-al key="al" v-if="currentStep === 0" :loginAnilist="loginAnilist"/>
+    <transition-group tag="div" class="steps" :class="{ hide: currentStep == null }">
+      <login-al key="al" v-if="currentStep === SetupStep.LOGIN_AL" :loginAnilist="loginAnilist"/>
 
       <login-cr
         key="cr"
-        v-if="currentStep === 1"
+        v-if="currentStep === SetupStep.LOGIN_CR"
         :error="crunchyrollError"
         :loginCrunchyroll="loginCrunchyroll"
       />
 
-      <spoiler-settings key="s-s" v-if="currentStep === 2" :goToNextStep="finishSetup"/>
+      <spoiler-settings
+        key="s-s"
+        v-if="currentStep === SetupStep.SPOILERS"
+        :goToNextStep="finishStep"
+      />
+
+      <discord
+        key="discord"
+        v-if="currentStep === SetupStep.DISCORD"
+        :goToNextStep="finishStep"
+      />
     </transition-group>
   </div>
 </div>
@@ -26,25 +36,30 @@ import Steps from '@/components/FirstTimeSetup/Steps.vue'
 import LoginAl from '@/components/FirstTimeSetup/LoginAL.vue'
 import LoginCr from '@/components/FirstTimeSetup/LoginCR.vue'
 import SpoilerSettings from '@/components/FirstTimeSetup/SpoilerSettings.vue'
+import Discord from '@/components/FirstTimeSetup/Discord.vue'
 
-import { getHasFinishedSetup, setHasFinishedSetup } from '@/state/app'
 import { getIsLoggedIn, loginCrunchyroll } from '@/state/auth'
+import {
+  getNextUnfinishedStep,
+  addFinishedStep,
+  SetupStep,
+  _setupSteps,
+} from '@/state/settings'
 import { loginAnilist } from '@/lib/anilist'
 import { Page, trackPageView } from '@/lib/tracking'
 
-export const steps = ['LOGIN_AL', 'LOGIN_CR', 'SPOILER_SETTINGS']
-
 @Component({
-  components: { LoginAl, LoginCr, Steps, SpoilerSettings },
+  components: { LoginAl, LoginCr, Steps, SpoilerSettings, Discord },
 })
 export default class FirstTimeSetup extends Vue {
-  public currentStep: number = 0
-  public steps = steps
+  public currentStep: SetupStep | null = SetupStep.LOGIN_AL
+  public steps = _setupSteps
+  public SetupStep = SetupStep
 
   public crunchyrollError: string | null = null
 
-  public get hasFinishedSetup() {
-    return getHasFinishedSetup(this.$store)
+  public get nextUnfinishedStep() {
+    return getNextUnfinishedStep(this.$store)
   }
 
   public get isLoggedIn() {
@@ -52,31 +67,24 @@ export default class FirstTimeSetup extends Vue {
   }
 
   public created() {
-    this.updateCurrentStep()
+    this.currentStep = getNextUnfinishedStep(this.$store)
   }
 
   public mounted() {
     trackPageView(Page.FIRST_TIME_SETUP)
   }
 
-  public updateCurrentStep() {
-    if (this.hasFinishedSetup) {
-      return (this.currentStep = 10)
-    }
+  public finishStep() {
+    if (this.currentStep == null) return
 
-    if (this.isLoggedIn.all) {
-      return (this.currentStep = 2)
-    }
-
-    if (this.isLoggedIn.anilist) {
-      return (this.currentStep = 1)
-    }
+    addFinishedStep(this.$store, this.currentStep)
+    this.currentStep = getNextUnfinishedStep(this.$store)
   }
 
   public async loginAnilist() {
     await loginAnilist(this.$store)
 
-    this.updateCurrentStep()
+    this.finishStep()
   }
 
   public async loginCrunchyroll(user: string, pass: string) {
@@ -88,12 +96,7 @@ export default class FirstTimeSetup extends Vue {
       this.crunchyrollError = err.message
     }
 
-    this.updateCurrentStep()
-  }
-
-  public finishSetup() {
-    this.currentStep++
-    setHasFinishedSetup(this.$store, true)
+    this.finishStep()
   }
 }
 </script>
@@ -150,7 +153,7 @@ export default class FirstTimeSetup extends Vue {
           opacity: 0;
           transform: translateY(calc(-50% - 150px));
 
-          &.spoiler-settings {
+          &:last-child {
             transform: translate(50px, -50%);
           }
         }

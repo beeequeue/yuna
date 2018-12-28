@@ -11,18 +11,7 @@ import { MediaListStatus } from '@/graphql-types'
 import { router } from '@/router'
 import { RootState } from '@/state/store'
 import { Episode } from '@/types'
-import { hasFinishedSetup, setFinishedSetup } from '@/utils'
-
-const generateId = () => {
-  const chars = 'abcdefghijklmnopqrstuvwxyz1234567890'
-  let id = ''
-
-  for (let i = 0; i < 8; i++) {
-    id += chars[Math.round(Math.random() * chars.length - 1)]
-  }
-
-  return id
-}
+import { generateId } from '@/utils'
 
 export interface Toast {
   id: string
@@ -89,7 +78,6 @@ export interface EditModalAnime {
 }
 
 export interface AppState {
-  hasFinishedSetup: boolean
   isUpdateAvailable: boolean
   toasts: Toast[]
   isFullscreen: boolean
@@ -105,7 +93,6 @@ export interface AppState {
 type AppContext = ActionContext<AppState, RootState>
 
 const initialState: AppState = {
-  hasFinishedSetup: hasFinishedSetup(),
   isUpdateAvailable: false,
   toasts: [],
   isFullscreen: false,
@@ -189,10 +176,6 @@ export const app = {
     getIsFullscreen(state: AppState) {
       return state.isFullscreen
     },
-
-    getHasFinishedSetup(state: AppState) {
-      return state.hasFinishedSetup
-    },
   },
 
   mutations: {
@@ -272,11 +255,6 @@ export const app = {
       state.isFullscreen = b
       browserWindow.setFullScreen(b)
     },
-
-    setHasFinishedSetup(state: AppState, b: boolean) {
-      state.hasFinishedSetup = b
-      setFinishedSetup(b)
-    },
   },
 
   actions: {
@@ -353,7 +331,6 @@ export const getNextEpisode = read(app.getters.getNextEpisode)
 export const getModalStates = read(app.getters.getModalStates)
 export const getEditingAnime = read(app.getters.getEditingAnime)
 export const getIsFullscreen = read(app.getters.getIsFullscreen)
-export const getHasFinishedSetup = read(app.getters.getHasFinishedSetup)
 
 export const setIsUpdateAvailable = commit(app.mutations.setIsUpdateAvailable)
 const setEditingAnime = commit(app.mutations.setEditingAnime)
@@ -368,7 +345,6 @@ export const toggleModal = commit(app.mutations.toggleModal)
 const addToast = commit(app.mutations.addToast)
 export const closeAllModals = commit(app.mutations.closeAllModals)
 export const setFullscreen = commit(app.mutations.setFullscreen)
-export const setHasFinishedSetup = commit(app.mutations.setHasFinishedSetup)
 
 export const toggleFullscreen = dispatch(app.actions.toggleFullscreen)
 export const sendToast = dispatch(app.actions.sendToast)

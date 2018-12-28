@@ -31,6 +31,15 @@ import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 import { ipcRenderer } from 'electron'
 
+import { getIsLoggedIn, setCrunchyrollCountry } from '@/state/auth'
+import { getHasFinishedSetup } from '@/state/settings'
+import {
+  AppState,
+  getEditingAnime,
+  getIsFullscreen,
+  getModalStates,
+  toggleModal,
+} from '@/state/app'
 import { CHECK_FOR_UPDATES } from '@/messages'
 import { createBothSessions } from '@/utils'
 import TitleBar from './components/TitleBar.vue'
@@ -39,15 +48,6 @@ import PlayerContainer from './components/Player/Container.vue'
 import ToastOverlay from './components/ToastOverlay.vue'
 import AboutModal from './components/Modals/AboutModal.vue'
 import EditModal from './components/Modals/EditModal.vue'
-import { getIsLoggedIn, setCrunchyrollCountry } from './state/auth'
-import {
-  AppState,
-  getEditingAnime,
-  getHasFinishedSetup,
-  getIsFullscreen,
-  getModalStates,
-  toggleModal,
-} from './state/app'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
