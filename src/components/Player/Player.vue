@@ -89,7 +89,7 @@ import {
   toggleFullscreen,
 } from '@/state/app'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
-import { SET_WATCHING, PAUSE_WATCHING } from '@/messages'
+import { DISCORD_SET_WATCHING, DISCORD_PAUSE_WATCHING } from '@/messages'
 import { Episode, Levels } from '@/types'
 import { clamp, prop } from '@/utils'
 
@@ -433,12 +433,15 @@ export default class Player extends Vue {
   }
 
   private setDiscordState(state: 'watching' | 'paused') {
-    ipcRenderer.send(state === 'watching' ? SET_WATCHING : PAUSE_WATCHING, {
-      animeName: this.playerData.anime.title,
-      episode: this.episode.episodeNumber,
-      totalEpisodes: this.playerData.anime.episodes,
-      progress: this.progressInSeconds,
-    })
+    ipcRenderer.send(
+      state === 'watching' ? DISCORD_SET_WATCHING : DISCORD_PAUSE_WATCHING,
+      {
+        animeName: this.playerData.anime.title,
+        episode: this.episode.episodeNumber,
+        totalEpisodes: this.playerData.anime.episodes,
+        progress: this.progressInSeconds,
+      },
+    )
   }
 }
 </script>

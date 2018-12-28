@@ -2,7 +2,7 @@ import DiscordRPC, { Presence } from 'discord-rpc'
 import { ipcMain } from 'electron'
 import { error, log } from 'electron-log'
 
-import { PAUSE_WATCHING, SET_WATCHING } from '../messages'
+import { DISCORD_PAUSE_WATCHING, DISCORD_SET_WATCHING } from '../messages'
 
 interface WatchingOptions {
   animeName: string
@@ -94,11 +94,11 @@ export const registerDiscord = () => {
 
   discord = new Discord()
 
-  ipcMain.on(SET_WATCHING, (_: Event, data: WatchingOptions) => {
+  ipcMain.on(DISCORD_SET_WATCHING, (_: Event, data: WatchingOptions) => {
     discord.setWatching(data)
   })
 
-  ipcMain.on(PAUSE_WATCHING, () => {
+  ipcMain.on(DISCORD_PAUSE_WATCHING, () => {
     discord.pauseWatching()
   })
 }
