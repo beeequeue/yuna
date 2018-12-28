@@ -74,6 +74,7 @@
 </template>
 
 <script lang="ts">
+import { ipcRenderer } from 'electron'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import Hls from 'hls.js'
 import { contains } from 'rambdax'
@@ -88,6 +89,7 @@ import {
   toggleFullscreen,
 } from '@/state/app'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
+import { SET_WATCHING, PAUSE_WATCHING } from '@/messages'
 import { Episode, Levels } from '@/types'
 import { clamp, prop } from '@/utils'
 
@@ -267,9 +269,13 @@ export default class Player extends Vue {
 
     this.$refs.player.onplay = () => {
       this.paused = false
+
+      this.setDiscordState('watching')
     }
     this.$refs.player.onpause = () => {
       this.paused = true
+
+      this.setDiscordState('paused')
     }
     this.$refs.player.oncanplay = () => {
       this.loading = false
@@ -337,6 +343,8 @@ export default class Player extends Vue {
   public onSetTime(value: number) {
     this.lastHeartbeat = this.progressInSeconds - 30
 
+    this.setDiscordState('watching')
+
     this.$refs.player.currentTime = value
   }
 
@@ -383,15 +391,17 @@ export default class Player extends Vue {
   }
 
   public play() {
-    if (this.paused) {
-      if (!this.initiated) this.initiated = true
+    if (!this.paused) return
 
-      this.$refs.player.play()
-    }
+    if (!this.initiated) this.initiated = true
+
+    this.$refs.player.play()
   }
 
   public pause() {
-    if (!this.paused) this.$refs.player.pause()
+    if (this.paused) return
+
+    this.$refs.player.pause()
   }
 
   public increaseVolume(n: number) {
@@ -420,6 +430,15 @@ export default class Player extends Vue {
     }
 
     this.setProgress(this.episode.episodeNumber)
+  }
+
+  private setDiscordState(state: 'watching' | 'paused') {
+    ipcRenderer.send(state === 'watching' ? SET_WATCHING : PAUSE_WATCHING, {
+      animeName: this.playerData.anime.title,
+      episode: this.episode.episodeNumber,
+      totalEpisodes: this.playerData.anime.episodes,
+      progress: this.progressInSeconds,
+    })
   }
 }
 </script>

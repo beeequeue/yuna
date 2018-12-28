@@ -1,12 +1,13 @@
-import { app, BrowserWindow, protocol, ipcMain } from 'electron'
+import { app, BrowserWindow, ipcMain, protocol } from 'electron'
 import electronDebug, { openDevTools } from 'electron-debug'
-import * as path from 'path'
+import { join } from 'path'
 import { format as formatUrl } from 'url'
 import {
   createProtocol,
   installVueDevtools,
 } from 'vue-cli-plugin-electron-builder/lib'
 
+import { registerDiscord, destroyDiscord } from './lib/discord'
 import { OPEN_DEVTOOLS } from './messages'
 import { initAutoUpdater } from './updater'
 
@@ -41,6 +42,8 @@ function createMainWindow() {
 
   initAutoUpdater()
 
+  registerDiscord()
+
   if (isDevelopment) {
     // Load the url of the dev server if in development mode
     window.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
@@ -50,7 +53,7 @@ function createMainWindow() {
     // Load the index.html when not in development
     window.loadURL(
       formatUrl({
-        pathname: path.join(__dirname, 'index.html'),
+        pathname: join(__dirname, 'index.html'),
         protocol: 'file',
         slashes: true,
       }),
@@ -79,6 +82,8 @@ function createMainWindow() {
 app.on('window-all-closed', () => {
   // on macOS it is common for applications to stay open until the user explicitly quits
   if (process.platform !== 'darwin') {
+    destroyDiscord()
+
     app.quit()
   }
 })

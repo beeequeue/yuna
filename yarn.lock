@@ -1141,6 +1141,11 @@
   dependencies:
     date-fns "*"
 
+"@types/discord-rpc@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@types/discord-rpc/-/discord-rpc-3.0.0.tgz#4cd7f9b59591ba31c29bdad4967073da3941a20d"
+  integrity sha512-JsFVpsGWOax1N77Ps31UR0GZWrPRwusDedMbdvJKt3vr95vRP+BFRjYfyiZShBkIX1Bf/XnogztXKOgyFc0PQQ==
+
 "@types/electron-debug@1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@types/electron-debug/-/electron-debug-1.1.0.tgz#b9203bad33dccc5a4ea180a89a9dbcf1961f4c3c"
@@ -4314,6 +4319,14 @@ dir-glob@^2.0.0:
   dependencies:
     arrify "^1.0.1"
     path-type "^3.0.0"
+
+discord-rpc@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/discord-rpc/-/discord-rpc-3.0.1.tgz#bb376d4d84531375f1b33ddc0f4fa81afb60aba0"
+  integrity sha512-PvkVpIlbFowih2mPIOAwUlX+w+9AGtpVUpQrGP6Mu7TPHDjfclsYoRuquIYiSHsS/n5EfhFgMZfsSTRPkvj22w==
+  dependencies:
+    node-fetch "^2.1.2"
+    ws "^5.2.1"
 
 dmg-builder@6.5.2:
   version "6.5.2"
@@ -12012,7 +12025,7 @@ write-file-atomic@^2.0.0, write-file-atomic@^2.3.0:
     imurmurhash "^0.1.4"
     signal-exit "^3.0.2"
 
-ws@^5.2.0:
+ws@^5.2.0, ws@^5.2.1:
   version "5.2.2"
   resolved "https://registry.yarnpkg.com/ws/-/ws-5.2.2.tgz#dffef14866b8e8dc9133582514d1befaf96e980f"
   integrity sha512-jaHFD6PFv6UgoIVda6qZllptQsMlDEJkTQcybzzXDYM1XO9Y8em691FGMPmM46WGyLU4z9KMgQN+qrux/nhlHA==
