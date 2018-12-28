@@ -2,7 +2,12 @@ import DiscordRPC, { Presence } from 'discord-rpc'
 import { ipcMain } from 'electron'
 import { error, log } from 'electron-log'
 
-import { DISCORD_PAUSE_WATCHING, DISCORD_SET_WATCHING } from '../messages'
+import {
+  DISCORD_DISABLE_RICH_PRESENCE,
+  DISCORD_ENABLE_RICH_PRESENCE,
+  DISCORD_PAUSE_WATCHING,
+  DISCORD_SET_WATCHING,
+} from '../messages'
 
 interface WatchingOptions {
   animeName: string
@@ -22,10 +27,11 @@ let discord!: Discord
 const generateId = () => Math.round(Math.random() * 100 + 20)
 
 class Discord {
+  public disabled = false
+
   private discord!: DiscordRPC.Client
 
   private errored = false
-
   private activityId: number = -1
 
   constructor() {
@@ -53,7 +59,7 @@ class Discord {
   }
 
   public async setActivity(activity: Presence) {
-    if (this.errored) return
+    if (this.errored || this.disabled) return
 
     this.activityId = generateId()
 
@@ -79,7 +85,7 @@ class Discord {
   }
 
   public async pauseWatching() {
-    if (this.errored) return
+    if (this.errored || this.disabled) return
 
     return this.discord.clearActivity()
   }
@@ -100,6 +106,15 @@ export const registerDiscord = () => {
 
   ipcMain.on(DISCORD_PAUSE_WATCHING, () => {
     discord.pauseWatching()
+  })
+
+  ipcMain.on(DISCORD_ENABLE_RICH_PRESENCE, () => {
+    discord.disabled = false
+  })
+
+  ipcMain.on(DISCORD_DISABLE_RICH_PRESENCE, () => {
+    discord.pauseWatching()
+    discord.disabled = true
   })
 }
 

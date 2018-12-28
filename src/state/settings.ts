@@ -1,9 +1,14 @@
-import Vue from 'vue'
-import { getStoreAccessors } from 'vuex-typescript'
+import { ipcRenderer } from 'electron'
 import Store from 'electron-store'
 import { complement, equals, filter } from 'rambdax'
 import { Key } from 'ts-key-enum'
+import Vue from 'vue'
+import { getStoreAccessors } from 'vuex-typescript'
 
+import {
+  DISCORD_DISABLE_RICH_PRESENCE,
+  DISCORD_ENABLE_RICH_PRESENCE,
+} from '@/messages'
 import { RootState } from '@/state/store'
 import { hasKey } from '@/utils'
 
@@ -33,6 +38,10 @@ interface SpoilerSettings {
   }
 }
 
+interface DiscordSettings {
+  richPresence: boolean
+}
+
 export interface SettingsState {
   autoMarkAsPlanning: boolean
   useCRUnblocker: boolean
@@ -40,6 +49,7 @@ export interface SettingsState {
   beta: boolean
   autoPlay: boolean
   autoMarkWatched: boolean
+  discord: DiscordSettings
   keybindings: KeybindingSettings
   spoilers: SpoilerSettings
 }
@@ -76,6 +86,10 @@ const defaultSpoilers: SpoilerSettings = {
   },
 }
 
+const defaultDiscord: DiscordSettings = {
+  richPresence: true,
+}
+
 const initialState: SettingsState = {
   autoMarkAsPlanning: settingsStore.get('autoMarkAsPlanning', true),
   useCRUnblocker: settingsStore.get('useCRUnblocker', true),
@@ -83,6 +97,7 @@ const initialState: SettingsState = {
   beta: settingsStore.get('beta', false),
   autoPlay: settingsStore.get('autoPlay', true),
   autoMarkWatched: settingsStore.get('autoMarkWatched', true),
+  discord: settingsStore.get('discord', { ...defaultDiscord }),
   keybindings: settingsStore.get('keybindings', { ...defaultBindings }),
   spoilers: settingsStore.get('spoilers', { ...defaultSpoilers }),
 }
@@ -226,6 +241,16 @@ export const settings = {
       settingsStore.set(['spoilers', ...payload.path].join('.'), payload.value)
     },
 
+    setDiscordRichPresence(state: SettingsState, enabled: boolean) {
+      if (enabled) {
+        ipcRenderer.send(DISCORD_ENABLE_RICH_PRESENCE)
+      } else {
+        ipcRenderer.send(DISCORD_DISABLE_RICH_PRESENCE)
+      }
+
+      state.discord.richPresence = enabled
+    },
+
     setSetting(
       state: SettingsState,
       options: {
@@ -264,3 +289,6 @@ export const removeKeybinding = commit(settings.mutations.removeKeybinding)
 export const resetKeybindings = commit(settings.mutations.resetKeybindings)
 export const setSpoiler = commit(settings.mutations.setSpoiler)
 export const setSetting = commit(settings.mutations.setSetting)
+export const setDiscordRichPresence = commit(
+  settings.mutations.setDiscordRichPresence,
+)

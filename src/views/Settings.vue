@@ -11,7 +11,18 @@
         :onChange="checked => setSetting('autoMarkAsPlanning', checked)"
       />
 
+      <section id="discord">
+        <h3>Discord Rich Presence</h3>
 
+        <checkbox
+          setting="enable-discord-rp"
+          text="Enable Discord Rich Presence"
+          :checked="settings.discord.richPresence"
+          :onChange="handleDiscordPresenceChange"
+        />
+      </section>
+
+      <section id="cr-unblocker">
       <h3>Crunchyroll Unblocker</h3>
 
       <checkbox
@@ -32,6 +43,7 @@
           :click="createUBSession"
         />
       </div>
+    </section>
     </section>
 
     <section class="category" id="updates">
@@ -188,6 +200,7 @@ import {
   setSetting,
   SettingsState,
   setSpoiler,
+  setDiscordRichPresence,
 } from '@/state/settings'
 import { createSession, SessionResponse } from '@/lib/crunchyroll'
 import { Page, trackPageView } from '@/lib/tracking'
@@ -265,6 +278,10 @@ export default class Settings extends Vue {
     }
 
     setCrunchyrollCountry(this.$store, data.country_code)
+  }
+
+  public handleDiscordPresenceChange(checked: boolean) {
+    setDiscordRichPresence(this.$store, checked)
   }
 
   public downloadUpdate() {
