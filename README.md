@@ -48,7 +48,6 @@
 
 ### Get Started
 
-1. Set the env variable `ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES` to `true`
 1. Install dependencies - `yarn`
 1. Fetch the GraphQL introspection schema - `yarn graphql:get-schema`
 1. Start the development client - `yarn serve`

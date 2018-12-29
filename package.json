@@ -27,6 +27,7 @@
     "normalize.css": "8.0.1",
     "rambdax": "1.5.5",
     "raw-loader": "1.0.0",
+    "register-scheme": "0.0.2",
     "superagent": "4.1.0",
     "svg-country-flags": "1.2.6",
     "ts-key-enum": "2.0.0",
