@@ -27,6 +27,7 @@
       />
 
       <episode
+        v-if="rightPadding"
         key="empty"
         :episode="{ episodeNumber: -1 }"
         :small="small"
@@ -87,6 +88,7 @@ export default class EpisodeList extends Vue {
   public sequels!: Sequel[]
   @Prop(Boolean) public showScroller!: boolean | null
   @Prop(Boolean) public small!: boolean | null
+  @Prop(Boolean) public rightPadding!: boolean | null
   @Prop(Boolean) public scrollToCurrentEpisode!: boolean | null
 
   public episodes: IEpisode[] | null = null

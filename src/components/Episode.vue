@@ -78,6 +78,7 @@ export default class Episode extends Vue {
     if (this.empty === true) {
       return {
         empty: true,
+        small: this.small,
       }
     }
 
@@ -147,6 +148,7 @@ export default class Episode extends Vue {
 
   &.empty {
     width: 300px;
+    box-shadow: none;
 
     &.small {
       width: 200px;
