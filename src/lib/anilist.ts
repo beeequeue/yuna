@@ -1,5 +1,6 @@
 import electron from 'electron'
 import { log } from 'electron-log'
+import { captureException } from '@sentry/browser'
 import { Store } from 'vuex'
 import request from 'superagent/superagent'
 
@@ -14,24 +15,37 @@ const { BrowserWindow } = electron.remote
 
 const GQL_ENDPOINT = 'https://graphql.anilist.co'
 
-const handleNewURL = (store: Store<any>) => async (
-  _e: Event,
-  _errCode: number,
-  _errDesc: string,
-  url?: string,
+const handleNewURL = async (
+  store: Store<any>,
+  url: string,
+  eventName?: string,
 ) => {
-  if (!url || typeof url !== 'string') return
+  if (!url || typeof url !== 'string') {
+    return captureException(
+      `AniList Login: Didn't get url in handleNewUrl: ${url}`,
+    )
+  }
+
+  // Due to dumb-ass American ISPs stealing our OAuth redirections
+  url = decodeURIComponent(url)
 
   log(
-    'got new url: ',
+    `${eventName}: got new url: `,
     url.replace(/access_token=.*&/, 'access_token=[secret]&'),
   )
 
   if (!authWindow) return
 
   if (!url.includes('access_token')) {
-    return authWindow.webContents.insertText(
-      '<h1 style="color: red">Something went very wrong :(</h1>',
+    captureException(
+      `AniList Login: Could not find access token in URL: ${url}`,
+    )
+
+    authWindow.close()
+
+    electron.dialog.showErrorBox(
+      'Error Authenticating AniList',
+      'Something went wrong logging you in. Please ask for help in the forum thread!\n https://anilist.co/forum/thread/6136',
     )
   }
 
@@ -63,15 +77,17 @@ export const loginAnilist = (store: Store<any>) =>
       show: false,
       title: 'AniList Login',
       darkTheme: true,
+      backgroundColor: '#111',
     })
 
     resolveLogin = resolve
 
-    authWindow.webContents.on('did-fail-load', handleNewURL(store))
+    authWindow.webContents.on('did-fail-load', (_e, _c, _d, url) =>
+      handleNewURL(store, url, 'did-fail-load'),
+    )
 
-    authWindow.webContents.on(
-      'did-start-navigation' as any,
-      handleNewURL(store),
+    authWindow.webContents.on('will-navigate', (_e, url) =>
+      handleNewURL(store, url, 'will-navigate'),
     )
 
     authWindow.loadURL(
