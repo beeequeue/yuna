@@ -17,39 +17,22 @@
       @wheel.prevent="handleScroll"
       @scroll="updateContainerClasses"
     >
-      <div
-        v-for="(episode, i) in episodes"
-        class="episode"
-        :class="getEpisodeClasses(episode.episodeNumber)"
-        :key="episode.crunchyroll.id"
-      >
-        <img class="thumbnail" :src="episode.thumbnail" @click="setCurrentEpisode(i)">
+      <episode
+        v-for="episode in episodes"
+        :key="episode.name"
+        :episode="episode"
+        :listEntry="listEntry"
+        :small="small"
+        :setCurrentEpisode="setCurrentEpisode"
+      />
 
-        <div class="title-container">
-          <div class="episode-number">Episode {{episode.episodeNumber}}</div>
-          <div class="title">{{episode.title}}</div>
-        </div>
-
-        <transition name="fade">
-          <c-button
-            v-if="!getIsEpisodeWatched(episode.episodeNumber)"
-            :icon="bookmarkSvg"
-            @click.native.prevent="setProgress(episode.episodeNumber)"
-          />
-          <c-button
-            v-else
-            type="danger"
-            :icon="unbookmarkSvg"
-            @click.native.prevent="setProgress(episode.episodeNumber - 1)"
-          />
-        </transition>
-
-        <transition>
-          <icon v-if="getIsEpisodeWatched(episode.episodeNumber)" :icon="checkSvg" class="check"/>
-        </transition>
-      </div>
-
-      <div class="episode space-filler" :class="getEpisodeClasses(-1)"/>
+      <episode
+        key="empty"
+        :episode="{ episodeNumber: -1 }"
+        :small="small"
+        :setCurrentEpisode="() => {}"
+        :empty="true"
+      />
     </div>
 
     <input
@@ -67,33 +50,27 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { Key } from 'ts-key-enum'
-import {
-  mdiCheckCircleOutline,
-  mdiBookmark,
-  mdiBookmarkRemove,
-  mdiCached,
-} from '@mdi/js'
+import { mdiCached } from '@mdi/js'
 
-import { setProgressMutation } from '@/graphql/mutations'
-import { getSpoilerSettings, SettingsState } from '@/state/settings'
 import {
   getPlaylistAnimeId,
-  setPlaylist,
-  setCurrentEpisode,
   ListEntry,
-  Sequel,
   sendErrorToast,
+  Sequel,
+  setCurrentEpisode,
+  setPlaylist,
 } from '@/state/app'
 import { AnimePageQuery_anime_nextAiringEpisode } from '@/graphql/AnimePageQuery'
 import { AnimeCache } from '@/lib/cache'
-import { Episode } from '@/types'
+import { Episode as IEpisode } from '@/types'
 import { prop } from '@/utils'
 
 import CButton from './CButton.vue'
+import Episode from './Episode.vue'
 import Icon from './Icon.vue'
 import Loader from './Loader.vue'
 
-@Component({ components: { CButton, Icon, Loader } })
+@Component({ components: { CButton, Episode, Icon, Loader } })
 export default class EpisodeList extends Vue {
   @Prop(prop(Number, true))
   public id!: number
@@ -110,19 +87,15 @@ export default class EpisodeList extends Vue {
   public sequels!: Sequel[]
   @Prop(Boolean) public showScroller!: boolean | null
   @Prop(Boolean) public small!: boolean | null
-  @Prop(Boolean) public rightPadding!: boolean | null
   @Prop(Boolean) public scrollToCurrentEpisode!: boolean | null
 
-  public episodes: Episode[] | null = null
+  public episodes: IEpisode[] | null = null
   public fetched = false
   public loading = true
   public error: string | null = null
   public scrollerValue = ''
 
   public reloadSvg = mdiCached
-  public bookmarkSvg = mdiBookmark
-  public unbookmarkSvg = mdiBookmarkRemove
-  public checkSvg = mdiCheckCircleOutline
 
   public containerClasses = {
     'furthest-left': true,
@@ -159,7 +132,7 @@ export default class EpisodeList extends Vue {
   }
 
   public handleScroll(e: WheelEvent) {
-    this.$refs.episodeContainer.scrollBy(e.deltaY, 0)
+    this.$refs.episodeContainer.scrollBy(e.deltaY + e.deltaX, 0)
   }
 
   private allowedKeys = [
@@ -248,13 +221,13 @@ export default class EpisodeList extends Vue {
     }
   }
 
-  public setCurrentEpisode(index: number) {
+  public setCurrentEpisode(episodeNumber: number) {
     if (!this.episodes) return
 
     const currentPlaylist = getPlaylistAnimeId(this.$store)
 
     if (currentPlaylist === this.id) {
-      setCurrentEpisode(this.$store, index)
+      setCurrentEpisode(this.$store, episodeNumber - 1)
     } else {
       setPlaylist(this.$store, {
         anime: {
@@ -266,45 +239,9 @@ export default class EpisodeList extends Vue {
         },
         listEntry: this.listEntry,
         episodes: this.episodes,
-        current: index,
+        current: episodeNumber - 1,
       })
     }
-  }
-
-  public getIsEpisodeWatched(index: number) {
-    return this.listEntry != null && this.listEntry.progress >= index
-  }
-
-  public getShouldBlur(
-    epNumber: number,
-  ): Required<SettingsState['spoilers']['episode']> {
-    const settings = getSpoilerSettings(this.$store).episode
-    const shouldBlur =
-      this.listEntry == null ||
-      (this.current != null && epNumber >= this.current)
-
-    return {
-      name: settings.name && shouldBlur,
-      thumbnail: settings.thumbnail && shouldBlur,
-    }
-  }
-
-  public getEpisodeClasses(index: number) {
-    return {
-      watched: this.getIsEpisodeWatched(index),
-      current: this.listEntry && this.listEntry.progress + 1 === index,
-      active: !this.small && Number(this.scrollerValue) === index,
-      small: this.small,
-      'right-padding': this.rightPadding,
-      'blur-title': this.getShouldBlur(index).name,
-      'blur-thumbnail': this.getShouldBlur(index).thumbnail,
-    }
-  }
-
-  public setProgress(progress: number) {
-    if (!this.listEntry) return
-
-    setProgressMutation(this, this.listEntry.id, progress, this.listEntry)
   }
 }
 </script>
@@ -368,136 +305,6 @@ export default class EpisodeList extends Vue {
 
     &::-webkit-scrollbar {
       display: none;
-    }
-
-    .episode {
-      position: relative;
-      flex-shrink: 0;
-      height: 175px;
-      margin: 0 10px;
-      border-radius: 8px;
-      box-shadow: 1px 0 5px rgba(0, 0, 0, 0.5);
-      box-sizing: border-box;
-      overflow: hidden;
-
-      will-change: height;
-      transition: height 0.25s;
-
-      &:first-child {
-        margin-left: 0;
-      }
-
-      &:hover > .button {
-        bottom: 0;
-      }
-
-      &.small {
-        height: 125px;
-        font-size: 0.85em;
-      }
-
-      &.active {
-        height: 200px;
-      }
-
-      &.blur {
-        &-thumbnail > .thumbnail {
-          filter: blur(15px);
-        }
-        &-title > .title-container > .title {
-          opacity: 0;
-          transform: translateX(10%);
-        }
-      }
-
-      &.right-padding.space-filler {
-        width: 300px;
-
-        &.small {
-          width: 200px;
-        }
-      }
-
-      & > * {
-        pointer-events: none;
-      }
-
-      & > .button {
-        position: absolute;
-        left: 0;
-        bottom: -30px;
-        border-top-left-radius: 0;
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 0;
-        transition: bottom 0.15s;
-        pointer-events: all;
-      }
-
-      & > .check {
-        display: block;
-        position: absolute;
-        bottom: -30px;
-        right: -35px;
-        height: 25px;
-        width: 100px;
-        fill: $white;
-        background: $success;
-        transform-origin: 0% 0%;
-        transform: rotateZ(-45deg);
-
-        &.v-enter-active,
-        &.v-leave-active {
-          transition: transform 0.5s;
-        }
-
-        &.v-enter,
-        &.v-leave-to {
-          transform: rotateZ(-45deg) translateX(100%);
-        }
-
-        &.v-enter-to,
-        &.v-leave {
-          transform: rotateZ(-45deg) translateX(0);
-        }
-
-        & /deep/ svg {
-          transform: rotateZ(45deg);
-        }
-      }
-
-      & > .title-container {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: flex-start;
-        width: calc(100% - 20px);
-        overflow: hidden;
-
-        & > div {
-          width: 100%;
-          text-align: left;
-          font-family: 'Raleway', sans-serif;
-          font-weight: 600;
-          font-size: 1.1em;
-          text-shadow: $outline;
-          overflow: hidden;
-          white-space: nowrap;
-          text-overflow: ellipsis;
-          transition: opacity 0.75s, transform 0.75s;
-        }
-      }
-
-      & > .thumbnail {
-        display: block;
-        height: 100%;
-        border-radius: 5px;
-        cursor: pointer;
-        pointer-events: all;
-        transition: filter 0.75s;
-      }
     }
   }
 
