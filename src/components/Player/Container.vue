@@ -1,5 +1,5 @@
 <template>
-  <transition name="fade">
+  <transition>
     <div v-if="episode" class="player-container" :class="classFromRoute">
       <player
         key="player"
@@ -105,10 +105,15 @@ $anim-speed: 0.5s;
 
   will-change: right, bottom, max-height, max-width, opacity;
   transition: right $anim-speed, bottom $anim-speed, max-height $anim-speed,
-    max-width $anim-speed, opacity 0.25s;
+    max-width $anim-speed, transform 0.25s;
 
   & > * {
     pointer-events: all;
+  }
+
+  &.v-enter,
+  &.v-leave-to {
+    transform: translateY(110%);
   }
 }
 
