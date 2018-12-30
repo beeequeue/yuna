@@ -38,6 +38,14 @@
     />
 
     <c-button content="Next" :click="goToNextStep"/>
+
+    <div class="example">
+      <episode
+        :episode="episodes[0]"
+        :setCurrentEpisode="() => {}"
+        small
+      />
+    </div>
   </div>
 </template>
 
@@ -47,14 +55,30 @@ import { mdiInformationOutline } from '@mdi/js'
 
 import Icon from '@/components/Icon.vue'
 import Checkbox from '@/components/Settings/Checkbox.vue'
-import { getSettings, setSpoiler } from '@/state/settings'
 import CButton from '@/components/CButton.vue'
+import Episode from '@/components/Episode.vue'
 
-@Component({ components: { CButton, Icon, Checkbox } })
+import thumbnailWebp from '@/assets/setup/episode_thumb.webp'
+import { Episode as IEpisode } from '@/types'
+import { getSettings, setSpoiler } from '@/state/settings'
+
+@Component({ components: { Episode, CButton, Icon, Checkbox } })
 export default class SpoilerSettings extends Vue {
   @Prop() public goToNextStep!: () => any
 
+  public episodes: IEpisode = [
+    {
+      title: 'A Really Good Episode',
+      thumbnail: thumbnailWebp,
+      duration: 60 * 25,
+      index: 2,
+      episodeNumber: 3,
+      progress: 2,
+    },
+  ] as any
+
   public infoSvg = mdiInformationOutline
+  public thumbnailWebp = thumbnailWebp
 
   public get settings() {
     return getSettings(this.$store)
@@ -99,5 +123,17 @@ export default class SpoilerSettings extends Vue {
     padding: 10px;
     margin-top: 10px;
   }
+}
+
+.example {
+  position: absolute;
+  top: 50%;
+  right: -25px;
+  transform: translate(100%, -50%);
+  padding: 25px;
+  background: $dark;
+  border-radius: 5px;
+  box-shadow: $shadow;
+  user-select: none;
 }
 </style>
