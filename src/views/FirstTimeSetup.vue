@@ -1,32 +1,28 @@
 <template>
-<div class="first-time-setup">
-  <div class="content">
-    <steps :steps="steps" :current="currentStep"/>
+  <div class="first-time-setup">
+    <div class="content">
+      <steps :steps="steps" :current="currentStep"/>
 
-    <transition-group tag="div" class="steps" :class="{ hide: currentStep == null }">
-      <login-al key="al" v-if="currentStep === SetupStep.LOGIN_AL" :loginAnilist="loginAnilist"/>
+      <transition-group tag="div" class="steps" :class="{ hide: currentStep == null }">
+        <login-al key="al" v-if="currentStep === SetupStep.LOGIN_AL" :loginAnilist="loginAnilist"/>
 
-      <login-cr
-        key="cr"
-        v-if="currentStep === SetupStep.LOGIN_CR"
-        :error="crunchyrollError"
-        :loginCrunchyroll="loginCrunchyroll"
-      />
+        <login-cr
+          key="cr"
+          v-if="currentStep === SetupStep.LOGIN_CR"
+          :error="crunchyrollError"
+          :loginCrunchyroll="loginCrunchyroll"
+        />
 
-      <spoiler-settings
-        key="s-s"
-        v-if="currentStep === SetupStep.SPOILERS"
-        :goToNextStep="finishStep"
-      />
+        <spoiler-settings
+          key="s-s"
+          v-if="currentStep === SetupStep.SPOILERS"
+          :goToNextStep="finishStep"
+        />
 
-      <discord
-        key="discord"
-        v-if="currentStep === SetupStep.DISCORD"
-        :goToNextStep="finishStep"
-      />
-    </transition-group>
+        <discord key="discord" v-if="currentStep === SetupStep.DISCORD" :goToNextStep="finishStep"/>
+      </transition-group>
+    </div>
   </div>
-</div>
 </template>
 
 <script lang="ts">

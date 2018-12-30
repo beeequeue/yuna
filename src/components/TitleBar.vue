@@ -1,34 +1,22 @@
 <template>
-<div class="title-bar">
-  <button class="nav-button" @click="goBack">
-    <icon
-      class="back"
-      :icon="backSvg"
-    />
-  </button>
+  <div class="title-bar">
+    <button class="nav-button" @click="goBack">
+      <icon class="back" :icon="backSvg"/>
+    </button>
 
-  <button class="nav-button" @click="goForward">
-    <icon
-      class="forward"
-      :icon="forwardSvg"
-    />
-  </button>
+    <button class="nav-button" @click="goForward">
+      <icon class="forward" :icon="forwardSvg"/>
+    </button>
 
-  <span class="title">
-    {{name}} | v{{version}}
-  </span>
+    <span class="title">{{name}} | v{{version}}</span>
 
-  <span
-    v-html="flag"
-    class="flag"
-    v-tooltip.bottom="`Using ${country} Crunchyroll`"
-  />
+    <span v-html="flag" class="flag" v-tooltip.bottom="`Using ${country} Crunchyroll`"/>
 
-  <span class="separator"/>
+    <span class="separator"/>
 
-  <icon :icon="minimizeSvg" @click.native="minimize"/>
-  <icon :icon="closeSvg" @click.native="close"/>
-</div>
+    <icon :icon="minimizeSvg" @click.native="minimize"/>
+    <icon :icon="closeSvg" @click.native="close"/>
+  </div>
 </template>
 
 <script lang="ts">

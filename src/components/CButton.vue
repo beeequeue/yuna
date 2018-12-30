@@ -1,24 +1,14 @@
 <template>
-<button
-  class="button"
-  :class="classes"
-  @click="handleClick"
->
-  <icon
-    v-if="icon != null && !confirmTimeout"
-    :icon="icon"
-  />
+  <button class="button" :class="classes" @click="handleClick">
+    <icon v-if="icon != null && !confirmTimeout" :icon="icon"/>
 
-  <icon
-    v-if="confirmTimeout"
-    class="alert"
-    :icon="alertSvg"
-  />
+    <icon v-if="confirmTimeout" class="alert" :icon="alertSvg"/>
 
-  <span v-if="content" class="content">
-    {{confirm && confirmTimeout ? confirmText || 'Confirm' : content}}
-  </span>
-</button>
+    <span
+      v-if="content"
+      class="content"
+    >{{confirm && confirmTimeout ? confirmText || 'Confirm' : content}}</span>
+  </button>
 </template>
 
 <script lang="ts">

@@ -1,24 +1,11 @@
 <template>
-<label
-  class="dropdown"
-  :class="classes"
-  v-tooltip.bottom="error"
->
-  <span>{{ label }}</span>
+  <label class="dropdown" :class="classes" v-tooltip.bottom="error">
+    <span>{{ label }}</span>
 
-  <select
-    :value="value"
-    @input="handleChange"
-  >
-    <option
-      v-for="item in items"
-      :key="item.value"
-      :value="item.value"
-    >
-      {{ item.label }}
-    </option>
-  </select>
-</label>
+    <select :value="value" @input="handleChange">
+      <option v-for="item in items" :key="item.value" :value="item.value">{{ item.label }}</option>
+    </select>
+  </label>
 </template>
 
 <script lang="ts">

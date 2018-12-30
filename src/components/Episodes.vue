@@ -1,76 +1,67 @@
 <template>
-<div class="episodes" :data-episodes="episodes ? episodes.length : -1">
-  <div v-if="loading" class="loading">
-    <loader/>
-    Looking for episodes...
-  </div>
-
-  <div v-if="error" class="error">
-    <c-button :icon="reloadSvg" type="danger" :click="refetchEpisodes"/>
-    {{ error }}
-  </div>
-
-  <div
-    v-if="!loading && !error && episodes && episodes.length > 0"
-    ref="episodeContainer"
-    class="episode-container"
-    :class="containerClasses"
-    @wheel.prevent="handleScroll"
-    @scroll="updateContainerClasses"
-  >
-    <div
-      v-for="(episode, i) in episodes"
-      class="episode"
-      :class="getEpisodeClasses(episode.episodeNumber)"
-      :key="episode.crunchyroll.id"
-    >
-      <img
-        class="thumbnail"
-        :src="episode.thumbnail"
-        @click="setCurrentEpisode(i)"
-      />
-
-      <div class="title-container">
-        <div class="episode-number">Episode {{episode.episodeNumber}}</div>
-        <div class="title">{{episode.title}}</div>
-      </div>
-
-      <transition name="fade">
-        <c-button
-          v-if="!getIsEpisodeWatched(episode.episodeNumber)"
-          :icon="bookmarkSvg"
-          @click.native.prevent="setProgress(episode.episodeNumber)"
-        />
-        <c-button
-          v-else
-          type="danger"
-          :icon="unbookmarkSvg"
-          @click.native.prevent="setProgress(episode.episodeNumber - 1)"
-        />
-      </transition>
-
-      <transition>
-        <icon
-          v-if="getIsEpisodeWatched(episode.episodeNumber)"
-          :icon="checkSvg"
-          class="check"
-        />
-      </transition>
+  <div class="episodes" :data-episodes="episodes ? episodes.length : -1">
+    <div v-if="loading" class="loading">
+      <loader/>Looking for episodes...
     </div>
 
-    <div class="episode space-filler" :class="getEpisodeClasses(-1)" />
-  </div>
+    <div v-if="error" class="error">
+      <c-button :icon="reloadSvg" type="danger" :click="refetchEpisodes"/>
+      {{ error }}
+    </div>
 
-  <input
-    v-if="showScroller && episodes && episodes.length > 0 && !loading"
-    class="scroller"
-    :maxlength="episodes.length.toString().length"
-    :value="scrollerValue"
-    placeholder="1"
-    @keydown.capture="handleScrollerKeydown"
-    @input="handleScrollerChange"
-  />
-</div>
+    <div
+      v-if="!loading && !error && episodes && episodes.length > 0"
+      ref="episodeContainer"
+      class="episode-container"
+      :class="containerClasses"
+      @wheel.prevent="handleScroll"
+      @scroll="updateContainerClasses"
+    >
+      <div
+        v-for="(episode, i) in episodes"
+        class="episode"
+        :class="getEpisodeClasses(episode.episodeNumber)"
+        :key="episode.crunchyroll.id"
+      >
+        <img class="thumbnail" :src="episode.thumbnail" @click="setCurrentEpisode(i)">
+
+        <div class="title-container">
+          <div class="episode-number">Episode {{episode.episodeNumber}}</div>
+          <div class="title">{{episode.title}}</div>
+        </div>
+
+        <transition name="fade">
+          <c-button
+            v-if="!getIsEpisodeWatched(episode.episodeNumber)"
+            :icon="bookmarkSvg"
+            @click.native.prevent="setProgress(episode.episodeNumber)"
+          />
+          <c-button
+            v-else
+            type="danger"
+            :icon="unbookmarkSvg"
+            @click.native.prevent="setProgress(episode.episodeNumber - 1)"
+          />
+        </transition>
+
+        <transition>
+          <icon v-if="getIsEpisodeWatched(episode.episodeNumber)" :icon="checkSvg" class="check"/>
+        </transition>
+      </div>
+
+      <div class="episode space-filler" :class="getEpisodeClasses(-1)"/>
+    </div>
+
+    <input
+      v-if="showScroller && episodes && episodes.length > 0 && !loading"
+      class="scroller"
+      :maxlength="episodes.length.toString().length"
+      :value="scrollerValue"
+      placeholder="1"
+      @keydown.capture="handleScrollerKeydown"
+      @input="handleScrollerChange"
+    >
+  </div>
 </template>
 
 <script lang="ts">

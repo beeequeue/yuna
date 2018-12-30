@@ -1,56 +1,46 @@
 <template>
-<div class="search">
-  <input
-    ref="searchbar"
-    placeholder="Search..."
-    @focus="isOpen = true"
-    @blur="isOpen = false"
-    @mouseup.left="selectAllInInput"
-    :value="searchString"
-    @input="setSearchString"
-    @keydown.esc.capture="$refs.searchbar.blur()"
-  />
+  <div class="search">
+    <input
+      ref="searchbar"
+      placeholder="Search..."
+      @focus="isOpen = true"
+      @blur="isOpen = false"
+      @mouseup.left="selectAllInInput"
+      :value="searchString"
+      @input="setSearchString"
+      @keydown.esc.capture="$refs.searchbar.blur()"
+    >
 
-  <transition name="fade">
-    <span
-      v-if="isOpen"
-      class="fader"
-    />
-  </transition>
+    <transition name="fade">
+      <span v-if="isOpen" class="fader"/>
+    </transition>
 
-  <div
-    class="list"
-    :class="{ open: isOpen }"
-  >
-    <span v-if="isLoading" key="loader" class="loading-spinner">
-      <icon :icon="loadingSvg"/>
-    </span>
+    <div class="list" :class="{ open: isOpen }">
+      <span v-if="isLoading" key="loader" class="loading-spinner">
+        <icon :icon="loadingSvg"/>
+      </span>
 
-    <div
+      <div
         v-if="!isLoading && results.length > 0"
         v-for="result in results"
         :key="result.id"
         class="item"
         @mousedown.left="$router.push(`/anime/${result.id}`)"
       >
-        <img class="thumbnail" :src="result.coverImage.medium"/>
+        <img class="thumbnail" :src="result.coverImage.medium">
 
         <div class="details">
           <div class="title">{{ result.title.userPreferred }}</div>
 
           <div class="sites">
-            <img
-              v-if="result.isOnCrunchyroll"
-              class="cr"
-              :src="crIcon"
-            />
+            <img v-if="result.isOnCrunchyroll" class="cr" :src="crIcon">
           </div>
         </div>
       </div>
 
-    <icon v-if="!isLoading && results.length < 1" :icon="emptySvg" class="empty"/>
+      <icon v-if="!isLoading && results.length < 1" :icon="emptySvg" class="empty"/>
+    </div>
   </div>
-</div>
 </template>
 
 <script lang="ts">

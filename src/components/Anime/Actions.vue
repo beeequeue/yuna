@@ -1,38 +1,58 @@
 <template>
-<transition name="fade">
-  <transition-group tag="div" class="actions" :class="{ small }">
-    <c-button
-      v-if="isNotExcluded(ActionKeys.ADD) && !isOnList || (!isPlanning && !isWatching && !isCompleted && !isDropped && !isPaused)"
-      :key="ActionKeys.ADD"
-      :icon="addToListSvg"
-      :content="ifBig('Set as Planning')"
-      v-tooltip.right="ifSmall('Set as Planning')"
-      :click="() => addEntryMutation(MediaListStatus.PLANNING)"
-    />
-
-    <c-button
-      v-if="isPlanning && isNotExcluded(ActionKeys.START)"
-      :key="ActionKeys.START"
-      type="success"
-      :icon="setCurrentSvg"
-      :content="ifBig('Set as Watching')"
-      v-tooltip.right="ifSmall('Set as Watching')"
-      :click="() => statusMutation(MediaListStatus.CURRENT)"
-    />
-
-    <c-button
-      v-if="isDropped || isPaused && isNotExcluded(ActionKeys.RESUME)"
-      :key="ActionKeys.RESUME"
-      :icon="setToRepeatSvg"
-      type="success"
-      :content="ifBig('Resume')"
-      v-tooltip.right="ifSmall('Resume')"
-      :click="() => statusMutation(MediaListStatus.CURRENT)"
-    />
-
-    <div v-if="isWatching && ifBig(true)" class="multi-button" key="isWatching">
+  <transition name="fade">
+    <transition-group tag="div" class="actions" :class="{ small }">
       <c-button
-        v-if="isNotExcluded(ActionKeys.PAUSE)"
+        v-if="isNotExcluded(ActionKeys.ADD) && !isOnList || (!isPlanning && !isWatching && !isCompleted && !isDropped && !isPaused)"
+        :key="ActionKeys.ADD"
+        :icon="addToListSvg"
+        :content="ifBig('Set as Planning')"
+        v-tooltip.right="ifSmall('Set as Planning')"
+        :click="() => addEntryMutation(MediaListStatus.PLANNING)"
+      />
+
+      <c-button
+        v-if="isPlanning && isNotExcluded(ActionKeys.START)"
+        :key="ActionKeys.START"
+        type="success"
+        :icon="setCurrentSvg"
+        :content="ifBig('Set as Watching')"
+        v-tooltip.right="ifSmall('Set as Watching')"
+        :click="() => statusMutation(MediaListStatus.CURRENT)"
+      />
+
+      <c-button
+        v-if="isDropped || isPaused && isNotExcluded(ActionKeys.RESUME)"
+        :key="ActionKeys.RESUME"
+        :icon="setToRepeatSvg"
+        type="success"
+        :content="ifBig('Resume')"
+        v-tooltip.right="ifSmall('Resume')"
+        :click="() => statusMutation(MediaListStatus.CURRENT)"
+      />
+
+      <div v-if="isWatching && ifBig(true)" class="multi-button" key="isWatching">
+        <c-button
+          v-if="isNotExcluded(ActionKeys.PAUSE)"
+          :icon="pauseSvg"
+          type="warning"
+          :content="ifBig('Pause')"
+          v-tooltip.right="ifSmall('Pause')"
+          :click="() => statusMutation(MediaListStatus.PAUSED)"
+        />
+
+        <c-button
+          v-if="isNotExcluded(ActionKeys.DROP)"
+          :icon="dropSvg"
+          type="danger"
+          :content="ifBig('Drop')"
+          v-tooltip.right="ifSmall('Drop')"
+          :click="() => statusMutation(MediaListStatus.DROPPED)"
+        />
+      </div>
+
+      <c-button
+        v-if="ifSmall(true) && isWatching && isNotExcluded(ActionKeys.PAUSE)"
+        :key="ActionKeys.PAUSE"
         :icon="pauseSvg"
         type="warning"
         :content="ifBig('Pause')"
@@ -41,72 +61,52 @@
       />
 
       <c-button
-        v-if="isNotExcluded(ActionKeys.DROP)"
+        v-if="ifSmall(true) && isWatching && isNotExcluded(ActionKeys.DROP)"
         :icon="dropSvg"
+        :key="ActionKeys.DROP"
         type="danger"
         :content="ifBig('Drop')"
         v-tooltip.right="ifSmall('Drop')"
         :click="() => statusMutation(MediaListStatus.DROPPED)"
       />
-    </div>
 
-    <c-button
-      v-if="ifSmall(true) && isWatching && isNotExcluded(ActionKeys.PAUSE)"
-      :key="ActionKeys.PAUSE"
-      :icon="pauseSvg"
-      type="warning"
-      :content="ifBig('Pause')"
-      v-tooltip.right="ifSmall('Pause')"
-      :click="() => statusMutation(MediaListStatus.PAUSED)"
-    />
+      <c-button
+        v-if="isCompleted && isNotExcluded(ActionKeys.REPEAT)"
+        :key="ActionKeys.REPEAT"
+        type="success"
+        :icon="setToRepeatSvg"
+        :content="ifBig('Set as Repeating')"
+        v-tooltip.right="ifSmall('Set as Repeating')"
+        :click="() => statusMutation(MediaListStatus.REPEATING)"
+      />
 
-    <c-button
-      v-if="ifSmall(true) && isWatching && isNotExcluded(ActionKeys.DROP)"
-      :icon="dropSvg"
-      :key="ActionKeys.DROP"
-      type="danger"
-      :content="ifBig('Drop')"
-      v-tooltip.right="ifSmall('Drop')"
-      :click="() => statusMutation(MediaListStatus.DROPPED)"
-    />
+      <c-button
+        v-if="!isInQueue && isNotExcluded(ActionKeys.ADD_QUEUE)"
+        :key="ActionKeys.ADD_QUEUE"
+        :icon="addToQueueSvg"
+        :content="ifBig('Add to Queue')"
+        v-tooltip.right="ifSmall('Add to Queue')"
+        :click="addToQueue"
+      />
+      <c-button
+        v-else-if="isNotExcluded(ActionKeys.REMOVE_QUEUE)"
+        :key="ActionKeys.REMOVE_QUEUE"
+        :icon="removeFromQueueSvg"
+        :content="ifBig('Remove from Queue')"
+        v-tooltip.right="ifSmall('Remove from Queue')"
+        :click="removeFromQueue"
+      />
 
-    <c-button
-      v-if="isCompleted && isNotExcluded(ActionKeys.REPEAT)"
-      :key="ActionKeys.REPEAT"
-      type="success"
-      :icon="setToRepeatSvg"
-      :content="ifBig('Set as Repeating')"
-      v-tooltip.right="ifSmall('Set as Repeating')"
-      :click="() => statusMutation(MediaListStatus.REPEATING)"
-    />
-
-    <c-button
-      v-if="!isInQueue && isNotExcluded(ActionKeys.ADD_QUEUE)"
-      :key="ActionKeys.ADD_QUEUE"
-      :icon="addToQueueSvg"
-      :content="ifBig('Add to Queue')"
-      v-tooltip.right="ifSmall('Add to Queue')"
-      :click="addToQueue"
-    />
-    <c-button
-      v-else-if="isNotExcluded(ActionKeys.REMOVE_QUEUE)"
-      :key="ActionKeys.REMOVE_QUEUE"
-      :icon="removeFromQueueSvg"
-      :content="ifBig('Remove from Queue')"
-      v-tooltip.right="ifSmall('Remove from Queue')"
-      :click="removeFromQueue"
-    />
-
-    <c-button
-      v-if="isOnList && isNotExcluded(ActionKeys.EDIT)"
-      :key="ActionKeys.EDIT"
-      :icon="editSvg"
-      :content="ifBig('Edit')"
-      v-tooltip.right="ifSmall('Edit')"
-      :click="editAnime"
-    />
-  </transition-group>
-</transition>
+      <c-button
+        v-if="isOnList && isNotExcluded(ActionKeys.EDIT)"
+        :key="ActionKeys.EDIT"
+        :icon="editSvg"
+        :content="ifBig('Edit')"
+        v-tooltip.right="ifSmall('Edit')"
+        :click="editAnime"
+      />
+    </transition-group>
+  </transition>
 </template>
 
 <script lang="ts">

@@ -1,23 +1,19 @@
 <template>
-<div class="relations">
-  <div
-    v-for="relation in relevantRelations"
-    class="relation"
-    @click="$router.push(`/anime/${relation.node.id}`)"
-    :key="relation.node.id"
-  >
-    <img
-      v-if="relation.node.bannerImage"
-      :src="relation.node.bannerImage"
-      class="banner"
-    />
+  <div class="relations">
+    <div
+      v-for="relation in relevantRelations"
+      class="relation"
+      @click="$router.push(`/anime/${relation.node.id}`)"
+      :key="relation.node.id"
+    >
+      <img v-if="relation.node.bannerImage" :src="relation.node.bannerImage" class="banner">
 
-    <div class="title">
-      <icon :icon="getRelationIcon(relation.relationType)"/>
-      <span>{{ relation.node.title.userPreferred }}</span>
+      <div class="title">
+        <icon :icon="getRelationIcon(relation.relationType)"/>
+        <span>{{ relation.node.title.userPreferred }}</span>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script lang="ts">

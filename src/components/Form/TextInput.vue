@@ -1,18 +1,14 @@
 <template>
-<label
-  class="text-input"
-  :class="classes"
-  v-tooltip.bottom="error"
->
-  <span v-if="label != null">{{ label }}</span>
+  <label class="text-input" :class="classes" v-tooltip.bottom="error">
+    <span v-if="label != null">{{ label }}</span>
 
-  <input
-    :type="password ? 'password' : 'text'"
-    :value="value"
-    :placeholder="placeholder"
-    @input="handleChange"
-  />
-</label>
+    <input
+      :type="password ? 'password' : 'text'"
+      :value="value"
+      :placeholder="placeholder"
+      @input="handleChange"
+    >
+  </label>
 </template>
 
 <script lang="ts">

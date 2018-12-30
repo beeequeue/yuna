@@ -1,91 +1,89 @@
 <template>
-<ApolloQuery class="anime" :query="ANIME_QUEUE_QUERY" :variables="{ id }">
-  <template slot-scope="{ result }">
-    <div v-if="result && result.data" class="container">
-      <anime-banner
-        :anime="result.data.anime"
-        :faded="!getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
-      />
+  <ApolloQuery class="anime" :query="ANIME_QUEUE_QUERY" :variables="{ id }">
+    <template slot-scope="{ result }">
+      <div v-if="result && result.data" class="container">
+        <anime-banner
+          :anime="result.data.anime"
+          :faded="!getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+        />
 
-      <div class="handle">
-        <icon :icon="listSvg" />
-      </div>
-
-      <div class="content-container">
-        <div>
-          <span class="state">
-            {{getHumanizedStatus(result.data)}}
-          </span>
-
-          <span :style="{width: '100%'}"/>
-
-          <div class="buttons">
-            <c-button
-              v-if="getIsStatus(result.data, MediaListStatus.PLANNING)"
-              type="success"
-              content="Start"
-              @click.native="statusMutation(result.data, MediaListStatus.CURRENT)"
-            />
-
-            <c-button
-              v-if="getIsStatus(result.data, MediaListStatus.PAUSED, MediaListStatus.DROPPED)"
-              type="success"
-              content="Resume"
-              @click.native="statusMutation(result.data, MediaListStatus.CURRENT)"
-            />
-
-            <c-button
-              v-if="getIsStatus(result.data, MediaListStatus.COMPLETED)"
-              type="success"
-              content="Rewatch"
-              @click.native="statusMutation(result.data, MediaListStatus.REPEATING)"
-            />
-
-            <c-button
-              v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
-              type="warning"
-              content="Pause"
-              @click.native="statusMutation(result.data, MediaListStatus.PAUSED)"
-            />
-
-            <c-button
-              v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
-              type="danger"
-              content="Drop"
-              @click.native="statusMutation(result.data, MediaListStatus.DROPPED)"
-            />
-
-            <c-button
-              v-if="!getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
-              class="large"
-              content="Remove from Queue"
-              @click.native="removeFromQueue(id)"
-            />
-          </div>
+        <div class="handle">
+          <icon :icon="listSvg"/>
         </div>
 
-        <transition>
-          <div
-            v-if="result.data.anime.idMal && getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
-            class="episode-container"
-          >
-            <episodes
-              :idMal="result.data.anime.idMal"
-              :id="result.data.anime.id"
-              :animeName="result.data.anime.title.userPreferred"
-              :episodesInAnime="result.data.anime.episodes"
-              :nextAiringEpisode="result.data.anime.nextAiringEpisode"
-              :listEntry="result.data.anime.mediaListEntry"
-              :sequels="getSequels(result.data)"
-              scrollToCurrentEpisode
-              small
-            />
+        <div class="content-container">
+          <div>
+            <span class="state">{{getHumanizedStatus(result.data)}}</span>
+
+            <span :style="{width: '100%'}"/>
+
+            <div class="buttons">
+              <c-button
+                v-if="getIsStatus(result.data, MediaListStatus.PLANNING)"
+                type="success"
+                content="Start"
+                @click.native="statusMutation(result.data, MediaListStatus.CURRENT)"
+              />
+
+              <c-button
+                v-if="getIsStatus(result.data, MediaListStatus.PAUSED, MediaListStatus.DROPPED)"
+                type="success"
+                content="Resume"
+                @click.native="statusMutation(result.data, MediaListStatus.CURRENT)"
+              />
+
+              <c-button
+                v-if="getIsStatus(result.data, MediaListStatus.COMPLETED)"
+                type="success"
+                content="Rewatch"
+                @click.native="statusMutation(result.data, MediaListStatus.REPEATING)"
+              />
+
+              <c-button
+                v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+                type="warning"
+                content="Pause"
+                @click.native="statusMutation(result.data, MediaListStatus.PAUSED)"
+              />
+
+              <c-button
+                v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+                type="danger"
+                content="Drop"
+                @click.native="statusMutation(result.data, MediaListStatus.DROPPED)"
+              />
+
+              <c-button
+                v-if="!getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+                class="large"
+                content="Remove from Queue"
+                @click.native="removeFromQueue(id)"
+              />
+            </div>
           </div>
-        </transition>
+
+          <transition>
+            <div
+              v-if="result.data.anime.idMal && getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+              class="episode-container"
+            >
+              <episodes
+                :idMal="result.data.anime.idMal"
+                :id="result.data.anime.id"
+                :animeName="result.data.anime.title.userPreferred"
+                :episodesInAnime="result.data.anime.episodes"
+                :nextAiringEpisode="result.data.anime.nextAiringEpisode"
+                :listEntry="result.data.anime.mediaListEntry"
+                :sequels="getSequels(result.data)"
+                scrollToCurrentEpisode
+                small
+              />
+            </div>
+          </transition>
+        </div>
       </div>
-    </div>
-  </template>
-</ApolloQuery>
+    </template>
+  </ApolloQuery>
 </template>
 
 <script lang="ts">

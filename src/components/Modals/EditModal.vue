@@ -1,86 +1,81 @@
 <template>
-<modal :visible="visible" :toggleVisible="toggleVisible">
-  <ApolloMutation
-    :mutation="SAVE_LIST_ENTRY_MUTATION"
-    :variables="anime && anime.mediaListEntry"
-    :update="handleUpdate"
-    @done="toggleVisible"
-  >
-    <template slot-scope="{ mutate, loading, error }">
-      <div class="modal-body edit-modal">
-        <anime-banner :anime="anime"/>
+  <modal :visible="visible" :toggleVisible="toggleVisible">
+    <ApolloMutation
+      :mutation="SAVE_LIST_ENTRY_MUTATION"
+      :variables="anime && anime.mediaListEntry"
+      :update="handleUpdate"
+      @done="toggleVisible"
+    >
+      <template slot-scope="{ mutate, loading, error }">
+        <div class="modal-body edit-modal">
+          <anime-banner :anime="anime"/>
 
-        <div class="list-entry-fields">
-          <dropdown
-            :disabled="loading"
-            label="Status"
-            :items="statusItems"
-            :onChange="value => setValue('mediaListEntry.status', value)"
-            :value="status"
-            :error="getValidationError(error, 'status')"
-          />
+          <div class="list-entry-fields">
+            <dropdown
+              :disabled="loading"
+              label="Status"
+              :items="statusItems"
+              :onChange="value => setValue('mediaListEntry.status', value)"
+              :value="status"
+              :error="getValidationError(error, 'status')"
+            />
 
-          <number-input
-            :disabled="loading"
-            label="Progress"
-            :suffix="`/ ${anime ? anime.episodes : 0}`"
-            :value="progress"
-            :onChange="value => setValue('mediaListEntry.progress', value)"
-            :error="getValidationError(error, 'progress')"
-          />
+            <number-input
+              :disabled="loading"
+              label="Progress"
+              :suffix="`/ ${anime ? anime.episodes : 0}`"
+              :value="progress"
+              :onChange="value => setValue('mediaListEntry.progress', value)"
+              :error="getValidationError(error, 'progress')"
+            />
 
-          <number-input
-            :disabled="loading"
-            label="Score"
-            suffix="/ 100"
-            :value="score"
-            :onChange="value => setValue('mediaListEntry.score', value)"
-            :error="getValidationError(error, 'scoreRaw')"
-          />
+            <number-input
+              :disabled="loading"
+              label="Score"
+              suffix="/ 100"
+              :value="score"
+              :onChange="value => setValue('mediaListEntry.score', value)"
+              :error="getValidationError(error, 'scoreRaw')"
+            />
 
-          <number-input
-            :disabled="loading"
-            label="Repeated"
-            :min="0"
-            :value="repeated"
-            :onChange="value => setValue('mediaListEntry.repeat', value)"
-            :error="getValidationError(error, 'repeat')"
-          />
+            <number-input
+              :disabled="loading"
+              label="Repeated"
+              :min="0"
+              :value="repeated"
+              :onChange="value => setValue('mediaListEntry.repeat', value)"
+              :error="getValidationError(error, 'repeat')"
+            />
 
-          <transition name="fade">
-            <div v-if="anime && anime.mediaListEntry == null" class="not-in-list">
-              Not in List
+            <transition name="fade">
+              <div v-if="anime && anime.mediaListEntry == null" class="not-in-list">Not in List
+                <c-button :disabled="loading" content="Add to List"/>
+              </div>
+            </transition>
+          </div>
 
-              <c-button
-                :disabled="loading"
-                content="Add to List"
-              />
-            </div>
-          </transition>
+          <div class="buttons">
+            <c-button
+              :disabled="loading"
+              type="danger"
+              flat
+              confirm
+              content="Delete"
+              :icon="deleteSvg"
+              :click="deleteEntry"
+            />
+
+            <c-button
+              :disabled="loading"
+              type="success"
+              :content="loading ? 'Saving...' : 'Save changes'"
+              :click="mutate"
+            />
+          </div>
         </div>
-
-        <div class="buttons">
-          <c-button
-            :disabled="loading"
-            type="danger"
-            flat
-            confirm
-            content="Delete"
-            :icon="deleteSvg"
-            :click="deleteEntry"
-          />
-
-          <c-button
-            :disabled="loading"
-            type="success"
-            :content="loading ? 'Saving...' : 'Save changes'"
-            :click="mutate"
-          />
-        </div>
-      </div>
-    </template>
-  </ApolloMutation>
-</modal>
+      </template>
+    </ApolloMutation>
+  </modal>
 </template>
 
 <script lang="ts">

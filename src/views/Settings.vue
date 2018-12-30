@@ -1,186 +1,189 @@
 <template>
-<div class="container" tabindex="0" @keydown.ctrl.d="openDevTools">
-  <div class="settings">
-    <section class="category" id="general">
-      <h1>General</h1>
-
-      <checkbox
-        setting="queue-auto-add-list"
-        text="Mark shows as Planning when adding them to the queue."
-        :checked="settings.autoMarkAsPlanning"
-        :onChange="checked => setSetting('autoMarkAsPlanning', checked)"
-      />
-
-      <section id="discord">
-        <h3>Discord Rich Presence</h3>
+  <div class="container" tabindex="0" @keydown.ctrl.d="openDevTools">
+    <div class="settings">
+      <section class="category" id="general">
+        <h1>General</h1>
 
         <checkbox
-          setting="enable-discord-rp"
-          text="Enable Discord Rich Presence"
-          :checked="settings.discord.richPresence"
-          :onChange="handleDiscordPresenceChange"
+          setting="queue-auto-add-list"
+          text="Mark shows as Planning when adding them to the queue."
+          :checked="settings.autoMarkAsPlanning"
+          :onChange="checked => setSetting('autoMarkAsPlanning', checked)"
+        />
+
+        <section id="discord">
+          <h3>Discord Rich Presence</h3>
+
+          <checkbox
+            setting="enable-discord-rp"
+            text="Enable Discord Rich Presence"
+            :checked="settings.discord.richPresence"
+            :onChange="handleDiscordPresenceChange"
+          />
+        </section>
+
+        <section id="cr-unblocker">
+          <h3>Crunchyroll Unblocker</h3>
+
+          <checkbox
+            setting="use-cr-unblocker"
+            text="Try to use the US catalogue."
+            :checked="settings.useCRUnblocker"
+            :onChange="handleUnblockerChange"
+          />
+
+          <div
+            class="us-cr-failed"
+            :class="{ visible: settings.useCRUnblocker && !isUsingUSSession }"
+          >
+            <div>There seems to have been an issue creating a US session. 😟</div>
+
+            <c-button
+              :icon="retrySvg"
+              content="Retry creating US session"
+              :click="createUBSession"
+            />
+          </div>
+        </section>
+      </section>
+
+      <section class="category" id="updates">
+        <h1>Updates</h1>
+
+        <c-button
+          v-if="updateIsAvailable"
+          content="Install update!"
+          type="success"
+          :click="downloadUpdate"
+        />
+
+        <checkbox
+          setting="auto-update"
+          text="Automatically update the program."
+          :checked="settings.autoUpdate"
+          :onChange="checked => setSetting('autoUpdate', checked)"
+        />
+
+        <checkbox
+          setting="beta"
+          text="Install pre-releases (beta versions)."
+          :checked="settings.beta"
+          :onChange="checked => setSetting('beta', checked)"
         />
       </section>
 
-      <section id="cr-unblocker">
-      <h3>Crunchyroll Unblocker</h3>
+      <section class="category" id="spoilers">
+        <h1>Spoiler Hiding</h1>
 
-      <checkbox
-        setting="use-cr-unblocker"
-        text="Try to use the US catalogue."
-        :checked="settings.useCRUnblocker"
-        :onChange="handleUnblockerChange"
-      />
-
-      <div class="us-cr-failed" :class="{ visible: settings.useCRUnblocker && !isUsingUSSession }">
-        <div>
-          There seems to have been an issue creating a US session. 😟
-        </div>
-
-        <c-button
-          :icon="retrySvg"
-          content="Retry creating US session"
-          :click="createUBSession"
-        />
-      </div>
-    </section>
-    </section>
-
-    <section class="category" id="updates">
-      <h1>Updates</h1>
-
-      <c-button
-        v-if="updateIsAvailable"
-        content="Install update!"
-        type="success"
-        :click="downloadUpdate"
-      />
-
-      <checkbox
-        setting="auto-update"
-        text="Automatically update the program."
-        :checked="settings.autoUpdate"
-        :onChange="checked => setSetting('autoUpdate', checked)"
-      />
-
-      <checkbox
-        setting="beta"
-        text="Install pre-releases (beta versions)."
-        :checked="settings.beta"
-        :onChange="checked => setSetting('beta', checked)"
-      />
-    </section>
-
-    <section class="category" id="spoilers">
-      <h1>Spoiler Hiding</h1>
-
-      <h3>
-        Anime Info
-
-        <icon :icon="infoSvg" v-tooltip.top="'These spoilers will stop being<br/>hidden after watching one third<br/>of the season\'s episodes.'"/>
-      </h3>
-
-      <checkbox
-        setting="spoiler-descriptions"
-        text="Descriptions"
-        :checked="settings.spoilers.anime.description"
-        :onChange="checked => setSpoiler('anime.description', checked)"
-      />
-
-      <h3>
-        Episode Info
-
-        <icon :icon="infoSvg" v-tooltip.top="'These spoilers will stop<br/>being hidden after watching<br/>the episode.'"/>
-      </h3>
-
-      <checkbox
-        setting="spoiler-episode-title"
-        text="Titles"
-        :checked="settings.spoilers.episode.name"
-        :onChange="checked => setSpoiler('episode.name', checked)"
-      />
-
-      <checkbox
-        setting="spoiler-episode-thumbnail"
-        text="Thumbnails"
-        :checked="settings.spoilers.episode.thumbnail"
-        :onChange="checked => setSpoiler('episode.thumbnail', checked)"
-      />
-    </section>
-
-    <section class="category" id="player">
-      <h1>Player</h1>
-
-      <checkbox
-        setting="autoPlay"
-        text="AutoPlay next epsiode"
-        :checked="settings.autoPlay"
-        :onChange="checked => setSetting('autoPlay', checked)"
-      />
-
-      <checkbox
-        setting="autoMarkWatched"
-        text="Automatically mark episodes as watched"
-        :checked="settings.autoMarkWatched"
-        :onChange="checked => setSetting('autoMarkWatched', checked)"
-      />
-
-      <section class="category" id="keybindings">
-        <h3>
-          Keybindings
-
-          <icon :icon="infoSvg" v-tooltip.right="'Click a binding to remove it.'"/>
+        <h3>Anime Info
+          <icon
+            :icon="infoSvg"
+            v-tooltip.top="'These spoilers will stop being<br/>hidden after watching one third<br/>of the season\'s episodes.'"
+          />
         </h3>
 
-        <div class="keybinding-container">
-          <div class="names">
-            <div v-for="action in keybindingActions" :key="action" class="name">
-              {{getPrettyActionName(action)}}:
+        <checkbox
+          setting="spoiler-descriptions"
+          text="Descriptions"
+          :checked="settings.spoilers.anime.description"
+          :onChange="checked => setSpoiler('anime.description', checked)"
+        />
+
+        <h3>Episode Info
+          <icon
+            :icon="infoSvg"
+            v-tooltip.top="'These spoilers will stop<br/>being hidden after watching<br/>the episode.'"
+          />
+        </h3>
+
+        <checkbox
+          setting="spoiler-episode-title"
+          text="Titles"
+          :checked="settings.spoilers.episode.name"
+          :onChange="checked => setSpoiler('episode.name', checked)"
+        />
+
+        <checkbox
+          setting="spoiler-episode-thumbnail"
+          text="Thumbnails"
+          :checked="settings.spoilers.episode.thumbnail"
+          :onChange="checked => setSpoiler('episode.thumbnail', checked)"
+        />
+      </section>
+
+      <section class="category" id="player">
+        <h1>Player</h1>
+
+        <checkbox
+          setting="autoPlay"
+          text="AutoPlay next epsiode"
+          :checked="settings.autoPlay"
+          :onChange="checked => setSetting('autoPlay', checked)"
+        />
+
+        <checkbox
+          setting="autoMarkWatched"
+          text="Automatically mark episodes as watched"
+          :checked="settings.autoMarkWatched"
+          :onChange="checked => setSetting('autoMarkWatched', checked)"
+        />
+
+        <section class="category" id="keybindings">
+          <h3>Keybindings
+            <icon :icon="infoSvg" v-tooltip.right="'Click a binding to remove it.'"/>
+          </h3>
+
+          <div class="keybinding-container">
+            <div class="names">
+              <div
+                v-for="action in keybindingActions"
+                :key="action"
+                class="name"
+              >{{getPrettyActionName(action)}}:</div>
+            </div>
+
+            <div class="actions">
+              <keybinding
+                v-for="action in keybindingActions"
+                :key="action"
+                :action="action"
+                :unbindKey="unbindKey"
+                :openKeybindModal="openKeybindModal"
+              />
             </div>
           </div>
 
-          <div class="actions">
-            <keybinding
-              v-for="action in keybindingActions"
-              :key="action"
-              :action="action"
-              :unbindKey="unbindKey"
-              :openKeybindModal="openKeybindModal"
-            />
-          </div>
-        </div>
-
-        <c-button
-          type="danger"
-          confirm
-          content="Reset keybindings to default"
-          :icon="resetSvg"
-          :click="resetKeybindings"
-        />
+          <c-button
+            type="danger"
+            confirm
+            content="Reset keybindings to default"
+            :icon="resetSvg"
+            :click="resetKeybindings"
+          />
+        </section>
       </section>
-    </section>
-  </div>
-
-  <div class="info-container"></div>
-
-  <transition name="fade">
-    <div
-      v-if="actionToBind"
-      class="keybinding-modal"
-      ref="keybindModal"
-      tabindex="0"
-      @keydown="bindKey"
-    >
-      <span class="backdrop"/>
-
-      <div class="body">
-        <div>Press any key...</div>
-
-        <div class="hint">escape to cancel</div>
-      </div>
     </div>
-  </transition>
-</div>
+
+    <div class="info-container"></div>
+
+    <transition name="fade">
+      <div
+        v-if="actionToBind"
+        class="keybinding-modal"
+        ref="keybindModal"
+        tabindex="0"
+        @keydown="bindKey"
+      >
+        <span class="backdrop"/>
+
+        <div class="body">
+          <div>Press any key...</div>
+
+          <div class="hint">escape to cancel</div>
+        </div>
+      </div>
+    </transition>
+  </div>
 </template>
 
 <script lang="ts">

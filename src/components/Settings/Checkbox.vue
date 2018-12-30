@@ -1,21 +1,14 @@
 <template>
-<div class="checkbox-container">
-  <input
-    v-show="false"
-    :id="setting"
-    type="checkbox"
-    @change="handleChange"
-    :checked="checked"
-  />
+  <div class="checkbox-container">
+    <input v-show="false" :id="setting" type="checkbox" @change="handleChange" :checked="checked">
 
-  <label :for="setting">
-    <div class="checkbox" :class="{ checked }">
-      <icon :icon="checkSvg"/>
-    </div>
-
-    {{ text }}
-  </label>
-</div>
+    <label :for="setting">
+      <div class="checkbox" :class="{ checked }">
+        <icon :icon="checkSvg"/>
+      </div>
+      {{ text }}
+    </label>
+  </div>
 </template>
 
 <script lang="ts">

@@ -1,9 +1,12 @@
 <template>
-<div class="steps-container">
-  <div v-for="(_, i) in steps" class="step" :class="{ current: current === i, done: !current || current > i }">
-    {{ i + 1 }}
+  <div class="steps-container">
+    <div
+      v-for="(_, i) in steps"
+      :key="i"
+      class="step"
+      :class="{ current: current === i, done: !current || current > i }"
+    >{{ i + 1 }}</div>
   </div>
-</div>
 </template>
 
 <script lang="ts">

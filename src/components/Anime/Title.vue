@@ -1,29 +1,11 @@
 <template>
-<div class="title">
-  <div
-    class="english"
-    :class="preferredStyle.english"
-    :title="title.english"
-  >
-    {{ title.english }}
-  </div>
+  <div class="title">
+    <div class="english" :class="preferredStyle.english" :title="title.english">{{ title.english }}</div>
 
-  <div
-    class="romaji"
-    :class="preferredStyle.romaji"
-    :title="title.romaji"
-  >
-    {{ title.romaji }}
-  </div>
+    <div class="romaji" :class="preferredStyle.romaji" :title="title.romaji">{{ title.romaji }}</div>
 
-  <div
-    class="native"
-    :class="preferredStyle.native"
-    :title="title.native"
-  >
-    {{ title.native }}
+    <div class="native" :class="preferredStyle.native" :title="title.native">{{ title.native }}</div>
   </div>
-</div>
 </template>
 
 <script lang="ts">

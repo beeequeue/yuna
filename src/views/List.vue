@@ -1,53 +1,42 @@
 <template>
-<ApolloQuery
-  class="list-page"
-  :query="LIST_QUERY"
-  :variables="{ userId }"
-  fetch-policy="cache-and-network"
->
-  <template slot-scope="{ result: { loading, error, data } }">
-    <div class="menu">
-      <a
-        class="anilist"
-        :href="`https://anilist.co/user/${userId}/animelist`"
-        v-tooltip.right="'Open in AniList'"
-      >
-        <span v-html="alLogo"/>
-      </a>
+  <ApolloQuery
+    class="list-page"
+    :query="LIST_QUERY"
+    :variables="{ userId }"
+    fetch-policy="cache-and-network"
+  >
+    <template slot-scope="{ result: { loading, error, data } }">
+      <div class="menu">
+        <a
+          class="anilist"
+          :href="`https://anilist.co/user/${userId}/animelist`"
+          v-tooltip.right="'Open in AniList'"
+        >
+          <span v-html="alLogo"/>
+        </a>
 
-      <div class="number-input-filler"/>
+        <div class="number-input-filler"/>
 
-      <text-input
-        placeholder="Filter..."
-        value=""
-        :onChange="setFilterString"
-      />
+        <text-input placeholder="Filter..." value :onChange="setFilterString"/>
 
-      <number-input
-        :value="limit"
-        :onChange="setLimit"
-      />
-    </div>
+        <number-input :value="limit" :onChange="setLimit"/>
+      </div>
 
-    <transition-group tag="div" class="list-container">
-      <transition-group
-        tag="div"
-        v-for="list in getLists(data)"
-        v-if="list.entries && list.entries.length > 0"
-        :key="list.name"
-        class="list"
-      >
-        <h1 :key="list.name">{{ list.name }}</h1>
+      <transition-group tag="div" class="list-container">
+        <transition-group
+          tag="div"
+          v-for="list in getLists(data)"
+          v-if="list.entries && list.entries.length > 0"
+          :key="list.name"
+          class="list"
+        >
+          <h1 :key="list.name">{{ list.name }}</h1>
 
-        <list-entry
-          v-for="entry in list.entries"
-          :key="entry.id"
-          :entry="entry"
-        />
+          <list-entry v-for="entry in list.entries" :key="entry.id" :entry="entry"/>
+        </transition-group>
       </transition-group>
-    </transition-group>
-  </template>
-</ApolloQuery>
+    </template>
+  </ApolloQuery>
 </template>
 
 <script lang="ts">

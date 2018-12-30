@@ -1,50 +1,30 @@
 <template>
-<transition>
-  <div class="end-of-season-container" :class="{ small: !isPlayerMaximized }">
-    <h1 class="text">
-      {{endMessage}}
-    </h1>
+  <transition>
+    <div class="end-of-season-container" :class="{ small: !isPlayerMaximized }">
+      <h1 class="text">{{endMessage}}</h1>
 
-    <h2
-      v-if="!isFinalEpisode"
-      class="text two-lines"
-    >
-      The next episode airs in {{nextEpisodeDistanceString}}
-      <br/>
-      {{nextEpisodeDateString}}
-    </h2>
+      <h2 v-if="!isFinalEpisode" class="text two-lines">
+        The next episode airs in {{nextEpisodeDistanceString}}
+        <br>
+        {{nextEpisodeDateString}}
+      </h2>
 
-    <div v-if="isFinalEpisode" class="scores-container">
-      <div
-        v-for="(s, index) in scores"
-        :key="index"
-        class="score"
-        @click="updateScore(s)"
-      >
-        <icon
-          v-if="listEntry.score >= s"
-          :icon="starSvg"
-        />
-        <icon
-          v-else
-          :icon="hollowStarSvg"
-        />
+      <div v-if="isFinalEpisode" class="scores-container">
+        <div v-for="(s, index) in scores" :key="index" class="score" @click="updateScore(s)">
+          <icon v-if="listEntry.score >= s" :icon="starSvg"/>
+          <icon v-else :icon="hollowStarSvg"/>
+        </div>
+      </div>
+
+      <div v-if="isFinalEpisode && sequels && sequels.length > 0" class="sequel-container">
+        <h1 class="text">Sequel{{sequels.length > 1 ? 's' : ''}}:</h1>
+
+        <div v-for="sequel in sequels" :key="sequel.id" class="sequel">
+          <anime-banner class="banner" :anime="sequel"/>
+        </div>
       </div>
     </div>
-
-    <div v-if="isFinalEpisode && sequels && sequels.length > 0" class="sequel-container">
-      <h1 class="text">Sequel{{sequels.length > 1 ? 's' : ''}}:</h1>
-
-      <div
-        v-for="sequel in sequels"
-        :key="sequel.id"
-        class="sequel"
-      >
-        <anime-banner class="banner" :anime="sequel"/>
-      </div>
-    </div>
-  </div>
-</transition>
+  </transition>
 </template>
 
 <script lang="ts">

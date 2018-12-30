@@ -1,23 +1,20 @@
 <template>
-<transition-group class="toast-container">
-  <div
-    v-for="(toast, i) in toasts"
-    ref="toasts"
-    :key="toast.id"
-    class="toast"
-    :class="{[toast.type]: true}"
-    :style="{top: getDistanceFromTop(i) + 'px'}"
-    @click="e => handleClick(e, toast)"
-  >
-    <div class="title">{{toast.title}}</div>
-    <div class="message">{{toast.message}}</div>
+  <transition-group class="toast-container">
+    <div
+      v-for="(toast, i) in toasts"
+      ref="toasts"
+      :key="toast.id"
+      class="toast"
+      :class="{[toast.type]: true}"
+      :style="{top: getDistanceFromTop(i) + 'px'}"
+      @click="e => handleClick(e, toast)"
+    >
+      <div class="title">{{toast.title}}</div>
+      <div class="message">{{toast.message}}</div>
 
-    <icon
-      class="close"
-      :icon="closeSvg"
-    />
-  </div>
-</transition-group>
+      <icon class="close" :icon="closeSvg"/>
+    </div>
+  </transition-group>
 </template>
 
 <script lang="ts">

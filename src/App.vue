@@ -1,29 +1,23 @@
 <template>
-<div id="app" :style="`background-image: url(${backgroundImage})`">
-  <title-bar v-if="!isFullscreen"/>
+  <div id="app" :style="`background-image: url(${backgroundImage})`">
+    <title-bar v-if="!isFullscreen"/>
 
-  <transition>
-    <navbar v-if="isLoggedIn.all && hasFinishedSetup && !isFullscreen"/>
-  </transition>
+    <transition>
+      <navbar v-if="isLoggedIn.all && hasFinishedSetup && !isFullscreen"/>
+    </transition>
 
-  <transition name="route">
-    <router-view :key="$route.params.id ? $route.params.id : $route.path" class="route"/>
-  </transition>
+    <transition name="route">
+      <router-view :key="$route.params.id ? $route.params.id : $route.path" class="route"/>
+    </transition>
 
-  <player-container v-if="isLoggedIn.all"/>
+    <player-container v-if="isLoggedIn.all"/>
 
-  <toast-overlay/>
+    <toast-overlay/>
 
-  <about-modal
-    :visible="modalStates.about"
-    :toggleVisible="() => toggleModal('about')"
-  />
+    <about-modal :visible="modalStates.about" :toggleVisible="() => toggleModal('about')"/>
 
-  <edit-modal
-    :visible="modalStates.edit"
-    :toggleVisible="() => toggleModal('edit')"
-  />
-</div>
+    <edit-modal :visible="modalStates.edit" :toggleVisible="() => toggleModal('edit')"/>
+  </div>
 </template>
 
 <script lang="ts">

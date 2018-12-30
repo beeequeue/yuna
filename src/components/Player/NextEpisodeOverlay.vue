@@ -1,45 +1,35 @@
 <template>
-<transition>
-  <div v-if="nextEpisode" class="next-episode-container">
-    <transition>
-      <div
-        v-if="isPlayerMaximized"
-        class="text"
-        :class="{ 'hide-title': shouldHide.title }"
-      >
-        <div>Up next...</div>
+  <transition>
+    <div v-if="nextEpisode" class="next-episode-container">
+      <transition>
+        <div v-if="isPlayerMaximized" class="text" :class="{ 'hide-title': shouldHide.title }">
+          <div>Up next...</div>
 
-        <div>{{nextEpisode.episodeNumber}}/{{episodesInAnime || '?'}}</div>
+          <div>{{nextEpisode.episodeNumber}}/{{episodesInAnime || '?'}}</div>
 
-        <div v-if="!shouldHide.title" class="episode-title">
-          {{nextEpisode.title}}
+          <div v-if="!shouldHide.title" class="episode-title">{{nextEpisode.title}}</div>
         </div>
+      </transition>
+
+      <div class="episode" @click="setToNextEpisode">
+        <img :src="nextEpisode.thumbnail" class="thumbnail" :class="{ blur: shouldHide.thumbnail }">
+
+        <icon :icon="playSvg"/>
+
+        <span v-if="shouldAutoPlay && timeoutId" class="countdown-line"/>
       </div>
-    </transition>
 
-    <div class="episode" @click="setToNextEpisode">
-      <img
-        :src="nextEpisode.thumbnail"
-        class="thumbnail"
-        :class="{ blur: shouldHide.thumbnail }"
-      />
-
-      <icon :icon="playSvg" />
-
-      <span v-if="shouldAutoPlay && timeoutId" class="countdown-line"/>
+      <transition>
+        <c-button
+          v-if="isPlayerMaximized && shouldAutoPlay && timeoutId"
+          flat
+          type="white"
+          content="Cancel"
+          @click.native="cancelCountdown"
+        />
+      </transition>
     </div>
-
-    <transition>
-      <c-button
-        v-if="isPlayerMaximized && shouldAutoPlay && timeoutId"
-        flat
-        type="white"
-        content="Cancel"
-        @click.native="cancelCountdown"
-      />
-    </transition>
-  </div>
-</transition>
+  </transition>
 </template>
 
 <script lang="ts">

@@ -1,26 +1,26 @@
 <template>
-<div class="step login-cr" @keydown.enter="login">
-  <img :src="crIcon" class="logo"/>
+  <div class="step login-cr" @keydown.enter="login">
+    <img :src="crIcon" class="logo">
 
-  <text-input
-    placeholder="Username"
-    :class="{ 'full-width': fullWidth }"
-    :onChange="value => handleChange('username', value)"
-  />
+    <text-input
+      placeholder="Username"
+      :class="{ 'full-width': fullWidth }"
+      :onChange="value => handleChange('username', value)"
+    />
 
-  <text-input
-    password
-    placeholder="Password"
-    :class="{ 'full-width': fullWidth }"
-    :onChange="value => handleChange('password', value)"
-  />
+    <text-input
+      password
+      placeholder="Password"
+      :class="{ 'full-width': fullWidth }"
+      :onChange="value => handleChange('password', value)"
+    />
 
-  <transition>
-    <div v-if="true" class="error">{{ error }}</div>
-  </transition>
+    <transition>
+      <div v-if="true" class="error">{{ error }}</div>
+    </transition>
 
-  <c-button content="Login" :click="login"/>
-</div>
+    <c-button content="Login" :click="login"/>
+  </div>
 </template>
 
 <script lang="ts">

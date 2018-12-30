@@ -1,9 +1,9 @@
 <template>
-<span class="icon">
-  <svg viewBox="0 0 24 24">
-    <path :d="icon"/>
-  </svg>
-</span>
+  <span class="icon">
+    <svg viewBox="0 0 24 24">
+      <path :d="icon"></path>
+    </svg>
+  </span>
 </template>
 
 <script lang="ts">

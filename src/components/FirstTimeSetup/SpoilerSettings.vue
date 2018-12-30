@@ -1,51 +1,44 @@
 <template>
-<div class="step spoiler-settings">
-  <h2>Spoiler settings</h2>
+  <div class="step spoiler-settings">
+    <h2>Spoiler settings</h2>
 
-  <h3>
-    Anime Info
+    <h3>Anime Info
+      <icon
+        :icon="infoSvg"
+        v-tooltip.right="'These spoilers will stop being<br/>hidden after watching one third<br/>of the season\'s episodes.'"
+      />
+    </h3>
 
-    <icon
-      :icon="infoSvg"
-      v-tooltip.right="'These spoilers will stop being<br/>hidden after watching one third<br/>of the season\'s episodes.'"
+    <checkbox
+      setting="spoiler-descriptions"
+      text="Descriptions"
+      :checked="settings.spoilers.anime.description"
+      :onChange="checked => setSpoiler('anime.description', checked)"
     />
-  </h3>
 
-  <checkbox
-    setting="spoiler-descriptions"
-    text="Descriptions"
-    :checked="settings.spoilers.anime.description"
-    :onChange="checked => setSpoiler('anime.description', checked)"
-  />
+    <h3>Episode Info
+      <icon
+        :icon="infoSvg"
+        v-tooltip.right="'These spoilers will stop<br/>being hidden after watching<br/>the episode.'"
+      />
+    </h3>
 
-  <h3>
-    Episode Info
-
-    <icon
-      :icon="infoSvg"
-      v-tooltip.right="'These spoilers will stop<br/>being hidden after watching<br/>the episode.'"
+    <checkbox
+      setting="spoiler-episode-title"
+      text="Titles"
+      :checked="settings.spoilers.episode.name"
+      :onChange="checked => setSpoiler('episode.name', checked)"
     />
-  </h3>
 
-  <checkbox
-    setting="spoiler-episode-title"
-    text="Titles"
-    :checked="settings.spoilers.episode.name"
-    :onChange="checked => setSpoiler('episode.name', checked)"
-  />
+    <checkbox
+      setting="spoiler-episode-thumbnail"
+      text="Thumbnails"
+      :checked="settings.spoilers.episode.thumbnail"
+      :onChange="checked => setSpoiler('episode.thumbnail', checked)"
+    />
 
-  <checkbox
-    setting="spoiler-episode-thumbnail"
-    text="Thumbnails"
-    :checked="settings.spoilers.episode.thumbnail"
-    :onChange="checked => setSpoiler('episode.thumbnail', checked)"
-  />
-
-  <c-button
-    content="Next"
-    :click="goToNextStep"
-  />
-</div>
+    <c-button content="Next" :click="goToNextStep"/>
+  </div>
 </template>
 
 <script lang="ts">

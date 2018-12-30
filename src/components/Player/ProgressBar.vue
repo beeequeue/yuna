@@ -1,30 +1,22 @@
 <template>
-<div
-  class="progress"
-  ref="progressBar"
-  @mousemove="handleMouseOver"
-  @mouseleave="hovering = false"
-  @mousedown="handleClick"
->
-  <div class="background"/>
-
   <div
-    class="loaded"
-    :style="{ left: (progressPercentage * 100 - 1.5) + '%', right: (100 - loadedPercentage * 100) + '%' }"
-  />
+    class="progress"
+    ref="progressBar"
+    @mousemove="handleMouseOver"
+    @mouseleave="hovering = false"
+    @mousedown="handleClick"
+  >
+    <div class="background"/>
 
-  <div
-    class="played"
-    :style="{ right: (100 - progressPercentage * 100) + '%' }"
-  />
+    <div
+      class="loaded"
+      :style="{ left: (progressPercentage * 100 - 1.5) + '%', right: (100 - loadedPercentage * 100) + '%' }"
+    />
 
-  <div
-    class="time-tooltip"
-    v-tooltip="tooltip"
-    :style="{ left: `${mousePosition * 100}%` }"
-  />
-</div>
+    <div class="played" :style="{ right: (100 - progressPercentage * 100) + '%' }"/>
 
+    <div class="time-tooltip" v-tooltip="tooltip" :style="{ left: `${mousePosition * 100}%` }"/>
+  </div>
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'

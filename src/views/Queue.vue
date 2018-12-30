@@ -3,26 +3,16 @@
     <div ref="queue" class="queue">
       <draggable v-model="queue" :options="draggableOptions" class="draggable-container">
         <transition-group type="transition" tag="div" class="transition-group">
-          <queue-item
-            v-for="id in queue"
-            :id="id"
-            :key="id"
-            class="anime"
-          />
+          <queue-item v-for="id in queue" :id="id" :key="id" class="anime"/>
         </transition-group>
       </draggable>
 
       <transition name="fade">
-        <div v-if="queue.length < 1" class="empty-message">
-          Seems your queue is empty!<br/>
+        <div v-if="queue.length < 1" class="empty-message">Seems your queue is empty!
+          <br>You can import shows from your list or add some by searching!
+          <br>
 
-          You can import shows from your list or add some by searching!<br/>
-
-          <c-button
-            content="Import Watching from List"
-            :icon="currentSvg"
-            :click="importWatching"
-          />
+          <c-button content="Import Watching from List" :icon="currentSvg" :click="importWatching"/>
         </div>
       </transition>
     </div>
@@ -30,11 +20,7 @@
     <div class="sidebar" :class="{ small: isPlayerOpen }">
       <span class="fill"/>
 
-      <c-button
-        content="Import Watching from List"
-        :icon="currentSvg"
-        :click="importWatching"
-      />
+      <c-button content="Import Watching from List" :icon="currentSvg" :click="importWatching"/>
 
       <c-button
         content="Import Random from Planning"
@@ -48,15 +34,9 @@
         :click="importRandomFromPaused"
       />
 
-      <c-button
-        content="Import Exported Queue"
-        :click="importQueueFromBackup"
-      />
+      <c-button content="Import Exported Queue" :click="importQueueFromBackup"/>
 
-      <c-button
-        content="Export Queue"
-        :click="exportQueue"
-      />
+      <c-button content="Export Queue" :click="exportQueue"/>
 
       <c-button
         type="danger"

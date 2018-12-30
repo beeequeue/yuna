@@ -1,22 +1,11 @@
 <template>
-<label
-  class="number-input"
-  :class="classes"
-  v-tooltip.bottom="error"
->
-  <span v-if="label != null">{{ label }}</span>
+  <label class="number-input" :class="classes" v-tooltip.bottom="error">
+    <span v-if="label != null">{{ label }}</span>
 
-  <input
-    type="number"
-    :value="value"
-    @input="handleChange"
-    @keydown.e.prevent="() => {}"
-  />
+    <input type="number" :value="value" @input="handleChange" @keydown.e.prevent="() => {}">
 
-  <span v-if="suffix" class="suffix">
-    {{ suffix }}
-  </span>
-</label>
+    <span v-if="suffix" class="suffix">{{ suffix }}</span>
+  </label>
 </template>
 
 <script lang="ts">

@@ -1,43 +1,43 @@
 <template>
-<div class="wrapper">
-  <div v-if="open" class="fader" @click="toggleOpen"/>
+  <div class="wrapper">
+    <div v-if="open" class="fader" @click="toggleOpen"/>
 
-  <div class="menu" :class="{ open }" @click="toggleOpen">
-    <div class="item open-settings" @click="openSettings">
-      <icon :icon="settingsSvg"/>
-      <span>Settings</span>
-    </div>
-
-    <a href="https://github.com/beeequeue/yuna/issues/new">
-      <div class="item report-bug">
-        <icon :icon="bugSvg"/>
-        <span>Report bug</span>
+    <div class="menu" :class="{ open }" @click="toggleOpen">
+      <div class="item open-settings" @click="openSettings">
+        <icon :icon="settingsSvg"/>
+        <span>Settings</span>
       </div>
-    </a>
 
-    <a href="https://github.com/beeequeue/yuna">
-      <div class="item github">
-        <icon :icon="githubSvg"/>
-        <span>Source</span>
+      <a href="https://github.com/beeequeue/yuna/issues/new">
+        <div class="item report-bug">
+          <icon :icon="bugSvg"/>
+          <span>Report bug</span>
+        </div>
+      </a>
+
+      <a href="https://github.com/beeequeue/yuna">
+        <div class="item github">
+          <icon :icon="githubSvg"/>
+          <span>Source</span>
+        </div>
+      </a>
+
+      <div class="item clear-cache" @click="clearCache">
+        <icon :icon="clearSvg"/>
+        <span>Clear caches</span>
       </div>
-    </a>
 
-    <div class="item clear-cache" @click="clearCache">
-      <icon :icon="clearSvg"/>
-      <span>Clear caches</span>
-    </div>
+      <div class="item open-about" @click="toggleAboutModal">
+        <icon :icon="infoSvg"/>
+        <span>About</span>
+      </div>
 
-    <div class="item open-about" @click="toggleAboutModal">
-      <icon :icon="infoSvg"/>
-      <span>About</span>
-    </div>
-
-    <div class="item log-out" @click="logOut">
-      <icon :icon="logOutSvg"/>
-      <span>Log out</span>
+      <div class="item log-out" @click="logOut">
+        <icon :icon="logOutSvg"/>
+        <span>Log out</span>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script lang="ts">

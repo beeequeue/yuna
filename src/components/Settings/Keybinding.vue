@@ -1,16 +1,16 @@
 <template>
-<div class="keybinding">
-  <c-button
-    v-for="key in keys"
-    :key="key"
-    :icon="getIconForKey(key)"
-    :title="key === ' ' ? 'Spacebar' : key"
-    :content="getIconForKey(key) ? null : key.toUpperCase()"
-    @click.native="unbindKey({key, action})"
-  />
+  <div class="keybinding">
+    <c-button
+      v-for="key in keys"
+      :key="key"
+      :icon="getIconForKey(key)"
+      :title="key === ' ' ? 'Spacebar' : key"
+      :content="getIconForKey(key) ? null : key.toUpperCase()"
+      @click.native="unbindKey({key, action})"
+    />
 
-  <c-button v-if="keys.length < 2" @click.native="openKeybindModal(action)" :icon="plusSvg"/>
-</div>
+    <c-button v-if="keys.length < 2" @click.native="openKeybindModal(action)" :icon="plusSvg"/>
+  </div>
 </template>
 
 <script lang="ts">

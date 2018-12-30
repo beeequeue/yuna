@@ -1,7 +1,7 @@
 <template functional>
-<div class="group">
-  <slot/>
-</div>
+  <div class="group">
+    <slot/>
+  </div>
 </template>
 
 <style scoped lang="scss">

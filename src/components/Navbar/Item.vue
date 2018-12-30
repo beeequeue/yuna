@@ -1,11 +1,10 @@
 <template>
-<router-link class="item" :to="path">
-  <span class="text">
-    {{text}}
-
-    <span class="underline"/>
-  </span>
-</router-link>
+  <router-link class="item" :to="path">
+    <span class="text">
+      {{text}}
+      <span class="underline"/>
+    </span>
+  </router-link>
 </template>
 
 <script lang="ts">

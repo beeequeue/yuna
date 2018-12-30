@@ -1,38 +1,19 @@
 <template>
-<div class="container">
-  <router-link to="/">
-    <icon class="button" :icon="homeOutlineSvg"/>
-  </router-link>
+  <div class="container">
+    <router-link to="/">
+      <icon class="button" :icon="homeOutlineSvg"/>
+    </router-link>
 
-  <item
-    text="Queue"
-    path="/queue"
-    class="align-right"
-    v-tooltip="getTooltip('queue')"
-  />
+    <item text="Queue" path="/queue" class="align-right" v-tooltip="getTooltip('queue')"/>
 
-  <search />
+    <search/>
 
-  <item
-    text="List"
-    path="/list"
-    class="align-left"
-    v-tooltip="getTooltip('list')"
-  />
+    <item text="List" path="/list" class="align-left" v-tooltip="getTooltip('list')"/>
 
-  <icon
-    class="button align-left"
-    :class="openClass"
-    :icon="menuSvg"
-    @click.native="toggleOpen"
-  />
+    <icon class="button align-left" :class="openClass" :icon="menuSvg" @click.native="toggleOpen"/>
 
-  <settings-dropdown
-    :class="openClass"
-    :open="settingsOpen"
-    :toggleOpen="toggleOpen"
-  />
-</div>
+    <settings-dropdown :class="openClass" :open="settingsOpen" :toggleOpen="toggleOpen"/>
+  </div>
 </template>
 
 <script lang="ts">

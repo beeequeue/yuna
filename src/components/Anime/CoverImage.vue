@@ -1,23 +1,15 @@
 <template>
-<div class="cover-image" :style="{ background: color }">
-  <img :src="src" class="image"/>
+  <div class="cover-image" :style="{ background: color }">
+    <img :src="src" class="image">
 
-  <span
-    v-if="mediaListStatus"
-    class="status"
-    :class="{ [lowercaseStatus]: !!mediaListStatus }"
-  >
-    <icon v-if="statusIcon" :icon="statusIcon"/>
-    {{ statusString }}
+    <span v-if="mediaListStatus" class="status" :class="{ [lowercaseStatus]: !!mediaListStatus }">
+      <icon v-if="statusIcon" :icon="statusIcon"/>
 
-    <icon
-      v-if="repeatedTimes > 0"
-      class="repeat"
-      :icon="repeatSvg"
-    />
-    {{repeatedTimes > 0 ? repeatedTimes : null}}
-  </span>
-</div>
+      {{ statusString }}
+      <icon v-if="repeatedTimes > 0" class="repeat" :icon="repeatSvg"/>
+      {{repeatedTimes > 0 ? repeatedTimes : null}}
+    </span>
+  </div>
 </template>
 
 <script lang="ts">

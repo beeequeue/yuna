@@ -1,21 +1,13 @@
 <template>
-<div class="entry" v-tooltip="entry.anime.title.userPreferred">
-  <router-link :to="`/anime/${entry.anime.id}`">
-    <cover-image
-      :src="entry.anime.coverImage.medium"
-      :color="entry.anime.coverImage.color"
-    />
-  </router-link>
+  <div class="entry" v-tooltip="entry.anime.title.userPreferred">
+    <router-link :to="`/anime/${entry.anime.id}`">
+      <cover-image :src="entry.anime.coverImage.medium" :color="entry.anime.coverImage.color"/>
+    </router-link>
 
-  <div class="info">
-    <actions
-      :mediaListEntry="entry"
-      :anime="entry.anime"
-      :exclude="['editEntry']"
-      small
-    />
+    <div class="info">
+      <actions :mediaListEntry="entry" :anime="entry.anime" :exclude="['editEntry']" small/>
+    </div>
   </div>
-</div>
 </template>
 
 <script lang="ts">

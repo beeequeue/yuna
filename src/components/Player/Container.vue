@@ -1,21 +1,17 @@
 <template>
-<transition name="fade">
-  <div
-    v-if="episode"
-    class="player-container"
-    :class="classFromRoute"
-  >
-    <player
-      key="player"
-      :episode="episode"
-      :nextEpisode="delayedNextEpisode"
-      :playerData="playerData"
-      :shouldAutoPlay="shouldAutoPlay"
-      :getShouldAutoMarkWatched="getShouldAutoMarkWatched"
-      :setProgress="setProgress"
-    />
-  </div>
-</transition>
+  <transition name="fade">
+    <div v-if="episode" class="player-container" :class="classFromRoute">
+      <player
+        key="player"
+        :episode="episode"
+        :nextEpisode="delayedNextEpisode"
+        :playerData="playerData"
+        :shouldAutoPlay="shouldAutoPlay"
+        :getShouldAutoMarkWatched="getShouldAutoMarkWatched"
+        :setProgress="setProgress"
+      />
+    </div>
+  </transition>
 </template>
 
 <script lang="ts">

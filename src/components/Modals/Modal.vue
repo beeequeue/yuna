@@ -1,11 +1,11 @@
 <template>
-<transition>
-  <div v-if="visible" class="modal">
-    <div class="cover" @click="toggleVisible"/>
+  <transition>
+    <div v-if="visible" class="modal">
+      <div class="cover" @click="toggleVisible"/>
 
-    <slot/>
-  </div>
-</transition>
+      <slot/>
+    </div>
+  </transition>
 </template>
 
 <script lang="ts">

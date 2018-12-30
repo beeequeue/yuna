@@ -1,17 +1,9 @@
 <template>
-<div class="center-container">
-  <info
-    :id="id"
-    :idMal="idMal"
-    :rating="rating"
-    :nextAiringEpisode="nextAiringEpisode"
-  />
+  <div class="center-container">
+    <info :id="id" :idMal="idMal" :rating="rating" :nextAiringEpisode="nextAiringEpisode"/>
 
-  <description
-    :content="content"
-    :blur="blurDescription"
-  />
-</div>
+    <description :content="content" :blur="blurDescription"/>
+  </div>
 </template>
 
 <script lang="ts">

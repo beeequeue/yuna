@@ -1,154 +1,166 @@
 <template>
-<div
-  class="controls"
-  :class="{ visible: settingsOpen || visible }"
-  @mousemove="goVisible"
-  @click="goVisible"
-  @mouseout="handleMouseLeave"
->
-  <div class="cover" @click="debounceCoverClick"/>
+  <div
+    class="controls"
+    :class="{ visible: settingsOpen || visible }"
+    @mousemove="goVisible"
+    @click="goVisible"
+    @mouseout="handleMouseLeave"
+  >
+    <div class="cover" @click="debounceCoverClick"/>
 
-  <transition name="fade">
-    <player-title
-      v-if="isPlayerMaximized"
-      :animeName="animeName"
-      :animeId="animeId"
-      :episode="episode"
-      :listEntry="listEntry"
-    />
-  </transition>
-
-  <transition name="fade">
-    <icon
-      class="button close"
-      :icon="closeSvg"
-      @click.native="closePlayer"
-    />
-  </transition>
-
-  <div class="toolbar">
-    <progress-bar
-      :duration="episode.duration"
-      :progressPercentage="progressPercentage"
-      :loadedPercentage="loadedPercentage"
-      :onSetTime="onSetTime"
-    />
-
-    <transition name="shrink">
-      <icon
+    <transition name="fade">
+      <player-title
         v-if="isPlayerMaximized"
-        class="button"
-        :class="{ disabled: episode.index < 1 }"
-        :icon="prevSvg"
-        @click.native="go(-1)"
+        :animeName="animeName"
+        :animeId="animeId"
+        :episode="episode"
+        :listEntry="listEntry"
       />
     </transition>
 
-    <span class="play-pause button-collapser">
-      <transition>
-        <icon v-if="paused" key="play" class="button" :icon="playSvg" @click.native="play"/>
-        <icon v-else class="button" key="pause" :icon="pauseSvg" @click.native="pause"/>
+    <transition name="fade">
+      <icon class="button close" :icon="closeSvg" @click.native="closePlayer"/>
+    </transition>
+
+    <div class="toolbar">
+      <progress-bar
+        :duration="episode.duration"
+        :progressPercentage="progressPercentage"
+        :loadedPercentage="loadedPercentage"
+        :onSetTime="onSetTime"
+      />
+
+      <transition name="shrink">
+        <icon
+          v-if="isPlayerMaximized"
+          class="button"
+          :class="{ disabled: episode.index < 1 }"
+          :icon="prevSvg"
+          @click.native="go(-1)"
+        />
       </transition>
-    </span>
 
-    <transition name="shrink">
-      <icon
-        v-if="isPlayerMaximized"
-        class="button"
-        :class="{ disabled: nextEpisode == null }"
-        :icon="nextSvg"
-        @click.native="go(1)"
-      />
-    </transition>
-
-    <volume-slider
-      :muted="muted"
-      :volume="volume"
-      :onChange="onSetVolume"
-      :onToggleMute="onToggleMute"
-      :open="isPlayerMaximized"
-    />
-
-    <transition name="shrink">
-      <span v-if="isPlayerMaximized" class="time">
-        {{timeString}}
+      <span class="play-pause button-collapser">
+        <transition>
+          <icon v-if="paused" key="play" class="button" :icon="playSvg" @click.native="play"/>
+          <icon v-else class="button" key="pause" :icon="pauseSvg" @click.native="pause"/>
+        </transition>
       </span>
-    </transition>
 
-    <span class="separator"/>
+      <transition name="shrink">
+        <icon
+          v-if="isPlayerMaximized"
+          class="button"
+          :class="{ disabled: nextEpisode == null }"
+          :icon="nextSvg"
+          @click.native="go(1)"
+        />
+      </transition>
 
-    <transition name="shrink">
-      <span v-if="isPlayerMaximized && listEntry" class="completed button-collapser">
+      <volume-slider
+        :muted="muted"
+        :volume="volume"
+        :onChange="onSetVolume"
+        :onToggleMute="onToggleMute"
+        :open="isPlayerMaximized"
+      />
+
+      <transition name="shrink">
+        <span v-if="isPlayerMaximized" class="time">{{timeString}}</span>
+      </transition>
+
+      <span class="separator"/>
+
+      <transition name="shrink">
+        <span v-if="isPlayerMaximized && listEntry" class="completed button-collapser">
+          <transition name="fade">
+            <icon
+              v-if="listEntry.progress < episode.episodeNumber"
+              key="max"
+              class="button"
+              :icon="bookmarkSvg"
+              v-tooltip.top="'Mark as watched'"
+              @click.native="setProgress(episode.episodeNumber)"
+            />
+            <icon
+              v-else
+              class="button"
+              key="min"
+              :icon="bookmarkRemoveSvg"
+              v-tooltip.top="'Unmark as watched'"
+              @click.native="setProgress(Math.max(0, episode.episodeNumber - 1))"
+            />
+          </transition>
+        </span>
+      </transition>
+
+      <transition name="shrink">
+        <span
+          v-if="isPlayerMaximized"
+          class="settings button-collapser"
+          :class="{ open: settingsOpen }"
+        >
+          <icon class="button" :icon="settingSvg" @click.native="toggleSettingsMenu"/>
+        </span>
+      </transition>
+
+      <span v-if="!isFullscreen" class="maximize button-collapser">
         <transition name="fade">
           <icon
-            v-if="listEntry.progress < episode.episodeNumber"
+            v-if="!isPlayerMaximized"
             key="max"
             class="button"
-            :icon="bookmarkSvg"
-            v-tooltip.top="'Mark as watched'"
-            @click.native="setProgress(episode.episodeNumber)"
+            :icon="maximizeSvg"
+            @click.native="maximizePlayer"
+          />
+          <icon v-else class="button" key="min" :icon="minimizeSvg" @click.native="$router.back()"/>
+        </transition>
+      </span>
+
+      <span class="fullscreen button-collapser">
+        <transition name="fade">
+          <icon
+            v-if="!isFullscreen"
+            key="fullscreen"
+            class="button"
+            :icon="fullscreenSvg"
+            @click.native="_toggleFullscreen"
           />
           <icon
             v-else
             class="button"
-            key="min"
-            :icon="bookmarkRemoveSvg"
-            v-tooltip.top="'Unmark as watched'"
-            @click.native="setProgress(Math.max(0, episode.episodeNumber - 1))"
+            key="fullscreenExit"
+            :icon="fullscreenExitSvg"
+            @click.native="_toggleFullscreen"
           />
         </transition>
       </span>
-    </transition>
-
-    <transition name="shrink">
-      <span v-if="isPlayerMaximized" class="settings button-collapser" :class="{ open: settingsOpen }">
-        <icon class="button" :icon="settingSvg" @click.native="toggleSettingsMenu"/>
-      </span>
-    </transition>
-
-    <span v-if="!isFullscreen" class="maximize button-collapser">
-      <transition name="fade">
-        <icon v-if="!isPlayerMaximized" key="max" class="button" :icon="maximizeSvg" @click.native="maximizePlayer"/>
-        <icon v-else class="button" key="min" :icon="minimizeSvg" @click.native="$router.back()"/>
-      </transition>
-    </span>
-
-    <span class="fullscreen button-collapser">
-      <transition name="fade">
-        <icon v-if="!isFullscreen" key="fullscreen" class="button" :icon="fullscreenSvg" @click.native="_toggleFullscreen"/>
-        <icon v-else class="button" key="fullscreenExit" :icon="fullscreenExitSvg" @click.native="_toggleFullscreen"/>
-      </transition>
-    </span>
-  </div>
-
-  <transition>
-    <div v-if="isPlayerMaximized && settingsOpen" class="settings-menu">
-      <label v-if="levels != null">
-        Quality:
-
-        <select @input="handleChangeQuality" :value="quality">
-          <option :value="-1">Auto</option>
-
-          <option v-for="(level, quality) in levels" :key="level" :value="level">
-            {{quality}}p
-          </option>
-        </select>
-      </label>
-
-      <label>
-        Speed:
-
-        <select  @input="onChangeSpeed" :value="speed">
-          <option :value="0.25">0.25x</option>
-          <option :value="0.5">0.5x</option>
-          <option :value="1">1x</option>
-          <option :value="1.5">1.5x</option>
-          <option :value="2">2x</option>
-        </select>
-      </label>
     </div>
-  </transition>
-</div>
+
+    <transition>
+      <div v-if="isPlayerMaximized && settingsOpen" class="settings-menu">
+        <label v-if="levels != null">
+          Quality:
+          <select @input="handleChangeQuality" :value="quality">
+            <option :value="-1">Auto</option>
+
+            <option v-for="(level, quality) in levels" :key="level" :value="level">{{quality}}p</option>
+          </select>
+        </label>
+
+        <label>
+          Speed:
+          <select @input="onChangeSpeed" :value="speed">
+            <option :value="0.25">0.25x</option>
+            <option :value="0.5">0.5x</option>
+            <option :value="1">1x</option>
+            <option :value="1.5">1.5x</option>
+            <option :value="2">2x</option>
+          </select>
+        </label>
+      </div>
+    </transition>
+  </div>
 </template>
 
 <script lang="ts">

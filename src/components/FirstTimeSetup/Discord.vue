@@ -1,25 +1,22 @@
 <template>
-<div class="step login-discord" @keydown.enter="login">
-  <span
-    v-html="discordSvg"
-    class="icon"
-  />
+  <div class="step login-discord" @keydown.enter="login">
+    <span v-html="discordSvg" class="icon"/>
 
-  <checkbox
-    setting="discord-rp"
-    text="Enable Discord Rich Presence"
-    :checked="discordRichPresence"
-    :onChange="toggleRichPresence"
-  />
+    <checkbox
+      setting="discord-rp"
+      text="Enable Discord Rich Presence"
+      :checked="discordRichPresence"
+      :onChange="toggleRichPresence"
+    />
 
-  <img
-    class="rich-presence-preview"
-    :class="{ fade: !discordRichPresence }"
-    :src="richPresenceWebp"
-  />
+    <img
+      class="rich-presence-preview"
+      :class="{ fade: !discordRichPresence }"
+      :src="richPresenceWebp"
+    >
 
-  <c-button content="Next" :click="goToNextStep"/>
-</div>
+    <c-button content="Next" :click="goToNextStep"/>
+  </div>
 </template>
 
 <script lang="ts">

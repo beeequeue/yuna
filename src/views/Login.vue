@@ -38,7 +38,6 @@ import { mdiCheck } from '@mdi/js'
 
 import Icon from '@/components/Icon.vue'
 import CButton from '@/components/CButton.vue'
-import LoginForm from '@/components/LoginForm.vue'
 import LoginCR from '@/components/FirstTimeSetup/LoginCR.vue'
 import LoginAL from '@/components/FirstTimeSetup/LoginAL.vue'
 import { getIsLoggedIn, loginCrunchyroll, logOut } from '@/state/auth'
@@ -49,7 +48,6 @@ import { Page, trackPageView } from '@/lib/tracking'
   components: {
     CButton,
     Icon,
-    LoginForm,
     LoginCR,
     LoginAL,
   },

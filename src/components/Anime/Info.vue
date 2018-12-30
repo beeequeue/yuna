@@ -1,29 +1,23 @@
 <template>
-<div class="info-container">
-  <a class="item" :href="alLink">
-    <span v-html="alLogo" class="logo"/>
+  <div class="info-container">
+    <a class="item" :href="alLink">
+      <span v-html="alLogo" class="logo"/>
 
-    <span v-if="rating" class="rating">
-      {{rating}}%
-    </span>
-  </a>
+      <span v-if="rating" class="rating">{{rating}}%</span>
+    </a>
 
-  <a class="item" :href="malLink">
-    <img class="logo mal" :src="malLogo"/>
+    <a class="item" :href="malLink">
+      <img class="logo mal" :src="malLogo">
 
-    <span v-if="malRating !== 'N/A'" class="rating">
-      {{malRating || '...'}}
-    </span>
-  </a>
+      <span v-if="malRating !== 'N/A'" class="rating">{{malRating || '...'}}</span>
+    </a>
 
-  <div
-    v-if="nextAiringEpisode"
-    class="item next-episode"
-    v-tooltip.top="nextEpisodeDateString"
-  >
-    New episode in {{nextEpisodeDistanceString}}
+    <div
+      v-if="nextAiringEpisode"
+      class="item next-episode"
+      v-tooltip.top="nextEpisodeDateString"
+    >New episode in {{nextEpisodeDistanceString}}</div>
   </div>
-</div>
 </template>
 
 <script lang="ts">

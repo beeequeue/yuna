@@ -1,20 +1,20 @@
 <template>
-<modal :visible="visible" :toggleVisible="toggleVisible">
-  <div class="modal-body about-modal">
-    <h2>Yuna v{{version}}</h2>
+  <modal :visible="visible" :toggleVisible="toggleVisible">
+    <div class="modal-body about-modal">
+      <h2>Yuna v{{version}}</h2>
 
-    <div>Electron: {{electronVersion}}</div>
-    <div>Chrome: {{chromeVersion}}</div>
+      <div>Electron: {{electronVersion}}</div>
+      <div>Chrome: {{chromeVersion}}</div>
 
-    <a href="https://subtlepatterns.com">
-      <div>Subtle Patterns</div>
-    </a>
+      <a href="https://subtlepatterns.com">
+        <div>Subtle Patterns</div>
+      </a>
 
-    <a href="https://github.com/beeequeue/yuna">
-      <div>Source on GitHub</div>
-    </a>
-  </div>
-</modal>
+      <a href="https://github.com/beeequeue/yuna">
+        <div>Source on GitHub</div>
+      </a>
+    </div>
+  </modal>
 </template>
 
 <script lang="ts">

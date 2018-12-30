@@ -1,86 +1,74 @@
 <template>
-<ApolloQuery
-  class="anime"
-  :query="ANIME_PAGE_QUERY"
-  :variables="{ id }"
-  @result="fetchedAnime"
->
-  <template slot-scope="{ result: { loading, error, data } }">
-    <transition-group tag="span">
-      <div
-        v-if="error"
-        key="error"
-        class="error-container slide-down"
-      >
-        <h1>{{ error.graphQLErrors[0].message }}</h1>
+  <ApolloQuery class="anime" :query="ANIME_PAGE_QUERY" :variables="{ id }" @result="fetchedAnime">
+    <template slot-scope="{ result: { loading, error, data } }">
+      <transition-group tag="span">
+        <div v-if="error" key="error" class="error-container slide-down">
+          <h1>{{ error.graphQLErrors[0].message }}</h1>
 
-        <c-button
-          content="Go back"
-          @click.native="$router.back()"
+          <c-button content="Go back" @click.native="$router.back()"/>
+        </div>
+
+        <cover-image
+          v-if="data && data.anime"
+          key="cover-image"
+          class="slide-down"
+          :src="data.anime.coverImage.extraLarge"
+          :color="data.anime.coverImage.color"
+          :mediaListEntry="getMediaListEntry(data)"
+          :length="data.anime.episodes"
         />
-      </div>
 
-      <cover-image
-        v-if="data && data.anime"
-        key="cover-image"
-        class="slide-down"
-        :src="data.anime.coverImage.extraLarge"
-        :color="data.anime.coverImage.color"
-        :mediaListEntry="getMediaListEntry(data)"
-        :length="data.anime.episodes"
-      />
+        <actions
+          v-if="data && data.anime"
+          key="actions"
+          class="slide-up"
+          :anime="data.anime"
+          :mediaListEntry="data.anime.mediaListEntry"
+        />
 
-      <actions
-        v-if="data && data.anime"
-        key="actions"
-        class="slide-up"
-        :anime="data.anime"
-        :mediaListEntry="data.anime.mediaListEntry"
-      />
+        <anime-title
+          v-if="data && data.anime"
+          key="title"
+          class="slide-down"
+          :title="data.anime.title"
+        />
 
-      <anime-title
-        v-if="data && data.anime"
-        key="title"
-        class="slide-down"
-        :title="data.anime.title"
-      />
+        <center-container
+          v-if="data && data.anime"
+          key="center"
+          class="slide-up"
+          :id="data.anime.id"
+          :idMal="data.anime.idMal"
+          :rating="data.anime.averageScore"
+          :content="data.anime.description"
+          :nextAiringEpisode="data.anime.nextAiringEpisode"
+          :blurDescription="getShouldBlurDescription(data)"
+        />
 
-      <center-container
-        v-if="data && data.anime"
-        key="center"
-        class="slide-up"
-        :id="data.anime.id"
-        :idMal="data.anime.idMal"
-        :rating="data.anime.averageScore"
-        :content="data.anime.description"
-        :nextAiringEpisode="data.anime.nextAiringEpisode"
-        :blurDescription="getShouldBlurDescription(data)"
-      />
+        <episodes
+          key="episodes"
+          v-if="data && data.anime && data.anime.idMal"
+          class="slide-up"
+          :id="data.anime.id"
+          :idMal="data.anime.idMal"
+          :listEntry="data.anime.mediaListEntry"
+          :animeName="data.anime.title.userPreferred"
+          :episodesInAnime="data.anime.episodes"
+          :nextAiringEpisode="data.anime.nextAiringEpisode"
+          :sequels="getSequels(data)"
+          showScroller
+          rightPadding
+        />
 
-      <episodes
-        key="episodes"
-        v-if="data && data.anime && data.anime.idMal"
-        class="slide-up"
-        :id="data.anime.id"
-        :idMal="data.anime.idMal"
-        :listEntry="data.anime.mediaListEntry"
-        :animeName="data.anime.title.userPreferred"
-        :episodesInAnime="data.anime.episodes"
-        :nextAiringEpisode="data.anime.nextAiringEpisode"
-        :sequels="getSequels(data)"
-        showScroller
-        rightPadding
-      />
-
-      <relations
-        v-if="data && data.anime"
-        key="relations"
-        class="slide-left"
-        :relations="data.anime.relations"
-      />
-    </transition-group>
-  </template>
-</ApolloQuery>
+        <relations
+          v-if="data && data.anime"
+          key="relations"
+          class="slide-left"
+          :relations="data.anime.relations"
+        />
+      </transition-group>
+    </template>
+  </ApolloQuery>
 </template>
 
 <script lang="ts">

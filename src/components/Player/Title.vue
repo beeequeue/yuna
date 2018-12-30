@@ -1,19 +1,18 @@
 <template>
-<div class="episode-info">
-  <h1 class="episode-number">{{episode.episodeNumber}}</h1>
+  <div class="episode-info">
+    <h1 class="episode-number">{{episode.episodeNumber}}</h1>
 
-  <div class="titles">
-    <h1 class="episode-title" :class="{ blur: listEntry.progress < episode.episodeNumber }">
-      {{episode.title}}
-    </h1>
+    <div class="titles">
+      <h1
+        class="episode-title"
+        :class="{ blur: listEntry.progress < episode.episodeNumber }"
+      >{{episode.title}}</h1>
 
-    <router-link :to="`/anime/${animeId}`">
-      <h3 class="anime-title">
-        {{animeName}}
-      </h3>
-    </router-link>
+      <router-link :to="`/anime/${animeId}`">
+        <h3 class="anime-title">{{animeName}}</h3>
+      </router-link>
+    </div>
   </div>
-</div>
 </template>
 
 <script lang="ts">
