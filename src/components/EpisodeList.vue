@@ -94,7 +94,7 @@ import Icon from './Icon.vue'
 import Loader from './Loader.vue'
 
 @Component({ components: { CButton, Icon, Loader } })
-export default class Episodes extends Vue {
+export default class EpisodeList extends Vue {
   @Prop(prop(Number, true))
   public id!: number
   @Prop(prop(Number, true))

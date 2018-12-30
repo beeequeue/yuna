@@ -67,7 +67,7 @@
               v-if="result.data.anime.idMal && getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
               class="episode-container"
             >
-              <episodes
+              <episode-list
                 :idMal="result.data.anime.idMal"
                 :id="result.data.anime.id"
                 :animeName="result.data.anime.title.userPreferred"
@@ -96,7 +96,7 @@ import AnimeBanner from './AnimeBanner.vue'
 import Icon from './Icon.vue'
 import Loader from './Loader.vue'
 import CButton from './CButton.vue'
-import Episodes from './Episodes.vue'
+import EpisodeList from './EpisodeList.vue'
 import ANIME_QUEUE_QUERY from '../graphql/AnimeQueueQuery.graphql'
 import {
   AnimeQueueQuery,
@@ -111,7 +111,7 @@ import { removeFromQueueById } from '../state/user'
 import { setProgressMutation, setStatusMutation } from '../graphql/mutations'
 
 @Component({
-  components: { AnimeBanner, Loader, Episodes, CButton, Icon },
+  components: { AnimeBanner, Loader, EpisodeList, CButton, Icon },
 })
 export default class QueueItem extends Vue {
   @Prop(prop(Number, true))

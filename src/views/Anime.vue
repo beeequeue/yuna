@@ -45,7 +45,7 @@
           :blurDescription="getShouldBlurDescription(data)"
         />
 
-        <episodes
+        <episode-list
           key="episodes"
           v-if="data && data.anime && data.anime.idMal"
           class="slide-up"
@@ -80,7 +80,7 @@ import AnimeTitle from '../components/Anime/Title.vue'
 import Actions from '../components/Anime/Actions.vue'
 import CenterContainer from '../components/Anime/CenterContainer.vue'
 import Relations from '../components/Anime/Relations.vue'
-import Episodes from '../components/Episodes.vue'
+import EpisodeList from '../components/EpisodeList.vue'
 import CButton from '../components/CButton.vue'
 
 import { MediaRelation } from '@/graphql-types'
@@ -97,7 +97,7 @@ import { trackPageView, Page } from '@/lib/tracking'
 
 @Component({
   components: {
-    Episodes,
+    EpisodeList,
     CenterContainer,
     Relations,
     Actions,
