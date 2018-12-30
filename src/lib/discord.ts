@@ -118,4 +118,10 @@ export const registerDiscord = () => {
   })
 }
 
-export const destroyDiscord = () => discord.destroy()
+export const destroyDiscord = () => {
+  try {
+    discord.destroy()
+  } catch (e) {
+    /* no-op */
+  }
+}
