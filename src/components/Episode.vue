@@ -3,7 +3,7 @@
     <img
       v-if="!empty"
       class="thumbnail"
-      :class="{ blur: blur.title }"
+      :class="{ blur: blur.thumbnail }"
       :src="episode.thumbnail"
       @click="handleThumbnailClick(episode.episodeNumber)"
     >
