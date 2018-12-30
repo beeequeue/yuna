@@ -22,7 +22,7 @@ query ListQuery(
         id
         status
         progress
-        score
+        score(format: POINT_100)
         repeat
         anime: media {
           id

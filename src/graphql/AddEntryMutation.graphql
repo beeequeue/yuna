@@ -3,7 +3,7 @@ mutation AddEntryMutation($mediaId: Int, $status: MediaListStatus) {
     id
     progress
     status
-    score
+    score(format: POINT_100)
     repeat
   }
 }

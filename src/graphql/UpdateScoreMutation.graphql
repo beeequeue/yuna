@@ -1,7 +1,7 @@
 mutation UpdateScoreMutation($id: Int, $score: Int) {
   SaveMediaListEntry(id: $id, scoreRaw: $score) {
     id
-    score
+    score(format: POINT_100)
     progress
     status
     repeat

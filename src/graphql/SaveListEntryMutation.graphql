@@ -13,7 +13,7 @@ mutation SaveListEntryMutation(
     repeat: $repeat
   ) {
     id
-    score
+    score(format: POINT_100)
     progress
     status
     repeat

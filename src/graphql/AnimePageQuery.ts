@@ -34,7 +34,7 @@ export interface AnimePageQuery_anime_coverImage {
    */
   extraLarge: string | null;
   /**
-   * Average RGB color of cover image
+   * Average #hex color of cover image
    */
   color: string | null;
 }

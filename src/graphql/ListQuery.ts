@@ -34,7 +34,7 @@ export interface ListQuery_listCollection_lists_entries_anime_coverImage {
    */
   medium: string | null;
   /**
-   * Average RGB color of cover image
+   * Average #hex color of cover image
    */
   color: string | null;
 }

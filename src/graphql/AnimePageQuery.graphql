@@ -39,7 +39,7 @@ query AnimePageQuery($id: Int) {
       id
       progress
       status
-      score
+      score(format: POINT_100)
       repeat
     }
   }

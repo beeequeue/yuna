@@ -62,7 +62,7 @@ export const setProgressMutation = async (
     update: (_cache, { data }) => {
       if (!data) return
 
-      updatePlaylistListEntry($store, data.SaveMediaListEntry)
+      updatePlaylistListEntry($store, data.SaveMediaListEntry as any)
     },
   })
 
@@ -122,13 +122,7 @@ export const setScoreMutation = async (
     update: (_cache, { data }) => {
       if (!data) return
 
-      updatePlaylistListEntry($store, {
-        id,
-        score,
-        progress: oldValues.progress || 0,
-        repeat: oldValues.repeat || 0,
-        status: oldValues.status || MediaListStatus.CURRENT,
-      } as any)
+      updatePlaylistListEntry($store, data.SaveMediaListEntry as any)
     },
   })
 
