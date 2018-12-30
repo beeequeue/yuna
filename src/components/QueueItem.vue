@@ -92,23 +92,24 @@ import Component from 'vue-class-component'
 import { path, pathOr } from 'rambdax'
 import { mdiPlayCircleOutline, mdiMenu } from '@mdi/js'
 
-import AnimeBanner from './AnimeBanner.vue'
-import Icon from './Icon.vue'
-import Loader from './Loader.vue'
-import CButton from './CButton.vue'
-import EpisodeList from './EpisodeList.vue'
-import ANIME_QUEUE_QUERY from '../graphql/AnimeQueueQuery.graphql'
+import { setProgressMutation, setStatusMutation } from '@/graphql/mutations'
+import ANIME_QUEUE_QUERY from '@/graphql/AnimeQueueQuery.graphql'
 import {
   AnimeQueueQuery,
   AnimeQueueQuery_anime_mediaListEntry,
   AnimeQueueQuery_anime_relations_edges,
   AnimeQueueQuery_anime_relations_edges_node,
-} from '../graphql/AnimeQueueQuery'
-import { sendErrorToast, Sequel } from '../state/app'
-import { humanizeMediaListStatus, prop } from '../utils'
-import { MediaListStatus, MediaRelation } from '../graphql-types'
-import { removeFromQueueById } from '../state/user'
-import { setProgressMutation, setStatusMutation } from '../graphql/mutations'
+} from '@/graphql/AnimeQueueQuery'
+import { sendErrorToast, Sequel } from '@/state/app'
+import { removeFromQueueById } from '@/state/user'
+import { MediaListStatus, MediaRelation } from '@/graphql-types'
+import { humanizeMediaListStatus, prop } from '@/utils'
+
+import AnimeBanner from './AnimeBanner.vue'
+import Icon from './Icon.vue'
+import Loader from './Loader.vue'
+import CButton from './CButton.vue'
+import EpisodeList from './EpisodeList.vue'
 
 @Component({
   components: { AnimeBanner, Loader, EpisodeList, CButton, Icon },

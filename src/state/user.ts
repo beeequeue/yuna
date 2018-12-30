@@ -1,18 +1,26 @@
-import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
-import { equals } from 'rambdax'
+import { propEq, isNil } from 'rambdax'
 
 import { RootState } from '@/state/store'
-import { userStore } from '@/lib/user'
+import { QueueItem, userStore } from '@/lib/user'
 
 export interface UserState {
-  queue: number[]
+  queue: QueueItem[]
 }
-
-type UserContext = ActionContext<UserState, RootState>
 
 const initialState: UserState = {
   queue: userStore.get('queue', []),
+}
+
+// Migration from number[]
+if (
+  initialState.queue.length > 0 &&
+  typeof initialState.queue[0] === 'number'
+) {
+  initialState.queue = initialState.queue.map(id => ({
+    id: id as any,
+    open: true,
+  }))
 }
 
 export const user = {
@@ -24,19 +32,23 @@ export const user = {
     getQueue(state: UserState) {
       return state.queue
     },
+
+    getIsInQueue(state: UserState) {
+      return (id: number) => !isNil(state.queue.find(propEq('id', id)))
+    },
   },
 
   mutations: {
-    setQueue(state: UserState, queue: number[]) {
+    setQueue(state: UserState, queue: QueueItem[]) {
       state.queue = queue
 
       userStore.set('queue', queue)
     },
 
     addToQueue(state: UserState, id: number) {
-      if (state.queue.includes(id)) return
+      if (state.queue.find(propEq('id', id)) != null) return
 
-      state.queue = [...state.queue, id]
+      state.queue = [...state.queue, { id, open: true }]
 
       userStore.set('queue', state.queue)
     },
@@ -48,26 +60,21 @@ export const user = {
     },
 
     removeFromQueueById(state: UserState, id: number) {
-      if (!state.queue.includes(id)) return
+      if (state.queue.find(propEq('id', id)) == null) return
 
-      state.queue.splice(state.queue.findIndex(equals(id)), 1)
+      state.queue.splice(state.queue.findIndex(propEq('id', id)), 1)
 
       userStore.set('queue', state.queue)
     },
   },
 
-  actions: {
-    async updateQueue(_context: UserContext) {
-      // noop
-    },
-  },
+  actions: {},
 }
 
-const { read, commit, dispatch } = getStoreAccessors<UserState, RootState>(
-  'user',
-)
+const { read, commit } = getStoreAccessors<UserState, RootState>('user')
 
 export const getQueue = read(user.getters.getQueue)
+export const getIsInQueue = read(user.getters.getIsInQueue)
 
 export const setQueue = commit(user.mutations.setQueue)
 export const addToQueue = commit(user.mutations.addToQueue)
@@ -75,5 +82,3 @@ export const removeFromQueueByIndex = commit(
   user.mutations.removeFromQueueByIndex,
 )
 export const removeFromQueueById = commit(user.mutations.removeFromQueueById)
-
-export const updateQueue = dispatch(user.actions.updateQueue)

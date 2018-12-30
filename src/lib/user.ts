@@ -9,9 +9,14 @@ interface CachedCRData {
   token: string | null
 }
 
+export interface QueueItem {
+  id: number
+  open: boolean
+}
+
 interface UserStore {
   __version: number
-  queue: number[]
+  queue: QueueItem[]
   crunchyroll: CachedCRData
   anilist: AnilistData
 }

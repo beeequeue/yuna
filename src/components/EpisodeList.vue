@@ -108,7 +108,7 @@ export default class EpisodeList extends Vue {
     episodeContainer: HTMLDivElement
   }
 
-  public get current() {
+  public get currentEpisode() {
     return this.listEntry != null ? this.listEntry.progress + 1 : null
   }
 
@@ -215,9 +215,13 @@ export default class EpisodeList extends Vue {
   public _scrollToCurrentEpisode(instant?: boolean | number) {
     const episodeContainer = this.$refs.episodeContainer
 
-    if (episodeContainer && this.scrollToCurrentEpisode && this.current) {
+    if (
+      episodeContainer &&
+      this.scrollToCurrentEpisode &&
+      this.currentEpisode
+    ) {
       episodeContainer.scroll({
-        left: this.getScrollPositionOfEpisode(this.current),
+        left: this.getScrollPositionOfEpisode(this.currentEpisode),
         behavior: instant === true ? undefined : 'smooth',
       })
     }

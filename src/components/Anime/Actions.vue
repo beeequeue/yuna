@@ -124,7 +124,12 @@ import {
 } from '@mdi/js'
 
 import { getAnilistUserId } from '@/state/auth'
-import { addToQueue, getQueue, removeFromQueueByIndex } from '@/state/user'
+import {
+  addToQueue,
+  getIsInQueue,
+  getQueue,
+  removeFromQueueByIndex,
+} from '@/state/user'
 import {
   sendErrorToast,
   sendNotImplementedToast,
@@ -214,7 +219,7 @@ export default class Actions extends Vue {
   public get isInQueue() {
     if (!this.anime) return false
 
-    return contains(this.anime.id, getQueue(this.$store))
+    return getIsInQueue(this.$store)(this.id)
   }
 
   public get shouldAddToListAsWell() {
