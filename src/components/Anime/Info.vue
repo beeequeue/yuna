@@ -12,28 +12,31 @@
       <span v-if="malRating !== 'N/A'" class="rating">{{malRating || '...'}}</span>
     </a>
 
-    <div
-      v-if="nextAiringEpisode"
-      class="item next-episode"
-      v-tooltip.top="nextEpisodeDateString"
-    >New episode in {{nextEpisodeDistanceString}}</div>
+    <div class="item">
+      <next-episode-info
+        v-if="nextAiringEpisode"
+        :nextAiringEpisode="nextAiringEpisode"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { formatDistance, format } from 'date-fns'
 import { mdiChevronDown } from '@mdi/js'
+
+import NextEpisodeInfo from '@/components/Anime/NextEpisodeInfo.vue'
 
 import malLogo from '@/assets/myanimelist.webp'
 import alLogo from '@/assets/anilist.svg'
 import { AnimePageQuery_anime_nextAiringEpisode } from '@/graphql/AnimePageQuery'
 import { sendErrorToast } from '@/state/app'
 import { AnimeCache } from '@/lib/cache'
+
 import Icon from '../Icon.vue'
 
 @Component({
-  components: { Icon },
+  components: { NextEpisodeInfo, Icon },
 })
 export default class Info extends Vue {
   @Prop(Number) public id!: number | null
@@ -58,21 +61,6 @@ export default class Info extends Vue {
 
   public get malLink() {
     return `https://myanimelist.net/anime/${this.idMal}`
-  }
-
-  public get nextEpisodeDateString() {
-    if (!this.nextAiringEpisode) return null
-
-    return format(
-      this.nextAiringEpisode.airingAt * 1000,
-      'iiii, do MMM - kk:mm',
-    )
-  }
-
-  public get nextEpisodeDistanceString() {
-    if (!this.nextAiringEpisode) return null
-
-    return formatDistance(new Date(), this.nextAiringEpisode.airingAt * 1000)
   }
 
   public mounted() {
@@ -104,17 +92,16 @@ export default class Info extends Vue {
   margin-bottom: 10px;
 
   & > .item {
-    display: inline-block;
-    background: $dark;
     margin-right: 10px;
     border-radius: 5px;
     display: flex;
     justify-content: flex-start;
     align-items: center;
     color: $white;
+    background: $dark;
     text-decoration: none;
 
-    &.next-episode {
+    & > .next-episode-info {
       font-weight: 600;
       padding: 0 10px;
     }

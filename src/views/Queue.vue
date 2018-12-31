@@ -3,7 +3,7 @@
     <div ref="queue" class="queue">
       <draggable v-model="queue" :options="draggableOptions" class="draggable-container">
         <transition-group type="transition" tag="div" class="transition-group">
-          <queue-item v-for="item in queue" :id="item.id" :key="item.id" class="anime"/>
+          <queue-item v-for="item in queue" :item="item" :key="item.id" class="anime"/>
         </transition-group>
       </draggable>
 

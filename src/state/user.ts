@@ -4,6 +4,9 @@ import { propEq, isNil } from 'rambdax'
 import { RootState } from '@/state/store'
 import { QueueItem, userStore } from '@/lib/user'
 
+const isInQueue = (state: UserState, id: number) =>
+  !isNil(state.queue.find(propEq('id', id)))
+
 export interface UserState {
   queue: QueueItem[]
 }
@@ -34,7 +37,7 @@ export const user = {
     },
 
     getIsInQueue(state: UserState) {
-      return (id: number) => !isNil(state.queue.find(propEq('id', id)))
+      return (id: number) => isInQueue(state, id)
     },
   },
 
@@ -46,7 +49,7 @@ export const user = {
     },
 
     addToQueue(state: UserState, id: number) {
-      if (state.queue.find(propEq('id', id)) != null) return
+      if (isInQueue(state, id)) return
 
       state.queue = [...state.queue, { id, open: true }]
 
@@ -60,9 +63,18 @@ export const user = {
     },
 
     removeFromQueueById(state: UserState, id: number) {
-      if (state.queue.find(propEq('id', id)) == null) return
+      if (!isInQueue(state, id)) return
 
       state.queue.splice(state.queue.findIndex(propEq('id', id)), 1)
+
+      userStore.set('queue', state.queue)
+    },
+
+    toggleQueueItemOpen(state: UserState, id: number) {
+      if (!isInQueue(state, id)) return
+
+      const index = state.queue.findIndex(propEq('id', id))
+      state.queue[index].open = !state.queue[index].open
 
       userStore.set('queue', state.queue)
     },
@@ -82,3 +94,4 @@ export const removeFromQueueByIndex = commit(
   user.mutations.removeFromQueueByIndex,
 )
 export const removeFromQueueById = commit(user.mutations.removeFromQueueById)
+export const toggleQueueItemOpen = commit(user.mutations.toggleQueueItemOpen)

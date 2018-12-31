@@ -1,5 +1,5 @@
 <template>
-  <ApolloQuery class="anime" :query="ANIME_QUEUE_QUERY" :variables="{ id }">
+  <ApolloQuery class="anime" :query="ANIME_QUEUE_QUERY" :variables="{ id: item.id }">
     <template slot-scope="{ result }">
       <div v-if="result && result.data" class="container">
         <anime-banner
@@ -13,9 +13,21 @@
 
         <div class="content-container">
           <div>
+            <icon
+              class="collapser"
+              :class="{ flip: !item.open }"
+              :icon="expandSvg"
+              @click.native="toggleItemOpen"
+            />
+
             <span class="state">{{getHumanizedStatus(result.data)}}</span>
 
             <span :style="{width: '100%'}"/>
+
+            <next-episode-info
+              v-if="result.data.anime.nextAiringEpisode"
+              :nextAiringEpisode="result.data.anime.nextAiringEpisode"
+            />
 
             <div class="buttons">
               <c-button
@@ -57,14 +69,18 @@
                 v-if="!getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
                 class="large"
                 content="Remove from Queue"
-                @click.native="removeFromQueue(id)"
+                @click.native="removeFromQueue"
               />
             </div>
           </div>
 
           <transition>
             <div
-              v-if="result.data.anime.idMal && getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+              v-if="
+                result.data.anime.idMal &&
+                getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING) &&
+                item.open
+              "
               class="episode-container"
             >
               <episode-list
@@ -87,10 +103,11 @@
 </template>
 
 <script lang="ts">
+import { format } from 'date-fns'
 import { Prop, Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 import { path, pathOr } from 'rambdax'
-import { mdiPlayCircleOutline, mdiMenu } from '@mdi/js'
+import { mdiPlayCircleOutline, mdiMenu, mdiChevronDown } from '@mdi/js'
 
 import { setProgressMutation, setStatusMutation } from '@/graphql/mutations'
 import ANIME_QUEUE_QUERY from '@/graphql/AnimeQueueQuery.graphql'
@@ -101,10 +118,12 @@ import {
   AnimeQueueQuery_anime_relations_edges_node,
 } from '@/graphql/AnimeQueueQuery'
 import { sendErrorToast, Sequel } from '@/state/app'
-import { removeFromQueueById } from '@/state/user'
+import { removeFromQueueById, toggleQueueItemOpen } from '@/state/user'
+import { QueueItem as IQueueItem } from '@/lib/user'
 import { MediaListStatus, MediaRelation } from '@/graphql-types'
 import { humanizeMediaListStatus, prop } from '@/utils'
 
+import NextEpisodeInfo from './Anime/NextEpisodeInfo.vue'
 import AnimeBanner from './AnimeBanner.vue'
 import Icon from './Icon.vue'
 import Loader from './Loader.vue'
@@ -112,12 +131,20 @@ import CButton from './CButton.vue'
 import EpisodeList from './EpisodeList.vue'
 
 @Component({
-  components: { AnimeBanner, Loader, EpisodeList, CButton, Icon },
+  components: {
+    NextEpisodeInfo,
+    AnimeBanner,
+    Loader,
+    EpisodeList,
+    CButton,
+    Icon,
+  },
 })
 export default class QueueItem extends Vue {
-  @Prop(prop(Number, true))
-  public id!: number
+  @Prop(prop(Object, true))
+  public item!: IQueueItem
 
+  public expandSvg = mdiChevronDown
   public listSvg = mdiMenu
 
   public getHumanizedStatus(data?: AnimeQueueQuery) {
@@ -149,6 +176,18 @@ export default class QueueItem extends Vue {
     return lastEpisode + 1
   }
 
+  public getNextEpisodeDateString(data?: AnimeQueueQuery) {
+    const nextAiringEpisode = pathOr<number | null>(
+      null,
+      ['anime', 'mediaListEntry', 'nextAiringEpisode'],
+      data,
+    )
+
+    if (!nextAiringEpisode) return null
+
+    return format(nextAiringEpisode.airingAt * 1000, 'iiii, do MMM - kk:mm')
+  }
+
   public getSequels(data?: AnimeQueueQuery): Sequel[] {
     if (!data) return []
 
@@ -175,8 +214,12 @@ export default class QueueItem extends Vue {
   public MediaListStatus = MediaListStatus
   public ANIME_QUEUE_QUERY = ANIME_QUEUE_QUERY
 
-  public removeFromQueue(id: number) {
-    removeFromQueueById(this.$store, id)
+  public removeFromQueue() {
+    removeFromQueueById(this.$store, this.item.id)
+  }
+
+  public toggleItemOpen() {
+    toggleQueueItemOpen(this.$store, this.item.id)
   }
 
   public async statusMutation(data: AnimeQueueQuery, status: MediaListStatus) {
@@ -288,11 +331,33 @@ export default class QueueItem extends Vue {
         justify-content: flex-start;
         align-items: center;
 
-        & > .state {
-          margin-bottom: -1px;
-          padding: 0 15px;
+        & > .collapser {
           flex-shrink: 0;
+          height: 32px;
+          width: 45px;
+          fill: $white;
+          padding: 0 10px 0 10px;
+          cursor: pointer;
+
+          & /deep/ svg {
+            transition: transform 0.5s;
+          }
+
+          &.flip /deep/ svg {
+            transform: rotateZ(-180deg);
+          }
+        }
+
+        & > .state {
+          flex-shrink: 0;
+          margin: 0 15px -1px 0;
           font-family: 'Raleway', sans-serif;
+        }
+
+        & > .next-episode-info {
+          flex-shrink: 0;
+          margin-right: 15px;
+          margin-bottom: -1px;
         }
 
         & > .buttons {
