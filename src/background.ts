@@ -7,9 +7,10 @@ import {
   installVueDevtools,
 } from 'vue-cli-plugin-electron-builder/lib'
 
-import { registerDiscord, destroyDiscord } from './lib/discord'
+import { destroyDiscord, registerDiscord } from './lib/discord'
 import { OPEN_DEVTOOLS } from './messages'
 import { initAutoUpdater } from './updater'
+import Store from 'electron-store'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 if (isDevelopment) {
@@ -28,12 +29,19 @@ protocol.registerStandardSchemes(['app'], { secure: true })
 electronDebug({})
 
 function createMainWindow() {
+  const settingsStore = new Store({ name: 'settings' })
+
+  const position = settingsStore.get('window', {})
+
   const window = new BrowserWindow({
     width: 1200,
     height: 755,
+    x: position.x,
+    y: position.y,
     maximizable: false,
     frame: false,
     darkTheme: true,
+    backgroundColor: '#111',
     webPreferences: {
       webSecurity: false,
       allowRunningInsecureContent: false,
@@ -62,6 +70,10 @@ function createMainWindow() {
 
   ipcMain.on(OPEN_DEVTOOLS, () => {
     openDevTools()
+  })
+
+  window.on('close', () => {
+    settingsStore.set('window', mainWindow.getBounds())
   })
 
   window.on('closed', () => {

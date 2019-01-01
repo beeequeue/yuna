@@ -72,6 +72,7 @@ export interface SettingsState {
   keybindings: KeybindingSettings
   spoilers: SpoilerSettings
   setup: SetupSettings
+  window: Electron.Rectangle
 }
 
 const settingsStore = new Store<SettingsState>({ name: 'settings' })
@@ -129,6 +130,7 @@ const initialState: SettingsState = {
   keybindings: settingsStore.get('keybindings', { ...defaultBindings }),
   spoilers: settingsStore.get('spoilers', { ...defaultSpoilers }),
   setup: settingsStore.get('setup', { finishedSteps: [...defaultSteps] }),
+  window: settingsStore.get('window', {}),
 }
 
 settingsStore.set(initialState)
