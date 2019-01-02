@@ -111,7 +111,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { contains, equals, findIndex, pathOr } from 'rambdax'
+import { contains, propEq, findIndex, pathOr } from 'rambdax'
 import {
   mdiPlaylistMinus,
   mdiPlaylistPlay,
@@ -267,7 +267,7 @@ export default class Actions extends Vue {
 
     removeFromQueueByIndex(
       this.$store,
-      findIndex(equals(this.anime.id), getQueue(this.$store)),
+      findIndex(propEq('id', this.anime.id), getQueue(this.$store)),
     )
   }
 

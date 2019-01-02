@@ -59,6 +59,9 @@ import { resolve } from 'path'
 import { complement, path } from 'rambdax'
 import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 
+import CButton from '@/components/CButton.vue'
+import QueueItem from '@/components/QueueItem.vue'
+
 import { addToQueue, getQueue, setQueue } from '@/state/user'
 import { getCurrentEpisode, sendErrorToast, sendToast } from '@/state/app'
 import { pausedQuery, planningQuery, watchingQuery } from '@/graphql/query'
@@ -67,10 +70,8 @@ import {
   WatchingQuery_listCollection_lists,
   WatchingQuery_listCollection_lists_entries,
 } from '@/graphql/WatchingQuery'
-
-import CButton from '../components/CButton.vue'
-import QueueItem from '../components/QueueItem.vue'
 import { Page, trackPageView } from '@/lib/tracking'
+import { QueueItem as IQueueItem } from '@/lib/user'
 
 @Component({ components: { Draggable, CButton, QueueItem } })
 export default class Queue extends Vue {
@@ -103,7 +104,7 @@ export default class Queue extends Vue {
     return getQueue(this.$store)
   }
 
-  public set queue(value: number[]) {
+  public set queue(value: IQueueItem[]) {
     setQueue(this.$store, value)
   }
 
