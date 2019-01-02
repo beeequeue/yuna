@@ -1,6 +1,7 @@
 import superagent from 'superagent'
 import { T } from 'rambdax'
 
+import { getConfig } from '@/config'
 import { getDeviceUuid } from '@/utils'
 
 import { version } from '../../package.json'
@@ -11,7 +12,7 @@ const deviceId = getDeviceUuid()
 
 const constants = {
   v: 1,
-  tid: process.env.VUE_APP_GA_ID as string,
+  tid: getConfig('GA_ID'),
   aip: true,
   cid: deviceId,
   an: 'yuna',
@@ -43,7 +44,7 @@ type Data = typeof constants &
       })
 
 const send = async (data: Data) => {
-  if (process.env.NODE_ENV !== 'production' || !process.env.VUE_APP_GA_ID) {
+  if (process.env.NODE_ENV !== 'production') {
     return
   }
 

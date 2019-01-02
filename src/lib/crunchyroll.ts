@@ -4,6 +4,7 @@ import { anyPass, T, complement } from 'rambdax'
 import superagent from 'superagent/superagent'
 import uuid from 'uuid/v4'
 
+import { getConfig } from '@/config'
 import { userStore } from '@/lib/user'
 import { Episode, Stream } from '@/types'
 import { RequestError, RequestSuccess } from '@/utils'
@@ -15,7 +16,7 @@ const locale = 'enUS'
 // tslint:disable-next-line:variable-name
 const device_type = 'com.crunchyroll.windows.desktop'
 // tslint:disable-next-line:variable-name
-const access_token = process.env.VUE_APP_ACCESS_TOKEN
+const access_token = getConfig('ACCESS_TOKEN')
 
 export interface User {
   class: 'user'

@@ -1,7 +1,8 @@
 import DiscordRPC, { Presence } from 'discord-rpc'
 import { ipcMain } from 'electron'
-import { error, log } from 'electron-log'
+import { debug } from 'electron-log'
 
+import { getConfig } from '../config'
 import {
   DISCORD_DISABLE_RICH_PRESENCE,
   DISCORD_ENABLE_RICH_PRESENCE,
@@ -21,7 +22,7 @@ export enum IMAGE_KEYS {
   LOGO_PADDED = 'logo-padded',
 }
 
-const { VUE_APP_DISCORD_ID } = process.env
+const id = getConfig('DISCORD_ID')
 let discord!: Discord
 
 const generateId = () => Math.round(Math.random() * 100 + 20)
@@ -35,24 +36,18 @@ class Discord {
   private activityId: number = -1
 
   constructor() {
-    if (!VUE_APP_DISCORD_ID) {
-      this.errored = true
-
-      return
-    }
-
     this.discord = new DiscordRPC.Client({ transport: 'ipc' })
 
     this.discord.on('ready', () => {
-      log(
+      debug(
         `[Discord] Finished initializing: ${
           this.errored ? 'Failed' : 'Successful'
         }`,
       )
     })
 
-    this.discord.login({ clientId: VUE_APP_DISCORD_ID }).catch(() => {
-      error('[Discord] Init failed.')
+    this.discord.login({ clientId: id }).catch(() => {
+      debug(`[Discord] Init failed.`)
 
       this.errored = true
     })
@@ -96,7 +91,7 @@ class Discord {
 }
 
 export const registerDiscord = () => {
-  DiscordRPC.register(VUE_APP_DISCORD_ID as string)
+  DiscordRPC.register(id)
 
   discord = new Discord()
 

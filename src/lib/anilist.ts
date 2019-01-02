@@ -4,6 +4,7 @@ import { captureException } from '@sentry/browser'
 import { Store } from 'vuex'
 import request from 'superagent/superagent'
 
+import { getConfig } from '@/config'
 import { AnilistData, setAnilist } from '@/state/auth'
 
 import { userStore } from './user'
@@ -91,9 +92,9 @@ export const loginAnilist = (store: Store<any>) =>
     )
 
     authWindow.loadURL(
-      `https://anilist.co/api/v2/oauth/authorize?client_id=${
-        process.env.VUE_APP_ANILIST_ID
-      }&response_type=token`,
+      `https://anilist.co/api/v2/oauth/authorize?client_id=${getConfig(
+        'ANILIST_ID',
+      )}&response_type=token`,
     )
     authWindow.show()
   })
