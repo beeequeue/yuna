@@ -10,16 +10,25 @@ import {
   DISCORD_SET_WATCHING,
 } from '../messages'
 
+declare module 'discord-rpc' {
+  interface Presence {
+    partySize: number
+    partyMax: number
+  }
+}
+
 interface WatchingOptions {
   animeName: string
   episode: number
   totalEpisodes: number
   progress: number
+  username?: string
 }
 
 export enum IMAGE_KEYS {
   LOGO = 'logo',
   LOGO_PADDED = 'logo-padded',
+  ANILIST = 'anilist',
 }
 
 const id = getConfig('DISCORD_ID')
@@ -66,17 +75,20 @@ class Discord {
     episode,
     totalEpisodes,
     progress,
+    username,
   }: WatchingOptions) {
     const now = Math.round(Date.now() / 1000)
 
     return this.setActivity({
-      details: `Watching ${animeName}`,
-      state: '    ',
+      details: animeName,
+      state: '    ', // The API requires at least three characters, but if this is null it doesn't show player counts.
       partySize: episode,
       partyMax: totalEpisodes,
       startTimestamp: now - progress,
       largeImageKey: IMAGE_KEYS.LOGO,
-    } as any)
+      smallImageKey: IMAGE_KEYS.ANILIST,
+      smallImageText: username ? `${username} on AniList` : undefined,
+    })
   }
 
   public async pauseWatching() {

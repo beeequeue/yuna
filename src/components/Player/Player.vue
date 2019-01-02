@@ -97,6 +97,7 @@ import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
 import NextEpisodeOverlay from './NextEpisodeOverlay.vue'
 import EndOfSeasonOverlay from './EndOfSeasonOverlay.vue'
+import { getAnilistUsername } from '@/state/auth'
 
 interface Level {
   attrs: {
@@ -194,6 +195,10 @@ export default class Player extends Vue {
 
   public get isFullscreen() {
     return getIsFullscreen(this.$store)
+  }
+
+  public get username() {
+    return getAnilistUsername(this.$store)
   }
 
   public mounted() {
@@ -440,6 +445,7 @@ export default class Player extends Vue {
         episode: this.episode.episodeNumber,
         totalEpisodes: this.playerData.anime.episodes,
         progress: this.progressInSeconds,
+        username: this.username,
       },
     )
   }
