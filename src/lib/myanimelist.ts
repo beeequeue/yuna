@@ -79,8 +79,8 @@ export const fetchRating = async (id: string | number) => {
 
   try {
     response = (await request.get(
-      `https://myanimelist.net/anime/${id}`,
-    )) as RequestResponse
+      `https://api.jikan.moe/v3/anime/${id}`,
+    )) as RequestResponse<{ score: string | null }>
   } catch (e) {
     // noop
   }
@@ -89,11 +89,5 @@ export const fetchRating = async (id: string | number) => {
     throw new Error('Could not fetch MAL rating. 😟')
   }
 
-  const match = /<div.*data-title="score".*>\s+?(.*)\s+?<\/div>/gm.exec(
-    response.text,
-  )
-
-  if (!match || !match[1]) throw new Error('Could not find a MAL rating.')
-
-  return match[1].trim()
+  return response.body.score as string | null
 }
