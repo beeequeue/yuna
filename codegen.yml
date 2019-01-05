@@ -18,10 +18,6 @@ generates:
       - add: ' // THIS IS A GENERATED FILE'
       - typescript-common
       - typescript-client
-  src/graphql/client/types.ts:
-    plugins:
-      - add: ' // tslint:disable'
-      - add: ' // THIS IS A GENERATED FILE'
       - fragment-matcher
   ./graphql.schema.json:
     plugins:

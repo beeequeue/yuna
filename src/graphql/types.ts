@@ -673,22 +673,6 @@ export type FuzzyDateInt = any;
     userPreferred: Maybe<string>;
   } 
 
-  export type EpisodesQueryVariables = {
-    id: number;
-  }
-
-  export type EpisodesQueryQuery = {
-    __typename?: "Query";
-    
-    episode: Maybe<EpisodesQueryEpisode[]>;
-  }
-
-  export type EpisodesQueryEpisode = {
-    __typename?: "Episode";
-    
-    id: number;
-  } 
-
   export type DeleteListEntryMutationVariables = {
     id: number;
   }
@@ -852,6 +836,112 @@ export type FuzzyDateInt = any;
     __typename?: "Media";
     
     id: number;
+  } 
+
+  export type PlayerVariables = {
+    id: number;
+  }
+
+  export type PlayerQuery = {
+    __typename?: "Query";
+    
+    anime: Maybe<PlayerAnime>;
+    
+    episodes: Maybe<PlayerEpisodes[]>;
+  }
+
+  export type PlayerAnime = {
+    __typename?: "Media";
+    
+    id: number;
+    
+    title: Maybe<PlayerTitle>;
+    
+    episodes: Maybe<number>;
+    
+    nextAiringEpisode: Maybe<PlayerNextAiringEpisode>;
+    
+    relations: Maybe<PlayerRelations>;
+    
+    mediaListEntry: Maybe<PlayerMediaListEntry>;
+  } 
+
+  export type PlayerTitle = {
+    __typename?: "MediaTitle";
+    
+    userPreferred: Maybe<string>;
+  } 
+
+  export type PlayerNextAiringEpisode = {
+    __typename?: "AiringSchedule";
+    
+    airingAt: number;
+    
+    timeUntilAiring: number;
+  } 
+
+  export type PlayerRelations = {
+    __typename?: "MediaConnection";
+    
+    edges: Maybe<PlayerEdges[]>;
+  } 
+
+  export type PlayerEdges = {
+    __typename?: "MediaEdge";
+    
+    relationType: Maybe<MediaRelation>;
+    
+    node: Maybe<PlayerNode>;
+  } 
+
+  export type PlayerNode = {
+    __typename?: "Media";
+    
+    id: number;
+    
+    title: Maybe<Player_Title>;
+    
+    bannerImage: Maybe<string>;
+  } 
+
+  export type Player_Title = {
+    __typename?: "MediaTitle";
+    
+    userPreferred: Maybe<string>;
+  } 
+
+  export type PlayerMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    status: Maybe<MediaListStatus>;
+    
+    progress: Maybe<number>;
+  } 
+
+  export type PlayerEpisodes = {
+    __typename?: "Episode";
+    
+    id: number;
+    
+    index: number;
+    
+    episodeNumber: number;
+    
+    provider: PlayerProvider;
+  } 
+
+  export type PlayerProvider = {
+    __typename?: "EpisodeProviderMeta";
+    
+    name: Provider;
+    
+    id: number;
+    
+    url: string;
+    
+    animeUrl: string;
   } 
 
   export type SaveListEntryMutationVariables = {
@@ -1041,3 +1131,85 @@ export type FuzzyDateInt = any;
     id: number;
   } 
 
+
+      export interface IntrospectionResultData {
+        __schema: {
+          types: {
+            kind: string;
+            name: string;
+            possibleTypes: {
+              name: string;
+            }[];
+          }[];
+        };
+      }
+
+      const result: IntrospectionResultData = {
+  "__schema": {
+    "types": [
+      {
+        "kind": "UNION",
+        "name": "NotificationUnion",
+        "possibleTypes": [
+          {
+            "name": "AiringNotification"
+          },
+          {
+            "name": "FollowingNotification"
+          },
+          {
+            "name": "ActivityMessageNotification"
+          },
+          {
+            "name": "ActivityMentionNotification"
+          },
+          {
+            "name": "ActivityReplyNotification"
+          },
+          {
+            "name": "ActivityReplySubscribedNotification"
+          },
+          {
+            "name": "ActivityLikeNotification"
+          },
+          {
+            "name": "ActivityReplyLikeNotification"
+          },
+          {
+            "name": "ThreadCommentMentionNotification"
+          },
+          {
+            "name": "ThreadCommentReplyNotification"
+          },
+          {
+            "name": "ThreadCommentSubscribedNotification"
+          },
+          {
+            "name": "ThreadCommentLikeNotification"
+          },
+          {
+            "name": "ThreadLikeNotification"
+          }
+        ]
+      },
+      {
+        "kind": "UNION",
+        "name": "ActivityUnion",
+        "possibleTypes": [
+          {
+            "name": "TextActivity"
+          },
+          {
+            "name": "ListActivity"
+          },
+          {
+            "name": "MessageActivity"
+          }
+        ]
+      }
+    ]
+  }
+};
+
+      export default result;
+    
