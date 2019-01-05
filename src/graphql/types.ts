@@ -496,6 +496,8 @@ export type FuzzyDateInt = any;
     
     averageScore: Maybe<number>;
     
+    scoreMal: Maybe<number>;
+    
     bannerImage: Maybe<string>;
     
     coverImage: Maybe<AnimePageQueryCoverImage>;
@@ -840,6 +842,7 @@ export type FuzzyDateInt = any;
 
   export type PlayerVariables = {
     id: number;
+    malId: number;
   }
 
   export type PlayerQuery = {

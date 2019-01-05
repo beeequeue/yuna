@@ -9,9 +9,9 @@
     <a class="item" :href="malLink">
       <img class="logo mal" :src="malLogo" />
 
-      <span v-if="malRating !== 'N/A'" class="rating">{{
-        malRating || '...'
-      }}</span>
+      <span v-if="ratingMal && ratingMal !== 'N/A'" class="rating">
+        {{ ratingMal }}
+      </span>
     </a>
 
     <div class="item">
@@ -32,8 +32,6 @@ import alLogo from '@/assets/anilist.svg'
 import NextEpisodeInfo from '@/components/Anime/NextEpisodeInfo.vue'
 
 import { AnimePageQueryNextAiringEpisode } from '@/graphql/types'
-import { AnimeCache } from '@/lib/cache'
-import { sendErrorToast } from '@/state/app'
 
 import Icon from '../Icon.vue'
 
@@ -42,16 +40,15 @@ import Icon from '../Icon.vue'
 })
 export default class Info extends Vue {
   @Prop(Number) public id!: number | null
-  @Prop(Number) public rating!: number | null
   @Prop(Number) public idMal!: number | null
+  @Prop(Number) public rating!: number | null
+  @Prop(Number) public ratingMal!: number | null
   @Prop(Object)
   public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
 
   $refs!: {
     content: HTMLElement
   }
-
-  public malRating: string | null = null
 
   public malLogo = malLogo
   public alLogo = alLogo
@@ -63,24 +60,6 @@ export default class Info extends Vue {
 
   public get malLink() {
     return `https://myanimelist.net/anime/${this.idMal}`
-  }
-
-  public mounted() {
-    this.fetchMALRating()
-  }
-
-  public async fetchMALRating() {
-    if (this.malRating || !this.idMal) return
-
-    let rating
-
-    try {
-      rating = await AnimeCache.getMalRating(this.idMal)
-    } catch (e) {
-      return sendErrorToast(this.$store, e)
-    }
-
-    this.malRating = rating
   }
 }
 </script>

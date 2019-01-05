@@ -4,8 +4,11 @@ enum Provider {
 
 type Episode {
   id: Int!
+
+extend type Media {
+  scoreMal: Int
 }
 
 type Query {
-  Episodes(id: Int!, provider: Provider!): [Episode!]
+  Episodes(malId: Int!, provider: Provider!): [Episode!]
 }

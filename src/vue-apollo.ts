@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueApollo from 'vue-apollo'
 import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
 import { userStore } from '@/lib/user'
+import { resolvers } from '@/graphql/client/resolvers'
 
 // Install the vue plugin
 Vue.use(VueApollo)
@@ -43,7 +44,10 @@ const defaultOptions = {
   getAuth: () => userStore.get('anilist.token'),
 
   // Client local data (see apollo-link-state)
-  // clientState: { resolvers: { ... }, defaults: { ... } }
+  clientState: {
+    resolvers,
+    defaults: {},
+  },
 }
 
 // Call this in the Vue app file

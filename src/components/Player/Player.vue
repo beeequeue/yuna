@@ -20,7 +20,7 @@
     </transition>
 
     <transition name="fade">
-      <span v-if="loading" class="loading-spinner">
+      <span v-if="loading || loadingVideo" class="loading-spinner">
         <icon :icon="loadingSvg"/>
       </span>
     </transition>
@@ -31,7 +31,7 @@
       :animeName="playerData.anime.title"
       :animeId="playerData.anime.id"
       :listEntry="playerData.listEntry"
-      :loading="loading"
+      :loading="loading || loadingVideo"
       :paused="paused"
       :isPlayerMaximized="isPlayerMaximized"
       :muted="muted"
@@ -130,6 +130,7 @@ export default class Player extends Vue {
   @Prop(Object) public nextEpisode!: Episode
   @Prop(prop(Object, true))
   public playerData!: PlayerData
+  @Prop(Boolean) public loading!: boolean | null
   @Prop(Boolean) public shouldAutoPlay!: boolean | null
   @Prop(Boolean) public getShouldAutoMarkWatched?: boolean
   @Prop(prop(Function, true))
@@ -143,7 +144,7 @@ export default class Player extends Vue {
   // Gotten to the 'soft end' - e.g. 80% of the way
   public softEnded = false
   public loaded = false
-  public loading = false
+  public loadingVideo = false
   public paused = true
   public muted = localStorage.getItem('muted') === 'true'
   public volume = Number(localStorage.getItem('volume') || 0.7)
@@ -237,7 +238,7 @@ export default class Player extends Vue {
     this.softEnded = false
     this.initiated = !!this.shouldAutoPlay
     this.paused = true
-    this.loading = true
+    this.loadingVideo = true
     this.loaded = false
 
     const hls = new Hls()
@@ -283,11 +284,11 @@ export default class Player extends Vue {
       this.setDiscordState('paused')
     }
     this.$refs.player.oncanplay = () => {
-      this.loading = false
+      this.loadingVideo = false
       this.loaded = true
     }
     this.$refs.player.onwaiting = () => {
-      this.loading = true
+      this.loadingVideo = true
     }
 
     this.$refs.player.onprogress = this.onLoadedProgress

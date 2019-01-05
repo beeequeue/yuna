@@ -4,6 +4,7 @@
       :id="id"
       :idMal="idMal"
       :rating="rating"
+      :ratingMal="ratingMal"
       :nextAiringEpisode="nextAiringEpisode"
     />
 
@@ -27,8 +28,9 @@ export default class CenterContainer extends Vue {
   @Prop(String) public content!: string | null
   @Prop(Boolean) public blurDescription!: boolean | null
   @Prop(Number) public id!: number | null
-  @Prop(Number) public rating!: number | null
   @Prop(Number) public idMal!: number | null
+  @Prop(Number) public rating!: number | null
+  @Prop(Number) public ratingMal!: number | null
   @Prop(Object)
   public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
 }

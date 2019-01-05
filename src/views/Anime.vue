@@ -45,6 +45,7 @@
           :id="data.anime.id"
           :idMal="data.anime.idMal"
           :rating="data.anime.averageScore"
+          :ratingMal="data.anime.scoreMal"
           :content="data.anime.description"
           :nextAiringEpisode="data.anime.nextAiringEpisode"
           :blurDescription="getShouldBlurDescription(data)"

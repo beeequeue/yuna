@@ -13,6 +13,7 @@ query AnimePageQuery($id: Int) {
     episodes
     isFavourite
     averageScore
+    scoreMal @client
     bannerImage
     coverImage {
       extraLarge

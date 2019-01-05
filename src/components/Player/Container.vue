@@ -1,28 +1,40 @@
 <template>
-  <transition>
-    <div v-if="episode" class="player-container" :class="classFromRoute">
-      <player
-        key="player"
-        :episode="episode"
-        :nextEpisode="delayedNextEpisode"
-        :playerData="playerData"
-        :shouldAutoPlay="shouldAutoPlay"
-        :getShouldAutoMarkWatched="getShouldAutoMarkWatched"
-        :setProgress="setProgress"
-      />
-    </div>
-  </transition>
+  <ApolloQuery
+    v-if="id"
+    class="anime"
+    :query="PLAYER_QUERY"
+    :variables="{ id }"
+  >
+    <template slot-scope="{ result: { loading, error, data } }">
+      <transition>
+        <div v-if="episode" class="player-container" :class="classFromRoute">
+          <player
+            key="player"
+            :loading="loading"
+            :episode="episode"
+            :nextEpisode="delayedNextEpisode"
+            :playerData="playerData"
+            :shouldAutoPlay="shouldAutoPlay"
+            :getShouldAutoMarkWatched="getShouldAutoMarkWatched"
+            :setProgress="setProgress"
+          />
+        </div>
+      </transition>
+    </template>
+  </ApolloQuery>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import Player from './Player.vue'
 
+import PLAYER_QUERY from '@/graphql/Player.graphql'
 import { setProgressMutation } from '@/graphql/mutations'
 import { Page, trackPageView } from '@/lib/tracking'
 import { getCurrentEpisode, getNextEpisode, getPlayerData } from '@/state/app'
 import { getShouldAutoMarkWatched, getShouldAutoPlay } from '@/state/settings'
 import { Episode } from '@/types'
+
+import Player from './Player.vue'
 
 @Component({
   components: { Player },
@@ -30,8 +42,16 @@ import { Episode } from '@/types'
 export default class PlayerContainer extends Vue {
   public delayedNextEpisode: Episode | null = null
 
+  public PLAYER_QUERY = PLAYER_QUERY
+
   get playerData() {
     return getPlayerData(this.$store)
+  }
+
+  get id() {
+    if (!this.playerData) return null
+
+    return this.playerData.anime.id
   }
 
   get episode() {
