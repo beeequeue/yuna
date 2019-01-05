@@ -1,5 +1,12 @@
 query EpisodesQuery($id: Int!) {
   episode: Episodes(id: $id, provider: CRUNCHYROLL) @client {
     id
+    index
+    episodeNumber
+    progress
+
+    provider
   }
 }
+
+
