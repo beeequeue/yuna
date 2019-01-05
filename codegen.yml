@@ -1,0 +1,29 @@
+overwrite: true
+schema:
+  - https://graphql.anilist.co
+  - src/graphql/client/client-schema.graphqls
+documents: src/graphql/**/*.graphql
+config:
+  avoidOptionals: true
+  immutableTypes: true
+  noNamespaces: true
+generates:
+  src/graphql.d.ts:
+    plugins:
+      - add: ' // tslint:disable'
+      - add: ' // THIS IS A GENERATED FILE'
+      - typescript-graphql-files-modules
+  src/graphql/types.ts:
+    plugins:
+      - add: ' // tslint:disable'
+      - add: ' // THIS IS A GENERATED FILE'
+      - typescript-common
+      - typescript-client
+  src/graphql/client/types.ts:
+    plugins:
+      - add: ' // tslint:disable'
+      - add: ' // THIS IS A GENERATED FILE'
+      - fragment-matcher
+  ./graphql.schema.json:
+    plugins:
+      - introspection

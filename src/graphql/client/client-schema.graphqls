@@ -1,0 +1,11 @@
+enum Provider {
+  CRUNCHYROLL,
+}
+
+type Episode {
+  id: Int!
+}
+
+type Query {
+  Episodes(id: Int!, provider: Provider!): [Episode!]
+}
