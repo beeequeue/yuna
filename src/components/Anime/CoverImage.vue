@@ -1,13 +1,17 @@
 <template>
   <div class="cover-image" :style="{ background: color }">
-    <img :src="src" class="image">
+    <img :src="src" class="image" />
 
-    <span v-if="mediaListStatus" class="status" :class="{ [lowercaseStatus]: !!mediaListStatus }">
-      <icon v-if="statusIcon" :icon="statusIcon"/>
+    <span
+      v-if="mediaListStatus"
+      class="status"
+      :class="{ [lowercaseStatus]: !!mediaListStatus }"
+    >
+      <icon v-if="statusIcon" :icon="statusIcon" />
 
       {{ statusString }}
-      <icon v-if="repeatedTimes > 0" class="repeat" :icon="repeatSvg"/>
-      {{repeatedTimes > 0 ? repeatedTimes : null}}
+      <icon v-if="repeatedTimes > 0" class="repeat" :icon="repeatSvg" />
+      {{ repeatedTimes > 0 ? repeatedTimes : null }}
     </span>
   </div>
 </template>
@@ -23,10 +27,10 @@ import {
   mdiRepeat,
 } from '@mdi/js'
 
+import { AnimePageQueryMediaListEntry, MediaListStatus } from '@/graphql/types'
+import { humanizeMediaListStatus, prop } from '@/utils'
+
 import Icon from '../Icon.vue'
-import { humanizeMediaListStatus, prop } from '../../utils'
-import { MediaListStatus } from '../../graphql-types'
-import { AnimePageQuery_anime_mediaListEntry } from '../../graphql/AnimePageQuery'
 
 @Component({
   components: { Icon },
@@ -36,7 +40,7 @@ export default class CoverImage extends Vue {
   public src!: string
   @Prop(String) public color!: string | null
   @Prop(prop(Object))
-  public mediaListEntry!: AnimePageQuery_anime_mediaListEntry | null
+  public mediaListEntry!: AnimePageQueryMediaListEntry | null
   @Prop(prop(Number))
   public length!: number | null
 
@@ -60,7 +64,7 @@ export default class CoverImage extends Vue {
     if (!this.mediaListEntry) return 'Not in List'
 
     return humanizeMediaListStatus(
-      this.mediaListEntry as AnimePageQuery_anime_mediaListEntry,
+      this.mediaListEntry as AnimePageQueryMediaListEntry,
       this.length,
     )
   }
@@ -69,17 +73,17 @@ export default class CoverImage extends Vue {
     if (!this.mediaListStatus) return null
 
     switch (this.mediaListStatus) {
-      case MediaListStatus.COMPLETED:
+      case MediaListStatus.Completed:
         return mdiCheckboxMarkedCircleOutline
-      case MediaListStatus.CURRENT:
+      case MediaListStatus.Current:
         return null
-      case MediaListStatus.DROPPED:
+      case MediaListStatus.Dropped:
         return mdiCloseCircleOutline
-      case MediaListStatus.PAUSED:
+      case MediaListStatus.Paused:
         return mdiPauseCircleOutline
-      case MediaListStatus.PLANNING:
+      case MediaListStatus.Planning:
         return mdiClockOutline
-      case MediaListStatus.REPEATING:
+      case MediaListStatus.Repeating:
         return mdiRepeat
     }
   }

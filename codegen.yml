@@ -5,7 +5,6 @@ schema:
 documents: src/graphql/**/*.graphql
 config:
   avoidOptionals: true
-  immutableTypes: true
   noNamespaces: true
 generates:
   src/graphql.d.ts:

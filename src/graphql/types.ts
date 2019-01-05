@@ -5,80 +5,80 @@ export type Maybe<T> = T | null;
 /** Notification option input */
 export interface NotificationOptionInput {
   /** The type of notification */
-  readonly type: Maybe<NotificationType>;
+  type: Maybe<NotificationType>;
   /** Whether this type of notification is enabled */
-  readonly enabled: Maybe<boolean>;
+  enabled: Maybe<boolean>;
 }
 /** A user's list options for anime or manga lists */
 export interface MediaListOptionsInput {
   /** The order each list should be displayed in */
-  readonly sectionOrder: Maybe<ReadonlyArray<string>>;
+  sectionOrder: Maybe<string[]>;
   /** If the completed sections of the list should be separated by format */
-  readonly splitCompletedSectionByFormat: Maybe<boolean>;
+  splitCompletedSectionByFormat: Maybe<boolean>;
   /** The names of the user's custom lists */
-  readonly customLists: Maybe<ReadonlyArray<string>>;
+  customLists: Maybe<string[]>;
   /** The names of the user's advanced scoring sections */
-  readonly advancedScoring: Maybe<ReadonlyArray<string>>;
+  advancedScoring: Maybe<string[]>;
   /** If advanced scoring is enabled */
-  readonly advancedScoringEnabled: Maybe<boolean>;
+  advancedScoringEnabled: Maybe<boolean>;
   /** list theme */
-  readonly theme: Maybe<string>;
+  theme: Maybe<string>;
 }
 /** Date object that allows for incomplete date values (fuzzy) */
 export interface FuzzyDateInput {
   /** Numeric Year (2017) */
-  readonly year: Maybe<number>;
+  year: Maybe<number>;
   /** Numeric Month (3) */
-  readonly month: Maybe<number>;
+  month: Maybe<number>;
   /** Numeric Day (24) */
-  readonly day: Maybe<number>;
+  day: Maybe<number>;
 }
 
 export interface AiringScheduleInput {
   
-  readonly airingAt: Maybe<number>;
+  airingAt: Maybe<number>;
   
-  readonly episode: Maybe<number>;
+  episode: Maybe<number>;
   
-  readonly timeUntilAiring: Maybe<number>;
+  timeUntilAiring: Maybe<number>;
 }
 /** The names of the character */
 export interface CharacterNameInput {
   /** The character's given name */
-  readonly first: Maybe<string>;
+  first: Maybe<string>;
   /** The character's surname */
-  readonly last: Maybe<string>;
+  last: Maybe<string>;
   /** The character's full name in their native language */
-  readonly native: Maybe<string>;
+  native: Maybe<string>;
   /** Other names the character might be referred by */
-  readonly alternative: Maybe<ReadonlyArray<string>>;
+  alternative: Maybe<string[]>;
 }
 /** An external link to another site related to the media */
 export interface MediaExternalLinkInput {
   /** The id of the external link */
-  readonly id: number;
+  id: number;
   /** The url of the external link */
-  readonly url: string;
+  url: string;
   /** The site location of the external link */
-  readonly site: string;
+  site: string;
 }
 /** The official titles of the media in various languages */
 export interface MediaTitleInput {
   /** The romanization of the native language title */
-  readonly romaji: Maybe<string>;
+  romaji: Maybe<string>;
   /** The official english title */
-  readonly english: Maybe<string>;
+  english: Maybe<string>;
   /** Official title in it's native language */
-  readonly native: Maybe<string>;
+  native: Maybe<string>;
 }
 /** The names of the staff member */
 export interface StaffNameInput {
   /** The person's given name */
-  readonly first: Maybe<string>;
+  first: Maybe<string>;
   /** The person's surname */
-  readonly last: Maybe<string>;
+  last: Maybe<string>;
   /** The person's full name in their native language */
-  readonly native: Maybe<string>;
+  native: Maybe<string>;
 }
 /** User sort enums */
 export enum UserSort {
@@ -443,601 +443,601 @@ export type FuzzyDateInt = any;
 
 
   export type AddEntryMutationVariables = {
-    readonly mediaId: Maybe<number>;
-    readonly status: Maybe<MediaListStatus>;
+    mediaId: Maybe<number>;
+    status: Maybe<MediaListStatus>;
   }
 
   export type AddEntryMutationMutation = {
-    readonly __typename?: "Mutation";
+    __typename?: "Mutation";
     
-    readonly SaveMediaListEntry: Maybe<AddEntryMutationSaveMediaListEntry>;
+    SaveMediaListEntry: Maybe<AddEntryMutationSaveMediaListEntry>;
   }
 
   export type AddEntryMutationSaveMediaListEntry = {
-    readonly __typename?: "MediaList";
+    __typename?: "MediaList";
     
-    readonly id: number;
+    id: number;
     
-    readonly progress: Maybe<number>;
+    progress: Maybe<number>;
     
-    readonly status: Maybe<MediaListStatus>;
+    status: Maybe<MediaListStatus>;
     
-    readonly score: Maybe<number>;
+    score: Maybe<number>;
     
-    readonly repeat: Maybe<number>;
+    repeat: Maybe<number>;
   } 
 
   export type AnimePageQueryVariables = {
-    readonly id: Maybe<number>;
+    id: Maybe<number>;
   }
 
   export type AnimePageQueryQuery = {
-    readonly __typename?: "Query";
+    __typename?: "Query";
     
-    readonly anime: Maybe<AnimePageQueryAnime>;
+    anime: Maybe<AnimePageQueryAnime>;
   }
 
   export type AnimePageQueryAnime = {
-    readonly __typename?: "Media";
+    __typename?: "Media";
     
-    readonly id: number;
+    id: number;
     
-    readonly idMal: Maybe<number>;
+    idMal: Maybe<number>;
     
-    readonly title: Maybe<AnimePageQueryTitle>;
+    title: Maybe<AnimePageQueryTitle>;
     
-    readonly description: Maybe<string>;
+    description: Maybe<string>;
     
-    readonly duration: Maybe<number>;
+    duration: Maybe<number>;
     
-    readonly episodes: Maybe<number>;
+    episodes: Maybe<number>;
     
-    readonly isFavourite: boolean;
+    isFavourite: boolean;
     
-    readonly averageScore: Maybe<number>;
+    averageScore: Maybe<number>;
     
-    readonly bannerImage: Maybe<string>;
+    bannerImage: Maybe<string>;
     
-    readonly coverImage: Maybe<AnimePageQueryCoverImage>;
+    coverImage: Maybe<AnimePageQueryCoverImage>;
     
-    readonly nextAiringEpisode: Maybe<AnimePageQueryNextAiringEpisode>;
+    nextAiringEpisode: Maybe<AnimePageQueryNextAiringEpisode>;
     
-    readonly relations: Maybe<AnimePageQueryRelations>;
+    relations: Maybe<AnimePageQueryRelations>;
     
-    readonly mediaListEntry: Maybe<AnimePageQueryMediaListEntry>;
+    mediaListEntry: Maybe<AnimePageQueryMediaListEntry>;
   } 
 
   export type AnimePageQueryTitle = {
-    readonly __typename?: "MediaTitle";
+    __typename?: "MediaTitle";
     
-    readonly english: Maybe<string>;
+    english: Maybe<string>;
     
-    readonly native: Maybe<string>;
+    native: Maybe<string>;
     
-    readonly romaji: Maybe<string>;
+    romaji: Maybe<string>;
     
-    readonly userPreferred: Maybe<string>;
+    userPreferred: Maybe<string>;
   } 
 
   export type AnimePageQueryCoverImage = {
-    readonly __typename?: "MediaCoverImage";
+    __typename?: "MediaCoverImage";
     
-    readonly extraLarge: Maybe<string>;
+    extraLarge: Maybe<string>;
     
-    readonly color: Maybe<string>;
+    color: Maybe<string>;
   } 
 
   export type AnimePageQueryNextAiringEpisode = {
-    readonly __typename?: "AiringSchedule";
+    __typename?: "AiringSchedule";
     
-    readonly airingAt: number;
+    airingAt: number;
     
-    readonly timeUntilAiring: number;
+    timeUntilAiring: number;
   } 
 
   export type AnimePageQueryRelations = {
-    readonly __typename?: "MediaConnection";
+    __typename?: "MediaConnection";
     
-    readonly edges: Maybe<ReadonlyArray<AnimePageQueryEdges>>;
+    edges: Maybe<AnimePageQueryEdges[]>;
   } 
 
   export type AnimePageQueryEdges = {
-    readonly __typename?: "MediaEdge";
+    __typename?: "MediaEdge";
     
-    readonly relationType: Maybe<MediaRelation>;
+    relationType: Maybe<MediaRelation>;
     
-    readonly node: Maybe<AnimePageQueryNode>;
+    node: Maybe<AnimePageQueryNode>;
   } 
 
   export type AnimePageQueryNode = {
-    readonly __typename?: "Media";
+    __typename?: "Media";
     
-    readonly id: number;
+    id: number;
     
-    readonly title: Maybe<AnimePageQuery_Title>;
+    title: Maybe<AnimePageQuery_Title>;
     
-    readonly bannerImage: Maybe<string>;
+    bannerImage: Maybe<string>;
     
-    readonly type: Maybe<MediaType>;
+    type: Maybe<MediaType>;
   } 
 
   export type AnimePageQuery_Title = {
-    readonly __typename?: "MediaTitle";
+    __typename?: "MediaTitle";
     
-    readonly userPreferred: Maybe<string>;
+    userPreferred: Maybe<string>;
   } 
 
   export type AnimePageQueryMediaListEntry = {
-    readonly __typename?: "MediaList";
+    __typename?: "MediaList";
     
-    readonly id: number;
+    id: number;
     
-    readonly progress: Maybe<number>;
+    progress: Maybe<number>;
     
-    readonly status: Maybe<MediaListStatus>;
+    status: Maybe<MediaListStatus>;
     
-    readonly score: Maybe<number>;
+    score: Maybe<number>;
     
-    readonly repeat: Maybe<number>;
+    repeat: Maybe<number>;
   } 
 
   export type AnimeQueueQueryVariables = {
-    readonly id: Maybe<number>;
+    id: Maybe<number>;
   }
 
   export type AnimeQueueQueryQuery = {
-    readonly __typename?: "Query";
+    __typename?: "Query";
     
-    readonly anime: Maybe<AnimeQueueQueryAnime>;
+    anime: Maybe<AnimeQueueQueryAnime>;
   }
 
   export type AnimeQueueQueryAnime = {
-    readonly __typename?: "Media";
+    __typename?: "Media";
     
-    readonly id: number;
+    id: number;
     
-    readonly idMal: Maybe<number>;
+    idMal: Maybe<number>;
     
-    readonly title: Maybe<AnimeQueueQueryTitle>;
+    title: Maybe<AnimeQueueQueryTitle>;
     
-    readonly episodes: Maybe<number>;
+    episodes: Maybe<number>;
     
-    readonly status: Maybe<MediaStatus>;
+    status: Maybe<MediaStatus>;
     
-    readonly siteUrl: Maybe<string>;
+    siteUrl: Maybe<string>;
     
-    readonly bannerImage: Maybe<string>;
+    bannerImage: Maybe<string>;
     
-    readonly nextAiringEpisode: Maybe<AnimeQueueQueryNextAiringEpisode>;
+    nextAiringEpisode: Maybe<AnimeQueueQueryNextAiringEpisode>;
     
-    readonly mediaListEntry: Maybe<AnimeQueueQueryMediaListEntry>;
+    mediaListEntry: Maybe<AnimeQueueQueryMediaListEntry>;
     
-    readonly relations: Maybe<AnimeQueueQueryRelations>;
+    relations: Maybe<AnimeQueueQueryRelations>;
   } 
 
   export type AnimeQueueQueryTitle = {
-    readonly __typename?: "MediaTitle";
+    __typename?: "MediaTitle";
     
-    readonly userPreferred: Maybe<string>;
+    userPreferred: Maybe<string>;
   } 
 
   export type AnimeQueueQueryNextAiringEpisode = {
-    readonly __typename?: "AiringSchedule";
+    __typename?: "AiringSchedule";
     
-    readonly airingAt: number;
+    airingAt: number;
     
-    readonly timeUntilAiring: number;
+    timeUntilAiring: number;
   } 
 
   export type AnimeQueueQueryMediaListEntry = {
-    readonly __typename?: "MediaList";
+    __typename?: "MediaList";
     
-    readonly id: number;
+    id: number;
     
-    readonly progress: Maybe<number>;
+    progress: Maybe<number>;
     
-    readonly status: Maybe<MediaListStatus>;
+    status: Maybe<MediaListStatus>;
     
-    readonly repeat: Maybe<number>;
+    repeat: Maybe<number>;
     
-    readonly score: Maybe<number>;
+    score: Maybe<number>;
   } 
 
   export type AnimeQueueQueryRelations = {
-    readonly __typename?: "MediaConnection";
+    __typename?: "MediaConnection";
     
-    readonly edges: Maybe<ReadonlyArray<AnimeQueueQueryEdges>>;
+    edges: Maybe<AnimeQueueQueryEdges[]>;
   } 
 
   export type AnimeQueueQueryEdges = {
-    readonly __typename?: "MediaEdge";
+    __typename?: "MediaEdge";
     
-    readonly relationType: Maybe<MediaRelation>;
+    relationType: Maybe<MediaRelation>;
     
-    readonly node: Maybe<AnimeQueueQueryNode>;
+    node: Maybe<AnimeQueueQueryNode>;
   } 
 
   export type AnimeQueueQueryNode = {
-    readonly __typename?: "Media";
+    __typename?: "Media";
     
-    readonly id: number;
+    id: number;
     
-    readonly title: Maybe<AnimeQueueQuery_Title>;
+    title: Maybe<AnimeQueueQuery_Title>;
     
-    readonly bannerImage: Maybe<string>;
+    bannerImage: Maybe<string>;
   } 
 
   export type AnimeQueueQuery_Title = {
-    readonly __typename?: "MediaTitle";
+    __typename?: "MediaTitle";
     
-    readonly userPreferred: Maybe<string>;
+    userPreferred: Maybe<string>;
   } 
 
   export type EpisodesQueryVariables = {
-    readonly id: number;
+    id: number;
   }
 
   export type EpisodesQueryQuery = {
-    readonly __typename?: "Query";
+    __typename?: "Query";
     
-    readonly episode: Maybe<ReadonlyArray<EpisodesQueryEpisode>>;
+    episode: Maybe<EpisodesQueryEpisode[]>;
   }
 
   export type EpisodesQueryEpisode = {
-    readonly __typename?: "Episode";
+    __typename?: "Episode";
     
-    readonly id: number;
+    id: number;
   } 
 
   export type DeleteListEntryMutationVariables = {
-    readonly id: number;
+    id: number;
   }
 
   export type DeleteListEntryMutationMutation = {
-    readonly __typename?: "Mutation";
+    __typename?: "Mutation";
     
-    readonly DeleteMediaListEntry: Maybe<DeleteListEntryMutationDeleteMediaListEntry>;
+    DeleteMediaListEntry: Maybe<DeleteListEntryMutationDeleteMediaListEntry>;
   }
 
   export type DeleteListEntryMutationDeleteMediaListEntry = {
-    readonly __typename?: "Deleted";
+    __typename?: "Deleted";
     
-    readonly deleted: Maybe<boolean>;
+    deleted: Maybe<boolean>;
   } 
 
   export type ListQueryVariables = {
-    readonly userId: number;
-    readonly statuses: Maybe<ReadonlyArray<MediaListStatus>>;
+    userId: number;
+    statuses: Maybe<MediaListStatus[]>;
   }
 
   export type ListQueryQuery = {
-    readonly __typename?: "Query";
+    __typename?: "Query";
     
-    readonly listCollection: Maybe<ListQueryListCollection>;
+    listCollection: Maybe<ListQueryListCollection>;
   }
 
   export type ListQueryListCollection = {
-    readonly __typename?: "MediaListCollection";
+    __typename?: "MediaListCollection";
     
-    readonly lists: Maybe<ReadonlyArray<ListQueryLists>>;
+    lists: Maybe<ListQueryLists[]>;
   } 
 
   export type ListQueryLists = {
-    readonly __typename?: "MediaListGroup";
+    __typename?: "MediaListGroup";
     
-    readonly isCustomList: Maybe<boolean>;
+    isCustomList: Maybe<boolean>;
     
-    readonly name: Maybe<string>;
+    name: Maybe<string>;
     
-    readonly entries: Maybe<ReadonlyArray<ListQueryEntries>>;
+    entries: Maybe<ListQueryEntries[]>;
   } 
 
   export type ListQueryEntries = {
-    readonly __typename?: "MediaList";
+    __typename?: "MediaList";
     
-    readonly id: number;
+    id: number;
     
-    readonly status: Maybe<MediaListStatus>;
+    status: Maybe<MediaListStatus>;
     
-    readonly progress: Maybe<number>;
+    progress: Maybe<number>;
     
-    readonly score: Maybe<number>;
+    score: Maybe<number>;
     
-    readonly repeat: Maybe<number>;
+    repeat: Maybe<number>;
     
-    readonly anime: Maybe<ListQueryAnime>;
+    anime: Maybe<ListQueryAnime>;
   } 
 
   export type ListQueryAnime = {
-    readonly __typename?: "Media";
+    __typename?: "Media";
     
-    readonly id: number;
+    id: number;
     
-    readonly title: Maybe<ListQueryTitle>;
+    title: Maybe<ListQueryTitle>;
     
-    readonly coverImage: Maybe<ListQueryCoverImage>;
+    coverImage: Maybe<ListQueryCoverImage>;
     
-    readonly isFavourite: boolean;
+    isFavourite: boolean;
     
-    readonly episodes: Maybe<number>;
+    episodes: Maybe<number>;
   } 
 
   export type ListQueryTitle = {
-    readonly __typename?: "MediaTitle";
+    __typename?: "MediaTitle";
     
-    readonly userPreferred: Maybe<string>;
+    userPreferred: Maybe<string>;
     
-    readonly english: Maybe<string>;
+    english: Maybe<string>;
     
-    readonly romaji: Maybe<string>;
+    romaji: Maybe<string>;
     
-    readonly native: Maybe<string>;
+    native: Maybe<string>;
   } 
 
   export type ListQueryCoverImage = {
-    readonly __typename?: "MediaCoverImage";
+    __typename?: "MediaCoverImage";
     
-    readonly medium: Maybe<string>;
+    medium: Maybe<string>;
     
-    readonly color: Maybe<string>;
+    color: Maybe<string>;
   } 
 
   export type PausedQueryVariables = {
-    readonly userId: number;
+    userId: number;
   }
 
   export type PausedQueryQuery = {
-    readonly __typename?: "Query";
+    __typename?: "Query";
     
-    readonly listCollection: Maybe<PausedQueryListCollection>;
+    listCollection: Maybe<PausedQueryListCollection>;
   }
 
   export type PausedQueryListCollection = {
-    readonly __typename?: "MediaListCollection";
+    __typename?: "MediaListCollection";
     
-    readonly lists: Maybe<ReadonlyArray<PausedQueryLists>>;
+    lists: Maybe<PausedQueryLists[]>;
   } 
 
   export type PausedQueryLists = {
-    readonly __typename?: "MediaListGroup";
+    __typename?: "MediaListGroup";
     
-    readonly isCustomList: Maybe<boolean>;
+    isCustomList: Maybe<boolean>;
     
-    readonly entries: Maybe<ReadonlyArray<PausedQueryEntries>>;
+    entries: Maybe<PausedQueryEntries[]>;
   } 
 
   export type PausedQueryEntries = {
-    readonly __typename?: "MediaList";
+    __typename?: "MediaList";
     
-    readonly info: Maybe<PausedQueryInfo>;
+    info: Maybe<PausedQueryInfo>;
   } 
 
   export type PausedQueryInfo = {
-    readonly __typename?: "Media";
+    __typename?: "Media";
     
-    readonly id: number;
+    id: number;
   } 
 
   export type PlanningQueryVariables = {
-    readonly userId: number;
+    userId: number;
   }
 
   export type PlanningQueryQuery = {
-    readonly __typename?: "Query";
+    __typename?: "Query";
     
-    readonly listCollection: Maybe<PlanningQueryListCollection>;
+    listCollection: Maybe<PlanningQueryListCollection>;
   }
 
   export type PlanningQueryListCollection = {
-    readonly __typename?: "MediaListCollection";
+    __typename?: "MediaListCollection";
     
-    readonly lists: Maybe<ReadonlyArray<PlanningQueryLists>>;
+    lists: Maybe<PlanningQueryLists[]>;
   } 
 
   export type PlanningQueryLists = {
-    readonly __typename?: "MediaListGroup";
+    __typename?: "MediaListGroup";
     
-    readonly isCustomList: Maybe<boolean>;
+    isCustomList: Maybe<boolean>;
     
-    readonly entries: Maybe<ReadonlyArray<PlanningQueryEntries>>;
+    entries: Maybe<PlanningQueryEntries[]>;
   } 
 
   export type PlanningQueryEntries = {
-    readonly __typename?: "MediaList";
+    __typename?: "MediaList";
     
-    readonly info: Maybe<PlanningQueryInfo>;
+    info: Maybe<PlanningQueryInfo>;
   } 
 
   export type PlanningQueryInfo = {
-    readonly __typename?: "Media";
+    __typename?: "Media";
     
-    readonly id: number;
+    id: number;
   } 
 
   export type SaveListEntryMutationVariables = {
-    readonly id: number;
-    readonly progress: number;
-    readonly status: MediaListStatus;
-    readonly repeat: number;
-    readonly score: number;
+    id: number;
+    progress: number;
+    status: MediaListStatus;
+    repeat: number;
+    score: number;
   }
 
   export type SaveListEntryMutationMutation = {
-    readonly __typename?: "Mutation";
+    __typename?: "Mutation";
     
-    readonly SaveMediaListEntry: Maybe<SaveListEntryMutationSaveMediaListEntry>;
+    SaveMediaListEntry: Maybe<SaveListEntryMutationSaveMediaListEntry>;
   }
 
   export type SaveListEntryMutationSaveMediaListEntry = {
-    readonly __typename?: "MediaList";
+    __typename?: "MediaList";
     
-    readonly id: number;
+    id: number;
     
-    readonly score: Maybe<number>;
+    score: Maybe<number>;
     
-    readonly progress: Maybe<number>;
+    progress: Maybe<number>;
     
-    readonly status: Maybe<MediaListStatus>;
+    status: Maybe<MediaListStatus>;
     
-    readonly repeat: Maybe<number>;
+    repeat: Maybe<number>;
   } 
 
   export type SearchQueryVariables = {
-    readonly search: Maybe<string>;
+    search: Maybe<string>;
   }
 
   export type SearchQueryQuery = {
-    readonly __typename?: "Query";
+    __typename?: "Query";
     
-    readonly anime: Maybe<SearchQueryAnime>;
+    anime: Maybe<SearchQueryAnime>;
   }
 
   export type SearchQueryAnime = {
-    readonly __typename?: "Page";
+    __typename?: "Page";
     
-    readonly pageInfo: Maybe<SearchQueryPageInfo>;
+    pageInfo: Maybe<SearchQueryPageInfo>;
     
-    readonly results: Maybe<ReadonlyArray<SearchQueryResults>>;
+    results: Maybe<SearchQueryResults[]>;
   } 
 
   export type SearchQueryPageInfo = {
-    readonly __typename?: "PageInfo";
+    __typename?: "PageInfo";
     
-    readonly total: Maybe<number>;
+    total: Maybe<number>;
   } 
 
   export type SearchQueryResults = {
-    readonly __typename?: "Media";
+    __typename?: "Media";
     
-    readonly id: number;
+    id: number;
     
-    readonly type: Maybe<MediaType>;
+    type: Maybe<MediaType>;
     
-    readonly title: Maybe<SearchQueryTitle>;
+    title: Maybe<SearchQueryTitle>;
     
-    readonly coverImage: Maybe<SearchQueryCoverImage>;
+    coverImage: Maybe<SearchQueryCoverImage>;
     
-    readonly streamingEpisodes: Maybe<ReadonlyArray<SearchQueryStreamingEpisodes>>;
+    streamingEpisodes: Maybe<SearchQueryStreamingEpisodes[]>;
   } 
 
   export type SearchQueryTitle = {
-    readonly __typename?: "MediaTitle";
+    __typename?: "MediaTitle";
     
-    readonly userPreferred: Maybe<string>;
+    userPreferred: Maybe<string>;
   } 
 
   export type SearchQueryCoverImage = {
-    readonly __typename?: "MediaCoverImage";
+    __typename?: "MediaCoverImage";
     
-    readonly medium: Maybe<string>;
+    medium: Maybe<string>;
   } 
 
   export type SearchQueryStreamingEpisodes = {
-    readonly __typename?: "MediaStreamingEpisode";
+    __typename?: "MediaStreamingEpisode";
     
-    readonly site: Maybe<string>;
+    site: Maybe<string>;
   } 
 
   export type SetStatusMutationVariables = {
-    readonly id: Maybe<number>;
-    readonly status: Maybe<MediaListStatus>;
+    id: Maybe<number>;
+    status: Maybe<MediaListStatus>;
   }
 
   export type SetStatusMutationMutation = {
-    readonly __typename?: "Mutation";
+    __typename?: "Mutation";
     
-    readonly SaveMediaListEntry: Maybe<SetStatusMutationSaveMediaListEntry>;
+    SaveMediaListEntry: Maybe<SetStatusMutationSaveMediaListEntry>;
   }
 
   export type SetStatusMutationSaveMediaListEntry = {
-    readonly __typename?: "MediaList";
+    __typename?: "MediaList";
     
-    readonly id: number;
+    id: number;
     
-    readonly status: Maybe<MediaListStatus>;
+    status: Maybe<MediaListStatus>;
   } 
 
   export type UpdateProgressMutationVariables = {
-    readonly id: Maybe<number>;
-    readonly progress: Maybe<number>;
+    id: Maybe<number>;
+    progress: Maybe<number>;
   }
 
   export type UpdateProgressMutationMutation = {
-    readonly __typename?: "Mutation";
+    __typename?: "Mutation";
     
-    readonly SaveMediaListEntry: Maybe<UpdateProgressMutationSaveMediaListEntry>;
+    SaveMediaListEntry: Maybe<UpdateProgressMutationSaveMediaListEntry>;
   }
 
   export type UpdateProgressMutationSaveMediaListEntry = {
-    readonly __typename?: "MediaList";
+    __typename?: "MediaList";
     
-    readonly id: number;
+    id: number;
     
-    readonly progress: Maybe<number>;
+    progress: Maybe<number>;
     
-    readonly status: Maybe<MediaListStatus>;
+    status: Maybe<MediaListStatus>;
     
-    readonly repeat: Maybe<number>;
+    repeat: Maybe<number>;
   } 
 
   export type UpdateScoreMutationVariables = {
-    readonly id: Maybe<number>;
-    readonly score: Maybe<number>;
+    id: Maybe<number>;
+    score: Maybe<number>;
   }
 
   export type UpdateScoreMutationMutation = {
-    readonly __typename?: "Mutation";
+    __typename?: "Mutation";
     
-    readonly SaveMediaListEntry: Maybe<UpdateScoreMutationSaveMediaListEntry>;
+    SaveMediaListEntry: Maybe<UpdateScoreMutationSaveMediaListEntry>;
   }
 
   export type UpdateScoreMutationSaveMediaListEntry = {
-    readonly __typename?: "MediaList";
+    __typename?: "MediaList";
     
-    readonly id: number;
+    id: number;
     
-    readonly score: Maybe<number>;
+    score: Maybe<number>;
     
-    readonly progress: Maybe<number>;
+    progress: Maybe<number>;
     
-    readonly status: Maybe<MediaListStatus>;
+    status: Maybe<MediaListStatus>;
     
-    readonly repeat: Maybe<number>;
+    repeat: Maybe<number>;
   } 
 
   export type WatchingQueryVariables = {
-    readonly userId: number;
+    userId: number;
   }
 
   export type WatchingQueryQuery = {
-    readonly __typename?: "Query";
+    __typename?: "Query";
     
-    readonly listCollection: Maybe<WatchingQueryListCollection>;
+    listCollection: Maybe<WatchingQueryListCollection>;
   }
 
   export type WatchingQueryListCollection = {
-    readonly __typename?: "MediaListCollection";
+    __typename?: "MediaListCollection";
     
-    readonly lists: Maybe<ReadonlyArray<WatchingQueryLists>>;
+    lists: Maybe<WatchingQueryLists[]>;
   } 
 
   export type WatchingQueryLists = {
-    readonly __typename?: "MediaListGroup";
+    __typename?: "MediaListGroup";
     
-    readonly isCustomList: Maybe<boolean>;
+    isCustomList: Maybe<boolean>;
     
-    readonly entries: Maybe<ReadonlyArray<WatchingQueryEntries>>;
+    entries: Maybe<WatchingQueryEntries[]>;
   } 
 
   export type WatchingQueryEntries = {
-    readonly __typename?: "MediaList";
+    __typename?: "MediaList";
     
-    readonly info: Maybe<WatchingQueryInfo>;
+    info: Maybe<WatchingQueryInfo>;
   } 
 
   export type WatchingQueryInfo = {
-    readonly __typename?: "Media";
+    __typename?: "Media";
     
-    readonly id: number;
+    id: number;
   } 
 

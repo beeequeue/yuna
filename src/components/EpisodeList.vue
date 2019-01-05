@@ -1,11 +1,9 @@
 <template>
   <div class="episodes" :data-episodes="episodes ? episodes.length : -1">
-    <div v-if="loading" class="loading">
-      <loader/>Looking for episodes...
-    </div>
+    <div v-if="loading" class="loading"><loader />Looking for episodes...</div>
 
     <div v-if="error" class="error">
-      <c-button :icon="reloadSvg" type="danger" :click="refetchEpisodes"/>
+      <c-button :icon="reloadSvg" type="danger" :click="refetchEpisodes" />
       {{ error }}
     </div>
 
@@ -44,7 +42,7 @@
       placeholder="1"
       @keydown.capture="handleScrollerKeydown"
       @input="handleScrollerChange"
-    >
+    />
   </div>
 </template>
 
@@ -53,6 +51,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { Key } from 'ts-key-enum'
 import { mdiCached } from '@mdi/js'
 
+import { AnimeCache } from '@/lib/cache'
 import {
   getPlaylistAnimeId,
   ListEntry,
@@ -61,8 +60,7 @@ import {
   setCurrentEpisode,
   setPlaylist,
 } from '@/state/app'
-import { AnimePageQuery_anime_nextAiringEpisode } from '@/graphql/AnimePageQuery'
-import { AnimeCache } from '@/lib/cache'
+import { AnimePageQueryNextAiringEpisode } from '@/graphql/types'
 import { Episode as IEpisode } from '@/types'
 import { prop } from '@/utils'
 
@@ -81,7 +79,7 @@ export default class EpisodeList extends Vue {
   public animeName!: string
   @Prop(Number) public episodesInAnime!: number | null
   @Prop(Object)
-  public nextAiringEpisode!: AnimePageQuery_anime_nextAiringEpisode | null
+  public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
   @Prop(prop(Object))
   public listEntry?: ListEntry | null
   @Prop(prop(Array, true))

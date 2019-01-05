@@ -1,23 +1,29 @@
 <template>
   <div class="title">
-    <div class="english" :class="preferredStyle.english" :title="title.english">{{ title.english }}</div>
+    <div class="english" :class="preferredStyle.english" :title="title.english">
+      {{ title.english }}
+    </div>
 
-    <div class="romaji" :class="preferredStyle.romaji" :title="title.romaji">{{ title.romaji }}</div>
+    <div class="romaji" :class="preferredStyle.romaji" :title="title.romaji">
+      {{ title.romaji }}
+    </div>
 
-    <div class="native" :class="preferredStyle.native" :title="title.native">{{ title.native }}</div>
+    <div class="native" :class="preferredStyle.native" :title="title.native">
+      {{ title.native }}
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { prop } from '../../utils'
-import { AnimePageQuery_anime_title } from '../../graphql/AnimePageQuery'
+import { AnimePageQueryTitle } from '@/graphql/types'
+import { prop } from '@/utils'
 
 @Component
 export default class AnimeTitle extends Vue {
   @Prop(prop(Object))
-  public title?: AnimePageQuery_anime_title
+  public title?: AnimePageQueryTitle
 
   public get preferredStyle() {
     if (!this.title) return { english: false, native: false, romaji: false }

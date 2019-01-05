@@ -1,15 +1,23 @@
 <template>
-  <ApolloQuery class="anime" :query="ANIME_QUEUE_QUERY" :variables="{ id: item.id }">
+  <ApolloQuery
+    class="anime"
+    :query="ANIME_QUEUE_QUERY"
+    :variables="{ id: item.id }"
+  >
     <template slot-scope="{ result }">
       <div v-if="result && result.data" class="container">
         <anime-banner
           :anime="result.data.anime"
-          :faded="!getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+          :faded="
+            !getIsStatus(
+              result.data,
+              MediaListStatus.CURRENT,
+              MediaListStatus.REPEATING,
+            )
+          "
         />
 
-        <div class="handle">
-          <icon :icon="listSvg"/>
-        </div>
+        <div class="handle"><icon :icon="listSvg" /></div>
 
         <div class="content-container">
           <div>
@@ -20,9 +28,9 @@
               @click.native="toggleItemOpen"
             />
 
-            <span class="state">{{getHumanizedStatus(result.data)}}</span>
+            <span class="state">{{ getHumanizedStatus(result.data) }}</span>
 
-            <span :style="{width: '100%'}"/>
+            <span :style="{ width: '100%' }" />
 
             <next-episode-info
               v-if="result.data.anime.nextAiringEpisode"
@@ -34,39 +42,73 @@
                 v-if="getIsStatus(result.data, MediaListStatus.PLANNING)"
                 type="success"
                 content="Start"
-                @click.native="statusMutation(result.data, MediaListStatus.CURRENT)"
+                @click.native="
+                  statusMutation(result.data, MediaListStatus.CURRENT)
+                "
               />
 
               <c-button
-                v-if="getIsStatus(result.data, MediaListStatus.PAUSED, MediaListStatus.DROPPED)"
+                v-if="
+                  getIsStatus(
+                    result.data,
+                    MediaListStatus.PAUSED,
+                    MediaListStatus.DROPPED,
+                  )
+                "
                 type="success"
                 content="Resume"
-                @click.native="statusMutation(result.data, MediaListStatus.CURRENT)"
+                @click.native="
+                  statusMutation(result.data, MediaListStatus.CURRENT)
+                "
               />
 
               <c-button
                 v-if="getIsStatus(result.data, MediaListStatus.COMPLETED)"
                 type="success"
                 content="Rewatch"
-                @click.native="statusMutation(result.data, MediaListStatus.REPEATING)"
+                @click.native="
+                  statusMutation(result.data, MediaListStatus.REPEATING)
+                "
               />
 
               <c-button
-                v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+                v-if="
+                  getIsStatus(
+                    result.data,
+                    MediaListStatus.CURRENT,
+                    MediaListStatus.REPEATING,
+                  )
+                "
                 type="warning"
                 content="Pause"
-                @click.native="statusMutation(result.data, MediaListStatus.PAUSED)"
+                @click.native="
+                  statusMutation(result.data, MediaListStatus.PAUSED)
+                "
               />
 
               <c-button
-                v-if="getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+                v-if="
+                  getIsStatus(
+                    result.data,
+                    MediaListStatus.CURRENT,
+                    MediaListStatus.REPEATING,
+                  )
+                "
                 type="danger"
                 content="Drop"
-                @click.native="statusMutation(result.data, MediaListStatus.DROPPED)"
+                @click.native="
+                  statusMutation(result.data, MediaListStatus.DROPPED)
+                "
               />
 
               <c-button
-                v-if="!getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING)"
+                v-if="
+                  !getIsStatus(
+                    result.data,
+                    MediaListStatus.CURRENT,
+                    MediaListStatus.REPEATING,
+                  )
+                "
                 class="large"
                 content="Remove from Queue"
                 @click.native="removeFromQueue"
@@ -78,8 +120,12 @@
             <div
               v-if="
                 result.data.anime.idMal &&
-                getIsStatus(result.data, MediaListStatus.CURRENT, MediaListStatus.REPEATING) &&
-                item.open
+                  getIsStatus(
+                    result.data,
+                    MediaListStatus.CURRENT,
+                    MediaListStatus.REPEATING,
+                  ) &&
+                  item.open
               "
               class="episode-container"
             >
@@ -103,24 +149,24 @@
 </template>
 
 <script lang="ts">
-import { format } from 'date-fns'
 import { Prop, Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 import { path, pathOr } from 'rambdax'
 import { mdiPlayCircleOutline, mdiMenu, mdiChevronDown } from '@mdi/js'
 
-import { setProgressMutation, setStatusMutation } from '@/graphql/mutations'
 import ANIME_QUEUE_QUERY from '@/graphql/AnimeQueueQuery.graphql'
+import { setProgressMutation, setStatusMutation } from '@/graphql/mutations'
 import {
-  AnimeQueueQuery,
-  AnimeQueueQuery_anime_mediaListEntry,
-  AnimeQueueQuery_anime_relations_edges,
-  AnimeQueueQuery_anime_relations_edges_node,
-} from '@/graphql/AnimeQueueQuery'
+  AnimeQueueQueryEdges,
+  AnimeQueueQueryMediaListEntry,
+  AnimeQueueQueryNode,
+  AnimeQueueQueryQuery,
+  MediaListStatus,
+  MediaRelation,
+} from '@/graphql/types'
+import { QueueItem as IQueueItem } from '@/lib/user'
 import { sendErrorToast, Sequel } from '@/state/app'
 import { removeFromQueueById, toggleQueueItemOpen } from '@/state/user'
-import { QueueItem as IQueueItem } from '@/lib/user'
-import { MediaListStatus, MediaRelation } from '@/graphql-types'
 import { humanizeMediaListStatus, prop } from '@/utils'
 
 import NextEpisodeInfo from './Anime/NextEpisodeInfo.vue'
@@ -147,9 +193,9 @@ export default class QueueItem extends Vue {
   public expandSvg = mdiChevronDown
   public listSvg = mdiMenu
 
-  public getHumanizedStatus(data?: AnimeQueueQuery) {
+  public getHumanizedStatus(data?: AnimeQueueQueryQuery) {
     const length = path<number>(['anime', 'episodes'], data)
-    const listEntry = path<AnimeQueueQuery_anime_mediaListEntry>(
+    const listEntry = path<AnimeQueueQueryMediaListEntry>(
       'anime.mediaListEntry',
       data,
     )
@@ -159,55 +205,33 @@ export default class QueueItem extends Vue {
     return humanizeMediaListStatus(listEntry, length)
   }
 
-  public getIsStatus(data?: AnimeQueueQuery, ...statuses: MediaListStatus[]) {
+  public getIsStatus(
+    data?: AnimeQueueQueryQuery,
+    ...statuses: MediaListStatus[]
+  ) {
     return statuses.includes(
       path<MediaListStatus>(['anime', 'mediaListEntry', 'status'], data),
     )
   }
 
-  public getCurrentEpisode(data?: AnimeQueueQuery) {
-    const lastEpisode = path<number>(
-      ['anime', 'mediaListEntry', 'progress'],
-      data,
-    )
-
-    if (!lastEpisode) return null
-
-    return lastEpisode + 1
-  }
-
-  public getNextEpisodeDateString(data?: AnimeQueueQuery) {
-    const nextAiringEpisode = pathOr<number | null>(
-      null,
-      ['anime', 'mediaListEntry', 'nextAiringEpisode'],
-      data,
-    )
-
-    if (!nextAiringEpisode) return null
-
-    return format(nextAiringEpisode.airingAt * 1000, 'iiii, do MMM - kk:mm')
-  }
-
-  public getSequels(data?: AnimeQueueQuery): Sequel[] {
+  public getSequels(data?: AnimeQueueQueryQuery): Sequel[] {
     if (!data) return []
 
-    const edges: AnimeQueueQuery_anime_relations_edges[] = pathOr(
+    const edges: AnimeQueueQueryEdges[] = pathOr(
       [],
       ['anime', 'relations', 'edges'],
       data,
     )
 
     const nodes = edges.filter(
-      node => node.relationType === MediaRelation.SEQUEL,
+      node => node.relationType === MediaRelation.Sequel,
     )
 
-    return nodes
-      .map(edge => edge.node as AnimeQueueQuery_anime_relations_edges_node)
-      .map(node => ({
-        id: node.id as number,
-        title: pathOr('TITLE', ['title', 'userPreferred'], node),
-        bannerImage: node.bannerImage as string,
-      }))
+    return nodes.map(edge => edge.node as AnimeQueueQueryNode).map(node => ({
+      id: node.id as number,
+      title: pathOr('TITLE', ['title', 'userPreferred'], node),
+      bannerImage: node.bannerImage as string,
+    }))
   }
 
   public playSvg = mdiPlayCircleOutline
@@ -222,7 +246,10 @@ export default class QueueItem extends Vue {
     toggleQueueItemOpen(this.$store, this.item.id)
   }
 
-  public async statusMutation(data: AnimeQueueQuery, status: MediaListStatus) {
+  public async statusMutation(
+    data: AnimeQueueQueryQuery,
+    status: MediaListStatus,
+  ) {
     const listEntryId = path<number>('anime.mediaListEntry.id', data)
 
     if (!listEntryId) {
@@ -232,11 +259,11 @@ export default class QueueItem extends Vue {
     await setStatusMutation(this, listEntryId, status)
   }
 
-  public async incrementProgress(data: AnimeQueueQuery, amount: number) {
+  public async incrementProgress(data: AnimeQueueQueryQuery, amount: number) {
     const listEntryId = path<number>('anime.mediaListEntry.id', data)
     const progress = path<number>('anime.mediaListEntry.progress', data) || 0
     const episodes = path<number>('anime.episodes', data)
-    const mediaListEntry = path<AnimeQueueQuery_anime_mediaListEntry>(
+    const mediaListEntry = path<AnimeQueueQueryMediaListEntry>(
       'anime.mediaListEntry',
       data,
     )

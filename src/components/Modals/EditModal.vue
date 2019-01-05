@@ -8,7 +8,7 @@
     >
       <template slot-scope="{ mutate, loading, error }">
         <div class="modal-body edit-modal">
-          <anime-banner :anime="anime"/>
+          <anime-banner :anime="anime" />
 
           <div class="list-entry-fields">
             <dropdown
@@ -48,8 +48,12 @@
             />
 
             <transition name="fade">
-              <div v-if="anime && anime.mediaListEntry == null" class="not-in-list">Not in List
-                <c-button :disabled="loading" content="Add to List"/>
+              <div
+                v-if="anime && anime.mediaListEntry == null"
+                class="not-in-list"
+              >
+                Not in List
+                <c-button :disabled="loading" content="Add to List" />
               </div>
             </transition>
           </div>
@@ -79,21 +83,26 @@
 </template>
 
 <script lang="ts">
+import { ApolloError } from 'apollo-client'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import { ApolloCache } from 'apollo-cache'
 import { change, path, propEq } from 'rambdax'
 import { mdiCloseCircle } from '@mdi/js'
 
+import SAVE_LIST_ENTRY_MUTATION from '@/graphql/SaveListEntryMutation.graphql'
+import ANIME_PAGE_QUERY from '@/graphql/AnimePageQuery.graphql'
+import { deleteListEntryMutation } from '@/graphql/mutations'
+import {
+  AnimePageQueryQuery,
+  AnimePageQueryVariables,
+  MediaListStatus,
+  SaveListEntryMutationMutation,
+} from '@/graphql/types'
 import {
   getEditingAnime,
   EditModalAnime,
   setEditingAnimeValue,
 } from '@/state/app'
-import { MediaListStatus } from '@/graphql-types'
-import SAVE_LIST_ENTRY_MUTATION from '@/graphql/SaveListEntryMutation.graphql'
-import { SaveListEntryMutation } from '@/graphql/SaveListEntryMutation'
-import ANIME_PAGE_QUERY from '@/graphql/AnimePageQuery.graphql'
-import { deleteListEntryMutation } from '@/graphql/mutations'
 import { bigFirstChar, prop, enumToArray } from '@/utils'
 
 import Modal from './Modal.vue'
@@ -102,11 +111,6 @@ import Icon from '../Icon.vue'
 import CButton from '../CButton.vue'
 import NumberInput from '../Form/NumberInput.vue'
 import Dropdown, { DropdownItem } from '../Form/Dropdown.vue'
-import { ApolloError } from 'apollo-client'
-import {
-  AnimePageQuery,
-  AnimePageQueryVariables,
-} from '@/graphql/AnimePageQuery'
 
 @Component({
   components: { Modal, AnimeBanner, Icon, NumberInput, Dropdown, CButton },
@@ -160,10 +164,10 @@ export default class EditModal extends Vue {
 
   public handleUpdate(
     cache: ApolloCache<any>,
-    payload: { data: SaveListEntryMutation },
+    payload: { data: SaveListEntryMutationMutation },
   ) {
     let data =
-      cache.readQuery<AnimePageQuery, AnimePageQueryVariables>({
+      cache.readQuery<AnimePageQueryQuery, AnimePageQueryVariables>({
         query: ANIME_PAGE_QUERY,
         variables: { id: path('id', this.anime) },
       }) || ({} as any)
@@ -202,7 +206,6 @@ export default class EditModal extends Vue {
   }
 }
 </script>
-
 
 <style scoped lang="scss">
 @import '../../colors';

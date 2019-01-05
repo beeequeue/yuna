@@ -1,15 +1,17 @@
 <template>
   <div class="info-container">
     <a class="item" :href="alLink">
-      <span v-html="alLogo" class="logo"/>
+      <span v-html="alLogo" class="logo" />
 
-      <span v-if="rating" class="rating">{{rating}}%</span>
+      <span v-if="rating" class="rating">{{ rating }}%</span>
     </a>
 
     <a class="item" :href="malLink">
-      <img class="logo mal" :src="malLogo">
+      <img class="logo mal" :src="malLogo" />
 
-      <span v-if="malRating !== 'N/A'" class="rating">{{malRating || '...'}}</span>
+      <span v-if="malRating !== 'N/A'" class="rating">{{
+        malRating || '...'
+      }}</span>
     </a>
 
     <div class="item">
@@ -25,13 +27,13 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiChevronDown } from '@mdi/js'
 
-import NextEpisodeInfo from '@/components/Anime/NextEpisodeInfo.vue'
-
 import malLogo from '@/assets/myanimelist.webp'
 import alLogo from '@/assets/anilist.svg'
-import { AnimePageQuery_anime_nextAiringEpisode } from '@/graphql/AnimePageQuery'
-import { sendErrorToast } from '@/state/app'
+import NextEpisodeInfo from '@/components/Anime/NextEpisodeInfo.vue'
+
+import { AnimePageQueryNextAiringEpisode } from '@/graphql/types'
 import { AnimeCache } from '@/lib/cache'
+import { sendErrorToast } from '@/state/app'
 
 import Icon from '../Icon.vue'
 
@@ -43,7 +45,7 @@ export default class Info extends Vue {
   @Prop(Number) public rating!: number | null
   @Prop(Number) public idMal!: number | null
   @Prop(Object)
-  public nextAiringEpisode!: AnimePageQuery_anime_nextAiringEpisode | null
+  public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
 
   $refs!: {
     content: HTMLElement

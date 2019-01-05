@@ -1,26 +1,33 @@
 <template>
   <transition>
     <div class="end-of-season-container" :class="{ small: !isPlayerMaximized }">
-      <h1 class="text">{{endMessage}}</h1>
+      <h1 class="text">{{ endMessage }}</h1>
 
       <h2 v-if="!isFinalEpisode" class="text two-lines">
-        The next episode airs in {{nextEpisodeDistanceString}}
-        <br>
-        {{nextEpisodeDateString}}
+        The next episode airs in {{ nextEpisodeDistanceString }} <br />
+        {{ nextEpisodeDateString }}
       </h2>
 
       <div v-if="isFinalEpisode" class="scores-container">
-        <div v-for="(s, index) in scores" :key="index" class="score" @click="updateScore(s)">
-          <icon v-if="listEntry.score >= s" :icon="starSvg"/>
-          <icon v-else :icon="hollowStarSvg"/>
+        <div
+          v-for="(s, index) in scores"
+          :key="index"
+          class="score"
+          @click="updateScore(s)"
+        >
+          <icon v-if="listEntry.score >= s" :icon="starSvg" />
+          <icon v-else :icon="hollowStarSvg" />
         </div>
       </div>
 
-      <div v-if="isFinalEpisode && sequels && sequels.length > 0" class="sequel-container">
-        <h1 class="text">Sequel{{sequels.length > 1 ? 's' : ''}}:</h1>
+      <div
+        v-if="isFinalEpisode && sequels && sequels.length > 0"
+        class="sequel-container"
+      >
+        <h1 class="text">Sequel{{ sequels.length > 1 ? 's' : '' }}:</h1>
 
         <div v-for="sequel in sequels" :key="sequel.id" class="sequel">
-          <anime-banner class="banner" :anime="sequel"/>
+          <anime-banner class="banner" :anime="sequel" />
         </div>
       </div>
     </div>
@@ -32,9 +39,9 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { format, formatDistance } from 'date-fns'
 import { mdiStar, mdiStarOutline } from '@mdi/js'
 
-import { Sequel, ListEntry } from '@/state/app'
-import { AnimePageQuery_anime_nextAiringEpisode } from '@/graphql/AnimePageQuery'
 import { setScoreMutation } from '@/graphql/mutations'
+import { AnimePageQueryNextAiringEpisode } from '@/graphql/types'
+import { Sequel, ListEntry } from '@/state/app'
 import { prop } from '@/utils'
 
 import AnimeBanner from '../AnimeBanner.vue'
@@ -52,7 +59,7 @@ export default class EndOfSeasonOverlay extends Vue {
   public episodeNumber!: number
   @Prop(Number) public episodesInAnime!: number | null
   @Prop(Object)
-  public nextAiringEpisode!: AnimePageQuery_anime_nextAiringEpisode | null
+  public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
   @Prop(prop(Boolean, true))
   public isPlayerMaximized!: boolean
 

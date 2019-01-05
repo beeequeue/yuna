@@ -36,7 +36,9 @@
             class="us-cr-failed"
             :class="{ visible: settings.useCRUnblocker && !isUsingUSSession }"
           >
-            <div>There seems to have been an issue creating a US session. 😟</div>
+            <div>
+              There seems to have been an issue creating a US session. 😟
+            </div>
 
             <c-button
               :icon="retrySvg"
@@ -75,10 +77,13 @@
       <section class="category" id="spoilers">
         <h1>Spoiler Hiding</h1>
 
-        <h3>Anime Info
+        <h3>
+          Anime Info
           <icon
             :icon="infoSvg"
-            v-tooltip.top="'These spoilers will stop being<br/>hidden after watching one third<br/>of the season\'s episodes.'"
+            v-tooltip.top="
+              'These spoilers will stop being<br/>hidden after watching one third<br/>of the season\'s episodes.'
+            "
           />
         </h3>
 
@@ -89,10 +94,13 @@
           :onChange="checked => setSpoiler('anime.description', checked)"
         />
 
-        <h3>Episode Info
+        <h3>
+          Episode Info
           <icon
             :icon="infoSvg"
-            v-tooltip.top="'These spoilers will stop<br/>being hidden after watching<br/>the episode.'"
+            v-tooltip.top="
+              'These spoilers will stop<br/>being hidden after watching<br/>the episode.'
+            "
           />
         </h3>
 
@@ -129,8 +137,12 @@
         />
 
         <section class="category" id="keybindings">
-          <h3>Keybindings
-            <icon :icon="infoSvg" v-tooltip.right="'Click a binding to remove it.'"/>
+          <h3>
+            Keybindings
+            <icon
+              :icon="infoSvg"
+              v-tooltip.right="'Click a binding to remove it.'"
+            />
           </h3>
 
           <div class="keybinding-container">
@@ -139,7 +151,9 @@
                 v-for="action in keybindingActions"
                 :key="action"
                 class="name"
-              >{{getPrettyActionName(action)}}:</div>
+              >
+                {{ getPrettyActionName(action) }}:
+              </div>
             </div>
 
             <div class="actions">
@@ -174,7 +188,7 @@
         tabindex="0"
         @keydown="bindKey"
       >
-        <span class="backdrop"/>
+        <span class="backdrop" />
 
         <div class="body">
           <div>Press any key...</div>
@@ -192,6 +206,14 @@ import { ipcRenderer } from 'electron'
 import { Key } from 'ts-key-enum'
 import { mdiUndoVariant, mdiInformationOutline, mdiRefresh } from '@mdi/js'
 
+import Keybinding from '@/components/Settings/Keybinding.vue'
+import Group from '@/components/Settings/Group.vue'
+import Checkbox from '@/components/Settings/Checkbox.vue'
+import CButton from '@/components/CButton.vue'
+import Icon from '@/components/Icon.vue'
+
+import { createSession, SessionResponse } from '@/lib/crunchyroll'
+import { Page, trackPageView } from '@/lib/tracking'
 import { getIsUpdateAvailable } from '@/state/app'
 import { setCrunchyrollCountry, getCrunchyrollCountry } from '@/state/auth'
 import {
@@ -205,16 +227,8 @@ import {
   setSpoiler,
   setDiscordRichPresence,
 } from '@/state/settings'
-import { createSession, SessionResponse } from '@/lib/crunchyroll'
-import { Page, trackPageView } from '@/lib/tracking'
 import { DOWNLOAD_UPDATE, OPEN_DEVTOOLS } from '@/messages'
 import { createBothSessions } from '@/utils'
-
-import Keybinding from '../components/Settings/Keybinding.vue'
-import Group from '../components/Settings/Group.vue'
-import Checkbox from '../components/Settings/Checkbox.vue'
-import CButton from '../components/CButton.vue'
-import Icon from '../components/Icon.vue'
 
 @Component({
   components: { CButton, Checkbox, Group, Keybinding, Icon },

@@ -9,15 +9,13 @@
       :value="searchString"
       @input="setSearchString"
       @keydown.esc.capture="$refs.searchbar.blur()"
-    >
+    />
 
-    <transition name="fade">
-      <span v-if="isOpen" class="fader"/>
-    </transition>
+    <transition name="fade"> <span v-if="isOpen" class="fader" /> </transition>
 
     <div class="list" :class="{ open: isOpen }">
       <span v-if="isLoading" key="loader" class="loading-spinner">
-        <icon :icon="loadingSvg"/>
+        <icon :icon="loadingSvg" />
       </span>
 
       <div
@@ -27,18 +25,22 @@
         class="item"
         @mousedown.left="$router.push(`/anime/${result.id}`)"
       >
-        <img class="thumbnail" :src="result.coverImage.medium">
+        <img class="thumbnail" :src="result.coverImage.medium" />
 
         <div class="details">
           <div class="title">{{ result.title.userPreferred }}</div>
 
           <div class="sites">
-            <img v-if="result.isOnCrunchyroll" class="cr" :src="crIcon">
+            <img v-if="result.isOnCrunchyroll" class="cr" :src="crIcon" />
           </div>
         </div>
       </div>
 
-      <icon v-if="!isLoading && results.length < 1" :icon="emptySvg" class="empty"/>
+      <icon
+        v-if="!isLoading && results.length < 1"
+        :icon="emptySvg"
+        class="empty"
+      />
     </div>
   </div>
 </template>
@@ -47,12 +49,17 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiClose, mdiLoading } from '@mdi/js'
 
-import Icon from '../Icon.vue'
-import SEARCH_QUERY from '../../graphql/SearchQuery.graphql'
-import { SearchQuery, SearchQuery_anime_results } from '@/graphql/SearchQuery'
-import crIcon from '../../assets/crunchyroll.webp'
+import crIcon from '@/assets/crunchyroll.webp'
 
-interface Result extends SearchQuery_anime_results {
+import SEARCH_QUERY from '@/graphql/SearchQuery.graphql'
+import {
+  SearchQueryQuery,
+  SearchQueryResults,
+  SearchQueryVariables,
+} from '@/graphql/types'
+import Icon from '../Icon.vue'
+
+interface Result extends SearchQueryResults {
   isOnCrunchyroll: boolean
 }
 
@@ -61,7 +68,7 @@ interface Result extends SearchQuery_anime_results {
   apollo: {
     search: {
       query: SEARCH_QUERY,
-      variables() {
+      variables(): SearchQueryVariables {
         return {
           search: this.searchString,
         }
@@ -114,11 +121,11 @@ export default class Search extends Vue {
     }
   }
 
-  public async handleResults(result: SearchQuery) {
+  public async handleResults(result: SearchQueryQuery) {
     if (!result.anime || !result.anime.results) return
 
     this.results = result.anime.results
-      .filter((r): r is SearchQuery_anime_results => r != null)
+      .filter((r): r is SearchQueryResults => r != null)
       .map(result => {
         return {
           ...result,

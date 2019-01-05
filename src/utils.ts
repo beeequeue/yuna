@@ -1,4 +1,6 @@
 import { error } from 'electron-log'
+import { api } from 'electron-util'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { path } from 'rambdax'
 import { Response } from 'superagent'
 import { Prop as IProp, PropOptions } from 'vue/types/options'
@@ -6,14 +8,12 @@ import { ActionContext, Store } from 'vuex'
 import uuid from 'uuid/v4'
 import { resolve } from 'path'
 
-import { MediaListStatus } from '@/graphql-types'
+import { MediaListStatus } from '@/graphql/types'
 import {
   createSession,
   createUnblockedSession,
   SessionResponse,
 } from '@/lib/crunchyroll'
-import { existsSync, readFileSync, writeFileSync } from 'fs'
-import { api } from 'electron-util'
 import { getSettings } from '@/state/settings'
 
 export interface RequestSuccess<B extends object> extends Response {
@@ -63,17 +63,17 @@ export const humanizeMediaListStatus = (
   const lengthString = episodes || '?'
 
   switch (entry.status) {
-    case MediaListStatus.COMPLETED:
+    case MediaListStatus.Completed:
       return 'Completed'
-    case MediaListStatus.CURRENT:
+    case MediaListStatus.Current:
       return `Watching ${entry.progress || 0}/${lengthString}`
-    case MediaListStatus.DROPPED:
+    case MediaListStatus.Dropped:
       return `Dropped ${entry.progress || 0}/${lengthString}`
-    case MediaListStatus.PAUSED:
+    case MediaListStatus.Paused:
       return `Paused ${entry.progress || 0}/${lengthString}`
-    case MediaListStatus.PLANNING:
+    case MediaListStatus.Planning:
       return 'Planning'
-    case MediaListStatus.REPEATING:
+    case MediaListStatus.Repeating:
       return `Repeating ${entry.progress || 0}/${lengthString}`
     default:
       throw new Error(`Tried to humanize an unknown status: ${entry.status}`)
@@ -102,11 +102,6 @@ export const createBothSessions = async (
 
   return data
 }
-
-export const finishedSetupFilePath = resolve(
-  api.app.getPath('userData'),
-  '.has-setup',
-)
 
 export const deviceUuidFilePath = resolve(
   api.app.getPath('userData'),

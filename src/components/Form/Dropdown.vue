@@ -3,7 +3,9 @@
     <span>{{ label }}</span>
 
     <select :value="value" @input="handleChange">
-      <option v-for="item in items" :key="item.value" :value="item.value">{{ item.label }}</option>
+      <option v-for="item in items" :key="item.value" :value="item.value">
+        {{ item.label }}
+      </option>
     </select>
   </label>
 </template>
@@ -11,7 +13,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { MediaListStatus } from '@/graphql-types'
+import { MediaListStatus } from '@/graphql/types'
 import { prop } from '@/utils'
 
 export interface DropdownItem {

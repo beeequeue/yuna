@@ -7,7 +7,7 @@ import {
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
 
-import { MediaListStatus } from '@/graphql-types'
+import { MediaListStatus } from '@/graphql/types'
 import { router } from '@/router'
 import { RootState } from '@/state/store'
 import { Episode } from '@/types'

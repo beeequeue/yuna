@@ -44,19 +44,19 @@ import { Component, Vue } from 'vue-property-decorator'
 import Fuse from 'fuse.js'
 import { debounce, path } from 'rambdax'
 
-import LIST_QUERY from '@/graphql/ListQuery.graphql'
-import {
-  ListQuery,
-  ListQuery_listCollection_lists,
-  ListQuery_listCollection_lists_entries,
-} from '@/graphql/ListQuery'
-import { Page, trackPageView } from '@/lib/tracking'
-import { getAnilistUserId } from '@/state/auth'
-
 import anilistLogoSvg from '@/assets/anilist.svg'
 import ListEntry from '@/components/ListEntry.vue'
 import TextInput from '@/components/Form/TextInput.vue'
 import NumberInput from '@/components/Form/NumberInput.vue'
+
+import LIST_QUERY from '@/graphql/ListQuery.graphql'
+import {
+  ListQueryQuery,
+  ListQueryLists,
+  ListQueryEntries,
+} from '@/graphql/types'
+import { Page, trackPageView } from '@/lib/tracking'
+import { getAnilistUserId } from '@/state/auth'
 
 @Component({ components: { ListEntry, TextInput, NumberInput } })
 export default class List extends Vue {
@@ -74,40 +74,31 @@ export default class List extends Vue {
     trackPageView(Page.LIST)
   }
 
-  public getLists(data: ListQuery) {
-    const lists = path<ListQuery_listCollection_lists[]>(
-      'listCollection.lists',
-      data,
-    )
+  public getLists(data: ListQueryQuery) {
+    const lists = path<ListQueryLists[]>('listCollection.lists', data)
 
     if (!lists) return []
 
     if (this.filterString.length < 1) {
       return lists.map(list => ({
         ...list,
-        entries: (list.entries as ListQuery_listCollection_lists_entries[]).slice(
-          0,
-          this.limit,
-        ),
+        entries: (list.entries as ListQueryEntries[]).slice(0, this.limit),
       }))
     }
 
     const filteredLists = lists.map(list => {
       if (!list.entries) return
 
-      const fuse = new Fuse<ListQuery_listCollection_lists_entries>(
-        list.entries as any,
-        {
-          caseSensitive: false,
-          shouldSort: true,
-          keys: [
-            'anime.title.userPreferred',
-            'anime.title.english',
-            'anime.title.romaji',
-          ] as any,
-          threshold: 0.35,
-        },
-      )
+      const fuse = new Fuse<ListQueryEntries>(list.entries as any, {
+        caseSensitive: false,
+        shouldSort: true,
+        keys: [
+          'anime.title.userPreferred',
+          'anime.title.english',
+          'anime.title.romaji',
+        ] as any,
+        threshold: 0.35,
+      })
 
       return {
         ...list,

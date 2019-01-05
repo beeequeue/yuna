@@ -2,7 +2,14 @@
   <transition name="fade">
     <transition-group tag="div" class="actions" :class="{ small }">
       <c-button
-        v-if="isNotExcluded(ActionKeys.ADD) && !isOnList || (!isPlanning && !isWatching && !isCompleted && !isDropped && !isPaused)"
+        v-if="
+          (isNotExcluded(ActionKeys.ADD) && !isOnList) ||
+            (!isPlanning &&
+              !isWatching &&
+              !isCompleted &&
+              !isDropped &&
+              !isPaused)
+        "
         :key="ActionKeys.ADD"
         :icon="addToListSvg"
         :content="ifBig('Set as Planning')"
@@ -21,7 +28,7 @@
       />
 
       <c-button
-        v-if="isDropped || isPaused && isNotExcluded(ActionKeys.RESUME)"
+        v-if="isDropped || (isPaused && isNotExcluded(ActionKeys.RESUME))"
         :key="ActionKeys.RESUME"
         :icon="setToRepeatSvg"
         type="success"
@@ -30,7 +37,11 @@
         :click="() => statusMutation(MediaListStatus.CURRENT)"
       />
 
-      <div v-if="isWatching && ifBig(true)" class="multi-button" key="isWatching">
+      <div
+        v-if="isWatching && ifBig(true)"
+        class="multi-button"
+        key="isWatching"
+      >
         <c-button
           v-if="isNotExcluded(ActionKeys.PAUSE)"
           :icon="pauseSvg"
@@ -123,6 +134,12 @@ import {
   mdiPencil,
 } from '@mdi/js'
 
+import { addEntryMutation, setStatusMutation } from '@/graphql/mutations'
+import {
+  AnimePageQueryMediaListEntry,
+  AnimePageQueryAnime,
+} from '@/graphql/types'
+import { MediaListStatus } from '@/graphql/types'
 import { getAnilistUserId } from '@/state/auth'
 import {
   addToQueue,
@@ -135,15 +152,9 @@ import {
   sendNotImplementedToast,
   initEditModal,
 } from '@/state/app'
-import {
-  AnimePageQuery_anime_mediaListEntry,
-  AnimePageQuery_anime,
-} from '@/graphql/AnimePageQuery'
-import { addEntryMutation, setStatusMutation } from '@/graphql/mutations'
-import { MediaListStatus } from '@/graphql-types'
+import { getSettings } from '@/state/settings'
 
 import CButton from '../CButton.vue'
-import { getSettings } from '@/state/settings'
 
 export enum ActionKeys {
   ADD = 'addEntry',
@@ -161,9 +172,8 @@ export enum ActionKeys {
   components: { CButton },
 })
 export default class Actions extends Vue {
-  @Prop(Object)
-  public mediaListEntry!: AnimePageQuery_anime_mediaListEntry | null
-  @Prop(Object) public anime!: AnimePageQuery_anime | null
+  @Prop(Object) public mediaListEntry!: AnimePageQueryMediaListEntry | null
+  @Prop(Object) public anime!: AnimePageQueryAnime | null
   @Prop(Boolean) public small!: boolean | null
   @Prop({ type: Array, default: () => [] })
   public exclude!: string[]
@@ -196,24 +206,24 @@ export default class Actions extends Vue {
   }
 
   public get isPlanning() {
-    return this.mediaListStatus === MediaListStatus.PLANNING
+    return this.mediaListStatus === MediaListStatus.Planning
   }
 
   public get isWatching() {
-    return [MediaListStatus.CURRENT, MediaListStatus.REPEATING].includes(this
+    return [MediaListStatus.Current, MediaListStatus.Repeating].includes(this
       .mediaListStatus as MediaListStatus)
   }
 
   public get isCompleted() {
-    return this.mediaListStatus === MediaListStatus.COMPLETED
+    return this.mediaListStatus === MediaListStatus.Completed
   }
 
   public get isDropped() {
-    return this.mediaListStatus === MediaListStatus.DROPPED
+    return this.mediaListStatus === MediaListStatus.Dropped
   }
 
   public get isPaused() {
-    return this.mediaListStatus === MediaListStatus.PAUSED
+    return this.mediaListStatus === MediaListStatus.Paused
   }
 
   public get isInQueue() {
@@ -254,7 +264,7 @@ export default class Actions extends Vue {
     }
 
     if (!this.mediaListEntry && this.shouldAddToListAsWell) {
-      await this.addEntryMutation(MediaListStatus.PLANNING)
+      await this.addEntryMutation(MediaListStatus.Planning)
     }
 
     addToQueue(this.$store, this.anime.id)

@@ -1,26 +1,43 @@
 <template>
   <div class="container">
     <div ref="queue" class="queue">
-      <draggable v-model="queue" :options="draggableOptions" class="draggable-container">
+      <draggable
+        v-model="queue"
+        :options="draggableOptions"
+        class="draggable-container"
+      >
         <transition-group type="transition" tag="div" class="transition-group">
-          <queue-item v-for="item in queue" :item="item" :key="item.id" class="anime"/>
+          <queue-item
+            v-for="item in queue"
+            :item="item"
+            :key="item.id"
+            class="anime"
+          />
         </transition-group>
       </draggable>
 
       <transition name="fade">
-        <div v-if="queue.length < 1" class="empty-message">Seems your queue is empty!
-          <br>You can import shows from your list or add some by searching!
-          <br>
+        <div v-if="queue.length < 1" class="empty-message">
+          Seems your queue is empty! <br />You can import shows from your list
+          or add some by searching! <br />
 
-          <c-button content="Import Watching from List" :icon="currentSvg" :click="importWatching"/>
+          <c-button
+            content="Import Watching from List"
+            :icon="currentSvg"
+            :click="importWatching"
+          />
         </div>
       </transition>
     </div>
 
     <div class="sidebar" :class="{ small: isPlayerOpen }">
-      <span class="fill"/>
+      <span class="fill" />
 
-      <c-button content="Import Watching from List" :icon="currentSvg" :click="importWatching"/>
+      <c-button
+        content="Import Watching from List"
+        :icon="currentSvg"
+        :click="importWatching"
+      />
 
       <c-button
         content="Import Random from Planning"
@@ -34,9 +51,12 @@
         :click="importRandomFromPaused"
       />
 
-      <c-button content="Import Exported Queue" :click="importQueueFromBackup"/>
+      <c-button
+        content="Import Exported Queue"
+        :click="importQueueFromBackup"
+      />
 
-      <c-button content="Export Queue" :click="exportQueue"/>
+      <c-button content="Export Queue" :click="exportQueue" />
 
       <c-button
         type="danger"
@@ -62,16 +82,14 @@ import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 import CButton from '@/components/CButton.vue'
 import QueueItem from '@/components/QueueItem.vue'
 
-import { addToQueue, getQueue, setQueue } from '@/state/user'
-import { getCurrentEpisode, sendErrorToast, sendToast } from '@/state/app'
 import { pausedQuery, planningQuery, watchingQuery } from '@/graphql/query'
-import { getAnilistUserId, getAnilistUsername } from '@/state/auth'
-import {
-  WatchingQuery_listCollection_lists,
-  WatchingQuery_listCollection_lists_entries,
-} from '@/graphql/WatchingQuery'
+import { WatchingQueryLists, WatchingQueryEntries } from '@/graphql/types'
+
 import { Page, trackPageView } from '@/lib/tracking'
 import { QueueItem as IQueueItem } from '@/lib/user'
+import { getCurrentEpisode, sendErrorToast, sendToast } from '@/state/app'
+import { getAnilistUserId, getAnilistUsername } from '@/state/auth'
+import { addToQueue, getQueue, setQueue } from '@/state/user'
 
 @Component({ components: { Draggable, CButton, QueueItem } })
 export default class Queue extends Vue {
@@ -122,7 +140,7 @@ export default class Queue extends Vue {
 
     const { data, errors } = await query(this.$apollo, this.anilistUserId)
 
-    const lists = path<WatchingQuery_listCollection_lists[] | null>(
+    const lists = path<WatchingQueryLists[] | null>(
       'listCollection.lists',
       data,
     )
@@ -136,10 +154,7 @@ export default class Queue extends Vue {
 
     const list = lists.find(complement(path<boolean>('isCustomList')))
 
-    const entries = path<WatchingQuery_listCollection_lists_entries[]>(
-      'entries',
-      list,
-    )
+    const entries = path<WatchingQueryEntries[]>('entries', list)
 
     if (errors || !entries || entries.length < 1) {
       return sendErrorToast(

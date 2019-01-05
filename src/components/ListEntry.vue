@@ -1,11 +1,19 @@
 <template>
   <div class="entry" v-tooltip="entry.anime.title.userPreferred">
     <router-link :to="`/anime/${entry.anime.id}`">
-      <cover-image :src="entry.anime.coverImage.medium" :color="entry.anime.coverImage.color"/>
+      <cover-image
+        :src="entry.anime.coverImage.medium"
+        :color="entry.anime.coverImage.color"
+      />
     </router-link>
 
     <div class="info">
-      <actions :mediaListEntry="entry" :anime="entry.anime" :exclude="['editEntry']" small/>
+      <actions
+        :mediaListEntry="entry"
+        :anime="entry.anime"
+        :exclude="['editEntry']"
+        small
+      />
     </div>
   </div>
 </template>
@@ -13,7 +21,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { ListQuery_listCollection_lists_entries } from '@/graphql/ListQuery'
+import { ListQueryEntries } from '@/graphql/types'
 import { prop } from '@/utils'
 
 import CoverImage from './Anime/CoverImage.vue'
@@ -23,7 +31,7 @@ import Actions from './Anime/Actions.vue'
 @Component({ components: { CoverImage, CButton, Actions } })
 export default class ListEntry extends Vue {
   @Prop(prop(Object, true))
-  public entry!: ListQuery_listCollection_lists_entries
+  public entry!: ListQueryEntries
 }
 </script>
 

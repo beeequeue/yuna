@@ -1,35 +1,43 @@
 <template>
-<div class="login-container">
-  <div class="login">
-    <div class="steps">
-      <div>
-        <transition name="fade">
-          <login-c-r v-if="!isLoggedIn.crunchyroll" fullWidth :error="crunchyrollError" :loginCrunchyroll="loginCrunchyroll" />
+  <div class="login-container">
+    <div class="login">
+      <div class="steps">
+        <div>
+          <transition name="fade">
+            <login-c-r
+              v-if="!isLoggedIn.crunchyroll"
+              fullWidth
+              :error="crunchyrollError"
+              :loginCrunchyroll="loginCrunchyroll"
+            />
 
-          <icon v-else :icon="checkSvg"/>
-        </transition>
+            <icon v-else :icon="checkSvg" />
+          </transition>
+        </div>
+
+        <div>
+          <transition name="fade">
+            <login-a-l
+              v-if="!isLoggedIn.anilist"
+              :loginAnilist="loginAnilist"
+            />
+
+            <icon v-else :icon="checkSvg" />
+          </transition>
+        </div>
       </div>
 
-      <div>
-        <transition name="fade">
-          <login-a-l v-if="!isLoggedIn.anilist" :loginAnilist="loginAnilist"/>
+      <br />
 
-          <icon v-else :icon="checkSvg"/>
-        </transition>
-      </div>
+      <c-button
+        type="danger"
+        confirm
+        content="Reset Login"
+        v-tooltip.bottom="'In case logging in goes terribly wrong'"
+        :click="reset"
+      />
     </div>
-
-    <br/>
-
-    <c-button
-      type="danger"
-      confirm
-      content="Reset Login"
-      v-tooltip.bottom="'In case logging in goes terribly wrong'"
-      :click="reset"
-    />
   </div>
-</div>
 </template>
 
 <script lang="ts">
@@ -40,9 +48,10 @@ import Icon from '@/components/Icon.vue'
 import CButton from '@/components/CButton.vue'
 import LoginCR from '@/components/FirstTimeSetup/LoginCR.vue'
 import LoginAL from '@/components/FirstTimeSetup/LoginAL.vue'
-import { getIsLoggedIn, loginCrunchyroll, logOut } from '@/state/auth'
+
 import { loginAnilist } from '@/lib/anilist'
 import { Page, trackPageView } from '@/lib/tracking'
+import { getIsLoggedIn, loginCrunchyroll, logOut } from '@/state/auth'
 
 @Component({
   components: {
@@ -65,7 +74,7 @@ export default class Login extends Vue {
     trackPageView(Page.LOGIN)
   }
 
-  public onSuccessfullLogin() {
+  public onSuccessfulLogin() {
     if (this.isLoggedIn.all) {
       if (window.initialLogin) {
         window.initialLogin = false
@@ -85,13 +94,13 @@ export default class Login extends Vue {
       this.crunchyrollError = err.message
     }
 
-    this.onSuccessfullLogin()
+    this.onSuccessfulLogin()
   }
 
   public async loginAnilist() {
     await loginAnilist(this.$store)
 
-    this.onSuccessfullLogin()
+    this.onSuccessfulLogin()
   }
 
   public reset() {

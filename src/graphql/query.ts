@@ -1,36 +1,34 @@
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 
-import { PausedQuery } from './PausedQuery'
+import { PausedQueryQuery, PlanningQueryQuery, SearchQueryQuery, WatchingQueryQuery } from '@/graphql/types'
+
 import PAUSED_QUERY from './PausedQuery.graphql'
-import { PlanningQuery } from './PlanningQuery'
 import PLANNING_QUERY from './PlanningQuery.graphql'
-import { SearchQuery } from './SearchQuery'
 import SEARCH_QUERY from './SearchQuery.graphql'
-import { WatchingQuery } from './WatchingQuery'
 import WATCHING_QUERY from './WatchingQuery.graphql'
 
 export const searchQuery = (apollo: DollarApollo<any>, search: string) =>
-  apollo.query<SearchQuery>({
+  apollo.query<SearchQueryQuery>({
     query: SEARCH_QUERY,
     variables: { search },
   })
 
 export const watchingQuery = (apollo: DollarApollo<any>, userId: number) =>
-  apollo.query<WatchingQuery>({
+  apollo.query<WatchingQueryQuery>({
     query: WATCHING_QUERY,
     variables: { userId },
     fetchPolicy: 'network-only',
   })
 
 export const planningQuery = (apollo: DollarApollo<any>, userId: number) =>
-  apollo.query<PlanningQuery>({
+  apollo.query<PlanningQueryQuery>({
     query: PLANNING_QUERY,
     variables: { userId },
     fetchPolicy: 'network-only',
   })
 
 export const pausedQuery = (apollo: DollarApollo<any>, userId: number) =>
-  apollo.query<PausedQuery>({
+  apollo.query<PausedQueryQuery>({
     query: PAUSED_QUERY,
     variables: { userId },
     fetchPolicy: 'network-only',

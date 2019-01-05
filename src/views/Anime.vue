@@ -1,11 +1,16 @@
 <template>
-  <ApolloQuery class="anime" :query="ANIME_PAGE_QUERY" :variables="{ id }" @result="fetchedAnime">
+  <ApolloQuery
+    class="anime"
+    :query="ANIME_PAGE_QUERY"
+    :variables="{ id }"
+    @result="fetchedAnime"
+  >
     <template slot-scope="{ result: { loading, error, data } }">
       <transition-group tag="span">
         <div v-if="error" key="error" class="error-container slide-down">
           <h1>{{ error.graphQLErrors[0].message }}</h1>
 
-          <c-button content="Go back" @click.native="$router.back()"/>
+          <c-button content="Go back" @click.native="$router.back()" />
         </div>
 
         <cover-image
@@ -75,22 +80,22 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { path, pathOr } from 'rambdax'
 
-import CoverImage from '../components/Anime/CoverImage.vue'
-import AnimeTitle from '../components/Anime/Title.vue'
-import Actions from '../components/Anime/Actions.vue'
-import CenterContainer from '../components/Anime/CenterContainer.vue'
-import Relations from '../components/Anime/Relations.vue'
-import EpisodeList from '../components/EpisodeList.vue'
-import CButton from '../components/CButton.vue'
+import CoverImage from '@/components/Anime/CoverImage.vue'
+import AnimeTitle from '@/components/Anime/Title.vue'
+import Actions from '@/components/Anime/Actions.vue'
+import CenterContainer from '@/components/Anime/CenterContainer.vue'
+import Relations from '@/components/Anime/Relations.vue'
+import EpisodeList from '@/components/EpisodeList.vue'
+import CButton from '@/components/CButton.vue'
 
-import { MediaRelation } from '@/graphql-types'
 import ANIME_PAGE_QUERY from '@/graphql/AnimePageQuery.graphql'
 import {
-  AnimePageQuery,
-  AnimePageQuery_anime_relations_edges,
-  AnimePageQuery_anime_relations_edges_node,
-  AnimePageQuery_anime_mediaListEntry,
-} from '@/graphql/AnimePageQuery'
+  AnimePageQueryEdges,
+  AnimePageQueryMediaListEntry,
+  AnimePageQueryNode,
+  AnimePageQueryQuery,
+  MediaRelation,
+} from '@/graphql/types'
 import { Sequel } from '@/state/app'
 import { getSpoilerSettings } from '@/state/settings'
 import { trackPageView, Page } from '@/lib/tracking'
@@ -108,14 +113,14 @@ import { trackPageView, Page } from '@/lib/tracking'
 })
 export default class Anime extends Vue {
   ANIME_PAGE_QUERY = ANIME_PAGE_QUERY
-  data?: AnimePageQuery
+  data?: AnimePageQueryQuery
   tracked = false
 
   public get id() {
     return Number(this.$route.params.id)
   }
 
-  public async fetchedAnime(result: { data: AnimePageQuery }) {
+  public async fetchedAnime(result: { data: AnimePageQueryQuery }) {
     if (this.tracked) return
 
     trackPageView(
@@ -128,7 +133,7 @@ export default class Anime extends Vue {
     this.tracked = true
   }
 
-  public getShouldBlurDescription(data: AnimePageQuery) {
+  public getShouldBlurDescription(data: AnimePageQueryQuery) {
     if (!data || !data.anime) {
       return false
     }
@@ -142,35 +147,29 @@ export default class Anime extends Vue {
   }
 
   public getMediaListEntry(
-    data: AnimePageQuery,
-  ): AnimePageQuery_anime_mediaListEntry | null {
+    data: AnimePageQueryQuery,
+  ): AnimePageQueryMediaListEntry | null {
     return pathOr(null, ['anime', 'mediaListEntry'], data)
   }
 
-  public getMediaListStatus(data: AnimePageQuery) {
-    return pathOr(null, ['anime', 'mediaListEntry', 'status'], data)
-  }
-
-  public getSequels(data?: AnimePageQuery): Sequel[] {
+  public getSequels(data?: AnimePageQueryQuery): Sequel[] {
     if (!data) return []
 
-    const edges: AnimePageQuery_anime_relations_edges[] = pathOr(
+    const edges: AnimePageQueryEdges[] = pathOr(
       [],
       ['anime', 'relations', 'edges'],
       data,
     )
 
     const nodes = edges.filter(
-      node => node.relationType === MediaRelation.SEQUEL,
+      node => node.relationType === MediaRelation.Sequel,
     )
 
-    return nodes
-      .map(edge => edge.node as AnimePageQuery_anime_relations_edges_node)
-      .map(node => ({
-        id: node.id as number,
-        title: pathOr('TITLE', ['title', 'userPreferred'], node),
-        bannerImage: node.bannerImage as string,
-      }))
+    return nodes.map(edge => edge.node as AnimePageQueryNode).map(node => ({
+      id: node.id as number,
+      title: pathOr('TITLE', ['title', 'userPreferred'], node),
+      bannerImage: node.bannerImage as string,
+    }))
   }
 }
 </script>

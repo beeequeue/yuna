@@ -1,4 +1,4 @@
-import { MediaListStatus } from '@/graphql-types'
+import { MediaListStatus } from '@/graphql/types'
 
 export interface Levels {
   [key: string]: number
