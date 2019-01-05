@@ -44,6 +44,7 @@
     "@types/graphql": "14.0.4",
     "@types/hls.js": "0.10.2",
     "@types/marked": "0.5.0",
+    "@types/node": "10.12.18",
     "@types/semver": "5.5.0",
     "@types/superagent": "3.8.5",
     "@types/uuid": "3.4.4",
