@@ -842,7 +842,7 @@ export type FuzzyDateInt = any;
 
   export type PlayerVariables = {
     id: number;
-    malId: number;
+    idMal: number;
   }
 
   export type PlayerQuery = {

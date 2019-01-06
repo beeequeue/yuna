@@ -1,4 +1,4 @@
-query Player($id: Int!, $malId: Int!) {
+query Player($id: Int!, $idMal: Int!) {
   anime: Media(id: $id, type: ANIME) {
     id
     title {
@@ -28,7 +28,7 @@ query Player($id: Int!, $malId: Int!) {
     }
   }
 
-  episodes: Episodes(malId: $malId, provider: CRUNCHYROLL) @client {
+  episodes: Episodes(malId: $idMal, provider: CRUNCHYROLL) @client {
     provider
     id
     title

@@ -8,7 +8,6 @@ import {
   SetStatusMutationMutation,
   UpdateProgressMutationMutation, UpdateProgressMutationSaveMediaListEntry, UpdateScoreMutationMutation,
 } from '@/graphql/types'
-import { updatePlaylistListEntry } from '@/state/app'
 import { getAnilistUserId } from '@/state/auth'
 
 import ADD_ENTRY_MUTATION from './AddEntryMutation.graphql'
@@ -56,11 +55,6 @@ export const setProgressMutation = async (
       },
     } as UpdateProgressMutationMutation,
     refetchQueries: refetchListQuery($store),
-    update: (_cache, { data }) => {
-      if (!data) return
-
-      updatePlaylistListEntry($store, data.SaveMediaListEntry as any)
-    },
   })
 
 export const setStatusMutation = async (
@@ -98,7 +92,7 @@ export const addEntryMutation = async (
   })
 
 export const setScoreMutation = async (
-  { $apollo, $store }: Instance,
+  { $apollo }: Instance,
   id: number,
   score: number,
   oldValues: Partial<UpdateProgressMutationSaveMediaListEntry> = {},
@@ -115,11 +109,6 @@ export const setScoreMutation = async (
         repeat: oldValues.repeat || 0,
         status: oldValues.status || MediaListStatus.Current,
       },
-    },
-    update: (_cache, { data }) => {
-      if (!data) return
-
-      updatePlaylistListEntry($store, data.SaveMediaListEntry as any)
     },
   })
 

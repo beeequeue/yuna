@@ -87,7 +87,7 @@ import { WatchingQueryLists, WatchingQueryEntries } from '@/graphql/types'
 
 import { Page, trackPageView } from '@/lib/tracking'
 import { QueueItem as IQueueItem } from '@/lib/user'
-import { getCurrentEpisode, sendErrorToast, sendToast } from '@/state/app'
+import { getPlayerData, sendErrorToast, sendToast } from '@/state/app'
 import { getAnilistUserId, getAnilistUsername } from '@/state/auth'
 import { addToQueue, getQueue, setQueue } from '@/state/user'
 
@@ -115,7 +115,7 @@ export default class Queue extends Vue {
   }
 
   public get isPlayerOpen() {
-    return !!getCurrentEpisode(this.$store)
+    return !!getPlayerData(this.$store)
   }
 
   public get queue() {
