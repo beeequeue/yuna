@@ -234,16 +234,9 @@ export default class EpisodeList extends Vue {
       setCurrentEpisode(this.$store, episodeNumber - 1)
     } else {
       setPlaylist(this.$store, {
-        anime: {
-          id: this.id,
-          title: this.animeName,
-          episodes: this.episodesInAnime,
-          sequels: this.sequels,
-          nextAiringEpisode: this.nextAiringEpisode,
-        },
-        listEntry: this.listEntry,
-        episodes: this.episodes,
-        current: episodeNumber - 1,
+        id: this.id,
+        idMal: this.idMal,
+        index: episodeNumber - 1,
       })
     }
   }

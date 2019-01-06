@@ -1,36 +1,35 @@
 <template>
-  <ApolloQuery
-    v-if="id"
-    class="anime"
-    :query="PLAYER_QUERY"
-    :variables="{ id }"
-  >
-    <template slot-scope="{ result: { loading, error, data } }">
-      <transition>
-        <div v-if="episode" class="player-container" :class="classFromRoute">
-          <player
-            key="player"
-            :loading="loading"
-            :episode="episode"
-            :nextEpisode="delayedNextEpisode"
-            :playerData="playerData"
-            :shouldAutoPlay="shouldAutoPlay"
-            :getShouldAutoMarkWatched="getShouldAutoMarkWatched"
-            :setProgress="setProgress"
-          />
-        </div>
-      </transition>
-    </template>
-  </ApolloQuery>
+  <transition>
+    <div v-if="playerData" class="player-container" :class="classFromRoute">
+      <player
+        key="player"
+        :loading="$apollo.loading"
+        :episode="episode"
+        :nextEpisode="delayedNextEpisode"
+        :playerData="playerData"
+        :shouldAutoPlay="shouldAutoPlay"
+        :getShouldAutoMarkWatched="getShouldAutoMarkWatched"
+        :setProgress="setProgress"
+      />
+    </div>
+  </transition>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
+import { pathOr } from 'rambdax'
 
 import PLAYER_QUERY from '@/graphql/Player.graphql'
 import { setProgressMutation } from '@/graphql/mutations'
+import {
+  PlayerMediaListEntry,
+  PlayerQuery,
+  PlayerVariables,
+} from '@/graphql/types'
+
+import { Query } from '@/decorators'
 import { Page, trackPageView } from '@/lib/tracking'
-import { getCurrentEpisode, getNextEpisode, getPlayerData } from '@/state/app'
+import { getPlayerData } from '@/state/app'
 import { getShouldAutoMarkWatched, getShouldAutoPlay } from '@/state/settings'
 import { Episode } from '@/types'
 
@@ -40,9 +39,21 @@ import Player from './Player.vue'
   components: { Player },
 })
 export default class PlayerContainer extends Vue {
-  public delayedNextEpisode: Episode | null = null
+  @Query<PlayerContainer, PlayerQuery, PlayerVariables>({
+    query: PLAYER_QUERY,
+    variables() {
+      return {
+        id: this.id,
+        idMal: this.idMal,
+      }
+    },
+    skip() {
+      return !this.id || !this.idMal
+    },
+  })
+  public data: PlayerQuery | null = null
 
-  public PLAYER_QUERY = PLAYER_QUERY
+  public delayedNextEpisode: Episode | null = null
 
   get playerData() {
     return getPlayerData(this.$store)
@@ -51,21 +62,37 @@ export default class PlayerContainer extends Vue {
   get id() {
     if (!this.playerData) return null
 
-    return this.playerData.anime.id
+    return this.playerData.id
+  }
+
+  get idMal() {
+    if (!this.playerData) return null
+
+    return this.playerData.idMal
   }
 
   get episode() {
-    return getCurrentEpisode(this.$store)
+    const episodes = pathOr(null, ['data', 'episodes'], this)
+    const index = pathOr(null, ['playerData', 'index'], this)
+    if (!episodes || !index) return null
+
+    return episodes[index]
   }
 
   get nextEpisode() {
-    return getNextEpisode(this.$store)
+    const episodes = pathOr(null, ['data', 'episodes'], this)
+    const index = pathOr(null, ['playerData', 'index'], this)
+    if (!episodes || !index) return null
+
+    return episodes[index + 1]
   }
 
-  get sequels() {
-    if (!this.playerData) return []
-
-    return this.playerData.anime.sequels
+  get listEntry() {
+    return pathOr(
+      null,
+      ['data', 'anime', 'mediaListEntry'],
+      this,
+    ) as PlayerMediaListEntry | null
   }
 
   get shouldAutoPlay() {
@@ -83,6 +110,7 @@ export default class PlayerContainer extends Vue {
       case 'player-big':
       case 'player-full':
         trackPageView(Page.PLAYER)
+        return pathWithoutSlash
       case 'queue':
         return pathWithoutSlash
       default:
@@ -102,9 +130,8 @@ export default class PlayerContainer extends Vue {
   }
 
   public setProgress(progress: number) {
-    if (!this.playerData || !this.playerData.listEntry) return
-
-    setProgressMutation(this, this.playerData.listEntry.id, progress)
+    if (!this.playerData || !this.listEntry) return
+    setProgressMutation(this, this.listEntry.id, progress)
   }
 }
 </script>

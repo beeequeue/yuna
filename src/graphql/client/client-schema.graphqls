@@ -3,7 +3,19 @@ enum Provider {
 }
 
 type Episode {
+  provider: Provider!
   id: Int!
+  title: String!
+  description: String!
+  duration: Int!
+  url: String!
+  # Index in the Array
+  index: Int!
+  # Number in Season
+  episodeNumber: Int!
+  # URL to thumbnail
+  thumbnail: String!
+}
 
 extend type Media {
   scoreMal: Int

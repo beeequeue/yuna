@@ -336,8 +336,8 @@ const fetchStreamInfo = async (mediaId: string): Promise<StreamInfo> => {
   }
 }
 
-export const fetchStream = async (mediaId: string): Promise<Stream> => {
-  const streamInfo = await fetchStreamInfo(mediaId)
+export const fetchStream = async (mediaId: number): Promise<Stream> => {
+  const streamInfo = await fetchStreamInfo(mediaId.toString())
   const { url } = streamInfo.stream_data.streams[0]
 
   return {
@@ -347,7 +347,7 @@ export const fetchStream = async (mediaId: string): Promise<Stream> => {
 }
 
 export const setProgressOfEpisode = async (
-  mediaId: string,
+  mediaId: number,
   progressInSeconds: number,
 ) => {
   const response = (await superagent.get(getUrl('log')).query({

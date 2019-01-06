@@ -10,7 +10,6 @@ import { getStoreAccessors } from 'vuex-typescript'
 import { MediaListStatus } from '@/graphql/types'
 import { router } from '@/router'
 import { RootState } from '@/state/store'
-import { Episode } from '@/types'
 import { generateId } from '@/utils'
 
 export interface Toast {
@@ -42,19 +41,9 @@ export interface Sequel {
 }
 
 export interface PlayerData {
-  anime: {
-    id: number
-    title: string
-    episodes: number | null
-    nextAiringEpisode: null | {
-      airingAt: number
-      timeUntilAiring: number
-    }
-    sequels: Sequel[]
-  }
-  listEntry?: ListEntry | null
-  episodes: Episode[]
-  current: number
+  id: number
+  idMal: number
+  index: number
 }
 
 interface ModalBase {
@@ -129,34 +118,7 @@ export const app = {
     getPlaylistAnimeId(state: AppState) {
       if (!state.player) return null
 
-      return state.player.anime.id
-    },
-
-    getPlaylistEntry(state: AppState) {
-      if (!state.player) return null
-
-      return state.player.listEntry
-    },
-
-    getPlaylist(state: AppState) {
-      if (!state.player) return null
-
-      return state.player.episodes
-    },
-
-    getCurrentEpisode(state: AppState) {
-      if (!state.player) return null
-
-      return state.player.episodes[state.player.current]
-    },
-
-    getNextEpisode(state: AppState) {
-      if (!state.player) return null
-
-      const nextIndex = state.player.current + 1
-      if (nextIndex >= state.player.episodes.length) return null
-
-      return state.player.episodes[nextIndex]
+      return state.player.id
     },
 
     getModalStates(state: AppState) {
@@ -204,19 +166,10 @@ export const app = {
       state.player = options
     },
 
-    updatePlaylistListEntry(state: AppState, listEntry: ListEntry) {
-      if (!state.player) return
-
-      state.player.listEntry = {
-        ...state.player.listEntry,
-        ...listEntry,
-      }
-    },
-
     setCurrentEpisode(state: AppState, index: number) {
       if (!state.player) return
 
-      state.player.current = index
+      state.player.index = index
     },
 
     toggleModal(state: AppState, modal: keyof AppState['modals']) {
@@ -324,10 +277,6 @@ export const getIsUpdateAvailable = read(app.getters.getIsUpdateAvailable)
 export const getToasts = read(app.getters.getToasts)
 export const getPlayerData = read(app.getters.getPlayerData)
 export const getPlaylistAnimeId = read(app.getters.getPlaylistAnimeId)
-export const getPlaylistEntry = read(app.getters.getPlaylistEntry)
-export const getPlaylist = read(app.getters.getPlaylist)
-export const getCurrentEpisode = read(app.getters.getCurrentEpisode)
-export const getNextEpisode = read(app.getters.getNextEpisode)
 export const getModalStates = read(app.getters.getModalStates)
 export const getEditingAnime = read(app.getters.getEditingAnime)
 export const getIsFullscreen = read(app.getters.getIsFullscreen)
@@ -337,9 +286,6 @@ const setEditingAnime = commit(app.mutations.setEditingAnime)
 export const setEditingAnimeValue = commit(app.mutations.setEditingAnimeValue)
 export const removeToast = commit(app.mutations.removeToast)
 export const setPlaylist = commit(app.mutations.setPlaylist)
-export const updatePlaylistListEntry = commit(
-  app.mutations.updatePlaylistListEntry,
-)
 export const setCurrentEpisode = commit(app.mutations.setCurrentEpisode)
 export const toggleModal = commit(app.mutations.toggleModal)
 const addToast = commit(app.mutations.addToast)
