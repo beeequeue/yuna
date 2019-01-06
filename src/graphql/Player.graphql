@@ -1,11 +1,42 @@
-query EpisodesQuery($id: Int!) {
-  episode: Episodes(id: $id, provider: CRUNCHYROLL) @client {
+query Player($id: Int!, $malId: Int!) {
+  anime: Media(id: $id, type: ANIME) {
     id
+    title {
+      userPreferred
+    }
+    episodes
+    nextAiringEpisode {
+      airingAt
+      timeUntilAiring
+    }
+    relations {
+      edges {
+        relationType
+        node {
+          id
+          title {
+            userPreferred
+          }
+          bannerImage
+        }
+      }
+    }
+    mediaListEntry {
+      id
+      status
+      progress
+    }
+  }
+
+  episodes: Episodes(malId: $malId, provider: CRUNCHYROLL) @client {
+    provider
+    id
+    title
+    duration
     index
     episodeNumber
-    progress
-
-    provider
+    url
+    thumbnail
   }
 }
 

@@ -14,7 +14,7 @@
         :icon="addToListSvg"
         :content="ifBig('Set as Planning')"
         v-tooltip.right="ifSmall('Set as Planning')"
-        :click="() => addEntryMutation(MediaListStatus.PLANNING)"
+        :click="() => addEntryMutation(MediaListStatus.Planning)"
       />
 
       <c-button
@@ -24,7 +24,7 @@
         :icon="setCurrentSvg"
         :content="ifBig('Set as Watching')"
         v-tooltip.right="ifSmall('Set as Watching')"
-        :click="() => statusMutation(MediaListStatus.CURRENT)"
+        :click="() => statusMutation(MediaListStatus.Current)"
       />
 
       <c-button
@@ -34,7 +34,7 @@
         type="success"
         :content="ifBig('Resume')"
         v-tooltip.right="ifSmall('Resume')"
-        :click="() => statusMutation(MediaListStatus.CURRENT)"
+        :click="() => statusMutation(MediaListStatus.Current)"
       />
 
       <div
@@ -48,7 +48,7 @@
           type="warning"
           :content="ifBig('Pause')"
           v-tooltip.right="ifSmall('Pause')"
-          :click="() => statusMutation(MediaListStatus.PAUSED)"
+          :click="() => statusMutation(MediaListStatus.Paused)"
         />
 
         <c-button
@@ -57,7 +57,7 @@
           type="danger"
           :content="ifBig('Drop')"
           v-tooltip.right="ifSmall('Drop')"
-          :click="() => statusMutation(MediaListStatus.DROPPED)"
+          :click="() => statusMutation(MediaListStatus.Dropped)"
         />
       </div>
 
@@ -68,7 +68,7 @@
         type="warning"
         :content="ifBig('Pause')"
         v-tooltip.right="ifSmall('Pause')"
-        :click="() => statusMutation(MediaListStatus.PAUSED)"
+        :click="() => statusMutation(MediaListStatus.Paused)"
       />
 
       <c-button
@@ -78,7 +78,7 @@
         type="danger"
         :content="ifBig('Drop')"
         v-tooltip.right="ifSmall('Drop')"
-        :click="() => statusMutation(MediaListStatus.DROPPED)"
+        :click="() => statusMutation(MediaListStatus.Dropped)"
       />
 
       <c-button
@@ -88,7 +88,7 @@
         :icon="setToRepeatSvg"
         :content="ifBig('Set as Repeating')"
         v-tooltip.right="ifSmall('Set as Repeating')"
-        :click="() => statusMutation(MediaListStatus.REPEATING)"
+        :click="() => statusMutation(MediaListStatus.Repeating)"
       />
 
       <c-button

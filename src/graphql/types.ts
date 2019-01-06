@@ -926,25 +926,21 @@ export type FuzzyDateInt = any;
   export type PlayerEpisodes = {
     __typename?: "Episode";
     
+    provider: Provider;
+    
     id: number;
+    
+    title: string;
+    
+    duration: number;
     
     index: number;
     
     episodeNumber: number;
     
-    provider: PlayerProvider;
-  } 
-
-  export type PlayerProvider = {
-    __typename?: "EpisodeProviderMeta";
-    
-    name: Provider;
-    
-    id: number;
-    
     url: string;
     
-    animeUrl: string;
+    thumbnail: string;
   } 
 
   export type SaveListEntryMutationVariables = {

@@ -11,8 +11,8 @@
           :faded="
             !getIsStatus(
               result.data,
-              MediaListStatus.CURRENT,
-              MediaListStatus.REPEATING,
+              MediaListStatus.Current,
+              MediaListStatus.Repeating,
             )
           "
         />
@@ -39,11 +39,11 @@
 
             <div class="buttons">
               <c-button
-                v-if="getIsStatus(result.data, MediaListStatus.PLANNING)"
+                v-if="getIsStatus(result.data, MediaListStatus.Planning)"
                 type="success"
                 content="Start"
                 @click.native="
-                  statusMutation(result.data, MediaListStatus.CURRENT)
+                  statusMutation(result.data, MediaListStatus.Current)
                 "
               />
 
@@ -51,23 +51,23 @@
                 v-if="
                   getIsStatus(
                     result.data,
-                    MediaListStatus.PAUSED,
-                    MediaListStatus.DROPPED,
+                    MediaListStatus.Paused,
+                    MediaListStatus.Dropped,
                   )
                 "
                 type="success"
                 content="Resume"
                 @click.native="
-                  statusMutation(result.data, MediaListStatus.CURRENT)
+                  statusMutation(result.data, MediaListStatus.Current)
                 "
               />
 
               <c-button
-                v-if="getIsStatus(result.data, MediaListStatus.COMPLETED)"
+                v-if="getIsStatus(result.data, MediaListStatus.Completed)"
                 type="success"
                 content="Rewatch"
                 @click.native="
-                  statusMutation(result.data, MediaListStatus.REPEATING)
+                  statusMutation(result.data, MediaListStatus.Repeating)
                 "
               />
 
@@ -75,14 +75,14 @@
                 v-if="
                   getIsStatus(
                     result.data,
-                    MediaListStatus.CURRENT,
-                    MediaListStatus.REPEATING,
+                    MediaListStatus.Current,
+                    MediaListStatus.Repeating,
                   )
                 "
                 type="warning"
                 content="Pause"
                 @click.native="
-                  statusMutation(result.data, MediaListStatus.PAUSED)
+                  statusMutation(result.data, MediaListStatus.Paused)
                 "
               />
 
@@ -90,14 +90,14 @@
                 v-if="
                   getIsStatus(
                     result.data,
-                    MediaListStatus.CURRENT,
-                    MediaListStatus.REPEATING,
+                    MediaListStatus.Current,
+                    MediaListStatus.Repeating,
                   )
                 "
                 type="danger"
                 content="Drop"
                 @click.native="
-                  statusMutation(result.data, MediaListStatus.DROPPED)
+                  statusMutation(result.data, MediaListStatus.Dropped)
                 "
               />
 
@@ -105,8 +105,8 @@
                 v-if="
                   !getIsStatus(
                     result.data,
-                    MediaListStatus.CURRENT,
-                    MediaListStatus.REPEATING,
+                    MediaListStatus.Current,
+                    MediaListStatus.Repeating,
                   )
                 "
                 class="large"
@@ -122,8 +122,8 @@
                 result.data.anime.idMal &&
                   getIsStatus(
                     result.data,
-                    MediaListStatus.CURRENT,
-                    MediaListStatus.REPEATING,
+                    MediaListStatus.Current,
+                    MediaListStatus.Repeating,
                   ) &&
                   item.open
               "
