@@ -4,7 +4,7 @@
     class="next-episode-info"
     v-tooltip.top="nextEpisodeDateString"
   >
-    New episode in {{nextEpisodeDistanceString}}
+    Episode {{ nextAiringEpisode.episode }} in {{nextEpisodeDistanceString}}
   </div>
 </template>
 
@@ -20,6 +20,7 @@ export default class NextEpisodeInfo extends Vue {
   public nextAiringEpisode!: {
     airingAt: number
     timeUntilAiring: number
+    episode: number
   }
 
   public get nextEpisodeDateString() {

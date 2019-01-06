@@ -12,6 +12,7 @@ query AnimeQueueQuery($id: Int) {
     nextAiringEpisode {
       airingAt
       timeUntilAiring
+      episode
     }
     mediaListEntry {
       id

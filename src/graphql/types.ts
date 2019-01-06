@@ -535,6 +535,8 @@ export type FuzzyDateInt = any;
     airingAt: number;
     
     timeUntilAiring: number;
+    
+    episode: number;
   } 
 
   export type AnimePageQueryRelations = {
@@ -629,6 +631,8 @@ export type FuzzyDateInt = any;
     airingAt: number;
     
     timeUntilAiring: number;
+    
+    episode: number;
   } 
 
   export type AnimeQueueQueryMediaListEntry = {

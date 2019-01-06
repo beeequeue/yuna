@@ -22,6 +22,7 @@ query AnimePageQuery($id: Int) {
     nextAiringEpisode {
       airingAt
       timeUntilAiring
+      episode
     }
     relations {
       edges {
