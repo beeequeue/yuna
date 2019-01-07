@@ -174,7 +174,7 @@ export const createSession = async () => {
       auth: userStore.get('crunchyroll.token', null),
       locale,
       device_type,
-      device_id: `${uuid()}`,
+      device_id: uuid(),
       version: '1.1',
       access_token,
       user_id: userStore.get('crunchyroll.userId', null),
