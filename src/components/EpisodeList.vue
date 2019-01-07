@@ -51,6 +51,10 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { Key } from 'ts-key-enum'
 import { mdiCached } from '@mdi/js'
 
+import {
+  PlayerEpisodesEpisodes,
+  AnimePageQueryNextAiringEpisode,
+} from '@/graphql/types'
 import { AnimeCache } from '@/lib/cache'
 import {
   getPlaylistAnimeId,
@@ -60,8 +64,6 @@ import {
   setCurrentEpisode,
   setPlaylist,
 } from '@/state/app'
-import { AnimePageQueryNextAiringEpisode } from '@/graphql/types'
-import { Episode as IEpisode } from '@/types'
 import { prop } from '@/utils'
 
 import CButton from './CButton.vue'
@@ -89,7 +91,7 @@ export default class EpisodeList extends Vue {
   @Prop(Boolean) public rightPadding!: boolean | null
   @Prop(Boolean) public scrollToCurrentEpisode!: boolean | null
 
-  public episodes: IEpisode[] | null = null
+  public episodes: PlayerEpisodesEpisodes[] | null = null
   public fetched = false
   public loading = true
   public error: string | null = null

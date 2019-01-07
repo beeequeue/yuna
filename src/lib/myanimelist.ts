@@ -1,8 +1,7 @@
 import request from 'superagent/superagent'
-import { T, delay } from 'rambdax'
+import { delay, T } from 'rambdax'
 
 import { fetchSeasonFromEpisode } from '@/lib/crunchyroll'
-import { Episode } from '@/types'
 import { RequestResponse, responseIsError } from '@/utils'
 import { PlayerEpisodesEpisodes } from '@/graphql/types'
 

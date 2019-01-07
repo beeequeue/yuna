@@ -213,7 +213,11 @@ import {
   mdiClose,
 } from '@mdi/js'
 
-import { PlayerAnimeAnime, PlayerAnimeMediaListEntry } from '@/graphql/types'
+import {
+  PlayerAnimeAnime,
+  PlayerAnimeMediaListEntry,
+  PlayerEpisodesEpisodes,
+} from '@/graphql/types'
 import {
   getIsFullscreen,
   toggleFullscreen,
@@ -221,7 +225,7 @@ import {
   setCurrentEpisode,
   setFullscreen,
 } from '@/state/app'
-import { Episode, Levels } from '@/types'
+import { Levels } from '@/types'
 import { prop, secondsToTimeString } from '@/utils'
 
 import Icon from '../Icon.vue'
@@ -241,9 +245,9 @@ import VolumeSlider from './VolumeSlider.vue'
 })
 export default class Controls extends Vue {
   @Prop(prop(Object, true))
-  public episode!: Episode
+  public episode!: PlayerEpisodesEpisodes
   @Prop(prop(Object))
-  public nextEpisode!: Episode | null
+  public nextEpisode!: PlayerEpisodesEpisodes | null
   @Prop(Object) public anime!: PlayerAnimeAnime | null
   @Prop(prop(Boolean, true))
   public paused!: boolean

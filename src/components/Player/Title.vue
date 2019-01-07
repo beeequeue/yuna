@@ -20,9 +20,8 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { PlayerAnimeAnime } from '@/graphql/types'
+import { PlayerAnimeAnime, PlayerEpisodesEpisodes } from '@/graphql/types'
 import { ListEntry } from '@/state/app'
-import { Episode } from '@/types'
 import { prop } from '@/utils'
 
 @Component
@@ -30,7 +29,7 @@ export default class PlayerTitle extends Vue {
   @Prop(prop(Object, true))
   public anime!: PlayerAnimeAnime
   @Prop(prop(Object, true))
-  public episode!: Episode
+  public episode!: PlayerEpisodesEpisodes
   @Prop(Object) public listEntry!: ListEntry
 }
 </script>

@@ -9,23 +9,6 @@ export interface Stream {
   progress: number
 }
 
-export interface Episode {
-  title: string
-  description: string
-  index: number
-  episodeNumber: number
-  duration: number
-  progress: number | null
-  thumbnail: string
-
-  crunchyroll: {
-    id: string
-    url: string
-    seriesId: string
-    collection: string
-  }
-}
-
 export interface Anime {
   title: string
   romajiTitle?: string

@@ -36,20 +36,20 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiPlay } from '@mdi/js'
 
+import { PlayerEpisodesEpisodes } from '@/graphql/types'
 import { setCurrentEpisode } from '@/state/app'
-import { Episode } from '@/types'
+import { getSpoilerSettings } from '@/state/settings'
 import { prop } from '@/utils'
 
 import CButton from '../CButton.vue'
 import Icon from '../Icon.vue'
-import { getSpoilerSettings } from '@/state/settings'
 
 @Component({
   components: { CButton, Icon },
 })
 export default class NextEpisodeOverlay extends Vue {
   @Prop(prop(Object))
-  public nextEpisode!: Episode | null
+  public nextEpisode!: PlayerEpisodesEpisodes | null
   @Prop(Number) public episodesInAnime!: number | null
   @Prop(Number) public progress!: number | null
   @Prop(prop(Boolean, true))
