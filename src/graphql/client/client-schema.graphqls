@@ -22,5 +22,5 @@ extend type Media {
 }
 
 type Query {
-  Episodes(malId: Int!, provider: Provider!): [Episode!]
+  Episodes(id: Int!, provider: Provider!): [Episode!]
 }

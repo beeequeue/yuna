@@ -52,7 +52,7 @@ export default class PlayerContainer extends Vue {
       }
     },
     skip() {
-      return !this.id || !this.idMal
+      return !this.id
     },
     update: data => data.anime,
   })
@@ -62,11 +62,11 @@ export default class PlayerContainer extends Vue {
     query: EPISODES_QUERY,
     variables() {
       return {
-        idMal: this.idMal,
+        id: this.id,
       }
     },
     skip() {
-      return !this.idMal
+      return !this.id
     },
     update: data => data.episodes,
   })

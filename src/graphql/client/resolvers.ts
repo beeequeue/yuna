@@ -2,13 +2,14 @@ import { isNil } from 'rambdax'
 
 import {
   AnimePageQueryAnime,
+  PlayerAnimeAnime,
   PlayerEpisodesEpisodes,
   Provider,
 } from '@/graphql/types'
 import { fetchEpisodesOfSeries, fetchRating } from '@/lib/myanimelist'
 
 interface EpisodeVariables {
-  malId: number
+  id: number
   provider: Provider
 }
 
@@ -26,11 +27,18 @@ export const resolvers = {
   Query: {
     Episodes: async (
       _: any,
-      { malId, provider }: EpisodeVariables,
+      { id, provider }: EpisodeVariables,
       { cache }: any,
     ): Promise<PlayerEpisodesEpisodes[] | null> => {
       if (provider === Provider.Crunchyroll) {
-        const episodes = await fetchEpisodesOfSeries(malId)
+        const cachedAnime = cache.data.data[
+          `Media:${id}`
+        ] as PlayerAnimeAnime | null
+        if (!cachedAnime || !cachedAnime.idMal) {
+          throw new Error('Could not find Anime in cache!')
+        }
+
+        const episodes = await fetchEpisodesOfSeries(cachedAnime.idMal)
 
         if (!episodes) return null
 
@@ -47,7 +55,7 @@ export const resolvers = {
           thumbnail: ep.thumbnail,
         }))
 
-        cache.writeData({ id: `Episodes:${malId}:${provider}`, data })
+        cache.writeData({ id: `Episodes:${id}:${provider}`, data })
 
         return data
       }

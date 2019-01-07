@@ -1,5 +1,5 @@
-query PlayerEpisodes($idMal: Int!) {
-  episodes: Episodes(malId: $idMal, provider: CRUNCHYROLL) @client {
+query PlayerEpisodes($id: Int!) {
+  episodes: Episodes(id: $id, provider: CRUNCHYROLL) @client {
     provider
     id
     title

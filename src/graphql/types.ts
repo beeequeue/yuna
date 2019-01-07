@@ -859,6 +859,8 @@ export type FuzzyDateInt = any;
     
     id: number;
     
+    idMal: Maybe<number>;
+    
     title: Maybe<PlayerAnimeTitle>;
     
     episodes: Maybe<number>;
@@ -925,7 +927,7 @@ export type FuzzyDateInt = any;
   } 
 
   export type PlayerEpisodesVariables = {
-    idMal: number;
+    id: number;
   }
 
   export type PlayerEpisodesQuery = {
