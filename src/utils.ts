@@ -1,7 +1,7 @@
 import { error } from 'electron-log'
 import { api } from 'electron-util'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
-import { path } from 'rambdax'
+import { isNil, path } from 'rambdax'
 import { Response } from 'superagent'
 import { Prop as IProp, PropOptions } from 'vue/types/options'
 import { ActionContext, Store } from 'vuex'
@@ -142,3 +142,20 @@ export const bigFirstChar = (str: string) => {
   const first = str.slice(0, 1).toUpperCase()
   return first + str.slice(1).toLowerCase()
 }
+
+export const isOfType = <T>(
+  obj: any,
+  ...properties: Array<keyof T>
+): obj is T => properties.every(p => !isNil(obj[p]))
+
+export const isOfTypename = <T extends { __typename?: string }>(
+  obj: any,
+  typename: T['__typename'],
+): obj is T => obj.__typename === typename
+
+// tslint:disable-next-line:array-type
+export const arrayIsOfType = <T>(
+  arr: any[],
+  ...properties: Array<keyof T>
+): arr is T[] =>
+  Array.isArray(arr) && arr.every(item => isOfType<any>(item, ...properties))

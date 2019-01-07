@@ -42,7 +42,7 @@ export const resolvers = {
 
         if (!episodes) return null
 
-        const data = episodes.map((ep, i) => ({
+        return episodes.map((ep, i) => ({
           __typename: 'Episode' as 'Episode',
           provider: Provider.Crunchyroll,
           id: Number(ep.crunchyroll.id),
@@ -54,10 +54,6 @@ export const resolvers = {
           episodeNumber: ep.episodeNumber,
           thumbnail: ep.thumbnail,
         }))
-
-        cache.writeData({ id: `Episodes:${id}:${provider}`, data })
-
-        return data
       }
 
       return null

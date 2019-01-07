@@ -1,8 +1,11 @@
 import Vue from 'vue'
 import VueApollo from 'vue-apollo'
 import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
-import { userStore } from '@/lib/user'
+
 import { resolvers } from '@/graphql/client/resolvers'
+import { PlayerEpisodesEpisodes } from '@/graphql/types'
+import { userStore } from '@/lib/user'
+import { arrayIsOfType, isOfTypename } from '@/utils'
 
 // Install the vue plugin
 Vue.use(VueApollo)
@@ -18,8 +21,31 @@ export const filesRoot =
 
 Vue.prototype.$filesRoot = filesRoot
 
+const dataIdFromObject = (obj: any) => {
+  // Episode List
+  if (arrayIsOfType<PlayerEpisodesEpisodes>(obj, 'provider', 'title')) {
+    return `Episodes:${obj[0].provider}:${obj[0].id}`
+  }
+
+  // Episode
+  if (isOfTypename<PlayerEpisodesEpisodes>(obj, 'Episode')) {
+    return `Episode:${obj.provider}:${obj.id}`
+  }
+
+  if (obj.__typename) {
+    if (obj.id !== undefined) {
+      return `${obj.__typename}:${obj.id}`
+    }
+    if (obj._id !== undefined) {
+      return `${obj.__typename}:${obj._id}`
+    }
+  }
+
+  return null
+}
+
 // Config
-const defaultOptions = {
+const options = {
   // You can use `https` for secure connection (recommended in production)
   httpEndpoint,
 
@@ -43,6 +69,11 @@ const defaultOptions = {
   // Override the way the Authorization header is set
   getAuth: () => userStore.get('anilist.token'),
 
+  // Cache Options
+  inMemoryCacheOptions: {
+    dataIdFromObject,
+  },
+
   // Client local data (see apollo-link-state)
   clientState: {
     resolvers,
@@ -51,12 +82,9 @@ const defaultOptions = {
 }
 
 // Call this in the Vue app file
-export function createProvider(options = {}) {
+export function createProvider() {
   // Create apollo client
-  const { apolloClient, wsClient } = createApolloClient({
-    ...defaultOptions,
-    ...options,
-  })
+  const { apolloClient, wsClient } = createApolloClient(options)
   apolloClient.wsClient = wsClient
 
   // Create vue apollo provider
