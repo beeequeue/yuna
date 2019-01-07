@@ -6,14 +6,17 @@
     @keydown.escape.prevent="isFullscreen ? toggleFullscreen() : null"
     @wheel.capture="onScroll"
   >
-    <video
-      preload
-      :muted="muted"
-      :autoplay="shouldAutoPlay"
-      :poster="episode.thumbnail"
-      ref="player"
-      :class="{ ended }"
-    />
+    <transition name="fade">
+      <video
+        v-if="episode"
+        preload
+        :muted="muted"
+        :autoplay="shouldAutoPlay"
+        :poster="episode.thumbnail"
+        ref="player"
+        :class="{ ended }"
+      />
+    </transition>
 
     <transition name="fade">
       <icon
@@ -30,7 +33,7 @@
     </transition>
 
     <controls
-      v-if="anime"
+      v-if="anime && episode"
       :episode="episode"
       :nextEpisode="nextEpisode"
       :anime="anime"
@@ -86,10 +89,10 @@ import { mdiLoading, mdiPlayCircle } from '@mdi/js'
 
 import {
   PlayerAnimeAnime,
-  PlayerEpisodesEpisodes,
   PlayerAnimeMediaListEntry,
-  Provider,
   PlayerAnimeTitle,
+  PlayerEpisodesEpisodes,
+  Provider,
 } from '@/graphql/types'
 import { fetchStream, setProgressOfEpisode } from '@/lib/crunchyroll'
 import { trackStillWatching } from '@/lib/tracking'
@@ -137,11 +140,9 @@ interface Level {
   components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
 })
 export default class Player extends Vue {
-  @Prop(prop(Object, true))
-  public episode!: PlayerEpisodesEpisodes
-  @Prop(Object) public nextEpisode!: PlayerEpisodesEpisodes
-  @Prop(prop(Object, true))
-  public anime!: PlayerAnimeAnime
+  @Prop(Object) public episode!: PlayerEpisodesEpisodes | null
+  @Prop(Object) public nextEpisode!: PlayerEpisodesEpisodes | null
+  @Prop(Object) public anime!: PlayerAnimeAnime | null
   @Prop(prop(Object, true))
   public playerData!: PlayerData
   @Prop(Boolean) public loading!: boolean | null
@@ -246,6 +247,8 @@ export default class Player extends Vue {
 
   @Watch('episode')
   public async onNewEpisode() {
+    if (!this.episode) return
+
     this.pause()
 
     try {
@@ -283,7 +286,7 @@ export default class Player extends Vue {
   }
 
   public registerEvents() {
-    if (!this.$refs.player) return
+    if (!this.$refs.player || !this.episode) return
 
     this.hls.on('hlsManifestParsed', (_event, data) => {
       let i = 0
@@ -303,7 +306,9 @@ export default class Player extends Vue {
 
     this.hls.on('hlsMediaAttached', () => {
       this.$refs.player.currentTime =
-        this.playhead < this.episode.duration * 0.8 ? this.playhead : 0
+        this.playhead < (this.episode as PlayerEpisodesEpisodes).duration * 0.8
+          ? this.playhead
+          : 0
     })
 
     this.$refs.player.onplay = () => {
@@ -330,12 +335,16 @@ export default class Player extends Vue {
   }
 
   public onLoadedProgress(e: Event) {
+    if (!this.episode) return
+
     const element = e.target as HTMLVideoElement
     this.loadedSeconds = element.buffered.end(0)
     this.loadedPercentage = this.loadedSeconds / this.episode.duration
   }
 
   public onTimeUpdate(e: Event) {
+    if (!this.episode) return
+
     const element = e.target as HTMLVideoElement
 
     if (this.ended) {
@@ -460,6 +469,8 @@ export default class Player extends Vue {
   }
 
   public updateProgressIfNecessary() {
+    if (!this.episode) return
+
     if (
       !this.listEntry ||
       !this.getShouldAutoMarkWatched ||
@@ -472,6 +483,8 @@ export default class Player extends Vue {
   }
 
   private setDiscordState(state: 'watching' | 'paused') {
+    if (!this.episode || !this.anime) return
+
     ipcRenderer.send(
       state === 'watching' ? DISCORD_SET_WATCHING : DISCORD_PAUSE_WATCHING,
       {

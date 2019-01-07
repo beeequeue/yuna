@@ -2,7 +2,6 @@
   <transition>
     <div v-if="playerData" class="player-container" :class="classFromRoute">
       <player
-        v-if="anime"
         key="player"
         :loading="$apollo.loading || !anime || !episode"
         :anime="anime"
@@ -50,7 +49,6 @@ export default class PlayerContainer extends Vue {
     variables() {
       return {
         id: this.id,
-        idMal: this.idMal,
       }
     },
     skip() {

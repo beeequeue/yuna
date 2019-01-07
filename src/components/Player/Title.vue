@@ -80,12 +80,13 @@ export default class PlayerTitle extends Vue {
       white-space: nowrap;
       text-overflow: ellipsis;
 
-      transition: height 0.5s, opacity 0.5s, transform 0.5s;
+      transition: height 0.25s, opacity 0.5s, transform 0.5s;
 
       &.blur {
         height: 0;
         opacity: 0;
-        transform: translateX(10%);
+        transform: translateY(-30px);
+        transition: height 0.65s, opacity 0.5s, transform 0.35s;
       }
     }
 
