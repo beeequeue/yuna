@@ -2,8 +2,10 @@ query PlayerEpisodes($id: Int!) {
   episodes: Episodes(id: $id, provider: CRUNCHYROLL) @client {
     provider
     id
+    animeId
     title
     duration
+    progress
     index
     episodeNumber
     url

@@ -1,13 +1,14 @@
 /* tslint:disable:class-name */
 import { activeWindow } from 'electron-util'
-import { anyPass, T, complement } from 'rambdax'
+import { anyPass, complement, T } from 'rambdax'
 import superagent from 'superagent/superagent'
 import uuid from 'uuid/v4'
 
 import { getConfig } from '@/config'
 import { userStore } from '@/lib/user'
-import { Episode, Stream } from '@/types'
+import { Stream } from '@/types'
 import { RequestError, RequestSuccess } from '@/utils'
+import { PlayerEpisodesEpisodes, Provider } from '@/graphql/types'
 
 const CR_UNBLOCKER_URL = 'api2.cr-unblocker.com'
 const API_URL = 'api.crunchyroll.com'
@@ -259,7 +260,7 @@ export const logout = () => {
 
 export const fetchEpisodesOfCollection = async (
   collectionId: string,
-): Promise<Episode[]> => {
+): Promise<PlayerEpisodesEpisodes[]> => {
   const response = (await superagent.get(getUrl('list_media')).query({
     session_id: _sessionId,
     locale,
@@ -279,7 +280,7 @@ export const fetchEpisodesOfCollection = async (
   return response.body.data.filter(excludeExtraEpisodes).map(mediaToEpisode)
 }
 
-export const fetchEpisode = async (mediaId: string): Promise<Episode> => {
+export const fetchEpisode = async (mediaId: string): Promise<_Media> => {
   const response = (await superagent.get(getUrl('info')).query({
     session_id: _sessionId,
     locale,
@@ -295,18 +296,15 @@ export const fetchEpisode = async (mediaId: string): Promise<Episode> => {
     throw new Error(response.body.message)
   }
 
-  return mediaToEpisode(
-    response.body.data,
-    Number(response.body.data.episode_number),
-  )
+  return response.body.data
 }
 
 export const fetchSeasonFromEpisode = async (
   mediaId: string,
-): Promise<Episode[]> => {
+): Promise<PlayerEpisodesEpisodes[]> => {
   const episode = await fetchEpisode(mediaId)
 
-  return fetchEpisodesOfCollection(episode.crunchyroll.collection)
+  return fetchEpisodesOfCollection(episode.collection_id)
 }
 
 interface StreamInfo {
@@ -367,31 +365,25 @@ export const setProgressOfEpisode = async (
 const mediaToEpisode = (
   {
     name,
-    description,
     duration,
     screenshot_image,
     media_id,
     series_id,
-    collection_id,
     url,
     playhead,
   }: _Media,
   index: number,
-): Episode => ({
+): PlayerEpisodesEpisodes => ({
+  provider: Provider.Crunchyroll,
+  id: Number(media_id),
+  animeId: Number(series_id),
   title: name,
-  description,
   index,
   episodeNumber: index + 1,
   duration,
   progress: playhead || null,
   thumbnail: screenshot_image.full_url,
-
-  crunchyroll: {
-    id: media_id,
-    seriesId: series_id,
-    collection: collection_id,
-    url,
-  },
+  url,
 })
 
 // Exclude episodes from episode lists

@@ -943,9 +943,13 @@ export type FuzzyDateInt = any;
     
     id: number;
     
+    animeId: number;
+    
     title: string;
     
     duration: number;
+    
+    progress: Maybe<number>;
     
     index: number;
     

@@ -42,18 +42,7 @@ export const resolvers = {
 
         if (!episodes) return null
 
-        return episodes.map((ep, i) => ({
-          __typename: 'Episode' as 'Episode',
-          provider: Provider.Crunchyroll,
-          id: Number(ep.crunchyroll.id),
-          title: ep.title,
-          description: ep.description,
-          duration: ep.duration,
-          url: ep.crunchyroll.url,
-          index: i,
-          episodeNumber: ep.episodeNumber,
-          thumbnail: ep.thumbnail,
-        }))
+        return episodes
       }
 
       return null

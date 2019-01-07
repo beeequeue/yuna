@@ -5,16 +5,16 @@ enum Provider {
 type Episode {
   provider: Provider!
   id: Int!
+  animeId: Int!
   title: String!
-  description: String!
   duration: Int!
-  url: String!
+  progress: Int
   # Index in the Array
   index: Int!
   # Number in Season
   episodeNumber: Int!
-  # URL to thumbnail
   thumbnail: String!
+  url: String!
 }
 
 extend type Media {
