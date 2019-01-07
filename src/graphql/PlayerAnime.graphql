@@ -1,4 +1,4 @@
-query Player($id: Int!, $idMal: Int!) {
+query PlayerAnime($id: Int!) {
   anime: Media(id: $id, type: ANIME) {
     id
     title {
@@ -26,17 +26,6 @@ query Player($id: Int!, $idMal: Int!) {
       status
       progress
     }
-  }
-
-  episodes: Episodes(malId: $idMal, provider: CRUNCHYROLL) @client {
-    provider
-    id
-    title
-    duration
-    index
-    episodeNumber
-    url
-    thumbnail
   }
 }
 

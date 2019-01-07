@@ -1,6 +1,10 @@
 import { isNil } from 'rambdax'
 
-import { AnimePageQueryAnime, PlayerEpisodes, Provider } from '@/graphql/types'
+import {
+  AnimePageQueryAnime,
+  PlayerEpisodesEpisodes,
+  Provider,
+} from '@/graphql/types'
 import { fetchEpisodesOfSeries, fetchRating } from '@/lib/myanimelist'
 
 interface EpisodeVariables {
@@ -24,7 +28,7 @@ export const resolvers = {
       _: any,
       { malId, provider }: EpisodeVariables,
       { cache }: any,
-    ): Promise<PlayerEpisodes[] | null> => {
+    ): Promise<PlayerEpisodesEpisodes[] | null> => {
       if (provider === Provider.Crunchyroll) {
         const episodes = await fetchEpisodesOfSeries(malId)
 

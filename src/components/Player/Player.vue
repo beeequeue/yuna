@@ -16,21 +16,25 @@
     />
 
     <transition name="fade">
-      <icon v-if="!initiated && loaded" class="uninitiated-icon" :icon="playCircleSvg"/>
+      <icon
+        v-if="!initiated && loaded"
+        class="uninitiated-icon"
+        :icon="playCircleSvg"
+      />
     </transition>
 
     <transition name="fade">
       <span v-if="loading || loadingVideo" class="loading-spinner">
-        <icon :icon="loadingSvg"/>
+        <icon :icon="loadingSvg" />
       </span>
     </transition>
 
     <controls
+      v-if="anime"
       :episode="episode"
       :nextEpisode="nextEpisode"
-      :animeName="playerData.anime.title"
-      :animeId="playerData.anime.id"
-      :listEntry="playerData.listEntry"
+      :anime="anime"
+      :listEntry="anime.listEntry"
       :loading="loading || loadingVideo"
       :paused="paused"
       :isPlayerMaximized="isPlayerMaximized"
@@ -55,19 +59,19 @@
     <next-episode-overlay
       v-if="ended && nextEpisode"
       :nextEpisode="nextEpisode"
-      :episodesInAnime="playerData.anime.episodes"
-      :progress="playerData.listEntry.progress"
+      :episodesInAnime="anime.episodes"
+      :progress="anime.listEntry.progress"
       :isPlayerMaximized="isPlayerMaximized"
       :shouldAutoPlay="shouldAutoPlay"
     />
 
     <end-of-season-overlay
       v-if="ended && !nextEpisode"
-      :listEntry="playerData.listEntry"
-      :sequels="playerData.anime.sequels"
+      :listEntry="anime.listEntry"
+      :sequels="anime.sequels"
       :episodeNumber="episode.episodeNumber"
-      :episodesInAnime="playerData.anime.episodes"
-      :nextAiringEpisode="playerData.anime.nextAiringEpisode"
+      :episodesInAnime="anime.episodes"
+      :nextAiringEpisode="anime.nextAiringEpisode"
       :isPlayerMaximized="isPlayerMaximized"
     />
   </div>
@@ -77,9 +81,16 @@
 import { ipcRenderer } from 'electron'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import Hls from 'hls.js'
-import { contains } from 'rambdax'
+import { contains, pathOr } from 'rambdax'
 import { mdiLoading, mdiPlayCircle } from '@mdi/js'
 
+import {
+  PlayerAnimeAnime,
+  PlayerEpisodesEpisodes,
+  PlayerAnimeMediaListEntry,
+  Provider,
+  PlayerAnimeTitle,
+} from '@/graphql/types'
 import { fetchStream, setProgressOfEpisode } from '@/lib/crunchyroll'
 import { trackStillWatching } from '@/lib/tracking'
 import {
@@ -88,16 +99,16 @@ import {
   sendErrorToast,
   toggleFullscreen,
 } from '@/state/app'
+import { getAnilistUsername } from '@/state/auth'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
-import { DISCORD_SET_WATCHING, DISCORD_PAUSE_WATCHING } from '@/messages'
-import { Episode, Levels } from '@/types'
+import { DISCORD_PAUSE_WATCHING, DISCORD_SET_WATCHING } from '@/messages'
+import { Levels, Stream } from '@/types'
 import { clamp, prop } from '@/utils'
 
 import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
 import NextEpisodeOverlay from './NextEpisodeOverlay.vue'
 import EndOfSeasonOverlay from './EndOfSeasonOverlay.vue'
-import { getAnilistUsername } from '@/state/auth'
 
 interface Level {
   attrs: {
@@ -126,8 +137,11 @@ interface Level {
   components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
 })
 export default class Player extends Vue {
-  @Prop(Object) public episode!: Episode
-  @Prop(Object) public nextEpisode!: Episode
+  @Prop(prop(Object, true))
+  public episode!: PlayerEpisodesEpisodes
+  @Prop(Object) public nextEpisode!: PlayerEpisodesEpisodes
+  @Prop(prop(Object, true))
+  public anime!: PlayerAnimeAnime
   @Prop(prop(Object, true))
   public playerData!: PlayerData
   @Prop(Boolean) public loading!: boolean | null
@@ -202,6 +216,14 @@ export default class Player extends Vue {
     return getAnilistUsername(this.$store)
   }
 
+  public get listEntry() {
+    return pathOr(
+      null,
+      ['data', 'anime', 'mediaListEntry'],
+      this,
+    ) as PlayerAnimeMediaListEntry | null
+  }
+
   public mounted() {
     this.onNewEpisode()
 
@@ -216,16 +238,25 @@ export default class Player extends Vue {
     this.gainNode.connect(audioContext.destination)
   }
 
+  private async fetchStream(provider: Provider, id: number) {
+    if (provider === Provider.Crunchyroll) {
+      return fetchStream(id)
+    }
+  }
+
   @Watch('episode')
   public async onNewEpisode() {
     this.pause()
 
     try {
-      const { url, progress } = await fetchStream(this.episode.crunchyroll.id)
+      const { url, progress } = (await this.fetchStream(
+        this.episode.provider,
+        this.episode.id,
+      )) as Stream
 
       this.streamUrl = url
 
-      this.playhead = progress
+      this.playhead = progress || 0
     } catch (e) {
       return sendErrorToast(this.$store, e)
     }
@@ -252,6 +283,8 @@ export default class Player extends Vue {
   }
 
   public registerEvents() {
+    if (!this.$refs.player) return
+
     this.hls.on('hlsManifestParsed', (_event, data) => {
       let i = 0
       const qualities = (data.levels as any).reduce(
@@ -318,7 +351,7 @@ export default class Player extends Vue {
     ) {
       this.lastScrobble = this.progressInSeconds
 
-      setProgressOfEpisode(this.episode.crunchyroll.id, this.progressInSeconds)
+      setProgressOfEpisode(this.episode.id, this.progressInSeconds)
     }
 
     if (
@@ -334,7 +367,7 @@ export default class Player extends Vue {
       this.softEnded = true
       this.lastScrobble = this.episode.duration
 
-      setProgressOfEpisode(this.episode.crunchyroll.id, this.episode.duration)
+      setProgressOfEpisode(this.episode.id, this.episode.duration)
       this.updateProgressIfNecessary()
     }
   }
@@ -428,9 +461,9 @@ export default class Player extends Vue {
 
   public updateProgressIfNecessary() {
     if (
-      !this.playerData.listEntry ||
+      !this.listEntry ||
       !this.getShouldAutoMarkWatched ||
-      this.playerData.listEntry.progress >= this.episode.episodeNumber
+      (this.listEntry.progress as number) >= this.episode.episodeNumber
     ) {
       return
     }
@@ -442,9 +475,9 @@ export default class Player extends Vue {
     ipcRenderer.send(
       state === 'watching' ? DISCORD_SET_WATCHING : DISCORD_PAUSE_WATCHING,
       {
-        animeName: this.playerData.anime.title,
+        animeName: (this.anime.title as PlayerAnimeTitle).userPreferred,
         episode: this.episode.episodeNumber,
-        totalEpisodes: this.playerData.anime.episodes,
+        totalEpisodes: this.anime.episodes,
         progress: this.progressInSeconds,
         username: this.username,
       },

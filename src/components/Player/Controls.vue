@@ -6,20 +6,19 @@
     @click="goVisible"
     @mouseout="handleMouseLeave"
   >
-    <div class="cover" @click="debounceCoverClick"/>
+    <div class="cover" @click="debounceCoverClick" />
 
     <transition name="fade">
       <player-title
         v-if="isPlayerMaximized"
-        :animeName="animeName"
-        :animeId="animeId"
+        :anime="anime"
         :episode="episode"
         :listEntry="listEntry"
       />
     </transition>
 
     <transition name="fade">
-      <icon class="button close" :icon="closeSvg" @click.native="closePlayer"/>
+      <icon class="button close" :icon="closeSvg" @click.native="closePlayer" />
     </transition>
 
     <div class="toolbar">
@@ -42,8 +41,20 @@
 
       <span class="play-pause button-collapser">
         <transition>
-          <icon v-if="paused" key="play" class="button" :icon="playSvg" @click.native="play"/>
-          <icon v-else class="button" key="pause" :icon="pauseSvg" @click.native="pause"/>
+          <icon
+            v-if="paused"
+            key="play"
+            class="button"
+            :icon="playSvg"
+            @click.native="play"
+          />
+          <icon
+            v-else
+            class="button"
+            key="pause"
+            :icon="pauseSvg"
+            @click.native="pause"
+          />
         </transition>
       </span>
 
@@ -66,13 +77,16 @@
       />
 
       <transition name="shrink">
-        <span v-if="isPlayerMaximized" class="time">{{timeString}}</span>
+        <span v-if="isPlayerMaximized" class="time">{{ timeString }}</span>
       </transition>
 
-      <span class="separator"/>
+      <span class="separator" />
 
       <transition name="shrink">
-        <span v-if="isPlayerMaximized && listEntry" class="completed button-collapser">
+        <span
+          v-if="isPlayerMaximized && listEntry"
+          class="completed button-collapser"
+        >
           <transition name="fade">
             <icon
               v-if="listEntry.progress < episode.episodeNumber"
@@ -88,7 +102,9 @@
               key="min"
               :icon="bookmarkRemoveSvg"
               v-tooltip.top="'Unmark as watched'"
-              @click.native="setProgress(Math.max(0, episode.episodeNumber - 1))"
+              @click.native="
+                setProgress(Math.max(0, episode.episodeNumber - 1))
+              "
             />
           </transition>
         </span>
@@ -100,7 +116,11 @@
           class="settings button-collapser"
           :class="{ open: settingsOpen }"
         >
-          <icon class="button" :icon="settingSvg" @click.native="toggleSettingsMenu"/>
+          <icon
+            class="button"
+            :icon="settingSvg"
+            @click.native="toggleSettingsMenu"
+          />
         </span>
       </transition>
 
@@ -113,7 +133,13 @@
             :icon="maximizeSvg"
             @click.native="maximizePlayer"
           />
-          <icon v-else class="button" key="min" :icon="minimizeSvg" @click.native="$router.back()"/>
+          <icon
+            v-else
+            class="button"
+            key="min"
+            :icon="minimizeSvg"
+            @click.native="$router.back()"
+          />
         </transition>
       </span>
 
@@ -144,7 +170,12 @@
           <select @input="handleChangeQuality" :value="quality">
             <option :value="-1">Auto</option>
 
-            <option v-for="(level, quality) in levels" :key="level" :value="level">{{quality}}p</option>
+            <option
+              v-for="(level, quality) in levels"
+              :key="level"
+              :value="level"
+              >{{ quality }}p</option
+            >
           </select>
         </label>
 
@@ -166,6 +197,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Route } from 'vue-router'
+import { pathOr } from 'rambdax'
 import {
   mdiArrowCollapse,
   mdiArrowExpand,
@@ -181,10 +213,10 @@ import {
   mdiClose,
 } from '@mdi/js'
 
+import { PlayerAnimeAnime, PlayerAnimeMediaListEntry } from '@/graphql/types'
 import {
   getIsFullscreen,
   toggleFullscreen,
-  ListEntry,
   setPlaylist,
   setCurrentEpisode,
   setFullscreen,
@@ -212,11 +244,7 @@ export default class Controls extends Vue {
   public episode!: Episode
   @Prop(prop(Object))
   public nextEpisode!: Episode | null
-  @Prop(prop(String, true))
-  public animeName!: string
-  @Prop(prop(Number, true))
-  public animeId!: number
-  @Prop(Object) public listEntry?: ListEntry
+  @Prop(Object) public anime!: PlayerAnimeAnime | null
   @Prop(prop(Boolean, true))
   public paused!: boolean
   @Prop(prop(Boolean, true))
@@ -258,6 +286,14 @@ export default class Controls extends Vue {
   public visibleTimeout: number | null = null
 
   public settingSvg = mdiSettingsOutline
+
+  public get listEntry() {
+    return pathOr(
+      null,
+      ['anime', 'mediaListEntry'],
+      this,
+    ) as PlayerAnimeMediaListEntry | null
+  }
 
   public get timeString() {
     const current = secondsToTimeString(
@@ -560,7 +596,7 @@ $buttonSize: 50px;
     transition: transform 0.35s;
 
     &.open {
-      transform: rotate(-50deg);
+      transform: rotate(-75deg);
     }
   }
 }

@@ -844,42 +844,39 @@ export type FuzzyDateInt = any;
     id: number;
   } 
 
-  export type PlayerVariables = {
+  export type PlayerAnimeVariables = {
     id: number;
-    idMal: number;
   }
 
-  export type PlayerQuery = {
+  export type PlayerAnimeQuery = {
     __typename?: "Query";
     
-    anime: Maybe<PlayerAnime>;
-    
-    episodes: Maybe<PlayerEpisodes[]>;
+    anime: Maybe<PlayerAnimeAnime>;
   }
 
-  export type PlayerAnime = {
+  export type PlayerAnimeAnime = {
     __typename?: "Media";
     
     id: number;
     
-    title: Maybe<PlayerTitle>;
+    title: Maybe<PlayerAnimeTitle>;
     
     episodes: Maybe<number>;
     
-    nextAiringEpisode: Maybe<PlayerNextAiringEpisode>;
+    nextAiringEpisode: Maybe<PlayerAnimeNextAiringEpisode>;
     
-    relations: Maybe<PlayerRelations>;
+    relations: Maybe<PlayerAnimeRelations>;
     
-    mediaListEntry: Maybe<PlayerMediaListEntry>;
+    mediaListEntry: Maybe<PlayerAnimeMediaListEntry>;
   } 
 
-  export type PlayerTitle = {
+  export type PlayerAnimeTitle = {
     __typename?: "MediaTitle";
     
     userPreferred: Maybe<string>;
   } 
 
-  export type PlayerNextAiringEpisode = {
+  export type PlayerAnimeNextAiringEpisode = {
     __typename?: "AiringSchedule";
     
     airingAt: number;
@@ -887,37 +884,37 @@ export type FuzzyDateInt = any;
     timeUntilAiring: number;
   } 
 
-  export type PlayerRelations = {
+  export type PlayerAnimeRelations = {
     __typename?: "MediaConnection";
     
-    edges: Maybe<PlayerEdges[]>;
+    edges: Maybe<PlayerAnimeEdges[]>;
   } 
 
-  export type PlayerEdges = {
+  export type PlayerAnimeEdges = {
     __typename?: "MediaEdge";
     
     relationType: Maybe<MediaRelation>;
     
-    node: Maybe<PlayerNode>;
+    node: Maybe<PlayerAnimeNode>;
   } 
 
-  export type PlayerNode = {
+  export type PlayerAnimeNode = {
     __typename?: "Media";
     
     id: number;
     
-    title: Maybe<Player_Title>;
+    title: Maybe<PlayerAnime_Title>;
     
     bannerImage: Maybe<string>;
   } 
 
-  export type Player_Title = {
+  export type PlayerAnime_Title = {
     __typename?: "MediaTitle";
     
     userPreferred: Maybe<string>;
   } 
 
-  export type PlayerMediaListEntry = {
+  export type PlayerAnimeMediaListEntry = {
     __typename?: "MediaList";
     
     id: number;
@@ -927,7 +924,17 @@ export type FuzzyDateInt = any;
     progress: Maybe<number>;
   } 
 
-  export type PlayerEpisodes = {
+  export type PlayerEpisodesVariables = {
+    idMal: number;
+  }
+
+  export type PlayerEpisodesQuery = {
+    __typename?: "Query";
+    
+    episodes: Maybe<PlayerEpisodesEpisodes[]>;
+  }
+
+  export type PlayerEpisodesEpisodes = {
     __typename?: "Episode";
     
     provider: Provider;

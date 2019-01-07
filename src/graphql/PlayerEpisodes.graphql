@@ -1,0 +1,14 @@
+query PlayerEpisodes($idMal: Int!) {
+  episodes: Episodes(malId: $idMal, provider: CRUNCHYROLL) @client {
+    provider
+    id
+    title
+    duration
+    index
+    episodeNumber
+    url
+    thumbnail
+  }
+}
+
+

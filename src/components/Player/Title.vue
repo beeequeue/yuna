@@ -1,15 +1,17 @@
 <template>
   <div class="episode-info">
-    <h1 class="episode-number">{{episode.episodeNumber}}</h1>
+    <h1 class="episode-number">{{ episode.episodeNumber }}</h1>
 
     <div class="titles">
       <h1
         class="episode-title"
         :class="{ blur: listEntry.progress < episode.episodeNumber }"
-      >{{episode.title}}</h1>
+      >
+        {{ episode.title }}
+      </h1>
 
-      <router-link :to="`/anime/${animeId}`">
-        <h3 class="anime-title">{{animeName}}</h3>
+      <router-link :to="`/anime/${anime.id}`">
+        <h3 class="anime-title">{{ anime.title.userPreferred }}</h3>
       </router-link>
     </div>
   </div>
@@ -18,16 +20,15 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
+import { PlayerAnimeAnime } from '@/graphql/types'
 import { ListEntry } from '@/state/app'
 import { Episode } from '@/types'
 import { prop } from '@/utils'
 
 @Component
 export default class PlayerTitle extends Vue {
-  @Prop(prop(String, true))
-  public animeName!: string
-  @Prop(prop(Number, true))
-  public animeId!: number
+  @Prop(prop(Object, true))
+  public anime!: PlayerAnimeAnime
   @Prop(prop(Object, true))
   public episode!: Episode
   @Prop(Object) public listEntry!: ListEntry

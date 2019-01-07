@@ -70,12 +70,22 @@ declare module '*/PlanningQuery.graphql' {
   export default defaultDocument
 }
 
-declare module '*/Player.graphql' {
+declare module '*/PlayerAnime.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const Player: DocumentNode
+  const PlayerAnime: DocumentNode
 
-  export { Player }
+  export { PlayerAnime }
+
+  export default defaultDocument
+}
+
+declare module '*/PlayerEpisodes.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const PlayerEpisodes: DocumentNode
+
+  export { PlayerEpisodes }
 
   export default defaultDocument
 }

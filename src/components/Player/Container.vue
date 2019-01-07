@@ -2,8 +2,10 @@
   <transition>
     <div v-if="playerData" class="player-container" :class="classFromRoute">
       <player
+        v-if="anime"
         key="player"
-        :loading="$apollo.loading"
+        :loading="$apollo.loading || !anime || !episode"
+        :anime="anime"
         :episode="episode"
         :nextEpisode="delayedNextEpisode"
         :playerData="playerData"
@@ -17,21 +19,25 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { pathOr } from 'rambdax'
+import { isNil, pathOr } from 'rambdax'
 
-import PLAYER_QUERY from '@/graphql/Player.graphql'
+import ANIME_QUERY from '@/graphql/PlayerAnime.graphql'
+import EPISODES_QUERY from '@/graphql/PlayerEpisodes.graphql'
 import { setProgressMutation } from '@/graphql/mutations'
 import {
-  PlayerMediaListEntry,
-  PlayerQuery,
-  PlayerVariables,
+  PlayerAnimeAnime,
+  PlayerAnimeMediaListEntry,
+  PlayerAnimeQuery,
+  PlayerAnimeVariables,
+  PlayerEpisodesEpisodes,
+  PlayerEpisodesQuery,
+  PlayerEpisodesVariables,
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
 import { Page, trackPageView } from '@/lib/tracking'
 import { getPlayerData } from '@/state/app'
 import { getShouldAutoMarkWatched, getShouldAutoPlay } from '@/state/settings'
-import { Episode } from '@/types'
 
 import Player from './Player.vue'
 
@@ -39,8 +45,8 @@ import Player from './Player.vue'
   components: { Player },
 })
 export default class PlayerContainer extends Vue {
-  @Query<PlayerContainer, PlayerQuery, PlayerVariables>({
-    query: PLAYER_QUERY,
+  @Query<PlayerContainer, PlayerAnimeQuery, PlayerAnimeVariables>({
+    query: ANIME_QUERY,
     variables() {
       return {
         id: this.id,
@@ -50,49 +56,64 @@ export default class PlayerContainer extends Vue {
     skip() {
       return !this.id || !this.idMal
     },
+    update: data => data.anime,
   })
-  public data: PlayerQuery | null = null
+  public anime: PlayerAnimeAnime | null = null
 
-  public delayedNextEpisode: Episode | null = null
+  @Query<PlayerContainer, PlayerEpisodesQuery, PlayerEpisodesVariables>({
+    query: EPISODES_QUERY,
+    variables() {
+      return {
+        idMal: this.idMal,
+      }
+    },
+    skip() {
+      return !this.idMal
+    },
+    update: data => data.episodes,
+  })
+  public episodes: PlayerEpisodesEpisodes[] | null = null
+
+  public delayedNextEpisode: PlayerEpisodesEpisodes | null = null
 
   get playerData() {
     return getPlayerData(this.$store)
   }
 
   get id() {
-    if (!this.playerData) return null
+    const data = getPlayerData(this.$store)
+    if (!data) return null
 
-    return this.playerData.id
+    return data.id
   }
 
   get idMal() {
-    if (!this.playerData) return null
+    const data = getPlayerData(this.$store)
+    if (!data) return null
 
-    return this.playerData.idMal
+    return data.idMal
   }
 
   get episode() {
-    const episodes = pathOr(null, ['data', 'episodes'], this)
     const index = pathOr(null, ['playerData', 'index'], this)
-    if (!episodes || !index) return null
+    if (isNil(this.episodes) || isNil(index)) return null
 
-    return episodes[index]
+    return this.episodes[index] as PlayerEpisodesEpisodes
   }
 
   get nextEpisode() {
-    const episodes = pathOr(null, ['data', 'episodes'], this)
     const index = pathOr(null, ['playerData', 'index'], this)
-    if (!episodes || !index) return null
+    if (!this.episodes || !index) return null
 
-    return episodes[index + 1]
+    return this.episodes[index + 1] as PlayerEpisodesEpisodes
   }
 
   get listEntry() {
     return pathOr(
       null,
-      ['data', 'anime', 'mediaListEntry'],
+      ['anime', 'mediaListEntry'],
       this,
-    ) as PlayerMediaListEntry | null
+    ) as PlayerAnimeMediaListEntry | null
   }
 
   get shouldAutoPlay() {
@@ -119,7 +140,7 @@ export default class PlayerContainer extends Vue {
   }
 
   public mounted() {
-    this.delayedNextEpisode = this.nextEpisode as Episode
+    this.delayedNextEpisode = this.nextEpisode as PlayerEpisodesEpisodes
   }
 
   @Watch('nextEpisode')
