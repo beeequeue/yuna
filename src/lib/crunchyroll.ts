@@ -374,6 +374,7 @@ const mediaToEpisode = (
   }: _Media,
   index: number,
 ): PlayerEpisodesEpisodes => ({
+  __typename: 'Episode',
   provider: Provider.Crunchyroll,
   id: Number(media_id),
   animeId: Number(series_id),
