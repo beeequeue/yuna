@@ -91,7 +91,7 @@ import {
   PlayerAnimeAnime,
   PlayerAnimeMediaListEntry,
   PlayerAnimeTitle,
-  PlayerEpisodesEpisodes,
+  EpisodeListEpisodes,
   Provider,
 } from '@/graphql/types'
 import { fetchStream, setProgressOfEpisode } from '@/lib/crunchyroll'
@@ -140,8 +140,8 @@ interface Level {
   components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
 })
 export default class Player extends Vue {
-  @Prop(Object) public episode!: PlayerEpisodesEpisodes | null
-  @Prop(Object) public nextEpisode!: PlayerEpisodesEpisodes | null
+  @Prop(Object) public episode!: EpisodeListEpisodes | null
+  @Prop(Object) public nextEpisode!: EpisodeListEpisodes | null
   @Prop(Object) public anime!: PlayerAnimeAnime | null
   @Prop(prop(Object, true))
   public playerData!: PlayerData
@@ -306,7 +306,7 @@ export default class Player extends Vue {
 
     this.hls.on('hlsMediaAttached', () => {
       this.$refs.player.currentTime =
-        this.playhead < (this.episode as PlayerEpisodesEpisodes).duration * 0.8
+        this.playhead < (this.episode as EpisodeListEpisodes).duration * 0.8
           ? this.playhead
           : 0
     })

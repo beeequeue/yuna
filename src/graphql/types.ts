@@ -695,6 +695,40 @@ export type FuzzyDateInt = any;
     deleted: Maybe<boolean>;
   } 
 
+  export type EpisodeListVariables = {
+    id: number;
+  }
+
+  export type EpisodeListQuery = {
+    __typename?: "Query";
+    
+    episodes: Maybe<EpisodeListEpisodes[]>;
+  }
+
+  export type EpisodeListEpisodes = {
+    __typename?: "Episode";
+    
+    provider: Provider;
+    
+    id: number;
+    
+    animeId: number;
+    
+    title: string;
+    
+    duration: number;
+    
+    progress: Maybe<number>;
+    
+    index: number;
+    
+    episodeNumber: number;
+    
+    url: string;
+    
+    thumbnail: string;
+  } 
+
   export type ListQueryVariables = {
     userId: number;
     statuses: Maybe<MediaListStatus[]>;
@@ -924,40 +958,6 @@ export type FuzzyDateInt = any;
     status: Maybe<MediaListStatus>;
     
     progress: Maybe<number>;
-  } 
-
-  export type PlayerEpisodesVariables = {
-    id: number;
-  }
-
-  export type PlayerEpisodesQuery = {
-    __typename?: "Query";
-    
-    episodes: Maybe<PlayerEpisodesEpisodes[]>;
-  }
-
-  export type PlayerEpisodesEpisodes = {
-    __typename?: "Episode";
-    
-    provider: Provider;
-    
-    id: number;
-    
-    animeId: number;
-    
-    title: string;
-    
-    duration: number;
-    
-    progress: Maybe<number>;
-    
-    index: number;
-    
-    episodeNumber: number;
-    
-    url: string;
-    
-    thumbnail: string;
   } 
 
   export type SaveListEntryMutationVariables = {

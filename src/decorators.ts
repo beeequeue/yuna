@@ -25,7 +25,7 @@ export function Query<C extends Vue, R = any, V = any>(
     }
 
     ;(componentOptions.apollo as any)[key] = {
-      update: (data: any) => data,
+      update: (data: any) => (data[key] != null ? data[key] : data),
       ...options,
     }
   }) as any

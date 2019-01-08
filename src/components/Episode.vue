@@ -37,7 +37,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiBookmark, mdiBookmarkRemove, mdiCheckCircleOutline } from '@mdi/js'
 
-import { PlayerEpisodesEpisodes } from '@/graphql/types'
+import { EpisodeListEpisodes } from '@/graphql/types'
 import { setProgressMutation } from '@/graphql/mutations'
 import { ListEntry } from '@/state/app'
 import { getSpoilerSettings } from '@/state/settings'
@@ -52,7 +52,7 @@ export default class Episode extends Vue {
   @Prop(prop(Function, true))
   public setCurrentEpisode!: (n: number) => void
   @Prop(prop(Object, true))
-  public episode!: PlayerEpisodesEpisodes
+  public episode!: EpisodeListEpisodes
   @Prop(String) public scrollerValue!: string | null
   @Prop(Boolean) public small!: boolean | null
   @Prop(Boolean) public empty!: boolean | null

@@ -3,7 +3,7 @@ import { delay, T } from 'rambdax'
 
 import { fetchSeasonFromEpisode } from '@/lib/crunchyroll'
 import { RequestResponse, responseIsError } from '@/utils'
-import { PlayerEpisodesEpisodes } from '@/graphql/types'
+import { EpisodeListEpisodes } from '@/graphql/types'
 
 let requestsRecently = 0
 const CRUNCHYROLL_PROVIDER_ID = '1'
@@ -30,7 +30,7 @@ const handleError = (response: RequestResponse) => {
 
 export const fetchEpisodesOfSeries = async (
   id: string | number,
-): Promise<PlayerEpisodesEpisodes[]> => {
+): Promise<EpisodeListEpisodes[]> => {
   const baseUrl = `https://myanimelist.net/anime/${id}`
   const episodeResponse = (await request.get(baseUrl).ok(T)) as RequestResponse
 

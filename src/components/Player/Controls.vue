@@ -216,7 +216,7 @@ import {
 import {
   PlayerAnimeAnime,
   PlayerAnimeMediaListEntry,
-  PlayerEpisodesEpisodes,
+  EpisodeListEpisodes,
 } from '@/graphql/types'
 import {
   getIsFullscreen,
@@ -245,9 +245,9 @@ import VolumeSlider from './VolumeSlider.vue'
 })
 export default class Controls extends Vue {
   @Prop(prop(Object, true))
-  public episode!: PlayerEpisodesEpisodes
+  public episode!: EpisodeListEpisodes
   @Prop(prop(Object))
-  public nextEpisode!: PlayerEpisodesEpisodes | null
+  public nextEpisode!: EpisodeListEpisodes | null
   @Prop(Object) public anime!: PlayerAnimeAnime | null
   @Prop(prop(Boolean, true))
   public paused!: boolean

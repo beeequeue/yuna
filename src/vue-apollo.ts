@@ -3,7 +3,7 @@ import VueApollo from 'vue-apollo'
 import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
 
 import { resolvers } from '@/graphql/client/resolvers'
-import { PlayerEpisodesEpisodes } from '@/graphql/types'
+import { EpisodeListEpisodes } from '@/graphql/types'
 import { userStore } from '@/lib/user'
 import { arrayIsOfType, isOfTypename } from '@/utils'
 
@@ -23,12 +23,12 @@ Vue.prototype.$filesRoot = filesRoot
 
 const dataIdFromObject = (obj: any) => {
   // Episode List
-  if (arrayIsOfType<PlayerEpisodesEpisodes>(obj, 'provider', 'title')) {
+  if (arrayIsOfType<EpisodeListEpisodes>(obj, 'provider', 'title')) {
     return `Episodes:${obj[0].provider}:${obj[0].id}`
   }
 
   // Episode
-  if (isOfTypename<PlayerEpisodesEpisodes>(obj, 'Episode')) {
+  if (isOfTypename<EpisodeListEpisodes>(obj, 'Episode')) {
     return `Episode:${obj.provider}:${obj.id}`
   }
 

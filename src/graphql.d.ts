@@ -80,12 +80,12 @@ declare module '*/PlayerAnime.graphql' {
   export default defaultDocument
 }
 
-declare module '*/PlayerEpisodes.graphql' {
+declare module '*/EpisodeList.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const PlayerEpisodes: DocumentNode
+  const EpisodeList: DocumentNode
 
-  export { PlayerEpisodes }
+  export { EpisodeList }
 
   export default defaultDocument
 }

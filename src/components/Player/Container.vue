@@ -21,16 +21,16 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { isNil, pathOr } from 'rambdax'
 
 import ANIME_QUERY from '@/graphql/PlayerAnime.graphql'
-import EPISODES_QUERY from '@/graphql/PlayerEpisodes.graphql'
+import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import { setProgressMutation } from '@/graphql/mutations'
 import {
   PlayerAnimeAnime,
   PlayerAnimeMediaListEntry,
   PlayerAnimeQuery,
   PlayerAnimeVariables,
-  PlayerEpisodesEpisodes,
-  PlayerEpisodesQuery,
-  PlayerEpisodesVariables,
+  EpisodeListEpisodes,
+  EpisodeListQuery,
+  EpisodeListVariables,
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
@@ -54,12 +54,11 @@ export default class PlayerContainer extends Vue {
     skip() {
       return !this.id
     },
-    update: data => data.anime,
   })
   public anime: PlayerAnimeAnime | null = null
 
-  @Query<PlayerContainer, PlayerEpisodesQuery, PlayerEpisodesVariables>({
-    query: EPISODES_QUERY,
+  @Query<PlayerContainer, EpisodeListQuery, EpisodeListVariables>({
+    query: EPISODE_LIST,
     variables() {
       return {
         id: this.id,
@@ -68,11 +67,10 @@ export default class PlayerContainer extends Vue {
     skip() {
       return !this.id
     },
-    update: data => data.episodes,
   })
-  public episodes: PlayerEpisodesEpisodes[] | null = null
+  public episodes: EpisodeListEpisodes[] | null = null
 
-  public delayedNextEpisode: PlayerEpisodesEpisodes | null = null
+  public delayedNextEpisode: EpisodeListEpisodes | null = null
 
   get playerData() {
     return getPlayerData(this.$store)
@@ -96,14 +94,14 @@ export default class PlayerContainer extends Vue {
     const index = pathOr(null, ['playerData', 'index'], this)
     if (isNil(this.episodes) || isNil(index)) return null
 
-    return this.episodes[index] as PlayerEpisodesEpisodes
+    return this.episodes[index] as EpisodeListEpisodes
   }
 
   get nextEpisode() {
     const index = pathOr(null, ['playerData', 'index'], this)
     if (!this.episodes || !index) return null
 
-    return this.episodes[index + 1] as PlayerEpisodesEpisodes
+    return this.episodes[index + 1] as EpisodeListEpisodes
   }
 
   get listEntry() {
@@ -138,7 +136,7 @@ export default class PlayerContainer extends Vue {
   }
 
   public mounted() {
-    this.delayedNextEpisode = this.nextEpisode as PlayerEpisodesEpisodes
+    this.delayedNextEpisode = this.nextEpisode as EpisodeListEpisodes
   }
 
   @Watch('id')

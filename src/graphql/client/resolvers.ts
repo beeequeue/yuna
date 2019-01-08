@@ -1,13 +1,13 @@
 import { DataProxy } from 'apollo-cache'
 import { isNil, omit } from 'rambdax'
 
-import EPISODES_QUERY from '@/graphql/PlayerEpisodes.graphql'
+import EPISODES_QUERY from '@/graphql/EpisodeList.graphql'
 import {
   AnimePageQueryAnime,
   PlayerAnimeAnime,
-  PlayerEpisodesEpisodes,
-  PlayerEpisodesQuery,
-  PlayerEpisodesVariables,
+  EpisodeListEpisodes,
+  EpisodeListQuery,
+  EpisodeListVariables,
   Provider,
 } from '@/graphql/types'
 import { fetchEpisodesOfSeries, fetchRating } from '@/lib/myanimelist'
@@ -33,7 +33,7 @@ interface RealProxy extends DataProxy {
 
 const cacheEpisodes = (cache: RealProxy, relations: EpisodeRelations) => {
   Object.entries(relations).forEach(([id, episodes]) => {
-    cache.writeQuery<PlayerEpisodesQuery, PlayerEpisodesVariables>({
+    cache.writeQuery<EpisodeListQuery, EpisodeListVariables>({
       query: EPISODES_QUERY,
       variables: { id: Number(id) },
       data: { episodes },
@@ -57,7 +57,7 @@ export const resolvers = {
       _: any,
       { id, provider }: EpisodeVariables,
       { cache }: { cache: RealProxy },
-    ): Promise<PlayerEpisodesEpisodes[] | null> => {
+    ): Promise<EpisodeListEpisodes[] | null> => {
       if (provider === Provider.Crunchyroll) {
         const cachedAnime = cache.data.data[
           `Media:${id}`

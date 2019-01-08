@@ -1,12 +1,12 @@
 import Store from 'electron-store'
 
-import { PlayerEpisodesEpisodes } from '@/graphql/types'
+import { EpisodeListEpisodes } from '@/graphql/types'
 import { fetchEpisodesOfSeries, fetchRating } from '@/lib/myanimelist'
 
 interface SeasonCacheSchema {
   [key: string]: {
     updatedAt: number
-    episodes: PlayerEpisodesEpisodes[]
+    episodes: EpisodeListEpisodes[]
     rating: string | null
     nextEpisodeAt: number | null
   }
@@ -41,7 +41,7 @@ export class AnimeCache {
   public static async getSeasonFromMalId({
     idMal,
     nextAiringEpisode,
-  }: GetSeasonOptions): Promise<PlayerEpisodesEpisodes[]> {
+  }: GetSeasonOptions): Promise<EpisodeListEpisodes[]> {
     const hit = seasonCache.get(idMal.toString())
 
     if (!hit || isStale(hit, WEEK * 4)) {

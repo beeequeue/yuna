@@ -1,4 +1,4 @@
-query PlayerEpisodes($id: Int!) {
+query EpisodeList($id: Int!) {
   episodes: Episodes(id: $id, provider: CRUNCHYROLL) @client {
     provider
     id

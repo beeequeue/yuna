@@ -8,7 +8,7 @@ import { getConfig } from '@/config'
 import { userStore } from '@/lib/user'
 import { Stream } from '@/types'
 import { RequestError, RequestSuccess } from '@/utils'
-import { PlayerEpisodesEpisodes, Provider } from '@/graphql/types'
+import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 
 const CR_UNBLOCKER_URL = 'api2.cr-unblocker.com'
 const API_URL = 'api.crunchyroll.com'
@@ -260,7 +260,7 @@ export const logout = () => {
 
 export const fetchEpisodesOfCollection = async (
   collectionId: string,
-): Promise<PlayerEpisodesEpisodes[]> => {
+): Promise<EpisodeListEpisodes[]> => {
   const response = (await superagent.get(getUrl('list_media')).query({
     session_id: _sessionId,
     locale,
@@ -301,7 +301,7 @@ export const fetchEpisode = async (mediaId: string): Promise<_Media> => {
 
 export const fetchSeasonFromEpisode = async (
   mediaId: string,
-): Promise<PlayerEpisodesEpisodes[]> => {
+): Promise<EpisodeListEpisodes[]> => {
   const episode = await fetchEpisode(mediaId)
 
   return fetchEpisodesOfCollection(episode.collection_id)
@@ -373,7 +373,7 @@ const mediaToEpisode = (
     playhead,
   }: _Media,
   index: number,
-): PlayerEpisodesEpisodes => ({
+): EpisodeListEpisodes => ({
   __typename: 'Episode',
   provider: Provider.Crunchyroll,
   id: Number(media_id),
