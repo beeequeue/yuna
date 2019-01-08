@@ -58,7 +58,7 @@
           :id="data.anime.id"
           :idMal="data.anime.idMal"
           :listEntry="data.anime.mediaListEntry"
-          :animeName="data.anime.title.userPreferred"
+          :animeTitle="data.anime.title.userPreferred"
           :episodesInAnime="data.anime.episodes"
           :nextAiringEpisode="data.anime.nextAiringEpisode"
           :sequels="getSequels(data)"

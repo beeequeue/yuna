@@ -1,3 +1,5 @@
+import { Store } from 'vuex'
+import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 import { MediaListStatus } from '@/graphql/types'
 
 export interface Levels {
@@ -31,4 +33,9 @@ export interface Anime {
     id: number
     listEntryId?: number
   }
+}
+
+export interface Instance {
+  $store: Store<any>
+  $apollo: DollarApollo<any>
 }

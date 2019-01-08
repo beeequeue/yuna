@@ -51,7 +51,6 @@ import {
   mdiGithubCircle,
 } from '@mdi/js'
 
-import { AnimeCache } from '@/lib/cache'
 import { logOut } from '@/state/auth'
 import { toggleModal } from '@/state/app'
 import Icon from '../Icon.vue'
@@ -77,7 +76,6 @@ export default class SettingsDropdown extends Vue {
   }
 
   public clearCache() {
-    AnimeCache.clear()
     caches.delete('images')
   }
 

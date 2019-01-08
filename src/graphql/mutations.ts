@@ -1,14 +1,21 @@
-import { DollarApollo } from 'vue-apollo/types/vue-apollo'
+import { DataProxy } from 'apollo-cache'
 import { Store } from 'vuex'
 
+import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
   AddEntryMutationMutation,
   DeleteListEntryMutationMutation,
+  EpisodeListEpisodes,
+  EpisodeListQuery,
+  EpisodeListVariables,
   MediaListStatus,
   SetStatusMutationMutation,
-  UpdateProgressMutationMutation, UpdateProgressMutationSaveMediaListEntry, UpdateScoreMutationMutation,
+  UpdateProgressMutationMutation,
+  UpdateProgressMutationSaveMediaListEntry,
+  UpdateScoreMutationMutation,
 } from '@/graphql/types'
 import { getAnilistUserId } from '@/state/auth'
+import { Instance } from '@/types'
 
 import ADD_ENTRY_MUTATION from './AddEntryMutation.graphql'
 import ANIME_PAGE_QUERY from './AnimePageQuery.graphql'
@@ -17,11 +24,6 @@ import LIST_QUERY from './ListQuery.graphql'
 import SET_STATUS_MUTATION from './SetStatusMutation.graphql'
 import UPDATE_PROGRESS_MUTATION from './UpdateProgressMutation.graphql'
 import UPDATE_SCORE_MUTATION from './UpdateScoreMutation.graphql'
-
-interface Instance {
-  $store: Store<any>
-  $apollo: DollarApollo<any>
-}
 
 const refetchListQuery = ($store: Store<any>) => {
   const userId = getAnilistUserId($store)
@@ -36,26 +38,74 @@ const refetchListQuery = ($store: Store<any>) => {
   ]
 }
 
-export const setProgressMutation = async (
-  { $apollo, $store }: Instance,
-  id: number,
+const writeEpisodeProgressToCache = (
+  cache: DataProxy,
+  episode: EpisodeListEpisodes,
   progress: number,
-  oldValues: Partial<UpdateProgressMutationSaveMediaListEntry> = {},
-) =>
-  $apollo.mutate<UpdateProgressMutationMutation>({
+) => {
+  const data = cache.readQuery<EpisodeListQuery, EpisodeListVariables>({
+    query: EPISODE_LIST,
+    variables: {
+      id: episode.animeId,
+    },
+  })
+
+  if (!data || !data.episodes) return
+
+  cache.writeQuery<EpisodeListQuery>({
+    query: EPISODE_LIST,
+    data: {
+      episodes: data.episodes.map(ep => ({
+        ...ep,
+        isWatched: progress >= ep.episodeNumber,
+      })),
+    },
+  })
+}
+
+export const setEpisodeWatched = async (
+  { $apollo, $store }: Instance,
+  episode: EpisodeListEpisodes,
+  listEntry: UpdateProgressMutationSaveMediaListEntry,
+) => {
+  if (episode.isSpecial) {
+    return
+  }
+
+  const progress = episode.episodeNumber
+
+  return $apollo.mutate<UpdateProgressMutationMutation>({
     mutation: UPDATE_PROGRESS_MUTATION,
-    variables: { id, progress },
+    variables: { id: listEntry.id, progress },
     optimisticResponse: {
       SaveMediaListEntry: {
         __typename: 'MediaList',
-        id,
+        id: listEntry.id,
         progress,
-        repeat: oldValues.repeat || 0,
-        status: oldValues.status || MediaListStatus.Current,
+        repeat: listEntry.repeat || 0,
+        status: listEntry.status || MediaListStatus.Current,
       },
     } as UpdateProgressMutationMutation,
     refetchQueries: refetchListQuery($store),
+    update: cache => {
+      writeEpisodeProgressToCache(cache, episode, progress)
+    },
   })
+}
+
+export const setEpisodeUnwatched = async (
+  instance: Instance,
+  episode: EpisodeListEpisodes,
+  listEntry: UpdateProgressMutationSaveMediaListEntry,
+) =>
+  setEpisodeWatched(
+    instance,
+    {
+      ...episode,
+      episodeNumber: episode.episodeNumber - 1,
+    },
+    listEntry,
+  )
 
 export const setStatusMutation = async (
   { $apollo, $store }: Instance,

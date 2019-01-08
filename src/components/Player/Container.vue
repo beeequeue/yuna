@@ -22,7 +22,7 @@ import { isNil, pathOr } from 'rambdax'
 
 import ANIME_QUERY from '@/graphql/PlayerAnime.graphql'
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
-import { setProgressMutation } from '@/graphql/mutations'
+import { setEpisodeUnwatched, setEpisodeWatched } from '@/graphql/mutations'
 import {
   PlayerAnimeAnime,
   PlayerAnimeMediaListEntry,
@@ -150,9 +150,14 @@ export default class PlayerContainer extends Vue {
     }, 1000)
   }
 
-  public setProgress(progress: number) {
-    if (!this.playerData || !this.listEntry) return
-    setProgressMutation(this, this.listEntry.id, progress)
+  public setProgress() {
+    if (!this.episode || !this.listEntry) return
+
+    if (!this.episode.isWatched) {
+      setEpisodeWatched(this, this.episode, this.listEntry as any)
+    } else {
+      setEpisodeUnwatched(this, this.episode, this.listEntry as any)
+    }
   }
 }
 </script>

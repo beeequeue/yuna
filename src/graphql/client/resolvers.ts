@@ -1,6 +1,7 @@
 import { DataProxy } from 'apollo-cache'
 import { isNil, omit } from 'rambdax'
 
+import ANIME_QUEUE_QUERY from '@/graphql/AnimeQueueQuery.graphql'
 import EPISODES_QUERY from '@/graphql/EpisodeList.graphql'
 import {
   AnimePageQueryAnime,
@@ -9,9 +10,12 @@ import {
   EpisodeListQuery,
   EpisodeListVariables,
   Provider,
+  AnimeQueueQueryQuery,
+  AnimeQueueQueryVariables,
 } from '@/graphql/types'
 import { fetchEpisodesOfSeries, fetchRating } from '@/lib/myanimelist'
 import { EpisodeRelations, getEpisodeRelations } from '@/lib/relations'
+import { SpecialEpisodeStore } from '@/lib/special-episode-tracking'
 
 interface EpisodeVariables {
   id: number
@@ -36,7 +40,9 @@ const cacheEpisodes = (cache: RealProxy, relations: EpisodeRelations) => {
     cache.writeQuery<EpisodeListQuery, EpisodeListVariables>({
       query: EPISODES_QUERY,
       variables: { id: Number(id) },
-      data: { episodes },
+      data: {
+        episodes: episodes.map((ep: any) => ({ ...ep, isWatched: false })),
+      },
     })
   })
 }
@@ -70,7 +76,10 @@ export const resolvers = {
         let unconfirmedEpisodes
 
         try {
-          unconfirmedEpisodes = await fetchEpisodesOfSeries(cachedAnime.idMal)
+          unconfirmedEpisodes = await fetchEpisodesOfSeries(
+            id,
+            cachedAnime.idMal,
+          )
         } catch (err) {
           throw new Error(err)
         }
@@ -85,6 +94,38 @@ export const resolvers = {
       }
 
       return null
+    },
+  },
+  Episode: {
+    isWatched: (
+      episode: EpisodeListEpisodes,
+      _: never,
+      { cache }: { cache: RealProxy },
+    ) => {
+      if (episode.isSpecial) {
+        return SpecialEpisodeStore.isWatched(episode)
+      }
+
+      const data = cache.readQuery<
+        AnimeQueueQueryQuery,
+        AnimeQueueQueryVariables
+      >({
+        query: ANIME_QUEUE_QUERY,
+        variables: {
+          id: episode.animeId,
+        },
+      })
+
+      if (
+        !data ||
+        !data.anime ||
+        !data.anime.mediaListEntry ||
+        !data.anime.mediaListEntry.progress
+      ) {
+        return false
+      }
+
+      return data.anime.mediaListEntry.progress >= episode.episodeNumber
     },
   },
 }

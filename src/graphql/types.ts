@@ -716,6 +716,8 @@ export type FuzzyDateInt = any;
     
     title: string;
     
+    name: string;
+    
     duration: number;
     
     progress: Maybe<number>;
@@ -723,6 +725,10 @@ export type FuzzyDateInt = any;
     index: number;
     
     episodeNumber: number;
+    
+    isSpecial: boolean;
+    
+    isWatched: boolean;
     
     url: string;
     

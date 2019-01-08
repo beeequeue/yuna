@@ -4,10 +4,13 @@ query EpisodeList($id: Int!) {
     id
     animeId
     title
+    name
     duration
     progress
     index
     episodeNumber
+    isSpecial
+    isWatched @client
     url
     thumbnail
   }

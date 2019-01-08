@@ -8,7 +8,7 @@ import { ActionContext, Store } from 'vuex'
 import uuid from 'uuid/v4'
 import { resolve } from 'path'
 
-import { MediaListStatus } from '@/graphql/types'
+import { EpisodeListEpisodes, MediaListStatus } from '@/graphql/types'
 import {
   createSession,
   createUnblockedSession,
@@ -159,3 +159,6 @@ export const arrayIsOfType = <T>(
   ...properties: Array<keyof T>
 ): arr is T[] =>
   Array.isArray(arr) && arr.every(item => isOfType<any>(item, ...properties))
+
+export const getEpisodeCacheKey = (ep: EpisodeListEpisodes) =>
+  `Episode:${ep.provider}:${ep.id}`

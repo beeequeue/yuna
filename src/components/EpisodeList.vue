@@ -49,21 +49,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Key } from 'ts-key-enum'
 import { mdiCached } from '@mdi/js'
 
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
-  EpisodeListEpisodes,
   AnimePageQueryNextAiringEpisode,
+  EpisodeListEpisodes,
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
 import {
   getPlaylistAnimeId,
   ListEntry,
-  sendErrorToast,
   Sequel,
   setCurrentEpisode,
   setPlaylist,
@@ -82,7 +81,7 @@ export default class EpisodeList extends Vue {
   @Prop(prop(Number, true))
   public idMal!: number
   @Prop(prop(String, true))
-  public animeName!: string
+  public animeTitle!: string
   @Prop(Number) public episodesInAnime!: number | null
   @Prop(Object)
   public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
@@ -106,7 +105,9 @@ export default class EpisodeList extends Vue {
       return !this.id
     },
     result() {
-      this.fetchedEpisodes()
+      setTimeout(() => {
+        this._scrollToEpisode()
+      }, 50)
     },
     error(err) {
       if (typeof err === 'string') {
@@ -211,19 +212,7 @@ export default class EpisodeList extends Vue {
     this.error = null
   }
 
-  public fetchedEpisodes() {
-    try {
-      setTimeout(() => this._scrollToCurrentEpisode(true), 150)
-    } catch (e) {
-      sendErrorToast(
-        this.$store,
-        `Could not fetch any episodes for ${this.animeName} - (${e.message})`,
-      )
-    }
-  }
-
-  @Watch('current')
-  public _scrollToCurrentEpisode(instant?: boolean | number) {
+  public _scrollToEpisode() {
     const episodeContainer = this.$refs.episodeContainer
 
     if (
@@ -232,8 +221,8 @@ export default class EpisodeList extends Vue {
       this.currentEpisode
     ) {
       episodeContainer.scroll({
-        left: this.getScrollPositionOfEpisode(this.currentEpisode),
-        behavior: instant === true ? undefined : 'smooth',
+        left: this.getScrollPositionOfEpisode(this.currentEpisode + 1),
+        behavior: 'smooth',
       })
     }
   }

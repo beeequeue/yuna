@@ -1,3 +1,5 @@
+declare type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+
 declare module '*.vue' {
   import Vue from 'vue'
   export default Vue

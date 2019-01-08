@@ -1,6 +1,6 @@
 /* tslint:disable:class-name */
 import { activeWindow } from 'electron-util'
-import { anyPass, complement, T } from 'rambdax'
+import { T } from 'rambdax'
 import superagent from 'superagent/superagent'
 import uuid from 'uuid/v4'
 
@@ -259,6 +259,7 @@ export const logout = () => {
 }
 
 export const fetchEpisodesOfCollection = async (
+  id: number,
   collectionId: string,
 ): Promise<EpisodeListEpisodes[]> => {
   const response = (await superagent.get(getUrl('list_media')).query({
@@ -277,7 +278,7 @@ export const fetchEpisodesOfCollection = async (
     throw new Error(response.body.message)
   }
 
-  return response.body.data.filter(excludeExtraEpisodes).map(mediaToEpisode)
+  return response.body.data.map(mediaToEpisode(id)) as any
 }
 
 export const fetchEpisode = async (mediaId: string): Promise<_Media> => {
@@ -300,11 +301,12 @@ export const fetchEpisode = async (mediaId: string): Promise<_Media> => {
 }
 
 export const fetchSeasonFromEpisode = async (
+  id: number,
   mediaId: string,
 ): Promise<EpisodeListEpisodes[]> => {
   const episode = await fetchEpisode(mediaId)
 
-  return fetchEpisodesOfCollection(episode.collection_id)
+  return fetchEpisodesOfCollection(id, episode.collection_id)
 }
 
 interface StreamInfo {
@@ -362,39 +364,40 @@ export const setProgressOfEpisode = async (
   }
 }
 
-const mediaToEpisode = (
+const onlyNumbers = (str: string) => str.replace(/[^\d.]/g, '')
+
+const getEpisodeNumber = (num: string | 'SP') => {
+  if (num === 'SP') return -1
+
+  num = onlyNumbers(num)
+
+  return Math.floor(Number(num))
+}
+
+const mediaToEpisode = (id: number) => (
   {
     name,
     duration,
     screenshot_image,
     media_id,
-    series_id,
     url,
     playhead,
+    episode_number,
   }: _Media,
   index: number,
-): EpisodeListEpisodes => ({
+): Omit<EpisodeListEpisodes, 'isWatched'> => ({
   __typename: 'Episode',
   provider: Provider.Crunchyroll,
   id: Number(media_id),
-  animeId: Number(series_id),
+  animeId: id,
   title: name,
+  name: episode_number,
   index,
-  episodeNumber: index + 1,
+  episodeNumber: getEpisodeNumber(episode_number),
+  isSpecial:
+    episode_number === 'SP' || Number(onlyNumbers(episode_number)) % 1 !== 0,
   duration,
   progress: playhead || null,
   thumbnail: screenshot_image.full_url,
   url,
 })
-
-// Exclude episodes from episode lists
-const episodeNumberIsHalf = ({ episode_number }: _Media) =>
-  Number(episode_number) % 1 !== 0
-
-const isSpecialEpisode = ({ episode_number }: _Media) => episode_number === 'SP'
-
-const isShorterThanFiveMinutes = ({ duration }: _Media) => duration < 300
-
-const excludeExtraEpisodes = complement(
-  anyPass([episodeNumberIsHalf, isSpecialEpisode, isShorterThanFiveMinutes]),
-)

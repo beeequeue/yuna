@@ -29,9 +29,10 @@ const handleError = (response: RequestResponse) => {
 }
 
 export const fetchEpisodesOfSeries = async (
-  id: string | number,
+  id: number,
+  idMal: number,
 ): Promise<EpisodeListEpisodes[]> => {
-  const baseUrl = `https://myanimelist.net/anime/${id}`
+  const baseUrl = `https://myanimelist.net/anime/${idMal}`
   const episodeResponse = (await request.get(baseUrl).ok(T)) as RequestResponse
 
   if (responseIsError(episodeResponse)) {
@@ -63,12 +64,12 @@ export const fetchEpisodesOfSeries = async (
   const mediaIdMatch = /"provider_episode_id":\s?(\d+)/m.exec(response.text)
   if (!mediaIdMatch || !mediaIdMatch[1]) {
     // tslint:disable-next-line:no-console
-    console.error(`Couldn't find media_id for ${id}`)
+    console.error(`Couldn't find media_id for ${idMal}`)
 
     return []
   }
 
-  return fetchSeasonFromEpisode(mediaIdMatch[1])
+  return fetchSeasonFromEpisode(id, mediaIdMatch[1])
 }
 
 export const fetchRating = async (id: string | number) => {

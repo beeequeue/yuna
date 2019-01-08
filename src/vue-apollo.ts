@@ -5,7 +5,7 @@ import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
 import { resolvers } from '@/graphql/client/resolvers'
 import { EpisodeListEpisodes } from '@/graphql/types'
 import { userStore } from '@/lib/user'
-import { arrayIsOfType, isOfTypename } from '@/utils'
+import { arrayIsOfType, getEpisodeCacheKey, isOfTypename } from '@/utils'
 
 // Install the vue plugin
 Vue.use(VueApollo)
@@ -29,7 +29,7 @@ const dataIdFromObject = (obj: any) => {
 
   // Episode
   if (isOfTypename<EpisodeListEpisodes>(obj, 'Episode')) {
-    return `Episode:${obj.provider}:${obj.id}`
+    return getEpisodeCacheKey(obj)
   }
 
   if (obj.__typename) {

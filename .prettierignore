@@ -1,4 +1,3 @@
 package.json
 graphql.schema.json
-src/graphql-types.ts
-src/graphql/*.ts
+src/graphql/types.ts

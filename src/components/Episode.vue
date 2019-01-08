@@ -6,29 +6,29 @@
       :class="{ blur: blur.thumbnail }"
       :src="episode.thumbnail"
       @click="handleThumbnailClick(episode.episodeNumber)"
-    >
+    />
 
     <div v-if="!empty" class="title-container">
-      <div class="episode-number">Episode {{episode.episodeNumber}}</div>
-      <div class="title" :class="{ blur: blur.title }">{{episode.title}}</div>
+      <div class="episode-number">{{ name }}</div>
+      <div class="title" :class="{ blur: blur.title }">{{ episode.title }}</div>
     </div>
 
     <transition v-if="!empty" name="fade">
       <c-button
-        v-if="!isWatched"
+        v-if="!episode.isWatched"
         :icon="bookmarkSvg"
-        @click.native.prevent="setProgress(episode.episodeNumber)"
+        @click.native.prevent="setProgress"
       />
       <c-button
         v-else
         type="danger"
         :icon="unbookmarkSvg"
-        @click.native.prevent="setProgress(episode.episodeNumber - 1)"
+        @click.native.prevent="setProgress"
       />
     </transition>
 
     <transition v-if="!empty">
-      <icon v-if="isWatched" :icon="checkSvg" class="check"/>
+      <icon v-if="episode.isWatched" :icon="checkSvg" class="check" />
     </transition>
   </div>
 </template>
@@ -37,8 +37,9 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiBookmark, mdiBookmarkRemove, mdiCheckCircleOutline } from '@mdi/js'
 
+import { setEpisodeUnwatched, setEpisodeWatched } from '@/graphql/mutations'
 import { EpisodeListEpisodes } from '@/graphql/types'
-import { setProgressMutation } from '@/graphql/mutations'
+
 import { ListEntry } from '@/state/app'
 import { getSpoilerSettings } from '@/state/settings'
 import { prop } from '@/utils'
@@ -61,16 +62,18 @@ export default class Episode extends Vue {
   public unbookmarkSvg = mdiBookmarkRemove
   public checkSvg = mdiCheckCircleOutline
 
+  public get name() {
+    if (this.episode.isSpecial) {
+      return 'Special'
+    }
+
+    return `Episode ${this.episode.name}`
+  }
+
   public get isCurrent() {
     return (
       this.listEntry &&
       this.listEntry.progress + 1 === this.episode.episodeNumber
-    )
-  }
-
-  public get isWatched() {
-    return (
-      this.listEntry && this.listEntry.progress >= this.episode.episodeNumber
     )
   }
 
@@ -83,7 +86,7 @@ export default class Episode extends Vue {
     }
 
     return {
-      watched: this.isWatched,
+      watched: this.episode.isWatched,
       current: this.isCurrent,
       active:
         !this.small &&
@@ -96,8 +99,8 @@ export default class Episode extends Vue {
     const settings = getSpoilerSettings(this.$store).episode
 
     return {
-      title: settings.name && !this.isWatched,
-      thumbnail: settings.thumbnail && !this.isWatched,
+      title: settings.name && !this.episode.isWatched,
+      thumbnail: settings.thumbnail && !this.episode.isWatched,
     }
   }
 
@@ -105,10 +108,14 @@ export default class Episode extends Vue {
     this.setCurrentEpisode(episodeNumber)
   }
 
-  public setProgress(progress: number) {
+  public setProgress() {
     if (!this.listEntry) return
 
-    setProgressMutation(this, this.listEntry.id, progress, this.listEntry)
+    if (!this.episode.isWatched) {
+      setEpisodeWatched(this, this.episode, this.listEntry as any)
+    } else {
+      setEpisodeUnwatched(this, this.episode, this.listEntry as any)
+    }
   }
 }
 </script>

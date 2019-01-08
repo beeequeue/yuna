@@ -113,7 +113,7 @@
             <episode-list
               :idMal="data.anime.idMal"
               :id="data.anime.id"
-              :animeName="data.anime.title.userPreferred"
+              :animeTitle="data.anime.title.userPreferred"
               :episodesInAnime="data.anime.episodes"
               :nextAiringEpisode="data.anime.nextAiringEpisode"
               :listEntry="data.anime.mediaListEntry"
@@ -132,11 +132,11 @@
 import { Prop, Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 import { path, pathOr } from 'rambdax'
-import { mdiPlayCircleOutline, mdiMenu, mdiChevronDown } from '@mdi/js'
+import { mdiChevronDown, mdiMenu, mdiPlayCircleOutline } from '@mdi/js'
 
 import { Query } from '@/decorators'
 import ANIME_QUEUE_QUERY from '@/graphql/AnimeQueueQuery.graphql'
-import { setProgressMutation, setStatusMutation } from '@/graphql/mutations'
+import { setStatusMutation } from '@/graphql/mutations'
 import {
   AnimeQueueQueryEdges,
   AnimeQueueQueryMediaListEntry,
@@ -251,31 +251,6 @@ export default class QueueItem extends Vue {
     }
 
     await setStatusMutation(this, listEntryId, status)
-  }
-
-  public async incrementProgress(data: AnimeQueueQueryQuery, amount: number) {
-    const listEntryId = path<number>('anime.mediaListEntry.id', data)
-    const progress = path<number>('anime.mediaListEntry.progress', data) || 0
-    const episodes = path<number>('anime.episodes', data)
-    const mediaListEntry = path<AnimeQueueQueryMediaListEntry>(
-      'anime.mediaListEntry',
-      data,
-    )
-
-    if (!listEntryId) {
-      return sendErrorToast(this.$store, 'No entry found..?')
-    }
-
-    if (progress + amount > episodes || progress + amount < 0) {
-      return
-    }
-
-    await setProgressMutation(
-      this,
-      listEntryId,
-      progress + amount,
-      mediaListEntry,
-    )
   }
 }
 </script>
