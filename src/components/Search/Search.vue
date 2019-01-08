@@ -14,12 +14,12 @@
     <transition name="fade"> <span v-if="isOpen" class="fader" /> </transition>
 
     <div class="list" :class="{ open: isOpen }">
-      <span v-if="isLoading" key="loader" class="loading-spinner">
+      <span v-if="fakeLoading" key="loader" class="loading-spinner">
         <icon :icon="loadingSvg" />
       </span>
 
       <div
-        v-if="!isLoading && results.length > 0"
+        v-if="!fakeLoading && results.length > 0"
         v-for="result in results"
         :key="result.id"
         class="item"
@@ -31,13 +31,13 @@
           <div class="title">{{ result.title.userPreferred }}</div>
 
           <div class="sites">
-            <img v-if="result.isOnCrunchyroll" class="cr" :src="crIcon" />
+            <img v-if="getIsOnCrunchyroll(result)" class="cr" :src="crIcon" />
           </div>
         </div>
       </div>
 
       <icon
-        v-if="!isLoading && results.length < 1"
+        v-if="!fakeLoading && results.length < 1"
         :icon="emptySvg"
         class="empty"
       />
@@ -47,6 +47,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { pathEq, pathOr } from 'rambdax'
 import { mdiClose, mdiLoading } from '@mdi/js'
 
 import crIcon from '@/assets/crunchyroll.webp'
@@ -57,43 +58,57 @@ import {
   SearchQueryResults,
   SearchQueryVariables,
 } from '@/graphql/types'
+
+import { Query } from '@/decorators'
+
 import Icon from '../Icon.vue'
 
-interface Result extends SearchQueryResults {
-  isOnCrunchyroll: boolean
-}
-
-@Component<Search>({
-  components: { Icon },
-  apollo: {
-    search: {
-      query: SEARCH_QUERY,
-      variables(): SearchQueryVariables {
-        return {
-          search: this.searchString,
-        }
-      },
-      skip: true,
-      deep: true,
-      loadingKey: 'isLoading',
-      debounce: 750,
-      result(result: any) {
-        this.handleResults(result.data)
-      },
-      notifyOnNetworkStatusChange: true,
-      fetchPolicy: 'network-only',
-    },
-  },
-})
+@Component({ components: { Icon } })
 export default class Search extends Vue {
+  @Query<Search, SearchQueryQuery, SearchQueryVariables>({
+    query: SEARCH_QUERY,
+    variables(): SearchQueryVariables {
+      return {
+        search: this.searchString,
+      }
+    },
+    skip() {
+      return this.searchString.length < 1
+    },
+    ['debounce' as any]: 750,
+    notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'network-only',
+    result() {
+      this.onFinish()
+    },
+  })
+  public search: SearchQueryQuery | null = null
+
   public isOpen = false
-  public isLoading = false
+  public fakeLoading = false
   public searchString = ''
-  public results: Result[] = []
 
   public emptySvg = mdiClose
   public loadingSvg = mdiLoading
   public crIcon = crIcon
+
+  public get results() {
+    return pathOr(
+      [],
+      ['search', 'anime', 'results'],
+      this,
+    ) as SearchQueryResults[]
+  }
+
+  public getIsOnCrunchyroll(result: SearchQueryResults) {
+    const streamingEpisodes = pathOr([], 'streamingEpisodes' as any, result)
+    const externalLinks = pathOr([], 'externalLinks' as any, result)
+
+    return (
+      streamingEpisodes.some(pathEq('site', 'crunchyroll')) ||
+      externalLinks.some(pathEq('site', 'Crunchyroll'))
+    )
+  }
 
   public selectAllInInput(e: MouseEvent) {
     const target = e.currentTarget as HTMLInputElement
@@ -103,40 +118,11 @@ export default class Search extends Vue {
   public setSearchString(e: KeyboardEvent) {
     const { value: search } = e.currentTarget as HTMLInputElement
     this.searchString = search
-
-    if (search.length < 1) {
-      this.results = []
-      this.$apollo.queries.search.stop()
-      this.isLoading = false
-
-      return
-    }
-
-    this.isLoading = true
-
-    if (this.$apollo.queries.search.skip) {
-      this.$apollo.queries.search.start()
-    } else {
-      this.$apollo.queries.search.refetch()
-    }
+    this.fakeLoading = true
   }
 
-  public async handleResults(result: SearchQueryQuery) {
-    if (!result.anime || !result.anime.results) return
-
-    this.results = result.anime.results
-      .filter((r): r is SearchQueryResults => r != null)
-      .map(result => {
-        return {
-          ...result,
-          isOnCrunchyroll:
-            !!result.streamingEpisodes && result.streamingEpisodes.length > 0,
-        }
-      })
-
-    setTimeout(() => {
-      this.isLoading = false
-    }, 250)
+  public onFinish() {
+    this.fakeLoading = false
   }
 }
 </script>

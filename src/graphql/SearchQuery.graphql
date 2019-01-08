@@ -1,5 +1,5 @@
 query SearchQuery($search: String) {
-  anime: Page(perPage: 6) {
+  anime: Page(perPage: 8) {
     pageInfo {
       total
     }
@@ -13,6 +13,9 @@ query SearchQuery($search: String) {
         medium
       }
       streamingEpisodes {
+        site
+      }
+      externalLinks {
         site
       }
     }

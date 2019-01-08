@@ -1024,6 +1024,8 @@ export type FuzzyDateInt = any;
     coverImage: Maybe<SearchQueryCoverImage>;
     
     streamingEpisodes: Maybe<SearchQueryStreamingEpisodes[]>;
+    
+    externalLinks: Maybe<SearchQueryExternalLinks[]>;
   } 
 
   export type SearchQueryTitle = {
@@ -1042,6 +1044,12 @@ export type FuzzyDateInt = any;
     __typename?: "MediaStreamingEpisode";
     
     site: Maybe<string>;
+  } 
+
+  export type SearchQueryExternalLinks = {
+    __typename?: "MediaExternalLink";
+    
+    site: string;
   } 
 
   export type SetStatusMutationVariables = {
