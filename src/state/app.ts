@@ -42,7 +42,6 @@ export interface Sequel {
 
 export interface PlayerData {
   id: number
-  idMal: number
   index: number
 }
 

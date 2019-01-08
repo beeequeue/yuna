@@ -83,13 +83,6 @@ export default class PlayerContainer extends Vue {
     return data.id
   }
 
-  get idMal() {
-    const data = getPlayerData(this.$store)
-    if (!data) return null
-
-    return data.idMal
-  }
-
   get episode() {
     const index = pathOr(null, ['playerData', 'index'], this)
     if (isNil(this.episodes) || isNil(index)) return null

@@ -67,9 +67,13 @@ export const resolvers = {
           throw new Error('Could not find Anime in cache!')
         }
 
-        const unconfirmedEpisodes = await fetchEpisodesOfSeries(
-          cachedAnime.idMal,
-        )
+        let unconfirmedEpisodes
+
+        try {
+          unconfirmedEpisodes = await fetchEpisodesOfSeries(cachedAnime.idMal)
+        } catch (err) {
+          throw new Error(err)
+        }
 
         if (!unconfirmedEpisodes) return null
 

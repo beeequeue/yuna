@@ -1,6 +1,8 @@
 <template>
   <div class="episodes" :data-episodes="episodes ? episodes.length : -1">
-    <div v-if="loading" class="loading"><loader />Looking for episodes...</div>
+    <div v-if="$apollo.loading" class="loading">
+      <loader />Looking for episodes...
+    </div>
 
     <div v-if="error" class="error">
       <c-button :icon="reloadSvg" type="danger" :click="refetchEpisodes" />
@@ -8,7 +10,7 @@
     </div>
 
     <div
-      v-if="!loading && !error && episodes && episodes.length > 0"
+      v-if="!$apollo.loading && !error && episodes && episodes.length > 0"
       ref="episodeContainer"
       class="episode-container"
       :class="containerClasses"
@@ -35,7 +37,7 @@
     </div>
 
     <input
-      v-if="showScroller && episodes && episodes.length > 0 && !loading"
+      v-if="showScroller && episodes && episodes.length > 0 && !$apollo.loading"
       class="scroller"
       :maxlength="episodes.length.toString().length"
       :value="scrollerValue"
@@ -51,11 +53,13 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { Key } from 'ts-key-enum'
 import { mdiCached } from '@mdi/js'
 
+import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
-  PlayerEpisodesEpisodes,
+  EpisodeListEpisodes,
   AnimePageQueryNextAiringEpisode,
 } from '@/graphql/types'
-import { AnimeCache } from '@/lib/cache'
+
+import { Query } from '@/decorators'
 import {
   getPlaylistAnimeId,
   ListEntry,
@@ -91,9 +95,34 @@ export default class EpisodeList extends Vue {
   @Prop(Boolean) public rightPadding!: boolean | null
   @Prop(Boolean) public scrollToCurrentEpisode!: boolean | null
 
-  public episodes: PlayerEpisodesEpisodes[] | null = null
-  public fetched = false
-  public loading = true
+  @Query({
+    query: EPISODE_LIST,
+    variables() {
+      return {
+        id: this.id,
+      }
+    },
+    skip() {
+      return !this.id
+    },
+    result() {
+      this.fetchedEpisodes()
+    },
+    error(err) {
+      if (typeof err === 'string') {
+        this.error = err
+        return
+      }
+
+      if (typeof err.message === 'string') {
+        this.error = err.message
+        return
+      }
+
+      this.error = 'Something went wrong fetching the episodes. :('
+    },
+  })
+  public episodes: EpisodeListEpisodes[] | null = null
   public error: string | null = null
   public scrollerValue = ''
 
@@ -110,10 +139,6 @@ export default class EpisodeList extends Vue {
 
   public get currentEpisode() {
     return this.listEntry != null ? this.listEntry.progress + 1 : null
-  }
-
-  public mounted() {
-    this.fetchEpisodes()
   }
 
   public updateContainerClasses() {
@@ -182,32 +207,18 @@ export default class EpisodeList extends Vue {
   }
 
   public refetchEpisodes() {
-    this.fetched = false
+    this.$apollo.queries.episodes.refetch()
     this.error = null
-    this.fetchEpisodes()
   }
 
-  public async fetchEpisodes() {
-    if (this.fetched || !this.idMal) return
-
-    this.loading = true
-
+  public fetchedEpisodes() {
     try {
-      this.fetched = true
-
-      this.episodes = await AnimeCache.getSeasonFromMalId(this)
-
-      this.loading = false
-
       setTimeout(() => this._scrollToCurrentEpisode(true), 150)
     } catch (e) {
       sendErrorToast(
         this.$store,
         `Could not fetch any episodes for ${this.animeName} - (${e.message})`,
       )
-
-      this.error = e.message
-      this.loading = false
     }
   }
 
@@ -237,7 +248,6 @@ export default class EpisodeList extends Vue {
     } else {
       setPlaylist(this.$store, {
         id: this.id,
-        idMal: this.idMal,
         index: episodeNumber - 1,
       })
     }
