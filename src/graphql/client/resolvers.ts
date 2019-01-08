@@ -1,16 +1,44 @@
-import { isNil } from 'rambdax'
+import { DataProxy } from 'apollo-cache'
+import { isNil, omit } from 'rambdax'
 
+import EPISODES_QUERY from '@/graphql/PlayerEpisodes.graphql'
 import {
   AnimePageQueryAnime,
   PlayerAnimeAnime,
   PlayerEpisodesEpisodes,
+  PlayerEpisodesQuery,
+  PlayerEpisodesVariables,
   Provider,
 } from '@/graphql/types'
 import { fetchEpisodesOfSeries, fetchRating } from '@/lib/myanimelist'
+import { EpisodeRelations, getEpisodeRelations } from '@/lib/relations'
 
 interface EpisodeVariables {
   id: number
   provider: Provider
+}
+
+interface RealProxy extends DataProxy {
+  data: {
+    data: {
+      [key: string]:
+        | undefined
+        | {
+            __typename: string
+            [key: string]: any | undefined
+          }
+    }
+  }
+}
+
+const cacheEpisodes = (cache: RealProxy, relations: EpisodeRelations) => {
+  Object.entries(relations).forEach(([id, episodes]) => {
+    cache.writeQuery<PlayerEpisodesQuery, PlayerEpisodesVariables>({
+      query: EPISODES_QUERY,
+      variables: { id: Number(id) },
+      data: { episodes },
+    })
+  })
 }
 
 export const resolvers = {
@@ -28,21 +56,28 @@ export const resolvers = {
     Episodes: async (
       _: any,
       { id, provider }: EpisodeVariables,
-      { cache }: any,
+      { cache }: { cache: RealProxy },
     ): Promise<PlayerEpisodesEpisodes[] | null> => {
       if (provider === Provider.Crunchyroll) {
         const cachedAnime = cache.data.data[
           `Media:${id}`
         ] as PlayerAnimeAnime | null
+
         if (!cachedAnime || !cachedAnime.idMal) {
           throw new Error('Could not find Anime in cache!')
         }
 
-        const episodes = await fetchEpisodesOfSeries(cachedAnime.idMal)
+        const unconfirmedEpisodes = await fetchEpisodesOfSeries(
+          cachedAnime.idMal,
+        )
 
-        if (!episodes) return null
+        if (!unconfirmedEpisodes) return null
 
-        return episodes
+        const relations = getEpisodeRelations(id, unconfirmedEpisodes)
+
+        cacheEpisodes(cache, omit(id.toString() as any, relations))
+
+        return relations[id]
       }
 
       return null

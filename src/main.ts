@@ -4,6 +4,8 @@ import Vue from 'vue'
 import { init, Integrations, SentryEvent } from '@sentry/browser'
 import { SentryException } from '@sentry/types'
 
+import { updateRelations } from '@/lib/relations'
+
 import App from './App.vue'
 import { router } from './router'
 import { store } from './state/store'
@@ -70,6 +72,9 @@ document.addEventListener('click', event => {
     return shell.openExternal(linkElement.href)
   }
 })
+
+// Fetch relation data
+updateRelations()
 
 new Vue({
   router,
