@@ -1,21 +1,17 @@
 import { DataProxy } from 'apollo-cache'
+import gql from 'graphql-tag'
 import { isNil, omit } from 'rambdax'
 
-import ANIME_QUEUE_QUERY from '@/graphql/AnimeQueueQuery.graphql'
 import EPISODES_QUERY from '@/graphql/EpisodeList.graphql'
 import {
   AnimePageQueryAnime,
-  PlayerAnimeAnime,
   EpisodeListEpisodes,
   EpisodeListQuery,
   EpisodeListVariables,
   Provider,
-  AnimeQueueQueryQuery,
-  AnimeQueueQueryVariables,
 } from '@/graphql/types'
 import { fetchEpisodesOfSeries, fetchRating } from '@/lib/myanimelist'
 import { EpisodeRelations, getEpisodeRelations } from '@/lib/relations'
-import { SpecialEpisodeStore } from '@/lib/special-episode-tracking'
 
 interface EpisodeVariables {
   id: number
@@ -65,21 +61,23 @@ export const resolvers = {
       { cache }: { cache: RealProxy },
     ): Promise<EpisodeListEpisodes[] | null> => {
       if (provider === Provider.Crunchyroll) {
-        const cachedAnime = cache.data.data[
-          `Media:${id}`
-        ] as PlayerAnimeAnime | null
+        const data = cache.readFragment<{ idMal: number | null }>({
+          id: `Media:${id}`,
+          fragment: gql`
+            fragment idMal on Media {
+              idMal
+            }
+          `,
+        })
 
-        if (!cachedAnime || !cachedAnime.idMal) {
+        if (!data || !data || !data.idMal) {
           throw new Error('Could not find Anime in cache!')
         }
 
         let unconfirmedEpisodes
 
         try {
-          unconfirmedEpisodes = await fetchEpisodesOfSeries(
-            id,
-            cachedAnime.idMal,
-          )
+          unconfirmedEpisodes = await fetchEpisodesOfSeries(id, data.idMal)
         } catch (err) {
           throw new Error(err)
         }
@@ -102,30 +100,24 @@ export const resolvers = {
       _: never,
       { cache }: { cache: RealProxy },
     ) => {
-      if (episode.isSpecial) {
-        return SpecialEpisodeStore.isWatched(episode)
-      }
-
-      const data = cache.readQuery<
-        AnimeQueueQueryQuery,
-        AnimeQueueQueryVariables
-      >({
-        query: ANIME_QUEUE_QUERY,
-        variables: {
-          id: episode.animeId,
-        },
+      const data = cache.readFragment<{
+        mediaListEntry: { progress: number } | null
+      }>({
+        id: `Media:${episode.animeId}`,
+        fragment: gql`
+          fragment listEntry on Media {
+            mediaListEntry {
+              progress
+            }
+          }
+        `,
       })
 
-      if (
-        !data ||
-        !data.anime ||
-        !data.anime.mediaListEntry ||
-        !data.anime.mediaListEntry.progress
-      ) {
+      if (!data || !data.mediaListEntry || !data.mediaListEntry.progress) {
         return false
       }
 
-      return data.anime.mediaListEntry.progress >= episode.episodeNumber
+      return data.mediaListEntry.progress >= episode.episodeNumber
     },
   },
 }

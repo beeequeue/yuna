@@ -9,11 +9,11 @@
     />
 
     <div v-if="!empty" class="title-container">
-      <div class="episode-number">{{ name }}</div>
+      <div class="episode-number">Episode {{ episode.episodeNumber }}</div>
       <div class="title" :class="{ blur: blur.title }">{{ episode.title }}</div>
     </div>
 
-    <transition v-if="!empty" name="fade">
+    <transition v-if="!empty && listEntry != null" name="fade">
       <c-button
         v-if="!episode.isWatched"
         :icon="bookmarkSvg"
@@ -61,14 +61,6 @@ export default class Episode extends Vue {
   public bookmarkSvg = mdiBookmark
   public unbookmarkSvg = mdiBookmarkRemove
   public checkSvg = mdiCheckCircleOutline
-
-  public get name() {
-    if (this.episode.isSpecial) {
-      return 'Special'
-    }
-
-    return `Episode ${this.episode.name}`
-  }
 
   public get isCurrent() {
     return (

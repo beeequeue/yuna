@@ -203,14 +203,14 @@ export interface Format {
   relations: {
     [key: string]:
       | undefined
-      | {
+      | Array<{
           description?: string
           id: string
           episodes: {
             from: string
             to: string
           }
-        }
+        }>
   }
 }
 
@@ -241,24 +241,28 @@ export const convert = (data: ReadonlyArray<Branches>) => {
 
       if (to === '?' || from === '?') return
 
-      toReturn.relations[branch.item.from.anilist] = {
+      if (!toReturn.relations[branch.item.from.anilist]) {
+        toReturn.relations[branch.item.from.anilist] = []
+      }
+
+      toReturn.relations[branch.item.from.anilist]!.push({
         description: branch.name,
         id: to,
         episodes: {
           from: branch.item.from.episodeRange,
           to: branch.item.to.episodeRange,
         },
-      }
+      })
 
       if (branch.item.redirectsToSelf) {
-        toReturn.relations[branch.item.from.anilist] = {
+        toReturn.relations[branch.item.from.anilist]!.push({
           description: branch.name,
           id: branch.item.from.anilist,
           episodes: {
             from: branch.item.from.episodeRange,
             to: branch.item.to.episodeRange,
           },
-        }
+        })
       }
 
       return
@@ -315,18 +319,20 @@ export const getEpisodeRelations = (
 
   if (!relation) return { [id]: episodes }
 
-  const from = relation.episodes.from.split('-').map(Number)
-  const to = relation.episodes.to.split('-').map(Number)
+  relation.forEach(rel => {
+    const from = rel.episodes.from.split('-').map(Number)
+    const to = rel.episodes.to.split('-').map(Number)
 
-  if (episodes[from[0] - 1] != null) {
-    toReturn[relation.id] = episodes
-      .splice(from[0] - 1, from[1] ? from[1] - from[0] : 1)
-      .map((ep, i) => ({
-        ...ep,
-        index: i,
-        episodeNumber: to[0] + i,
-      }))
-  }
+    if (episodes[from[0] - 1] != null) {
+      toReturn[rel.id] = episodes
+        .splice(from[0] - 1, from[1] ? from[1] - from[0] : 1)
+        .map((ep, i) => ({
+          ...ep,
+          index: i,
+          episodeNumber: to[0] + i,
+        }))
+    }
+  })
 
   toReturn[id] = episodes
 

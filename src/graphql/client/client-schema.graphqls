@@ -6,7 +6,6 @@ type Episode {
   provider: Provider!
   id: Int!
   animeId: Int!
-  name: String!
   title: String!
   duration: Int!
   progress: Int
@@ -14,7 +13,6 @@ type Episode {
   index: Int!
   # Number in Season
   episodeNumber: Int!
-  isSpecial: Boolean!
   isWatched: Boolean!
   thumbnail: String!
   url: String!

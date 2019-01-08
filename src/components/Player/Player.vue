@@ -245,7 +245,7 @@ export default class Player extends Vue {
     }
   }
 
-  @Watch('episode')
+  @Watch('episode.id')
   public async onNewEpisode() {
     if (!this.episode) return
 

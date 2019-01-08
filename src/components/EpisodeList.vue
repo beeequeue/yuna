@@ -19,11 +19,12 @@
     >
       <episode
         v-for="episode in episodes"
-        :key="episode.name"
+        :key="`${episode.name}:${episode.id}`"
         :episode="episode"
         :listEntry="listEntry"
         :small="small"
         :setCurrentEpisode="setCurrentEpisode"
+        :data-episode="episode.episodeNumber"
       />
 
       <episode
@@ -179,8 +180,9 @@ export default class EpisodeList extends Vue {
 
   private getScrollPositionOfEpisode(index: number) {
     const container = this.$refs.episodeContainer
+    // index - 2 because for whatever reason it finds the episode number + 2????
     const episode = container.querySelector(
-      `.episode:nth-child(${index})`,
+      `.episode[data-episode="${index - 2}"]`,
     ) as HTMLElement | null
 
     if (!episode) return 0
@@ -221,7 +223,7 @@ export default class EpisodeList extends Vue {
       this.currentEpisode
     ) {
       episodeContainer.scroll({
-        left: this.getScrollPositionOfEpisode(this.currentEpisode + 1),
+        left: this.getScrollPositionOfEpisode(this.currentEpisode + 2),
         behavior: 'smooth',
       })
     }

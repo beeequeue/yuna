@@ -68,10 +68,6 @@ export const setEpisodeWatched = async (
   episode: EpisodeListEpisodes,
   listEntry: UpdateProgressMutationSaveMediaListEntry,
 ) => {
-  if (episode.isSpecial) {
-    return
-  }
-
   const progress = episode.episodeNumber
 
   return $apollo.mutate<UpdateProgressMutationMutation>({

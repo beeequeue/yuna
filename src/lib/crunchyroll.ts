@@ -1,6 +1,6 @@
 /* tslint:disable:class-name */
 import { activeWindow } from 'electron-util'
-import { T } from 'rambdax'
+import { T, complement, anyPass } from 'rambdax'
 import superagent from 'superagent/superagent'
 import uuid from 'uuid/v4'
 
@@ -278,7 +278,11 @@ export const fetchEpisodesOfCollection = async (
     throw new Error(response.body.message)
   }
 
-  return response.body.data.map(mediaToEpisode(id)) as any
+  const episodes = response.body.data
+    .filter(isRealEpisode)
+    .map(mediaToEpisode(id)) as any
+
+  return fixEpisodeNumbers(episodes)
 }
 
 export const fetchEpisode = async (mediaId: string): Promise<_Media> => {
@@ -364,16 +368,6 @@ export const setProgressOfEpisode = async (
   }
 }
 
-const onlyNumbers = (str: string) => str.replace(/[^\d.]/g, '')
-
-const getEpisodeNumber = (num: string | 'SP') => {
-  if (num === 'SP') return -1
-
-  num = onlyNumbers(num)
-
-  return Math.floor(Number(num))
-}
-
 const mediaToEpisode = (id: number) => (
   {
     name,
@@ -391,13 +385,41 @@ const mediaToEpisode = (id: number) => (
   id: Number(media_id),
   animeId: id,
   title: name,
-  name: episode_number,
   index,
-  episodeNumber: getEpisodeNumber(episode_number),
-  isSpecial:
-    episode_number === 'SP' || Number(onlyNumbers(episode_number)) % 1 !== 0,
+  episodeNumber: episode_number as any,
   duration,
   progress: playhead || null,
   thumbnail: screenshot_image.full_url,
   url,
 })
+
+const notNumberRegex = /[^\d.]/g
+const onlyNumbers = (str: string) => str.replace(notNumberRegex, '')
+
+const getEpisodeNumber = (num: string) => Number(onlyNumbers(num))
+
+const fixEpisodeNumbers = (episodes: EpisodeListEpisodes[]) => {
+  const firstIndex = getEpisodeNumber(episodes[0].episodeNumber as any) - 1
+
+  return episodes.map(ep => {
+    const num = getEpisodeNumber(ep.episodeNumber as any)
+
+    return {
+      ...ep,
+      episodeNumber: num - firstIndex,
+    }
+  })
+}
+
+// Exclude episodes from episode lists
+const episodeNumberIsHalf = ({ episode_number }: _Media) =>
+  getEpisodeNumber(episode_number) % 1 !== 0
+
+const isSpecialEpisode = ({ episode_number }: _Media) =>
+  episode_number === 'SP' || episode_number === ''
+
+const isShorterThanFiveMinutes = ({ duration }: _Media) => duration < 300
+
+const isRealEpisode = complement(
+  anyPass([episodeNumberIsHalf, isSpecialEpisode, isShorterThanFiveMinutes]),
+)
