@@ -32,7 +32,11 @@ interface RealProxy extends DataProxy {
   }
 }
 
-const cacheEpisodes = (cache: RealProxy, relations: EpisodeRelations) => {
+const cacheEpisodes = (
+  cache: RealProxy,
+  provider: Provider,
+  relations: EpisodeRelations,
+) => {
   Object.entries(relations).forEach(
     ([id, episodes]: [string, EpisodeListEpisodes[]]) => {
       episodes = episodes.map(ep => ({
@@ -48,7 +52,7 @@ const cacheEpisodes = (cache: RealProxy, relations: EpisodeRelations) => {
         },
       })
 
-      EpisodeCache.set(Number(id), episodes[0].provider, episodes)
+      EpisodeCache.set(Number(id), provider, episodes)
     },
   )
 }
@@ -148,7 +152,7 @@ export const resolvers = {
         }
       }
 
-      if (isStale) {
+      if (isStale || !episodes) {
         if (provider === Provider.Crunchyroll) {
           const data = cache.readFragment<{ idMal: number | null }>({
             id: `Media:${id}`,
@@ -175,7 +179,7 @@ export const resolvers = {
 
           const relations = getEpisodeRelations(id, unconfirmedEpisodes)
 
-          cacheEpisodes(cache, relations)
+          cacheEpisodes(cache, provider, relations)
 
           episodes = relations[id]
         }
