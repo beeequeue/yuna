@@ -27,6 +27,8 @@ const handleNewURL = async (
     )
   }
 
+  if (url.includes('anilist.co/api/v2/oauth/authorize')) return
+
   // Due to dumb-ass American ISPs stealing our OAuth redirections
   url = decodeURIComponent(url)
 
@@ -43,11 +45,6 @@ const handleNewURL = async (
     )
 
     authWindow.close()
-
-    electron.dialog.showErrorBox(
-      'Error Authenticating AniList',
-      'Something went wrong logging you in. Please ask for help in the forum thread!\n https://anilist.co/forum/thread/6136',
-    )
   }
 
   const matches = url.match(
