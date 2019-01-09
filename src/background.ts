@@ -1,4 +1,11 @@
-import { app, BrowserWindow, ipcMain, protocol } from 'electron'
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  protocol,
+  Menu,
+  MenuItemConstructorOptions,
+} from 'electron'
 import electronDebug, { openDevTools } from 'electron-debug'
 import { join } from 'path'
 import { format as formatUrl } from 'url'
@@ -47,6 +54,52 @@ function createMainWindow() {
       allowRunningInsecureContent: false,
     },
   })
+
+  const template: MenuItemConstructorOptions[] = [
+    {
+      label: 'Edit',
+      submenu: [
+        {
+          type: 'normal',
+          label: 'Undo',
+          accelerator: 'CmdOrCtrl+Z',
+          role: 'undo',
+        },
+        {
+          type: 'normal',
+          label: 'Redo',
+          accelerator: 'Shift+CmdOrCtrl+Z',
+          role: 'redo',
+        },
+        { type: 'separator' },
+        {
+          type: 'normal',
+          label: 'Cut',
+          accelerator: 'CmdOrCtrl+X',
+          role: 'cut',
+        },
+        {
+          type: 'normal',
+          label: 'Copy',
+          accelerator: 'CmdOrCtrl+C',
+          role: 'copy',
+        },
+        {
+          type: 'normal',
+          label: 'Paste',
+          accelerator: 'CmdOrCtrl+V',
+          role: 'paste',
+        },
+        {
+          type: 'normal',
+          label: 'Select All',
+          accelerator: 'CmdOrCtrl+A',
+          role: 'selectAll',
+        },
+      ],
+    },
+  ]
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 
   initAutoUpdater()
 
