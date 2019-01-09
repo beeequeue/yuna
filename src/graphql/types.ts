@@ -496,8 +496,6 @@ export type FuzzyDateInt = any;
     
     averageScore: Maybe<number>;
     
-    scoreMal: Maybe<number>;
-    
     bannerImage: Maybe<string>;
     
     coverImage: Maybe<AnimePageQueryCoverImage>;

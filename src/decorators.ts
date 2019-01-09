@@ -1,4 +1,5 @@
 import { Vue } from 'vue/types/vue'
+import { Prop } from 'vue/types/options'
 import {
   ApolloVueThisType,
   VueApolloQueryOptions,
@@ -27,6 +28,19 @@ export function Query<C extends Vue, R = any, V = any>(
     ;(componentOptions.apollo as any)[key] = {
       update: (data: any) => (data[key] != null ? data[key] : data),
       ...options,
+    }
+  }) as any
+}
+
+export function Required(type: Prop<any>): PropertyDecorator {
+  return createDecorator((componentOptions, key) => {
+    if (!componentOptions.props) {
+      componentOptions.props = {}
+    }
+
+    ;(componentOptions.props as any)[key] = {
+      type,
+      required: true,
     }
   }) as any
 }

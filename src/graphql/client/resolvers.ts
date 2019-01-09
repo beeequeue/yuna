@@ -108,7 +108,7 @@ export const resolvers = {
       if (isNil(media) || isNil(media.idMal)) return null
 
       const result = await fetchRating(media.idMal)
-      if (!result) return null
+      if (result == null) return null
 
       return Number(result)
     },

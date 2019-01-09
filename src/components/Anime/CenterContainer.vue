@@ -3,8 +3,7 @@
     <info
       :id="id"
       :idMal="idMal"
-      :rating="rating"
-      :ratingMal="ratingMal"
+      :score="score"
       :nextAiringEpisode="nextAiringEpisode"
     />
 
@@ -20,6 +19,7 @@ import { AnimePageQueryNextAiringEpisode } from '@/graphql/types'
 import Description from './Description.vue'
 import Info from './Info.vue'
 import Icon from '../Icon.vue'
+import { prop } from '@/utils'
 
 @Component({
   components: { Description, Icon, Info },
@@ -27,10 +27,10 @@ import Icon from '../Icon.vue'
 export default class CenterContainer extends Vue {
   @Prop(String) public content!: string | null
   @Prop(Boolean) public blurDescription!: boolean | null
-  @Prop(Number) public id!: number | null
+  @Prop(prop(Number, true))
+  public id!: number
   @Prop(Number) public idMal!: number | null
-  @Prop(Number) public rating!: number | null
-  @Prop(Number) public ratingMal!: number | null
+  @Prop(Number) public score!: number | null
   @Prop(Object)
   public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
 }

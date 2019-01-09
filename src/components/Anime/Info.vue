@@ -3,14 +3,14 @@
     <a class="item" :href="alLink">
       <span v-html="alLogo" class="logo" />
 
-      <span v-if="rating" class="rating">{{ rating }}%</span>
+      <span v-if="score" class="rating">{{ score }}%</span>
     </a>
 
     <a class="item" :href="malLink">
       <img class="logo mal" :src="malLogo" />
 
-      <span v-if="ratingMal && ratingMal !== 'N/A'" class="rating">
-        {{ ratingMal }}
+      <span class="rating">
+        {{ !$apollo.loading ? scoreMal : '...' }}
       </span>
     </a>
 
@@ -24,6 +24,7 @@
 </template>
 
 <script lang="ts">
+import gql from 'graphql-tag'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiChevronDown } from '@mdi/js'
 
@@ -31,6 +32,7 @@ import malLogo from '@/assets/myanimelist.webp'
 import alLogo from '@/assets/anilist.svg'
 import NextEpisodeInfo from '@/components/Anime/NextEpisodeInfo.vue'
 
+import { Query, Required } from '@/decorators'
 import { AnimePageQueryNextAiringEpisode } from '@/graphql/types'
 
 import Icon from '../Icon.vue'
@@ -39,12 +41,27 @@ import Icon from '../Icon.vue'
   components: { NextEpisodeInfo, Icon },
 })
 export default class Info extends Vue {
-  @Prop(Number) public id!: number | null
+  @Required(Number) public id!: number
   @Prop(Number) public idMal!: number | null
-  @Prop(Number) public rating!: number | null
-  @Prop(Number) public ratingMal!: number | null
+  @Prop(Number) public score!: number | null
   @Prop(Object)
   public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
+
+  @Query<Info, { anime: { scoreMal: number | null } }, { id: number }>({
+    query: gql`
+      query MalScore($id: Int!) {
+        anime: Media(id: $id) {
+          idMal
+          scoreMal @client
+        }
+      }
+    `,
+    variables() {
+      return { id: this.id }
+    },
+    update: data => data.anime.scoreMal,
+  })
+  public scoreMal!: number | null
 
   $refs!: {
     content: HTMLElement
