@@ -24,6 +24,7 @@ import LIST_QUERY from './ListQuery.graphql'
 import SET_STATUS_MUTATION from './SetStatusMutation.graphql'
 import UPDATE_PROGRESS_MUTATION from './UpdateProgressMutation.graphql'
 import UPDATE_SCORE_MUTATION from './UpdateScoreMutation.graphql'
+import { EpisodeCache } from '@/lib/episode-cache'
 
 const refetchListQuery = ($store: Store<any>) => {
   const userId = getAnilistUserId($store)
@@ -52,15 +53,17 @@ const writeEpisodeProgressToCache = (
 
   if (!data || !data.episodes) return
 
+  const episodes = data.episodes.map(ep => ({
+    ...ep,
+    isWatched: progress >= ep.episodeNumber,
+  }))
+
   cache.writeQuery<EpisodeListQuery>({
     query: EPISODE_LIST,
-    data: {
-      episodes: data.episodes.map(ep => ({
-        ...ep,
-        isWatched: progress >= ep.episodeNumber,
-      })),
-    },
+    data: { episodes },
   })
+
+  EpisodeCache.set(episode.animeId, episode.provider, episodes)
 }
 
 export const setEpisodeWatched = async (

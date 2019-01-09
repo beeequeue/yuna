@@ -1,8 +1,8 @@
 import { DataProxy } from 'apollo-cache'
 import gql from 'graphql-tag'
-import { isNil, omit } from 'rambdax'
+import { isNil } from 'rambdax'
 
-import EPISODES_QUERY from '@/graphql/EpisodeList.graphql'
+import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
   AnimePageQueryAnime,
   EpisodeListEpisodes,
@@ -12,6 +12,7 @@ import {
 } from '@/graphql/types'
 import { fetchEpisodesOfSeries, fetchRating } from '@/lib/myanimelist'
 import { EpisodeRelations, getEpisodeRelations } from '@/lib/relations'
+import { EpisodeCache } from '@/lib/episode-cache'
 
 interface EpisodeVariables {
   id: number
@@ -32,15 +33,45 @@ interface RealProxy extends DataProxy {
 }
 
 const cacheEpisodes = (cache: RealProxy, relations: EpisodeRelations) => {
-  Object.entries(relations).forEach(([id, episodes]) => {
-    cache.writeQuery<EpisodeListQuery, EpisodeListVariables>({
-      query: EPISODES_QUERY,
-      variables: { id: Number(id) },
-      data: {
-        episodes: episodes.map((ep: any) => ({ ...ep, isWatched: false })),
-      },
-    })
+  Object.entries(relations).forEach(
+    ([id, episodes]: [string, EpisodeListEpisodes[]]) => {
+      episodes = episodes.map(ep => ({
+        ...ep,
+        isWatched: getIsWatched(cache, ep.animeId, ep.episodeNumber),
+      }))
+
+      cache.writeQuery<EpisodeListQuery, EpisodeListVariables>({
+        query: EPISODE_LIST,
+        variables: { id: Number(id) },
+        data: {
+          episodes,
+        },
+      })
+
+      EpisodeCache.set(Number(id), episodes[0].provider, episodes)
+    },
+  )
+}
+
+const getIsWatched = (cache: RealProxy, animeId: number, episode: number) => {
+  const data = cache.readFragment<{
+    mediaListEntry: { progress: number } | null
+  }>({
+    id: `Media:${animeId}`,
+    fragment: gql`
+      fragment listEntry on Media {
+        mediaListEntry {
+          progress
+        }
+      }
+    `,
   })
+
+  if (!data || !data.mediaListEntry || !data.mediaListEntry.progress) {
+    return false
+  }
+
+  return data.mediaListEntry.progress >= episode
 }
 
 export const resolvers = {
@@ -60,6 +91,30 @@ export const resolvers = {
       { id, provider }: EpisodeVariables,
       { cache }: { cache: RealProxy },
     ): Promise<EpisodeListEpisodes[] | null> => {
+      let softCachedData
+
+      try {
+        softCachedData = cache.readQuery<
+          EpisodeListQuery,
+          EpisodeListVariables
+        >({
+          query: EPISODE_LIST,
+          variables: { id: Number(id) },
+        })
+      } catch (err) {
+        /* no-op */
+      }
+
+      if (softCachedData && softCachedData.episodes) {
+        return softCachedData.episodes
+      }
+
+      const hardCachedEpisodes = EpisodeCache.get(id, provider)
+
+      if (hardCachedEpisodes) {
+        return hardCachedEpisodes.episodes
+      }
+
       if (provider === Provider.Crunchyroll) {
         const data = cache.readFragment<{ idMal: number | null }>({
           id: `Media:${id}`,
@@ -86,7 +141,7 @@ export const resolvers = {
 
         const relations = getEpisodeRelations(id, unconfirmedEpisodes)
 
-        cacheEpisodes(cache, omit(id.toString() as any, relations))
+        cacheEpisodes(cache, relations)
 
         return relations[id]
       }
@@ -99,25 +154,6 @@ export const resolvers = {
       episode: EpisodeListEpisodes,
       _: never,
       { cache }: { cache: RealProxy },
-    ) => {
-      const data = cache.readFragment<{
-        mediaListEntry: { progress: number } | null
-      }>({
-        id: `Media:${episode.animeId}`,
-        fragment: gql`
-          fragment listEntry on Media {
-            mediaListEntry {
-              progress
-            }
-          }
-        `,
-      })
-
-      if (!data || !data.mediaListEntry || !data.mediaListEntry.progress) {
-        return false
-      }
-
-      return data.mediaListEntry.progress >= episode.episodeNumber
-    },
+    ) => getIsWatched(cache, episode.animeId, episode.episodeNumber),
   },
 }

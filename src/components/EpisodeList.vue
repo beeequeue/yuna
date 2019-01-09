@@ -96,6 +96,7 @@ export default class EpisodeList extends Vue {
   @Prop(Boolean) public scrollToCurrentEpisode!: boolean | null
 
   @Query({
+    fetchPolicy: 'network-only',
     query: EPISODE_LIST,
     variables() {
       return {
