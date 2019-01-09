@@ -204,7 +204,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { ipcRenderer } from 'electron'
 import { Key } from 'ts-key-enum'
-import { mdiUndoVariant, mdiInformationOutline, mdiRefresh } from '@mdi/js'
+import { mdiInformationOutline, mdiRefresh, mdiUndoVariant } from '@mdi/js'
 
 import Keybinding from '@/components/Settings/Keybinding.vue'
 import Group from '@/components/Settings/Group.vue'
@@ -212,20 +212,20 @@ import Checkbox from '@/components/Settings/Checkbox.vue'
 import CButton from '@/components/CButton.vue'
 import Icon from '@/components/Icon.vue'
 
-import { createSession, SessionResponse } from '@/lib/crunchyroll'
+import { createSession } from '@/lib/crunchyroll'
 import { Page, trackPageView } from '@/lib/tracking'
 import { getIsUpdateAvailable } from '@/state/app'
-import { setCrunchyrollCountry, getCrunchyrollCountry } from '@/state/auth'
+import { getCrunchyrollCountry } from '@/state/auth'
 import {
   addKeybinding,
   getSettings,
   KeybindingAction,
   removeKeybinding,
   resetKeybindings,
-  setSetting,
-  SettingsState,
-  setSpoiler,
   setDiscordRichPresence,
+  setSetting,
+  setSpoiler,
+  SettingsState,
 } from '@/state/settings'
 import { DOWNLOAD_UPDATE, OPEN_DEVTOOLS } from '@/messages'
 import { createBothSessions } from '@/utils'
@@ -286,15 +286,12 @@ export default class Settings extends Vue {
 
   public async handleUnblockerChange(checked: boolean) {
     this.setSetting('useCRUnblocker', checked)
-    let data: SessionResponse
 
     if (checked) {
-      data = await createBothSessions(this.$store)
+      await createBothSessions(this.$store)
     } else {
-      data = await createSession()
+      await createSession()
     }
-
-    setCrunchyrollCountry(this.$store, data.country_code)
   }
 
   public handleDiscordPresenceChange(checked: boolean) {

@@ -112,17 +112,16 @@ export const auth = {
         return
       }
 
-      logoutAnilist()
       crunchyroll.logout()
       setCrunchyroll(context, false)
+      logoutAnilist()
       setAnilist(context, {
         user: null,
         token: null,
         expires: null,
       })
 
-      const data = await createBothSessions(context)
-      setCrunchyrollCountry(context, data.country_code)
+      await createBothSessions(context)
     },
   },
 }

@@ -25,7 +25,7 @@ import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 import { ipcRenderer } from 'electron'
 
-import { getIsLoggedIn, setCrunchyrollCountry } from '@/state/auth'
+import { getIsLoggedIn } from '@/state/auth'
 import { getHasFinishedSetup } from '@/state/settings'
 import {
   AppState,
@@ -91,8 +91,7 @@ export default class App extends Vue {
       this.$router.push('login')
     }
 
-    const data = await createBothSessions(this.$store)
-    setCrunchyrollCountry(this.$store, data.country_code)
+    await createBothSessions(this.$store)
 
     if (process.env.NODE_ENV === 'production') {
       ipcRenderer.send(CHECK_FOR_UPDATES)

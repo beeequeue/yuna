@@ -15,6 +15,7 @@ import {
   SessionResponse,
 } from '@/lib/crunchyroll'
 import { getSettings } from '@/state/settings'
+import { setCrunchyrollCountry } from '@/state/auth'
 
 export interface RequestSuccess<B extends object> extends Response {
   status: 200
@@ -99,6 +100,8 @@ export const createBothSessions = async (
   if (data == null) {
     data = await createSession()
   }
+
+  setCrunchyrollCountry(store, data.country_code)
 
   return data
 }
