@@ -1,6 +1,6 @@
 import { DataProxy } from 'apollo-cache'
 import gql from 'graphql-tag'
-import { isNil } from 'rambdax'
+import { isNil, pathOr } from 'rambdax'
 
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
@@ -74,6 +74,34 @@ const getIsWatched = (cache: RealProxy, animeId: number, episode: number) => {
   return data.mediaListEntry.progress >= episode
 }
 
+const getNextEpisodeAiringAt = (
+  cache: RealProxy,
+  animeId: number,
+): number | null => {
+  const cachedNextEpisode = cache.readFragment<{
+    nextAiringEpisode: { timeUntilAiring: number } | null
+  }>({
+    id: `Media:${animeId}`,
+    fragment: gql`
+      fragment nextEpisode on Media {
+        nextAiringEpisode {
+          timeUntilAiring
+        }
+      }
+    `,
+  })
+
+  const timeUntilAiring = pathOr(
+    null,
+    ['nextAiringEpisode', 'timeUntilAiring'],
+    cachedNextEpisode,
+  )
+
+  if (!timeUntilAiring) return null
+
+  return Date.now() + timeUntilAiring * 1000
+}
+
 export const resolvers = {
   Media: {
     scoreMal: async (media: AnimePageQueryAnime): Promise<number | null> => {
@@ -91,62 +119,69 @@ export const resolvers = {
       { id, provider }: EpisodeVariables,
       { cache }: { cache: RealProxy },
     ): Promise<EpisodeListEpisodes[] | null> => {
+      const airingAt = getNextEpisodeAiringAt(cache, id)
+      const isStale = airingAt != null && Date.now() >= airingAt
+      let episodes: EpisodeListEpisodes[] | null = null
       let softCachedData
 
-      try {
-        softCachedData = cache.readQuery<
-          EpisodeListQuery,
-          EpisodeListVariables
-        >({
-          query: EPISODE_LIST,
-          variables: { id: Number(id) },
-        })
-      } catch (err) {
-        /* no-op */
-      }
-
-      if (softCachedData && softCachedData.episodes) {
-        return softCachedData.episodes
-      }
-
-      const hardCachedEpisodes = EpisodeCache.get(id, provider)
-
-      if (hardCachedEpisodes) {
-        return hardCachedEpisodes.episodes
-      }
-
-      if (provider === Provider.Crunchyroll) {
-        const data = cache.readFragment<{ idMal: number | null }>({
-          id: `Media:${id}`,
-          fragment: gql`
-            fragment idMal on Media {
-              idMal
-            }
-          `,
-        })
-
-        if (!data || !data || !data.idMal) {
-          throw new Error('Could not find Anime in cache!')
-        }
-
-        let unconfirmedEpisodes
-
+      if (!isStale) {
         try {
-          unconfirmedEpisodes = await fetchEpisodesOfSeries(id, data.idMal)
+          softCachedData = cache.readQuery<
+            EpisodeListQuery,
+            EpisodeListVariables
+          >({
+            query: EPISODE_LIST,
+            variables: { id: Number(id) },
+          })
         } catch (err) {
-          throw new Error(err)
+          /* no-op */
         }
 
-        if (!unconfirmedEpisodes) return null
+        if (softCachedData && softCachedData.episodes) {
+          episodes = softCachedData.episodes
+        }
 
-        const relations = getEpisodeRelations(id, unconfirmedEpisodes)
+        const hardCachedData = EpisodeCache.get(id, provider)
 
-        cacheEpisodes(cache, relations)
-
-        return relations[id]
+        if (hardCachedData && hardCachedData.episodes) {
+          episodes = hardCachedData.episodes
+        }
       }
 
-      return null
+      if (isStale) {
+        if (provider === Provider.Crunchyroll) {
+          const data = cache.readFragment<{ idMal: number | null }>({
+            id: `Media:${id}`,
+            fragment: gql`
+              fragment idMal on Media {
+                idMal
+              }
+            `,
+          })
+
+          if (!data || !data || !data.idMal) {
+            throw new Error('Could not find Anime in cache!')
+          }
+
+          let unconfirmedEpisodes
+
+          try {
+            unconfirmedEpisodes = await fetchEpisodesOfSeries(id, data.idMal)
+          } catch (err) {
+            throw new Error(err)
+          }
+
+          if (!unconfirmedEpisodes) return null
+
+          const relations = getEpisodeRelations(id, unconfirmedEpisodes)
+
+          cacheEpisodes(cache, relations)
+
+          episodes = relations[id]
+        }
+      }
+
+      return episodes
     },
   },
   Episode: {
