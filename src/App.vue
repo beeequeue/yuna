@@ -25,6 +25,7 @@ import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 import { ipcRenderer } from 'electron'
 
+import { Crunchyroll } from '@/lib/crunchyroll'
 import { getIsLoggedIn } from '@/state/auth'
 import { getHasFinishedSetup } from '@/state/settings'
 import {
@@ -35,7 +36,7 @@ import {
   toggleModal,
 } from '@/state/app'
 import { CHECK_FOR_UPDATES } from '@/messages'
-import { createBothSessions } from '@/utils'
+
 import TitleBar from './components/TitleBar.vue'
 import Navbar from './components/Navbar/Navbar.vue'
 import PlayerContainer from './components/Player/Container.vue'
@@ -91,7 +92,7 @@ export default class App extends Vue {
       this.$router.push('login')
     }
 
-    await createBothSessions(this.$store)
+    await Crunchyroll.createSession(this.$store)
 
     if (process.env.NODE_ENV === 'production') {
       ipcRenderer.send(CHECK_FOR_UPDATES)

@@ -2,11 +2,10 @@
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
 
-import * as crunchyroll from '@/lib/crunchyroll'
+import { Crunchyroll } from '@/lib/crunchyroll'
 import { logoutAnilist } from '@/lib/anilist'
 import { userStore } from '@/lib/user'
 import { RootState } from '@/state/store'
-import { createBothSessions } from '@/utils'
 
 export interface CrunchyrollData {
   isLoggedIn: boolean
@@ -96,7 +95,7 @@ export const auth = {
       payload: { user: string; pass: string },
     ) {
       try {
-        await crunchyroll.login(payload.user, payload.pass)
+        await Crunchyroll.login(context, payload.user, payload.pass)
       } catch (err) {
         throw new Error(err)
       }
@@ -112,7 +111,7 @@ export const auth = {
         return
       }
 
-      crunchyroll.logout()
+      Crunchyroll.logout()
       setCrunchyroll(context, false)
       logoutAnilist()
       setAnilist(context, {
@@ -121,7 +120,7 @@ export const auth = {
         expires: null,
       })
 
-      await createBothSessions(context)
+      await Crunchyroll.createSession(context)
     },
   },
 }

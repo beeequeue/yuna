@@ -1,19 +1,17 @@
-import { error } from 'electron-log'
 import { api } from 'electron-util'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { isNil, path } from 'rambdax'
 import { Response } from 'superagent'
-import { ActionContext, Store } from 'vuex'
 import uuid from 'uuid/v4'
 import { resolve } from 'path'
 
 import { EpisodeListEpisodes, MediaListStatus } from '@/graphql/types'
-import {
-  createSession,
-  createUnblockedSession,
-  SessionResponse,
-} from '@/lib/crunchyroll'
-import { getSettings } from '@/state/settings'
+import electron from 'electron'
+import Filter = Electron.Filter
+
+const noop = () => {
+  /* no-op */
+}
 
 export interface RequestSuccess<B extends object> extends Response {
   status: 200
@@ -72,29 +70,6 @@ export const humanizeMediaListStatus = (
     default:
       throw new Error(`Tried to humanize an unknown status: ${entry.status}`)
   }
-}
-
-export const createBothSessions = async (
-  store: Store<any> | ActionContext<any, any>,
-) => {
-  let data: SessionResponse | null = null
-
-  if (getSettings(store).useCRUnblocker) {
-    try {
-      data = await createUnblockedSession(store)
-    } catch (e) {
-      error(e)
-      store.dispatch('app/sendErrorToast', 'Could not create US session. 😞', {
-        root: true,
-      })
-    }
-  }
-
-  if (data == null) {
-    data = await createSession(store)
-  }
-
-  return data
 }
 
 export const deviceUuidFilePath = resolve(
@@ -162,3 +137,27 @@ export const arrayIsOfType = <T>(
 
 export const getEpisodeCacheKey = (ep: EpisodeListEpisodes) =>
   `Episode:${ep.provider}:${ep.id}`
+
+export const removeCookies = (filter: Filter) => {
+  if (!electron.remote.session.defaultSession) {
+    // tslint:disable-next-line:no-console
+    return console.warn(
+      `Could not get default session when deleting cookie.\n${filter}`,
+    )
+  }
+
+  const { cookies } = electron.remote.session.defaultSession
+
+  cookies.get(filter, (err, cooks) => {
+    if (err) throw new Error(err.message)
+
+    cooks.forEach(cookie => {
+      if (!cookie.domain) return
+
+      const prefix = cookie.domain.includes('crunchyroll') ? 'api.' : ''
+      const url = 'https://' + prefix + cookie.domain.replace(/^\./, '')
+
+      cookies.remove(url, cookie.name, noop)
+    })
+  })
+}

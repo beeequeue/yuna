@@ -8,6 +8,7 @@ import { getConfig } from '@/config'
 import { AnilistData, setAnilist } from '@/state/auth'
 
 import { userStore } from './user'
+import { removeCookies } from '@/utils'
 
 type BrowserWindow = electron.BrowserWindow
 let authWindow: BrowserWindow
@@ -97,25 +98,7 @@ export const loginAnilist = (store: Store<any>) =>
   })
 
 export const logoutAnilist = () => {
-  if (!electron.remote.session.defaultSession) return
-
-  /* tslint:disable no-empty */
-  electron.remote.session.defaultSession.cookies.remove(
-    'https://anilist.co',
-    'remember_web_59ba36addc2b2f9401580f014c7f58ea4e30989d',
-    () => {},
-  )
-  electron.remote.session.defaultSession.cookies.remove(
-    'https://anilist.co',
-    'laravel_session',
-    () => {},
-  )
-  electron.remote.session.defaultSession.cookies.remove(
-    'https://anilist.co',
-    '__cfduid',
-    () => {},
-  )
-  /* tslint:enable no-empty */
+  removeCookies({ domain: 'anilist.co' })
 }
 
 interface Parameters {

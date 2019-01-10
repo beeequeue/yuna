@@ -212,7 +212,7 @@ import Checkbox from '@/components/Settings/Checkbox.vue'
 import CButton from '@/components/CButton.vue'
 import Icon from '@/components/Icon.vue'
 
-import { createSession } from '@/lib/crunchyroll'
+import { Crunchyroll } from '@/lib/crunchyroll'
 import { Page, trackPageView } from '@/lib/tracking'
 import { getIsUpdateAvailable } from '@/state/app'
 import { getCrunchyrollCountry } from '@/state/auth'
@@ -228,7 +228,6 @@ import {
   SettingsState,
 } from '@/state/settings'
 import { DOWNLOAD_UPDATE, OPEN_DEVTOOLS } from '@/messages'
-import { createBothSessions } from '@/utils'
 
 @Component({
   components: { CButton, Checkbox, Group, Keybinding, Icon },
@@ -287,11 +286,7 @@ export default class Settings extends Vue {
   public async handleUnblockerChange(checked: boolean) {
     this.setSetting('useCRUnblocker', checked)
 
-    if (checked) {
-      await createBothSessions(this.$store)
-    } else {
-      await createSession(this.$store)
-    }
+    await Crunchyroll.createSession(this.$store)
   }
 
   public handleDiscordPresenceChange(checked: boolean) {

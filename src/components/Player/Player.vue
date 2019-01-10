@@ -96,7 +96,7 @@ import {
 } from '@/graphql/types'
 
 import { Required } from '@/decorators'
-import { fetchStream, setProgressOfEpisode } from '@/lib/crunchyroll'
+import { Crunchyroll } from '@/lib/crunchyroll'
 import { trackStillWatching } from '@/lib/tracking'
 import {
   getIsFullscreen,
@@ -218,7 +218,7 @@ export default class Player extends Vue {
 
   private async fetchStream(provider: Provider, id: number): Promise<Stream> {
     if (provider === Provider.Crunchyroll) {
-      return fetchStream(id)
+      return Crunchyroll.fetchStream(id)
     }
 
     return null as any
@@ -347,7 +347,7 @@ export default class Player extends Vue {
     ) {
       this.lastScrobble = this.progressInSeconds
 
-      setProgressOfEpisode(this.episode.id, this.progressInSeconds)
+      Crunchyroll.setProgressOfEpisode(this.episode.id, this.progressInSeconds)
     }
 
     if (
@@ -363,7 +363,7 @@ export default class Player extends Vue {
       this.softEnded = true
       this.lastScrobble = this.episode.duration
 
-      setProgressOfEpisode(this.episode.id, this.episode.duration)
+      Crunchyroll.setProgressOfEpisode(this.episode.id, this.episode.duration)
       this.updateProgressIfNecessary()
     }
   }

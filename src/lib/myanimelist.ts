@@ -1,7 +1,7 @@
 import request from 'superagent/superagent'
 import { delay, T } from 'rambdax'
 
-import { fetchSeasonFromEpisode } from '@/lib/crunchyroll'
+import { Crunchyroll } from '@/lib/crunchyroll'
 import { RequestResponse, responseIsError } from '@/utils'
 import { EpisodeListEpisodes } from '@/graphql/types'
 
@@ -69,7 +69,7 @@ export const fetchEpisodesOfSeries = async (
     return []
   }
 
-  return fetchSeasonFromEpisode(id, mediaIdMatch[1])
+  return Crunchyroll.fetchSeasonFromEpisode(id, mediaIdMatch[1])
 }
 
 export const fetchRating = async (id: string | number) => {

@@ -9,9 +9,11 @@ import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 
 import { getConfig } from '@/config'
 import { userStore } from '@/lib/user'
-import { setCrunchyrollCountry } from '@/state/auth'
-import { RequestError, RequestSuccess } from '@/utils'
+import { setCrunchyroll, setCrunchyrollCountry } from '@/state/auth'
+import { removeCookies, RequestError, RequestSuccess } from '@/utils'
 import { Stream } from '@/types'
+import { getSettings } from '@/state/settings'
+import { error } from 'electron-log'
 
 const CR_UNBLOCKER_URL = 'api2.cr-unblocker.com'
 const API_URL = 'api.crunchyroll.com'
@@ -170,60 +172,240 @@ export interface SessionResponse {
   country_code: string
 }
 
-export const createSession = async (
-  store: Store<any> | ActionContext<any, any>,
-) => {
-  const response = (await superagent
-    .get(getUrl('start_session'))
-    .ok(T)
-    .query({
-      auth: userStore.get('crunchyroll.token', null),
-      locale,
-      device_type,
-      device_id: uuid(),
-      version: '1.1',
-      access_token,
-      user_id: userStore.get('crunchyroll.userId', null),
-    })) as CrunchyrollResponse<SessionResponse>
-
-  if (responseIsError(response)) {
-    throw new Error(response.body.message)
-  }
-
-  _sessionId = response.body.data.session_id
-
-  userStore.set('crunchyroll.sessionId', _sessionId)
-  userStore.set('crunchyroll.country', response.body.data.country_code)
-
-  setCrunchyrollCountry(store, response.body.data.country_code)
-
-  return response.body.data
+interface StreamInfo {
+  playhead: number
+  stream_data: _StreamData
 }
 
-export const createUnblockedSession = async (
-  store: Store<any> | ActionContext<any, any>,
-) => {
-  const response = (await superagent
-    .get(`https://${CR_UNBLOCKER_URL}/start_session`)
-    .ok(T)
-    .query({
-      auth: userStore.get('crunchyroll.token', null),
-      version: '1.1',
-      user_id: userStore.get('crunchyroll.userId', null),
-    })) as CrunchyrollResponse<SessionResponse>
+type StoreType = Store<any> | ActionContext<any, any>
 
-  if (responseIsError(response)) {
-    return Promise.reject(response.body.message)
+export class Crunchyroll {
+  public static createSession = async (store: StoreType) => {
+    const { useCRUnblocker } = getSettings(store)
+    let data: SessionResponse | null = null
+
+    if (useCRUnblocker) {
+      try {
+        data = await Crunchyroll.createUnblockedSession(store)
+      } catch (e) {
+        error(e)
+        store.dispatch(
+          'app/sendErrorToast',
+          'Could not create US session. 😞',
+          {
+            root: true,
+          },
+        )
+      }
+    }
+
+    if (data == null) {
+      data = await Crunchyroll.createNormalSession(store)
+    }
+
+    return data
   }
 
-  _sessionId = response.body.data.session_id
+  public static login = async (
+    store: StoreType,
+    username: string,
+    password: string,
+  ) => {
+    const data = new FormData()
+    data.append('account', username)
+    data.append('password', password)
+    data.append('session_id', _sessionId)
 
-  userStore.set('crunchyroll.sessionId', _sessionId)
-  userStore.set('crunchyroll.country', response.body.data.country_code)
+    const response = (await superagent
+      .post(getUrl('login'))
+      .send(data)) as CrunchyrollResponse<LoginSuccess>
 
-  setCrunchyrollCountry(store, response.body.data.country_code)
+    removeCookies({ domain: 'crunchyroll.com' })
 
-  return response.body.data
+    if (responseIsError(response)) {
+      return Promise.reject(response.body.message)
+    }
+
+    const session = await Crunchyroll.createSession(store)
+
+    _sessionId = session.session_id
+    userStore.set('crunchyroll', {
+      sessionId: session.session_id,
+      userId: response.body.data.user.user_id,
+      token: response.body.data.auth,
+    })
+    setCrunchyroll(store, true)
+
+    return response.body.data
+  }
+
+  public static logout = () => {
+    userStore.delete('crunchyroll')
+    removeCookies({ domain: 'crunchyroll.com' })
+  }
+
+  public static fetchEpisodesOfCollection = async (
+    id: number,
+    collectionId: string,
+  ): Promise<EpisodeListEpisodes[]> => {
+    const response = (await superagent.get(getUrl('list_media')).query({
+      session_id: _sessionId,
+      locale,
+      collection_id: collectionId,
+      limit: 1000,
+      fields: mediaFields.join(','),
+    })) as CrunchyrollResponse<_Media[]>
+
+    if (responseIsError(response)) {
+      if (response.body.code === 'bad_session') {
+        activeWindow().reload()
+      }
+
+      throw new Error(response.body.message)
+    }
+
+    const episodes = response.body.data
+      .filter(isRealEpisode)
+      .map(mediaToEpisode(id)) as any
+
+    return fixEpisodeNumbers(episodes)
+  }
+
+  public static fetchEpisode = async (mediaId: string): Promise<_Media> => {
+    const response = (await superagent.get(getUrl('info')).query({
+      session_id: _sessionId,
+      locale,
+      media_id: mediaId,
+      fields: mediaFields.join(','),
+    })) as CrunchyrollResponse<_Media>
+
+    if (responseIsError(response)) {
+      if (response.body.code === 'bad_session') {
+        activeWindow().reload()
+      }
+
+      throw new Error(response.body.message)
+    }
+
+    return response.body.data
+  }
+
+  public static fetchSeasonFromEpisode = async (
+    id: number,
+    mediaId: string,
+  ): Promise<EpisodeListEpisodes[]> => {
+    const episode = await Crunchyroll.fetchEpisode(mediaId)
+
+    return Crunchyroll.fetchEpisodesOfCollection(id, episode.collection_id)
+  }
+
+  public static fetchStream = async (mediaId: number): Promise<Stream> => {
+    const streamInfo = await Crunchyroll.fetchStreamInfo(mediaId.toString())
+    const streams = streamInfo.stream_data.streams
+
+    if (!streams || streams.length < 1) {
+      throw new Error(`Did not receive stream data from Crunchyroll.`)
+    }
+
+    return {
+      url: streams[0].url,
+      progress: streamInfo.playhead,
+    }
+  }
+
+  public static setProgressOfEpisode = async (
+    mediaId: number,
+    progressInSeconds: number,
+  ) => {
+    const response = (await superagent.get(getUrl('log')).query({
+      session_id: _sessionId,
+      locale,
+      event: 'playback_status',
+      media_id: mediaId,
+      playhead: progressInSeconds,
+      fields: mediaFields.join(','),
+    })) as CrunchyrollResponse
+
+    if (responseIsError(response)) {
+      throw new Error('Could not update progress of episode!')
+    }
+  }
+
+  private static createNormalSession = async (store: StoreType) => {
+    const response = (await superagent
+      .get(getUrl('start_session'))
+      .ok(T)
+      .query({
+        access_token,
+        device_type,
+        device_id: uuid(),
+        version: '1.1',
+        auth: userStore.get('crunchyroll.token', null),
+        // user_id: userStore.get('crunchyroll.userId', null),
+      })) as CrunchyrollResponse<SessionResponse>
+
+    if (responseIsError(response)) {
+      throw new Error(response.body.message)
+    }
+
+    _sessionId = response.body.data.session_id
+
+    userStore.set('crunchyroll.sessionId', _sessionId)
+    userStore.set('crunchyroll.country', response.body.data.country_code)
+
+    setCrunchyrollCountry(store, response.body.data.country_code)
+
+    return response.body.data
+  }
+
+  private static createUnblockedSession = async (store: StoreType) => {
+    const response = (await superagent
+      .get(`https://${CR_UNBLOCKER_URL}/start_session`)
+      .ok(T)
+      .query({
+        auth: userStore.get('crunchyroll.token', null),
+        version: '1.1',
+        user_id: userStore.get('crunchyroll.userId', null),
+      })) as CrunchyrollResponse<SessionResponse>
+
+    if (responseIsError(response)) {
+      return Promise.reject(response.body.message)
+    }
+
+    _sessionId = response.body.data.session_id
+
+    userStore.set('crunchyroll.sessionId', _sessionId)
+    userStore.set('crunchyroll.country', response.body.data.country_code)
+
+    setCrunchyrollCountry(store, response.body.data.country_code)
+
+    return response.body.data
+  }
+
+  private static fetchStreamInfo = async (
+    mediaId: string,
+  ): Promise<StreamInfo> => {
+    const response = (await superagent.get(getUrl('info')).query({
+      session_id: _sessionId,
+      locale,
+      media_id: mediaId,
+      fields: ['media.stream_data', 'media.playhead'].join(','),
+    })) as CrunchyrollResponse<StreamInfo>
+
+    if (responseIsError(response)) {
+      if (response.body.code === 'bad_session') {
+        activeWindow().reload()
+      }
+
+      throw new Error(response.body.message)
+    }
+
+    const { playhead, stream_data } = response.body.data
+    return {
+      playhead,
+      stream_data,
+    }
+  }
 }
 
 const mediaFields = [
@@ -241,147 +423,6 @@ const mediaFields = [
   'media.collection_id',
   'media.url',
 ]
-
-export const login = async (username: string, password: string) => {
-  const data = new FormData()
-  data.append('account', username)
-  data.append('password', password)
-  data.append('session_id', _sessionId)
-
-  const response = (await superagent
-    .post(getUrl('login'))
-    .send(data)) as CrunchyrollResponse<LoginSuccess>
-
-  if (responseIsError(response)) {
-    return Promise.reject(response.body.message)
-  }
-
-  userStore.set('crunchyroll', {
-    sessionId: _sessionId,
-    userId: response.body.data.user.user_id,
-    token: response.body.data.auth,
-  })
-
-  return response.body.data
-}
-
-export const logout = () => {
-  userStore.delete('crunchyroll')
-}
-
-export const fetchEpisodesOfCollection = async (
-  id: number,
-  collectionId: string,
-): Promise<EpisodeListEpisodes[]> => {
-  const response = (await superagent.get(getUrl('list_media')).query({
-    session_id: _sessionId,
-    locale,
-    collection_id: collectionId,
-    limit: 1000,
-    fields: mediaFields.join(','),
-  })) as CrunchyrollResponse<_Media[]>
-
-  if (responseIsError(response)) {
-    if (response.body.code === 'bad_session') {
-      activeWindow().reload()
-    }
-
-    throw new Error(response.body.message)
-  }
-
-  const episodes = response.body.data
-    .filter(isRealEpisode)
-    .map(mediaToEpisode(id)) as any
-
-  return fixEpisodeNumbers(episodes)
-}
-
-export const fetchEpisode = async (mediaId: string): Promise<_Media> => {
-  const response = (await superagent.get(getUrl('info')).query({
-    session_id: _sessionId,
-    locale,
-    media_id: mediaId,
-    fields: mediaFields.join(','),
-  })) as CrunchyrollResponse<_Media>
-
-  if (responseIsError(response)) {
-    if (response.body.code === 'bad_session') {
-      activeWindow().reload()
-    }
-
-    throw new Error(response.body.message)
-  }
-
-  return response.body.data
-}
-
-export const fetchSeasonFromEpisode = async (
-  id: number,
-  mediaId: string,
-): Promise<EpisodeListEpisodes[]> => {
-  const episode = await fetchEpisode(mediaId)
-
-  return fetchEpisodesOfCollection(id, episode.collection_id)
-}
-
-interface StreamInfo {
-  playhead: number
-  stream_data: _StreamData
-}
-const fetchStreamInfo = async (mediaId: string): Promise<StreamInfo> => {
-  const response = (await superagent.get(getUrl('info')).query({
-    session_id: _sessionId,
-    locale,
-    media_id: mediaId,
-    fields: ['media.stream_data', 'media.playhead'].join(','),
-  })) as CrunchyrollResponse<StreamInfo>
-
-  if (responseIsError(response)) {
-    if (response.body.code === 'bad_session') {
-      activeWindow().reload()
-    }
-
-    throw new Error(response.body.message)
-  }
-
-  const { playhead, stream_data } = response.body.data
-  return {
-    playhead,
-    stream_data,
-  }
-}
-
-export const fetchStream = async (mediaId: number): Promise<Stream> => {
-  const streamInfo = await fetchStreamInfo(mediaId.toString())
-  const streams = streamInfo.stream_data.streams
-
-  if (!streams || streams.length < 1) {
-    throw new Error(`Did not receive stream data from Crunchyroll.`)
-  }
-
-  return {
-    url: streams[0].url,
-    progress: streamInfo.playhead,
-  }
-}
-
-export const setProgressOfEpisode = async (
-  mediaId: number,
-  progressInSeconds: number,
-) => {
-  const response = (await superagent.get(getUrl('log')).query({
-    session_id: _sessionId,
-    locale,
-    event: 'playback_status',
-    media_id: mediaId,
-    playhead: progressInSeconds,
-    fields: mediaFields.join(','),
-  })) as CrunchyrollResponse
-
-  if (responseIsError(response)) {
-    throw new Error('Could not update progress of episode!')
-  }
-}
 
 const mediaToEpisode = (id: number) => (
   {
