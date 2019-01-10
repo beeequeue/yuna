@@ -20,6 +20,7 @@
       <episode
         v-for="episode in episodes"
         :key="`${episode.name}:${episode.id}`"
+        ref="episodes"
         :episode="episode"
         :listEntry="listEntry"
         :small="small"
@@ -52,6 +53,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Key } from 'ts-key-enum'
+import { find, pathEq, pathOr } from 'rambdax'
 import { mdiCached } from '@mdi/js'
 
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
@@ -103,7 +105,7 @@ export default class EpisodeList extends Vue {
     result() {
       setTimeout(() => {
         this._scrollToEpisode()
-      }, 50)
+      }, 200)
     },
     error(err) {
       if (typeof err === 'string') {
@@ -132,6 +134,7 @@ export default class EpisodeList extends Vue {
 
   public $refs!: {
     episodeContainer: HTMLDivElement
+    episodes: Episode[]
   }
 
   public get currentEpisode() {
@@ -173,33 +176,19 @@ export default class EpisodeList extends Vue {
     }
   }
 
-  private getScrollPositionOfEpisode(index: number) {
-    const container = this.$refs.episodeContainer
-    // index - 2 because for whatever reason it finds the episode number + 2????
-    const episode = container.querySelector(
-      `.episode[data-episode="${index - 2}"]`,
-    ) as HTMLElement | null
-
-    if (!episode) return 0
-
-    return (
-      episode.offsetLeft - container.clientWidth / 2 + episode.clientWidth / 2
-    )
-  }
-
   public handleScrollerChange(e: KeyboardEvent) {
-    const episodeContainer = this.$refs.episodeContainer
-
-    if (!episodeContainer) return
-
     const episodeIdx = (e.currentTarget as HTMLInputElement).value.trim()
 
     this.scrollerValue = episodeIdx
 
-    if (!episodeContainer || episodeIdx === '') return
+    if (episodeIdx === '') return
 
-    episodeContainer.scroll({
-      left: this.getScrollPositionOfEpisode(Number(episodeIdx)),
+    const episodeEl = this.getEpisodeElement(Number(episodeIdx))
+
+    if (!episodeEl) return
+
+    this.$refs.episodeContainer.scroll({
+      left: this.getContainerScrollLeft(episodeEl),
       behavior: 'smooth',
     })
   }
@@ -210,15 +199,13 @@ export default class EpisodeList extends Vue {
   }
 
   public _scrollToEpisode() {
-    const episodeContainer = this.$refs.episodeContainer
+    if (!this.currentEpisode) return
 
-    if (
-      episodeContainer &&
-      this.scrollToCurrentEpisode &&
-      this.currentEpisode
-    ) {
-      episodeContainer.scroll({
-        left: this.getScrollPositionOfEpisode(this.currentEpisode + 2),
+    const currentEpisodeDiv = this.getEpisodeElement(this.currentEpisode)
+
+    if (this.scrollToCurrentEpisode && currentEpisodeDiv != null) {
+      this.$refs.episodeContainer.scroll({
+        left: this.getContainerScrollLeft(currentEpisodeDiv),
         behavior: 'smooth',
       })
     }
@@ -237,6 +224,29 @@ export default class EpisodeList extends Vue {
         index: episodeNumber - 1,
       })
     }
+  }
+
+  private getEpisodeElement(episodeNumber: number) {
+    return pathOr(
+      null,
+      ['$el'],
+      find(
+        pathEq(['episode', 'episodeNumber'], episodeNumber),
+        this.$refs.episodes,
+      ),
+    ) as HTMLDivElement | null
+  }
+
+  private getContainerScrollLeft(episodeElement: HTMLDivElement) {
+    const containerDiv = this.$refs.episodeContainer
+
+    if (!containerDiv) return 0
+
+    return (
+      episodeElement.offsetLeft -
+      containerDiv.clientWidth / 2 +
+      episodeElement.clientWidth / 2
+    )
   }
 }
 </script>
