@@ -14,7 +14,6 @@ import {
   SessionResponse,
 } from '@/lib/crunchyroll'
 import { getSettings } from '@/state/settings'
-import { setCrunchyrollCountry } from '@/state/auth'
 
 export interface RequestSuccess<B extends object> extends Response {
   status: 200
@@ -82,7 +81,7 @@ export const createBothSessions = async (
 
   if (getSettings(store).useCRUnblocker) {
     try {
-      data = await createUnblockedSession()
+      data = await createUnblockedSession(store)
     } catch (e) {
       error(e)
       store.dispatch('app/sendErrorToast', 'Could not create US session. 😞', {
@@ -92,10 +91,8 @@ export const createBothSessions = async (
   }
 
   if (data == null) {
-    data = await createSession()
+    data = await createSession(store)
   }
-
-  setCrunchyrollCountry(store, data.country_code)
 
   return data
 }

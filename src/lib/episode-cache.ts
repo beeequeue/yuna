@@ -26,4 +26,8 @@ export class EpisodeCache {
       episodes,
     })
   }
+
+  public static clear() {
+    episodeCache.clear()
+  }
 }

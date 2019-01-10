@@ -290,7 +290,7 @@ export default class Settings extends Vue {
     if (checked) {
       await createBothSessions(this.$store)
     } else {
-      await createSession()
+      await createSession(this.$store)
     }
   }
 

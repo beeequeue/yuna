@@ -1,14 +1,17 @@
 /* tslint:disable:class-name */
 import { activeWindow } from 'electron-util'
-import { T, complement, anyPass } from 'rambdax'
+import { anyPass, complement, T } from 'rambdax'
 import superagent from 'superagent/superagent'
+import { ActionContext, Store } from 'vuex'
 import uuid from 'uuid/v4'
+
+import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 
 import { getConfig } from '@/config'
 import { userStore } from '@/lib/user'
-import { Stream } from '@/types'
+import { setCrunchyrollCountry } from '@/state/auth'
 import { RequestError, RequestSuccess } from '@/utils'
-import { EpisodeListEpisodes, Provider } from '@/graphql/types'
+import { Stream } from '@/types'
 
 const CR_UNBLOCKER_URL = 'api2.cr-unblocker.com'
 const API_URL = 'api.crunchyroll.com'
@@ -167,7 +170,9 @@ export interface SessionResponse {
   country_code: string
 }
 
-export const createSession = async () => {
+export const createSession = async (
+  store: Store<any> | ActionContext<any, any>,
+) => {
   const response = (await superagent
     .get(getUrl('start_session'))
     .ok(T)
@@ -190,10 +195,14 @@ export const createSession = async () => {
   userStore.set('crunchyroll.sessionId', _sessionId)
   userStore.set('crunchyroll.country', response.body.data.country_code)
 
+  setCrunchyrollCountry(store, response.body.data.country_code)
+
   return response.body.data
 }
 
-export const createUnblockedSession = async () => {
+export const createUnblockedSession = async (
+  store: Store<any> | ActionContext<any, any>,
+) => {
   const response = (await superagent
     .get(`https://${CR_UNBLOCKER_URL}/start_session`)
     .ok(T)
@@ -211,6 +220,8 @@ export const createUnblockedSession = async () => {
 
   userStore.set('crunchyroll.sessionId', _sessionId)
   userStore.set('crunchyroll.country', response.body.data.country_code)
+
+  setCrunchyrollCountry(store, response.body.data.country_code)
 
   return response.body.data
 }
