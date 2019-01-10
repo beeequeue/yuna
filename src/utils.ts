@@ -135,9 +135,15 @@ export const clamp = (x: number, min: number, max: number) =>
 export const enumToArray = <T>(Enum: any): T[] =>
   Object.keys(Enum).map(key => Enum[key])
 
-export const bigFirstChar = (str: string) => {
-  const first = str.slice(0, 1).toUpperCase()
-  return first + str.slice(1).toLowerCase()
+export const capitalize = (str: string) => {
+  let words = str.split(' ')
+
+  words = words.map(word => {
+    const first = word.slice(0, 1).toUpperCase()
+    return first + word.slice(1).toLowerCase()
+  })
+
+  return words.join(' ')
 }
 
 export const isOfType = <T>(

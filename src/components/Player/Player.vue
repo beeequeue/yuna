@@ -108,7 +108,7 @@ import { getAnilistUsername } from '@/state/auth'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
 import { DISCORD_PAUSE_WATCHING, DISCORD_SET_WATCHING } from '@/messages'
 import { Levels, Stream } from '@/types'
-import { clamp } from '@/utils'
+import { capitalize, clamp } from '@/utils'
 
 import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
@@ -216,10 +216,12 @@ export default class Player extends Vue {
     this.gainNode.connect(audioContext.destination)
   }
 
-  private async fetchStream(provider: Provider, id: number) {
+  private async fetchStream(provider: Provider, id: number): Promise<Stream> {
     if (provider === Provider.Crunchyroll) {
       return fetchStream(id)
     }
+
+    return null as any
   }
 
   @Watch('episode.id')
@@ -229,16 +231,24 @@ export default class Player extends Vue {
     this.pause()
 
     try {
-      const { url, progress } = (await this.fetchStream(
+      const stream = await this.fetchStream(
         this.episode.provider,
         this.episode.id,
-      )) as Stream
+      )
 
-      this.streamUrl = url
+      if (!stream) {
+        throw new Error(
+          `Did not receive stream data from ${capitalize(
+            this.episode.provider,
+          )}.`,
+        )
+      }
 
-      this.playhead = progress || 0
+      this.streamUrl = stream.url
+
+      this.playhead = stream.progress || 0
     } catch (e) {
-      return sendErrorToast(this.$store, e)
+      return sendErrorToast(this.$store, e.message)
     }
 
     if (!this.streamUrl) return

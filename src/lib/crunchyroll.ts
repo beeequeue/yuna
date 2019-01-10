@@ -342,10 +342,14 @@ const fetchStreamInfo = async (mediaId: string): Promise<StreamInfo> => {
 
 export const fetchStream = async (mediaId: number): Promise<Stream> => {
   const streamInfo = await fetchStreamInfo(mediaId.toString())
-  const { url } = streamInfo.stream_data.streams[0]
+  const streams = streamInfo.stream_data.streams
+
+  if (!streams || streams.length < 1) {
+    throw new Error(`Did not receive stream data from Crunchyroll.`)
+  }
 
   return {
-    url,
+    url: streams[0].url,
     progress: streamInfo.playhead,
   }
 }

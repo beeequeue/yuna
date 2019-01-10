@@ -105,7 +105,7 @@ import {
   getEditingAnime,
   setEditingAnimeValue,
 } from '@/state/app'
-import { bigFirstChar, enumToArray } from '@/utils'
+import { capitalize, enumToArray } from '@/utils'
 
 import Modal from './Modal.vue'
 import AnimeBanner from '../AnimeBanner.vue'
@@ -124,7 +124,7 @@ export default class EditModal extends Vue {
   public statusItems: DropdownItem[] = enumToArray<MediaListStatus>(
     MediaListStatus,
   ).map(status => ({
-    label: bigFirstChar(status),
+    label: capitalize(status),
     value: status,
   }))
 
