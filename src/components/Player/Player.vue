@@ -113,29 +113,6 @@ import Controls from './Controls.vue'
 import NextEpisodeOverlay from './NextEpisodeOverlay.vue'
 import EndOfSeasonOverlay from './EndOfSeasonOverlay.vue'
 
-interface Level {
-  attrs: {
-    BANDWIDTH: number
-    CODECS: string
-    'FRAME-RATE': string
-    'PROGRAM-ID': string
-    RESOLUTION: string
-  }
-  bitrate: number
-  details: {}
-  name?: string
-  height: number
-  width: number
-  level: number
-  audioCodec: string
-  videoCodec: string
-  unknownCodecs: any[]
-  urls: string[]
-  urlId: number
-  fragmentError: boolean
-  loadError: number
-}
-
 @Component({
   components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
 })
@@ -220,7 +197,7 @@ export default class Player extends Vue {
   public get listEntry() {
     return pathOr(
       null,
-      ['data', 'anime', 'mediaListEntry'],
+      ['anime', 'mediaListEntry'],
       this,
     ) as PlayerAnimeMediaListEntry | null
   }

@@ -1,5 +1,28 @@
 declare type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 
+declare interface Level {
+  attrs: {
+    BANDWIDTH: number
+    CODECS: string
+    'FRAME-RATE': string
+    'PROGRAM-ID': string
+    RESOLUTION: string
+  }
+  bitrate: number
+  details: {}
+  name?: string
+  height: number
+  width: number
+  level: number
+  audioCodec: string
+  videoCodec: string
+  unknownCodecs: any[]
+  urls: string[]
+  urlId: number
+  fragmentError: boolean
+  loadError: number
+}
+
 declare module '*.vue' {
   import Vue from 'vue'
   export default Vue
