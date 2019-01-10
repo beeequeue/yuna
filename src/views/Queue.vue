@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <div ref="queue" class="queue">
+  <div class="queue">
+    <div ref="container" class="container">
       <draggable
         v-model="queue"
         :options="draggableOptions"
@@ -102,7 +102,7 @@ export default class Queue extends Vue {
   }
 
   public $refs!: {
-    queue: HTMLDivElement
+    container: HTMLDivElement
   }
 
   public currentSvg = mdiPlay
@@ -191,7 +191,7 @@ export default class Queue extends Vue {
     }
 
     setTimeout(() => {
-      this.$refs.queue.scrollTo({
+      this.$refs.container.scrollTo({
         top: 100000,
         behavior: 'smooth',
       })
@@ -280,7 +280,7 @@ export default class Queue extends Vue {
 <style scoped lang="scss">
 @import '../colors';
 
-.container {
+.queue {
   position: relative;
   display: grid;
   grid-template-columns: 1fr 325px;
@@ -292,7 +292,7 @@ export default class Queue extends Vue {
   width: 100%;
   height: 100%;
 
-  .queue {
+  .container {
     position: relative;
     grid-area: queue;
     padding: 15px 25px;
@@ -355,7 +355,7 @@ export default class Queue extends Vue {
 .route-leave-active {
   transition: none 0.5s; // Required for Vue to realize there are transitions
 
-  & > .queue,
+  & > .container,
   & > .sidebar {
     transition: transform 0.5s;
   }
@@ -363,7 +363,7 @@ export default class Queue extends Vue {
 
 .route-enter,
 .route-leave-to {
-  & > .queue {
+  & > .container {
     transform: translateX(-100%);
   }
 
