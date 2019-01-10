@@ -7,17 +7,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 
 import anilistLogoSvg from '@/assets/anilist.svg'
-import { prop } from '@/utils'
-
 import CButton from '@/components/CButton.vue'
+
+import { Required } from '@/decorators'
 
 @Component({ components: { CButton } })
 export default class LoginAl extends Vue {
-  @Prop(prop(Function, true))
-  public loginAnilist!: () => any
+  @Required(Function) public loginAnilist!: () => any
 
   public alLogo = anilistLogoSvg
 

@@ -14,7 +14,8 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import { MediaListStatus } from '@/graphql/types'
-import { prop } from '@/utils'
+
+import { Required } from '@/decorators'
 
 export interface DropdownItem {
   label: string
@@ -23,13 +24,10 @@ export interface DropdownItem {
 
 @Component
 export default class Dropdown extends Vue {
-  @Prop(prop(String, true))
-  public label!: string
-  @Prop(prop(Array, true))
-  public items!: DropdownItem[]
+  @Required(String) public label!: string
+  @Required(Array) public items!: DropdownItem[]
   @Prop(String) public value!: MediaListStatus | null
-  @Prop(prop(Function, true))
-  public onChange!: (value: string) => any
+  @Required(Function) public onChange!: (value: string) => any
   @Prop(String) public error!: string | null
   @Prop(Boolean) public disabled!: boolean | null
 

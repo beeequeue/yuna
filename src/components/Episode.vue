@@ -40,9 +40,9 @@ import { mdiBookmark, mdiBookmarkRemove, mdiCheckCircleOutline } from '@mdi/js'
 import { setEpisodeUnwatched, setEpisodeWatched } from '@/graphql/mutations'
 import { EpisodeListEpisodes } from '@/graphql/types'
 
+import { Required } from '@/decorators'
 import { ListEntry } from '@/state/app'
 import { getSpoilerSettings } from '@/state/settings'
-import { prop } from '@/utils'
 
 import CButton from './CButton.vue'
 import Icon from './Icon.vue'
@@ -50,10 +50,8 @@ import Icon from './Icon.vue'
 @Component({ components: { CButton, Icon } })
 export default class Episode extends Vue {
   @Prop(Object) public listEntry!: ListEntry | null
-  @Prop(prop(Function, true))
-  public setCurrentEpisode!: (n: number) => void
-  @Prop(prop(Object, true))
-  public episode!: EpisodeListEpisodes
+  @Required(Function) public setCurrentEpisode!: (n: number) => void
+  @Required(Object) public episode!: EpisodeListEpisodes
   @Prop(String) public scrollerValue!: string | null
   @Prop(Boolean) public small!: boolean | null
   @Prop(Boolean) public empty!: boolean | null

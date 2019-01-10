@@ -218,6 +218,8 @@ import {
   PlayerAnimeMediaListEntry,
   EpisodeListEpisodes,
 } from '@/graphql/types'
+
+import { Required } from '@/decorators'
 import {
   getIsFullscreen,
   toggleFullscreen,
@@ -226,7 +228,7 @@ import {
   setFullscreen,
 } from '@/state/app'
 import { Levels } from '@/types'
-import { prop, secondsToTimeString } from '@/utils'
+import { secondsToTimeString } from '@/utils'
 
 import Icon from '../Icon.vue'
 import PlayerTitle from './Title.vue'
@@ -244,46 +246,27 @@ import VolumeSlider from './VolumeSlider.vue'
   },
 })
 export default class Controls extends Vue {
-  @Prop(prop(Object, true))
-  public episode!: EpisodeListEpisodes
-  @Prop(prop(Object))
-  public nextEpisode!: EpisodeListEpisodes | null
+  @Required(Object) public episode!: EpisodeListEpisodes
+  @Prop(Object) public nextEpisode!: EpisodeListEpisodes | null
   @Prop(Object) public anime!: PlayerAnimeAnime | null
-  @Prop(prop(Boolean, true))
-  public paused!: boolean
-  @Prop(prop(Boolean, true))
-  public muted!: boolean
-  @Prop(prop(Boolean, true))
-  public isPlayerMaximized!: boolean
-  @Prop(prop(Number, true))
-  public volume!: number
-  @Prop(prop(Number, true))
-  public progressInSeconds!: number
-  @Prop(prop(Number, true))
-  public progressPercentage!: number
-  @Prop(prop(Number, true))
-  public loadedPercentage!: number
-  @Prop(prop(Number, true))
-  public speed!: number
-  @Prop(prop(Number, true))
-  public quality!: number
+  @Required(Boolean) public paused!: boolean
+  @Required(Boolean) public muted!: boolean
+  @Required(Boolean) public isPlayerMaximized!: boolean
+  @Required(Number) public volume!: number
+  @Required(Number) public progressInSeconds!: number
+  @Required(Number) public progressPercentage!: number
+  @Required(Number) public loadedPercentage!: number
+  @Required(Number) public speed!: number
+  @Required(Number) public quality!: number
   @Prop(Object) public levels!: Levels | null
-  @Prop(prop(Function, true))
-  public play!: () => void
-  @Prop(prop(Function, true))
-  public pause!: () => void
-  @Prop(prop(Function, true))
-  public onSetTime!: (e: Event) => void
-  @Prop(prop(Function, true))
-  public onSetVolume!: (e: Event) => void
-  @Prop(prop(Function, true))
-  public onToggleMute!: (e: Event) => void
-  @Prop(prop(Function, true))
-  public onChangeSpeed!: (e: Event) => void
-  @Prop(prop(Function, true))
-  public onChangeQuality!: (quality: number) => void
-  @Prop(prop(Function, true))
-  public setProgress!: (progress: number) => any
+  @Required(Function) public play!: () => void
+  @Required(Function) public pause!: () => void
+  @Required(Function) public onSetTime!: (e: Event) => void
+  @Required(Function) public onSetVolume!: (e: Event) => void
+  @Required(Function) public onToggleMute!: (e: Event) => void
+  @Required(Function) public onChangeSpeed!: (e: Event) => void
+  @Required(Function) public onChangeQuality!: (quality: number) => void
+  @Required(Function) public setProgress!: (progress: number) => any
 
   public settingsOpen = false
   public visible = this.settingsOpen || false

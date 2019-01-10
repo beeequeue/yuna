@@ -84,7 +84,7 @@
 
 <script lang="ts">
 import { ApolloError } from 'apollo-client'
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import { ApolloCache } from 'apollo-cache'
 import { change, path, propEq } from 'rambdax'
 import { mdiCloseCircle } from '@mdi/js'
@@ -98,12 +98,14 @@ import {
   MediaListStatus,
   SaveListEntryMutationMutation,
 } from '@/graphql/types'
+
+import { Required } from '@/decorators'
 import {
-  getEditingAnime,
   EditModalAnime,
+  getEditingAnime,
   setEditingAnimeValue,
 } from '@/state/app'
-import { bigFirstChar, prop, enumToArray } from '@/utils'
+import { bigFirstChar, enumToArray } from '@/utils'
 
 import Modal from './Modal.vue'
 import AnimeBanner from '../AnimeBanner.vue'
@@ -117,8 +119,7 @@ import Dropdown, { DropdownItem } from '../Form/Dropdown.vue'
 })
 export default class EditModal extends Vue {
   @Prop(Boolean) public visible!: boolean | null
-  @Prop(prop(Function, true))
-  public toggleVisible!: () => any
+  @Required(Function) public toggleVisible!: () => any
 
   public statusItems: DropdownItem[] = enumToArray<MediaListStatus>(
     MediaListStatus,

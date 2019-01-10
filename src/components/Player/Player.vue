@@ -88,12 +88,14 @@ import { contains, pathOr } from 'rambdax'
 import { mdiLoading, mdiPlayCircle } from '@mdi/js'
 
 import {
+  EpisodeListEpisodes,
   PlayerAnimeAnime,
   PlayerAnimeMediaListEntry,
   PlayerAnimeTitle,
-  EpisodeListEpisodes,
   Provider,
 } from '@/graphql/types'
+
+import { Required } from '@/decorators'
 import { fetchStream, setProgressOfEpisode } from '@/lib/crunchyroll'
 import { trackStillWatching } from '@/lib/tracking'
 import {
@@ -106,7 +108,7 @@ import { getAnilistUsername } from '@/state/auth'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
 import { DISCORD_PAUSE_WATCHING, DISCORD_SET_WATCHING } from '@/messages'
 import { Levels, Stream } from '@/types'
-import { clamp, prop } from '@/utils'
+import { clamp } from '@/utils'
 
 import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
@@ -120,13 +122,11 @@ export default class Player extends Vue {
   @Prop(Object) public episode!: EpisodeListEpisodes | null
   @Prop(Object) public nextEpisode!: EpisodeListEpisodes | null
   @Prop(Object) public anime!: PlayerAnimeAnime | null
-  @Prop(prop(Object, true))
-  public playerData!: PlayerData
+  @Required(Object) public playerData!: PlayerData
   @Prop(Boolean) public loading!: boolean | null
   @Prop(Boolean) public shouldAutoPlay!: boolean | null
   @Prop(Boolean) public getShouldAutoMarkWatched?: boolean
-  @Prop(prop(Function, true))
-  public setProgress!: (p: number) => any
+  @Required(Function) public setProgress!: (p: number) => any
 
   public streamUrl: string | null = null
   public levels: Levels | null = null

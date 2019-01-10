@@ -60,7 +60,7 @@ import {
   EpisodeListEpisodes,
 } from '@/graphql/types'
 
-import { Query } from '@/decorators'
+import { Query, Required } from '@/decorators'
 import {
   getPlaylistAnimeId,
   ListEntry,
@@ -68,7 +68,6 @@ import {
   setCurrentEpisode,
   setPlaylist,
 } from '@/state/app'
-import { prop } from '@/utils'
 
 import CButton from './CButton.vue'
 import Episode from './Episode.vue'
@@ -77,19 +76,14 @@ import Loader from './Loader.vue'
 
 @Component({ components: { CButton, Episode, Icon, Loader } })
 export default class EpisodeList extends Vue {
-  @Prop(prop(Number, true))
-  public id!: number
-  @Prop(prop(Number, true))
-  public idMal!: number
-  @Prop(prop(String, true))
-  public animeTitle!: string
+  @Required(Number) public id!: number
+  @Required(Number) public idMal!: number
+  @Required(String) public animeTitle!: string
   @Prop(Number) public episodesInAnime!: number | null
   @Prop(Object)
   public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
-  @Prop(prop(Object))
-  public listEntry?: ListEntry | null
-  @Prop(prop(Array, true))
-  public sequels!: Sequel[]
+  @Prop(Object) public listEntry!: ListEntry | null
+  @Required(Array) public sequels!: Sequel[]
   @Prop(Boolean) public showScroller!: boolean | null
   @Prop(Boolean) public small!: boolean | null
   @Prop(Boolean) public rightPadding!: boolean | null

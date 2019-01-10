@@ -13,14 +13,13 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { prop } from '@/utils'
+import { Required } from '@/decorators'
 
 @Component
 export default class TextInput extends Vue {
   @Prop(String) public label!: string
   @Prop(String) public value!: string
-  @Prop(prop(Function, true))
-  public onChange!: (value: string) => any
+  @Required(Function) public onChange!: (value: string) => any
   @Prop(String) public placeholder!: string | null
   @Prop(String) public error!: string | null
   @Prop(Boolean) public disabled!: boolean | null

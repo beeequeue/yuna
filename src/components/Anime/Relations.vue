@@ -49,7 +49,6 @@ import {
   MediaRelation,
   MediaType,
 } from '@/graphql/types'
-import { prop } from '@/utils'
 
 import Icon from '../Icon.vue'
 
@@ -57,8 +56,7 @@ import Icon from '../Icon.vue'
   components: { Icon },
 })
 export default class Relations extends Vue {
-  @Prop(prop(Object))
-  public relations!: AnimePageQueryRelations | null
+  @Prop(Object) public relations!: AnimePageQueryRelations | null
 
   public get prequels() {
     return this.getRelationOfType(MediaRelation.Prequel)

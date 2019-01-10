@@ -10,15 +10,13 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { prop } from '@/utils'
+import { Required } from '@/decorators'
 
 @Component
 export default class NumberInput extends Vue {
   @Prop(String) public label!: string
-  @Prop(prop(Number, true))
-  public value!: number
-  @Prop(prop(Function, true))
-  public onChange!: (value: number) => any
+  @Required(Number) public value!: number
+  @Required(Function) public onChange!: (value: number) => any
   @Prop(String) public suffix!: string | null
   @Prop(String) public error!: string | null
   @Prop(Boolean) public disabled!: boolean | null

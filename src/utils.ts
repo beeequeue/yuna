@@ -3,7 +3,6 @@ import { api } from 'electron-util'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { isNil, path } from 'rambdax'
 import { Response } from 'superagent'
-import { Prop as IProp, PropOptions } from 'vue/types/options'
 import { ActionContext, Store } from 'vuex'
 import uuid from 'uuid/v4'
 import { resolve } from 'path'
@@ -47,11 +46,6 @@ export const secondsToTimeString = (input: number) => {
     seconds < 10 ? '0' : ''
   }${seconds}`
 }
-
-export const prop = (type: IProp<any>, required?: boolean): PropOptions => ({
-  type,
-  required: !!required,
-})
 
 interface MediaListEntry {
   status: MediaListStatus | null

@@ -19,10 +19,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 
 import { ListQueryEntries } from '@/graphql/types'
-import { prop } from '@/utils'
+import { Required } from '@/decorators'
 
 import CoverImage from './Anime/CoverImage.vue'
 import CButton from './CButton.vue'
@@ -30,8 +30,7 @@ import Actions from './Anime/Actions.vue'
 
 @Component({ components: { CoverImage, CButton, Actions } })
 export default class ListEntry extends Vue {
-  @Prop(prop(Object, true))
-  public entry!: ListQueryEntries
+  @Required(Object) public entry!: ListQueryEntries
 }
 </script>
 

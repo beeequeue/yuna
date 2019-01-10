@@ -7,13 +7,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { prop } from '../utils'
+import { Component, Vue } from 'vue-property-decorator'
+import { Required } from '@/decorators'
 
 @Component
 export default class Icon extends Vue {
-  @Prop(prop(String, true))
-  public icon!: string
+  @Required(String) public icon!: string
 }
 </script>
 

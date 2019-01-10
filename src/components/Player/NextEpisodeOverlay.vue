@@ -2,21 +2,33 @@
   <transition>
     <div v-if="nextEpisode" class="next-episode-container">
       <transition>
-        <div v-if="isPlayerMaximized" class="text" :class="{ 'hide-title': shouldHide.title }">
+        <div
+          v-if="isPlayerMaximized"
+          class="text"
+          :class="{ 'hide-title': shouldHide.title }"
+        >
           <div>Up next...</div>
 
-          <div>{{nextEpisode.episodeNumber}}/{{episodesInAnime || '?'}}</div>
+          <div>
+            {{ nextEpisode.episodeNumber }}/{{ episodesInAnime || '?' }}
+          </div>
 
-          <div v-if="!shouldHide.title" class="episode-title">{{nextEpisode.title}}</div>
+          <div v-if="!shouldHide.title" class="episode-title">
+            {{ nextEpisode.title }}
+          </div>
         </div>
       </transition>
 
       <div class="episode" @click="setToNextEpisode">
-        <img :src="nextEpisode.thumbnail" class="thumbnail" :class="{ blur: shouldHide.thumbnail }">
+        <img
+          :src="nextEpisode.thumbnail"
+          class="thumbnail"
+          :class="{ blur: shouldHide.thumbnail }"
+        />
 
-        <icon :icon="playSvg"/>
+        <icon :icon="playSvg" />
 
-        <span v-if="shouldAutoPlay && timeoutId" class="countdown-line"/>
+        <span v-if="shouldAutoPlay && timeoutId" class="countdown-line" />
       </div>
 
       <transition>
@@ -37,9 +49,10 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiPlay } from '@mdi/js'
 
 import { EpisodeListEpisodes } from '@/graphql/types'
+
+import { Required } from '@/decorators'
 import { setCurrentEpisode } from '@/state/app'
 import { getSpoilerSettings } from '@/state/settings'
-import { prop } from '@/utils'
 
 import CButton from '../CButton.vue'
 import Icon from '../Icon.vue'
@@ -48,12 +61,10 @@ import Icon from '../Icon.vue'
   components: { CButton, Icon },
 })
 export default class NextEpisodeOverlay extends Vue {
-  @Prop(prop(Object))
-  public nextEpisode!: EpisodeListEpisodes | null
+  @Prop(Object) public nextEpisode!: EpisodeListEpisodes | null
   @Prop(Number) public episodesInAnime!: number | null
   @Prop(Number) public progress!: number | null
-  @Prop(prop(Boolean, true))
-  public isPlayerMaximized!: boolean
+  @Required(Boolean) public isPlayerMaximized!: boolean
   @Prop(Boolean) public shouldAutoPlay?: boolean
 
   public timeoutId: number | null = null

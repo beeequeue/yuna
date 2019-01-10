@@ -18,19 +18,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
-import { electronVersion, chromeVersion } from 'electron-util'
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import { chromeVersion, electronVersion } from 'electron-util'
 
-import { prop } from '@/utils'
-
+import { Required } from '@/decorators'
 import Modal from './Modal.vue'
 import { version } from '../../../package.json'
 
 @Component({ components: { Modal } })
 export default class AboutModal extends Vue {
   @Prop(Boolean) public visible!: boolean | null
-  @Prop(prop(Function, true))
-  public toggleVisible!: () => any
+  @Required(Function) public toggleVisible!: () => any
 
   public version = version
   public electronVersion = electronVersion

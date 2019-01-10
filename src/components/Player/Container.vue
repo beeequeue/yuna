@@ -40,9 +40,7 @@ import { getShouldAutoMarkWatched, getShouldAutoPlay } from '@/state/settings'
 
 import Player from './Player.vue'
 
-@Component({
-  components: { Player },
-})
+@Component({ components: { Player } })
 export default class PlayerContainer extends Vue {
   @Query<PlayerContainer, PlayerAnimeQuery, PlayerAnimeVariables>({
     fetchPolicy: 'network-only',

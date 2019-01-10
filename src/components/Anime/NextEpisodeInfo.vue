@@ -9,14 +9,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { format, formatDistance } from 'date-fns'
 
-import { prop } from '@/utils'
+import { Required } from '@/decorators'
 
 @Component
 export default class NextEpisodeInfo extends Vue {
-  @Prop(prop(Object, true))
+  @Required(Object)
   public nextAiringEpisode!: {
     airingAt: number
     timeUntilAiring: number

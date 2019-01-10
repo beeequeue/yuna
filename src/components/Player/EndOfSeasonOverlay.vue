@@ -41,8 +41,9 @@ import { mdiStar, mdiStarOutline } from '@mdi/js'
 
 import { setScoreMutation } from '@/graphql/mutations'
 import { AnimePageQueryNextAiringEpisode } from '@/graphql/types'
-import { Sequel, ListEntry } from '@/state/app'
-import { prop } from '@/utils'
+
+import { Required } from '@/decorators'
+import { ListEntry, Sequel } from '@/state/app'
 
 import AnimeBanner from '../AnimeBanner.vue'
 import CButton from '../CButton.vue'
@@ -53,15 +54,12 @@ import Icon from '../Icon.vue'
 })
 export default class EndOfSeasonOverlay extends Vue {
   @Prop(Object) public listEntry!: ListEntry | null
-  @Prop(prop(Array, true))
-  public sequels!: Sequel[]
-  @Prop(prop(Number, true))
-  public episodeNumber!: number
+  @Required(Array) public sequels!: Sequel[]
+  @Required(Number) public episodeNumber!: number
   @Prop(Number) public episodesInAnime!: number | null
   @Prop(Object)
   public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
-  @Prop(prop(Boolean, true))
-  public isPlayerMaximized!: boolean
+  @Required(Boolean) public isPlayerMaximized!: boolean
 
   public scores = [1, 25, 50, 75, 100]
 

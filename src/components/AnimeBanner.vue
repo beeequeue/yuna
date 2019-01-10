@@ -14,12 +14,12 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import DiagmondsWebp from '@/assets/diagmonds.webp'
-import { prop } from '@/utils'
+import { Required } from '@/decorators'
 
 @Component
 export default class AnimeBanner extends Vue {
   @Prop(Boolean) faded!: boolean | null
-  @Prop(prop(Object, true))
+  @Required(Object)
   public anime!: {
     id: number
     title:

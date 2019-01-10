@@ -1,6 +1,6 @@
 <template>
   <div class="step login-cr" @keydown.enter="login">
-    <img :src="crIcon" class="logo">
+    <img :src="crIcon" class="logo" />
 
     <text-input
       placeholder="Username"
@@ -19,7 +19,7 @@
       <div v-if="true" class="error">{{ error }}</div>
     </transition>
 
-    <c-button content="Login" :click="login"/>
+    <c-button content="Login" :click="login" />
   </div>
 </template>
 
@@ -29,14 +29,14 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import crIcon from '@/assets/crunchyroll.webp'
 import TextInput from '@/components/Form/TextInput.vue'
 import CButton from '@/components/CButton.vue'
-import { prop } from '@/utils'
+
+import { Required } from '@/decorators'
 
 @Component({ components: { CButton, TextInput } })
 export default class LoginCr extends Vue {
   @Prop(Boolean) public loading!: boolean | null
   @Prop(String) public error!: string | null
-  @Prop(prop(Function, true))
-  public loginCrunchyroll!: (u: string, p: string) => any
+  @Required(Function) public loginCrunchyroll!: (u: string, p: string) => any
   @Prop(Boolean) public fullWidth!: boolean | null
 
   public username = ''

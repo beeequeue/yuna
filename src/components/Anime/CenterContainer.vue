@@ -15,11 +15,11 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import { AnimePageQueryNextAiringEpisode } from '@/graphql/types'
+import { Required } from '@/decorators'
 
 import Description from './Description.vue'
 import Info from './Info.vue'
 import Icon from '../Icon.vue'
-import { prop } from '@/utils'
 
 @Component({
   components: { Description, Icon, Info },
@@ -27,8 +27,7 @@ import { prop } from '@/utils'
 export default class CenterContainer extends Vue {
   @Prop(String) public content!: string | null
   @Prop(Boolean) public blurDescription!: boolean | null
-  @Prop(prop(Number, true))
-  public id!: number
+  @Required(Number) public id!: number
   @Prop(Number) public idMal!: number | null
   @Prop(Number) public score!: number | null
   @Prop(Object)

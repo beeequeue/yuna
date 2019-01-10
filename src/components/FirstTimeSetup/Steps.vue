@@ -12,12 +12,11 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { prop } from '@/utils'
+import { Required } from '@/decorators'
 
 @Component({ components: {} })
 export default class Steps extends Vue {
-  @Prop(prop(Array, true))
-  public steps!: string[]
+  @Required(Array) public steps!: string[]
   @Prop(Number) public current!: number | null
 }
 </script>

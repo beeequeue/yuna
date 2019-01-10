@@ -28,7 +28,9 @@ import {
 } from '@mdi/js'
 
 import { AnimePageQueryMediaListEntry, MediaListStatus } from '@/graphql/types'
-import { humanizeMediaListStatus, prop } from '@/utils'
+
+import { Required } from '@/decorators'
+import { humanizeMediaListStatus } from '@/utils'
 
 import Icon from '../Icon.vue'
 
@@ -36,13 +38,10 @@ import Icon from '../Icon.vue'
   components: { Icon },
 })
 export default class CoverImage extends Vue {
-  @Prop(prop(String, true))
-  public src!: string
+  @Required(String) public src!: string
   @Prop(String) public color!: string | null
-  @Prop(prop(Object))
-  public mediaListEntry!: AnimePageQueryMediaListEntry | null
-  @Prop(prop(Number))
-  public length!: number | null
+  @Prop(Object) public mediaListEntry!: AnimePageQueryMediaListEntry | null
+  @Prop(Number) public length!: number | null
 
   public repeatSvg = mdiRepeat
 

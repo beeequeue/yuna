@@ -129,12 +129,12 @@
 </template>
 
 <script lang="ts">
-import { Prop, Vue } from 'vue-property-decorator'
+import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 import { path, pathOr } from 'rambdax'
 import { mdiChevronDown, mdiMenu, mdiPlayCircleOutline } from '@mdi/js'
 
-import { Query } from '@/decorators'
+import { Query, Required } from '@/decorators'
 import ANIME_QUEUE_QUERY from '@/graphql/AnimeQueueQuery.graphql'
 import { setStatusMutation } from '@/graphql/mutations'
 import {
@@ -149,7 +149,7 @@ import {
 import { QueueItem as IQueueItem } from '@/lib/user'
 import { sendErrorToast, Sequel } from '@/state/app'
 import { removeFromQueueById, toggleQueueItemOpen } from '@/state/user'
-import { humanizeMediaListStatus, prop } from '@/utils'
+import { humanizeMediaListStatus } from '@/utils'
 
 import NextEpisodeInfo from './Anime/NextEpisodeInfo.vue'
 import AnimeBanner from './AnimeBanner.vue'
@@ -169,8 +169,7 @@ import EpisodeList from './EpisodeList.vue'
   },
 })
 export default class QueueItem extends Vue {
-  @Prop(prop(Object, true))
-  public item!: IQueueItem
+  @Required(Object) public item!: IQueueItem
 
   @Query<QueueItem, AnimeQueueQueryQuery, AnimeQueueQueryVariables>({
     query: ANIME_QUEUE_QUERY,
