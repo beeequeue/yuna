@@ -79,7 +79,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { filter, map, path, pathEq, pathOr } from 'rambdax'
+import { path, pathOr } from 'rambdax'
 
 import CoverImage from '@/components/Anime/CoverImage.vue'
 import AnimeTitle from '@/components/Anime/Title.vue'
@@ -93,10 +93,10 @@ import ANIME_PAGE_QUERY from '@/graphql/AnimePageQuery.graphql'
 import {
   AnimePageQueryMediaListEntry,
   AnimePageQueryQuery,
-  MediaRelation,
 } from '@/graphql/types'
 import { getSpoilerSettings } from '@/state/settings'
 import { Page, trackPageView } from '@/lib/tracking'
+import { getRelations } from '@/utils'
 
 @Component({
   components: {
@@ -150,19 +150,7 @@ export default class Anime extends Vue {
     return pathOr(null, ['anime', 'mediaListEntry'], data)
   }
 
-  public getRelations = (
-    data: AnimePageQueryQuery,
-    type: string | MediaRelation,
-  ) => {
-    const relations = pathOr<any[]>([], ['anime', 'relations', 'edges'], data)
-
-    if (relations.length < 1) return []
-
-    return map(
-      pathOr(null, ['node']),
-      filter(pathEq('relationType', type), relations),
-    )
-  }
+  public getRelations = getRelations
 }
 </script>
 

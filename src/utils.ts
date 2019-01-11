@@ -1,12 +1,18 @@
+import electron from 'electron'
 import { api } from 'electron-util'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
-import { isNil, path } from 'rambdax'
+import { filter, isNil, map, path, pathEq, pathOr } from 'rambdax'
 import { Response } from 'superagent'
 import uuid from 'uuid/v4'
 import { resolve } from 'path'
 
-import { EpisodeListEpisodes, MediaListStatus } from '@/graphql/types'
-import electron from 'electron'
+import {
+  AnimePageQueryQuery,
+  EpisodeListEpisodes,
+  MediaListStatus,
+  MediaRelation,
+  PlayerAnimeQuery,
+} from '@/graphql/types'
 import Filter = Electron.Filter
 
 const noop = () => {
@@ -140,6 +146,7 @@ export const arrayIsOfType = <T>(
 export const getEpisodeCacheKey = (ep: EpisodeListEpisodes) =>
   `Episode:${ep.provider}:${ep.id}`
 
+// tslint:disable-next-line:no-shadowed-variable
 export const removeCookies = (filter: Filter) => {
   if (!electron.remote.session.defaultSession) {
     // tslint:disable-next-line:no-console
@@ -162,4 +169,18 @@ export const removeCookies = (filter: Filter) => {
       cookies.remove(url, cookie.name, noop)
     })
   })
+}
+
+export const getRelations = (
+  data: AnimePageQueryQuery | PlayerAnimeQuery,
+  type: string | MediaRelation,
+) => {
+  const relations = pathOr<any[]>([], ['anime', 'relations', 'edges'], data)
+
+  if (relations.length < 1) return []
+
+  return map(
+    pathOr(null, ['node']),
+    filter(pathEq('relationType', type), relations),
+  )
 }

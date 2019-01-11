@@ -1,3 +1,4 @@
+import { MediaRelation } from '../../graphql/types'
 <template>
   <div
     class="player"
@@ -71,7 +72,7 @@
     <end-of-season-overlay
       v-if="ended && !nextEpisode"
       :listEntry="listEntry"
-      :sequels="anime.sequels"
+      :sequels="sequels"
       :episodeNumber="episode.episodeNumber"
       :episodesInAnime="anime.episodes"
       :nextAiringEpisode="anime.nextAiringEpisode"
@@ -89,6 +90,7 @@ import { mdiLoading, mdiPlayCircle } from '@mdi/js'
 
 import {
   EpisodeListEpisodes,
+  MediaRelation,
   PlayerAnimeAnime,
   PlayerAnimeMediaListEntry,
   PlayerAnimeTitle,
@@ -108,7 +110,7 @@ import { getAnilistUsername } from '@/state/auth'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
 import { DISCORD_PAUSE_WATCHING, DISCORD_SET_WATCHING } from '@/messages'
 import { Levels, Stream } from '@/types'
-import { capitalize, clamp } from '@/utils'
+import { capitalize, clamp, getRelations } from '@/utils'
 
 import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
@@ -200,6 +202,10 @@ export default class Player extends Vue {
       ['anime', 'mediaListEntry'],
       this,
     ) as PlayerAnimeMediaListEntry | null
+  }
+
+  public get sequels() {
+    return getRelations(this, MediaRelation.Sequel)
   }
 
   public mounted() {
