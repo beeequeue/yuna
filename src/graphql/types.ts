@@ -559,8 +559,6 @@ export type FuzzyDateInt = any;
     title: Maybe<AnimePageQuery_Title>;
     
     bannerImage: Maybe<string>;
-    
-    type: Maybe<MediaType>;
   } 
 
   export type AnimePageQuery_Title = {
@@ -613,8 +611,6 @@ export type FuzzyDateInt = any;
     nextAiringEpisode: Maybe<AnimeQueueQueryNextAiringEpisode>;
     
     mediaListEntry: Maybe<AnimeQueueQueryMediaListEntry>;
-    
-    relations: Maybe<AnimeQueueQueryRelations>;
   } 
 
   export type AnimeQueueQueryTitle = {
@@ -645,36 +641,6 @@ export type FuzzyDateInt = any;
     repeat: Maybe<number>;
     
     score: Maybe<number>;
-  } 
-
-  export type AnimeQueueQueryRelations = {
-    __typename?: "MediaConnection";
-    
-    edges: Maybe<AnimeQueueQueryEdges[]>;
-  } 
-
-  export type AnimeQueueQueryEdges = {
-    __typename?: "MediaEdge";
-    
-    relationType: Maybe<MediaRelation>;
-    
-    node: Maybe<AnimeQueueQueryNode>;
-  } 
-
-  export type AnimeQueueQueryNode = {
-    __typename?: "Media";
-    
-    id: number;
-    
-    title: Maybe<AnimeQueueQuery_Title>;
-    
-    bannerImage: Maybe<string>;
-  } 
-
-  export type AnimeQueueQuery_Title = {
-    __typename?: "MediaTitle";
-    
-    userPreferred: Maybe<string>;
   } 
 
   export type DeleteListEntryMutationVariables = {
@@ -903,8 +869,6 @@ export type FuzzyDateInt = any;
     
     relations: Maybe<PlayerAnimeRelations>;
     
-    sequels: PlayerAnimeSequels[];
-    
     mediaListEntry: Maybe<PlayerAnimeMediaListEntry>;
   } 
 
@@ -936,9 +900,21 @@ export type FuzzyDateInt = any;
     node: Maybe<PlayerAnimeNode>;
   } 
 
-  export type PlayerAnimeNode = RelationMediaFragment
+  export type PlayerAnimeNode = {
+    __typename?: "Media";
+    
+    id: number;
+    
+    title: Maybe<PlayerAnime_Title>;
+    
+    bannerImage: Maybe<string>;
+  } 
 
-  export type PlayerAnimeSequels = RelationMediaFragment
+  export type PlayerAnime_Title = {
+    __typename?: "MediaTitle";
+    
+    userPreferred: Maybe<string>;
+  } 
 
   export type PlayerAnimeMediaListEntry = {
     __typename?: "MediaList";
@@ -1144,22 +1120,6 @@ export type FuzzyDateInt = any;
     
     id: number;
   } 
-
-  export type RelationMediaFragment = {
-    __typename?: "Media";
-    
-    id: number;
-    
-    title: Maybe<RelationMediaTitle>;
-    
-    bannerImage: Maybe<string>;
-  }
-
-  export type RelationMediaTitle = {
-    __typename?: "MediaTitle";
-    
-    userPreferred: Maybe<string>;
-  }
 
 
       export interface IntrospectionResultData {

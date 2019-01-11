@@ -1,6 +1,6 @@
 import { DataProxy } from 'apollo-cache'
 import gql from 'graphql-tag'
-import { isNil, pathOr, filter, pathEq, map } from 'rambdax'
+import { isNil, pathOr } from 'rambdax'
 
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
@@ -31,23 +31,6 @@ interface RealProxy extends DataProxy {
     }
   }
 }
-
-const relationsFragment = gql`
-  fragment full on Media {
-    relations {
-      edges {
-        relationType
-        node {
-          id
-          title {
-            userPreferred
-          }
-          bannerImage
-        }
-      }
-    }
-  }
-`
 
 const cacheEpisodes = (
   cache: RealProxy,
@@ -123,21 +106,6 @@ const getNextEpisodeAiringAt = (
   return Date.now() + timeUntilAiring * 1000
 }
 
-const getRelations = (cache: RealProxy, id: number, type: string) => {
-  const data = cache.readFragment({
-    id: `Media:${id}`,
-    fragment: relationsFragment,
-  })
-  const relations = pathOr<any[]>([], ['relations', 'edges'], data)
-
-  if (relations.length < 1) return []
-
-  return map(
-    pathOr(null, ['node']),
-    filter(pathEq('relationType', type), relations),
-  )
-}
-
 export const resolvers = {
   Media: {
     scoreMal: async (media: AnimePageQueryAnime): Promise<number | null> => {
@@ -151,18 +119,6 @@ export const resolvers = {
         return null
       }
     },
-
-    prequels: (
-      media: AnimePageQueryAnime,
-      _: never,
-      { cache }: { cache: RealProxy },
-    ) => getRelations(cache, media.id, 'PREQUEL'),
-
-    sequels: (
-      media: AnimePageQueryAnime,
-      _: never,
-      { cache }: { cache: RealProxy },
-    ) => getRelations(cache, media.id, 'SEQUEL'),
   },
   Query: {
     Episodes: async (

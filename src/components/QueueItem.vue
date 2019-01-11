@@ -117,7 +117,6 @@
               :episodesInAnime="data.anime.episodes"
               :nextAiringEpisode="data.anime.nextAiringEpisode"
               :listEntry="data.anime.mediaListEntry"
-              :sequels="getSequels(data)"
               scrollToCurrentEpisode
               small
             />
@@ -131,23 +130,20 @@
 <script lang="ts">
 import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
-import { path, pathOr } from 'rambdax'
+import { path } from 'rambdax'
 import { mdiChevronDown, mdiMenu, mdiPlayCircleOutline } from '@mdi/js'
 
 import { Query, Required } from '@/decorators'
 import ANIME_QUEUE_QUERY from '@/graphql/AnimeQueueQuery.graphql'
 import { setStatusMutation } from '@/graphql/mutations'
 import {
-  AnimeQueueQueryEdges,
   AnimeQueueQueryMediaListEntry,
-  AnimeQueueQueryNode,
   AnimeQueueQueryQuery,
   AnimeQueueQueryVariables,
   MediaListStatus,
-  MediaRelation,
 } from '@/graphql/types'
 import { QueueItem as IQueueItem } from '@/lib/user'
-import { sendErrorToast, Sequel } from '@/state/app'
+import { sendErrorToast } from '@/state/app'
 import { removeFromQueueById, toggleQueueItemOpen } from '@/state/user'
 import { humanizeMediaListStatus } from '@/utils'
 
@@ -206,26 +202,6 @@ export default class QueueItem extends Vue {
     return statuses.includes(
       path<MediaListStatus>(['anime', 'mediaListEntry', 'status'], data),
     )
-  }
-
-  public getSequels(data?: AnimeQueueQueryQuery): Sequel[] {
-    if (!data) return []
-
-    const edges: AnimeQueueQueryEdges[] = pathOr(
-      [],
-      ['anime', 'relations', 'edges'],
-      data,
-    )
-
-    const nodes = edges.filter(
-      node => node.relationType === MediaRelation.Sequel,
-    )
-
-    return nodes.map(edge => edge.node as AnimeQueueQueryNode).map(node => ({
-      id: node.id as number,
-      title: pathOr('TITLE', ['title', 'userPreferred'], node),
-      bannerImage: node.bannerImage as string,
-    }))
   }
 
   public playSvg = mdiPlayCircleOutline

@@ -21,17 +21,5 @@ query AnimeQueueQuery($id: Int) {
       repeat
       score(format: POINT_100)
     }
-    relations {
-      edges {
-        relationType
-        node {
-          id
-          title {
-            userPreferred
-          }
-          bannerImage
-        }
-      }
-    }
   }
 }

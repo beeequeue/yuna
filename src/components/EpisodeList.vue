@@ -66,7 +66,6 @@ import { Query, Required } from '@/decorators'
 import {
   getPlaylistAnimeId,
   ListEntry,
-  Sequel,
   setCurrentEpisode,
   setPlaylist,
 } from '@/state/app'
@@ -85,7 +84,6 @@ export default class EpisodeList extends Vue {
   @Prop(Object)
   public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
   @Prop(Object) public listEntry!: ListEntry | null
-  @Required(Array) public sequels!: Sequel[]
   @Prop(Boolean) public showScroller!: boolean | null
   @Prop(Boolean) public small!: boolean | null
   @Prop(Boolean) public rightPadding!: boolean | null

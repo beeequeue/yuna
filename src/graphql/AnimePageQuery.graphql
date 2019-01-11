@@ -32,7 +32,6 @@ query AnimePageQuery($id: Int) {
             userPreferred
           }
           bannerImage
-          type
         }
       }
     }

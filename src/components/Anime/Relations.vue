@@ -4,86 +4,62 @@ import { MediaRelation } from '../../graphql/types'
     <div
       v-for="prequel in prequels"
       class="relation"
-      @click="$router.push(`/anime/${prequel.node.id}`)"
-      :key="prequel.node.id"
+      @click="$router.push(`/anime/${prequel.id}`)"
+      :key="prequel.id"
     >
       <img
-        v-if="prequel.node.bannerImage"
-        :src="prequel.node.bannerImage"
+        v-if="prequel.bannerImage"
+        :src="prequel.bannerImage"
         class="banner"
       />
 
       <div class="title">
-        <icon :icon="getRelationIcon(prequel.relationType)" />
-        <span>{{ prequel.node.title.userPreferred }}</span>
+        <icon :icon="getRelationIcon('PREQUEL')" />
+        <span>{{ prequel.title.userPreferred }}</span>
       </div>
     </div>
 
     <div
       v-for="sequel in sequels"
       class="relation"
-      @click="$router.push(`/anime/${sequel.node.id}`)"
-      :key="sequel.node.id"
+      @click="$router.push(`/anime/${sequel.id}`)"
+      :key="sequel.id"
     >
       <img
-        v-if="sequel.node.bannerImage"
-        :src="sequel.node.bannerImage"
+        v-if="sequel.bannerImage"
+        :src="sequel.bannerImage"
         class="banner"
       />
 
       <div class="title">
-        <icon :icon="getRelationIcon(sequel.relationType)" />
-        <span>{{ sequel.node.title.userPreferred }}</span>
+        <icon :icon="getRelationIcon('SEQUEL')" />
+        <span>{{ sequel.title.userPreferred }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { contains, equals, filter } from 'rambdax'
+import { Component, Vue } from 'vue-property-decorator'
 import { mdiArrowLeftBold, mdiArrowRightBold } from '@mdi/js'
 
-import {
-  AnimePageQueryRelations,
-  MediaRelation,
-  MediaType,
-} from '@/graphql/types'
+import { AnimePageQueryRelations } from '@/graphql/types'
 
 import Icon from '../Icon.vue'
+import { Required } from '@/decorators'
 
 @Component({
   components: { Icon },
 })
 export default class Relations extends Vue {
-  @Prop(Object) public relations!: AnimePageQueryRelations | null
+  @Required(Array) public prequels!: AnimePageQueryRelations[]
+  @Required(Array) public sequels!: AnimePageQueryRelations[]
 
-  public get prequels() {
-    return this.getRelationOfType(MediaRelation.Prequel)
-  }
-
-  public get sequels() {
-    return this.getRelationOfType(MediaRelation.Sequel)
-  }
-
-  public getRelationOfType(type: MediaRelation) {
-    if (!this.relations || !this.relations.edges) return []
-
-    return filter(
-      edge =>
-        edge != null &&
-        edge.node != null &&
-        equals(edge.relationType, type) &&
-        contains(edge.node.type, [MediaType.Anime]),
-      this.relations.edges,
-    )
-  }
-
-  public getRelationIcon(relation: MediaRelation) {
+  public getRelationIcon(relation: 'PREQUEL' | 'SEQUEL') {
     switch (relation) {
-      case MediaRelation.Prequel:
+      case 'PREQUEL':
         return mdiArrowLeftBold
-      case MediaRelation.Sequel:
+      case 'SEQUEL':
         return mdiArrowRightBold
     }
   }
@@ -125,6 +101,7 @@ export default class Relations extends Vue {
       padding: 10px;
 
       & > .icon {
+        flex-shrink: 0;
         height: 20px;
         width: 20px;
         margin-right: 8px;

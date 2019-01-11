@@ -60,7 +60,7 @@
           :animeTitle="data.anime.title.userPreferred"
           :episodesInAnime="data.anime.episodes"
           :nextAiringEpisode="data.anime.nextAiringEpisode"
-          :sequels="getSequels(data)"
+          :sequels="getRelations(data, 'SEQUEL')"
           showScroller
           rightPadding
         />
@@ -69,7 +69,8 @@
           v-if="data && data.anime"
           key="relations"
           class="slide-left"
-          :relations="data.anime.relations"
+          :prequels="getRelations(data, 'PREQUEL')"
+          :sequels="getRelations(data, 'SEQUEL')"
         />
       </transition-group>
     </template>
@@ -78,7 +79,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { path, pathOr } from 'rambdax'
+import { filter, map, path, pathEq, pathOr } from 'rambdax'
 
 import CoverImage from '@/components/Anime/CoverImage.vue'
 import AnimeTitle from '@/components/Anime/Title.vue'
@@ -90,15 +91,12 @@ import CButton from '@/components/CButton.vue'
 
 import ANIME_PAGE_QUERY from '@/graphql/AnimePageQuery.graphql'
 import {
-  AnimePageQueryEdges,
   AnimePageQueryMediaListEntry,
-  AnimePageQueryNode,
   AnimePageQueryQuery,
   MediaRelation,
 } from '@/graphql/types'
-import { Sequel } from '@/state/app'
 import { getSpoilerSettings } from '@/state/settings'
-import { trackPageView, Page } from '@/lib/tracking'
+import { Page, trackPageView } from '@/lib/tracking'
 
 @Component({
   components: {
@@ -152,24 +150,18 @@ export default class Anime extends Vue {
     return pathOr(null, ['anime', 'mediaListEntry'], data)
   }
 
-  public getSequels(data?: AnimePageQueryQuery): Sequel[] {
-    if (!data) return []
+  public getRelations = (
+    data: AnimePageQueryQuery,
+    type: string | MediaRelation,
+  ) => {
+    const relations = pathOr<any[]>([], ['anime', 'relations', 'edges'], data)
 
-    const edges: AnimePageQueryEdges[] = pathOr(
-      [],
-      ['anime', 'relations', 'edges'],
-      data,
+    if (relations.length < 1) return []
+
+    return map(
+      pathOr(null, ['node']),
+      filter(pathEq('relationType', type), relations),
     )
-
-    const nodes = edges.filter(
-      node => node.relationType === MediaRelation.Sequel,
-    )
-
-    return nodes.map(edge => edge.node as AnimePageQueryNode).map(node => ({
-      id: node.id as number,
-      title: pathOr('TITLE', ['title', 'userPreferred'], node),
-      bannerImage: node.bannerImage as string,
-    }))
   }
 }
 </script>

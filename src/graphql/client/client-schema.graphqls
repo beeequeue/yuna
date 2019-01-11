@@ -20,8 +20,6 @@ type Episode {
 
 extend type Media {
   scoreMal: Int
-  prequels: [Media!]!
-  sequels: [Media!]!
 }
 
 type Query {
