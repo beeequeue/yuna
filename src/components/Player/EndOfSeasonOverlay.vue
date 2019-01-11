@@ -54,7 +54,7 @@ import Icon from '../Icon.vue'
 })
 export default class EndOfSeasonOverlay extends Vue {
   @Prop(Object) public listEntry!: ListEntry | null
-  @Required(Array) public sequels!: Sequel[]
+  @Prop(Array) public sequels!: Sequel[] | null
   @Required(Number) public episodeNumber!: number
   @Prop(Number) public episodesInAnime!: number | null
   @Prop(Object)

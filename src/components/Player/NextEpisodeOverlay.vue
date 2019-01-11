@@ -10,7 +10,7 @@
           <div>Up next...</div>
 
           <div>
-            {{ nextEpisode.episodeNumber }}/{{ episodesInAnime || '?' }}
+            Episode {{ nextEpisode.episodeNumber }}/{{ episodesInAnime || '?' }}
           </div>
 
           <div v-if="!shouldHide.title" class="episode-title">
@@ -27,18 +27,22 @@
         />
 
         <icon :icon="playSvg" />
-
-        <span v-if="shouldAutoPlay && timeoutId" class="countdown-line" />
       </div>
 
       <transition>
-        <c-button
+        <div
           v-if="isPlayerMaximized && shouldAutoPlay && timeoutId"
-          flat
-          type="white"
-          content="Cancel"
-          @click.native="cancelCountdown"
-        />
+          class="timer-container"
+        >
+          <span>Starting in {{ secondsLeft }}...</span>
+
+          <c-button
+            flat
+            type="white"
+            content="Cancel"
+            @click.native="cancelCountdown"
+          />
+        </div>
       </transition>
     </div>
   </transition>
@@ -67,6 +71,7 @@ export default class NextEpisodeOverlay extends Vue {
   @Required(Boolean) public isPlayerMaximized!: boolean
   @Prop(Boolean) public shouldAutoPlay?: boolean
 
+  public secondsLeft = 5
   public timeoutId: number | null = null
 
   public playSvg = mdiPlay
@@ -85,11 +90,15 @@ export default class NextEpisodeOverlay extends Vue {
 
   public mounted() {
     if (this.nextEpisode && this.shouldAutoPlay) {
-      this.timeoutId = window.setTimeout(() => {
+      this.timeoutId = window.setInterval(() => {
+        if (this.secondsLeft > 1) {
+          return this.secondsLeft--
+        }
+
         this.timeoutId = null
 
         this.setToNextEpisode()
-      }, 5000)
+      }, 1000)
     }
   }
 
@@ -136,28 +145,21 @@ export default class NextEpisodeOverlay extends Vue {
   align-items: center;
   pointer-events: none;
   user-select: none;
+  white-space: nowrap;
+  font-family: 'Raleway', sans-serif;
+  text-shadow: $outline;
+  font-size: 1.25em;
+  font-weight: 600;
+  margin: 0;
+  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.35));
 
   & > .text {
-    font-size: 1.25em;
     padding: 5px;
     height: 75px;
     overflow: hidden;
 
     &.hide-title {
       height: 55px;
-    }
-
-    & > * {
-      white-space: nowrap;
-      font-family: 'Raleway', sans-serif;
-      text-shadow: $outline;
-      font-weight: 600;
-      margin: 0;
-      filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.35));
-
-      &:first-child {
-        font-size: 0.9em;
-      }
     }
 
     & > .episode-title {
@@ -186,6 +188,7 @@ export default class NextEpisodeOverlay extends Vue {
     pointer-events: all;
     border-radius: 5px;
     overflow: hidden;
+    z-index: 2;
 
     & > .icon {
       display: block;
@@ -209,48 +212,46 @@ export default class NextEpisodeOverlay extends Vue {
         filter: blur(12px);
       }
     }
-
-    & > .countdown-line {
-      position: absolute;
-      left: 0;
-      right: 100%;
-      bottom: 0;
-      height: 2px;
-      background: $highlight;
-      box-shadow: 0 -2px 2px $highlight;
-
-      animation: expand 5s linear;
-      animation-iteration-count: 1;
-    }
   }
 
-  & > .button {
+  & > .timer-container {
     position: relative;
-    pointer-events: all;
-    text-shadow: $outline !important;
-    padding: 0.35em 2em 0.5em;
-    font-size: 1.25em;
-    height: 45px;
+    height: 43px;
+    width: 35%;
+    display: flex;
+    justify-content: space-between;
     overflow: hidden;
+    z-index: 1;
+
+    & > span,
+    .button {
+      padding: 0;
+      padding-top: 5px;
+    }
+
+    & > .button {
+      padding-left: 15px;
+      padding-bottom: 15px;
+      pointer-events: all;
+      text-shadow: $outline !important;
+      overflow: hidden;
+
+      & /deep/ .content {
+        padding: 0;
+      }
+    }
 
     &.v-enter-active {
-      transition: 0.5s;
+      transition: height 0.5s;
     }
 
     &.v-leave-active {
-      transition: 0.25s;
+      transition: height 0.15s;
     }
 
     &.v-enter,
     &.v-leave-to {
       height: 0;
-      padding: 0;
-    }
-
-    &.v-leave,
-    &.v-enter-to {
-      height: 45px;
-      padding: 0.35em 2em 0.5em;
     }
   }
 

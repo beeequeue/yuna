@@ -63,14 +63,14 @@
       v-if="ended && nextEpisode"
       :nextEpisode="nextEpisode"
       :episodesInAnime="anime.episodes"
-      :progress="anime.listEntry.progress"
+      :progress="listEntry.progress"
       :isPlayerMaximized="isPlayerMaximized"
       :shouldAutoPlay="shouldAutoPlay"
     />
 
     <end-of-season-overlay
       v-if="ended && !nextEpisode"
-      :listEntry="anime.listEntry"
+      :listEntry="listEntry"
       :sequels="anime.sequels"
       :episodeNumber="episode.episodeNumber"
       :episodesInAnime="anime.episodes"
