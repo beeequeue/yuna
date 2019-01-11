@@ -1,3 +1,11 @@
+fragment relationMedia on Media {
+  id
+  title {
+    userPreferred
+  }
+  bannerImage
+}
+
 query PlayerAnime($id: Int!) {
   anime: Media(id: $id, type: ANIME) {
     id
@@ -14,13 +22,12 @@ query PlayerAnime($id: Int!) {
       edges {
         relationType
         node {
-          id
-          title {
-            userPreferred
-          }
-          bannerImage
+          ...relationMedia
         }
       }
+    }
+    sequels @client {
+      ...relationMedia
     }
     mediaListEntry {
       id

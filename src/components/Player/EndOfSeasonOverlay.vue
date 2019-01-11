@@ -21,7 +21,7 @@
       </div>
 
       <div
-        v-if="isFinalEpisode && sequels && sequels.length > 0"
+        v-if="isFinalEpisode && sequels.length > 0"
         class="sequel-container"
       >
         <h1 class="text">Sequel{{ sequels.length > 1 ? 's' : '' }}:</h1>
@@ -54,7 +54,7 @@ import Icon from '../Icon.vue'
 })
 export default class EndOfSeasonOverlay extends Vue {
   @Prop(Object) public listEntry!: ListEntry | null
-  @Prop(Array) public sequels!: Sequel[] | null
+  @Required(Array) public sequels!: Sequel[]
   @Required(Number) public episodeNumber!: number
   @Prop(Number) public episodesInAnime!: number | null
   @Prop(Object)
