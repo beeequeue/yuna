@@ -9,7 +9,7 @@
     <a class="item" :href="malLink">
       <img class="logo mal" :src="malLogo" />
 
-      <span class="rating">
+      <span v-if="$apollo.loading || scoreMal != null" class="rating">
         {{ !$apollo.loading ? scoreMal : '...' }}
       </span>
     </a>

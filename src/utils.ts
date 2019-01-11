@@ -30,8 +30,10 @@ export type RequestResponse<D extends object = any, E extends object = any> =
   | RequestError<E>
 
 export const responseIsError = (
-  res: RequestResponse,
-): res is RequestError<any> => {
+  res: RequestResponse | null,
+): res is RequestError<any> | null => {
+  if (!res) return true
+
   return path('body.error', res) != null || path<boolean>('error', res)
 }
 

@@ -16,16 +16,16 @@ setInterval(() => {
 const waitForRequests = async () =>
   delay(Math.max(0, requestsRecently - 1) * 750)
 
-const handleError = (response: RequestResponse) => {
-  if (response.status === 404) {
+const handleError = (response: RequestResponse | null, message?: string) => {
+  if (response && response.status === 404) {
     return []
   }
 
-  if (response.status === 429) {
+  if (response && response.status === 429) {
     return Promise.reject('Too many requests, try again later.')
   }
 
-  return Promise.reject('Something went wrong!')
+  return Promise.reject(message || 'Something went wrong!')
 }
 
 export const fetchEpisodesOfSeries = async (
@@ -86,8 +86,8 @@ export const fetchRating = async (id: string | number) => {
     // noop
   }
 
-  if (!response || responseIsError(response)) {
-    throw new Error('Could not fetch MAL rating. 😟')
+  if (responseIsError(response)) {
+    return handleError(response, 'Could not fetch MAL rating. 😟')
   }
 
   return response.body.score as string | null

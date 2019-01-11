@@ -111,10 +111,13 @@ export const resolvers = {
     scoreMal: async (media: AnimePageQueryAnime): Promise<number | null> => {
       if (isNil(media) || isNil(media.idMal)) return null
 
-      const result = await fetchRating(media.idMal)
-      if (result == null) return null
+      try {
+        const result = await fetchRating(media.idMal)
 
-      return Number(result)
+        return Number(result)
+      } catch (err) {
+        return null
+      }
     },
   },
   Query: {

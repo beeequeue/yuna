@@ -227,6 +227,8 @@ export default class EpisodeList extends Vue {
   }
 
   private getEpisodeElement(episodeNumber: number) {
+    if (!this.$refs.episodes || this.$refs.episodes.length < 1) return null
+
     return pathOr(
       null,
       ['$el'],
