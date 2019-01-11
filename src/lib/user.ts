@@ -22,7 +22,7 @@ interface UserStore {
 }
 
 export const userStore = new Store<UserStore>({
-  name: 'user',
+  name: process.env.NODE_ENV === 'development' ? 'user-d' : 'user',
 })
 
 // Ultra primitive migration
