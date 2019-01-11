@@ -86,8 +86,8 @@
         :key="ActionKeys.REPEAT"
         type="success"
         :icon="setToRepeatSvg"
-        :content="ifBig('Set as Repeating')"
-        v-tooltip.right="ifSmall('Set as Repeating')"
+        :content="ifBig('Rewatch')"
+        v-tooltip.right="ifSmall('Rewatch')"
         :click="() => statusMutation(MediaListStatus.Repeating)"
       />
 
@@ -134,7 +134,11 @@ import {
   mdiPencil,
 } from '@mdi/js'
 
-import { addEntryMutation, setStatusMutation } from '@/graphql/mutations'
+import {
+  addEntryMutation,
+  rewatchMutation,
+  setStatusMutation,
+} from '@/graphql/mutations'
 import {
   AnimePageQueryMediaListEntry,
   AnimePageQueryAnime,
@@ -284,6 +288,10 @@ export default class Actions extends Vue {
   public async statusMutation(status: MediaListStatus) {
     if (!this.mediaListEntry) {
       return sendErrorToast(this.$store, 'No entry found..?')
+    }
+
+    if (status === MediaListStatus.Repeating) {
+      return rewatchMutation(this, this.mediaListEntry.id)
     }
 
     await setStatusMutation(this, this.mediaListEntry.id, status)

@@ -926,6 +926,26 @@ export type FuzzyDateInt = any;
     progress: Maybe<number>;
   } 
 
+  export type RewatchMutationVariables = {
+    id: Maybe<number>;
+  }
+
+  export type RewatchMutationMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<RewatchMutationSaveMediaListEntry>;
+  }
+
+  export type RewatchMutationSaveMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    status: Maybe<MediaListStatus>;
+    
+    progress: Maybe<number>;
+  } 
+
   export type SaveListEntryMutationVariables = {
     id: number;
     progress: number;

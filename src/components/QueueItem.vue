@@ -135,7 +135,7 @@ import { mdiChevronDown, mdiMenu, mdiPlayCircleOutline } from '@mdi/js'
 
 import { Query, Required } from '@/decorators'
 import ANIME_QUEUE_QUERY from '@/graphql/AnimeQueueQuery.graphql'
-import { setStatusMutation } from '@/graphql/mutations'
+import { rewatchMutation, setStatusMutation } from '@/graphql/mutations'
 import {
   AnimeQueueQueryMediaListEntry,
   AnimeQueueQueryQuery,
@@ -223,6 +223,10 @@ export default class QueueItem extends Vue {
 
     if (!listEntryId) {
       return sendErrorToast(this.$store, 'No entry found..?')
+    }
+
+    if (status === MediaListStatus.Repeating) {
+      return rewatchMutation(this, listEntryId)
     }
 
     await setStatusMutation(this, listEntryId, status)
