@@ -91,7 +91,7 @@ export default class PlayerContainer extends Vue {
 
   get nextEpisode() {
     const index = pathOr(null, ['playerData', 'index'], this)
-    if (!this.episodes || !index) return null
+    if (isNil(this.episodes) || isNil(index)) return null
 
     return this.episodes[index + 1] as EpisodeListEpisodes
   }
