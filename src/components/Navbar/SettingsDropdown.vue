@@ -1,40 +1,30 @@
 <template>
   <div class="wrapper">
-    <div v-if="open" class="fader" @click="toggleOpen"/>
+    <div v-if="open" class="fader" @click="toggleOpen" />
 
     <div class="menu" :class="{ open }" @click="toggleOpen">
       <div class="item open-settings" @click="openSettings">
-        <icon :icon="settingsSvg"/>
-        <span>Settings</span>
+        <icon :icon="settingsSvg" /> <span>Settings</span>
       </div>
 
       <a href="https://github.com/beeequeue/yuna/issues/new">
         <div class="item report-bug">
-          <icon :icon="bugSvg"/>
-          <span>Report bug</span>
+          <icon :icon="bugSvg" /> <span>Report bug</span>
         </div>
       </a>
 
       <a href="https://github.com/beeequeue/yuna">
         <div class="item github">
-          <icon :icon="githubSvg"/>
-          <span>Source</span>
+          <icon :icon="githubSvg" /> <span>Source</span>
         </div>
       </a>
 
       <div class="item clear-cache" @click="clearCache">
-        <icon :icon="clearSvg"/>
-        <span>Clear caches</span>
+        <icon :icon="clearSvg" /> <span>Clear caches</span>
       </div>
 
       <div class="item open-about" @click="toggleAboutModal">
-        <icon :icon="infoSvg"/>
-        <span>About</span>
-      </div>
-
-      <div class="item log-out" @click="logOut">
-        <icon :icon="logOutSvg"/>
-        <span>Log out</span>
+        <icon :icon="infoSvg" /> <span>About</span>
       </div>
     </div>
   </div>
@@ -43,16 +33,14 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import {
-  mdiCached,
-  mdiLogout,
-  mdiSettingsOutline,
-  mdiInformationOutline,
   mdiBugOutline,
+  mdiCached,
   mdiGithubCircle,
+  mdiInformationOutline,
+  mdiSettingsOutline,
 } from '@mdi/js'
 
 import { EpisodeCache } from '@/lib/episode-cache'
-import { logOut } from '@/state/auth'
 import { toggleModal } from '@/state/app'
 import Icon from '../Icon.vue'
 
@@ -68,13 +56,6 @@ export default class SettingsDropdown extends Vue {
   public githubSvg = mdiGithubCircle
   public clearSvg = mdiCached
   public infoSvg = mdiInformationOutline
-  public logOutSvg = mdiLogout
-
-  public logOut() {
-    logOut(this.$store)
-
-    this.$router.push('login')
-  }
 
   public clearCache() {
     EpisodeCache.clear()

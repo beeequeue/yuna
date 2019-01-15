@@ -25,7 +25,7 @@ import { activeWindow } from 'electron-util'
 import { mdiClose, mdiMinus, mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 
 import { closeAllModals } from '@/state/app'
-import { getCrunchyrollCountry, getIsLoggedIn } from '@/state/auth'
+import { getCrunchyrollCountry, getIsConnectedTo } from '@/state/auth'
 
 import Icon from './Icon.vue'
 import { version } from '../../package.json'
@@ -68,8 +68,8 @@ export default class TitleBar extends Vue {
     return flagSvg
   }
 
-  public get isLoggedIn() {
-    return getIsLoggedIn(this.$store).all
+  public get isConnectedTo() {
+    return getIsConnectedTo(this.$store).all
   }
 
   public minimize() {
@@ -81,14 +81,14 @@ export default class TitleBar extends Vue {
   }
 
   public goBack() {
-    if (!this.isLoggedIn) return
+    if (!this.isConnectedTo) return
 
     closeAllModals(this.$store)
     history.back()
   }
 
   public goForward() {
-    if (!this.isLoggedIn) return
+    if (!this.isConnectedTo) return
 
     closeAllModals(this.$store)
     history.forward()

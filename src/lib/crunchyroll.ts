@@ -227,21 +227,43 @@ export class Crunchyroll {
     }
 
     const session = await Crunchyroll.createSession(store)
+    const user = response.body.data.user
 
     _sessionId = session.session_id
-    userStore.set('crunchyroll', {
-      sessionId: session.session_id,
-      userId: response.body.data.user.user_id,
-      token: response.body.data.auth,
+    setCrunchyroll(store, {
+      user: {
+        id: Number(user.user_id),
+        name: user.username,
+        url: `https://www.crunchyroll.com/user/${user.username}`,
+      },
+      token: session.session_id,
+      refreshToken: response.body.data.auth,
+      expires: null,
     })
-    setCrunchyroll(store, true)
-
-    return response.body.data
   }
 
-  public static logout = () => {
-    userStore.delete('crunchyroll')
+  /*
+   *  By not removing user until after we get a new session
+   *  we make it look like they aren't logged out until then.
+   */
+  public static logOut = async (store: StoreType) => {
+    setCrunchyroll(store, {
+      user: store.state.auth.crunchyroll.user,
+      token: null as any,
+      refreshToken: null as any,
+      expires: null,
+    })
+
     removeCookies({ domain: 'crunchyroll.com' })
+
+    await Crunchyroll.createSession(store)
+
+    setCrunchyroll(store, {
+      user: null,
+      token: null as any,
+      refreshToken: null as any,
+      expires: null,
+    })
   }
 
   public static fetchEpisodesOfCollection = async (
@@ -365,7 +387,7 @@ export class Crunchyroll {
       .query({
         auth: userStore.get('crunchyroll.token', null),
         version: '1.1',
-        user_id: userStore.get('crunchyroll.userId', null),
+        user_id: userStore.get('crunchyroll.user.id', null),
       })) as CrunchyrollResponse<SessionResponse>
 
     if (responseIsError(response)) {

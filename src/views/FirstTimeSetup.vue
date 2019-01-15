@@ -1,10 +1,18 @@
 <template>
   <div class="first-time-setup">
     <div class="content">
-      <steps :steps="steps" :current="currentStep"/>
+      <steps :steps="steps" :current="currentStep" />
 
-      <transition-group tag="div" class="steps" :class="{ hide: currentStep == null }">
-        <login-al key="al" v-if="currentStep === SetupStep.LOGIN_AL" :loginAnilist="loginAnilist"/>
+      <transition-group
+        tag="div"
+        class="steps"
+        :class="{ hide: currentStep == null }"
+      >
+        <login-al
+          key="al"
+          v-if="currentStep === SetupStep.LOGIN_AL"
+          :loginAnilist="loginAnilist"
+        />
 
         <login-cr
           key="cr"
@@ -19,7 +27,11 @@
           :goToNextStep="finishStep"
         />
 
-        <discord key="discord" v-if="currentStep === SetupStep.DISCORD" :goToNextStep="finishStep"/>
+        <discord
+          key="discord"
+          v-if="currentStep === SetupStep.DISCORD"
+          :goToNextStep="finishStep"
+        />
       </transition-group>
     </div>
   </div>
@@ -34,7 +46,7 @@ import LoginCr from '@/components/FirstTimeSetup/LoginCR.vue'
 import SpoilerSettings from '@/components/FirstTimeSetup/SpoilerSettings.vue'
 import Discord from '@/components/FirstTimeSetup/Discord.vue'
 
-import { getIsLoggedIn, loginCrunchyroll } from '@/state/auth'
+import { getIsConnectedTo } from '@/state/auth'
 import {
   getNextUnfinishedStep,
   addFinishedStep,
@@ -43,6 +55,7 @@ import {
 } from '@/state/settings'
 import { loginAnilist } from '@/lib/anilist'
 import { Page, trackPageView } from '@/lib/tracking'
+import { Crunchyroll } from '@/lib/crunchyroll'
 
 @Component({
   components: { LoginAl, LoginCr, Steps, SpoilerSettings, Discord },
@@ -59,7 +72,7 @@ export default class FirstTimeSetup extends Vue {
   }
 
   public get isLoggedIn() {
-    return getIsLoggedIn(this.$store)
+    return getIsConnectedTo(this.$store)
   }
 
   public created() {
@@ -87,7 +100,7 @@ export default class FirstTimeSetup extends Vue {
     this.crunchyrollError = null
 
     try {
-      await loginCrunchyroll(this.$store, { user, pass })
+      await Crunchyroll.login(this.$store, user, pass)
     } catch (err) {
       this.crunchyrollError = err.message
     }

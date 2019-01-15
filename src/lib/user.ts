@@ -1,13 +1,7 @@
 import Store from 'electron-store'
-import { AnilistData } from '@/state/auth'
+import { AnilistData, CrunchyrollData } from '@/state/auth'
 
-const CURRENT_VERSION = 2
-
-interface CachedCRData {
-  sessionId: string | null
-  userId: string | null
-  token: string | null
-}
+const CURRENT_VERSION = 3
 
 export interface QueueItem {
   id: number
@@ -17,7 +11,7 @@ export interface QueueItem {
 interface UserStore {
   __version: number
   queue: QueueItem[]
-  crunchyroll: CachedCRData
+  crunchyroll: Omit<CrunchyrollData, 'country'>
   anilist: AnilistData
 }
 
@@ -26,14 +20,30 @@ export const userStore = new Store<UserStore>({
 })
 
 // Ultra primitive migration
-const oldVersion = userStore.get('__version')
+let oldVersion = userStore.get('__version', 0)
 
 if (oldVersion !== CURRENT_VERSION) {
+  if (oldVersion === 0) {
+    userStore.clear()
+    userStore.set('__version', CURRENT_VERSION)
+    // Don't set oldVersion as we only want this migration to run here
+  }
+
   if (oldVersion === 1) {
     userStore.set('anilist', null)
     userStore.set('__version', 2)
-  } else {
-    userStore.clear()
-    userStore.set('__version', CURRENT_VERSION)
+    oldVersion = 2
+  }
+
+  if (oldVersion === 2) {
+    userStore.set('crunchyroll', null)
+    userStore.set(
+      'anilist.user.url',
+      userStore.get('anilist.user.siteUrl', null),
+    )
+    userStore.delete('anilist.user.siteUrl')
+
+    userStore.set('__version', 3)
+    oldVersion = 3
   }
 }

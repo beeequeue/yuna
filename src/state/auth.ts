@@ -1,43 +1,46 @@
 // tslint:disable:no-use-before-declare
-import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
+import { omit } from 'rambdax'
 
-import { Crunchyroll } from '@/lib/crunchyroll'
-import { logoutAnilist } from '@/lib/anilist'
 import { userStore } from '@/lib/user'
 import { RootState } from '@/state/store'
 
-export interface CrunchyrollData {
-  isLoggedIn: boolean
-  country: string | null
-}
-
-export interface AnilistData {
-  user: {
+interface ServiceData {
+  user: null | {
     id: number
     name: string
-    url: string
-  } | null
+    url: string | null
+  }
   token: string | null
   expires: number | null
 }
+
+export interface CrunchyrollData extends ServiceData {
+  refreshToken: string
+  token: string
+  country: string | null
+}
+
+// tslint:disable-next-line:no-empty-interface
+export interface AnilistData extends ServiceData {}
 
 export interface AuthState {
   crunchyroll: CrunchyrollData
   anilist: AnilistData
 }
 
-type AuthContext = ActionContext<AuthState, RootState>
-
 const initialState: AuthState = {
   crunchyroll: {
-    isLoggedIn: !!userStore.get('crunchyroll.token', false),
+    user: userStore.get('crunchyroll.user', null),
+    token: userStore.get('crunchyroll.token', null),
+    expires: userStore.get('crunchyroll.expires', null),
+    refreshToken: userStore.get('crunchyroll.refreshToken', null),
     country: null,
   },
   anilist: {
     user: userStore.get('anilist.user', null),
     token: userStore.get('anilist.token', null),
-    expires: Number(userStore.get('anilist.expires', null)),
+    expires: userStore.get('anilist.expires', null),
   },
 }
 
@@ -47,16 +50,16 @@ export const auth = {
   state: { ...initialState },
 
   getters: {
-    isLoggedIn(
+    getIsConnectedTo(
       state: AuthState,
     ): { anilist: boolean; crunchyroll: boolean; all: boolean } {
       const anilist = state.anilist.token != null
-      const _crunchyroll = state.crunchyroll.isLoggedIn
+      const crunchyroll = state.crunchyroll.user != null
 
       return {
         anilist,
-        crunchyroll: _crunchyroll,
-        all: anilist && _crunchyroll,
+        crunchyroll,
+        all: anilist && crunchyroll,
       }
     },
 
@@ -74,8 +77,23 @@ export const auth = {
   },
 
   mutations: {
-    setCrunchyroll(state: AuthState, loggedIn: boolean) {
-      state.crunchyroll.isLoggedIn = loggedIn
+    setCrunchyroll(state: AuthState, data: Omit<CrunchyrollData, 'country'>) {
+      state.crunchyroll.user = data.user
+      state.crunchyroll.token = data.token
+      state.crunchyroll.refreshToken = data.refreshToken
+      state.crunchyroll.expires = data.expires
+
+      const extraKeys = Object.keys(
+        omit(['user', 'token', 'refreshToken', 'expires'], data),
+      )
+      if (extraKeys.length > 0) {
+        // tslint:disable-next-line:no-console
+        console.warn(
+          `Tried to set ${extraKeys} without setters in setCrunchyroll`,
+        )
+      }
+
+      userStore.set('crunchyroll', data)
     },
 
     setCrunchyrollCountry(state: AuthState, countryCode: string) {
@@ -83,53 +101,24 @@ export const auth = {
     },
 
     setAnilist(state: AuthState, data: AnilistData) {
-      state.anilist = data
+      state.anilist.user = data.user
+      state.anilist.token = data.token
+      state.anilist.expires = data.expires
+
+      const extraKeys = Object.keys(omit(['user', 'token', 'expires'], data))
+      if (extraKeys.length > 0) {
+        // tslint:disable-next-line:no-console
+        console.warn(`Tried to set ${extraKeys} without setters in setAnilist`)
+      }
 
       userStore.set('anilist', data)
     },
   },
-
-  actions: {
-    async loginCrunchyroll(
-      context: AuthContext,
-      payload: { user: string; pass: string },
-    ) {
-      try {
-        await Crunchyroll.login(context, payload.user, payload.pass)
-      } catch (err) {
-        throw new Error(err)
-      }
-
-      setCrunchyroll(context, true)
-    },
-
-    async logOut(context: AuthContext) {
-      if (
-        !context.state.crunchyroll.isLoggedIn &&
-        !context.state.anilist.token
-      ) {
-        return
-      }
-
-      Crunchyroll.logout()
-      setCrunchyroll(context, false)
-      logoutAnilist()
-      setAnilist(context, {
-        user: null,
-        token: null,
-        expires: null,
-      })
-
-      await Crunchyroll.createSession(context)
-    },
-  },
 }
 
-const { commit, dispatch, read } = getStoreAccessors<AuthState, RootState>(
-  'auth',
-)
+const { commit, read } = getStoreAccessors<AuthState, RootState>('auth')
 
-export const getIsLoggedIn = read(auth.getters.isLoggedIn)
+export const getIsConnectedTo = read(auth.getters.getIsConnectedTo)
 export const getCrunchyrollCountry = read(auth.getters.getCrunchyrollCountry)
 export const getAnilistUserId = read(auth.getters.getAnilistUserId)
 export const getAnilistUsername = read(auth.getters.getAnilistUsername)
@@ -139,7 +128,3 @@ export const setCrunchyrollCountry = commit(
   auth.mutations.setCrunchyrollCountry,
 )
 export const setAnilist = commit(auth.mutations.setAnilist)
-
-export const loginCrunchyroll = dispatch(auth.actions.loginCrunchyroll)
-
-export const logOut = dispatch(auth.actions.logOut)

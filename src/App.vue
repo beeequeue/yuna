@@ -3,14 +3,14 @@
     <title-bar v-if="!isFullscreen"/>
 
     <transition>
-      <navbar v-if="isLoggedIn.all && hasFinishedSetup && !isFullscreen"/>
+      <navbar v-if="isConnectedTo.all && hasFinishedSetup && !isFullscreen"/>
     </transition>
 
     <transition name="route">
       <router-view :key="$route.params.id ? $route.params.id : $route.path" class="route"/>
     </transition>
 
-    <player-container v-if="isLoggedIn.all"/>
+    <player-container v-if="isConnectedTo.all"/>
 
     <toast-overlay/>
 
@@ -26,7 +26,7 @@ import Component from 'vue-class-component'
 import { ipcRenderer } from 'electron'
 
 import { Crunchyroll } from '@/lib/crunchyroll'
-import { getIsLoggedIn } from '@/state/auth'
+import { getIsConnectedTo } from '@/state/auth'
 import { getHasFinishedSetup } from '@/state/settings'
 import {
   AppState,
@@ -58,8 +58,8 @@ const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
   },
 })
 export default class App extends Vue {
-  get isLoggedIn() {
-    return getIsLoggedIn(this.$store)
+  get isConnectedTo() {
+    return getIsConnectedTo(this.$store)
   }
 
   get isFullscreen() {
@@ -87,7 +87,7 @@ export default class App extends Vue {
       this.$router.push('/first-time-setup')
     }
 
-    if (!this.isLoggedIn.all && this.hasFinishedSetup) {
+    if (!this.isConnectedTo.all && this.hasFinishedSetup) {
       window.initialLogin = true
       this.$router.push('login')
     }

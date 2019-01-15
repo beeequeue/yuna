@@ -1,7 +1,7 @@
 import electron from 'electron'
 import { log } from 'electron-log'
 import { captureException } from '@sentry/browser'
-import { Store } from 'vuex'
+import { ActionContext, Store } from 'vuex'
 import request from 'superagent/superagent'
 
 import { getConfig } from '@/config'
@@ -11,6 +11,7 @@ import { userStore } from './user'
 import { removeCookies } from '@/utils'
 
 type BrowserWindow = electron.BrowserWindow
+type StoreType = Store<any> | ActionContext<any, any>
 let authWindow: BrowserWindow
 let resolveLogin: () => any
 const { BrowserWindow } = electron.remote
@@ -18,7 +19,7 @@ const { BrowserWindow } = electron.remote
 const GQL_ENDPOINT = 'https://graphql.anilist.co'
 
 const handleNewURL = async (
-  store: Store<any>,
+  store: StoreType,
   url: string,
   eventName?: string,
 ) => {
@@ -64,7 +65,7 @@ const handleNewURL = async (
   authWindow = null as any
 }
 
-export const loginAnilist = (store: Store<any>) =>
+export const loginAnilist = (store: StoreType) =>
   new Promise(resolve => {
     authWindow = new BrowserWindow({
       width: 400,
@@ -97,8 +98,14 @@ export const loginAnilist = (store: Store<any>) =>
     authWindow.show()
   })
 
-export const logoutAnilist = () => {
+export const logoutAnilist = (store: StoreType) => {
   removeCookies({ domain: 'anilist.co' })
+
+  setAnilist(store, {
+    user: null,
+    token: null,
+    expires: null,
+  })
 }
 
 interface Parameters {

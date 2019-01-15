@@ -5,7 +5,7 @@
         <div>
           <transition name="fade">
             <login-c-r
-              v-if="!isLoggedIn.crunchyroll"
+              v-if="!isConnectedTo.crunchyroll"
               fullWidth
               :error="crunchyrollError"
               :loginCrunchyroll="loginCrunchyroll"
@@ -18,7 +18,7 @@
         <div>
           <transition name="fade">
             <login-a-l
-              v-if="!isLoggedIn.anilist"
+              v-if="!isConnectedTo.anilist"
               :loginAnilist="loginAnilist"
             />
 
@@ -26,16 +26,6 @@
           </transition>
         </div>
       </div>
-
-      <br />
-
-      <c-button
-        type="danger"
-        confirm
-        content="Reset Login"
-        v-tooltip.bottom="'In case logging in goes terribly wrong'"
-        :click="reset"
-      />
     </div>
   </div>
 </template>
@@ -51,7 +41,8 @@ import LoginAL from '@/components/FirstTimeSetup/LoginAL.vue'
 
 import { loginAnilist } from '@/lib/anilist'
 import { Page, trackPageView } from '@/lib/tracking'
-import { getIsLoggedIn, loginCrunchyroll, logOut } from '@/state/auth'
+import { Crunchyroll } from '@/lib/crunchyroll'
+import { getIsConnectedTo } from '@/state/auth'
 
 @Component({
   components: {
@@ -67,7 +58,7 @@ export default class Login extends Vue {
   public crunchyrollError: string | null = null
 
   public mounted() {
-    if (this.isLoggedIn.all) {
+    if (this.isConnectedTo.all) {
       return this.$router.back()
     }
 
@@ -75,7 +66,7 @@ export default class Login extends Vue {
   }
 
   public onSuccessfulLogin() {
-    if (this.isLoggedIn.all) {
+    if (this.isConnectedTo.all) {
       if (window.initialLogin) {
         window.initialLogin = false
         return this.$router.push('/')
@@ -89,7 +80,7 @@ export default class Login extends Vue {
     this.crunchyrollError = null
 
     try {
-      await loginCrunchyroll(this.$store, { user, pass })
+      await Crunchyroll.login(this.$store, user, pass)
     } catch (err) {
       this.crunchyrollError = err.message
     }
@@ -103,12 +94,8 @@ export default class Login extends Vue {
     this.onSuccessfulLogin()
   }
 
-  public reset() {
-    logOut(this.$store)
-  }
-
-  get isLoggedIn() {
-    return getIsLoggedIn(this.$store)
+  get isConnectedTo() {
+    return getIsConnectedTo(this.$store)
   }
 }
 </script>
