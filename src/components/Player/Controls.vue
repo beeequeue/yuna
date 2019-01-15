@@ -269,10 +269,14 @@ export default class Controls extends Vue {
   @Required(Function) public setProgress!: (progress: number) => any
 
   public settingsOpen = false
-  public visible = this.settingsOpen || false
-  public visibleTimeout: number | null = null
+  public hovering = this.settingsOpen || this.paused || false
+  public hoveringTimeout: number | null = null
 
   public settingSvg = mdiSettingsOutline
+
+  public get visible() {
+    return this.settingsOpen || this.paused || this.hovering
+  }
 
   public get listEntry() {
     return pathOr(
@@ -343,20 +347,20 @@ export default class Controls extends Vue {
   }
 
   public goVisible() {
-    this.visible = true
+    this.hovering = true
 
-    if (this.visibleTimeout) window.clearTimeout(this.visibleTimeout)
+    if (this.hoveringTimeout) window.clearTimeout(this.hoveringTimeout)
 
-    this.visibleTimeout = window.setTimeout(() => {
-      this.visible = false
-      this.visibleTimeout = null
+    this.hoveringTimeout = window.setTimeout(() => {
+      this.hovering = false
+      this.hoveringTimeout = null
     }, 2000)
   }
 
   public handleMouseLeave() {
-    this.visible = false
+    this.hovering = false
 
-    if (this.visibleTimeout) window.clearTimeout(this.visibleTimeout)
+    if (this.hoveringTimeout) window.clearTimeout(this.hoveringTimeout)
   }
 
   public closePlayer() {

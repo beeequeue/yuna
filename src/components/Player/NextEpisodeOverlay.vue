@@ -135,15 +135,15 @@ export default class NextEpisodeOverlay extends Vue {
 
 .next-episode-container {
   position: absolute;
-  top: 0;
+  top: 80px;
   left: 0;
-  height: 100%;
+  bottom: 65px;
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  pointer-events: none;
+  pointer-events: all;
   user-select: none;
   white-space: nowrap;
   font-family: 'Raleway', sans-serif;
@@ -152,6 +152,7 @@ export default class NextEpisodeOverlay extends Vue {
   font-weight: 600;
   margin: 0;
   filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.35));
+  z-index: 100;
 
   & > .text {
     padding: 5px;
