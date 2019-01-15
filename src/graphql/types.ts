@@ -941,6 +941,8 @@ export type FuzzyDateInt = any;
     
     id: number;
     
+    mediaId: number;
+    
     status: Maybe<MediaListStatus>;
     
     progress: Maybe<number>;
