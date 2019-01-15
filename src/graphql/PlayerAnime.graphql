@@ -26,6 +26,7 @@ query PlayerAnime($id: Int!) {
       id
       status
       progress
+      score(format: POINT_100)
     }
   }
 }

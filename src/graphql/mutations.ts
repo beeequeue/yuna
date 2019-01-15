@@ -49,12 +49,26 @@ const writeEpisodeProgressToCache = (
   episode: FakeEpisode,
   progress: number,
 ) => {
-  const data = cache.readQuery<EpisodeListQuery, EpisodeListVariables>({
-    query: EPISODE_LIST,
-    variables: {
-      id: episode.animeId,
-    },
-  })
+  let data: EpisodeListQuery | null = null
+
+  try {
+    data = cache.readQuery<EpisodeListQuery, EpisodeListVariables>({
+      query: EPISODE_LIST,
+      variables: {
+        id: episode.animeId,
+      },
+    })
+  } catch (e) {
+    // no-op
+  }
+
+  if (!data || !data.episodes) {
+    const hardCachedData = EpisodeCache.get(episode.animeId, episode.provider)
+
+    data = {
+      episodes: hardCachedData ? hardCachedData.episodes : null,
+    }
+  }
 
   if (!data || !data.episodes) return
 

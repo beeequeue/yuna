@@ -20,10 +20,7 @@
         </div>
       </div>
 
-      <div
-        v-if="isFinalEpisode && sequels.length > 0"
-        class="sequel-container"
-      >
+      <div v-if="isFinalEpisode && sequels.length > 0" class="sequel-container">
         <h1 class="text">Sequel{{ sequels.length > 1 ? 's' : '' }}:</h1>
 
         <div v-for="sequel in sequels" :key="sequel.id" class="sequel">
@@ -40,10 +37,13 @@ import { format, formatDistance } from 'date-fns'
 import { mdiStar, mdiStarOutline } from '@mdi/js'
 
 import { setScoreMutation } from '@/graphql/mutations'
-import { AnimePageQueryNextAiringEpisode } from '@/graphql/types'
+import {
+  AnimePageQueryNextAiringEpisode,
+  PlayerAnimeMediaListEntry,
+} from '@/graphql/types'
 
 import { Required } from '@/decorators'
-import { ListEntry, Sequel } from '@/state/app'
+import { Sequel } from '@/state/app'
 
 import AnimeBanner from '../AnimeBanner.vue'
 import CButton from '../CButton.vue'
@@ -53,7 +53,7 @@ import Icon from '../Icon.vue'
   components: { AnimeBanner, CButton, Icon },
 })
 export default class EndOfSeasonOverlay extends Vue {
-  @Prop(Object) public listEntry!: ListEntry | null
+  @Prop(Object) public listEntry!: PlayerAnimeMediaListEntry | null
   @Required(Array) public sequels!: Sequel[]
   @Required(Number) public episodeNumber!: number
   @Prop(Number) public episodesInAnime!: number | null
