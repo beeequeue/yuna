@@ -207,7 +207,6 @@ import { Key } from 'ts-key-enum'
 import { mdiInformationOutline, mdiRefresh, mdiUndoVariant } from '@mdi/js'
 
 import Keybinding from '@/components/Settings/Keybinding.vue'
-import Group from '@/components/Settings/Group.vue'
 import Checkbox from '@/components/Settings/Checkbox.vue'
 import CButton from '@/components/CButton.vue'
 import Icon from '@/components/Icon.vue'
@@ -230,7 +229,7 @@ import {
 import { DOWNLOAD_UPDATE, OPEN_DEVTOOLS } from '@/messages'
 
 @Component({
-  components: { CButton, Checkbox, Group, Keybinding, Icon },
+  components: { CButton, Checkbox, Keybinding, Icon },
 })
 export default class Settings extends Vue {
   public actionToBind: KeybindingAction | null = null
