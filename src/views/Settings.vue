@@ -176,6 +176,14 @@
           />
         </section>
       </section>
+
+      <section class="category" id="accounts">
+        <h1>Accounts</h1>
+
+        <connection type="anilist"/>
+
+        <connection type="crunchyroll"/>
+      </section>
     </div>
 
     <div class="info-container"></div>
@@ -206,6 +214,7 @@ import { ipcRenderer } from 'electron'
 import { Key } from 'ts-key-enum'
 import { mdiInformationOutline, mdiRefresh, mdiUndoVariant } from '@mdi/js'
 
+import Connection from '@/components/Settings/Connection.vue'
 import Keybinding from '@/components/Settings/Keybinding.vue'
 import Checkbox from '@/components/Settings/Checkbox.vue'
 import CButton from '@/components/CButton.vue'
@@ -229,7 +238,7 @@ import {
 import { DOWNLOAD_UPDATE, OPEN_DEVTOOLS } from '@/messages'
 
 @Component({
-  components: { CButton, Checkbox, Keybinding, Icon },
+  components: { Connection, CButton, Checkbox, Keybinding, Icon },
 })
 export default class Settings extends Vue {
   public actionToBind: KeybindingAction | null = null
