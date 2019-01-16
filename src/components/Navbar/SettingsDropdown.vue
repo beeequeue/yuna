@@ -44,9 +44,7 @@ import { EpisodeCache } from '@/lib/episode-cache'
 import { toggleModal } from '@/state/app'
 import Icon from '../Icon.vue'
 
-@Component({
-  components: { Icon },
-})
+@Component({ components: { Icon } })
 export default class SettingsDropdown extends Vue {
   @Prop(Boolean) public open!: boolean
   @Prop() public toggleOpen!: () => any
@@ -59,7 +57,7 @@ export default class SettingsDropdown extends Vue {
 
   public clearCache() {
     EpisodeCache.clear()
-    caches.delete('images')
+    ;(this as any).$apolloProvider.defaultClient.cache.reset()
   }
 
   public openSettings() {
