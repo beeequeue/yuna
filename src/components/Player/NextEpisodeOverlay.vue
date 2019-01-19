@@ -31,7 +31,7 @@
 
       <transition>
         <div
-          v-if="isPlayerMaximized && shouldAutoPlay && timeoutId"
+          v-if="isPlayerMaximized && shouldAutoPlay && intervalId"
           class="timer-container"
         >
           <span>Starting in {{ secondsLeft }}...</span>
@@ -72,7 +72,7 @@ export default class NextEpisodeOverlay extends Vue {
   @Prop(Boolean) public shouldAutoPlay?: boolean
 
   public secondsLeft = 5
-  public timeoutId: number | null = null
+  public intervalId: number | null = null
 
   public playSvg = mdiPlay
 
@@ -90,12 +90,13 @@ export default class NextEpisodeOverlay extends Vue {
 
   public mounted() {
     if (this.nextEpisode && this.shouldAutoPlay) {
-      this.timeoutId = window.setInterval(() => {
+      this.intervalId = window.setInterval(() => {
         if (this.secondsLeft > 1) {
           return this.secondsLeft--
         }
 
-        this.timeoutId = null
+        window.clearInterval(this.intervalId as number)
+        this.intervalId = null
 
         this.setToNextEpisode()
       }, 1000)
@@ -107,10 +108,10 @@ export default class NextEpisodeOverlay extends Vue {
   }
 
   public cancelCountdown() {
-    if (!this.timeoutId) return
+    if (!this.intervalId) return
 
-    window.clearTimeout(this.timeoutId)
-    this.timeoutId = null
+    window.clearInterval(this.intervalId)
+    this.intervalId = null
   }
 
   public setToNextEpisode() {

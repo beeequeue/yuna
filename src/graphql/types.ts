@@ -924,6 +924,8 @@ export type FuzzyDateInt = any;
     status: Maybe<MediaListStatus>;
     
     progress: Maybe<number>;
+    
+    score: Maybe<number>;
   } 
 
   export type RewatchMutationVariables = {
