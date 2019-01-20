@@ -165,7 +165,7 @@ const responseIsError = (
   return res.body.error === true
 }
 
-let _sessionId: string = userStore.get('crunchyroll.sessionId', '')
+let _sessionId: string = userStore.get('crunchyroll.token', '')
 
 export interface SessionResponse {
   session_id: string
@@ -362,8 +362,7 @@ export class Crunchyroll {
         device_type,
         device_id: uuid(),
         version: '1.1',
-        auth: userStore.get('crunchyroll.token', null),
-        // user_id: userStore.get('crunchyroll.userId', null),
+        auth: userStore.get('crunchyroll.refreshToken', null),
       })) as CrunchyrollResponse<SessionResponse>
 
     if (responseIsError(response)) {
@@ -385,7 +384,7 @@ export class Crunchyroll {
       .get(`https://${CR_UNBLOCKER_URL}/start_session`)
       .ok(T)
       .query({
-        auth: userStore.get('crunchyroll.token', null),
+        auth: userStore.get('crunchyroll.refreshToken', null),
         version: '1.1',
         user_id: userStore.get('crunchyroll.user.id', null),
       })) as CrunchyrollResponse<SessionResponse>
@@ -397,7 +396,6 @@ export class Crunchyroll {
     _sessionId = response.body.data.session_id
 
     userStore.set('crunchyroll.sessionId', _sessionId)
-    userStore.set('crunchyroll.country', response.body.data.country_code)
 
     setCrunchyrollCountry(store, response.body.data.country_code)
 
