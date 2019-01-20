@@ -116,6 +116,7 @@ export default class Episode extends Vue {
 .episode {
   position: relative;
   flex-shrink: 0;
+  width: 300px;
   height: 175px;
   margin: 0 10px;
   border-radius: 8px;
@@ -136,6 +137,7 @@ export default class Episode extends Vue {
 
   &.small {
     height: 125px;
+    width: 215px;
     font-size: 0.85em;
   }
 
@@ -232,7 +234,9 @@ export default class Episode extends Vue {
   & > .thumbnail {
     display: block;
     height: 100%;
+    width: 100%;
     border-radius: 5px;
+    object-fit: cover;
     cursor: pointer;
     pointer-events: all;
     transition: filter 0.75s;
