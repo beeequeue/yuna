@@ -112,9 +112,7 @@ export const resolvers = {
       if (isNil(media) || isNil(media.idMal)) return null
 
       try {
-        const result = await fetchRating(media.idMal)
-
-        return Number(result)
+        return fetchRating(media.idMal)
       } catch (err) {
         return null
       }

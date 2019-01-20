@@ -10,7 +10,7 @@
       <img class="logo mal" :src="malLogo" />
 
       <span v-if="$apollo.loading || scoreMal != null" class="rating">
-        {{ !$apollo.loading ? scoreMal : '...' }}
+        {{ !$apollo.loading ? scoreMal.toFixed(2) : '...' }}
       </span>
     </a>
 

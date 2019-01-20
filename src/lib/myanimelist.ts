@@ -16,7 +16,10 @@ setInterval(() => {
 const waitForRequests = async () =>
   delay(Math.max(0, requestsRecently - 1) * 750)
 
-const handleError = (response: RequestResponse | null, message?: string) => {
+const handleError = (
+  response: RequestResponse | null,
+  message?: string,
+): any => {
   if (response && response.status === 404) {
     return []
   }
@@ -72,7 +75,7 @@ export const fetchEpisodesOfSeries = async (
   return Crunchyroll.fetchSeasonFromEpisode(id, mediaIdMatch[1])
 }
 
-export const fetchRating = async (id: string | number) => {
+export const fetchRating = async (id: string | number): Promise<number> => {
   let response: RequestResponse | null = null
 
   requestsRecently++
@@ -90,5 +93,7 @@ export const fetchRating = async (id: string | number) => {
     return handleError(response, 'Could not fetch MAL rating. 😟')
   }
 
-  return response.body.score as string | null
+  const { score } = response.body
+
+  return score
 }
