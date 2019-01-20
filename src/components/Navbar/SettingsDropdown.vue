@@ -7,7 +7,7 @@
         <icon :icon="settingsSvg" /> <span>Settings</span>
       </div>
 
-      <a href="https://github.com/beeequeue/yuna/issues/new">
+      <a href="https://github.com/beeequeue/yuna/issues">
         <div class="item report-bug">
           <icon :icon="bugSvg" /> <span>Report bug</span>
         </div>
