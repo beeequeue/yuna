@@ -65,15 +65,6 @@ export default class CButton extends Vue {
 <style scoped lang="scss">
 @import '../colors';
 
-@mixin buttonEvents($property, $color) {
-  &:hover {
-    $property: lighten($color, 4%);
-  }
-  &:active {
-    $property: darken($color, 4%);
-  }
-}
-
 @mixin raised($color) {
   background: $color;
 

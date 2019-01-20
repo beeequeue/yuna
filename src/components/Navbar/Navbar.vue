@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="navbar">
     <router-link to="/">
       <icon class="button" :icon="homeOutlineSvg"/>
     </router-link>
@@ -81,7 +81,7 @@ export default class Navbar extends Vue {
 <style scoped lang="scss">
 @import '../../colors';
 
-.container {
+.navbar {
   position: relative;
   display: grid;
   grid-template-columns: 50px 1fr 1.5fr 1fr 50px;
