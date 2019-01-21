@@ -502,6 +502,8 @@ export type FuzzyDateInt = any;
     
     nextAiringEpisode: Maybe<AnimePageQueryNextAiringEpisode>;
     
+    externalLinks: Maybe<AnimePageQueryExternalLinks[]>;
+    
     relations: Maybe<AnimePageQueryRelations>;
     
     mediaListEntry: Maybe<AnimePageQueryMediaListEntry>;
@@ -535,6 +537,14 @@ export type FuzzyDateInt = any;
     timeUntilAiring: number;
     
     episode: number;
+  } 
+
+  export type AnimePageQueryExternalLinks = {
+    __typename?: "MediaExternalLink";
+    
+    site: string;
+    
+    url: string;
   } 
 
   export type AnimePageQueryRelations = {
@@ -610,6 +620,8 @@ export type FuzzyDateInt = any;
     
     nextAiringEpisode: Maybe<AnimeQueueQueryNextAiringEpisode>;
     
+    externalLinks: Maybe<AnimeQueueQueryExternalLinks[]>;
+    
     mediaListEntry: Maybe<AnimeQueueQueryMediaListEntry>;
   } 
 
@@ -627,6 +639,14 @@ export type FuzzyDateInt = any;
     timeUntilAiring: number;
     
     episode: number;
+  } 
+
+  export type AnimeQueueQueryExternalLinks = {
+    __typename?: "MediaExternalLink";
+    
+    site: string;
+    
+    url: string;
   } 
 
   export type AnimeQueueQueryMediaListEntry = {
@@ -1145,85 +1165,3 @@ export type FuzzyDateInt = any;
     id: number;
   } 
 
-
-      export interface IntrospectionResultData {
-        __schema: {
-          types: {
-            kind: string;
-            name: string;
-            possibleTypes: {
-              name: string;
-            }[];
-          }[];
-        };
-      }
-
-      const result: IntrospectionResultData = {
-  "__schema": {
-    "types": [
-      {
-        "kind": "UNION",
-        "name": "NotificationUnion",
-        "possibleTypes": [
-          {
-            "name": "AiringNotification"
-          },
-          {
-            "name": "FollowingNotification"
-          },
-          {
-            "name": "ActivityMessageNotification"
-          },
-          {
-            "name": "ActivityMentionNotification"
-          },
-          {
-            "name": "ActivityReplyNotification"
-          },
-          {
-            "name": "ActivityReplySubscribedNotification"
-          },
-          {
-            "name": "ActivityLikeNotification"
-          },
-          {
-            "name": "ActivityReplyLikeNotification"
-          },
-          {
-            "name": "ThreadCommentMentionNotification"
-          },
-          {
-            "name": "ThreadCommentReplyNotification"
-          },
-          {
-            "name": "ThreadCommentSubscribedNotification"
-          },
-          {
-            "name": "ThreadCommentLikeNotification"
-          },
-          {
-            "name": "ThreadLikeNotification"
-          }
-        ]
-      },
-      {
-        "kind": "UNION",
-        "name": "ActivityUnion",
-        "possibleTypes": [
-          {
-            "name": "TextActivity"
-          },
-          {
-            "name": "ListActivity"
-          },
-          {
-            "name": "MessageActivity"
-          }
-        ]
-      }
-    ]
-  }
-};
-
-      export default result;
-    

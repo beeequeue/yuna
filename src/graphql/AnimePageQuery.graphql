@@ -23,6 +23,10 @@ query AnimePageQuery($id: Int) {
       timeUntilAiring
       episode
     }
+    externalLinks {
+      site
+      url
+    }
     relations {
       edges {
         relationType

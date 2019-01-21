@@ -14,6 +14,10 @@ query AnimeQueueQuery($id: Int) {
       timeUntilAiring
       episode
     }
+    externalLinks {
+      site
+      url
+    }
     mediaListEntry {
       id
       progress
