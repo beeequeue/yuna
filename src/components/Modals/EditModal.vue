@@ -121,12 +121,12 @@ export default class EditModal extends Vue {
   @Prop(Boolean) public visible!: boolean | null
   @Required(Function) public toggleVisible!: () => any
 
-  public statusItems: DropdownItem[] = enumToArray<MediaListStatus>(
-    MediaListStatus,
-  ).map(status => ({
-    label: capitalize(status),
-    value: status,
-  }))
+  public statusItems: DropdownItem[] = enumToArray(MediaListStatus).map(
+    status => ({
+      label: capitalize((status as unknown) as string),
+      value: (status as unknown) as string,
+    }),
+  )
 
   public SAVE_LIST_ENTRY_MUTATION = SAVE_LIST_ENTRY_MUTATION
   public deleteSvg = mdiCloseCircle

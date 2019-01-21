@@ -112,8 +112,10 @@ export const hasKey = (obj: any, value: any) => Object.keys(obj).includes(value)
 export const clamp = (x: number, min: number, max: number) =>
   Math.max(min, Math.min(x, max))
 
-export const enumToArray = <T>(Enum: any): T[] =>
-  Object.keys(Enum).map(key => Enum[key])
+export const enumToArray = <E>(Enum: E): E[] => Object.values(Enum)
+
+export const enumKeysToArray = <E>(Enum: E): Array<keyof E> =>
+  Object.keys(Enum) as any
 
 export const capitalize = (str: string) => {
   let words = str.split(' ')
