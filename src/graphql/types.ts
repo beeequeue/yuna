@@ -405,6 +405,7 @@ export enum ThreadSort {
 
 export enum Provider {
   Crunchyroll = "CRUNCHYROLL",
+  Hidive = "HIDIVE",
 }
 /** Types that can be liked */
 export enum LikeableType {
