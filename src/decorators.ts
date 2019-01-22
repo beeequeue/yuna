@@ -44,3 +44,22 @@ export function Required(type: Prop<any>): PropertyDecorator {
     }
   }) as any
 }
+
+export function Default(type: Prop<any>, defaultValue: any): PropertyDecorator {
+  return createDecorator((componentOptions, key) => {
+    if (!componentOptions.props) {
+      componentOptions.props = {}
+    }
+
+    ;(componentOptions.props as any)[key] = {
+      type,
+      required: false,
+      default: defaultValue,
+    }
+
+    // If the default value is an array or function it has to be a factory function
+    if (Array.isArray(defaultValue) || typeof defaultValue === 'object') {
+      ;(componentOptions.props as any)[key].default = () => defaultValue
+    }
+  }) as any
+}

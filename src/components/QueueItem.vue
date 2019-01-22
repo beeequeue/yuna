@@ -117,6 +117,7 @@
               :episodesInAnime="data.anime.episodes"
               :nextAiringEpisode="data.anime.nextAiringEpisode"
               :listEntry="data.anime.mediaListEntry"
+              :links="data.anime.externalLinks"
               scrollToCurrentEpisode
               small
             />

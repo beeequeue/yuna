@@ -37,6 +37,7 @@
         :empty="true"
       />
     </div>
+    <source-list v-else-if="!$apollo.loading && !error" :links="links" />
 
     <input
       v-if="showScroller && episodes && episodes.length > 0 && !$apollo.loading"
@@ -58,11 +59,13 @@ import { mdiCached } from '@mdi/js'
 
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
+  AnimePageQueryExternalLinks,
   AnimePageQueryNextAiringEpisode,
   EpisodeListEpisodes,
+  Provider,
 } from '@/graphql/types'
 
-import { Query, Required } from '@/decorators'
+import { Default, Query, Required } from '@/decorators'
 import {
   getPlaylistAnimeId,
   ListEntry,
@@ -74,8 +77,9 @@ import CButton from './CButton.vue'
 import Episode from './Episode.vue'
 import Icon from './Icon.vue'
 import Loader from './Loader.vue'
+import SourceList from './SourceList.vue'
 
-@Component({ components: { CButton, Episode, Icon, Loader } })
+@Component({ components: { SourceList, CButton, Episode, Icon, Loader } })
 export default class EpisodeList extends Vue {
   @Required(Number) public id!: number
   @Required(Number) public idMal!: number
@@ -84,6 +88,8 @@ export default class EpisodeList extends Vue {
   @Prop(Object)
   public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
   @Prop(Object) public listEntry!: ListEntry | null
+  @Default(Array, [])
+  public links!: AnimePageQueryExternalLinks[]
   @Prop(Boolean) public showScroller!: boolean | null
   @Prop(Boolean) public small!: boolean | null
   @Prop(Boolean) public rightPadding!: boolean | null
@@ -107,7 +113,7 @@ export default class EpisodeList extends Vue {
     },
     error(err) {
       if (typeof err === 'string') {
-        this.error = err
+        this.error = err.replace('Network error: ', '')
         return
       }
 
@@ -120,6 +126,7 @@ export default class EpisodeList extends Vue {
     },
   })
   public episodes: EpisodeListEpisodes[] | null = null
+  public provider = Provider.Crunchyroll
   public error: string | null = null
   public scrollerValue = ''
 
