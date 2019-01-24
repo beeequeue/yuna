@@ -1,6 +1,6 @@
 <template>
   <div v-if="!$apollo.error && anime" class="queue-item">
-    <div class="handle" />
+    <icon :icon="hamburgerSvg" class="handle" />
 
     <anime-banner :anime="anime" :faded="!isWatching" />
   </div>
@@ -9,6 +9,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { path } from 'rambdax'
+import { mdiMenu } from '@mdi/js'
 
 import ANIME_QUEUE_QUERY from '@/graphql/AnimeQueueQuery.graphql'
 import {
@@ -19,15 +20,16 @@ import {
 } from '@/graphql/types'
 
 import AnimeBanner from '@/components/AnimeBanner.vue'
+import Icon from '@/components/Icon.vue'
 
 import { Query, Required } from '@/decorators'
 import { QueueItem } from '@/lib/user'
 
-@Component({
-  components: { AnimeBanner },
-})
+@Component({ components: { AnimeBanner, Icon } })
 export default class NewQueueItem extends Vue {
   @Required(Object) public item!: QueueItem
+
+  public hamburgerSvg = mdiMenu
 
   @Query<NewQueueItem, AnimeQueueQueryQuery, AnimeQueueQueryVariables>({
     query: ANIME_QUEUE_QUERY,
@@ -65,6 +67,7 @@ export default class NewQueueItem extends Vue {
   margin-bottom: 15px;
   display: inline-block;
   border-radius: 5px;
+  box-shadow: 1px 2px 15px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   z-index: 2;
 
@@ -72,11 +75,20 @@ export default class NewQueueItem extends Vue {
     position: absolute;
     top: 0;
     right: 0;
-    height: 20px;
+    height: 100%;
     width: 20px;
-    border-bottom-left-radius: 15px;
-    background: #5a5a5a;
+    padding: 2px;
+    border-bottom-left-radius: 5px;
+    background: #616161;
     cursor: -webkit-grab;
+    z-index: 5;
+
+    transform: translateX(100%);
+    transition: transform 0.15s;
+  }
+
+  &:hover > .handle {
+    transform: none;
   }
 }
 
