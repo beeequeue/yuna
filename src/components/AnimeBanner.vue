@@ -38,7 +38,7 @@ export default class AnimeBanner extends Vue {
 @import '../colors';
 
 .anime-banner {
-  display: inline-block;
+  display: block;
   position: relative;
   height: 75px;
   width: 100%;
