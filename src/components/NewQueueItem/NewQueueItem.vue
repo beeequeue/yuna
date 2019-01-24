@@ -3,13 +3,22 @@
     <icon :icon="hamburgerSvg" class="handle" />
 
     <anime-banner :anime="anime" :faded="!isWatching" />
+
+    <div class="controls">
+      <icon
+        class="collapser"
+        :class="{ flip: !item.open }"
+        :icon="expandSvg"
+        @click.native="toggleItemOpen"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { path } from 'rambdax'
-import { mdiMenu } from '@mdi/js'
+import { mdiChevronDown, mdiMenu } from '@mdi/js'
 
 import ANIME_QUEUE_QUERY from '@/graphql/AnimeQueueQuery.graphql'
 import {
@@ -24,11 +33,13 @@ import Icon from '@/components/Icon.vue'
 
 import { Query, Required } from '@/decorators'
 import { QueueItem } from '@/lib/user'
+import { toggleQueueItemOpen } from '@/state/user'
 
 @Component({ components: { AnimeBanner, Icon } })
 export default class NewQueueItem extends Vue {
   @Required(Object) public item!: QueueItem
 
+  public expandSvg = mdiChevronDown
   public hamburgerSvg = mdiMenu
 
   @Query<NewQueueItem, AnimeQueueQueryQuery, AnimeQueueQueryVariables>({
@@ -51,6 +62,10 @@ export default class NewQueueItem extends Vue {
     return this.isStatus(MediaListStatus.Current, MediaListStatus.Repeating)
   }
 
+  public toggleItemOpen() {
+    toggleQueueItemOpen(this.$store, this.item.id)
+  }
+
   public isStatus(...statuses: MediaListStatus[]) {
     return statuses.includes(
       path<MediaListStatus>(['mediaListEntry', 'status'], this.anime),
@@ -60,6 +75,8 @@ export default class NewQueueItem extends Vue {
 </script>
 
 <style scoped lang="scss">
+@import '../../colors';
+
 .queue-item {
   left: 0;
   position: relative;
@@ -75,7 +92,7 @@ export default class NewQueueItem extends Vue {
     position: absolute;
     top: 0;
     right: 0;
-    height: 100%;
+    height: 75px;
     width: 20px;
     padding: 2px;
     border-bottom-left-radius: 5px;
@@ -89,6 +106,28 @@ export default class NewQueueItem extends Vue {
 
   &:hover > .handle {
     transform: none;
+  }
+
+  & > .controls {
+    display: flex;
+    background: $dark;
+
+    & > .collapser {
+      flex-shrink: 0;
+      height: 32px;
+      width: 35px;
+      fill: $white;
+      padding: 0 5px;
+      cursor: pointer;
+
+      & /deep/ svg {
+        transition: transform 0.5s;
+      }
+
+      &.flip /deep/ svg {
+        transform: rotateZ(-180deg);
+      }
+    }
   }
 }
 

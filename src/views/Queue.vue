@@ -2,22 +2,21 @@
   <div class="queue">
     <div ref="container" class="container">
       <draggable
-        v-model="queue"
+        v-model="fakeQueue"
         :options="draggableOptions"
         class="draggable-container"
       >
         <transition-group type="transition" tag="div" class="transition-group">
-          <queue-item
-            v-for="item in queue"
+          <new-queue-item
+            v-for="item in fakeQueue"
             :item="item"
             :key="item.id"
-            class="anime"
           />
         </transition-group>
       </draggable>
 
       <transition name="fade">
-        <div v-if="queue.length < 1" class="empty-message">
+        <div v-if="fakeQueue.length < 1" class="empty-message">
           Seems your queue is empty! <br />You can import shows from your list
           or add some by searching! <br />
 
@@ -32,6 +31,12 @@
 
     <div class="sidebar" :class="{ small: isPlayerOpen }">
       <span class="fill" />
+
+      <span>{{ this.fakeQueue.length }}</span>
+
+      <c-button content="+++++++++++" :click="affectFakeQueue" />
+
+      <c-button content="-------------" :click="() => affectFakeQueue(true)" />
 
       <c-button
         content="Import Watching from List"
@@ -83,15 +88,16 @@ import CButton from '@/components/CButton.vue'
 import QueueItem from '@/components/QueueItem.vue'
 
 import { pausedQuery, planningQuery, watchingQuery } from '@/graphql/query'
-import { WatchingQueryLists, WatchingQueryEntries } from '@/graphql/types'
+import { WatchingQueryEntries, WatchingQueryLists } from '@/graphql/types'
 
 import { Page, trackPageView } from '@/lib/tracking'
 import { QueueItem as IQueueItem } from '@/lib/user'
 import { getPlayerData, sendErrorToast, sendToast } from '@/state/app'
 import { getAnilistUserId, getAnilistUsername } from '@/state/auth'
 import { addToQueue, getQueue, setQueue } from '@/state/user'
+import NewQueueItem from '@/components/NewQueueItem/NewQueueItem.vue'
 
-@Component({ components: { Draggable, CButton, QueueItem } })
+@Component({ components: { NewQueueItem, Draggable, CButton, QueueItem } })
 export default class Queue extends Vue {
   private defaultBackupPath = resolve(api.app.getPath('userData'), 'backups')
   private jsonFilter = { extensions: ['json'], name: '*' }
@@ -126,8 +132,27 @@ export default class Queue extends Vue {
     setQueue(this.$store, value)
   }
 
+  public fakeQueue = [{ id: 5680, open: false }]
+
   public mounted() {
     trackPageView(Page.QUEUE)
+  }
+
+  public affectFakeQueue(doRemove = false) {
+    const ids = [5680, 21699, 21856, 100077, 101291, 21460]
+
+    if (doRemove) {
+      const idx = Math.round(Math.random() * (this.fakeQueue.length - 1))
+      const arr = [...this.fakeQueue]
+      arr.splice(idx, 1)
+      this.fakeQueue = arr
+    } else {
+      const id = ids.filter(
+        id => !this.fakeQueue.find(item => item.id === id),
+      )[0]
+      if (!id) return
+      this.fakeQueue = [...this.fakeQueue, { id, open: false }]
+    }
   }
 
   public async importFromQuery(
