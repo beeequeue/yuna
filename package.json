@@ -7,6 +7,7 @@
     "@mdi/js": "3.3.92",
     "@sentry/browser": "4.5.2",
     "apollo-boost": "0.1.27",
+    "bottleneck": "2.15.3",
     "date-fns": "2.0.0-alpha.26",
     "discord-rpc": "3.0.1",
     "electron-debug": "2.0.0",

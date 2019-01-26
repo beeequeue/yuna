@@ -1,20 +1,36 @@
+import Bottleneck from 'bottleneck'
 import request from 'superagent/superagent'
-import { delay, T } from 'rambdax'
+import { T } from 'rambdax'
+
+import { EpisodeListEpisodes } from '@/graphql/types'
 
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { RequestResponse, responseIsError } from '@/utils'
-import { EpisodeListEpisodes } from '@/graphql/types'
 
-let requestsRecently = 0
+const baseUrl = `https://myanimelist.net/anime/`
 const CRUNCHYROLL_PROVIDER_ID = '1'
 
-setInterval(() => {
-  requestsRecently = 0
-}, 5000)
+const malLimiter = new Bottleneck({
+  maxConcurrent: 2,
+  reservoir: 3,
+  reservoirRefreshAmount: 3,
+  reservoirRefreshInterval: 3 * 1000,
+  minTime: 350,
+})
 
-// Waits
-const waitForRequests = async () =>
-  delay(Math.max(0, requestsRecently - 1) * 750)
+const jikanLimiter = new Bottleneck({
+  reservoir: 4,
+  reservoirRefreshAmount: 4,
+  reservoirRefreshInterval: 5 * 1000,
+  minTime: 250,
+})
+
+const _request = async <B extends {} = any>(
+  url: string,
+): Promise<RequestResponse<B>> =>
+  request.get(url).ok(T) as Promise<RequestResponse<B>>
+
+const requestLimited = (url: string) => malLimiter.schedule(() => _request(url))
 
 const handleError = (
   response: RequestResponse | null,
@@ -35,25 +51,21 @@ export const fetchEpisodesOfSeries = async (
   id: number,
   idMal: number,
 ): Promise<EpisodeListEpisodes[]> => {
-  const baseUrl = `https://myanimelist.net/anime/${idMal}`
-  const episodeResponse = (await request.get(baseUrl).ok(T)) as RequestResponse
+  const episodeResponse = await requestLimited(`${baseUrl}/${idMal}`)
 
   if (responseIsError(episodeResponse)) {
     return handleError(episodeResponse)
   }
 
   const episodesLinkMatch = episodeResponse.text.match(
-    `(${baseUrl}\/.*\/episode)`,
+    /(https:\/\/.*anime\/\d+.*\/episode)/,
   )
   if (!episodesLinkMatch || !episodesLinkMatch[1]) {
     return []
   }
 
-  requestsRecently++
-  await waitForRequests()
-
   const videoUrl = episodesLinkMatch[0] + '/1'
-  const response = (await request.get(videoUrl).ok(T)) as RequestResponse
+  const response = await requestLimited(videoUrl)
 
   if (responseIsError(response)) {
     return handleError(response)
@@ -76,15 +88,12 @@ export const fetchEpisodesOfSeries = async (
 }
 
 export const fetchRating = async (id: string | number): Promise<number> => {
-  let response: RequestResponse | null = null
-
-  requestsRecently++
-  await waitForRequests()
+  let response: RequestResponse<{ score: string | null }> | null = null
 
   try {
-    response = (await request.get(
-      `https://api.jikan.moe/v3/anime/${id}`,
-    )) as RequestResponse<{ score: string | null }>
+    response = (await jikanLimiter.schedule(() =>
+      request.get(`https://api.jikan.moe/v3/anime/${id}`),
+    )) as any
   } catch (e) {
     // noop
   }
@@ -95,5 +104,5 @@ export const fetchRating = async (id: string | number): Promise<number> => {
 
   const { score } = response.body
 
-  return score
+  return Number(score)
 }
