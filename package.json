@@ -34,7 +34,8 @@
     "vue-router": "3.0.2",
     "vuedraggable": "2.17.0",
     "vuex": "3.1.0",
-    "vuex-typescript": "3.0.2"
+    "vuex-typescript": "3.0.2",
+    "xml2js": "0.4.19"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "7.2.3",
@@ -50,6 +51,7 @@
     "@types/superagent": "3.8.6",
     "@types/uuid": "3.4.4",
     "@types/webpack-env": "1.13.6",
+    "@types/xml2js": "0.4.3",
     "@vue/cli-plugin-babel": "3.2.2",
     "@vue/cli-plugin-typescript": "3.2.2",
     "@vue/cli-service": "3.2.2",

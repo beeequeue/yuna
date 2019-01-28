@@ -13,6 +13,7 @@ import {
 import { fetchEpisodesOfSeries, fetchRating } from '@/lib/myanimelist'
 import { EpisodeRelations, getEpisodeRelations } from '@/lib/relations'
 import { EpisodeCache } from '@/lib/episode-cache'
+import { AniDB } from '@/lib/anidb'
 
 interface EpisodeVariables {
   id: number
@@ -174,6 +175,14 @@ export const resolvers = {
             unconfirmedEpisodes = await fetchEpisodesOfSeries(id, data.idMal)
           } catch (err) {
             throw new Error(err)
+          }
+
+          if (unconfirmedEpisodes == null || unconfirmedEpisodes.length === 0) {
+            try {
+              unconfirmedEpisodes = await AniDB.getEpisodesForAnime(id)
+            } catch (err) {
+              throw new Error(err)
+            }
           }
 
           if (!unconfirmedEpisodes) return null

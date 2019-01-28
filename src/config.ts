@@ -1,6 +1,8 @@
 const config = {
   all: {
     ACCESS_TOKEN: 'LNDJgOit5yaRIWN',
+    ANIDB_CLIENT: 'application',
+    ANIDB_CLIENTVER: '1',
     ANILIST_ID: '913',
     DISCORD_ID: '527978676525072386',
     GA_ID: '527978676525072386',
