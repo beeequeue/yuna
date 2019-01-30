@@ -82,7 +82,7 @@ const getIdentifier = (ep: XmlEpisode) => {
 
 const limiter = new Bottleneck({
   maxConcurrent: 1,
-  minTime: 2000,
+  minTime: 2250,
 })
 
 const query = {
@@ -113,7 +113,9 @@ export class AniDB {
         })
         .ok(T)
 
-    const response = (await limiter.schedule(request)) as RequestResponse
+    const response = (await limiter.schedule(() =>
+      request(),
+    )) as RequestResponse
 
     if (responseIsError(response)) {
       return null

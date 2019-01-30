@@ -12,9 +12,9 @@ const CRUNCHYROLL_PROVIDER_ID = '1'
 
 const malLimiter = new Bottleneck({
   maxConcurrent: 2,
-  reservoir: 3,
-  reservoirRefreshAmount: 3,
-  reservoirRefreshInterval: 3 * 1000,
+  reservoir: 2,
+  reservoirRefreshAmount: 2,
+  reservoirRefreshInterval: 2 * 1000,
   minTime: 350,
 })
 
