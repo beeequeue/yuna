@@ -325,7 +325,7 @@ export default class Queue extends Vue {
     overflow-x: hidden;
 
     min-width: 800px;
-    background: #10111a;
+    background: transparentize(#000000, 0.15);
     user-select: none;
 
     & > .empty-message {
