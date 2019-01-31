@@ -1,7 +1,7 @@
 console.log('Service worker startups.')
 
 const endsWith = (url, ...strs) => strs.some(str => url.endsWith(str))
-const includes = (url, ...strs) => strs.some(str => url.includes(str))
+const matches = (url, ...regexps) => regexps.some(regex => url.match(regex))
 
 const fromCache = async request => {
   const cache = await caches.open('images')
@@ -29,7 +29,7 @@ self.addEventListener('install', () => {
 self.addEventListener('fetch', event => {
   const { url } = event.request
   const isImage = endsWith(url, '.png', '.jpg', '.jpeg', '.gif')
-  const isFromCacheableUrl = includes(url, 'img1.ak.crunchyroll.com', 's3.anilist.co')
+  const isFromCacheableUrl = matches(url, /img\d\.ak\.crunchyroll\.com/, /s\d.anilist.co/)
 
   if (!isImage || !isFromCacheableUrl) return
 
