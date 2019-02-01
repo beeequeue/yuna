@@ -32,7 +32,7 @@
     "vue-class-component": "6.3.2",
     "vue-property-decorator": "7.3.0",
     "vue-router": "3.0.2",
-    "vuedraggable": "2.17.0",
+    "vue-smooth-dnd": "0.2.8",
     "vuex": "3.1.0",
     "vuex-typescript": "3.0.2",
     "xml2js": "0.4.19"

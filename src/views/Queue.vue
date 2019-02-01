@@ -1,14 +1,24 @@
 <template>
   <div class="queue">
     <div class="queue-container">
-      <transition-group tag="div">
-        <new-queue-item
+      <container
+        lock-axis="y"
+        drag-handle-selector=".handle"
+        :get-child-payload="getChildPayload"
+        @drop="handleDrop"
+      >
+        <draggable
           v-for="item in fakeQueue"
+          v-if="getAnime(item.id) != null"
           :key="item.id"
-          :anime="getAnime(item.id)"
-          :open="item.open"
-        />
-      </transition-group>
+        >
+          <new-queue-item
+            :anime="getAnime(item.id)"
+            :open="item.open"
+            :key="item.id"
+          />
+        </draggable>
+      </container>
 
       <transition name="fade">
         <div v-if="fakeQueue.length < 1" class="empty-message">
@@ -71,6 +81,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { Container, Draggable } from 'vue-smooth-dnd'
 import { remote, shell } from 'electron'
 import { activeWindow, api } from 'electron-util'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
@@ -104,8 +115,8 @@ const sortNumber = (a: number, b: number) => a - b
   components: {
     NewQueueItem,
     CButton,
-    // GridLayout: VueGridLayout.GridLayout,
-    // GridItem: VueGridLayout.GridItem,
+    Container,
+    Draggable,
   },
 })
 export default class Queue extends Vue {
@@ -183,6 +194,15 @@ export default class Queue extends Vue {
       if (!id) return
       this.fakeQueue = [...this.fakeQueue, { id, open: false }]
     }
+  }
+
+  public handleDrop({ removedIndex, addedIndex, payload }: any) {
+    this.fakeQueue.splice(removedIndex, 1)
+    this.fakeQueue.splice(addedIndex, 0, payload)
+  }
+
+  public getChildPayload(index: number) {
+    return this.fakeQueue[index]
   }
 
   public async importFromQuery(
@@ -353,8 +373,9 @@ export default class Queue extends Vue {
     min-width: 800px;
     user-select: none;
 
-    & > div:not(.empty-message) {
+    & > .smooth-dnd-container {
       position: relative;
+      height: 100%;
     }
 
     & > .empty-message {
@@ -382,6 +403,7 @@ export default class Queue extends Vue {
   }
 
   .sidebar {
+    width: 325px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
