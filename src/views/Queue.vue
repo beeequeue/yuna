@@ -2,7 +2,12 @@
   <div class="queue">
     <div class="queue-container">
       <transition-group tag="div">
-        <new-queue-item v-for="item in fakeQueue" :item="item" :key="item.id" />
+        <new-queue-item
+          v-for="item in fakeQueue"
+          :key="item.id"
+          :anime="getAnime(item.id)"
+          :open="item.open"
+        />
       </transition-group>
 
       <transition name="fade">
@@ -66,37 +71,62 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import VueGridLayout from 'vue-grid-layout'
 import { remote, shell } from 'electron'
 import { activeWindow, api } from 'electron-util'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
-import { complement, path } from 'rambdax'
+import { complement, indexBy, path, pathOr } from 'rambdax'
 import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 
 import CButton from '@/components/CButton.vue'
 import NewQueueItem from '@/components/NewQueueItem/NewQueueItem.vue'
 
 import { pausedQuery, planningQuery, watchingQuery } from '@/graphql/query'
-import { WatchingQueryEntries, WatchingQueryLists } from '@/graphql/types'
+import {
+  QueueAnime,
+  QueueQuery,
+  QueueVariables,
+  WatchingQueryEntries,
+  WatchingQueryLists,
+} from '@/graphql/types'
+import QUEUE_QUERY from '@/graphql/Queue.graphql'
 
 import { Page, trackPageView } from '@/lib/tracking'
-import { QueueItem as IQueueItem } from '@/lib/user'
 import { getPlayerData, sendErrorToast, sendToast } from '@/state/app'
 import { getAnilistUserId, getAnilistUsername } from '@/state/auth'
 import { addToQueue, getQueue, setQueue } from '@/state/user'
+import { Query } from '@/decorators'
+import { QueueItem as IQueueItem } from '@/lib/user'
+
+const sortNumber = (a: number, b: number) => a - b
 
 @Component({
   components: {
     NewQueueItem,
     CButton,
-    GridLayout: VueGridLayout.GridLayout,
-    GridItem: VueGridLayout.GridItem,
+    // GridLayout: VueGridLayout.GridLayout,
+    // GridItem: VueGridLayout.GridItem,
   },
 })
 export default class Queue extends Vue {
   private defaultBackupPath = resolve(api.app.getPath('userData'), 'backups')
   private jsonFilter = { extensions: ['json'], name: '*' }
+
+  @Query<Queue, QueueQuery, QueueVariables>({
+    query: QUEUE_QUERY,
+    variables() {
+      return {
+        ids: this.fakeQueue.map(path('id')).sort(sortNumber),
+      }
+    },
+    update: data => {
+      const items = pathOr([], ['queue', 'anime'])(data)
+      return indexBy(anime => path('id', anime), items)
+    },
+  })
+  public animes!: {
+    [key: number]: QueueAnime
+  }
 
   public gridOptions = {
     animation: 150,
@@ -132,6 +162,10 @@ export default class Queue extends Vue {
 
   public mounted() {
     trackPageView(Page.QUEUE)
+  }
+
+  public getAnime(id: number) {
+    return this.animes[id]
   }
 
   public affectFakeQueue(doRemove = false) {
@@ -354,7 +388,7 @@ export default class Queue extends Vue {
     align-items: stretch;
     padding: 20px 25px;
 
-    background: #1a1b29;
+    background: #202130;
 
     &.small {
       grid-area: sidebar;

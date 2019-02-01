@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!$apollo.error && anime" class="queue-item">
+  <div class="queue-item">
     <icon :icon="hamburgerSvg" class="handle" />
 
     <anime-banner :anime="anime" :faded="!isWatching" />
@@ -7,7 +7,7 @@
     <div class="controls">
       <icon
         class="collapser"
-        :class="{ flip: !item.open }"
+        :class="{ flip: !open }"
         :icon="expandSvg"
         @click.native="toggleItemOpen"
       />
@@ -19,51 +19,28 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { path } from 'rambdax'
 import { mdiChevronDown, mdiMenu } from '@mdi/js'
-
-import ANIME_QUEUE_QUERY from '@/graphql/AnimeQueueQuery.graphql'
-import {
-  AnimeQueueQueryAnime,
-  AnimeQueueQueryQuery,
-  AnimeQueueQueryVariables,
-  MediaListStatus,
-} from '@/graphql/types'
+import { MediaListStatus, QueueAnime } from '@/graphql/types'
 
 import AnimeBanner from '@/components/AnimeBanner.vue'
 import Icon from '@/components/Icon.vue'
 
-import { Query, Required } from '@/decorators'
-import { QueueItem } from '@/lib/user'
+import { Required } from '@/decorators'
 import { toggleQueueItemOpen } from '@/state/user'
 
 @Component({ components: { AnimeBanner, Icon } })
 export default class NewQueueItem extends Vue {
-  @Required(Object) public item!: QueueItem
+  @Required(Object) public anime!: QueueAnime
+  @Required(Boolean) public open!: boolean
 
   public expandSvg = mdiChevronDown
   public hamburgerSvg = mdiMenu
-
-  @Query<NewQueueItem, AnimeQueueQueryQuery, AnimeQueueQueryVariables>({
-    query: ANIME_QUEUE_QUERY,
-    variables() {
-      return {
-        id: this.item.id,
-      }
-    },
-    skip() {
-      return !this.item.id
-    },
-    update(data) {
-      return data.anime
-    },
-  })
-  public anime: AnimeQueueQueryAnime | null = null
 
   public get isWatching() {
     return this.isStatus(MediaListStatus.Current, MediaListStatus.Repeating)
   }
 
   public toggleItemOpen() {
-    toggleQueueItemOpen(this.$store, this.item.id)
+    toggleQueueItemOpen(this.$store, this.anime.id)
   }
 
   public isStatus(...statuses: MediaListStatus[]) {

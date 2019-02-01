@@ -949,6 +949,84 @@ export type FuzzyDateInt = any;
     score: Maybe<number>;
   } 
 
+  export type QueueVariables = {
+    ids: number[];
+  }
+
+  export type QueueQuery = {
+    __typename?: "Query";
+    
+    queue: Maybe<QueueQueue>;
+  }
+
+  export type QueueQueue = {
+    __typename?: "Page";
+    
+    anime: Maybe<QueueAnime[]>;
+  } 
+
+  export type QueueAnime = {
+    __typename?: "Media";
+    
+    id: number;
+    
+    idMal: Maybe<number>;
+    
+    title: Maybe<QueueTitle>;
+    
+    episodes: Maybe<number>;
+    
+    status: Maybe<MediaStatus>;
+    
+    siteUrl: Maybe<string>;
+    
+    bannerImage: Maybe<string>;
+    
+    nextAiringEpisode: Maybe<QueueNextAiringEpisode>;
+    
+    externalLinks: Maybe<QueueExternalLinks[]>;
+    
+    mediaListEntry: Maybe<QueueMediaListEntry>;
+  } 
+
+  export type QueueTitle = {
+    __typename?: "MediaTitle";
+    
+    userPreferred: Maybe<string>;
+  } 
+
+  export type QueueNextAiringEpisode = {
+    __typename?: "AiringSchedule";
+    
+    airingAt: number;
+    
+    timeUntilAiring: number;
+    
+    episode: number;
+  } 
+
+  export type QueueExternalLinks = {
+    __typename?: "MediaExternalLink";
+    
+    site: string;
+    
+    url: string;
+  } 
+
+  export type QueueMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    progress: Maybe<number>;
+    
+    status: Maybe<MediaListStatus>;
+    
+    repeat: Maybe<number>;
+    
+    score: Maybe<number>;
+  } 
+
   export type RewatchMutationVariables = {
     id: Maybe<number>;
   }

@@ -90,6 +90,16 @@ declare module '*/PlayerAnime.graphql' {
   export default defaultDocument
 }
 
+declare module '*/Queue.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const Queue: DocumentNode
+
+  export { Queue }
+
+  export default defaultDocument
+}
+
 declare module '*/RewatchMutation.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
