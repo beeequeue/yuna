@@ -1,19 +1,9 @@
 <template>
   <div class="queue">
-    <div ref="container" class="container">
-      <draggable
-        v-model="fakeQueue"
-        :options="draggableOptions"
-        class="draggable-container"
-      >
-        <transition-group type="transition" tag="div" class="transition-group">
-          <new-queue-item
-            v-for="item in fakeQueue"
-            :item="item"
-            :key="item.id"
-          />
-        </transition-group>
-      </draggable>
+    <div class="queue-container">
+      <transition-group tag="div">
+        <new-queue-item v-for="item in fakeQueue" :item="item" :key="item.id" />
+      </transition-group>
 
       <transition name="fade">
         <div v-if="fakeQueue.length < 1" class="empty-message">
@@ -76,7 +66,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import Draggable from 'vuedraggable'
+import VueGridLayout from 'vue-grid-layout'
 import { remote, shell } from 'electron'
 import { activeWindow, api } from 'electron-util'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
@@ -85,7 +75,7 @@ import { complement, path } from 'rambdax'
 import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 
 import CButton from '@/components/CButton.vue'
-import QueueItem from '@/components/QueueItem.vue'
+import NewQueueItem from '@/components/NewQueueItem/NewQueueItem.vue'
 
 import { pausedQuery, planningQuery, watchingQuery } from '@/graphql/query'
 import { WatchingQueryEntries, WatchingQueryLists } from '@/graphql/types'
@@ -95,14 +85,20 @@ import { QueueItem as IQueueItem } from '@/lib/user'
 import { getPlayerData, sendErrorToast, sendToast } from '@/state/app'
 import { getAnilistUserId, getAnilistUsername } from '@/state/auth'
 import { addToQueue, getQueue, setQueue } from '@/state/user'
-import NewQueueItem from '@/components/NewQueueItem/NewQueueItem.vue'
 
-@Component({ components: { NewQueueItem, Draggable, CButton, QueueItem } })
+@Component({
+  components: {
+    NewQueueItem,
+    CButton,
+    GridLayout: VueGridLayout.GridLayout,
+    GridItem: VueGridLayout.GridItem,
+  },
+})
 export default class Queue extends Vue {
   private defaultBackupPath = resolve(api.app.getPath('userData'), 'backups')
   private jsonFilter = { extensions: ['json'], name: '*' }
 
-  public draggableOptions = {
+  public gridOptions = {
     animation: 150,
     handle: '.handle',
   }
@@ -307,26 +303,25 @@ export default class Queue extends Vue {
 
 .queue {
   position: relative;
-  display: grid;
-  grid-template-columns: 1fr 325px;
-  grid-template-rows: 1fr 170px;
-  grid-template-areas:
-    'queue sidebar'
-    'queue player';
+  display: flex;
 
   width: 100%;
   height: 100%;
+  background: rgba(0, 0, 0, 0.85);
 
-  .container {
+  .queue-container {
     position: relative;
-    grid-area: queue;
     padding: 15px 25px;
     overflow-y: auto;
     overflow-x: hidden;
 
+    width: 100%;
     min-width: 800px;
-    background: transparentize(#000000, 0.15);
     user-select: none;
+
+    & > div:not(.empty-message) {
+      position: relative;
+    }
 
     & > .empty-message {
       position: absolute;
@@ -353,7 +348,7 @@ export default class Queue extends Vue {
   }
 
   .sidebar {
-    grid-area: sidebar / sidebar / player / player;
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -378,7 +373,7 @@ export default class Queue extends Vue {
 
 .route-enter-active,
 .route-leave-active {
-  transition: none 0.5s; // Required for Vue to realize there are transitions
+  transition: background 0.5s;
 
   & > .container,
   & > .sidebar {
@@ -388,6 +383,8 @@ export default class Queue extends Vue {
 
 .route-enter,
 .route-leave-to {
+  background: none;
+
   & > .container {
     transform: translateX(-100%);
   }
