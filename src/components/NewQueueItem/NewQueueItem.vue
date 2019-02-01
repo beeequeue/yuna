@@ -70,12 +70,15 @@ export default class NewQueueItem extends Vue {
     top: 0;
     right: 0;
     height: 75px;
-    width: 20px;
+    width: 25px;
     padding: 2px;
-    border-bottom-left-radius: 5px;
-    background: #616161;
+    background: $dark;
     cursor: -webkit-grab;
     z-index: 5;
+
+    & /deep/ svg {
+      fill: $highlight;
+    }
 
     transform: translateX(100%);
     transition: transform 0.15s;
