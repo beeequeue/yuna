@@ -267,6 +267,26 @@ export const app = {
       setEditingAnime(context, anime)
       toggleModal(context, 'edit')
     },
+
+    setCurrentEpisode(
+      context: AppContext,
+      options: { id: number; index: number } | null,
+    ) {
+      if (!options) {
+        return setPlaylist(context, null)
+      }
+
+      const currentPlaylist = getPlaylistAnimeId(context)
+
+      if (currentPlaylist === options.id) {
+        _setCurrentEpisode(context, options.index)
+      } else {
+        setPlaylist(context, {
+          id: options.id,
+          index: options.index,
+        })
+      }
+    },
   },
 }
 
@@ -284,8 +304,8 @@ export const setIsUpdateAvailable = commit(app.mutations.setIsUpdateAvailable)
 const setEditingAnime = commit(app.mutations.setEditingAnime)
 export const setEditingAnimeValue = commit(app.mutations.setEditingAnimeValue)
 export const removeToast = commit(app.mutations.removeToast)
-export const setPlaylist = commit(app.mutations.setPlaylist)
-export const setCurrentEpisode = commit(app.mutations.setCurrentEpisode)
+const setPlaylist = commit(app.mutations.setPlaylist)
+const _setCurrentEpisode = commit(app.mutations.setCurrentEpisode)
 export const toggleModal = commit(app.mutations.toggleModal)
 const addToast = commit(app.mutations.addToast)
 export const closeAllModals = commit(app.mutations.closeAllModals)
@@ -299,3 +319,4 @@ export const sendNotImplementedToast = dispatch(
 )
 export const notifyDownloadDone = dispatch(app.actions.notifyDownloadDone)
 export const initEditModal = dispatch(app.actions.initEditModal)
+export const setCurrentEpisode = dispatch(app.actions.setCurrentEpisode)

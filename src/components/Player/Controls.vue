@@ -17,9 +17,7 @@
       />
     </transition>
 
-    <transition name="fade">
-      <icon class="button close" :icon="closeSvg" @click.native="closePlayer" />
-    </transition>
+    <icon class="button close" :icon="closeSvg" @click.native="closePlayer" />
 
     <div class="toolbar">
       <progress-bar
@@ -223,7 +221,6 @@ import { Required } from '@/decorators'
 import {
   getIsFullscreen,
   toggleFullscreen,
-  setPlaylist,
   setCurrentEpisode,
   setFullscreen,
 } from '@/state/app'
@@ -364,7 +361,7 @@ export default class Controls extends Vue {
   }
 
   public closePlayer() {
-    setPlaylist(this.$store, null)
+    setCurrentEpisode(this.$store, null)
 
     if (this.isFullscreen) {
       this._toggleFullscreen()

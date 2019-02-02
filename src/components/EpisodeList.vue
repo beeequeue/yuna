@@ -59,19 +59,15 @@ import { mdiCached } from '@mdi/js'
 
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
-  AnimePageQueryExternalLinks,
-  AnimePageQueryNextAiringEpisode,
   EpisodeListEpisodes,
   Provider,
+  QueueAnime,
+  QueueExternalLinks,
+  QueueMediaListEntry,
 } from '@/graphql/types'
 
-import { Default, Query, Required } from '@/decorators'
-import {
-  getPlaylistAnimeId,
-  ListEntry,
-  setCurrentEpisode,
-  setPlaylist,
-} from '@/state/app'
+import { Query, Required } from '@/decorators'
+import { getPlaylistAnimeId, setCurrentEpisode, setPlaylist } from '@/state/app'
 
 import CButton from './CButton.vue'
 import Episode from './Episode.vue'
@@ -81,15 +77,7 @@ import SourceList from './SourceList.vue'
 
 @Component({ components: { SourceList, CButton, Episode, Icon, Loader } })
 export default class EpisodeList extends Vue {
-  @Required(Number) public id!: number
-  @Required(Number) public idMal!: number
-  @Required(String) public animeTitle!: string
-  @Prop(Number) public episodesInAnime!: number | null
-  @Prop(Object)
-  public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
-  @Prop(Object) public listEntry!: ListEntry | null
-  @Default(Array, [])
-  public links!: AnimePageQueryExternalLinks[]
+  @Required(Object) public anime!: QueueAnime
   @Prop(Boolean) public showScroller!: boolean | null
   @Prop(Boolean) public small!: boolean | null
   @Prop(Boolean) public rightPadding!: boolean | null
@@ -142,8 +130,24 @@ export default class EpisodeList extends Vue {
     episodes: Episode[]
   }
 
+  public get listEntry() {
+    return pathOr(
+      null,
+      ['mediaListEntry'],
+      this.anime,
+    ) as QueueMediaListEntry | null
+  }
+
+  public get links() {
+    return pathOr(
+      null,
+      ['externalLinks'],
+      this.anime,
+    ) as QueueExternalLinks | null
+  }
+
   public get currentEpisode() {
-    return this.listEntry != null ? this.listEntry.progress + 1 : null
+    return this.listEntry != null ? (this.listEntry.progress || 0) + 1 : null
   }
 
   public updateContainerClasses() {
@@ -219,16 +223,10 @@ export default class EpisodeList extends Vue {
   public setCurrentEpisode(episodeNumber: number) {
     if (!this.episodes) return
 
-    const currentPlaylist = getPlaylistAnimeId(this.$store)
-
-    if (currentPlaylist === this.id) {
-      setCurrentEpisode(this.$store, episodeNumber - 1)
-    } else {
-      setPlaylist(this.$store, {
-        id: this.id,
-        index: episodeNumber - 1,
-      })
-    }
+    setCurrentEpisode(this.$store, {
+      id: this.anime.id,
+      index: episodeNumber - 1,
+    })
   }
 
   private getEpisodeElement(episodeNumber: number) {
@@ -267,7 +265,6 @@ export default class EpisodeList extends Vue {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  z-index: -1;
 
   & > .loading {
     display: flex;
