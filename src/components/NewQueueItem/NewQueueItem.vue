@@ -17,6 +17,52 @@
         :icon="expandSvg"
         @click.native="toggleItemOpen"
       />
+
+      <div class="buttons">
+        <c-button
+          v-if="getIsStatus(MediaListStatus.Planning)"
+          type="success"
+          content="Start"
+          @click.native="statusMutation(MediaListStatus.Current)"
+        />
+
+        <c-button
+          v-if="getIsStatus(MediaListStatus.Paused, MediaListStatus.Dropped)"
+          type="success"
+          content="Resume"
+          @click.native="statusMutation(MediaListStatus.Current)"
+        />
+
+        <c-button
+          v-if="getIsStatus(MediaListStatus.Completed)"
+          type="success"
+          content="Rewatch"
+          @click.native="statusMutation(MediaListStatus.Repeating)"
+        />
+
+        <c-button
+          v-if="getIsStatus(MediaListStatus.Current, MediaListStatus.Repeating)"
+          type="warning"
+          content="Pause"
+          @click.native="statusMutation(MediaListStatus.Paused)"
+        />
+
+        <c-button
+          v-if="getIsStatus(MediaListStatus.Current, MediaListStatus.Repeating)"
+          type="danger"
+          content="Drop"
+          @click.native="statusMutation(MediaListStatus.Dropped)"
+        />
+
+        <c-button
+          v-if="
+            !getIsStatus(MediaListStatus.Current, MediaListStatus.Repeating)
+          "
+          class="large"
+          content="Remove from Queue"
+          @click.native="removeFromQueue"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -37,9 +83,13 @@ import Loading from '@/components/NewQueueItem/Loading.vue'
 
 import { Required } from '@/decorators'
 import { toggleQueueItemOpen } from '@/state/user'
+import CButton from '@/components/CButton.vue'
+import { sendErrorToast } from '@/state/app'
+import { rewatchMutation, setStatusMutation } from '@/graphql/mutations'
 
 @Component({
   components: {
+    CButton,
     Loading,
     SourceList,
     AnimatedHeight,
@@ -53,6 +103,7 @@ export default class NewQueueItem extends Vue {
   @Required(Object) public anime!: QueueAnime
   @Required(Boolean) public open!: boolean
 
+  public MediaListStatus = MediaListStatus
   public expandSvg = mdiChevronDown
   public hamburgerSvg = mdiMenu
 
@@ -69,6 +120,26 @@ export default class NewQueueItem extends Vue {
       path<MediaListStatus>(['mediaListEntry', 'status'], this.anime),
     )
   }
+
+  public getIsStatus(...statuses: MediaListStatus[]) {
+    return statuses.includes(
+      path<MediaListStatus>(['mediaListEntry', 'status'], this.anime),
+    )
+  }
+
+  public async statusMutation(status: MediaListStatus) {
+    const listEntryId = path<number>('mediaListEntry.id', this.anime)
+
+    if (!listEntryId) {
+      return sendErrorToast(this.$store, 'No entry found..?')
+    }
+
+    if (status === MediaListStatus.Repeating) {
+      return rewatchMutation(this, listEntryId)
+    }
+
+    await setStatusMutation(this, listEntryId, status)
+  }
 }
 </script>
 
@@ -79,7 +150,7 @@ export default class NewQueueItem extends Vue {
   left: 0;
   position: relative;
   width: 100%;
-  margin-bottom: 15px;
+  margin-bottom: 30px;
   display: inline-block;
   border-radius: 5px;
   box-shadow: 1px 2px 15px rgba(0, 0, 0, 0.5);
@@ -132,6 +203,15 @@ export default class NewQueueItem extends Vue {
 
       &.flip /deep/ svg {
         transform: rotateZ(-180deg);
+      }
+    }
+
+    & > .buttons {
+      margin-left: auto;
+
+      & > .button {
+        min-width: 85px;
+        border-radius: 0;
       }
     }
   }

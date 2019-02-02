@@ -1,7 +1,7 @@
 <template>
   <loading v-if="$apollo.loading" />
   <div
-    v-else
+    v-else-if="episodes && episodes.length > 0"
     class="queue-episode-list"
     ref="container"
     @wheel.prevent="handleScroll"
@@ -15,6 +15,7 @@
       small
     />
   </div>
+  <source-list v-else :links="anime.externalLinks"/>
 </template>
 
 <script lang="ts">
@@ -33,9 +34,10 @@ import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import { Query, Required } from '@/decorators'
 import Episode from '@/components/Episode.vue'
 import Loading from '@/components/NewQueueItem/Loading.vue'
+import SourceList from '@/components/SourceList.vue'
 
 @Component({
-  components: { Loading, Episode },
+  components: { SourceList, Loading, Episode },
 })
 export default class QueueEpisodeList extends Vue {
   @Required(Object) public anime!: QueueAnime
@@ -93,7 +95,7 @@ export default class QueueEpisodeList extends Vue {
 
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 15px;
 
   overflow: hidden;
   transition: opacity 0.25s;
