@@ -45,7 +45,11 @@ export function Required(type: Prop<any>): PropertyDecorator {
   }) as any
 }
 
-export function Default(type: Prop<any>, defaultValue: any): PropertyDecorator {
+type Constructor = NumberConstructor | StringConstructor | ArrayConstructor
+export function Default<T extends Constructor>(
+  type: T,
+  defaultValue: ReturnType<T>,
+): PropertyDecorator {
   return createDecorator((componentOptions, key) => {
     if (!componentOptions.props) {
       componentOptions.props = {}
