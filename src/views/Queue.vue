@@ -14,7 +14,7 @@
         >
           <new-queue-item
             :anime="getAnime(item.id)"
-            :open="item.open"
+            :open="getIsItemOpen(item.id)"
             :key="item.id"
           />
         </draggable>
@@ -86,7 +86,7 @@ import { remote, shell } from 'electron'
 import { activeWindow, api } from 'electron-util'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
-import { complement, indexBy, path, pathOr } from 'rambdax'
+import { complement, indexBy, path, pathEq, pathOr } from 'rambdax'
 import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 
 import CButton from '@/components/CButton.vue'
@@ -102,11 +102,11 @@ import {
 } from '@/graphql/types'
 import QUEUE_QUERY from '@/graphql/Queue.graphql'
 
-import { Page, trackPageView } from '@/lib/tracking'
+import { Query } from '@/decorators'
 import { getPlayerData, sendErrorToast, sendToast } from '@/state/app'
 import { getAnilistUserId, getAnilistUsername } from '@/state/auth'
 import { addToQueue, getQueue, setQueue } from '@/state/user'
-import { Query } from '@/decorators'
+import { Page, trackPageView } from '@/lib/tracking'
 import { QueueItem as IQueueItem } from '@/lib/user'
 
 const sortNumber = (a: number, b: number) => a - b
@@ -169,7 +169,7 @@ export default class Queue extends Vue {
     setQueue(this.$store, value)
   }
 
-  public fakeQueue = [{ id: 5680, open: false }]
+  public fakeQueue = [{ id: 21699, open: false }]
 
   public mounted() {
     trackPageView(Page.QUEUE)
@@ -177,6 +177,11 @@ export default class Queue extends Vue {
 
   public getAnime(id: number) {
     return this.animes[id]
+  }
+
+  public getIsItemOpen(id: number) {
+    const item = this.queue.find(pathEq('id', id))
+    return !!item && item.open
   }
 
   public affectFakeQueue(doRemove = false) {
@@ -409,11 +414,11 @@ export default class Queue extends Vue {
     flex-direction: column;
     align-items: stretch;
     padding: 20px 25px;
-
     background: #202130;
+    transition: margin-bottom 0.25s;
 
     &.small {
-      grid-area: sidebar;
+      margin-bottom: 183px;
     }
 
     & > .button {

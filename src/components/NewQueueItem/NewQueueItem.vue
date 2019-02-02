@@ -4,10 +4,16 @@
 
     <anime-banner :anime="anime" :faded="!isWatching" />
 
+    <animated-height class="episodes-container">
+      <transition>
+        <queue-episode-list v-if="open" :anime="anime" />
+      </transition>
+    </animated-height>
+
     <div class="controls">
       <icon
         class="collapser"
-        :class="{ flip: !open }"
+        :class="{ flip: open }"
         :icon="expandSvg"
         @click.native="toggleItemOpen"
       />
@@ -21,13 +27,28 @@ import { path } from 'rambdax'
 import { mdiChevronDown, mdiMenu } from '@mdi/js'
 import { MediaListStatus, QueueAnime } from '@/graphql/types'
 
-import AnimeBanner from '@/components/AnimeBanner.vue'
 import Icon from '@/components/Icon.vue'
+import AnimeBanner from '@/components/AnimeBanner.vue'
+import EpisodeList from '@/components/EpisodeList.vue'
+import QueueEpisodeList from '@/components/NewQueueItem/QueueEpisodeList.vue'
+import AnimatedHeight from '@/components/AnimatedHeight.vue'
+import SourceList from '@/components/SourceList.vue'
+import Loading from '@/components/NewQueueItem/Loading.vue'
 
 import { Required } from '@/decorators'
 import { toggleQueueItemOpen } from '@/state/user'
 
-@Component({ components: { AnimeBanner, Icon } })
+@Component({
+  components: {
+    Loading,
+    SourceList,
+    AnimatedHeight,
+    QueueEpisodeList,
+    EpisodeList,
+    AnimeBanner,
+    Icon,
+  },
+})
 export default class NewQueueItem extends Vue {
   @Required(Object) public anime!: QueueAnime
   @Required(Boolean) public open!: boolean
@@ -88,9 +109,14 @@ export default class NewQueueItem extends Vue {
     transform: none;
   }
 
+  & > .episodes-container {
+    position: relative;
+    background: $dark;
+  }
+
   & > .controls {
     display: flex;
-    background: $dark;
+    background: lighten($dark, 5%);
 
     & > .collapser {
       flex-shrink: 0;
