@@ -26,7 +26,8 @@ export function Query<C extends Vue, R = any, V = any>(
     }
 
     ;(componentOptions.apollo as any)[key] = {
-      update: (data: any) => (data[key] != null ? data[key] : data),
+      update: (data: any) =>
+        Object.keys(data).includes(key) ? data[key] : data,
       ...options,
     }
   }) as any
@@ -45,7 +46,11 @@ export function Required(type: Prop<any>): PropertyDecorator {
   }) as any
 }
 
-type Constructor = NumberConstructor | StringConstructor | ArrayConstructor
+type Constructor =
+  | NumberConstructor
+  | StringConstructor
+  | ArrayConstructor
+  | BooleanConstructor
 export function Default<T extends Constructor>(
   type: T,
   defaultValue: ReturnType<T>,

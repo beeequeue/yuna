@@ -67,7 +67,7 @@ import {
 } from '@/graphql/types'
 
 import { Query, Required } from '@/decorators'
-import { getPlaylistAnimeId, setCurrentEpisode, setPlaylist } from '@/state/app'
+import { setCurrentEpisode } from '@/state/app'
 
 import CButton from './CButton.vue'
 import Episode from './Episode.vue'

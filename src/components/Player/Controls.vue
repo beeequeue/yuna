@@ -199,30 +199,30 @@ import { pathOr } from 'rambdax'
 import {
   mdiArrowCollapse,
   mdiArrowExpand,
+  mdiBookmark,
+  mdiBookmarkRemove,
+  mdiClose,
   mdiFullscreen,
   mdiFullscreenExit,
   mdiPause,
   mdiPlay,
-  mdiBookmark,
-  mdiBookmarkRemove,
+  mdiSettingsOutline,
   mdiSkipNext,
   mdiSkipPrevious,
-  mdiSettingsOutline,
-  mdiClose,
 } from '@mdi/js'
 
 import {
+  EpisodeListEpisodes,
   PlayerAnimeAnime,
   PlayerAnimeMediaListEntry,
-  EpisodeListEpisodes,
 } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import {
   getIsFullscreen,
-  toggleFullscreen,
   setCurrentEpisode,
   setFullscreen,
+  toggleFullscreen,
 } from '@/state/app'
 import { Levels } from '@/types'
 import { secondsToTimeString } from '@/utils'
@@ -390,7 +390,7 @@ export default class Controls extends Vue {
   }
 
   public go(amount: number) {
-    setCurrentEpisode(this.$store, this.episode.index + amount)
+    setCurrentEpisode(this.$store, { index: this.episode.index + amount })
   }
 }
 </script>

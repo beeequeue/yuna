@@ -270,15 +270,13 @@ export const app = {
 
     setCurrentEpisode(
       context: AppContext,
-      options: { id: number; index: number } | null,
+      options: { id?: number; index: number } | null,
     ) {
       if (!options) {
         return setPlaylist(context, null)
       }
 
-      const currentPlaylist = getPlaylistAnimeId(context)
-
-      if (currentPlaylist === options.id) {
+      if (options.id == null) {
         _setCurrentEpisode(context, options.index)
       } else {
         setPlaylist(context, {
