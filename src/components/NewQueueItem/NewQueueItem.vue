@@ -32,14 +32,14 @@
 
       <div class="buttons">
         <c-button
-          v-if="isWatching && (!episodes || episodes.length < 1)"
+          v-if="isWatching"
           content="+"
           :disabled="listEntry && listEntry.progress >= anime.episodes"
           :click="incrementProgress"
           class="small"
         />
         <c-button
-          v-if="isWatching && (!episodes || episodes.length < 1)"
+          v-if="isWatching"
           content="-"
           :disabled="listEntry && listEntry.progress < 1"
           :click="decrementProgress"
