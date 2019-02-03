@@ -8,7 +8,7 @@
         @drop="handleDrop"
       >
         <draggable
-          v-for="item in fakeQueue"
+          v-for="item in queue"
           v-if="getAnime(item.id) != null"
           :key="item.id"
         >
@@ -21,7 +21,7 @@
       </container>
 
       <transition name="fade">
-        <div v-if="fakeQueue.length < 1" class="empty-message">
+        <div v-if="queue.length < 1" class="empty-message">
           Seems your queue is empty! <br />You can import shows from your list
           or add some by searching! <br />
 
@@ -36,12 +36,6 @@
 
     <div class="sidebar" :class="{ small: isPlayerOpen }">
       <span class="fill" />
-
-      <span>{{ this.fakeQueue.length }}</span>
-
-      <c-button content="+++++++++++" :click="affectFakeQueue" />
-
-      <c-button content="-------------" :click="() => affectFakeQueue(true)" />
 
       <c-button
         content="Import Watching from List"
@@ -127,7 +121,7 @@ export default class Queue extends Vue {
     query: QUEUE_QUERY,
     variables() {
       return {
-        ids: this.fakeQueue.map(path('id')).sort(sortNumber),
+        ids: this.queue.map(path('id')).sort(sortNumber),
       }
     },
     update: data => {
@@ -169,8 +163,6 @@ export default class Queue extends Vue {
     setQueue(this.$store, value)
   }
 
-  public fakeQueue = [{ id: 99578, open: false }]
-
   public mounted() {
     trackPageView(Page.QUEUE)
   }
@@ -184,30 +176,17 @@ export default class Queue extends Vue {
     return !!item && item.open
   }
 
-  public affectFakeQueue(doRemove = false) {
-    const ids = [99578, 99420, 99263, 5680, 21699, 100077, 101291, 21460]
-
-    if (doRemove) {
-      const idx = Math.round(Math.random() * (this.fakeQueue.length - 1))
-      const arr = [...this.fakeQueue]
-      arr.splice(idx, 1)
-      this.fakeQueue = arr
-    } else {
-      const id = ids.filter(
-        id => !this.fakeQueue.find(item => item.id === id),
-      )[0]
-      if (!id) return
-      this.fakeQueue = [...this.fakeQueue, { id, open: false }]
-    }
-  }
-
   public handleDrop({ removedIndex, addedIndex, payload }: any) {
-    this.fakeQueue.splice(removedIndex, 1)
-    this.fakeQueue.splice(addedIndex, 0, payload)
+    const newQueue = [...this.queue]
+
+    newQueue.splice(removedIndex, 1)
+    newQueue.splice(addedIndex, 0, payload)
+
+    setQueue(this.$store, newQueue)
   }
 
   public getChildPayload(index: number) {
-    return this.fakeQueue[index]
+    return this.queue[index]
   }
 
   public async importFromQuery(

@@ -126,7 +126,7 @@ import NextEpisodeInfo from '@/components/Anime/NextEpisodeInfo.vue'
 import CButton from '@/components/CButton.vue'
 
 import { Query, Required } from '@/decorators'
-import { toggleQueueItemOpen } from '@/state/user'
+import { removeFromQueueById, toggleQueueItemOpen } from '@/state/user'
 import { sendErrorToast } from '@/state/app'
 
 @Component({
@@ -202,6 +202,10 @@ export default class NewQueueItem extends Vue {
     return statuses.includes(
       path<MediaListStatus>(['mediaListEntry', 'status'], this.anime),
     )
+  }
+
+  public removeFromQueue() {
+    removeFromQueueById(this.$store, this.anime.id)
   }
 
   public async statusMutation(status: MediaListStatus) {
