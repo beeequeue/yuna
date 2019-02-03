@@ -87,8 +87,6 @@
           content="Remove from Queue"
           :click="removeFromQueue"
         />
-
-        <c-button :icon="menuSvg" class="small" />
       </div>
     </div>
   </div>
@@ -97,7 +95,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { isNil, path, pathOr } from 'rambdax'
-import { mdiChevronDown, mdiDotsVertical, mdiMenu } from '@mdi/js'
+import { mdiChevronDown, mdiMenu } from '@mdi/js'
 
 import {
   rewatchMutation,
@@ -181,7 +179,6 @@ export default class NewQueueItem extends Vue {
   public MediaListStatus = MediaListStatus
   public expandSvg = mdiChevronDown
   public hamburgerSvg = mdiMenu
-  public menuSvg = mdiDotsVertical
 
   public get listEntry() {
     return pathOr(

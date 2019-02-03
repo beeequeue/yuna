@@ -380,10 +380,6 @@ export default class Queue extends Vue {
         font-size: 0.85em;
       }
     }
-
-    & > .draggable-container > .transition-group {
-      position: relative;
-    }
   }
 
   .sidebar {
@@ -418,6 +414,10 @@ export default class Queue extends Vue {
   & > .queue-container,
   & > .sidebar {
     transition: transform 0.5s;
+  }
+
+  & > .queue-container {
+    overflow: visible;
   }
 }
 
