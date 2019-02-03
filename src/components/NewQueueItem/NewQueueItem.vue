@@ -32,46 +32,59 @@
 
       <div class="buttons">
         <c-button
-          v-if="getIsStatus(MediaListStatus.Planning)"
+          v-if="isWatching && (!episodes || episodes.length < 1)"
+          content="+"
+          :disabled="listEntry && listEntry.progress >= anime.episodes"
+          :click="incrementProgress"
+          class="small"
+        />
+        <c-button
+          v-if="isWatching && (!episodes || episodes.length < 1)"
+          content="-"
+          :disabled="listEntry && listEntry.progress < 1"
+          :click="decrementProgress"
+          class="small"
+        />
+
+        <c-button
+          v-if="isStatus(MediaListStatus.Planning)"
           type="success"
           content="Start"
-          @click.native="statusMutation(MediaListStatus.Current)"
+          :click="() => statusMutation(MediaListStatus.Current)"
         />
 
         <c-button
-          v-if="getIsStatus(MediaListStatus.Paused, MediaListStatus.Dropped)"
+          v-if="isStatus(MediaListStatus.Paused, MediaListStatus.Dropped)"
           type="success"
           content="Resume"
-          @click.native="statusMutation(MediaListStatus.Current)"
+          :click="() => statusMutation(MediaListStatus.Current)"
         />
 
         <c-button
-          v-if="getIsStatus(MediaListStatus.Completed)"
+          v-if="isStatus(MediaListStatus.Completed)"
           type="success"
           content="Rewatch"
-          @click.native="statusMutation(MediaListStatus.Repeating)"
+          :click="() => statusMutation(MediaListStatus.Repeating)"
         />
 
         <c-button
-          v-if="getIsStatus(MediaListStatus.Current, MediaListStatus.Repeating)"
+          v-if="isWatching"
           type="warning"
           content="Pause"
-          @click.native="statusMutation(MediaListStatus.Paused)"
+          :click="() => statusMutation(MediaListStatus.Paused)"
         />
 
         <c-button
-          v-if="getIsStatus(MediaListStatus.Current, MediaListStatus.Repeating)"
+          v-if="isWatching"
           type="danger"
           content="Drop"
-          @click.native="statusMutation(MediaListStatus.Dropped)"
+          :click="() => statusMutation(MediaListStatus.Dropped)"
         />
 
         <c-button
-          v-if="
-            !getIsStatus(MediaListStatus.Current, MediaListStatus.Repeating)
-          "
+          v-if="!isWatching"
           content="Remove from Queue"
-          @click.native="removeFromQueue"
+          :click="removeFromQueue"
         />
 
         <c-button :icon="menuSvg" class="small" />
@@ -82,17 +95,24 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { path } from 'rambdax'
+import { isNil, path, pathOr } from 'rambdax'
 import { mdiChevronDown, mdiDotsVertical, mdiMenu } from '@mdi/js'
 
-import { rewatchMutation, setStatusMutation } from '@/graphql/mutations'
+import {
+  rewatchMutation,
+  setEpisodeUnwatched,
+  setEpisodeWatched,
+  setStatusMutation,
+} from '@/graphql/mutations'
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
   EpisodeListEpisodes,
   EpisodeListQuery,
   EpisodeListVariables,
   MediaListStatus,
+  Provider,
   QueueAnime,
+  QueueMediaListEntry,
 } from '@/graphql/types'
 
 import Icon from '@/components/Icon.vue'
@@ -162,6 +182,14 @@ export default class NewQueueItem extends Vue {
   public hamburgerSvg = mdiMenu
   public menuSvg = mdiDotsVertical
 
+  public get listEntry() {
+    return pathOr(
+      null,
+      ['mediaListEntry'],
+      this.anime,
+    ) as QueueMediaListEntry | null
+  }
+
   public get isWatching() {
     return this.isStatus(MediaListStatus.Current, MediaListStatus.Repeating)
   }
@@ -171,12 +199,6 @@ export default class NewQueueItem extends Vue {
   }
 
   public isStatus(...statuses: MediaListStatus[]) {
-    return statuses.includes(
-      path<MediaListStatus>(['mediaListEntry', 'status'], this.anime),
-    )
-  }
-
-  public getIsStatus(...statuses: MediaListStatus[]) {
     return statuses.includes(
       path<MediaListStatus>(['mediaListEntry', 'status'], this.anime),
     )
@@ -194,6 +216,38 @@ export default class NewQueueItem extends Vue {
     }
 
     await setStatusMutation(this, listEntryId, status)
+  }
+
+  public async incrementProgress() {
+    if (isNil(this.listEntry) || isNil(this.listEntry.progress)) {
+      return
+    }
+
+    return setEpisodeWatched(
+      this,
+      {
+        animeId: this.anime.id,
+        provider: Provider.Crunchyroll,
+        episodeNumber: this.listEntry.progress + 1,
+      },
+      this.listEntry,
+    )
+  }
+
+  public async decrementProgress() {
+    if (isNil(this.listEntry) || isNil(this.listEntry.progress)) {
+      return
+    }
+
+    return setEpisodeUnwatched(
+      this,
+      {
+        animeId: this.anime.id,
+        provider: Provider.Crunchyroll,
+        episodeNumber: this.listEntry.progress,
+      },
+      this.listEntry,
+    )
   }
 }
 </script>

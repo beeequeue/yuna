@@ -4,7 +4,7 @@
       <anime-banner
         :anime="data.anime"
         :faded="
-          !getIsStatus(data, MediaListStatus.Current, MediaListStatus.Repeating)
+          !isStatus(data, MediaListStatus.Current, MediaListStatus.Repeating)
         "
       />
 
@@ -30,7 +30,7 @@
 
           <div class="buttons">
             <c-button
-              v-if="getIsStatus(data, MediaListStatus.Planning)"
+              v-if="isStatus(data, MediaListStatus.Planning)"
               type="success"
               content="Start"
               @click.native="statusMutation(data, MediaListStatus.Current)"
@@ -38,7 +38,7 @@
 
             <c-button
               v-if="
-                getIsStatus(
+                isStatus(
                   data,
                   MediaListStatus.Paused,
                   MediaListStatus.Dropped,
@@ -50,7 +50,7 @@
             />
 
             <c-button
-              v-if="getIsStatus(data, MediaListStatus.Completed)"
+              v-if="isStatus(data, MediaListStatus.Completed)"
               type="success"
               content="Rewatch"
               @click.native="statusMutation(data, MediaListStatus.Repeating)"
@@ -58,7 +58,7 @@
 
             <c-button
               v-if="
-                getIsStatus(
+                isStatus(
                   data,
                   MediaListStatus.Current,
                   MediaListStatus.Repeating,
@@ -71,7 +71,7 @@
 
             <c-button
               v-if="
-                getIsStatus(
+                isStatus(
                   data,
                   MediaListStatus.Current,
                   MediaListStatus.Repeating,
@@ -84,7 +84,7 @@
 
             <c-button
               v-if="
-                !getIsStatus(
+                !isStatus(
                   data,
                   MediaListStatus.Current,
                   MediaListStatus.Repeating,
@@ -101,7 +101,7 @@
           <div
             v-if="
               data.anime.idMal &&
-                getIsStatus(
+                isStatus(
                   data,
                   MediaListStatus.Current,
                   MediaListStatus.Repeating,

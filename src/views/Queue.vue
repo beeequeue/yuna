@@ -436,7 +436,7 @@ export default class Queue extends Vue {
 .route-leave-active {
   transition: background 0.5s;
 
-  & > .container,
+  & > .queue-container,
   & > .sidebar {
     transition: transform 0.5s;
   }
@@ -446,7 +446,7 @@ export default class Queue extends Vue {
 .route-leave-to {
   background: none;
 
-  & > .container {
+  & > .queue-container {
     transform: translateX(-100%);
   }
 

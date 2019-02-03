@@ -43,10 +43,13 @@ const refetchListQuery = ($store: Store<any>) => {
   ]
 }
 
-type FakeEpisode = Pick<EpisodeListEpisodes, 'animeId' | 'provider'>
+export type EpisodeMutationObject = Pick<
+  EpisodeListEpisodes,
+  'animeId' | 'provider' | 'episodeNumber'
+>
 const writeEpisodeProgressToCache = (
   cache: DataProxy,
-  episode: FakeEpisode,
+  episode: EpisodeMutationObject,
   progress: number,
 ) => {
   let data: EpisodeListQuery | null = null
@@ -87,7 +90,7 @@ const writeEpisodeProgressToCache = (
 
 export const setEpisodeWatched = async (
   { $apollo, $store }: Instance,
-  episode: EpisodeListEpisodes,
+  episode: EpisodeMutationObject,
   listEntry: UpdateProgressMutationSaveMediaListEntry,
 ) => {
   const progress = episode.episodeNumber
@@ -113,7 +116,7 @@ export const setEpisodeWatched = async (
 
 export const setEpisodeUnwatched = async (
   instance: Instance,
-  episode: EpisodeListEpisodes,
+  episode: EpisodeMutationObject,
   listEntry: UpdateProgressMutationSaveMediaListEntry,
 ) =>
   setEpisodeWatched(
@@ -147,9 +150,10 @@ export const rewatchMutation = async (
     update: (cache, { data }) => {
       if (!data) return
 
-      const fakeEpisode: FakeEpisode = {
+      const fakeEpisode: EpisodeMutationObject = {
         provider: Provider.Crunchyroll,
         animeId: data.SaveMediaListEntry!.mediaId,
+        episodeNumber: 0,
       }
       writeEpisodeProgressToCache(cache, fakeEpisode, 0)
     },
