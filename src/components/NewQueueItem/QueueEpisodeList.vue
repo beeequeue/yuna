@@ -5,7 +5,6 @@
     class="queue-episode-list"
     ref="container"
     @wheel.prevent="handleScroll"
-    @scroll="() => {}"
   >
     <episode
       v-for="episode in episodes"
@@ -33,9 +32,7 @@ import Episode from '@/components/Episode.vue'
 import Loading from '@/components/NewQueueItem/Loading.vue'
 import SourceList from '@/components/SourceList.vue'
 
-@Component({
-  components: { SourceList, Loading, Episode },
-})
+@Component({ components: { SourceList, Loading, Episode } })
 export default class QueueEpisodeList extends Vue {
   @Required(Object) public anime!: QueueAnime
   @Default(Array, [])

@@ -27,6 +27,7 @@ enum StreamingSource {
   Hidive = 'hidive',
   Animelab = 'animelab',
   Funimation = 'funimation',
+  Amazon = 'amazon',
 }
 
 const streamingSites = enumKeysToArray(StreamingSource)
