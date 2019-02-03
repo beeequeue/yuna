@@ -51,7 +51,7 @@ export const user = {
     addToQueue(state: UserState, id: number) {
       if (isInQueue(state, id)) return
 
-      state.queue = [...state.queue, { id, open: true }]
+      state.queue = [...state.queue, { id, open: false }]
 
       userStore.set('queue', state.queue)
     },

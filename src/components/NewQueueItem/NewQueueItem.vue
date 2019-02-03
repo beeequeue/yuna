@@ -363,28 +363,4 @@ export default class NewQueueItem extends Vue {
     }
   }
 }
-
-.v-enter-active {
-  z-index: 1;
-  transition: opacity 0.25s, transform 0.35s;
-}
-
-.v-leave-active {
-  z-index: 1;
-  position: absolute;
-  transition: opacity 0.25s;
-}
-
-.v-enter,
-.v-leave-to {
-  opacity: 0;
-}
-
-.v-enter {
-  transform: translateY(25px);
-}
-
-.v-move {
-  transition: 0.5s;
-}
 </style>
