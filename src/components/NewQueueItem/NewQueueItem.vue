@@ -83,6 +83,7 @@
 
         <c-button
           v-if="!isWatching"
+          type="danger"
           content="Remove from Queue"
           :click="removeFromQueue"
         />
@@ -198,6 +199,12 @@ export default class NewQueueItem extends Vue {
     toggleQueueItemOpen(this.$store, this.anime.id)
   }
 
+  public setOpenState(newState: boolean) {
+    if (this.open === newState) return
+
+    this.toggleItemOpen()
+  }
+
   public isStatus(...statuses: MediaListStatus[]) {
     return statuses.includes(
       path<MediaListStatus>(['mediaListEntry', 'status'], this.anime),
@@ -213,6 +220,18 @@ export default class NewQueueItem extends Vue {
 
     if (!listEntryId) {
       return sendErrorToast(this.$store, 'No entry found..?')
+    }
+
+    switch (status) {
+      case MediaListStatus.Current:
+      case MediaListStatus.Repeating:
+        this.setOpenState(true)
+        break
+      case MediaListStatus.Completed:
+      case MediaListStatus.Dropped:
+      case MediaListStatus.Paused:
+        this.setOpenState(false)
+        break
     }
 
     if (status === MediaListStatus.Repeating) {
