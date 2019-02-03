@@ -1,5 +1,5 @@
 <template>
-  <loading v-if="$apollo.loading" />
+  <loading v-if="loading" />
   <div
     v-else-if="episodes && episodes.length > 0"
     class="queue-episode-list"
@@ -15,23 +15,20 @@
       small
     />
   </div>
-  <source-list v-else :links="anime.externalLinks"/>
+  <source-list v-else :links="anime.externalLinks" />
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import { pathOr } from 'rambdax'
 
 import {
   EpisodeListEpisodes,
-  EpisodeListQuery,
-  EpisodeListVariables,
   QueueAnime,
   QueueMediaListEntry,
 } from '@/graphql/types'
-import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 
-import { Query, Required } from '@/decorators'
+import { Default, Required } from '@/decorators'
 import Episode from '@/components/Episode.vue'
 import Loading from '@/components/NewQueueItem/Loading.vue'
 import SourceList from '@/components/SourceList.vue'
@@ -41,34 +38,11 @@ import SourceList from '@/components/SourceList.vue'
 })
 export default class QueueEpisodeList extends Vue {
   @Required(Object) public anime!: QueueAnime
-
-  @Query<QueueEpisodeList, EpisodeListQuery, EpisodeListVariables>({
-    fetchPolicy: 'network-only',
-    query: EPISODE_LIST,
-    variables() {
-      return {
-        id: this.anime.id,
-      }
-    },
-    skip() {
-      return !this.anime.id
-    },
-    error(err) {
-      if (typeof err === 'string') {
-        this.error = err.replace('Network error: ', '')
-        return
-      }
-
-      if (typeof err.message === 'string') {
-        this.error = err.message
-        return
-      }
-
-      this.error = 'Something went wrong fetching the episodes. :('
-    },
-  })
-  public episodes!: EpisodeListEpisodes[] | null
-  public error: string | null = null
+  @Default(Array, [])
+  public episodes!: EpisodeListEpisodes[]
+  @Prop(String) public error!: string | null
+  @Default(Boolean, false)
+  public loading!: boolean
 
   public $refs!: {
     container: HTMLDivElement

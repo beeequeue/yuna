@@ -6,7 +6,12 @@
 
     <animated-height class="episodes-container">
       <transition>
-        <queue-episode-list v-if="open" :anime="anime" />
+        <queue-episode-list
+          v-if="open"
+          :anime="anime"
+          :episodes="episodes"
+          :loading="episodesLoading !== 0"
+        />
       </transition>
     </animated-height>
 
@@ -16,6 +21,13 @@
         :class="{ flip: open }"
         :icon="expandSvg"
         @click.native="toggleItemOpen"
+      />
+
+      <span class="filler" />
+
+      <next-episode-info
+        v-if="anime.nextAiringEpisode"
+        :nextAiringEpisode="anime.nextAiringEpisode"
       />
 
       <div class="buttons">
@@ -58,10 +70,11 @@
           v-if="
             !getIsStatus(MediaListStatus.Current, MediaListStatus.Repeating)
           "
-          class="large"
           content="Remove from Queue"
           @click.native="removeFromQueue"
         />
+
+        <c-button :icon="menuSvg" class="small" />
       </div>
     </div>
   </div>
@@ -70,8 +83,17 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { path } from 'rambdax'
-import { mdiChevronDown, mdiMenu } from '@mdi/js'
-import { MediaListStatus, QueueAnime } from '@/graphql/types'
+import { mdiChevronDown, mdiDotsVertical, mdiMenu } from '@mdi/js'
+
+import { rewatchMutation, setStatusMutation } from '@/graphql/mutations'
+import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
+import {
+  EpisodeListEpisodes,
+  EpisodeListQuery,
+  EpisodeListVariables,
+  MediaListStatus,
+  QueueAnime,
+} from '@/graphql/types'
 
 import Icon from '@/components/Icon.vue'
 import AnimeBanner from '@/components/AnimeBanner.vue'
@@ -80,15 +102,16 @@ import QueueEpisodeList from '@/components/NewQueueItem/QueueEpisodeList.vue'
 import AnimatedHeight from '@/components/AnimatedHeight.vue'
 import SourceList from '@/components/SourceList.vue'
 import Loading from '@/components/NewQueueItem/Loading.vue'
-
-import { Required } from '@/decorators'
-import { toggleQueueItemOpen } from '@/state/user'
+import NextEpisodeInfo from '@/components/Anime/NextEpisodeInfo.vue'
 import CButton from '@/components/CButton.vue'
+
+import { Query, Required } from '@/decorators'
+import { toggleQueueItemOpen } from '@/state/user'
 import { sendErrorToast } from '@/state/app'
-import { rewatchMutation, setStatusMutation } from '@/graphql/mutations'
 
 @Component({
   components: {
+    NextEpisodeInfo,
     CButton,
     Loading,
     SourceList,
@@ -100,12 +123,44 @@ import { rewatchMutation, setStatusMutation } from '@/graphql/mutations'
   },
 })
 export default class NewQueueItem extends Vue {
+  @Query<QueueEpisodeList, EpisodeListQuery, EpisodeListVariables>({
+    fetchPolicy: 'network-only',
+    query: EPISODE_LIST,
+    loadingKey: 'episodesLoading',
+    variables() {
+      return {
+        id: this.anime.id,
+      }
+    },
+    skip() {
+      return !this.anime.id || !this.open
+    },
+    error(err) {
+      if (typeof err === 'string') {
+        this.episodesFetchingError = err.replace('Network error: ', '')
+        return
+      }
+
+      if (typeof err.message === 'string') {
+        this.episodesFetchingError = err.message
+        return
+      }
+
+      this.episodesFetchingError =
+        'Something went wrong fetching the episodes. :('
+    },
+  })
+  public episodes!: EpisodeListEpisodes[] | null
+  public episodesLoading = 0
+  public episodesFetchingError: string | null = null
+
   @Required(Object) public anime!: QueueAnime
   @Required(Boolean) public open!: boolean
 
   public MediaListStatus = MediaListStatus
   public expandSvg = mdiChevronDown
   public hamburgerSvg = mdiMenu
+  public menuSvg = mdiDotsVertical
 
   public get isWatching() {
     return this.isStatus(MediaListStatus.Current, MediaListStatus.Repeating)
@@ -187,10 +242,19 @@ export default class NewQueueItem extends Vue {
 
   & > .controls {
     display: flex;
+    align-items: center;
     background: lighten($dark, 5%);
 
-    & > .collapser {
+    & > * {
       flex-shrink: 0;
+    }
+
+    & > .filler {
+      width: 100%;
+      flex-shrink: 1;
+    }
+
+    & > .collapser {
       height: 32px;
       width: 35px;
       fill: $white;
@@ -206,12 +270,21 @@ export default class NewQueueItem extends Vue {
       }
     }
 
+    & > .next-episode-info {
+      margin-right: 15px;
+    }
+
     & > .buttons {
-      margin-left: auto;
+      display: flex;
 
       & > .button {
         min-width: 85px;
         border-radius: 0;
+
+        &.small {
+          min-width: 0;
+          width: 35px;
+        }
       }
     }
   }

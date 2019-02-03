@@ -169,7 +169,7 @@ export default class Queue extends Vue {
     setQueue(this.$store, value)
   }
 
-  public fakeQueue = [{ id: 21699, open: false }]
+  public fakeQueue = [{ id: 99263, open: false }]
 
   public mounted() {
     trackPageView(Page.QUEUE)
@@ -185,7 +185,7 @@ export default class Queue extends Vue {
   }
 
   public affectFakeQueue(doRemove = false) {
-    const ids = [5680, 21699, 21856, 100077, 101291, 21460]
+    const ids = [99263, 5680, 21699, 100077, 101291, 21460]
 
     if (doRemove) {
       const idx = Math.round(Math.random() * (this.fakeQueue.length - 1))
