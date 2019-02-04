@@ -10,6 +10,7 @@
       <episode
         v-for="episode in episodes"
         :key="`${episode.name}:${episode.id}`"
+        ref="episodes"
         :episode="episode"
         :listEntry="listEntry"
         small
@@ -20,8 +21,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { pathOr } from 'rambdax'
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { pathOr, isNil } from 'rambdax'
 
 import {
   EpisodeListEpisodes,
@@ -45,6 +46,7 @@ export default class QueueEpisodeList extends Vue {
 
   public $refs!: {
     container: HTMLDivElement
+    episodes: Episode[]
   }
 
   public get listEntry() {
@@ -55,8 +57,33 @@ export default class QueueEpisodeList extends Vue {
     ) as QueueMediaListEntry | null
   }
 
+  public mounted() {
+    this.scrollToNextEpisode()
+  }
+
   public handleScroll(e: WheelEvent) {
     this.$refs.container.scrollBy(e.deltaY + e.deltaX, 0)
+  }
+
+  @Watch('episodes')
+  public scrollToNextEpisode() {
+    if (isNil(this.listEntry)) return
+
+    setTimeout(() => {
+      const containerWidth = this.$refs.container.offsetWidth
+      const episodeWidth = (this.$refs.episodes[0].$el as HTMLDivElement)
+        .offsetWidth
+      const nextEpisode =
+        this.$refs.episodes[this.listEntry!.progress || 0] ||
+        this.$refs.episodes[this.$refs.episodes.length]
+
+      this.$refs.container.scrollTo({
+        left:
+          (nextEpisode.$el as HTMLDivElement).offsetLeft -
+          (containerWidth / 2 - episodeWidth / 2),
+        behavior: 'smooth',
+      })
+    }, 150)
   }
 }
 </script>
