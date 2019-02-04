@@ -231,11 +231,15 @@ export default class NewQueueItem extends Vue {
         break
     }
 
-    if (status === MediaListStatus.Repeating) {
-      return rewatchMutation(this, listEntryId)
-    }
+    try {
+      if (status === MediaListStatus.Repeating) {
+        return rewatchMutation(this, listEntryId)
+      }
 
-    await setStatusMutation(this, listEntryId, status)
+      await setStatusMutation(this, listEntryId, status)
+    } catch (err) {
+      this.setOpenState(!this.open)
+    }
   }
 
   public async incrementProgress() {

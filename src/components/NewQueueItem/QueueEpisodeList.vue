@@ -67,7 +67,7 @@ export default class QueueEpisodeList extends Vue {
 
   @Watch('episodes')
   public scrollToNextEpisode() {
-    if (isNil(this.listEntry)) return
+    if (isNil(this.listEntry) || this.episodes.length < 1) return
 
     setTimeout(() => {
       const containerWidth = this.$refs.container.offsetWidth
