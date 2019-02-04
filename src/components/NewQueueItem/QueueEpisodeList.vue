@@ -6,13 +6,15 @@
     ref="container"
     @wheel.prevent="handleScroll"
   >
-    <episode
-      v-for="episode in episodes"
-      :key="`${episode.name}:${episode.id}`"
-      :episode="episode"
-      :listEntry="listEntry"
-      small
-    />
+    <div class="episode-wrapper">
+      <episode
+        v-for="episode in episodes"
+        :key="`${episode.name}:${episode.id}`"
+        :episode="episode"
+        :listEntry="listEntry"
+        small
+      />
+    </div>
   </div>
   <source-list v-else :links="anime.externalLinks" />
 </template>
@@ -62,14 +64,17 @@ export default class QueueEpisodeList extends Vue {
 <style scoped lang="scss">
 .queue-episode-list {
   position: absolute;
-  width: 100%;
-
-  display: flex;
-  align-items: center;
-  padding: 15px;
+  left: 0;
+  right: 0;
 
   overflow: hidden;
   transition: opacity 0.25s;
+
+  & > .episode-wrapper {
+    display: inline-flex;
+    align-items: center;
+    padding: 15px;
+  }
 
   &.v-enter,
   &.v-leave-to {

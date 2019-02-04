@@ -1,6 +1,6 @@
 <template>
   <div class="queue">
-    <div class="queue-container">
+    <div ref="container" class="queue-container">
       <container
         lock-axis="y"
         drag-handle-selector=".handle"
