@@ -78,14 +78,18 @@ export default class QueueEpisodeList extends Vue {
       const containerWidth = this.$refs.container.offsetWidth
       const episodeWidth = (this.$refs.episodes[0].$el as HTMLDivElement)
         .offsetWidth
-      const nextEpisode =
-        this.$refs.episodes[this.listEntry!.progress || 0] ||
-        this.$refs.episodes[this.$refs.episodes.length]
+      let offset = 0
+
+      if (this.$refs.episodes.length > this.listEntry!.progress! || 0) {
+        const nextEpisode = this.$refs.episodes[this.listEntry!.progress || 0]
+
+        offset = (nextEpisode.$el as HTMLDivElement).offsetLeft
+      } else {
+        offset = episodeWidth * 1.5 * this.$refs.episodes.length
+      }
 
       this.$refs.container.scrollTo({
-        left:
-          (nextEpisode.$el as HTMLDivElement).offsetLeft -
-          (containerWidth / 2 - episodeWidth / 2),
+        left: offset - (containerWidth / 2 - episodeWidth / 2),
         behavior: 'smooth',
       })
     }, 150)
