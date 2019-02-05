@@ -5,6 +5,17 @@ import { filter, isNil, map, path, pathEq, pathOr } from 'rambdax'
 import { Response } from 'superagent'
 import uuid from 'uuid/v4'
 import { resolve } from 'path'
+import {
+  mdiCheckboxMarked,
+  mdiCheckboxMarkedCircleOutline,
+  mdiClock,
+  mdiClockOutline,
+  mdiClose,
+  mdiCloseCircleOutline,
+  mdiPause,
+  mdiPauseCircleOutline,
+  mdiRepeat,
+} from '@mdi/js'
 
 import {
   AnimePageQueryQuery,
@@ -77,6 +88,28 @@ export const humanizeMediaListStatus = (
       return `Repeating ${entry.progress || 0}/${lengthString}`
     default:
       throw new Error(`Tried to humanize an unknown status: ${entry.status}`)
+  }
+}
+
+export const getIconForStatus = (
+  status: MediaListStatus | null,
+  circled = false,
+) => {
+  if (isNil(status)) return null
+
+  switch (status) {
+    case MediaListStatus.Completed:
+      return circled ? mdiCheckboxMarkedCircleOutline : mdiCheckboxMarked
+    case MediaListStatus.Current:
+      return null
+    case MediaListStatus.Dropped:
+      return circled ? mdiCloseCircleOutline : mdiClose
+    case MediaListStatus.Paused:
+      return circled ? mdiPauseCircleOutline : mdiPause
+    case MediaListStatus.Planning:
+      return circled ? mdiClockOutline : mdiClock
+    case MediaListStatus.Repeating:
+      return mdiRepeat
   }
 }
 

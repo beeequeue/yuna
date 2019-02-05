@@ -19,18 +19,12 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { pathOr } from 'rambdax'
-import {
-  mdiCheckboxMarkedCircleOutline,
-  mdiClockOutline,
-  mdiCloseCircleOutline,
-  mdiPauseCircleOutline,
-  mdiRepeat,
-} from '@mdi/js'
+import { mdiRepeat } from '@mdi/js'
 
 import { AnimePageQueryMediaListEntry, MediaListStatus } from '@/graphql/types'
 
 import { Required } from '@/decorators'
-import { humanizeMediaListStatus } from '@/utils'
+import { getIconForStatus, humanizeMediaListStatus } from '@/utils'
 
 import Icon from '../Icon.vue'
 
@@ -69,22 +63,7 @@ export default class CoverImage extends Vue {
   }
 
   public get statusIcon() {
-    if (!this.mediaListStatus) return null
-
-    switch (this.mediaListStatus) {
-      case MediaListStatus.Completed:
-        return mdiCheckboxMarkedCircleOutline
-      case MediaListStatus.Current:
-        return null
-      case MediaListStatus.Dropped:
-        return mdiCloseCircleOutline
-      case MediaListStatus.Paused:
-        return mdiPauseCircleOutline
-      case MediaListStatus.Planning:
-        return mdiClockOutline
-      case MediaListStatus.Repeating:
-        return mdiRepeat
-    }
+    return getIconForStatus(this.mediaListStatus, true)
   }
 }
 </script>
