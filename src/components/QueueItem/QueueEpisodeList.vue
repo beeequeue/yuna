@@ -32,7 +32,7 @@ import {
 
 import { Default, Required } from '@/decorators'
 import Episode from '@/components/Episode.vue'
-import Loading from '@/components/NewQueueItem/Loading.vue'
+import Loading from '@/components/QueueItem/Loading.vue'
 import SourceList from '@/components/SourceList.vue'
 
 @Component({ components: { SourceList, Loading, Episode } })

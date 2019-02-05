@@ -125,10 +125,10 @@ import {
 import Icon from '@/components/Icon.vue'
 import AnimeBanner from '@/components/AnimeBanner.vue'
 import EpisodeList from '@/components/EpisodeList.vue'
-import QueueEpisodeList from '@/components/NewQueueItem/QueueEpisodeList.vue'
+import QueueEpisodeList from '@/components/QueueItem/QueueEpisodeList.vue'
 import AnimatedHeight from '@/components/AnimatedHeight.vue'
 import SourceList from '@/components/SourceList.vue'
-import Loading from '@/components/NewQueueItem/Loading.vue'
+import Loading from '@/components/QueueItem/Loading.vue'
 import NextEpisodeInfo from '@/components/Anime/NextEpisodeInfo.vue'
 import CButton from '@/components/CButton.vue'
 
@@ -150,7 +150,7 @@ import { getIconForStatus, capitalize } from '@/utils'
     Icon,
   },
 })
-export default class NewQueueItem extends Vue {
+export default class QueueItem extends Vue {
   @Query<QueueEpisodeList, EpisodeListQuery, EpisodeListVariables>({
     fetchPolicy: 'network-only',
     query: EPISODE_LIST,

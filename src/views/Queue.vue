@@ -12,7 +12,7 @@
           v-if="getAnime(item.id) != null"
           :key="item.id"
         >
-          <new-queue-item
+          <queue-item
             :anime="getAnime(item.id)"
             :open="getIsItemOpen(item.id)"
             :key="item.id"
@@ -84,7 +84,7 @@ import { complement, indexBy, path, pathEq, pathOr } from 'rambdax'
 import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 
 import CButton from '@/components/CButton.vue'
-import NewQueueItem from '@/components/NewQueueItem/NewQueueItem.vue'
+import QueueItem from '@/components/QueueItem/QueueItem.vue'
 
 import { pausedQuery, planningQuery, watchingQuery } from '@/graphql/query'
 import {
@@ -107,7 +107,7 @@ const sortNumber = (a: number, b: number) => a - b
 
 @Component({
   components: {
-    NewQueueItem,
+    QueueItem,
     CButton,
     Container,
     Draggable,
