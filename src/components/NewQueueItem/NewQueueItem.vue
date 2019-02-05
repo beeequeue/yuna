@@ -1,8 +1,16 @@
 <template>
   <div class="queue-item">
-    <icon :icon="hamburgerSvg" class="handle" />
+    <div
+      class="status"
+      :class="{ [status.toLowerCase()]: !!status }"
+      v-tooltip.right="capitalize(status)"
+    >
+      <icon v-if="iconForStatus" :icon="iconForStatus" />
+    </div>
 
     <anime-banner :anime="anime" :faded="!isWatching" />
+
+    <icon :icon="hamburgerSvg" class="handle" />
 
     <animated-height class="episodes-container">
       <transition>
@@ -127,6 +135,7 @@ import CButton from '@/components/CButton.vue'
 import { Query, Required } from '@/decorators'
 import { removeFromQueueById, toggleQueueItemOpen } from '@/state/user'
 import { sendErrorToast } from '@/state/app'
+import { getIconForStatus, capitalize } from '@/utils'
 
 @Component({
   components: {
@@ -180,6 +189,8 @@ export default class NewQueueItem extends Vue {
   public expandSvg = mdiChevronDown
   public hamburgerSvg = mdiMenu
 
+  public capitalize = capitalize
+
   public get listEntry() {
     return pathOr(
       null,
@@ -188,8 +199,18 @@ export default class NewQueueItem extends Vue {
     ) as QueueMediaListEntry | null
   }
 
+  public get status() {
+    if (isNil(this.listEntry)) return null
+
+    return this.listEntry.status
+  }
+
   public get isWatching() {
     return this.isStatus(MediaListStatus.Current, MediaListStatus.Repeating)
+  }
+
+  public get iconForStatus() {
+    return getIconForStatus(this.status)
   }
 
   public toggleItemOpen() {
@@ -203,9 +224,9 @@ export default class NewQueueItem extends Vue {
   }
 
   public isStatus(...statuses: MediaListStatus[]) {
-    return statuses.includes(
-      path<MediaListStatus>(['mediaListEntry', 'status'], this.anime),
-    )
+    if (isNil(this.status)) return false
+
+    return statuses.includes(this.status)
   }
 
   public removeFromQueue() {
@@ -279,6 +300,10 @@ export default class NewQueueItem extends Vue {
 <style scoped lang="scss">
 @import '../../colors';
 
+@function gradient($color, $opacity: 0.5) {
+  @return linear-gradient(90deg, transparentize($color, $opacity), transparent);
+}
+
 .queue-item {
   left: 0;
   position: relative;
@@ -289,6 +314,35 @@ export default class NewQueueItem extends Vue {
   box-shadow: 1px 2px 15px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   z-index: 2;
+
+  & > .status {
+    position: absolute;
+    top: 0;
+    height: 75px;
+    width: 40px;
+    padding-left: 6px;
+    padding-right: 10px;
+    display: flex;
+    align-items: center;
+    z-index: 5;
+
+    &.paused {
+      background: gradient($warning);
+    }
+
+    &.dropped {
+      background: gradient($danger);
+    }
+
+    &.repeating {
+      background: gradient($success);
+    }
+
+    & > .icon {
+      fill: $white;
+      filter: drop-shadow(0 0 5px black);
+    }
+  }
 
   & > .handle {
     position: absolute;

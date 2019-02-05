@@ -38,8 +38,7 @@ import SourceList from '@/components/SourceList.vue'
 @Component({ components: { SourceList, Loading, Episode } })
 export default class QueueEpisodeList extends Vue {
   @Required(Object) public anime!: QueueAnime
-  @Default(Array, [])
-  public episodes!: EpisodeListEpisodes[]
+  @Prop(Array) public episodes!: EpisodeListEpisodes[] | null
   @Prop(String) public error!: string | null
   @Default(Boolean, false)
   public loading!: boolean
@@ -67,7 +66,13 @@ export default class QueueEpisodeList extends Vue {
 
   @Watch('episodes')
   public scrollToNextEpisode() {
-    if (isNil(this.listEntry) || this.episodes.length < 1) return
+    if (
+      isNil(this.listEntry) ||
+      isNil(this.episodes) ||
+      this.episodes.length < 1
+    ) {
+      return
+    }
 
     setTimeout(() => {
       const containerWidth = this.$refs.container.offsetWidth
