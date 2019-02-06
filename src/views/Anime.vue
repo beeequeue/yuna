@@ -44,7 +44,7 @@
         :blurDescription="getShouldBlurDescription(data)"
       />
 
-      <queue-episode-list
+      <episode-list
         key="episodes"
         v-if="data && data.anime"
         class="slide-up"
@@ -74,7 +74,7 @@ import Actions from '@/components/Anime/Actions.vue'
 import CenterContainer from '@/components/Anime/CenterContainer.vue'
 import Relations from '@/components/Anime/Relations.vue'
 import CButton from '@/components/CButton.vue'
-import QueueEpisodeList from '@/components/QueueItem/QueueEpisodeList.vue'
+import EpisodeList from '@/components/EpisodeList.vue'
 
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import ANIME_PAGE_QUERY from '@/graphql/AnimePageQuery.graphql'
@@ -94,7 +94,7 @@ import { getRelations } from '@/utils'
 
 @Component({
   components: {
-    QueueEpisodeList,
+    EpisodeList,
     CenterContainer,
     Relations,
     Actions,

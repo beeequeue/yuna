@@ -21,7 +21,7 @@
 
     <animated-height class="episodes-container">
       <transition>
-        <queue-episode-list
+        <episode-list
           v-if="open"
           :anime="anime"
           :episodes="episodes"
@@ -134,7 +134,6 @@ import {
 import Icon from '@/components/Icon.vue'
 import AnimeBanner from '@/components/AnimeBanner.vue'
 import EpisodeList from '@/components/EpisodeList.vue'
-import QueueEpisodeList from '@/components/QueueItem/QueueEpisodeList.vue'
 import AnimatedHeight from '@/components/AnimatedHeight.vue'
 import SourceList from '@/components/SourceList.vue'
 import Loading from '@/components/QueueItem/Loading.vue'
@@ -153,14 +152,13 @@ import { getIconForStatus, capitalize } from '@/utils'
     Loading,
     SourceList,
     AnimatedHeight,
-    QueueEpisodeList,
     EpisodeList,
     AnimeBanner,
     Icon,
   },
 })
 export default class QueueItem extends Vue {
-  @Query<QueueEpisodeList, EpisodeListQuery, EpisodeListVariables>({
+  @Query<EpisodeList, EpisodeListQuery, EpisodeListVariables>({
     fetchPolicy: 'network-only',
     query: EPISODE_LIST,
     loadingKey: 'episodesLoading',

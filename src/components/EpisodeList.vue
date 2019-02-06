@@ -1,22 +1,12 @@
 <template>
-  <div class="episodes" :data-episodes="episodes ? episodes.length : -1">
-    <div v-if="$apollo.loading" class="loading">
-      <loader /> Looking for episodes...
-    </div>
-
-    <div v-if="error" class="error">
-      <c-button :icon="reloadSvg" type="danger" :click="refetchEpisodes" />
-      {{ error }}
-    </div>
-
-    <div
-      v-if="!$apollo.loading && !error && episodes && episodes.length > 0"
-      ref="episodeContainer"
-      class="episode-container"
-      :class="containerClasses"
-      @wheel.prevent="handleScroll"
-      @scroll="updateContainerClasses"
-    >
+  <loading v-if="loading" />
+  <div
+    v-else-if="episodes && episodes.length > 0"
+    class="episode-list"
+    ref="container"
+    @wheel.prevent="handleScroll"
+  >
+    <div class="episode-wrapper" :class="{ 'pad-right': !!padRight }">
       <episode
         v-for="episode in episodes"
         :key="`${episode.name}:${episode.id}`"
@@ -24,307 +14,114 @@
         :episode="episode"
         :listEntry="listEntry"
         :small="small"
-        :setCurrentEpisode="setCurrentEpisode"
-        :data-episode="episode.episodeNumber"
-      />
-
-      <episode
-        v-if="rightPadding"
-        key="empty"
-        :episode="{ episodeNumber: -1 }"
-        :small="small"
-        :setCurrentEpisode="() => {}"
-        :empty="true"
       />
     </div>
-
-    <input
-      v-if="showScroller && episodes && episodes.length > 0 && !$apollo.loading"
-      class="scroller"
-      :maxlength="episodes.length.toString().length"
-      :value="scrollerValue"
-      placeholder="1"
-      @keydown.capture="handleScrollerKeydown"
-      @input="handleScrollerChange"
-    />
   </div>
+  <source-list v-else :links="anime.externalLinks" />
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { Key } from 'ts-key-enum'
-import { find, pathEq, pathOr } from 'rambdax'
-import { mdiCached } from '@mdi/js'
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { pathOr, isNil } from 'rambdax'
 
-import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
-  AnimePageQueryNextAiringEpisode,
   EpisodeListEpisodes,
+  QueueAnime,
+  QueueMediaListEntry,
 } from '@/graphql/types'
 
-import { Query, Required } from '@/decorators'
-import {
-  getPlaylistAnimeId,
-  ListEntry,
-  setCurrentEpisode,
-  setPlaylist,
-} from '@/state/app'
-
-import CButton from './CButton.vue'
+import { Required } from '@/decorators'
 import Episode from './Episode.vue'
-import Icon from './Icon.vue'
-import Loader from './Loader.vue'
+import Loading from './QueueItem/Loading.vue'
+import SourceList from './SourceList.vue'
 
-@Component({ components: { CButton, Episode, Icon, Loader } })
+@Component({ components: { SourceList, Loading, Episode } })
 export default class EpisodeList extends Vue {
-  @Required(Number) public id!: number
-  @Required(Number) public idMal!: number
-  @Required(String) public animeTitle!: string
-  @Prop(Number) public episodesInAnime!: number | null
-  @Prop(Object)
-  public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
-  @Prop(Object) public listEntry!: ListEntry | null
-  @Prop(Boolean) public showScroller!: boolean | null
+  @Required(Object) public anime!: QueueAnime
+  @Prop(Array) public episodes!: EpisodeListEpisodes[] | null
+  @Prop(String) public error!: string | null
+  @Prop(Boolean) public loading!: boolean | null
+  @Prop(Boolean) public scrollToNextEpisode!: boolean | null
   @Prop(Boolean) public small!: boolean | null
-  @Prop(Boolean) public rightPadding!: boolean | null
-  @Prop(Boolean) public scrollToCurrentEpisode!: boolean | null
-
-  @Query({
-    fetchPolicy: 'network-only',
-    query: EPISODE_LIST,
-    variables() {
-      return {
-        id: this.id,
-      }
-    },
-    skip() {
-      return !this.id
-    },
-    result() {
-      setTimeout(() => {
-        this._scrollToEpisode()
-      }, 200)
-    },
-    error(err) {
-      if (typeof err === 'string') {
-        this.error = err
-        return
-      }
-
-      if (typeof err.message === 'string') {
-        this.error = err.message
-        return
-      }
-
-      this.error = 'Something went wrong fetching the episodes. :('
-    },
-  })
-  public episodes: EpisodeListEpisodes[] | null = null
-  public error: string | null = null
-  public scrollerValue = ''
-
-  public reloadSvg = mdiCached
-
-  public containerClasses = {
-    'furthest-left': true,
-    'furthest-right': false,
-  }
+  @Prop(Boolean) public padRight!: boolean | null
 
   public $refs!: {
-    episodeContainer: HTMLDivElement
+    container: HTMLDivElement
     episodes: Episode[]
   }
 
-  public get currentEpisode() {
-    return this.listEntry != null ? this.listEntry.progress + 1 : null
+  public get listEntry() {
+    return pathOr(
+      null,
+      ['mediaListEntry'],
+      this.anime,
+    ) as QueueMediaListEntry | null
   }
 
-  public updateContainerClasses() {
-    const el = this.$refs.episodeContainer
-
-    if (!el)
-      return {
-        'furthest-left': true,
-        'furthest-right': false,
-      }
-
-    const width = el.scrollWidth
-
-    this.containerClasses = {
-      'furthest-left': el.scrollLeft <= 50,
-      'furthest-right': el.scrollLeft + el.clientWidth >= width - 50,
-    }
+  public mounted() {
+    this._scrollToNextEpisode()
   }
 
   public handleScroll(e: WheelEvent) {
-    this.$refs.episodeContainer.scrollBy(e.deltaY + e.deltaX, 0)
+    this.$refs.container.scrollBy(e.deltaY + e.deltaX, 0)
   }
 
-  private allowedKeys = [
-    Key.Backspace,
-    Key.Delete,
-    Key.ArrowLeft,
-    Key.ArrowRight,
-    Key.Home,
-    Key.End,
-  ]
-
-  public handleScrollerKeydown(e: KeyboardEvent) {
-    if (!/\d/.test(e.key) && !this.allowedKeys.includes(e.key as Key)) {
-      e.preventDefault() // If key is not a number
+  @Watch('episodes')
+  public _scrollToNextEpisode() {
+    if (
+      !this.scrollToNextEpisode ||
+      isNil(this.listEntry) ||
+      isNil(this.episodes) ||
+      this.episodes.length < 1
+    ) {
+      return
     }
-  }
 
-  public handleScrollerChange(e: KeyboardEvent) {
-    const episodeIdx = (e.currentTarget as HTMLInputElement).value.trim()
+    setTimeout(() => {
+      const containerWidth = this.$refs.container.offsetWidth
+      const episodeWidth = (this.$refs.episodes[0].$el as HTMLDivElement)
+        .offsetWidth
+      let offset = 0
 
-    this.scrollerValue = episodeIdx
+      if (this.$refs.episodes.length > this.listEntry!.progress! || 0) {
+        const nextEpisode = this.$refs.episodes[this.listEntry!.progress || 0]
 
-    if (episodeIdx === '') return
+        offset = (nextEpisode.$el as HTMLDivElement).offsetLeft
+      } else {
+        offset = this.$refs.container.clientWidth * 2
+      }
 
-    const episodeEl = this.getEpisodeElement(Number(episodeIdx))
-
-    if (!episodeEl) return
-
-    this.$refs.episodeContainer.scroll({
-      left: this.getContainerScrollLeft(episodeEl),
-      behavior: 'smooth',
-    })
-  }
-
-  public refetchEpisodes() {
-    this.$apollo.queries.episodes.refetch()
-    this.error = null
-  }
-
-  public _scrollToEpisode() {
-    if (!this.currentEpisode) return
-
-    const currentEpisodeDiv = this.getEpisodeElement(this.currentEpisode)
-
-    if (this.scrollToCurrentEpisode && currentEpisodeDiv != null) {
-      this.$refs.episodeContainer.scroll({
-        left: this.getContainerScrollLeft(currentEpisodeDiv),
+      this.$refs.container.scrollTo({
+        left: offset - (containerWidth / 2 - episodeWidth / 2),
         behavior: 'smooth',
       })
-    }
-  }
-
-  public setCurrentEpisode(episodeNumber: number) {
-    if (!this.episodes) return
-
-    const currentPlaylist = getPlaylistAnimeId(this.$store)
-
-    if (currentPlaylist === this.id) {
-      setCurrentEpisode(this.$store, episodeNumber - 1)
-    } else {
-      setPlaylist(this.$store, {
-        id: this.id,
-        index: episodeNumber - 1,
-      })
-    }
-  }
-
-  private getEpisodeElement(episodeNumber: number) {
-    if (!this.$refs.episodes || this.$refs.episodes.length < 1) return null
-
-    return pathOr(
-      null,
-      ['$el'],
-      find(
-        pathEq(['episode', 'episodeNumber'], episodeNumber),
-        this.$refs.episodes,
-      ),
-    ) as HTMLDivElement | null
-  }
-
-  private getContainerScrollLeft(episodeElement: HTMLDivElement) {
-    const containerDiv = this.$refs.episodeContainer
-
-    if (!containerDiv) return 0
-
-    return (
-      episodeElement.offsetLeft -
-      containerDiv.clientWidth / 2 +
-      episodeElement.clientWidth / 2
-    )
+    }, 150)
   }
 }
 </script>
 
 <style scoped lang="scss">
-@import '../colors';
+.episode-list {
+  position: absolute;
+  left: 0;
+  right: 0;
 
-.episodes {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  z-index: -1;
+  overflow: hidden;
+  transition: opacity 0.25s;
 
-  & > .loading {
-    display: flex;
-    justify-content: center;
+  & > .episode-wrapper {
+    display: inline-flex;
     align-items: center;
-    margin: auto;
-    text-shadow: $outline;
-    filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
-  }
+    padding: 15px;
 
-  & > .error {
-    margin: auto;
-    color: $danger;
-    font-size: 1.05em;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-
-    & > .button {
-      margin-right: 10px;
+    &.pad-right {
+      padding-right: 320px;
     }
   }
 
-  & > .episode-container {
-    display: flex;
-    align-items: flex-start;
-    width: 100%;
-    overflow-x: auto;
-
-    &:not(.furthest-left) {
-      mask-image: linear-gradient(90deg, transparent, black 5%);
-    }
-
-    &:not(.furthest-right) {
-      mask-image: linear-gradient(-90deg, transparent, black 5%);
-    }
-
-    &:not(.furthest-left):not(.furthest-right) {
-      mask-image: linear-gradient(
-        90deg,
-        transparent,
-        black 5%,
-        black 95%,
-        transparent
-      );
-    }
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-  }
-
-  & > .scroller {
-    position: relative;
-    margin-top: 10px;
-    background: none;
-    border: none;
-    padding-bottom: 5px;
-    border-bottom: 2px solid white;
-    width: 60px;
-    color: $white;
-    font-family: 'Raleway', sans-serif;
-    font-size: 1.5em;
+  &.v-enter,
+  &.v-leave-to {
+    opacity: 0;
   }
 }
 </style>
