@@ -55,7 +55,7 @@ export default class AboutModal extends Vue {
   & > a {
     margin: 5px 0;
     font-weight: 800;
-    color: lighten($main, 20%);
+    color: $highlight;
     transition: color 0.15s;
 
     &:last-child {
@@ -63,7 +63,7 @@ export default class AboutModal extends Vue {
     }
 
     &:hover {
-      color: lighten($main, 30%);
+      color: color($highlight, 800);
     }
   }
 }

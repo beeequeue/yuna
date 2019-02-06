@@ -156,7 +156,7 @@ export default class Search extends Vue {
     font-size: 1.25em;
     font-weight: 600;
     border-radius: 5px;
-    background: darken($highlight, 15%);
+    background: $main;
     color: $white;
     z-index: 2;
   }
@@ -194,7 +194,7 @@ export default class Search extends Vue {
       border-radius: 5px;
       overflow: hidden;
       box-shadow: $shadow;
-      background: darken($highlight, 17.5%);
+      background: color($main, 200);
       cursor: pointer;
 
       & > .thumbnail {

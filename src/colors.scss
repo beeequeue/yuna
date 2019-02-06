@@ -1,11 +1,35 @@
-$dark: rgb(21, 23, 36);
-$main: rgb(33, 45, 71);
-$highlight: rgb(50, 68, 122);
-$gray: rgba(206, 204, 206, 1);
-$white: rgba(229, 229, 229, 1);
-$success: rgb(63, 141, 61);
-$warning: rgb(179, 112, 31);
-$danger: rgb(170, 44, 44);
+@function color($color, $shade) {
+  @if ($shade == 0) {
+    @return darken($color, 10%);
+  } @else if ($shade == 100) {
+    @return darken($color, 7.5%);
+  } @else if ($shade == 200) {
+    @return darken($color, 5%);
+  } @else if($shade == 300) {
+    @return darken($color, 2.5%);
+  } @else if ($shade == 400) {
+    @return $color;
+  } @else if ($shade == 500) {
+    @return lighten($color, 2.5%);
+  } @else if ($shade == 600) {
+    @return lighten($color, 5%);
+  } @else if ($shade == 700) {
+    @return lighten($color, 7.5%);
+  } @else if ($shade == 800) {
+    @return lighten($color, 10%);
+  }
+}
+
+$black: #111;
+$dark: #151724;
+$highlight: #363f87;
+$main: #202650;
+$gray: #bbb9bb;
+$white: #e5e5e5;
+
+$success: #3f8d3d;
+$warning: #b3701f;
+$danger: #aa2c2c;
 
 $shadow: 1px 4px 10px rgba(0, 0, 0, 0.5);
 $outline: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;

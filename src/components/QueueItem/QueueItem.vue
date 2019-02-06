@@ -402,7 +402,7 @@ export default class QueueItem extends Vue {
   & > .controls {
     display: flex;
     align-items: center;
-    background: lighten($dark, 5%);
+    background: color($dark, 600);
 
     & > * {
       flex-shrink: 0;

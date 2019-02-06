@@ -60,7 +60,7 @@ export default class AnimeTitle extends Vue {
     font-family: 'Raleway', sans-serif;
     padding: 5px 0;
     font-weight: 500;
-    color: darken($white, 10%);
+    color: color($white, 100);
     text-align: left;
     text-shadow: 2px 2px 4px black;
     user-select: initial;

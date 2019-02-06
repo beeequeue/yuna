@@ -69,18 +69,18 @@ export default class CButton extends Vue {
   background: $color;
 
   &:hover {
-    background: lighten($color, 4%);
+    background: color($color, 600);
   }
   &:active {
-    background: darken($color, 4%);
+    background: color($color, 300);
   }
   &.disabled {
     background: mix($color, #333) !important;
-    color: darken($white, 25%);
+    color: color($white, 100);
     cursor: default;
 
     & > .icon {
-      fill: darken($white, 25%);
+      fill: color($white, 200);
     }
   }
 
@@ -99,12 +99,12 @@ export default class CButton extends Vue {
     cursor: default;
 
     & > .icon {
-      fill: darken($white, 25%);
+      fill: $gray;
     }
   }
 
   &:hover {
-    color: lighten($color, 10%);
+    color: color($color, 800);
   }
   &:active {
     background: rgba(0, 0, 0, 0.1);

@@ -128,7 +128,7 @@ export default class Dashboard extends Vue {
 
     & > .version {
       padding-bottom: 15px;
-      border-top: 1px solid darken($main, 0.5);
+      border-top: 1px solid color($main, 600);
       box-shadow: inset 0px 18px 15px -20px $main,
         inset 0px -18px 15px -20px $main;
     }
@@ -145,11 +145,11 @@ export default class Dashboard extends Vue {
     & /deep/ a {
       font-weight: 700;
       text-decoration: none;
-      color: lighten($main, 20%);
+      color: color($highlight, 400);
       transition: color 0.15s;
 
       &:hover {
-        color: lighten($main, 30%);
+        color: color($highlight, 600);
       }
     }
   }

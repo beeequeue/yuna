@@ -84,7 +84,7 @@ export default class Relations extends Vue {
     position: relative;
     font-family: 'Raleway', sans-serif;
     margin-bottom: 10px;
-    background: lighten($dark, 10%);
+    background: color($main, 200);
     text-align: left;
     border-radius: 5px;
     overflow: hidden;

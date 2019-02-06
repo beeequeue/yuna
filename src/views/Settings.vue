@@ -376,7 +376,7 @@ export default class Settings extends Vue {
     flex-direction: column;
     align-items: flex-start;
     text-align: left;
-    background: darken($dark, 2%);
+    background: color($dark, 300);
     min-width: 425px;
     padding-bottom: 35px;
     user-select: none;
@@ -413,7 +413,7 @@ export default class Settings extends Vue {
       padding: 25px 50px 0;
 
       & .us-cr-failed {
-        color: lighten($danger, 10%);
+        color: color($danger, 600);
         height: 0;
         padding: 0 15px;
         font-weight: 600;

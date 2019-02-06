@@ -58,9 +58,9 @@ export default class NumberInput extends Vue {
     width: 100%;
     border: 0;
     border-radius: 5px;
-    background: darken($highlight, 15%);
-    border-left: 2px solid darken($highlight, 15%);
-    border-right: 2px solid darken($highlight, 15%);
+    background: $main;
+    border-left: 2px solid $main;
+    border-right: 2px solid $main;
     color: $white;
     font-weight: 300;
     transition: color 0.5s, border-color 0.5s, filter 0.5s;
@@ -85,7 +85,7 @@ export default class NumberInput extends Vue {
     }
 
     & > input {
-      border-color: darken($danger, 10%);
+      border-color: $danger;
     }
   }
 
@@ -94,7 +94,7 @@ export default class NumberInput extends Vue {
     filter: grayscale(0.35);
 
     & > span {
-      color: darken($white, 25%);
+      color: $gray;
     }
   }
 }

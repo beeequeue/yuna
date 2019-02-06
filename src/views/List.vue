@@ -145,7 +145,7 @@ export default class List extends Vue {
     align-items: center;
     width: 100%;
     padding: 10px 0;
-    background: darken($dark, 3%);
+    background: color($dark, 300);
     flex-shrink: 0;
 
     & > .anilist {
