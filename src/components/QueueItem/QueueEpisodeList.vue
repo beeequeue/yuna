@@ -2,18 +2,18 @@
   <loading v-if="loading" />
   <div
     v-else-if="episodes && episodes.length > 0"
-    class="queue-episode-list"
+    class="episode-list"
     ref="container"
     @wheel.prevent="handleScroll"
   >
-    <div class="episode-wrapper">
+    <div class="episode-wrapper" :class="{ 'pad-right': !!padRight }">
       <episode
         v-for="episode in episodes"
         :key="`${episode.name}:${episode.id}`"
         ref="episodes"
         :episode="episode"
         :listEntry="listEntry"
-        small
+        :small="small"
       />
     </div>
   </div>
@@ -30,7 +30,7 @@ import {
   QueueMediaListEntry,
 } from '@/graphql/types'
 
-import { Default, Required } from '@/decorators'
+import { Required } from '@/decorators'
 import Episode from '@/components/Episode.vue'
 import Loading from '@/components/QueueItem/Loading.vue'
 import SourceList from '@/components/SourceList.vue'
@@ -40,8 +40,10 @@ export default class QueueEpisodeList extends Vue {
   @Required(Object) public anime!: QueueAnime
   @Prop(Array) public episodes!: EpisodeListEpisodes[] | null
   @Prop(String) public error!: string | null
-  @Default(Boolean, false)
-  public loading!: boolean
+  @Prop(Boolean) public loading!: boolean | null
+  @Prop(Boolean) public scrollToNextEpisode!: boolean | null
+  @Prop(Boolean) public small!: boolean | null
+  @Prop(Boolean) public padRight!: boolean | null
 
   public $refs!: {
     container: HTMLDivElement
@@ -57,7 +59,7 @@ export default class QueueEpisodeList extends Vue {
   }
 
   public mounted() {
-    this.scrollToNextEpisode()
+    this._scrollToNextEpisode()
   }
 
   public handleScroll(e: WheelEvent) {
@@ -65,8 +67,9 @@ export default class QueueEpisodeList extends Vue {
   }
 
   @Watch('episodes')
-  public scrollToNextEpisode() {
+  public _scrollToNextEpisode() {
     if (
+      !this.scrollToNextEpisode ||
       isNil(this.listEntry) ||
       isNil(this.episodes) ||
       this.episodes.length < 1
@@ -98,7 +101,7 @@ export default class QueueEpisodeList extends Vue {
 </script>
 
 <style scoped lang="scss">
-.queue-episode-list {
+.episode-list {
   position: absolute;
   left: 0;
   right: 0;
@@ -110,6 +113,10 @@ export default class QueueEpisodeList extends Vue {
     display: inline-flex;
     align-items: center;
     padding: 15px;
+
+    &.pad-right {
+      padding-right: 320px;
+    }
   }
 
   &.v-enter,

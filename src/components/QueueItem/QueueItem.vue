@@ -26,6 +26,8 @@
           :anime="anime"
           :episodes="episodes"
           :loading="episodesLoading !== 0"
+          small
+          scrollToNextEpisode
         />
       </transition>
     </animated-height>
