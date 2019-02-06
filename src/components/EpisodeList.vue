@@ -1,7 +1,7 @@
 <template>
   <div class="episodes" :data-episodes="episodes ? episodes.length : -1">
     <div v-if="$apollo.loading" class="loading">
-      <loader />Looking for episodes...
+      <loader /> Looking for episodes...
     </div>
 
     <div v-if="error" class="error">
@@ -37,7 +37,6 @@
         :empty="true"
       />
     </div>
-    <source-list v-else-if="!$apollo.loading && !error" :links="links" />
 
     <input
       v-if="showScroller && episodes && episodes.length > 0 && !$apollo.loading"
@@ -59,25 +58,32 @@ import { mdiCached } from '@mdi/js'
 
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
+  AnimePageQueryNextAiringEpisode,
   EpisodeListEpisodes,
-  Provider,
-  QueueAnime,
-  QueueExternalLinks,
-  QueueMediaListEntry,
 } from '@/graphql/types'
 
 import { Query, Required } from '@/decorators'
-import { setCurrentEpisode } from '@/state/app'
+import {
+  getPlaylistAnimeId,
+  ListEntry,
+  setCurrentEpisode,
+  setPlaylist,
+} from '@/state/app'
 
 import CButton from './CButton.vue'
 import Episode from './Episode.vue'
 import Icon from './Icon.vue'
 import Loader from './Loader.vue'
-import SourceList from './SourceList.vue'
 
-@Component({ components: { SourceList, CButton, Episode, Icon, Loader } })
+@Component({ components: { CButton, Episode, Icon, Loader } })
 export default class EpisodeList extends Vue {
-  @Required(Object) public anime!: QueueAnime
+  @Required(Number) public id!: number
+  @Required(Number) public idMal!: number
+  @Required(String) public animeTitle!: string
+  @Prop(Number) public episodesInAnime!: number | null
+  @Prop(Object)
+  public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
+  @Prop(Object) public listEntry!: ListEntry | null
   @Prop(Boolean) public showScroller!: boolean | null
   @Prop(Boolean) public small!: boolean | null
   @Prop(Boolean) public rightPadding!: boolean | null
@@ -101,7 +107,7 @@ export default class EpisodeList extends Vue {
     },
     error(err) {
       if (typeof err === 'string') {
-        this.error = err.replace('Network error: ', '')
+        this.error = err
         return
       }
 
@@ -114,7 +120,6 @@ export default class EpisodeList extends Vue {
     },
   })
   public episodes: EpisodeListEpisodes[] | null = null
-  public provider = Provider.Crunchyroll
   public error: string | null = null
   public scrollerValue = ''
 
@@ -130,24 +135,8 @@ export default class EpisodeList extends Vue {
     episodes: Episode[]
   }
 
-  public get listEntry() {
-    return pathOr(
-      null,
-      ['mediaListEntry'],
-      this.anime,
-    ) as QueueMediaListEntry | null
-  }
-
-  public get links() {
-    return pathOr(
-      null,
-      ['externalLinks'],
-      this.anime,
-    ) as QueueExternalLinks | null
-  }
-
   public get currentEpisode() {
-    return this.listEntry != null ? (this.listEntry.progress || 0) + 1 : null
+    return this.listEntry != null ? this.listEntry.progress + 1 : null
   }
 
   public updateContainerClasses() {
@@ -179,6 +168,7 @@ export default class EpisodeList extends Vue {
     Key.Home,
     Key.End,
   ]
+
   public handleScrollerKeydown(e: KeyboardEvent) {
     if (!/\d/.test(e.key) && !this.allowedKeys.includes(e.key as Key)) {
       e.preventDefault() // If key is not a number
@@ -223,10 +213,16 @@ export default class EpisodeList extends Vue {
   public setCurrentEpisode(episodeNumber: number) {
     if (!this.episodes) return
 
-    setCurrentEpisode(this.$store, {
-      id: this.anime.id,
-      index: episodeNumber - 1,
-    })
+    const currentPlaylist = getPlaylistAnimeId(this.$store)
+
+    if (currentPlaylist === this.id) {
+      setCurrentEpisode(this.$store, episodeNumber - 1)
+    } else {
+      setPlaylist(this.$store, {
+        id: this.id,
+        index: episodeNumber - 1,
+      })
+    }
   }
 
   private getEpisodeElement(episodeNumber: number) {
@@ -265,6 +261,7 @@ export default class EpisodeList extends Vue {
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
+  z-index: -1;
 
   & > .loading {
     display: flex;
