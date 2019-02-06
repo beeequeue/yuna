@@ -7,12 +7,12 @@
     >
       <icon v-if="iconForStatus" :icon="iconForStatus" />
 
-      <transition name="fade">
+      <animated-height>
         <div v-if="isWatching" class="progress">
           <div class="watched">{{ listEntry.progress }}</div>
           <div class="total">{{ anime.episodes }}</div>
         </div>
-      </transition>
+      </animated-height>
     </div>
 
     <anime-banner :anime="anime" :faded="!isWatching" />
@@ -355,7 +355,7 @@ export default class QueueItem extends Vue {
       flex-shrink: 0;
     }
 
-    & > .progress {
+    & .progress {
       filter: drop-shadow(0 0 2px black);
 
       & > .total {
