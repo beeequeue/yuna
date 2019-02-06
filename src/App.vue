@@ -78,6 +78,10 @@ export default class App extends Vue {
     return getHasFinishedSetup(this.$store)
   }
 
+  public errorCaptured(err: any) {
+    console.error(err)
+  }
+
   public backgroundImage = requireBg(
     backgrounds[Math.floor(Math.random() * backgrounds.length)],
   )
