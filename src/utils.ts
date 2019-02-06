@@ -5,6 +5,17 @@ import { filter, isNil, map, path, pathEq, pathOr } from 'rambdax'
 import { Response } from 'superagent'
 import uuid from 'uuid/v4'
 import { resolve } from 'path'
+import {
+  mdiCheckboxMarked,
+  mdiCheckboxMarkedCircleOutline,
+  mdiClock,
+  mdiClockOutline,
+  mdiClose,
+  mdiCloseCircleOutline,
+  mdiPause,
+  mdiPauseCircleOutline,
+  mdiRepeat,
+} from '@mdi/js'
 
 import {
   AnimePageQueryQuery,
@@ -80,6 +91,28 @@ export const humanizeMediaListStatus = (
   }
 }
 
+export const getIconForStatus = (
+  status: MediaListStatus | null,
+  circled = false,
+) => {
+  if (isNil(status)) return null
+
+  switch (status) {
+    case MediaListStatus.Completed:
+      return circled ? mdiCheckboxMarkedCircleOutline : mdiCheckboxMarked
+    case MediaListStatus.Current:
+      return null
+    case MediaListStatus.Dropped:
+      return circled ? mdiCloseCircleOutline : mdiClose
+    case MediaListStatus.Paused:
+      return circled ? mdiPauseCircleOutline : mdiPause
+    case MediaListStatus.Planning:
+      return circled ? mdiClockOutline : mdiClock
+    case MediaListStatus.Repeating:
+      return mdiRepeat
+  }
+}
+
 export const deviceUuidFilePath = resolve(
   api.app.getPath('userData'),
   '.device',
@@ -112,8 +145,10 @@ export const hasKey = (obj: any, value: any) => Object.keys(obj).includes(value)
 export const clamp = (x: number, min: number, max: number) =>
   Math.max(min, Math.min(x, max))
 
-export const enumToArray = <T>(Enum: any): T[] =>
-  Object.keys(Enum).map(key => Enum[key])
+export const enumToArray = <E>(Enum: E): E[] => Object.values(Enum)
+
+export const enumKeysToArray = <E>(Enum: E): Array<keyof E> =>
+  Object.keys(Enum) as any
 
 export const capitalize = (str: string) => {
   let words = str.split(' ')

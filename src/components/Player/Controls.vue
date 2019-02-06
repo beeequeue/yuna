@@ -17,9 +17,7 @@
       />
     </transition>
 
-    <transition name="fade">
-      <icon class="button close" :icon="closeSvg" @click.native="closePlayer" />
-    </transition>
+    <icon class="button close" :icon="closeSvg" @click.native="closePlayer" />
 
     <div class="toolbar">
       <progress-bar
@@ -201,31 +199,30 @@ import { pathOr } from 'rambdax'
 import {
   mdiArrowCollapse,
   mdiArrowExpand,
+  mdiBookmark,
+  mdiBookmarkRemove,
+  mdiClose,
   mdiFullscreen,
   mdiFullscreenExit,
   mdiPause,
   mdiPlay,
-  mdiBookmark,
-  mdiBookmarkRemove,
+  mdiSettingsOutline,
   mdiSkipNext,
   mdiSkipPrevious,
-  mdiSettingsOutline,
-  mdiClose,
 } from '@mdi/js'
 
 import {
+  EpisodeListEpisodes,
   PlayerAnimeAnime,
   PlayerAnimeMediaListEntry,
-  EpisodeListEpisodes,
 } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import {
   getIsFullscreen,
-  toggleFullscreen,
-  setPlaylist,
   setCurrentEpisode,
   setFullscreen,
+  toggleFullscreen,
 } from '@/state/app'
 import { Levels } from '@/types'
 import { secondsToTimeString } from '@/utils'
@@ -364,7 +361,7 @@ export default class Controls extends Vue {
   }
 
   public closePlayer() {
-    setPlaylist(this.$store, null)
+    setCurrentEpisode(this.$store, null)
 
     if (this.isFullscreen) {
       this._toggleFullscreen()
@@ -393,7 +390,7 @@ export default class Controls extends Vue {
   }
 
   public go(amount: number) {
-    setCurrentEpisode(this.$store, this.episode.index + amount)
+    setCurrentEpisode(this.$store, { index: this.episode.index + amount })
   }
 }
 </script>

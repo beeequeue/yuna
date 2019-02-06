@@ -1,0 +1,31 @@
+query Queue($ids: [Int!]!) {
+  queue: Page {
+    anime: media(id_in: $ids, type: ANIME) {
+      id
+      idMal
+      title {
+        userPreferred
+      }
+      episodes
+      status
+      siteUrl
+      bannerImage
+      nextAiringEpisode {
+        airingAt
+        timeUntilAiring
+        episode
+      }
+      externalLinks {
+        site
+        url
+      }
+      mediaListEntry {
+        id
+        progress
+        status
+        repeat
+        score(format: POINT_100)
+      }
+    }
+  }
+}

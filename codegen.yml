@@ -18,7 +18,6 @@ generates:
       - add: ' // THIS IS A GENERATED FILE'
       - typescript-common
       - typescript-client
-      - fragment-matcher
   ./graphql.schema.json:
     plugins:
       - introspection

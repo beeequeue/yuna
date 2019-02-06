@@ -135,7 +135,7 @@ export class AniDB {
       ep => ep.epno.type === EpisodeType.EPISODE && ep.epno._ === 1,
     )
 
-    if (!firstEpisode) return null
+    if (!firstEpisode) return []
 
     return getIdentifier(firstEpisode)
   }

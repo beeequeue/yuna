@@ -41,7 +41,7 @@ import { setEpisodeUnwatched, setEpisodeWatched } from '@/graphql/mutations'
 import { EpisodeListEpisodes } from '@/graphql/types'
 
 import { Required } from '@/decorators'
-import { ListEntry } from '@/state/app'
+import { ListEntry, setCurrentEpisode } from '@/state/app'
 import { getSpoilerSettings } from '@/state/settings'
 
 import CButton from './CButton.vue'
@@ -49,9 +49,8 @@ import Icon from './Icon.vue'
 
 @Component({ components: { CButton, Icon } })
 export default class Episode extends Vue {
-  @Prop(Object) public listEntry!: ListEntry | null
-  @Required(Function) public setCurrentEpisode!: (n: number) => void
   @Required(Object) public episode!: EpisodeListEpisodes
+  @Prop(Object) public listEntry!: ListEntry | null
   @Prop(String) public scrollerValue!: string | null
   @Prop(Boolean) public small!: boolean | null
   @Prop(Boolean) public empty!: boolean | null
@@ -95,7 +94,10 @@ export default class Episode extends Vue {
   }
 
   public handleThumbnailClick(episodeNumber: number) {
-    this.setCurrentEpisode(episodeNumber)
+    setCurrentEpisode(this.$store, {
+      id: this.episode.animeId,
+      index: episodeNumber - 1,
+    })
   }
 
   public setProgress() {

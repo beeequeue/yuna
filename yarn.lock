@@ -9599,6 +9599,11 @@ slice-ansi@0.0.4:
   resolved "https://registry.yarnpkg.com/slice-ansi/-/slice-ansi-0.0.4.tgz#edbf8903f66f7ce2f8eafd6ceed65e264c831b35"
   integrity sha1-7b+JA/ZvfOL46v1s7tZeJkyDGzU=
 
+smooth-dnd@^0.6.3:
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/smooth-dnd/-/smooth-dnd-0.6.3.tgz#e2eb0b6686b030ff8227ce0df9ea3b72b250a7f3"
+  integrity sha512-MT9YZK2+/GOWYLDUUrsaFpQ02DOGVxFRsX006uWdh3k2sZhKajDU6hkufznw3WFR6nO9ZqSfP5n21ekOUORwXg==
+
 snake-case@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/snake-case/-/snake-case-2.1.0.tgz#41bdb1b73f30ec66a04d4e2cad1b76387d4d6d9f"
@@ -9655,11 +9660,6 @@ sockjs@0.3.19:
   dependencies:
     faye-websocket "^0.10.0"
     uuid "^3.0.1"
-
-sortablejs@^1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/sortablejs/-/sortablejs-1.7.0.tgz#80a2b2370abd568e1cec8c271131ef30a904fa28"
-  integrity sha1-gKKyNwq9Vo4c7IwnETHvMKkE+ig=
 
 source-list-map@^2.0.0:
   version "2.0.1"
@@ -10999,6 +10999,13 @@ vue-router@3.0.2:
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.0.2.tgz#dedc67afe6c4e2bc25682c8b1c2a8c0d7c7e56be"
   integrity sha512-opKtsxjp9eOcFWdp6xLQPLmRGgfM932Tl56U9chYTnoWqKxQ8M20N7AkdEbM5beUh6wICoFGYugAX9vQjyJLFg==
 
+vue-smooth-dnd@0.2.8:
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/vue-smooth-dnd/-/vue-smooth-dnd-0.2.8.tgz#356a14609dcaf66fc47a6aaf24dfb0710df5ac99"
+  integrity sha512-sJ+ZyjO2V6qbdHNVd8ICj4PCE+Yw4X8A7TehLPLm3HzHb1LmLFLBEelJAiWpijgs0mHC3XVzRqCox5SQsj2vqA==
+  dependencies:
+    smooth-dnd "^0.6.3"
+
 vue-style-loader@^4.1.0:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/vue-style-loader/-/vue-style-loader-4.1.2.tgz#dedf349806f25ceb4e64f3ad7c0a44fba735fcf8"
@@ -11040,13 +11047,6 @@ vue@2.5.22:
   version "2.5.22"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.22.tgz#3bf88041af08b8539c37b268b70ca79245e9cc30"
   integrity sha512-pxY3ZHlXNJMFQbkjEgGVMaMMkSV1ONpz+4qB55kZuJzyJOhn6MSy/YZdzhdnumegNzVTL/Dn3Pp4UrVBYt1j/g==
-
-vuedraggable@2.17.0:
-  version "2.17.0"
-  resolved "https://registry.yarnpkg.com/vuedraggable/-/vuedraggable-2.17.0.tgz#489c16c9bcb9eb06f441944d3c52e5f2bb7060f9"
-  integrity sha512-TAC5tJTSbHSINQCSB59qHnuzT0Ad+E3IgvSWuA1e9UaebD8DxKaY1tCdvL3XvuLoaM3wc1dhpP/NbjpdxYsrng==
-  dependencies:
-    sortablejs "^1.7.0"
 
 vuex-typescript@3.0.2:
   version "3.0.2"

@@ -1,20 +1,24 @@
 <template>
   <div class="queue">
-    <div ref="container" class="container">
-      <draggable
-        v-model="queue"
-        :options="draggableOptions"
-        class="draggable-container"
+    <div ref="container" class="queue-container">
+      <container
+        lock-axis="y"
+        drag-handle-selector=".handle"
+        :get-child-payload="getChildPayload"
+        @drop="handleDrop"
       >
-        <transition-group type="transition" tag="div" class="transition-group">
+        <draggable
+          v-for="item in queue"
+          v-if="getAnime(item.id) != null"
+          :key="item.id"
+        >
           <queue-item
-            v-for="item in queue"
-            :item="item"
+            :anime="getAnime(item.id)"
+            :open="getIsItemOpen(item.id)"
             :key="item.id"
-            class="anime"
           />
-        </transition-group>
-      </draggable>
+        </draggable>
+      </container>
 
       <transition name="fade">
         <div v-if="queue.length < 1" class="empty-message">
@@ -71,32 +75,65 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import Draggable from 'vuedraggable'
+import { Container, Draggable } from 'vue-smooth-dnd'
 import { remote, shell } from 'electron'
 import { activeWindow, api } from 'electron-util'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
-import { complement, path } from 'rambdax'
+import { complement, indexBy, path, pathEq, pathOr, isNil } from 'rambdax'
 import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 
 import CButton from '@/components/CButton.vue'
-import QueueItem from '@/components/QueueItem.vue'
+import QueueItem from '@/components/QueueItem/QueueItem.vue'
 
 import { pausedQuery, planningQuery, watchingQuery } from '@/graphql/query'
-import { WatchingQueryLists, WatchingQueryEntries } from '@/graphql/types'
+import {
+  QueueAnime,
+  QueueQuery,
+  QueueVariables,
+  WatchingQueryEntries,
+  WatchingQueryLists,
+} from '@/graphql/types'
+import QUEUE_QUERY from '@/graphql/Queue.graphql'
 
-import { Page, trackPageView } from '@/lib/tracking'
-import { QueueItem as IQueueItem } from '@/lib/user'
+import { Query } from '@/decorators'
 import { getPlayerData, sendErrorToast, sendToast } from '@/state/app'
 import { getAnilistUserId, getAnilistUsername } from '@/state/auth'
 import { addToQueue, getQueue, setQueue } from '@/state/user'
+import { Page, trackPageView } from '@/lib/tracking'
+import { QueueItem as IQueueItem } from '@/lib/user'
 
-@Component({ components: { Draggable, CButton, QueueItem } })
+const sortNumber = (a: number, b: number) => a - b
+
+@Component({
+  components: {
+    QueueItem,
+    CButton,
+    Container,
+    Draggable,
+  },
+})
 export default class Queue extends Vue {
   private defaultBackupPath = resolve(api.app.getPath('userData'), 'backups')
   private jsonFilter = { extensions: ['json'], name: '*' }
 
-  public draggableOptions = {
+  @Query<Queue, QueueQuery, QueueVariables>({
+    query: QUEUE_QUERY,
+    variables() {
+      return {
+        ids: this.queue.map(path('id')).sort(sortNumber),
+      }
+    },
+    update: data => {
+      const items = pathOr([], ['queue', 'anime'])(data)
+      return indexBy(anime => path('id', anime), items)
+    },
+  })
+  public animes!: {
+    [key: number]: QueueAnime
+  }
+
+  public gridOptions = {
     animation: 150,
     handle: '.handle',
   }
@@ -128,6 +165,30 @@ export default class Queue extends Vue {
 
   public mounted() {
     trackPageView(Page.QUEUE)
+  }
+
+  public getAnime(id: number) {
+    if (isNil(this.animes)) return null
+
+    return this.animes[id]
+  }
+
+  public getIsItemOpen(id: number) {
+    const item = this.queue.find(pathEq('id', id))
+    return !!item && item.open
+  }
+
+  public handleDrop({ removedIndex, addedIndex, payload }: any) {
+    const newQueue = [...this.queue]
+
+    newQueue.splice(removedIndex, 1)
+    newQueue.splice(addedIndex, 0, payload)
+
+    setQueue(this.$store, newQueue)
+  }
+
+  public getChildPayload(index: number) {
+    return this.queue[index]
   }
 
   public async importFromQuery(
@@ -282,26 +343,26 @@ export default class Queue extends Vue {
 
 .queue {
   position: relative;
-  display: grid;
-  grid-template-columns: 1fr 325px;
-  grid-template-rows: 1fr 170px;
-  grid-template-areas:
-    'queue sidebar'
-    'queue player';
+  display: flex;
 
   width: 100%;
   height: 100%;
+  background: rgba(0, 0, 0, 0.85);
 
-  .container {
+  .queue-container {
     position: relative;
-    grid-area: queue;
     padding: 15px 25px;
     overflow-y: auto;
     overflow-x: hidden;
 
+    width: 100%;
     min-width: 800px;
-    background: #10111a;
     user-select: none;
+
+    & > .smooth-dnd-container {
+      position: relative;
+      height: 100%;
+    }
 
     & > .empty-message {
       position: absolute;
@@ -321,23 +382,20 @@ export default class Queue extends Vue {
         font-size: 0.85em;
       }
     }
-
-    & > .draggable-container > .transition-group {
-      position: relative;
-    }
   }
 
   .sidebar {
-    grid-area: sidebar / sidebar / player / player;
+    width: 325px;
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     padding: 20px 25px;
-
-    background: #1a1b29;
+    background: #202130;
+    transition: margin-bottom 0.25s;
 
     &.small {
-      grid-area: sidebar;
+      margin-bottom: 183px;
     }
 
     & > .button {
@@ -353,17 +411,23 @@ export default class Queue extends Vue {
 
 .route-enter-active,
 .route-leave-active {
-  transition: none 0.5s; // Required for Vue to realize there are transitions
+  transition: background 0.5s;
 
-  & > .container,
+  & > .queue-container,
   & > .sidebar {
     transition: transform 0.5s;
+  }
+
+  & > .queue-container {
+    overflow: visible;
   }
 }
 
 .route-enter,
 .route-leave-to {
-  & > .container {
+  background: none;
+
+  & > .queue-container {
     transform: translateX(-100%);
   }
 

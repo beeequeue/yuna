@@ -156,7 +156,7 @@ export default class Search extends Vue {
     font-size: 1.25em;
     font-weight: 600;
     border-radius: 5px;
-    background: darken($highlight, 17.5%);
+    background: darken($highlight, 15%);
     color: $white;
     z-index: 2;
   }

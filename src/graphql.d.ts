@@ -20,16 +20,6 @@ declare module '*/AnimePageQuery.graphql' {
   export default defaultDocument
 }
 
-declare module '*/AnimeQueueQuery.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const AnimeQueueQuery: DocumentNode
-
-  export { AnimeQueueQuery }
-
-  export default defaultDocument
-}
-
 declare module '*/DeleteListEntryMutation.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
@@ -86,6 +76,16 @@ declare module '*/PlayerAnime.graphql' {
   const PlayerAnime: DocumentNode
 
   export { PlayerAnime }
+
+  export default defaultDocument
+}
+
+declare module '*/Queue.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const Queue: DocumentNode
+
+  export { Queue }
 
   export default defaultDocument
 }

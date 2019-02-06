@@ -405,6 +405,7 @@ export enum ThreadSort {
 
 export enum Provider {
   Crunchyroll = "CRUNCHYROLL",
+  Hidive = "HIDIVE",
 }
 /** Types that can be liked */
 export enum LikeableType {
@@ -502,6 +503,8 @@ export type FuzzyDateInt = any;
     
     nextAiringEpisode: Maybe<AnimePageQueryNextAiringEpisode>;
     
+    externalLinks: Maybe<AnimePageQueryExternalLinks[]>;
+    
     relations: Maybe<AnimePageQueryRelations>;
     
     mediaListEntry: Maybe<AnimePageQueryMediaListEntry>;
@@ -535,6 +538,14 @@ export type FuzzyDateInt = any;
     timeUntilAiring: number;
     
     episode: number;
+  } 
+
+  export type AnimePageQueryExternalLinks = {
+    __typename?: "MediaExternalLink";
+    
+    site: string;
+    
+    url: string;
   } 
 
   export type AnimePageQueryRelations = {
@@ -579,68 +590,6 @@ export type FuzzyDateInt = any;
     score: Maybe<number>;
     
     repeat: Maybe<number>;
-  } 
-
-  export type AnimeQueueQueryVariables = {
-    id: Maybe<number>;
-  }
-
-  export type AnimeQueueQueryQuery = {
-    __typename?: "Query";
-    
-    anime: Maybe<AnimeQueueQueryAnime>;
-  }
-
-  export type AnimeQueueQueryAnime = {
-    __typename?: "Media";
-    
-    id: number;
-    
-    idMal: Maybe<number>;
-    
-    title: Maybe<AnimeQueueQueryTitle>;
-    
-    episodes: Maybe<number>;
-    
-    status: Maybe<MediaStatus>;
-    
-    siteUrl: Maybe<string>;
-    
-    bannerImage: Maybe<string>;
-    
-    nextAiringEpisode: Maybe<AnimeQueueQueryNextAiringEpisode>;
-    
-    mediaListEntry: Maybe<AnimeQueueQueryMediaListEntry>;
-  } 
-
-  export type AnimeQueueQueryTitle = {
-    __typename?: "MediaTitle";
-    
-    userPreferred: Maybe<string>;
-  } 
-
-  export type AnimeQueueQueryNextAiringEpisode = {
-    __typename?: "AiringSchedule";
-    
-    airingAt: number;
-    
-    timeUntilAiring: number;
-    
-    episode: number;
-  } 
-
-  export type AnimeQueueQueryMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    progress: Maybe<number>;
-    
-    status: Maybe<MediaListStatus>;
-    
-    repeat: Maybe<number>;
-    
-    score: Maybe<number>;
   } 
 
   export type DeleteListEntryMutationVariables = {
@@ -928,6 +877,84 @@ export type FuzzyDateInt = any;
     score: Maybe<number>;
   } 
 
+  export type QueueVariables = {
+    ids: number[];
+  }
+
+  export type QueueQuery = {
+    __typename?: "Query";
+    
+    queue: Maybe<QueueQueue>;
+  }
+
+  export type QueueQueue = {
+    __typename?: "Page";
+    
+    anime: Maybe<QueueAnime[]>;
+  } 
+
+  export type QueueAnime = {
+    __typename?: "Media";
+    
+    id: number;
+    
+    idMal: Maybe<number>;
+    
+    title: Maybe<QueueTitle>;
+    
+    episodes: Maybe<number>;
+    
+    status: Maybe<MediaStatus>;
+    
+    siteUrl: Maybe<string>;
+    
+    bannerImage: Maybe<string>;
+    
+    nextAiringEpisode: Maybe<QueueNextAiringEpisode>;
+    
+    externalLinks: Maybe<QueueExternalLinks[]>;
+    
+    mediaListEntry: Maybe<QueueMediaListEntry>;
+  } 
+
+  export type QueueTitle = {
+    __typename?: "MediaTitle";
+    
+    userPreferred: Maybe<string>;
+  } 
+
+  export type QueueNextAiringEpisode = {
+    __typename?: "AiringSchedule";
+    
+    airingAt: number;
+    
+    timeUntilAiring: number;
+    
+    episode: number;
+  } 
+
+  export type QueueExternalLinks = {
+    __typename?: "MediaExternalLink";
+    
+    site: string;
+    
+    url: string;
+  } 
+
+  export type QueueMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    progress: Maybe<number>;
+    
+    status: Maybe<MediaListStatus>;
+    
+    repeat: Maybe<number>;
+    
+    score: Maybe<number>;
+  } 
+
   export type RewatchMutationVariables = {
     id: Maybe<number>;
   }
@@ -1145,85 +1172,3 @@ export type FuzzyDateInt = any;
     id: number;
   } 
 
-
-      export interface IntrospectionResultData {
-        __schema: {
-          types: {
-            kind: string;
-            name: string;
-            possibleTypes: {
-              name: string;
-            }[];
-          }[];
-        };
-      }
-
-      const result: IntrospectionResultData = {
-  "__schema": {
-    "types": [
-      {
-        "kind": "UNION",
-        "name": "NotificationUnion",
-        "possibleTypes": [
-          {
-            "name": "AiringNotification"
-          },
-          {
-            "name": "FollowingNotification"
-          },
-          {
-            "name": "ActivityMessageNotification"
-          },
-          {
-            "name": "ActivityMentionNotification"
-          },
-          {
-            "name": "ActivityReplyNotification"
-          },
-          {
-            "name": "ActivityReplySubscribedNotification"
-          },
-          {
-            "name": "ActivityLikeNotification"
-          },
-          {
-            "name": "ActivityReplyLikeNotification"
-          },
-          {
-            "name": "ThreadCommentMentionNotification"
-          },
-          {
-            "name": "ThreadCommentReplyNotification"
-          },
-          {
-            "name": "ThreadCommentSubscribedNotification"
-          },
-          {
-            "name": "ThreadCommentLikeNotification"
-          },
-          {
-            "name": "ThreadLikeNotification"
-          }
-        ]
-      },
-      {
-        "kind": "UNION",
-        "name": "ActivityUnion",
-        "possibleTypes": [
-          {
-            "name": "TextActivity"
-          },
-          {
-            "name": "ListActivity"
-          },
-          {
-            "name": "MessageActivity"
-          }
-        ]
-      }
-    ]
-  }
-};
-
-      export default result;
-    

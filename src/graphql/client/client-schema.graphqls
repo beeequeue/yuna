@@ -1,5 +1,6 @@
 enum Provider {
   CRUNCHYROLL,
+  HIDIVE,
 }
 
 type Episode {
