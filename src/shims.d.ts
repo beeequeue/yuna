@@ -50,55 +50,6 @@ declare module 'vue-smooth-dnd' {
   export const Draggable: VueConstructor<Vue>
 }
 
-declare module 'electron-util' {
-  import { App, BrowserWindow } from 'electron'
-
-  export const api: { app: App }
-
-  export const is: {
-    macos: boolean
-    linux: boolean
-    windows: boolean
-    main: boolean
-    renderer: boolean
-    development: boolean
-    usingAsar: boolean
-    macAppStore: boolean
-    windowsStore: boolean
-  }
-
-  export const electronVersion: string
-  export const chromeVersion: string
-
-  export const platform: <F1, F2, F3>(
-    opts: { macos?: F1; windows?: F2; linux?: F3 },
-  ) => F1 | F2 | F3
-
-  export const isFirstAppLaunch: () => boolean
-
-  export const activeWindow: () => BrowserWindow
-}
-
-declare module 'electron-debug' {
-  import { BrowserWindow } from 'electron'
-  /**
-   * Install keyboard shortcuts and optionally activate DevTools on each
-   * created BrowserWindow.
-   */
-  const electronDebug: (
-    options: {
-      /** Enable debug options. */
-      enabled?: boolean
-      /** Show DevTools on each created BrowserWindow. */
-      showDevTools?: boolean | 'right' | 'bottom' | 'undocked'
-    },
-  ) => void
-
-  export const openDevTools: (window?: BrowserWindow) => void
-
-  export default electronDebug
-}
-
 declare interface Window {
   initialLogin: boolean
 }
