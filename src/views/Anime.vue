@@ -1,80 +1,67 @@
 <template>
-  <ApolloQuery
-    class="anime"
-    :query="ANIME_PAGE_QUERY"
-    :variables="{ id }"
-    @result="fetchedAnime"
-  >
-    <template slot-scope="{ result: { loading, error, data } }">
-      <transition-group tag="span">
-        <div v-if="error" key="error" class="error-container slide-down">
-          <h1>{{ error.graphQLErrors[0].message }}</h1>
+  <div class="anime">
+    <transition-group tag="span">
+      <div v-if="error" key="error" class="error-container slide-down">
+        <h1>{{ error.graphQLErrors[0].message }}</h1>
 
-          <c-button content="Go back" @click.native="$router.back()" />
-        </div>
+        <c-button content="Go back" @click.native="$router.back()" />
+      </div>
 
-        <cover-image
-          v-if="data && data.anime"
-          key="cover-image"
-          class="slide-down"
-          :src="data.anime.coverImage.extraLarge"
-          :color="data.anime.coverImage.color"
-          :mediaListEntry="getMediaListEntry(data)"
-          :length="data.anime.episodes"
-        />
+      <cover-image
+        v-if="data && data.anime"
+        key="cover-image"
+        class="slide-down"
+        :src="data.anime.coverImage.extraLarge"
+        :color="data.anime.coverImage.color"
+        :mediaListEntry="getMediaListEntry(data)"
+        :length="data.anime.episodes"
+      />
 
-        <actions
-          v-if="data && data.anime"
-          key="actions"
-          class="slide-up"
-          :anime="data.anime"
-          :mediaListEntry="data.anime.mediaListEntry"
-        />
+      <actions
+        v-if="data && data.anime"
+        key="actions"
+        class="slide-up"
+        :anime="data.anime"
+        :mediaListEntry="data.anime.mediaListEntry"
+      />
 
-        <anime-title
-          v-if="data && data.anime"
-          key="title"
-          class="slide-down"
-          :title="data.anime.title"
-        />
+      <anime-title
+        v-if="data && data.anime"
+        key="title"
+        class="slide-down"
+        :title="data.anime.title"
+      />
 
-        <center-container
-          v-if="data && data.anime"
-          key="center"
-          class="slide-up"
-          :id="data.anime.id"
-          :idMal="data.anime.idMal"
-          :score="data.anime.averageScore"
-          :content="data.anime.description"
-          :nextAiringEpisode="data.anime.nextAiringEpisode"
-          :blurDescription="getShouldBlurDescription(data)"
-        />
+      <center-container
+        v-if="data && data.anime"
+        key="center"
+        class="slide-up"
+        :id="data.anime.id"
+        :idMal="data.anime.idMal"
+        :score="data.anime.averageScore"
+        :content="data.anime.description"
+        :nextAiringEpisode="data.anime.nextAiringEpisode"
+        :blurDescription="getShouldBlurDescription(data)"
+      />
 
-        <episode-list
-          key="episodes"
-          v-if="data && data.anime && data.anime.idMal"
-          class="slide-up"
-          :id="data.anime.id"
-          :idMal="data.anime.idMal"
-          :listEntry="data.anime.mediaListEntry"
-          :animeTitle="data.anime.title.userPreferred"
-          :episodesInAnime="data.anime.episodes"
-          :nextAiringEpisode="data.anime.nextAiringEpisode"
-          :sequels="getRelations(data, 'SEQUEL')"
-          showScroller
-          rightPadding
-        />
+      <queue-episode-list
+        key="episodes"
+        v-if="data && data.anime"
+        class="slide-up"
+        :anime="data.anime"
+        :episodes="episodes"
+        padRight
+      />
 
-        <relations
-          v-if="data && data.anime"
-          key="relations"
-          class="slide-left"
-          :prequels="getRelations(data, 'PREQUEL')"
-          :sequels="getRelations(data, 'SEQUEL')"
-        />
-      </transition-group>
-    </template>
-  </ApolloQuery>
+      <relations
+        v-if="data && data.anime"
+        key="relations"
+        class="slide-left"
+        :prequels="getRelations(data, 'PREQUEL')"
+        :sequels="getRelations(data, 'SEQUEL')"
+      />
+    </transition-group>
+  </div>
 </template>
 
 <script lang="ts">
@@ -86,21 +73,28 @@ import AnimeTitle from '@/components/Anime/Title.vue'
 import Actions from '@/components/Anime/Actions.vue'
 import CenterContainer from '@/components/Anime/CenterContainer.vue'
 import Relations from '@/components/Anime/Relations.vue'
-import EpisodeList from '@/components/EpisodeList.vue'
 import CButton from '@/components/CButton.vue'
+import QueueEpisodeList from '@/components/QueueItem/QueueEpisodeList.vue'
 
+import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import ANIME_PAGE_QUERY from '@/graphql/AnimePageQuery.graphql'
 import {
   AnimePageQueryMediaListEntry,
   AnimePageQueryQuery,
+  AnimePageQueryVariables,
+  EpisodeListEpisodes,
+  EpisodeListQuery,
+  EpisodeListVariables,
 } from '@/graphql/types'
+
+import { Query } from '@/decorators'
 import { getSpoilerSettings } from '@/state/settings'
 import { Page, trackPageView } from '@/lib/tracking'
 import { getRelations } from '@/utils'
 
 @Component({
   components: {
-    EpisodeList,
+    QueueEpisodeList,
     CenterContainer,
     Relations,
     Actions,
@@ -110,22 +104,68 @@ import { getRelations } from '@/utils'
   },
 })
 export default class Anime extends Vue {
-  ANIME_PAGE_QUERY = ANIME_PAGE_QUERY
-  data?: AnimePageQueryQuery
+  @Query<Anime, AnimePageQueryQuery, AnimePageQueryVariables>({
+    query: ANIME_PAGE_QUERY,
+    variables() {
+      return {
+        id: this.id,
+      }
+    },
+    error(err: Error) {
+      this.error = err.message
+    },
+    result(data) {
+      this.fetchedAnime(data)
+    },
+  })
+  public data!: AnimePageQueryQuery | null
+  error: string | null = null
+
+  @Query<Anime, EpisodeListQuery, EpisodeListVariables>({
+    fetchPolicy: 'network-only',
+    query: EPISODE_LIST,
+    loadingKey: 'episodesLoading',
+    variables() {
+      return {
+        id: this.id,
+      }
+    },
+    skip() {
+      return !this.id
+    },
+    error(err) {
+      if (typeof err === 'string') {
+        this.episodesFetchingError = err.replace('Network error: ', '')
+        return
+      }
+
+      if (typeof err.message === 'string') {
+        this.episodesFetchingError = err.message.replace('Network error: ', '')
+        return
+      }
+
+      this.episodesFetchingError =
+        'Something went wrong fetching the episodes. :('
+    },
+  })
+  public episodes!: EpisodeListEpisodes[] | null
+  public episodesLoading = 0
+  public episodesFetchingError: string | null = null
+
   tracked = false
 
   public get id() {
     return Number(this.$route.params.id)
   }
 
-  public async fetchedAnime(result: { data: AnimePageQueryQuery }) {
+  public async fetchedAnime(data: AnimePageQueryQuery) {
     if (this.tracked) return
 
     trackPageView(
       Page.ANIME,
       this.id,
-      path('data.anime.title.english', result) ||
-        path('data.anime.title.userPreferred', result),
+      path('anime.title.english', data) ||
+        path('anime.title.userPreferred', data),
     )
 
     this.tracked = true
@@ -246,8 +286,14 @@ export default class Anime extends Vue {
       grid-row: 2 / span 2;
     }
 
-    & > .episodes {
+    & > .episode-list {
       grid-column: 2 / span 2;
+      grid-row: 3 / span 1;
+      align-self: flex-start;
+    }
+
+    & > .source-list {
+      grid-column: 2 / span 1;
       grid-row: 3 / span 1;
       align-self: flex-start;
     }
