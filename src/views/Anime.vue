@@ -48,6 +48,7 @@
         key="episodes"
         v-if="data && data.anime"
         class="slide-up"
+        :loading="episodesLoading !== 0"
         :anime="data.anime"
         :episodes="episodes"
         padRight
@@ -66,7 +67,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { path, pathOr } from 'rambdax'
+import { path, pathOr, isNil } from 'rambdax'
 
 import CoverImage from '@/components/Anime/CoverImage.vue'
 import AnimeTitle from '@/components/Anime/Title.vue'
@@ -131,7 +132,7 @@ export default class Anime extends Vue {
       }
     },
     skip() {
-      return !this.id
+      return isNil(this.id) || isNil(this.data) || isNil(this.data.anime)
     },
     error(err) {
       if (typeof err === 'string') {
@@ -291,11 +292,14 @@ export default class Anime extends Vue {
       grid-row: 3 / span 1;
       align-self: flex-start;
     }
-
     & > .source-list {
       grid-column: 2 / span 1;
       grid-row: 3 / span 1;
       align-self: flex-start;
+    }
+    & > .loading {
+      grid-column: 2 / span 1;
+      grid-row: 3 / span 1;
     }
 
     & > .relations {
