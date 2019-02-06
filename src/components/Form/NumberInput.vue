@@ -1,8 +1,15 @@
 <template>
-  <label class="number-input" :class="classes" v-tooltip.bottom="error">
+  <label
+    class="number-input"
+    :class="classes"
+    v-tooltip.bottom="validationError || error"
+  >
     <span v-if="label != null">{{ label }}</span>
 
-    <input type="number" :value="value" @input="handleChange" @keydown.e.prevent="() => {}">
+    <input
+      :value="stringValue"
+      @input="handleChange"
+    />
 
     <span v-if="suffix" class="suffix">{{ suffix }}</span>
   </label>
@@ -11,6 +18,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Required } from '@/decorators'
+import { isNil } from 'rambdax'
 
 @Component
 export default class NumberInput extends Vue {
@@ -18,18 +26,45 @@ export default class NumberInput extends Vue {
   @Required(Number) public value!: number
   @Required(Function) public onChange!: (value: number) => any
   @Prop(String) public suffix!: string | null
+  @Prop(Number) public min!: number | null
+  @Prop(Number) public max!: number | null
   @Prop(String) public error!: string | null
   @Prop(Boolean) public disabled!: boolean | null
 
+  public validationError: string | null = null
+  public stringValue: string = this.value.toString()
+
   public get classes() {
     return {
-      error: this.error != null,
+      error: !isNil(this.validationError) || !isNil(this.error),
       disabled: this.disabled,
     }
   }
 
   public handleChange(e: InputEvent) {
-    this.onChange(Number(e.currentTarget.value))
+    const value = Number(e.currentTarget.value)
+    this.stringValue = e.currentTarget.value
+
+    this.validationError = null
+
+    if (isNaN(value)) {
+      this.validationError = 'Not a number!'
+      return
+    }
+
+    if (!isNil(this.min) && value < this.min) {
+      this.validationError = `Too low! (Minimum ${this.min})`
+      return
+    }
+
+    if (!isNil(this.max) && value > this.max) {
+      this.validationError = `Too high! (Max ${this.max})`
+      return
+    }
+
+    if (e.currentTarget.value === '') return this.onChange(0)
+
+    this.onChange(value)
   }
 }
 </script>
