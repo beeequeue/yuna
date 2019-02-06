@@ -80,7 +80,7 @@ import { remote, shell } from 'electron'
 import { activeWindow, api } from 'electron-util'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
-import { complement, indexBy, path, pathEq, pathOr } from 'rambdax'
+import { complement, indexBy, path, pathEq, pathOr, isNil } from 'rambdax'
 import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 
 import CButton from '@/components/CButton.vue'
@@ -168,6 +168,8 @@ export default class Queue extends Vue {
   }
 
   public getAnime(id: number) {
+    if (isNil(this.animes)) return null
+
     return this.animes[id]
   }
 
