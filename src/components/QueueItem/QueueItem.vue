@@ -6,6 +6,13 @@
       v-tooltip.right="capitalize(status)"
     >
       <icon v-if="iconForStatus" :icon="iconForStatus" />
+
+      <transition name="fade">
+        <div v-if="isWatching" class="progress">
+          <div class="watched">{{ listEntry.progress }}</div>
+          <div class="total">{{ anime.episodes }}</div>
+        </div>
+      </transition>
     </div>
 
     <anime-banner :anime="anime" :faded="!isWatching" />
@@ -319,11 +326,13 @@ export default class QueueItem extends Vue {
     position: absolute;
     top: 0;
     height: 75px;
-    width: 40px;
-    padding-left: 6px;
-    padding-right: 10px;
+    padding-left: 10px;
+    padding-right: 20px;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
+    font-weight: 500;
     z-index: 5;
 
     &.paused {
@@ -338,9 +347,27 @@ export default class QueueItem extends Vue {
       background: gradient($success);
     }
 
+    &.current {
+      background: gradient(black, 0.25);
+    }
+
+    & > * {
+      flex-shrink: 0;
+    }
+
+    & > .progress {
+      filter: drop-shadow(0 0 2px black);
+
+      & > .total {
+        margin-top: 3px;
+        padding-top: 2px;
+        border-top: 1px solid $white;
+      }
+    }
+
     & > .icon {
+      width: 20px;
       fill: $white;
-      filter: drop-shadow(0 0 5px black);
     }
   }
 
