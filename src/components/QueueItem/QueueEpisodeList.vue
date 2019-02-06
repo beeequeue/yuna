@@ -85,7 +85,7 @@ export default class QueueEpisodeList extends Vue {
 
         offset = (nextEpisode.$el as HTMLDivElement).offsetLeft
       } else {
-        offset = episodeWidth * 1.5 * this.$refs.episodes.length
+        offset = this.$refs.container.clientWidth * 2
       }
 
       this.$refs.container.scrollTo({
