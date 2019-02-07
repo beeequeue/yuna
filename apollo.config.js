@@ -5,6 +5,5 @@ module.exports = {
       name: 'anilist',
       url: 'https://graphql.anilist.co',
     },
-  }
+  },
 }
-
