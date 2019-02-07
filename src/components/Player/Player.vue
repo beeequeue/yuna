@@ -140,7 +140,7 @@ export default class Player extends Vue {
   public loadingVideo = false
   public paused = true
   public muted = localStorage.getItem('muted') === 'true'
-  public volume = Number(localStorage.getItem('volume') || 0.7)
+  public volume = Number(localStorage.getItem('volume') || 70)
   public speed = Number(localStorage.getItem('speed') || 1)
   public quality: number = Number(localStorage.getItem('quality') || -1)
   public progressPercentage = 0
@@ -176,8 +176,8 @@ export default class Player extends Vue {
         this.paused ? this.play() : this.pause(),
       [KeybindingAction.SKIP_BACK]: () => this.skipBySeconds(-5),
       [KeybindingAction.SKIP_FORWARD]: () => this.skipBySeconds(5),
-      [KeybindingAction.VOLUME_DOWN]: () => this.increaseVolume(-0.1),
-      [KeybindingAction.VOLUME_UP]: () => this.increaseVolume(0.1),
+      [KeybindingAction.VOLUME_DOWN]: () => this.increaseVolume(-10),
+      [KeybindingAction.VOLUME_UP]: () => this.increaseVolume(10),
       [KeybindingAction.TOGGLE_MUTED]: () => this.onToggleMute(),
       [KeybindingAction.TOGGLE_FULLSCREEN]: () => this.toggleFullscreen(),
     }
@@ -212,13 +212,17 @@ export default class Player extends Vue {
 
     const audioContext = new AudioContext()
     this.gainNode = audioContext.createGain()
-    this.gainNode.gain.value = this.volume
+    this.gainNode.gain.value = this.volume / 100
 
     audioContext
       .createMediaElementSource(this.$refs.player)
       .connect(this.gainNode)
 
     this.gainNode.connect(audioContext.destination)
+  }
+
+  public beforeDestroy() {
+    this.fadeOutVolume()
   }
 
   private async fetchStream(provider: Provider, id: number): Promise<Stream> {
@@ -393,12 +397,12 @@ export default class Player extends Vue {
 
     const element = e.target as HTMLInputElement
 
-    const value = clamp(+Number(element.value).toFixed(2), 0, 2)
+    const value = clamp(+Number(element.value).toFixed(2), 0, 200)
 
     this.volume = value
     localStorage.setItem('volume', value.toString())
 
-    this.gainNode.gain.value = value
+    this.gainNode.gain.value = value / 100
   }
 
   public onToggleMute() {
@@ -427,7 +431,7 @@ export default class Player extends Vue {
   public onScroll(e: WheelEvent) {
     const direction = Math.sign(-e.deltaY)
 
-    this.increaseVolume(direction / 10)
+    this.increaseVolume(direction * 10)
   }
 
   public play() {
@@ -447,9 +451,21 @@ export default class Player extends Vue {
   public increaseVolume(n: number) {
     this.onSetVolume({
       target: {
-        value: Math.min(100, Math.max(0, this.volume + n)),
+        value: clamp(this.volume + n, 0, 200),
       },
     } as any)
+  }
+
+  public fadeOutVolume() {
+    const interval = window.setInterval(() => {
+      if (!this.gainNode) return
+
+      if (this.gainNode.gain.value <= 0) {
+        return clearInterval(interval)
+      }
+
+      this.gainNode.gain.value = clamp(this.gainNode.gain.value - 0.05, 0, 2)
+    }, 10)
   }
 
   public skipBySeconds(n: number) {

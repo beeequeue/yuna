@@ -8,21 +8,21 @@
 
       <span class="slider-container" :class="{ open }">
         <input
-          :class="{ red: volume >= 2 }"
+          :class="{ red: volume >= 200 }"
           type="range"
           min="0"
-          max="1"
-          step="0.01"
+          max="100"
+          step="1"
           :value="clampedVolume"
           @input="onChange"
         />
 
-        <span class="filler" :style="{ width: clampedVolume * 100 + '%' }" />
+        <span class="filler" :style="{ width: clampedVolume + '%' }" />
 
         <span
-          v-if="volume > 1"
+          v-if="volume > 100"
           class="filler red"
-          :style="{ width: (volume - 1) * 100 + '%' }"
+          :style="{ width: volume - 100 + '%' }"
         />
       </span>
     </div>
@@ -34,6 +34,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiVolumeHigh, mdiVolumeMute } from '@mdi/js'
 
 import Icon from '../Icon.vue'
+import { clamp } from '@/utils'
 
 @Component({
   components: { Icon },
@@ -45,13 +46,11 @@ export default class VolumeSlider extends Vue {
   @Prop(Function) public onChange!: (e: Event) => void
   @Prop(Function) public onToggleMute!: (e: Event) => void
 
-  public initialVolume = Number(localStorage.getItem('volume') || 75)
-
   public volumeHighSvg = mdiVolumeHigh
   public mutedSvg = mdiVolumeMute
 
   public get clampedVolume() {
-    return Math.min(this.volume, 1)
+    return clamp(this.volume, 0, 100)
   }
 }
 </script>
