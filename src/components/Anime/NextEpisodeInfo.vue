@@ -39,3 +39,10 @@ export default class NextEpisodeInfo extends Vue {
   }
 }
 </script>
+
+<style scoped lang="scss">
+.next-episode-info {
+  display: flex;
+  align-items: center;
+}
+</style>

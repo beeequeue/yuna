@@ -24,6 +24,7 @@ import {
   MediaRelation,
   PlayerAnimeQuery,
 } from '@/graphql/types'
+import { StreamingSource } from '@/types'
 import Filter = Electron.Filter
 
 const noop = () => {
@@ -219,3 +220,14 @@ export const getRelations = (
     filter(pathEq('relationType', type), relations),
   )
 }
+
+interface ExternalLink {
+  site: string
+  url: string
+}
+
+const streamingSites = enumKeysToArray(StreamingSource)
+const isStreamingSource = (link: ExternalLink) =>
+  streamingSites.includes(link.site as any)
+export const getStreamingSources = (sources: ExternalLink[]) =>
+  sources.filter(isStreamingSource)

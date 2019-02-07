@@ -39,3 +39,12 @@ export interface Instance {
   $store: Store<any>
   $apollo: DollarApollo<any>
 }
+
+export enum StreamingSource {
+  Crunchyroll = 'crunchyroll',
+  Hulu = 'hulu',
+  Hidive = 'hidive',
+  Animelab = 'animelab',
+  Funimation = 'funimation',
+  Amazon = 'amazon',
+}
