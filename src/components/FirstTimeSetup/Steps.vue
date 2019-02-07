@@ -5,7 +5,9 @@
       :key="i"
       class="step"
       :class="{ current: current === i, done: !current || current > i }"
-    >{{ i + 1 }}</div>
+    >
+      {{ i + 1 }}
+    </div>
   </div>
 </template>
 

@@ -1,4 +1,4 @@
-/* tslint:disable:class-name */
+/* eslint-disable class-name */
 import { activeWindow } from 'electron-util'
 import { anyPass, complement, T } from 'rambdax'
 import superagent from 'superagent/superagent'
@@ -19,9 +19,9 @@ const CR_UNBLOCKER_URL = 'api2.cr-unblocker.com'
 const API_URL = 'api.crunchyroll.com'
 const VERSION = '0'
 const locale = 'enUS'
-// tslint:disable-next-line:variable-name
+// eslint-disable-next-line variable-name
 const device_type = 'com.crunchyroll.windows.desktop'
-// tslint:disable-next-line:variable-name
+// eslint-disable-next-line variable-name
 const access_token = getConfig('ACCESS_TOKEN')
 
 export interface User {

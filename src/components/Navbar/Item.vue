@@ -1,8 +1,8 @@
 <template>
   <router-link class="item" :to="path">
     <span class="text">
-      {{text}}
-      <span class="underline"/>
+      {{ text }}
+      <span class="underline" />
     </span>
   </router-link>
 </template>

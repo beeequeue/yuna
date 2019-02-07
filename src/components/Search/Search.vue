@@ -19,7 +19,6 @@
       </span>
 
       <div
-        v-if="!fakeLoading && results.length > 0"
         v-for="result in results"
         :key="result.id"
         class="item"

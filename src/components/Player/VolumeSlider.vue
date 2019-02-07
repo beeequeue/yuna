@@ -1,7 +1,10 @@
 <template>
   <transition>
     <div class="volume-slider">
-      <icon :icon="muted ? mutedSvg : volumeHighSvg" @click.native="onToggleMute"/>
+      <icon
+        :icon="muted ? mutedSvg : volumeHighSvg"
+        @click.native="onToggleMute"
+      />
 
       <span class="slider-container" :class="{ open }">
         <input
@@ -12,11 +15,15 @@
           step="0.01"
           :value="clampedVolume"
           @input="onChange"
-        >
+        />
 
-        <span class="filler" :style="{ width: clampedVolume * 100 + '%' }"/>
+        <span class="filler" :style="{ width: clampedVolume * 100 + '%' }" />
 
-        <span v-if="volume > 1" class="filler red" :style="{ width: (volume - 1) * 100 + '%' }"/>
+        <span
+          v-if="volume > 1"
+          class="filler red"
+          :style="{ width: (volume - 1) * 100 + '%' }"
+        />
       </span>
     </div>
   </transition>

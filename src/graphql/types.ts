@@ -1,4 +1,4 @@
- // tslint:disable
+ // eslint-disable
  // THIS IS A GENERATED FILE
 export type Maybe<T> = T | null;
 

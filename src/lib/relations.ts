@@ -171,28 +171,30 @@ export const parseData = (data: string): ReadonlyArray<Branches> => {
     lastBranchIndex = tree.length - 1
   }
 
-  lines.filter(l => l.length > 0).forEach(line => {
-    const branch = parseBranch(line)
+  lines
+    .filter(l => l.length > 0)
+    .forEach(line => {
+      const branch = parseBranch(line)
 
-    if (isComment(branch) && lastBranch && isComment(lastBranch)) {
-      lastBranch.item.push(branch.item[0])
+      if (isComment(branch) && lastBranch && isComment(lastBranch)) {
+        lastBranch.item.push(branch.item[0])
 
-      updateLastBranch()
-      return
-    }
+        updateLastBranch()
+        return
+      }
 
-    if (isRule(branch) && lastBranch && isComment(lastBranch)) {
-      branch.name = lastBranch.item[0]
-      tree.splice(lastBranchIndex, 1)
+      if (isRule(branch) && lastBranch && isComment(lastBranch)) {
+        branch.name = lastBranch.item[0]
+        tree.splice(lastBranchIndex, 1)
+        tree.push(branch)
+
+        updateLastBranch()
+        return
+      }
+
       tree.push(branch)
-
       updateLastBranch()
-      return
-    }
-
-    tree.push(branch)
-    updateLastBranch()
-  })
+    })
 
   return tree
 }

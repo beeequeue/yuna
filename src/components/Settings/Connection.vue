@@ -1,7 +1,7 @@
 <template>
   <div class="connection">
     <img class="logo" v-if="type !== 'anilist'" :src="image" />
-    <span v-else class="logo" v-html="image"/>
+    <span v-else class="logo" v-html="image" />
 
     <c-button
       :icon="!isConnected ? connectSvg : disconnectSvg"
@@ -71,6 +71,7 @@ export default class Connection extends Vue {
     }
   }
 
+  // eslint-disable-next-line
   public get image() {
     switch (this.type) {
       case 'crunchyroll':

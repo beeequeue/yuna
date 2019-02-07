@@ -1,6 +1,6 @@
 <template>
   <div class="loading">
-    <icon :icon="loadingSvg"/>
+    <icon :icon="loadingSvg" />
   </div>
 </template>
 

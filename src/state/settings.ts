@@ -273,7 +273,7 @@ export const settings = {
       },
     ) {
       if (!hasKey(state.spoilers[payload.path[0]], payload.path[1])) {
-        // tslint:disable-next-line:no-console
+        //eslint-disable-next-line no-console
         return console.error(
           'Tried to set unknown setting: ' + payload.path.join('.'),
         )
@@ -304,7 +304,7 @@ export const settings = {
       },
     ) {
       if (!hasKey(state, options.setting)) {
-        // tslint:disable-next-line:no-console
+        // eslint-disable-next-line no-console
         return console.error('Tried to set unknown setting: ' + options.setting)
       }
 

@@ -4,7 +4,7 @@
     class="next-episode-info"
     v-tooltip.top="nextEpisodeDateString"
   >
-    Episode {{ nextAiringEpisode.episode }} in {{nextEpisodeDistanceString}}
+    Episode {{ nextAiringEpisode.episode }} in {{ nextEpisodeDistanceString }}
   </div>
 </template>
 

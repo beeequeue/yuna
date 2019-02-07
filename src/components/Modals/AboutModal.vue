@@ -1,10 +1,10 @@
 <template>
   <modal :visible="visible" :toggleVisible="toggleVisible">
     <div class="modal-body about-modal">
-      <h2>Yuna v{{version}}</h2>
+      <h2>Yuna v{{ version }}</h2>
 
-      <div>Electron: {{electronVersion}}</div>
-      <div>Chrome: {{chromeVersion}}</div>
+      <div>Electron: {{ electronVersion }}</div>
+      <div>Chrome: {{ chromeVersion }}</div>
 
       <a href="https://subtlepatterns.com">
         <div>Subtle Patterns</div>
@@ -35,7 +35,6 @@ export default class AboutModal extends Vue {
   public chromeVersion = chromeVersion
 }
 </script>
-
 
 <style scoped lang="scss">
 @import '../../colors';

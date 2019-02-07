@@ -1,6 +1,11 @@
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 
-import { PausedQueryQuery, PlanningQueryQuery, SearchQueryQuery, WatchingQueryQuery } from '@/graphql/types'
+import {
+  PausedQueryQuery,
+  PlanningQueryQuery,
+  SearchQueryQuery,
+  WatchingQueryQuery,
+} from '@/graphql/types'
 
 import PAUSED_QUERY from './PausedQuery.graphql'
 import PLANNING_QUERY from './PlanningQuery.graphql'

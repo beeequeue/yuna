@@ -6,10 +6,14 @@
       :icon="getIconForKey(key)"
       :title="key === ' ' ? 'Spacebar' : key"
       :content="getIconForKey(key) ? null : key.toUpperCase()"
-      @click.native="unbindKey({key, action})"
+      @click.native="unbindKey({ key, action })"
     />
 
-    <c-button v-if="keys.length < 2" @click.native="openKeybindModal(action)" :icon="plusSvg"/>
+    <c-button
+      v-if="keys.length < 2"
+      @click.native="openKeybindModal(action)"
+      :icon="plusSvg"
+    />
   </div>
 </template>
 
@@ -37,9 +41,10 @@ import CButton from '../CButton.vue'
 export default class Keybinding extends Vue {
   @Prop(String) public action!: KeybindingAction
   @Prop(Function)
-  public unbindKey!: (
-    opts: { key: Key | string; action: KeybindingAction },
-  ) => void
+  public unbindKey!: (opts: {
+    key: Key | string
+    action: KeybindingAction
+  }) => void
   @Prop(Function) public openKeybindModal!: (action: KeybindingAction) => void
 
   public plusSvg = mdiPlus

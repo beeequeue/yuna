@@ -10,10 +10,10 @@
         :id="version.tag_name"
       >
         <a class="header" :href="version.html_url" target="_blank">
-          <h2 v-html="getHeader(version.name)"/>
+          <h2 v-html="getHeader(version.name)" />
         </a>
 
-        <div class="body" v-html="compileMarkdown(version.body)"/>
+        <div class="body" v-html="compileMarkdown(version.body)" />
       </section>
     </div>
   </div>

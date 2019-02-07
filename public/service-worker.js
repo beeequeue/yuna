@@ -1,3 +1,4 @@
+//eslint-disable-next-line no-console
 console.log('Service worker startups.')
 
 const endsWith = (url, ...strs) => strs.some(str => url.endsWith(str))
@@ -21,6 +22,7 @@ const update = async request => {
 }
 
 self.addEventListener('install', () => {
+  //eslint-disable-next-line no-console
   console.log('Service worker installed.')
 
   self.skipWaiting()
@@ -29,7 +31,11 @@ self.addEventListener('install', () => {
 self.addEventListener('fetch', event => {
   const { url } = event.request
   const isImage = endsWith(url, '.png', '.jpg', '.jpeg', '.gif')
-  const isFromCacheableUrl = matches(url, /img\d\.ak\.crunchyroll\.com/, /s\d.anilist.co/)
+  const isFromCacheableUrl = matches(
+    url,
+    /img\d\.ak\.crunchyroll\.com/,
+    /s\d.anilist.co/,
+  )
 
   if (!isImage || !isFromCacheableUrl) return
 

@@ -1,22 +1,31 @@
 <template>
   <div id="app" :style="`background-image: url(${backgroundImage})`">
-    <title-bar v-if="!isFullscreen"/>
+    <title-bar v-if="!isFullscreen" />
 
     <transition>
-      <navbar v-if="isConnectedTo.all && hasFinishedSetup && !isFullscreen"/>
+      <navbar v-if="isConnectedTo.all && hasFinishedSetup && !isFullscreen" />
     </transition>
 
     <transition name="route">
-      <router-view :key="$route.params.id ? $route.params.id : $route.path" class="route"/>
+      <router-view
+        :key="$route.params.id ? $route.params.id : $route.path"
+        class="route"
+      />
     </transition>
 
-    <player-container v-if="isConnectedTo.all"/>
+    <player-container v-if="isConnectedTo.all" />
 
-    <toast-overlay/>
+    <toast-overlay />
 
-    <about-modal :visible="modalStates.about" :toggleVisible="() => toggleModal('about')"/>
+    <about-modal
+      :visible="modalStates.about"
+      :toggleVisible="() => toggleModal('about')"
+    />
 
-    <edit-modal :visible="modalStates.edit" :toggleVisible="() => toggleModal('edit')"/>
+    <edit-modal
+      :visible="modalStates.edit"
+      :toggleVisible="() => toggleModal('edit')"
+    />
   </div>
 </template>
 
@@ -79,6 +88,7 @@ export default class App extends Vue {
   }
 
   public errorCaptured(err: any) {
+    //eslint-disable-next-line no-console
     console.error(err)
   }
 

@@ -1,10 +1,9 @@
-import { MediaRelation } from '../../graphql/types'
 <template>
   <div
     class="player"
     tabindex="0"
-    @keydown="onKeyDown"
-    @keydown.escape.prevent="isFullscreen ? toggleFullscreen() : null"
+    @keydown.exact="onKeyDown"
+    @keydown.exact.escape.prevent="isFullscreen ? toggleFullscreen() : null"
     @wheel.capture="onScroll"
   >
     <transition name="fade">

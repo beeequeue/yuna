@@ -1,5 +1,5 @@
 <template>
-  <icon :icon="loaderSvg"/>
+  <icon :icon="loaderSvg" />
 </template>
 
 <script lang="ts">

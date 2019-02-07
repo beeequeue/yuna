@@ -1,6 +1,6 @@
 <template>
   <div class="source-list">
-    <a v-for="link in sources" :href="link.url" class="link">
+    <a v-for="link in sources" :key="link.url" :href="link.url" class="link">
       <img :src="getImageUrl(link.site)" :title="link.site" />
     </a>
   </div>

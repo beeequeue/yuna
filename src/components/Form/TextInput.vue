@@ -7,7 +7,7 @@
       :value="value"
       :placeholder="placeholder"
       @input="handleChange"
-    >
+    />
   </label>
 </template>
 

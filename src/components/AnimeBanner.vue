@@ -4,9 +4,9 @@
     class="anime-banner"
     :style="{ background: `url(${diagmondsWebp})` }"
   >
-    <img class="image" :class="{ faded }" :src="anime.bannerImage">
+    <img class="image" :class="{ faded }" :src="anime.bannerImage" />
 
-    <span class="title">{{anime.title.userPreferred || anime.title}}</span>
+    <span class="title">{{ anime.title.userPreferred || anime.title }}</span>
   </router-link>
 </template>
 

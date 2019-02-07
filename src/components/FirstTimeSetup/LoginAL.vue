@@ -1,8 +1,8 @@
 <template>
   <div class="step login-cr" @keydown.enter="login">
-    <span v-html="alLogo" class="logo"/>
+    <span v-html="alLogo" class="logo" />
 
-    <c-button content="Login" :click="login"/>
+    <c-button content="Login" :click="login" />
   </div>
 </template>
 

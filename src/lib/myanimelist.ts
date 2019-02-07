@@ -78,7 +78,7 @@ export const fetchEpisodesOfSeries = async (
 
   const mediaIdMatch = /"provider_episode_id":\s?(\d+)/m.exec(response.text)
   if (!mediaIdMatch || !mediaIdMatch[1]) {
-    // tslint:disable-next-line:no-console
+    // eslint-disable-next-line no-console
     console.error(`Couldn't find media_id for ${idMal}`)
 
     return []

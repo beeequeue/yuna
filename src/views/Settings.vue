@@ -180,9 +180,9 @@
       <section class="category" id="accounts">
         <h1>Accounts</h1>
 
-        <connection type="anilist"/>
+        <connection type="anilist" />
 
-        <connection type="crunchyroll"/>
+        <connection type="crunchyroll" />
       </section>
     </div>
 

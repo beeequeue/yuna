@@ -5,11 +5,11 @@
     :style="{ maxHeight: open ? `${realMaxHeight}px` : null }"
   >
     <transition>
-      <span class="content" :class="{ blur }" ref="content" v-html="content"/>
+      <span class="content" :class="{ blur }" ref="content" v-html="content" />
     </transition>
 
     <div v-if="isContentTooBig" class="fade-overlay" @click="toggleOpen">
-      <icon :icon="openSvg"/>
+      <icon :icon="openSvg" />
     </div>
   </div>
 </template>

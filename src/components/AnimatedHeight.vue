@@ -4,7 +4,7 @@
     class="animated-height"
     :style="{ height: height + 'px' }"
   >
-    <slot/>
+    <slot />
   </div>
 </template>
 

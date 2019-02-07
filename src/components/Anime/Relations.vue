@@ -25,11 +25,7 @@ import { MediaRelation } from '../../graphql/types'
       @click="$router.push(`/anime/${sequel.id}`)"
       :key="sequel.id"
     >
-      <img
-        v-if="sequel.bannerImage"
-        :src="sequel.bannerImage"
-        class="banner"
-      />
+      <img v-if="sequel.bannerImage" :src="sequel.bannerImage" class="banner" />
 
       <div class="title">
         <icon :icon="getRelationIcon('SEQUEL')" />

@@ -6,10 +6,7 @@
   >
     <span v-if="label != null">{{ label }}</span>
 
-    <input
-      :value="stringValue"
-      @input="handleChange"
-    />
+    <input :value="stringValue" @input="handleChange" />
 
     <span v-if="suffix" class="suffix">{{ suffix }}</span>
   </label>

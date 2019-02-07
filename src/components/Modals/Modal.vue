@@ -1,9 +1,9 @@
 <template>
   <transition>
     <div v-if="visible" class="modal">
-      <div class="cover" @click="toggleVisible"/>
+      <div class="cover" @click="toggleVisible" />
 
-      <slot/>
+      <slot />
     </div>
   </transition>
 </template>
@@ -17,7 +17,6 @@ export default class Modal extends Vue {
   @Prop(Function) public toggleVisible!: () => any
 }
 </script>
-
 
 <style scoped lang="scss">
 @import '../../colors';

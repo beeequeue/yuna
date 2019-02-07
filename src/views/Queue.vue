@@ -7,15 +7,11 @@
         :get-child-payload="getChildPayload"
         @drop="handleDrop"
       >
-        <draggable
-          v-for="item in queue"
-          v-if="getAnime(item.id) != null"
-          :key="item.id"
-        >
+        <draggable v-for="anime in animes" :key="anime.id">
           <queue-item
-            :anime="getAnime(item.id)"
-            :open="getIsItemOpen(item.id)"
-            :key="item.id"
+            :anime="anime"
+            :open="getIsItemOpen(anime.id)"
+            :key="anime.id"
           />
         </draggable>
       </container>
@@ -80,7 +76,7 @@ import { remote, shell } from 'electron'
 import { activeWindow, api } from 'electron-util'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
-import { complement, indexBy, path, pathEq, pathOr, isNil } from 'rambdax'
+import { complement, indexBy, path, pathEq, pathOr } from 'rambdax'
 import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 
 import CButton from '@/components/CButton.vue'
@@ -124,14 +120,16 @@ export default class Queue extends Vue {
         ids: this.queue.map(path('id')).sort(sortNumber),
       }
     },
-    update: data => {
-      const items = pathOr([], ['queue', 'anime'])(data)
-      return indexBy(anime => path('id', anime), items)
+    update(data) {
+      const items = indexBy(anime => path('id', anime), pathOr(
+        [],
+        ['queue', 'anime'],
+      )(data) as QueueAnime[])
+
+      return this.queue.map(item => items[item.id])
     },
   })
-  public animes!: {
-    [key: number]: QueueAnime
-  }
+  public animes!: QueueAnime[]
 
   public gridOptions = {
     animation: 150,
@@ -165,12 +163,6 @@ export default class Queue extends Vue {
 
   public mounted() {
     trackPageView(Page.QUEUE)
-  }
-
-  public getAnime(id: number) {
-    if (isNil(this.animes)) return null
-
-    return this.animes[id]
   }
 
   public getIsItemOpen(id: number) {

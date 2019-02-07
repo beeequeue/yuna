@@ -211,7 +211,7 @@ export const app = {
 
   actions: {
     notifyDownloadDone() {
-      // tslint:disable-next-line:no-unused-expression
+      // eslint-disable-next-line no-unused-expression
       new Notification('New version downloaded, restart to start using it!')
     },
 

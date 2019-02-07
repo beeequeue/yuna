@@ -2,10 +2,13 @@
   <div class="step spoiler-settings">
     <h2>Spoiler settings</h2>
 
-    <h3>Anime Info
+    <h3>
+      Anime Info
       <icon
         :icon="infoSvg"
-        v-tooltip.right="'These spoilers will stop being<br/>hidden after watching one third<br/>of the season\'s episodes.'"
+        v-tooltip.right="
+          'These spoilers will stop being<br/>hidden after watching one third<br/>of the season\'s episodes.'
+        "
       />
     </h3>
 
@@ -16,10 +19,13 @@
       :onChange="checked => setSpoiler('anime.description', checked)"
     />
 
-    <h3>Episode Info
+    <h3>
+      Episode Info
       <icon
         :icon="infoSvg"
-        v-tooltip.right="'These spoilers will stop<br/>being hidden after watching<br/>the episode.'"
+        v-tooltip.right="
+          'These spoilers will stop<br/>being hidden after watching<br/>the episode.'
+        "
       />
     </h3>
 
@@ -37,14 +43,10 @@
       :onChange="checked => setSpoiler('episode.thumbnail', checked)"
     />
 
-    <c-button content="Next" :click="goToNextStep"/>
+    <c-button content="Next" :click="goToNextStep" />
 
     <div class="example">
-      <episode
-        :episode="episodes[0]"
-        :setCurrentEpisode="() => {}"
-        small
-      />
+      <episode :episode="episodes[0]" :setCurrentEpisode="() => {}" small />
     </div>
   </div>
 </template>

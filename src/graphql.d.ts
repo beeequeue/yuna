@@ -1,4 +1,4 @@
-// tslint:disable
+// eslint-disable
 // THIS IS A GENERATED FILE
 declare module '*/AddEntryMutation.graphql' {
   import { DocumentNode } from 'graphql'

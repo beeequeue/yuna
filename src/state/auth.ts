@@ -1,4 +1,4 @@
-// tslint:disable:no-use-before-declare
+// eslint-disable no-use-before-declare
 import { getStoreAccessors } from 'vuex-typescript'
 import { omit } from 'rambdax'
 
@@ -21,7 +21,7 @@ export interface CrunchyrollData extends ServiceData {
   country: string | null
 }
 
-// tslint:disable-next-line:no-empty-interface
+// eslint-disable-next-line no-empty-interface
 export interface AnilistData extends ServiceData {}
 
 export interface AuthState {
@@ -87,7 +87,7 @@ export const auth = {
         omit(['user', 'token', 'refreshToken', 'expires'], data),
       )
       if (extraKeys.length > 0) {
-        // tslint:disable-next-line:no-console
+        // eslint-disable-next-line no-console
         console.warn(
           `Tried to set ${extraKeys} without setters in setCrunchyroll`,
         )
@@ -107,7 +107,7 @@ export const auth = {
 
       const extraKeys = Object.keys(omit(['user', 'token', 'expires'], data))
       if (extraKeys.length > 0) {
-        // tslint:disable-next-line:no-console
+        // eslint-disable-next-line no-console
         console.warn(`Tried to set ${extraKeys} without setters in setAnilist`)
       }
 

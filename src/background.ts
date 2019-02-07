@@ -22,7 +22,7 @@ import Store from 'electron-store'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 if (isDevelopment) {
   // Don't load any native (external) modules until the following line is run:
-  // tslint:disable-next-line
+  // eslint-disable-next-line
   require('module').globalPaths.push(process.env.NODE_MODULES_PATH)
 }
 
