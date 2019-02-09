@@ -40,6 +40,8 @@
         @click.native="toggleItemOpen"
       />
 
+      <source-select :anime="anime" />
+
       <span class="filler" />
 
       <next-episode-info
@@ -139,6 +141,7 @@ import SourceList from '@/components/SourceList.vue'
 import Loading from '@/components/QueueItem/Loading.vue'
 import NextEpisodeInfo from '@/components/Anime/NextEpisodeInfo.vue'
 import CButton from '@/components/CButton.vue'
+import SourceSelect from '@/components/QueueItem/SourceSelect.vue'
 
 import { Query, Required } from '@/decorators'
 import { removeFromQueueById, toggleQueueItemOpen } from '@/state/user'
@@ -147,6 +150,7 @@ import { getIconForStatus, capitalize } from '@/utils'
 
 @Component({
   components: {
+    SourceSelect,
     NextEpisodeInfo,
     CButton,
     Loading,
@@ -319,7 +323,6 @@ export default class QueueItem extends Vue {
   display: inline-block;
   border-radius: 5px;
   box-shadow: 1px 2px 15px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
   z-index: 2;
 
   & > .status {
@@ -333,6 +336,7 @@ export default class QueueItem extends Vue {
     justify-content: center;
     align-items: center;
     font-weight: 500;
+    border-top-left-radius: 5px;
     z-index: 5;
 
     &.paused {
@@ -371,6 +375,12 @@ export default class QueueItem extends Vue {
     }
   }
 
+  & > .anime-banner {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    overflow: hidden;
+  }
+
   & > .handle {
     position: absolute;
     top: 0;
@@ -380,6 +390,7 @@ export default class QueueItem extends Vue {
     padding: 2px;
     background: $dark;
     cursor: -webkit-grab;
+    border-top-right-radius: 5px;
     z-index: 5;
 
     & /deep/ svg {
@@ -401,8 +412,10 @@ export default class QueueItem extends Vue {
 
   & > .controls {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     background: color($dark, 600);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 
     & > * {
       flex-shrink: 0;
@@ -435,6 +448,8 @@ export default class QueueItem extends Vue {
 
     & > .buttons {
       display: flex;
+      border-bottom-right-radius: 5px;
+      overflow: hidden;
 
       & > .button {
         min-width: 85px;

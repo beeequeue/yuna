@@ -48,3 +48,8 @@ export enum StreamingSource {
   Funimation = 'funimation',
   Amazon = 'amazon',
 }
+
+export const SupportedSources = [
+  StreamingSource.Crunchyroll,
+  StreamingSource.Hidive,
+]
