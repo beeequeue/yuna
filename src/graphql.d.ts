@@ -1,5 +1,4 @@
-// eslint-disable
-// THIS IS A GENERATED FILE
+/* THIS IS A GENERATED FILE */
 declare module '*/AddEntryMutation.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode

@@ -9,13 +9,11 @@ config:
 generates:
   src/graphql.d.ts:
     plugins:
-      - add: ' // eslint-disable'
-      - add: ' // THIS IS A GENERATED FILE'
+      - add: '/* THIS IS A GENERATED FILE */'
       - typescript-graphql-files-modules
   src/graphql/types.ts:
     plugins:
-      - add: ' // eslint-disable'
-      - add: ' // THIS IS A GENERATED FILE'
+      - add: '/* THIS IS A GENERATED FILE */'
       - typescript-common
       - typescript-client
   ./graphql.schema.json:
