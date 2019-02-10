@@ -390,7 +390,7 @@ export default class Controls extends Vue {
   }
 
   public go(amount: number) {
-    setCurrentEpisode(this.$store, { index: this.episode.index + amount })
+    setCurrentEpisode(this.$store, this.episode.index + amount)
   }
 }
 </script>

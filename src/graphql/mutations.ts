@@ -59,6 +59,7 @@ const writeEpisodeProgressToCache = (
       query: EPISODE_LIST,
       variables: {
         id: episode.animeId,
+        provider: episode.provider,
       },
     })
   } catch (e) {

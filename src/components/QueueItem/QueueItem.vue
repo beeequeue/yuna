@@ -273,7 +273,7 @@ export default class QueueItem extends Vue {
 
       await setStatusMutation(this, listEntryId, status)
     } catch (err) {
-      this.setOpenState(!this.open)
+      this.setOpenState(!this.item.open)
     }
   }
 

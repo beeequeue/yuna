@@ -1,5 +1,5 @@
 import { activeWindow } from 'electron-util'
-import { merge, propEq, reject, change } from 'rambdax'
+import { merge, propEq, reject, change, isNil } from 'rambdax'
 import {
   NotificationFunctionOptions,
   NotificationTypes,
@@ -7,7 +7,7 @@ import {
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
 
-import { MediaListStatus } from '@/graphql/types'
+import { MediaListStatus, Provider } from '@/graphql/types'
 import { router } from '@/router'
 import { RootState } from '@/state/store'
 import { generateId } from '@/utils'
@@ -43,6 +43,7 @@ export interface Sequel {
 export interface PlayerData {
   id: number
   index: number
+  provider: Provider
 }
 
 interface ModalBase {
@@ -270,18 +271,22 @@ export const app = {
 
     setCurrentEpisode(
       context: AppContext,
-      options: { id?: number; index: number } | null,
+      options:
+        | number
+        | { id: number; index: number; provider: Provider }
+        | null,
     ) {
-      if (!options) {
+      if (isNil(options)) {
         return setPlaylist(context, null)
       }
 
-      if (options.id == null) {
-        _setCurrentEpisode(context, options.index)
+      if (typeof options === 'number') {
+        _setCurrentEpisode(context, options)
       } else {
         setPlaylist(context, {
           id: options.id,
           index: options.index,
+          provider: options.provider,
         })
       }
     },

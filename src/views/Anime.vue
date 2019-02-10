@@ -86,6 +86,7 @@ import {
   EpisodeListEpisodes,
   EpisodeListQuery,
   EpisodeListVariables,
+  Provider,
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
@@ -129,6 +130,7 @@ export default class Anime extends Vue {
     variables() {
       return {
         id: this.id,
+        provider: Provider.Crunchyroll,
       }
     },
     skip() {
