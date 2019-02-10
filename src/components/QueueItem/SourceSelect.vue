@@ -1,17 +1,30 @@
 <template>
   <div v-if="supportedSources.length > 0" class="source-select">
-    <div class="background" />
-
-    <div class="dropdown">
+    <div class="dropdown" @click="toggleOpen">
       <img
         v-for="source in supportedSources"
         :key="source.site"
         :src="getImageUrl(source)"
         class="source"
+        :alt="source.site"
       />
 
       <icon :icon="expandSvg" class="expand" />
     </div>
+
+    <transition>
+      <div v-if="open" class="menu">
+        <div class="menu-item crunchyroll">
+          <img :src="crIcon" />
+          Automatic
+        </div>
+
+        <div class="menu-item crunchyroll-search">
+          <img :src="crIcon" />
+          Manual
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -20,6 +33,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { isNil } from 'rambdax'
 import { mdiChevronDown } from '@mdi/js'
 
+import crIcon from '@/assets/crunchyroll.webp'
 import Icon from '@/components/Icon.vue'
 
 import { QueueAnime, QueueExternalLinks } from '@/graphql/types'
@@ -35,6 +49,9 @@ const siteImages = streamingSiteCtx.keys()
 export default class SourceSelect extends Vue {
   @Required(Object) public anime!: QueueAnime
 
+  public open = false
+
+  public crIcon = crIcon
   public expandSvg = mdiChevronDown
 
   public get streamingSources() {
@@ -65,6 +82,10 @@ export default class SourceSelect extends Vue {
 
     return streamingSiteCtx(image)
   }
+
+  public toggleOpen() {
+    this.open = !this.open
+  }
 }
 </script>
 
@@ -73,17 +94,6 @@ export default class SourceSelect extends Vue {
 
 .source-select {
   position: relative;
-  overflow: hidden;
-  padding: 0 6px;
-
-  & > .background {
-    position: absolute;
-    top: 80px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.5);
-  }
 
   & > .dropdown {
     background: $main;
@@ -113,6 +123,51 @@ export default class SourceSelect extends Vue {
       fill: color($highlight, 800);
       margin-left: auto;
       order: 99;
+    }
+  }
+
+  & > .menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    transition: none 0.15s;
+
+    &.v-enter,
+    &.v-leave-to {
+      & > .menu-item {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+    }
+
+    & > .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: color($main, 600);
+      padding: 5px 10px;
+      font-weight: 500;
+      font-size: 0.9em;
+      box-shadow: $shadow;
+      cursor: pointer;
+      transition: background 0.1s, transform 0.15s, opacity 0.15s;
+      z-index: 99;
+
+      &:hover {
+        background: color($main, 800);
+      }
+
+      &:last-child {
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+      }
+
+      & > img {
+        height: 20px;
+        filter: drop-shadow(0 1px 1px black);
+      }
     }
   }
 }

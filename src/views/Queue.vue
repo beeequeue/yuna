@@ -354,6 +354,11 @@ export default class Queue extends Vue {
     & > .smooth-dnd-container {
       position: relative;
       height: 100%;
+
+      & > .smooth-dnd-draggable-wrapper {
+        position: relative;
+        overflow: visible;
+      }
     }
 
     & > .empty-message {

@@ -323,7 +323,6 @@ export default class QueueItem extends Vue {
   display: inline-block;
   border-radius: 5px;
   box-shadow: 1px 2px 15px rgba(0, 0, 0, 0.5);
-  z-index: 2;
 
   & > .status {
     position: absolute;
