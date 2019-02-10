@@ -184,6 +184,7 @@ export default class Queue extends Vue {
     newQueue.splice(addedIndex, 0, payload)
 
     setQueue(this.$store, newQueue)
+    this.$apollo.queries.animes.refresh()
   }
 
   public getChildPayload(index: number) {
