@@ -145,7 +145,7 @@ import { Query, Required } from '@/decorators'
 import { removeFromQueueById, toggleQueueItemOpen } from '@/state/user'
 import { sendErrorToast } from '@/state/app'
 import { QueueItem as IQueueItem } from '@/lib/user'
-import { getIconForStatus, capitalize } from '@/utils'
+import { capitalize, getIconForStatus } from '@/utils'
 
 @Component({
   components: {

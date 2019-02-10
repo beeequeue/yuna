@@ -47,13 +47,13 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { isNil, propEq, prop } from 'rambdax'
+import { isNil } from 'rambdax'
 import { mdiChevronDown } from '@mdi/js'
 
 import crIcon from '@/assets/crunchyroll.webp'
 import Icon from '@/components/Icon.vue'
 
-import { QueueAnime, QueueExternalLinks, Provider } from '@/graphql/types'
+import { Provider, QueueAnime, QueueExternalLinks } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import { StreamingSource, SupportedSources } from '@/types'
