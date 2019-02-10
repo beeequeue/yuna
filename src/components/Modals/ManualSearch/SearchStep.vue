@@ -8,14 +8,15 @@
 
     <transition name="fade">
       <loading v-if="loading" />
-      <div v-else class="results">
-        <anime-banner
-          v-for="result in results"
-          :key="result.id"
-          :anime="{ title: result.title, bannerImage: result.landscapeImage }"
-        />
-      </div>
     </transition>
+
+    <div class="results">
+      <anime-banner
+        v-for="result in results"
+        :key="result.id"
+        :anime="{ title: result.title, bannerImage: result.landscapeImage }"
+      />
+    </div>
   </div>
 </template>
 
@@ -84,44 +85,16 @@ export default class SearchStep extends Vue {
 
   & > .loading {
     position: relative;
-
-    &.v-leave-to {
-      position: absolute;
-    }
   }
 
   & > .results {
     position: relative;
     width: 100%;
+    max-height: 500px;
+    overflow: auto;
 
-    & > .result {
+    & > .anime-banner {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 50px;
-      margin-bottom: 10px;
-      overflow: hidden;
-
-      & > .title {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-size: 1.25em;
-        font-family: 'Raleway', sans-serif;
-      }
-    }
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    & > img {
-      flex-shrink: 0;
-      display: block;
-      height: 100%;
-      width: 150px;
-      object-fit: cover;
-      margin-right: 15px;
     }
   }
 }

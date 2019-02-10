@@ -1,7 +1,7 @@
 <template>
   <modal :visible="visible" :toggleVisible="toggleVisible">
     <animated-height class="manual-search-modal">
-      <search-step class="manual-search-modal" />
+      <search-step />
     </animated-height>
   </modal>
 </template>
