@@ -15,6 +15,7 @@
     <transition>
       <div v-if="open" class="menu">
         <div
+          v-if="getIsSupported(Provider.Crunchyroll)"
           class="menu-item crunchyroll"
           @click="handleClick(Provider.Crunchyroll)"
         >
@@ -46,7 +47,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { isNil } from 'rambdax'
+import { isNil, propEq, prop } from 'rambdax'
 import { mdiChevronDown } from '@mdi/js'
 
 import crIcon from '@/assets/crunchyroll.webp'
@@ -99,6 +100,14 @@ export default class SourceSelect extends Vue {
     }
 
     return streamingSiteCtx(image)
+  }
+
+  public getIsSupported(provider: Provider) {
+    return !isNil(
+      this.supportedSources.find(
+        source => source.site.toLowerCase() === provider.toLowerCase(),
+      ),
+    )
   }
 
   public handleClick(provider: Provider) {
