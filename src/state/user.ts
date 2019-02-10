@@ -1,6 +1,7 @@
 import { getStoreAccessors } from 'vuex-typescript'
-import { propEq, isNil } from 'rambdax'
+import { isNil, propEq } from 'rambdax'
 
+import { Provider } from '@/graphql/types'
 import { RootState } from '@/state/store'
 import { QueueItem, userStore } from '@/lib/user'
 
@@ -23,6 +24,7 @@ if (
   initialState.queue = initialState.queue.map(id => ({
     id: id as any,
     open: true,
+    provider: Provider.Crunchyroll,
   }))
 }
 
@@ -51,7 +53,10 @@ export const user = {
     addToQueue(state: UserState, id: number) {
       if (isInQueue(state, id)) return
 
-      state.queue = [...state.queue, { id, open: false }]
+      state.queue = [
+        ...state.queue,
+        { id, open: false, provider: Provider.Crunchyroll },
+      ]
 
       userStore.set('queue', state.queue)
     },
