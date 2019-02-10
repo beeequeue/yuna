@@ -74,7 +74,7 @@ export interface _Media {
   series_id: string
   series_name: string
   series_etp_guid: string
-  media_type: string
+  media_type: 'anime' | 'drama'
   episode_number: string
   duration: number
   name: string
@@ -106,6 +106,18 @@ export interface _Series {
   description: string
   url: string
   media_count: number
+  landscape_image: _ImageSet
+  portrait_image: _ImageSet
+}
+
+export interface _AutocompleteResult {
+  class: 'series'
+  media_type: 'anime'
+  series_id: string
+  name: string
+  description: string
+  url: string
+  etp_guid: string
   landscape_image: _ImageSet
   portrait_image: _ImageSet
 }
@@ -143,8 +155,18 @@ interface LoginSuccess {
   expires: Date
 }
 
+export interface SearchResult {
+  id: number
+  title: string
+  description: string
+  url: string
+  portraitImage: string
+  landscapeImage: string
+}
+
 type RequestTypes =
   | 'add_to_queue'
+  | 'autocomplete'
   | 'categories'
   | 'info'
   | 'list_media'
@@ -351,6 +373,38 @@ export class Crunchyroll {
     if (responseIsError(response)) {
       throw new Error('Could not update progress of episode!')
     }
+  }
+
+  public static searchByString = async (
+    query: string,
+  ): Promise<SearchResult[]> => {
+    const response = (await superagent.get(getUrl('autocomplete')).query({
+      session_id: _sessionId,
+      q: query,
+      media_types: 'anime',
+      limit: 10,
+    })) as CrunchyrollResponse<_AutocompleteResult[]>
+
+    if (responseIsError(response)) {
+      if (response.body.code === 'bad_session') {
+        activeWindow().reload()
+      }
+
+      throw new Error(response.body.message)
+    }
+
+    return response.body.data.map(result => ({
+      id: Number(result.series_id),
+      title: result.name,
+      description: result.description,
+      url: result.url,
+      portraitImage:
+        result.portrait_image.large_url || result.portrait_image.medium_url,
+      landscapeImage:
+        result.landscape_image.full_url ||
+        result.landscape_image.large_url ||
+        result.landscape_image.medium_url,
+    }))
   }
 
   private static createNormalSession = async (store: StoreType) => {

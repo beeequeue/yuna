@@ -1,5 +1,6 @@
 <template>
   <router-link
+    v-if="link"
     :to="`/anime/${anime.id}`"
     class="anime-banner"
     :style="{ background: `url(${diagmondsWebp})` }"
@@ -8,6 +9,15 @@
 
     <span class="title">{{ anime.title.userPreferred || anime.title }}</span>
   </router-link>
+  <span
+    v-else
+    class="anime-banner"
+    :style="{ background: `url(${diagmondsWebp})` }"
+  >
+    <img class="image" :class="{ faded }" :src="anime.bannerImage" />
+
+    <span class="title">{{ anime.title.userPreferred || anime.title }}</span>
+  </span>
 </template>
 
 <script lang="ts">
@@ -18,7 +28,6 @@ import { Required } from '@/decorators'
 
 @Component
 export default class AnimeBanner extends Vue {
-  @Prop(Boolean) faded!: boolean | null
   @Required(Object)
   public anime!: {
     id: number
@@ -29,6 +38,8 @@ export default class AnimeBanner extends Vue {
         }
     bannerImage: string
   }
+  @Prop(Boolean) faded!: boolean | null
+  @Prop(Boolean) link!: boolean | null
 
   public diagmondsWebp = DiagmondsWebp
 }

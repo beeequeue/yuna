@@ -76,10 +76,15 @@ export interface AppState {
     edit: ModalBase & {
       anime: EditModalAnime | null
     }
+    manualSearch: ModalBase
   }
 }
 
 type AppContext = ActionContext<AppState, RootState>
+
+const initialModalBase: ModalBase = {
+  visible: false,
+}
 
 const initialState: AppState = {
   isUpdateAvailable: false,
@@ -87,13 +92,12 @@ const initialState: AppState = {
   isFullscreen: false,
   player: null,
   modals: {
-    about: {
-      visible: false,
-    },
+    about: { ...initialModalBase },
     edit: {
-      visible: false,
+      ...initialModalBase,
       anime: null,
     },
+    manualSearch: { ...initialModalBase },
   },
 }
 
