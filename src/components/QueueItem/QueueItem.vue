@@ -11,7 +11,7 @@
       </animated-height>
     </div>
 
-    <anime-banner :anime="anime" :faded="!isWatching" />
+    <anime-banner :anime="anime" :faded="!isWatching" link />
 
     <div class="handle-wrapper">
       <icon :icon="hamburgerSvg" class="handle" />
