@@ -47,7 +47,7 @@ const cacheEpisodes = (
 
       cache.writeQuery<EpisodeListQuery, EpisodeListVariables>({
         query: EPISODE_LIST,
-        variables: { id: Number(id) },
+        variables: { id: Number(id), provider },
         data: {
           episodes,
         },
@@ -137,7 +137,7 @@ export const resolvers = {
             EpisodeListVariables
           >({
             query: EPISODE_LIST,
-            variables: { id: Number(id) },
+            variables: { id: Number(id), provider },
           })
         } catch (err) {
           /* no-op */

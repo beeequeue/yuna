@@ -8,6 +8,11 @@ import { QueueItem, userStore } from '@/lib/user'
 const isInQueue = (state: UserState, id: number) =>
   !isNil(state.queue.find(propEq('id', id)))
 
+interface SetProviderOptions {
+  id: number
+  provider: Provider
+}
+
 export interface UserState {
   queue: QueueItem[]
 }
@@ -83,6 +88,15 @@ export const user = {
 
       userStore.set('queue', state.queue)
     },
+
+    setQueueItemProvider(state: UserState, options: SetProviderOptions) {
+      if (!isInQueue(state, options.id)) return
+
+      const index = state.queue.findIndex(propEq('id', options.id))
+      state.queue[index].provider = options.provider
+
+      userStore.set('queue', state.queue)
+    },
   },
 
   actions: {},
@@ -100,3 +114,4 @@ export const removeFromQueueByIndex = commit(
 )
 export const removeFromQueueById = commit(user.mutations.removeFromQueueById)
 export const toggleQueueItemOpen = commit(user.mutations.toggleQueueItemOpen)
+export const setQueueItemProvider = commit(user.mutations.setQueueItemProvider)

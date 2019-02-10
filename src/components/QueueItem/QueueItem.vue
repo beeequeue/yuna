@@ -22,7 +22,7 @@
     <animated-height class="episodes-container">
       <transition>
         <episode-list
-          v-if="open"
+          v-if="item.open"
           :anime="anime"
           :episodes="episodes"
           :loading="episodesLoading !== 0"
@@ -35,12 +35,12 @@
     <div class="controls">
       <icon
         class="collapser"
-        :class="{ flip: open }"
+        :class="{ flip: item.open }"
         :icon="expandSvg"
         @click.native="toggleItemOpen"
       />
 
-      <source-select :anime="anime" />
+      <source-select :anime="anime" :setProvider="setProvider" />
 
       <span class="filler" />
 
@@ -146,6 +146,7 @@ import SourceSelect from '@/components/QueueItem/SourceSelect.vue'
 import { Query, Required } from '@/decorators'
 import { removeFromQueueById, toggleQueueItemOpen } from '@/state/user'
 import { sendErrorToast } from '@/state/app'
+import { QueueItem as IQueueItem } from '@/lib/user'
 import { getIconForStatus, capitalize } from '@/utils'
 
 @Component({
@@ -169,10 +170,11 @@ export default class QueueItem extends Vue {
     variables() {
       return {
         id: this.anime.id,
+        provider: this.item.provider,
       }
     },
     skip() {
-      return !this.anime.id || !this.open
+      return !this.anime.id || !this.item.open
     },
     error(err) {
       if (typeof err === 'string') {
@@ -194,7 +196,8 @@ export default class QueueItem extends Vue {
   public episodesFetchingError: string | null = null
 
   @Required(Object) public anime!: QueueAnime
-  @Required(Boolean) public open!: boolean
+  @Required(Object) public item!: IQueueItem
+  @Required(Function) public setProvider!: (provider: Provider) => void
 
   public MediaListStatus = MediaListStatus
   public expandSvg = mdiChevronDown
@@ -229,7 +232,7 @@ export default class QueueItem extends Vue {
   }
 
   public setOpenState(newState: boolean) {
-    if (this.open === newState) return
+    if (this.item.open === newState) return
 
     this.toggleItemOpen()
   }

@@ -14,12 +14,18 @@
 
     <transition>
       <div v-if="open" class="menu">
-        <div class="menu-item crunchyroll">
+        <div
+          class="menu-item crunchyroll"
+          @click="handleClick(Provider.Crunchyroll)"
+        >
           <img :src="crIcon" />
           Automatic
         </div>
 
-        <div class="menu-item crunchyroll-search">
+        <div
+          class="menu-item crunchyroll-search"
+          @click="handleClick(Provider.CrunchyrollManual)"
+        >
           <img :src="crIcon" />
           Manual
         </div>
@@ -46,7 +52,7 @@ import { mdiChevronDown } from '@mdi/js'
 import crIcon from '@/assets/crunchyroll.webp'
 import Icon from '@/components/Icon.vue'
 
-import { QueueAnime, QueueExternalLinks } from '@/graphql/types'
+import { QueueAnime, QueueExternalLinks, Provider } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import { StreamingSource, SupportedSources } from '@/types'
@@ -58,9 +64,11 @@ const siteImages = streamingSiteCtx.keys()
 @Component({ components: { Icon } })
 export default class SourceSelect extends Vue {
   @Required(Object) public anime!: QueueAnime
+  @Required(Function) public setProvider!: (provider: Provider) => void
 
   public open = false
 
+  public Provider = Provider
   public crIcon = crIcon
   public expandSvg = mdiChevronDown
 
@@ -91,6 +99,11 @@ export default class SourceSelect extends Vue {
     }
 
     return streamingSiteCtx(image)
+  }
+
+  public handleClick(provider: Provider) {
+    this.setProvider(provider)
+    this.toggleOpen()
   }
 
   public toggleOpen() {

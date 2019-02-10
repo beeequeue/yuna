@@ -404,6 +404,7 @@ export interface StaffNameInput {
 
   export enum Provider {
     Crunchyroll = "CRUNCHYROLL",
+    CrunchyrollManual = "CRUNCHYROLL_MANUAL",
     Hidive = "HIDIVE",
   }
 /** Types that can be liked */
@@ -609,6 +610,7 @@ export type FuzzyDateInt = any;
 
   export type EpisodeListVariables = {
     id: number;
+    provider: Provider;
   }
 
   export type EpisodeListQuery = {

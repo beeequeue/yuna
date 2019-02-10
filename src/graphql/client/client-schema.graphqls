@@ -1,5 +1,6 @@
 enum Provider {
   CRUNCHYROLL,
+  CRUNCHYROLL_MANUAL,
   HIDIVE,
 }
 
