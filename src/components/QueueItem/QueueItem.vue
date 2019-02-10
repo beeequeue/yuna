@@ -17,7 +17,9 @@
 
     <anime-banner :anime="anime" :faded="!isWatching" />
 
-    <icon :icon="hamburgerSvg" class="handle" />
+    <div class="handle-wrapper">
+      <icon :icon="hamburgerSvg" class="handle" />
+    </div>
 
     <animated-height class="episodes-container">
       <transition>
@@ -383,27 +385,31 @@ export default class QueueItem extends Vue {
     overflow: hidden;
   }
 
-  & > .handle {
+  & > .handle-wrapper {
     position: absolute;
     top: 0;
     right: 0;
-    height: 75px;
-    width: 25px;
-    padding: 2px;
-    background: $dark;
-    cursor: -webkit-grab;
     border-top-right-radius: 5px;
-    z-index: 5;
+    overflow: hidden;
 
-    & /deep/ svg {
-      fill: $highlight;
+    & > .handle {
+      height: 75px;
+      width: 25px;
+      padding: 2px;
+      background: $dark;
+      cursor: -webkit-grab;
+      z-index: 5;
+
+      & /deep/ svg {
+        fill: $highlight;
+      }
+
+      transform: translateX(100%);
+      transition: transform 0.15s;
     }
-
-    transform: translateX(100%);
-    transition: transform 0.15s;
   }
 
-  &:hover > .handle {
+  &:hover > .handle-wrapper > .handle {
     transform: none;
   }
 

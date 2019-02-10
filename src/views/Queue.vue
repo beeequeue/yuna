@@ -141,7 +141,7 @@ export default class Queue extends Vue {
 
   public gridOptions = {
     animation: 150,
-    handle: '.handle',
+    handle: '.handle-wrapper',
   }
 
   public $refs!: {
