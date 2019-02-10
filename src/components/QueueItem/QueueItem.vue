@@ -1,10 +1,6 @@
 <template>
   <div class="queue-item">
-    <div
-      class="status"
-      :class="{ [status.toLowerCase()]: !!status }"
-      v-tooltip.right="capitalize(status)"
-    >
+    <div class="status" v-tooltip.right="capitalize(status)">
       <icon v-if="iconForStatus" :icon="iconForStatus" />
 
       <animated-height>
@@ -341,23 +337,8 @@ export default class QueueItem extends Vue {
     align-items: center;
     font-weight: 500;
     border-top-left-radius: 5px;
+    background: gradient(black, 0.5);
     z-index: 5;
-
-    &.paused {
-      background: gradient($warning);
-    }
-
-    &.dropped {
-      background: gradient($danger);
-    }
-
-    &.repeating {
-      background: gradient($success);
-    }
-
-    &.current {
-      background: gradient(black, 0.25);
-    }
 
     & > * {
       flex-shrink: 0;
