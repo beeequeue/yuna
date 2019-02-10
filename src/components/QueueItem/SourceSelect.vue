@@ -23,6 +23,16 @@
           <img :src="crIcon" />
           Manual
         </div>
+
+        <div v-if="unsupportedSources.length > 0" class="menu-item unsupported">
+          <a
+            v-for="source in unsupportedSources"
+            :key="source.site"
+            :href="source.url"
+          >
+            <img :src="getImageUrl(source)" />
+          </a>
+        </div>
       </div>
     </transition>
   </div>
@@ -98,7 +108,7 @@ export default class SourceSelect extends Vue {
   & > .dropdown {
     background: $main;
     height: 100%;
-    min-width: 150px;
+    min-width: 125px;
     display: flex;
     align-items: center;
     cursor: pointer;
@@ -132,7 +142,7 @@ export default class SourceSelect extends Vue {
     left: 0;
     width: 100%;
     z-index: 100;
-    transition: none 0.15s;
+    transition: none 75ms;
 
     &.v-enter,
     &.v-leave-to {
@@ -152,8 +162,31 @@ export default class SourceSelect extends Vue {
       font-size: 0.9em;
       box-shadow: $shadow;
       cursor: pointer;
-      transition: background 0.1s, transform 0.15s, opacity 0.15s;
+      transition: background 0.1s, transform 75ms, opacity 75ms;
       z-index: 99;
+
+      &.unsupported {
+        justify-content: flex-start;
+        background: color($main, 400);
+        cursor: default;
+
+        & > a {
+          display: flex;
+          transition: transform 75ms;
+
+          &:hover {
+            transform: scale(1.1);
+          }
+        }
+
+        & img {
+          height: 16px;
+        }
+
+        &:hover {
+          background: color($main, 400);
+        }
+      }
 
       &:hover {
         background: color($main, 800);
@@ -164,9 +197,10 @@ export default class SourceSelect extends Vue {
         border-bottom-right-radius: 5px;
       }
 
-      & > img {
+      & img {
         height: 20px;
         filter: drop-shadow(0 1px 1px black);
+        margin-right: 5px;
       }
     }
   }
