@@ -6,9 +6,12 @@
       :onChange="handleSearchChange"
     />
 
-    <transition name="fade">
-      <loading v-if="loading" />
-    </transition>
+    <div class="status">
+      <transition name="fade">
+        <loading v-if="loading" />
+        <icon v-else :icon="searchSvg" />
+      </transition>
+    </div>
 
     <div class="results">
       <anime-banner
@@ -23,18 +26,22 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { debounce } from 'rambdax'
+import { mdiMagnify } from '@mdi/js'
 
 import TextInput from '@/components/Form/TextInput.vue'
-import Loading from '@/components/QueueItem/Loading.vue'
-
-import { Crunchyroll, SearchResult } from '@/lib/crunchyroll'
+import Loading from '@/components/Loading.vue'
+import Icon from '@/components/Icon.vue'
 import AnimeBanner from '@/components/AnimeBanner.vue'
 
-@Component({ components: { AnimeBanner, Loading, TextInput } })
+import { Crunchyroll, SearchResult } from '@/lib/crunchyroll'
+
+@Component({ components: { Icon, AnimeBanner, Loading, TextInput } })
 export default class SearchStep extends Vue {
   public searchString = ''
   public loading = false
   public results: SearchResult[] = []
+
+  public searchSvg = mdiMagnify
 
   public handleSearchChange(value: string) {
     this.loading = true
@@ -83,14 +90,29 @@ export default class SearchStep extends Vue {
     }
   }
 
-  & > .loading {
-    position: relative;
+  & > .status {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    right: 5px;
+    height: 30px;
+    width: 30px;
+    padding: 5px;
+
+    & > .icon {
+      fill: $gray;
+      display: flex;
+      align-items: center;
+    }
   }
 
   & > .results {
     position: relative;
     width: 100%;
     max-height: 500px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
     overflow: auto;
 
     & > .anime-banner {
