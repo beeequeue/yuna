@@ -19,6 +19,7 @@
         v-for="result in results"
         :key="result.id"
         :anime="{ title: result.title, bannerImage: result.landscapeImage }"
+        @click.native="setSelectedId(result.id)"
       />
     </div>
   </div>
@@ -41,6 +42,7 @@ import { Crunchyroll, SearchResult } from '@/lib/crunchyroll'
 @Component({ components: { Icon, AnimeBanner, Loading, TextInput } })
 export default class SearchStep extends Vue {
   @Required(String) provider!: Provider
+  @Required(Function) setSelectedId!: (id: number | null) => void
 
   public searchString = ''
   public loading = false
@@ -127,6 +129,7 @@ export default class SearchStep extends Vue {
 
     & > .anime-banner {
       display: flex;
+      cursor: pointer;
     }
   }
 }

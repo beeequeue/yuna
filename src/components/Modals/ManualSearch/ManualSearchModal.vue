@@ -1,7 +1,11 @@
 <template>
   <modal :visible="visible" :toggleVisible="toggleVisible">
     <animated-height class="manual-search-modal">
-      <search-step :provider="searchOptions.provider" />
+      <search-step
+        v-if="selectedId == null"
+        :provider="searchOptions.provider"
+        :setSelectedId="setSelectedId"
+      />
     </animated-height>
   </modal>
 </template>
@@ -21,8 +25,14 @@ export default class ManualSearchModal extends Vue {
   @Prop(Boolean) public visible!: boolean | null
   @Required(Function) public toggleVisible!: () => any
 
+  public selectedId: number | null = null
+
   public get searchOptions() {
     return getManualSearchOptions(this.$store)
+  }
+
+  public setSelectedId(id: number | null) {
+    this.selectedId = id
   }
 }
 </script>
