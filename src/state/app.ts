@@ -1,5 +1,5 @@
 import { activeWindow } from 'electron-util'
-import { merge, propEq, reject, change, isNil } from 'rambdax'
+import { change, isNil, merge, propEq, reject } from 'rambdax'
 import {
   NotificationFunctionOptions,
   NotificationTypes,
@@ -76,7 +76,9 @@ export interface AppState {
     edit: ModalBase & {
       anime: EditModalAnime | null
     }
-    manualSearch: ModalBase
+    manualSearch: ModalBase & {
+      provider: Provider
+    }
   }
 }
 
@@ -97,7 +99,7 @@ const initialState: AppState = {
       ...initialModalBase,
       anime: null,
     },
-    manualSearch: { ...initialModalBase },
+    manualSearch: { ...initialModalBase, provider: Provider.Crunchyroll },
   },
 }
 
@@ -137,6 +139,10 @@ export const app = {
 
     getEditingAnime(state: AppState) {
       return state.modals.edit.anime
+    },
+
+    getManualSearchOptions(state: AppState) {
+      return state.modals.manualSearch
     },
 
     getIsFullscreen(state: AppState) {
@@ -305,6 +311,7 @@ export const getPlayerData = read(app.getters.getPlayerData)
 export const getPlaylistAnimeId = read(app.getters.getPlaylistAnimeId)
 export const getModalStates = read(app.getters.getModalStates)
 export const getEditingAnime = read(app.getters.getEditingAnime)
+export const getManualSearchOptions = read(app.getters.getManualSearchOptions)
 export const getIsFullscreen = read(app.getters.getIsFullscreen)
 
 export const setIsUpdateAvailable = commit(app.mutations.setIsUpdateAvailable)

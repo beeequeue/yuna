@@ -9,6 +9,7 @@
     <div class="status">
       <transition name="fade">
         <loading v-if="loading" />
+        <icon v-else-if="results && results.length < 1" :icon="emptySvg" />
         <icon v-else :icon="searchSvg" />
       </transition>
     </div>
@@ -26,22 +27,27 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { debounce } from 'rambdax'
-import { mdiMagnify } from '@mdi/js'
+import { mdiClose, mdiMagnify } from '@mdi/js'
 
 import TextInput from '@/components/Form/TextInput.vue'
 import Loading from '@/components/Loading.vue'
 import Icon from '@/components/Icon.vue'
 import AnimeBanner from '@/components/AnimeBanner.vue'
 
+import { Provider } from '@/graphql/types'
+import { Required } from '@/decorators'
 import { Crunchyroll, SearchResult } from '@/lib/crunchyroll'
 
 @Component({ components: { Icon, AnimeBanner, Loading, TextInput } })
 export default class SearchStep extends Vue {
+  @Required(String) provider!: Provider
+
   public searchString = ''
   public loading = false
-  public results: SearchResult[] = []
+  public results: SearchResult[] | null = null
 
   public searchSvg = mdiMagnify
+  public emptySvg = mdiClose
 
   public handleSearchChange(value: string) {
     this.loading = true
@@ -58,7 +64,11 @@ export default class SearchStep extends Vue {
 
   public async search() {
     this.loading = true
-    this.results = await Crunchyroll.searchByString(this.searchString)
+
+    if (this.provider === Provider.Crunchyroll) {
+      this.results = await Crunchyroll.searchByString(this.searchString)
+    }
+
     this.loading = false
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <modal :visible="visible" :toggleVisible="toggleVisible">
     <animated-height class="manual-search-modal">
-      <search-step />
+      <search-step :provider="searchOptions.provider" />
     </animated-height>
   </modal>
 </template>
@@ -14,11 +14,16 @@ import Modal from '../Modal.vue'
 
 import { Required } from '@/decorators'
 import SearchStep from '@/components/Modals/ManualSearch/SearchStep.vue'
+import { getManualSearchOptions } from '@/state/app'
 
 @Component({ components: { SearchStep, AnimatedHeight, Modal } })
 export default class ManualSearchModal extends Vue {
   @Prop(Boolean) public visible!: boolean | null
   @Required(Function) public toggleVisible!: () => any
+
+  public get searchOptions() {
+    return getManualSearchOptions(this.$store)
+  }
 }
 </script>
 
