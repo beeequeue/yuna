@@ -136,7 +136,6 @@ import AnimeBanner from '@/components/AnimeBanner.vue'
 import EpisodeList from '@/components/EpisodeList.vue'
 import AnimatedHeight from '@/components/AnimatedHeight.vue'
 import SourceList from '@/components/SourceList.vue'
-import Loading from '@/components/QueueItem/Loading.vue'
 import NextEpisodeInfo from '@/components/Anime/NextEpisodeInfo.vue'
 import CButton from '@/components/CButton.vue'
 import SourceSelect from '@/components/QueueItem/SourceSelect.vue'
@@ -152,7 +151,6 @@ import { capitalize, getIconForStatus } from '@/utils'
     SourceSelect,
     NextEpisodeInfo,
     CButton,
-    Loading,
     SourceList,
     AnimatedHeight,
     EpisodeList,

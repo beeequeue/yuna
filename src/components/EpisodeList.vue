@@ -1,5 +1,7 @@
 <template>
-  <loading v-if="loading" />
+  <div v-if="loading" class="loading-wrapper">
+    <loading :size="40" />
+  </div>
   <div
     v-else-if="episodes && episodes.length > 0"
     class="episode-list"
@@ -32,7 +34,7 @@ import {
 
 import { Required } from '@/decorators'
 import Episode from './Episode.vue'
-import Loading from './QueueItem/Loading.vue'
+import Loading from './Loading.vue'
 import SourceList from './SourceList.vue'
 
 @Component({ components: { SourceList, Loading, Episode } })
@@ -101,6 +103,10 @@ export default class EpisodeList extends Vue {
 </script>
 
 <style scoped lang="scss">
+.loading-wrapper {
+  padding: 10px;
+}
+
 .episode-list {
   position: absolute;
   left: 0;
