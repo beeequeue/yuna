@@ -66,6 +66,11 @@ export interface EditModalAnime {
   }
 }
 
+export interface ManualSearchOptions {
+  provider: Provider
+  anilistId: number | null
+}
+
 export interface AppState {
   isUpdateAvailable: boolean
   toasts: Toast[]
@@ -76,9 +81,7 @@ export interface AppState {
     edit: ModalBase & {
       anime: EditModalAnime | null
     }
-    manualSearch: ModalBase & {
-      provider: Provider
-    }
+    manualSearch: ModalBase & ManualSearchOptions
   }
 }
 
@@ -99,7 +102,11 @@ const initialState: AppState = {
       ...initialModalBase,
       anime: null,
     },
-    manualSearch: { ...initialModalBase, provider: Provider.Crunchyroll },
+    manualSearch: {
+      ...initialModalBase,
+      provider: Provider.Crunchyroll,
+      anilistId: null,
+    },
   },
 }
 
@@ -212,6 +219,13 @@ export const app = {
       ) as any
     },
 
+    setManualSearchOptions(state: AppState, options: ManualSearchOptions) {
+      state.modals.manualSearch = {
+        ...state.modals.manualSearch,
+        ...options,
+      }
+    },
+
     setFullscreen(state: AppState, b: boolean) {
       const browserWindow = activeWindow()
 
@@ -279,6 +293,11 @@ export const app = {
       toggleModal(context, 'edit')
     },
 
+    initManualSearch(context: AppContext, options: ManualSearchOptions) {
+      setManualSearchOptions(context, options)
+      toggleModal(context, 'manualSearch')
+    },
+
     setCurrentEpisode(
       context: AppContext,
       options:
@@ -317,6 +336,9 @@ export const getIsFullscreen = read(app.getters.getIsFullscreen)
 export const setIsUpdateAvailable = commit(app.mutations.setIsUpdateAvailable)
 const setEditingAnime = commit(app.mutations.setEditingAnime)
 export const setEditingAnimeValue = commit(app.mutations.setEditingAnimeValue)
+export const setManualSearchOptions = commit(
+  app.mutations.setManualSearchOptions,
+)
 export const removeToast = commit(app.mutations.removeToast)
 const setPlaylist = commit(app.mutations.setPlaylist)
 const _setCurrentEpisode = commit(app.mutations.setCurrentEpisode)
@@ -333,4 +355,5 @@ export const sendNotImplementedToast = dispatch(
 )
 export const notifyDownloadDone = dispatch(app.actions.notifyDownloadDone)
 export const initEditModal = dispatch(app.actions.initEditModal)
+export const initManualSearch = dispatch(app.actions.initManualSearch)
 export const setCurrentEpisode = dispatch(app.actions.setCurrentEpisode)
