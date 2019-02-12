@@ -19,6 +19,7 @@
         v-for="result in results"
         :key="result.id"
         :anime="{ title: result.title, bannerImage: result.landscapeImage }"
+        hideTitle
         @click.native="setSelectedId(result.id)"
       />
     </div>
