@@ -1,0 +1,5 @@
+query EpisodeCount($id: Int) {
+  anime: Media(id: $id) {
+    episodes
+  }
+}

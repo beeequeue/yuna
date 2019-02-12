@@ -29,6 +29,16 @@ declare module '*/DeleteListEntryMutation.graphql' {
   export default defaultDocument
 }
 
+declare module '*/EpisodeCount.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const EpisodeCount: DocumentNode
+
+  export { EpisodeCount }
+
+  export default defaultDocument
+}
+
 declare module '*/EpisodeList.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode

@@ -33,6 +33,13 @@ export interface FuzzyDateInput {
   day: Maybe<number>;
 }
 
+export interface AniChartHighlightInput {
+  
+  mediaId: Maybe<number>;
+  
+  highlight: Maybe<string>;
+}
+
 export interface AiringScheduleInput {
   
   airingAt: Maybe<number>;
@@ -606,6 +613,22 @@ export type FuzzyDateInt = any;
     __typename?: "Deleted";
     
     deleted: Maybe<boolean>;
+  } 
+
+  export type EpisodeCountVariables = {
+    id: Maybe<number>;
+  }
+
+  export type EpisodeCountQuery = {
+    __typename?: "Query";
+    
+    anime: Maybe<EpisodeCountAnime>;
+  }
+
+  export type EpisodeCountAnime = {
+    __typename?: "Media";
+    
+    episodes: Maybe<number>;
   } 
 
   export type EpisodeListVariables = {
