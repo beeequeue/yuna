@@ -3,7 +3,13 @@
     <animated-height class="manual-search-modal">
       <search-step
         v-if="selectedId == null"
-        :provider="searchOptions.provider"
+        :searchOptions="searchOptions"
+        :setSelectedId="setSelectedId"
+      />
+      <crunchyroll-editor
+        v-else
+        :searchOptions="searchOptions"
+        :id="selectedId"
         :setSelectedId="setSelectedId"
       />
     </animated-height>
@@ -19,8 +25,11 @@ import Modal from '../Modal.vue'
 import { Required } from '@/decorators'
 import SearchStep from '@/components/Modals/ManualSearch/SearchStep.vue'
 import { getManualSearchOptions } from '@/state/app'
+import CrunchyrollEditor from '@/components/Modals/ManualSearch/CrunchyrollEditor.vue'
 
-@Component({ components: { SearchStep, AnimatedHeight, Modal } })
+@Component({
+  components: { CrunchyrollEditor, SearchStep, AnimatedHeight, Modal },
+})
 export default class ManualSearchModal extends Vue {
   @Prop(Boolean) public visible!: boolean | null
   @Required(Function) public toggleVisible!: () => any

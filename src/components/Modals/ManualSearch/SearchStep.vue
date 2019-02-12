@@ -37,11 +37,12 @@ import AnimeBanner from '@/components/AnimeBanner.vue'
 
 import { Provider } from '@/graphql/types'
 import { Required } from '@/decorators'
+import { ManualSearchOptions } from '@/state/app'
 import { Crunchyroll, SearchResult } from '@/lib/crunchyroll'
 
 @Component({ components: { Icon, AnimeBanner, Loading, TextInput } })
 export default class SearchStep extends Vue {
-  @Required(String) provider!: Provider
+  @Required(Object) searchOptions!: ManualSearchOptions
   @Required(Function) setSelectedId!: (id: number | null) => void
 
   public searchString = ''
@@ -67,7 +68,7 @@ export default class SearchStep extends Vue {
   public async search() {
     this.loading = true
 
-    if (this.provider === Provider.Crunchyroll) {
+    if (this.searchOptions.provider === Provider.Crunchyroll) {
       this.results = await Crunchyroll.searchByString(this.searchString)
     }
 
