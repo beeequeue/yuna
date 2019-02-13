@@ -105,7 +105,7 @@ const initialState: AppState = {
     manualSearch: {
       ...initialModalBase,
       provider: Provider.Crunchyroll,
-      anilistId: null,
+      anilistId: 21460,
     },
   },
 }
