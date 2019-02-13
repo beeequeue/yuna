@@ -1,6 +1,6 @@
 /* eslint-disable class-name */
 import { activeWindow } from 'electron-util'
-import { anyPass, complement, T } from 'rambdax'
+import { anyPass, complement, T, mapAsync } from 'rambdax'
 import superagent from 'superagent/superagent'
 import { ActionContext, Store } from 'vuex'
 import uuid from 'uuid/v4'
@@ -65,7 +65,7 @@ export interface _Stream {
   url: string
 }
 
-export interface _Media {
+interface _Media {
   class: string
   media_id: string
   etp_guid: string
@@ -97,7 +97,7 @@ export interface _Media {
   playhead: number
 }
 
-export interface _Series {
+interface _Series {
   class: 'series'
   media_type: 'anime'
   series_id: string
@@ -110,7 +110,26 @@ export interface _Series {
   portrait_image: _ImageSet
 }
 
-export interface _SeriesWithEpisodes {
+interface _Collection {
+  availability_notes: string
+  class: 'collection'
+  media_type: 'anime'
+  series_id: string
+  collection_id: string
+  complete: boolean
+  name: string
+  description: string
+  landscape_image: _ImageSet | null
+  portrait_image: _ImageSet | null
+  season: string
+  created: string
+}
+
+export interface _CollectionWithEpisodes extends _Collection {
+  episodes: EpisodeListEpisodes[]
+}
+
+export interface _SeriesWithCollections {
   id: number
   seriesId: number
   title: string
@@ -118,7 +137,7 @@ export interface _SeriesWithEpisodes {
   url: string
   landscapeImage: string
   portraitImage: string
-  episodes: EpisodeListEpisodes[]
+  collections: _CollectionWithEpisodes[]
 }
 
 export interface _AutocompleteResult {
@@ -180,6 +199,7 @@ type RequestTypes =
   | 'autocomplete'
   | 'categories'
   | 'info'
+  | 'list_collections'
   | 'list_media'
   | 'log'
   | 'login'
@@ -299,14 +319,13 @@ export class Crunchyroll {
     })
   }
 
-  public static fetchSeries = async (
+  public static fetchSeriesAndCollections = async (
     anilistId: number,
     seriesId: number,
-  ): Promise<_SeriesWithEpisodes> => {
-    const response = (await superagent.get(getUrl('info')).query({
-      session_id: _sessionId,
+  ): Promise<_SeriesWithCollections> => {
+    const response = await Crunchyroll.request<_Series>('info', {
       series_id: seriesId,
-    })) as CrunchyrollResponse<_Series>
+    })
 
     if (responseIsError(response)) {
       if (response.body.code === 'bad_session') {
@@ -316,9 +335,9 @@ export class Crunchyroll {
       throw new Error(response.body.message)
     }
 
-    const episodes = await Crunchyroll.fetchAllEpisodesOfSeries(
+    const collections = await Crunchyroll.fetchCollectionsAndEpisodes(
       anilistId,
-      seriesId.toString(),
+      seriesId,
     )
 
     return {
@@ -329,7 +348,7 @@ export class Crunchyroll {
       url: response.body.data.url,
       landscapeImage: response.body.data.landscape_image.full_url,
       portraitImage: response.body.data.portrait_image.full_url,
-      episodes,
+      collections,
     }
   }
 
@@ -352,16 +371,16 @@ export class Crunchyroll {
     return response.body.data
   }
 
-  public static fetchAllEpisodesOfSeries = async (
+  public static fetchCollectionsAndEpisodes = async (
     id: number,
-    seriesId: string,
-  ): Promise<EpisodeListEpisodes[]> => {
-    const response = (await superagent.get(getUrl('list_media')).query({
-      session_id: _sessionId,
-      locale,
-      series_id: seriesId,
-      limit: 2000,
-    })) as CrunchyrollResponse<_Media[]>
+    seriesId: number,
+  ): Promise<_CollectionWithEpisodes[]> => {
+    const response = await Crunchyroll.request<_Collection[]>(
+      'list_collections',
+      {
+        series_id: seriesId,
+      },
+    )
 
     if (responseIsError(response)) {
       if (response.body.code === 'bad_session') {
@@ -371,11 +390,16 @@ export class Crunchyroll {
       throw new Error(response.body.message)
     }
 
-    const episodes = response.body.data
-      .filter(isRealEpisode)
-      .map(mediaToEpisode(id)) as any
-
-    return fixEpisodeNumbers(episodes)
+    return mapAsync<_CollectionWithEpisodes>(
+      async (coll: _Collection) => ({
+        ...coll,
+        episodes: await Crunchyroll.fetchEpisodesOfCollection(
+          id,
+          coll.collection_id,
+        ),
+      }),
+      response.body.data,
+    )
   }
 
   public static fetchEpisodesOfCollection = async (
@@ -477,6 +501,17 @@ export class Crunchyroll {
         result.landscape_image.medium_url,
     }))
   }
+
+  private static request = async <B extends {}>(
+    type: RequestTypes,
+    query: any,
+  ) =>
+    (await superagent.get(`https://${API_URL}/${type}.${VERSION}.json`).query({
+      session_id: _sessionId,
+      locale,
+      device_type,
+      ...query,
+    })) as CrunchyrollResponse<B>
 
   private static createNormalSession = async (store: StoreType) => {
     const response = (await superagent
