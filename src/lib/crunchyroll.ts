@@ -353,12 +353,10 @@ export class Crunchyroll {
   }
 
   public static fetchEpisode = async (mediaId: string): Promise<_Media> => {
-    const response = (await superagent.get(getUrl('info')).query({
-      session_id: _sessionId,
-      locale,
+    const response = await Crunchyroll.request<_Media>('info', {
       media_id: mediaId,
       fields: mediaFields.join(','),
-    })) as CrunchyrollResponse<_Media>
+    })
 
     if (responseIsError(response)) {
       if (response.body.code === 'bad_session') {
@@ -406,13 +404,11 @@ export class Crunchyroll {
     id: number,
     collectionId: string,
   ): Promise<EpisodeListEpisodes[]> => {
-    const response = (await superagent.get(getUrl('list_media')).query({
-      session_id: _sessionId,
-      locale,
+    const response = await Crunchyroll.request<_Media[]>('list_media', {
       collection_id: collectionId,
       limit: 1000,
       fields: mediaFields.join(','),
-    })) as CrunchyrollResponse<_Media[]>
+    })
 
     if (responseIsError(response)) {
       if (response.body.code === 'bad_session') {
@@ -456,14 +452,11 @@ export class Crunchyroll {
     mediaId: number,
     progressInSeconds: number,
   ) => {
-    const response = (await superagent.get(getUrl('log')).query({
-      session_id: _sessionId,
-      locale,
+    const response = await Crunchyroll.request('log', {
       event: 'playback_status',
       media_id: mediaId,
       playhead: progressInSeconds,
-      fields: mediaFields.join(','),
-    })) as CrunchyrollResponse
+    })
 
     if (responseIsError(response)) {
       throw new Error('Could not update progress of episode!')
@@ -473,12 +466,14 @@ export class Crunchyroll {
   public static searchByString = async (
     query: string,
   ): Promise<SearchResult[]> => {
-    const response = (await superagent.get(getUrl('autocomplete')).query({
-      session_id: _sessionId,
-      q: query,
-      media_types: 'anime',
-      limit: 10,
-    })) as CrunchyrollResponse<_AutocompleteResult[]>
+    const response = await Crunchyroll.request<_AutocompleteResult[]>(
+      'autocomplete',
+      {
+        q: query,
+        media_types: 'anime',
+        limit: 10,
+      },
+    )
 
     if (responseIsError(response)) {
       if (response.body.code === 'bad_session') {
@@ -514,16 +509,15 @@ export class Crunchyroll {
     })) as CrunchyrollResponse<B>
 
   private static createNormalSession = async (store: StoreType) => {
-    const response = (await superagent
-      .get(getUrl('start_session'))
-      .ok(T)
-      .query({
+    const response = await Crunchyroll.request<SessionResponse>(
+      'start_session',
+      {
         access_token,
-        device_type,
         device_id: uuid(),
         version: '1.1',
         auth: userStore.get('crunchyroll.refreshToken', null),
-      })) as CrunchyrollResponse<SessionResponse>
+      },
+    )
 
     if (responseIsError(response)) {
       throw new Error(response.body.message)
@@ -565,12 +559,10 @@ export class Crunchyroll {
   private static fetchStreamInfo = async (
     mediaId: string,
   ): Promise<StreamInfo> => {
-    const response = (await superagent.get(getUrl('info')).query({
-      session_id: _sessionId,
-      locale,
+    const response = await Crunchyroll.request<StreamInfo>('info', {
       media_id: mediaId,
       fields: ['media.stream_data', 'media.playhead'].join(','),
-    })) as CrunchyrollResponse<StreamInfo>
+    })
 
     if (responseIsError(response)) {
       if (response.body.code === 'bad_session') {
