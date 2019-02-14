@@ -23,7 +23,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import CButton from '@/components/CButton.vue'
-import Checkbox from '@/components/Settings/Checkbox.vue'
+import Checkbox from '@/components/Checkbox.vue'
 
 import discordSvg from '@/assets/discord.svg'
 import richPresenceWebp from '@/assets/setup/discord.webp'
