@@ -11,10 +11,12 @@
 
       <c-button
         flat
+        :confirm="!correctAmount"
         type="success"
         :icon="confirmSvg"
-        :disabled="!correctAmount"
         :click="saveEpisodes"
+        :onConfirm="saveEpisodes"
+        v-tooltip.top="confirmTooltip"
       />
     </div>
 
@@ -64,6 +66,7 @@ import {
   unselectCrunchyrollEpisodes,
 } from '@/state/app'
 import { _SeriesWithCollections, Crunchyroll } from '@/lib/crunchyroll'
+import { TooltipSettings } from 'v-tooltip'
 
 @Component({
   components: { CrunchyrollCollection, CButton, AnimeBanner, Icon, Loading },
@@ -98,6 +101,15 @@ export default class CrunchyrollEditor extends Vue {
   public backSvg = mdiArrowLeft
   public confirmSvg = mdiCheck
 
+  public confirming = false
+  public get confirmTooltip(): TooltipSettings {
+    return {
+      content: "Are you sure? You haven't selected all the episodes!",
+      trigger: 'manual',
+      show: this.confirming,
+    }
+  }
+
   // Remove duplicate episode numbers
   public get selectedEpisodeCount() {
     const numbers = pluck('episodeNumber', this.selectedEpisodes)
@@ -122,6 +134,18 @@ export default class CrunchyrollEditor extends Vue {
   }
 
   public async saveEpisodes() {
+    if (!this.correctAmount && !this.confirming) {
+      this.confirming = true
+
+      setTimeout(() => {
+        this.confirming = false
+      }, 2500)
+
+      return
+    }
+
+    this.confirming = false
+
     await cacheEpisodes(
       this,
       this.searchOptions.anilistId as number,
