@@ -3,7 +3,6 @@ import {
   change,
   equals,
   filter,
-  includes,
   isNil,
   map,
   merge,
@@ -101,8 +100,6 @@ export interface AppState {
 
 type AppContext = ActionContext<AppState, RootState>
 
-const doesNotInclude = <T>(array: T[], item?: T) => !includes(item, array)
-
 const initialModalBase: ModalBase = {
   visible: false,
 }
@@ -121,7 +118,7 @@ const initialState: AppState = {
     manualSearch: {
       ...initialModalBase,
       provider: Provider.Crunchyroll,
-      anilistId: 21355,
+      anilistId: 1735,
       selectedEpisodes: [],
     },
   },
@@ -259,28 +256,43 @@ export const app = {
       episodes: EpisodeListEpisodes[],
     ) {
       const { selectedEpisodes } = state.modals.manualSearch
-      const count = selectedEpisodes.length
       const selectedIds = pluck<number>('id', selectedEpisodes)
 
-      const getEpisodes = pipe<
-        EpisodeListEpisodes[],
-        EpisodeListEpisodes[],
-        SelectedEpisode[]
-      >(
-        filter<EpisodeListEpisodes>(({ id }) =>
-          doesNotInclude(selectedIds, id),
-        ),
-        map<EpisodeListEpisodes, SelectedEpisode>(
-          ({ id, episodeNumber }, prop) => ({
+      const filteredEpisodes = episodes.filter(
+        ({ id }) => !selectedIds.includes(id),
+      )
+
+      let count = selectedEpisodes.length
+      let lastNumber = 0
+      let duplicates = 0
+
+      const episodeWithCorrectNumbers = filteredEpisodes.map(
+        ({ id, episodeNumber }) => {
+          let newNumber = count + 1
+
+          if (episodeNumber === lastNumber) {
+            newNumber = count
+          }
+
+          const selectedEpisode = {
             id,
-            episodeNumber: episodeNumber,
-          }),
-        ) as any,
+            episodeNumber: newNumber - duplicates,
+          }
+
+          if (episodeNumber === lastNumber) {
+            duplicates++
+          }
+
+          lastNumber = episodeNumber
+          count++
+
+          return selectedEpisode
+        },
       )
 
       state.modals.manualSearch.selectedEpisodes = [
         ...state.modals.manualSearch.selectedEpisodes,
-        ...getEpisodes(episodes),
+        ...episodeWithCorrectNumbers,
       ]
     },
 

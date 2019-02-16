@@ -231,3 +231,26 @@ const isStreamingSource = (link: ExternalLink) =>
   streamingSites.includes(link.site as any)
 export const getStreamingSources = (sources: ExternalLink[]) =>
   sources.filter(isStreamingSource)
+
+export const sortNumber = (a: number, b: number) => a - b
+
+export const humanizeNumberList = (list: number[]) => {
+  list = list.sort(sortNumber)
+
+  let str = `${list[0]}`
+  let lastNum: number = list[0]
+
+  list.forEach((n, i) => {
+    if (i === 0 || n === lastNum) return
+
+    if (n !== lastNum + 1) {
+      str += ` - ${lastNum}, ${n}`
+    } else if (n === list[list.length - 1]) {
+      str += ` - ${n}`
+    }
+
+    lastNum = n
+  })
+
+  return str
+}

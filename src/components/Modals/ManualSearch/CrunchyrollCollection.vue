@@ -6,9 +6,7 @@
       <span class="title">{{ collection.name }}</span>
 
       <span class="count">
-        {{ getEpisodeCount(ownedSelectedEpisodes) }}
-        {{ ' / ' }}
-        {{ getEpisodeCount(collection.episodes) }}
+        {{ humanizedSelectedNumbers }}
       </span>
 
       <checkbox
@@ -33,7 +31,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { includes, pluck, propEq } from 'rambdax'
+import { includes, pluck, propEq, complement, isNil, prop } from 'rambdax'
 import { mdiChevronDown } from '@mdi/js'
 
 import { EpisodeListEpisodes } from '@/graphql/types'
@@ -45,6 +43,9 @@ import CrunchyrollEpisode from './CrunchyrollEpisode.vue'
 import { Required } from '@/decorators'
 import { _CollectionWithEpisodes } from '@/lib/crunchyroll'
 import { SelectedEpisode } from '@/types'
+import { humanizeNumberList } from '@/utils'
+
+const pluckId = pluck<number>('id')
 
 @Component({
   components: { AnimatedHeight, CrunchyrollEpisode, Checkbox, Icon },
@@ -60,14 +61,25 @@ export default class CrunchyrollCollection extends Vue {
   public expandSvg = mdiChevronDown
 
   public get ownedSelectedEpisodes() {
-    const selectedIds = pluck<number>('id', this.selectedEpisodes)
-    const ownedIds = pluck<number>('id', this.collection.episodes)
+    const selectedIds = pluckId(this.selectedEpisodes)
+    const ownedIds = pluckId(this.collection.episodes)
 
     return selectedIds.filter(id => includes(id, ownedIds))
   }
 
   public get isFullySelected() {
     return this.ownedSelectedEpisodes.length === this.collection.episodes.length
+  }
+
+  public get humanizedSelectedNumbers() {
+    if (this.ownedSelectedEpisodes.length < 1) return null
+
+    const selectedNumbers = this.ownedSelectedEpisodes
+      .map(id => this.selectedEpisodes.find(propEq('id', id)))
+      .filter<SelectedEpisode>(complement(isNil) as any)
+      .map(prop('episodeNumber'))
+
+    return humanizeNumberList(selectedNumbers)
   }
 
   public toggleItemOpen() {
@@ -78,13 +90,8 @@ export default class CrunchyrollCollection extends Vue {
     if (checked) {
       this.selectEpisodes(this.collection.episodes)
     } else {
-      this.unselectEpisodes(pluck('id', this.collection.episodes))
+      this.unselectEpisodes(pluckId(this.collection.episodes))
     }
-  }
-
-  public getEpisodeCount(episodes: Array<{ episodeNumber: number }>) {
-    const numbers = pluck('episodeNumber', this.selectedEpisodes)
-    return new Set(numbers).size
   }
 
   public getSelectedEpisode(id: number) {
