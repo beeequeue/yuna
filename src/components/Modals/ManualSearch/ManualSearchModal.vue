@@ -63,7 +63,7 @@ export default class ManualSearchModal extends Vue {
 
 .manual-search-modal {
   position: relative;
-  min-width: 250px;
+  min-width: 300px;
   max-width: 750px;
   display: flex;
   flex-direction: column;

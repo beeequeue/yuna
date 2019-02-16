@@ -2,7 +2,7 @@
   <div class="search-step">
     <text-input
       class="search-bar"
-      :placeholder="capitalizedProvider"
+      :placeholder="`Search on ${capitalizedProvider}`"
       :onChange="handleSearchChange"
     />
 
@@ -104,7 +104,7 @@ export default class SearchStep extends Vue {
 
     & /deep/ input {
       text-align: center;
-      background: color($dark, 500);
+      background: $main;
       border: none;
     }
   }
