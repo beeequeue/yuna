@@ -46,6 +46,8 @@ export default class TextInput extends Vue {
   display: inline-flex;
   flex-direction: column;
   align-items: flex-start;
+  border-radius: 5px;
+  overflow: hidden;
 
   & > span {
     margin-bottom: 5px;
@@ -58,10 +60,8 @@ export default class TextInput extends Vue {
     display: flex;
     align-items: center;
     padding: 5px 10px;
-    height: 30px;
     width: 100%;
     border: 0;
-    border-radius: 5px;
     background: $main;
     border-left: 2px solid $main;
     border-right: 2px solid $main;

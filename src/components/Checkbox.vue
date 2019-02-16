@@ -18,19 +18,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiCheck } from '@mdi/js'
 
-import { Required } from '@/decorators'
+import { Required } from '../decorators'
 
-import CButton from '../CButton.vue'
-import Icon from '../Icon.vue'
+import CButton from './CButton.vue'
+import Icon from './Icon.vue'
 
 @Component({
   components: { CButton, Icon },
 })
 export default class Checkbox extends Vue {
-  @Required(String) public text!: string
+  @Prop(String) public text!: string | null
   @Required(String) public setting!: string
   @Required(Boolean) public checked!: boolean
   @Required(Function) public onChange!: (value: boolean) => any
@@ -46,7 +46,7 @@ export default class Checkbox extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import '../colors';
 
 .checkbox-container {
   position: relative;

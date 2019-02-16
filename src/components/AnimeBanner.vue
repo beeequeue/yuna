@@ -1,13 +1,29 @@
 <template>
   <router-link
+    v-if="link"
     :to="`/anime/${anime.id}`"
     class="anime-banner"
+    :class="{ hide: hideTitle }"
     :style="{ background: `url(${diagmondsWebp})` }"
   >
     <img class="image" :class="{ faded }" :src="anime.bannerImage" />
 
-    <span class="title">{{ anime.title.userPreferred || anime.title }}</span>
+    <span class="title">
+      {{ anime.title.userPreferred || anime.title }}
+    </span>
   </router-link>
+  <span
+    v-else
+    class="anime-banner"
+    :class="{ hide: hideTitle }"
+    :style="{ background: `url(${diagmondsWebp})` }"
+  >
+    <img class="image" :class="{ faded }" :src="anime.bannerImage" />
+
+    <span class="title">
+      {{ anime.title.userPreferred || anime.title }}
+    </span>
+  </span>
 </template>
 
 <script lang="ts">
@@ -18,7 +34,6 @@ import { Required } from '@/decorators'
 
 @Component
 export default class AnimeBanner extends Vue {
-  @Prop(Boolean) faded!: boolean | null
   @Required(Object)
   public anime!: {
     id: number
@@ -29,6 +44,9 @@ export default class AnimeBanner extends Vue {
         }
     bannerImage: string
   }
+  @Prop(Boolean) faded!: boolean | null
+  @Prop(Boolean) link!: boolean | null
+  @Prop(Boolean) hideTitle!: boolean | null
 
   public diagmondsWebp = DiagmondsWebp
 }
@@ -42,6 +60,22 @@ export default class AnimeBanner extends Vue {
   position: relative;
   height: 75px;
   width: 100%;
+
+  &.hide {
+    & > .image {
+      filter: brightness(0.35);
+      transition: filter 75ms;
+    }
+
+    &:not(:hover) {
+      & > .image {
+        filter: none;
+      }
+      & > .title {
+        opacity: 0;
+      }
+    }
+  }
 
   & > .image {
     object-fit: cover;
@@ -76,6 +110,7 @@ export default class AnimeBanner extends Vue {
     color: $white;
     text-shadow: $outline;
     filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.75));
+    transition: opacity 75ms;
   }
 }
 </style>

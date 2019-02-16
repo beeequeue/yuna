@@ -61,6 +61,7 @@ export default class PlayerContainer extends Vue {
     variables() {
       return {
         id: this.id,
+        provider: this.playerData.provider,
       }
     },
     skip() {

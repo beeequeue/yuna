@@ -18,6 +18,7 @@ import { mdiAlertCircleOutline } from '@mdi/js'
 @Component({ components: { Icon } })
 export default class CButton extends Vue {
   @Prop(Function) public click?: () => any
+  @Prop(Function) public onConfirm?: () => any
   @Prop(String) public content?: string
   @Prop(String)
   public type?: 'normal' | 'success' | 'warning' | 'danger' | 'white'
@@ -48,6 +49,8 @@ export default class CButton extends Vue {
     if (!this.confirm) return this.click()
 
     if (!this.confirmTimeout) {
+      if (this.onConfirm) this.onConfirm()
+
       this.confirmTimeout = window.setTimeout(() => {
         this.confirmTimeout = null
       }, 2500)

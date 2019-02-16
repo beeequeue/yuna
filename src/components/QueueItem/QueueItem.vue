@@ -1,10 +1,6 @@
 <template>
   <div class="queue-item">
-    <div
-      class="status"
-      :class="{ [status.toLowerCase()]: !!status }"
-      v-tooltip.right="capitalize(status)"
-    >
+    <div class="status" v-tooltip.right="capitalize(status)">
       <icon v-if="iconForStatus" :icon="iconForStatus" />
 
       <animated-height>
@@ -15,14 +11,16 @@
       </animated-height>
     </div>
 
-    <anime-banner :anime="anime" :faded="!isWatching" />
+    <anime-banner :anime="anime" :faded="!isWatching" link />
 
-    <icon :icon="hamburgerSvg" class="handle" />
+    <div class="handle-wrapper">
+      <icon :icon="hamburgerSvg" class="handle" />
+    </div>
 
     <animated-height class="episodes-container">
       <transition>
         <episode-list
-          v-if="open"
+          v-if="item.open"
           :anime="anime"
           :episodes="episodes"
           :loading="episodesLoading !== 0"
@@ -35,10 +33,12 @@
     <div class="controls">
       <icon
         class="collapser"
-        :class="{ flip: open }"
+        :class="{ flip: item.open }"
         :icon="expandSvg"
         @click.native="toggleItemOpen"
       />
+
+      <source-select :anime="anime" :setProvider="setProvider" />
 
       <span class="filler" />
 
@@ -136,20 +136,21 @@ import AnimeBanner from '@/components/AnimeBanner.vue'
 import EpisodeList from '@/components/EpisodeList.vue'
 import AnimatedHeight from '@/components/AnimatedHeight.vue'
 import SourceList from '@/components/SourceList.vue'
-import Loading from '@/components/QueueItem/Loading.vue'
 import NextEpisodeInfo from '@/components/Anime/NextEpisodeInfo.vue'
 import CButton from '@/components/CButton.vue'
+import SourceSelect from '@/components/QueueItem/SourceSelect.vue'
 
 import { Query, Required } from '@/decorators'
 import { removeFromQueueById, toggleQueueItemOpen } from '@/state/user'
 import { sendErrorToast } from '@/state/app'
-import { getIconForStatus, capitalize } from '@/utils'
+import { QueueItem as IQueueItem } from '@/lib/user'
+import { capitalize, getIconForStatus } from '@/utils'
 
 @Component({
   components: {
+    SourceSelect,
     NextEpisodeInfo,
     CButton,
-    Loading,
     SourceList,
     AnimatedHeight,
     EpisodeList,
@@ -165,10 +166,11 @@ export default class QueueItem extends Vue {
     variables() {
       return {
         id: this.anime.id,
+        provider: this.item.provider,
       }
     },
     skip() {
-      return !this.anime.id || !this.open
+      return !this.anime.id || !this.item.open
     },
     error(err) {
       if (typeof err === 'string') {
@@ -190,7 +192,8 @@ export default class QueueItem extends Vue {
   public episodesFetchingError: string | null = null
 
   @Required(Object) public anime!: QueueAnime
-  @Required(Boolean) public open!: boolean
+  @Required(Object) public item!: IQueueItem
+  @Required(Function) public setProvider!: (provider: Provider) => void
 
   public MediaListStatus = MediaListStatus
   public expandSvg = mdiChevronDown
@@ -225,7 +228,7 @@ export default class QueueItem extends Vue {
   }
 
   public setOpenState(newState: boolean) {
-    if (this.open === newState) return
+    if (this.item.open === newState) return
 
     this.toggleItemOpen()
   }
@@ -266,7 +269,7 @@ export default class QueueItem extends Vue {
 
       await setStatusMutation(this, listEntryId, status)
     } catch (err) {
-      this.setOpenState(!this.open)
+      this.setOpenState(!this.item.open)
     }
   }
 
@@ -319,8 +322,6 @@ export default class QueueItem extends Vue {
   display: inline-block;
   border-radius: 5px;
   box-shadow: 1px 2px 15px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
-  z-index: 2;
 
   & > .status {
     position: absolute;
@@ -333,23 +334,9 @@ export default class QueueItem extends Vue {
     justify-content: center;
     align-items: center;
     font-weight: 500;
+    border-top-left-radius: 5px;
+    background: gradient(black, 0.5);
     z-index: 5;
-
-    &.paused {
-      background: gradient($warning);
-    }
-
-    &.dropped {
-      background: gradient($danger);
-    }
-
-    &.repeating {
-      background: gradient($success);
-    }
-
-    &.current {
-      background: gradient(black, 0.25);
-    }
 
     & > * {
       flex-shrink: 0;
@@ -371,26 +358,37 @@ export default class QueueItem extends Vue {
     }
   }
 
-  & > .handle {
+  & > .anime-banner {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    overflow: hidden;
+  }
+
+  & > .handle-wrapper {
     position: absolute;
     top: 0;
     right: 0;
-    height: 75px;
-    width: 25px;
-    padding: 2px;
-    background: $dark;
-    cursor: -webkit-grab;
-    z-index: 5;
+    border-top-right-radius: 5px;
+    overflow: hidden;
 
-    & /deep/ svg {
-      fill: $highlight;
+    & > .handle {
+      height: 75px;
+      width: 25px;
+      padding: 2px;
+      background: $dark;
+      cursor: -webkit-grab;
+      z-index: 5;
+
+      & /deep/ svg {
+        fill: $highlight;
+      }
+
+      transform: translateX(100%);
+      transition: transform 0.15s;
     }
-
-    transform: translateX(100%);
-    transition: transform 0.15s;
   }
 
-  &:hover > .handle {
+  &:hover > .handle-wrapper > .handle {
     transform: none;
   }
 
@@ -401,8 +399,10 @@ export default class QueueItem extends Vue {
 
   & > .controls {
     display: flex;
-    align-items: center;
+    align-items: stretch;
     background: color($dark, 600);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
 
     & > * {
       flex-shrink: 0;
@@ -435,6 +435,8 @@ export default class QueueItem extends Vue {
 
     & > .buttons {
       display: flex;
+      border-bottom-right-radius: 5px;
+      overflow: hidden;
 
       & > .button {
         min-width: 85px;

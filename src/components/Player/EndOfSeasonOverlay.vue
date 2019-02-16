@@ -24,7 +24,7 @@
         <h1 class="text">Sequel{{ sequels.length > 1 ? 's' : '' }}:</h1>
 
         <div v-for="sequel in sequels" :key="sequel.id" class="sequel">
-          <anime-banner class="banner" :anime="sequel" />
+          <anime-banner class="banner" :anime="sequel" link />
         </div>
       </div>
     </div>

@@ -1,0 +1,3 @@
+mutation CacheEpisodes($id: Int!, $provider: Provider!, $episodes: [EpisodeInput!]!) {
+  CacheEpisodes(id: $id, provider: $provider, episodes: $episodes) @client
+}

@@ -216,7 +216,7 @@ import { mdiInformationOutline, mdiRefresh, mdiUndoVariant } from '@mdi/js'
 
 import Connection from '@/components/Settings/Connection.vue'
 import Keybinding from '@/components/Settings/Keybinding.vue'
-import Checkbox from '@/components/Settings/Checkbox.vue'
+import Checkbox from '@/components/Checkbox.vue'
 import CButton from '@/components/CButton.vue'
 import Icon from '@/components/Icon.vue'
 

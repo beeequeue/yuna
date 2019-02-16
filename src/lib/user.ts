@@ -1,11 +1,14 @@
 import Store from 'electron-store'
+
+import { Provider } from '@/graphql/types'
 import { AnilistData, CrunchyrollData } from '@/state/auth'
 
-const CURRENT_VERSION = 3
+const CURRENT_VERSION = 4
 
 export interface QueueItem {
   id: number
   open: boolean
+  provider: Provider
 }
 
 interface UserStore {
@@ -45,5 +48,18 @@ if (oldVersion !== CURRENT_VERSION) {
 
     userStore.set('__version', 3)
     oldVersion = 3
+  }
+
+  if (oldVersion === 3) {
+    const queue = userStore.get('queue', [])
+
+    const newQueue = queue.map(item => ({
+      ...item,
+      provider: Provider.Crunchyroll,
+    }))
+    userStore.set('queue', newQueue)
+
+    userStore.set('__version', 4)
+    oldVersion = 4
   }
 }

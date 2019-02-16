@@ -1,5 +1,5 @@
-query EpisodeList($id: Int!) {
-  episodes: Episodes(id: $id, provider: CRUNCHYROLL) @client {
+query EpisodeList($id: Int!, $provider: Provider!) {
+  episodes: Episodes(id: $id, provider: $provider) @client {
     provider
     id
     animeId

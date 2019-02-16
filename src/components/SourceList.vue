@@ -8,12 +8,12 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { contains, flip } from 'rambdax'
 
 import { AnimePageQueryExternalLinks } from '@/graphql/types'
 
 import { Default } from '@/decorators'
-import { enumKeysToArray } from '@/utils'
+import { StreamingSource } from '@/types'
+import { getStreamingSources } from '@/utils'
 
 import CButton from './CButton.vue'
 import Icon from './Icon.vue'
@@ -21,27 +21,13 @@ import Icon from './Icon.vue'
 const streamingSiteCtx = require.context('@/assets', false)
 const siteImages = streamingSiteCtx.keys()
 
-enum StreamingSource {
-  Crunchyroll = 'crunchyroll',
-  Hulu = 'hulu',
-  Hidive = 'hidive',
-  Animelab = 'animelab',
-  Funimation = 'funimation',
-  Amazon = 'amazon',
-}
-
-const streamingSites = enumKeysToArray(StreamingSource)
-const isStreamingSite = flip<AnimePageQueryExternalLinks[], string[], any>(
-  contains,
-)(streamingSites)
-
 @Component({ components: { CButton, Icon } })
 export default class SourceList extends Vue {
   @Default(Array, [])
   public links!: AnimePageQueryExternalLinks[]
 
   public get sources() {
-    return this.links.filter(link => isStreamingSite(link.site))
+    return getStreamingSources(this.links)
   }
 
   public getImageUrl(source: keyof StreamingSource) {

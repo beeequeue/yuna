@@ -1,5 +1,4 @@
-// eslint-disable
-// THIS IS A GENERATED FILE
+/* THIS IS A GENERATED FILE */
 declare module '*/AddEntryMutation.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
@@ -20,12 +19,32 @@ declare module '*/AnimePageQuery.graphql' {
   export default defaultDocument
 }
 
+declare module '*/CacheEpisodes.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const CacheEpisodes: DocumentNode
+
+  export { CacheEpisodes }
+
+  export default defaultDocument
+}
+
 declare module '*/DeleteListEntryMutation.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
   const DeleteListEntryMutation: DocumentNode
 
   export { DeleteListEntryMutation }
+
+  export default defaultDocument
+}
+
+declare module '*/EpisodeCount.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const EpisodeCount: DocumentNode
+
+  export { EpisodeCount }
 
   export default defaultDocument
 }

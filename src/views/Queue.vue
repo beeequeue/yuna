@@ -9,9 +9,10 @@
       >
         <draggable v-for="anime in animes" :key="anime.id">
           <queue-item
-            :anime="anime"
-            :open="getIsItemOpen(anime.id)"
             :key="anime.id"
+            :anime="anime"
+            :item="getItem(anime.id)"
+            :setProvider="setProvider(anime.id)"
           />
         </draggable>
       </container>
@@ -84,6 +85,7 @@ import QueueItem from '@/components/QueueItem/QueueItem.vue'
 
 import { pausedQuery, planningQuery, watchingQuery } from '@/graphql/query'
 import {
+  Provider,
   QueueAnime,
   QueueQuery,
   QueueVariables,
@@ -95,11 +97,16 @@ import QUEUE_QUERY from '@/graphql/Queue.graphql'
 import { Query } from '@/decorators'
 import { getPlayerData, sendErrorToast, sendToast } from '@/state/app'
 import { getAnilistUserId, getAnilistUsername } from '@/state/auth'
-import { addToQueue, getQueue, setQueue } from '@/state/user'
+import {
+  addToQueue,
+  getQueue,
+  setQueue,
+  setQueueItemProvider,
+  toggleQueueItemOpen,
+} from '@/state/user'
 import { Page, trackPageView } from '@/lib/tracking'
 import { QueueItem as IQueueItem } from '@/lib/user'
-
-const sortNumber = (a: number, b: number) => a - b
+import { sortNumber } from '@/utils'
 
 @Component({
   components: {
@@ -133,7 +140,7 @@ export default class Queue extends Vue {
 
   public gridOptions = {
     animation: 150,
-    handle: '.handle',
+    handle: '.handle-wrapper',
   }
 
   public $refs!: {
@@ -165,9 +172,8 @@ export default class Queue extends Vue {
     trackPageView(Page.QUEUE)
   }
 
-  public getIsItemOpen(id: number) {
-    const item = this.queue.find(pathEq('id', id))
-    return !!item && item.open
+  public getItem(id: number) {
+    return this.queue.find(pathEq('id', id)) as IQueueItem
   }
 
   public handleDrop({ removedIndex, addedIndex, payload }: any) {
@@ -177,10 +183,21 @@ export default class Queue extends Vue {
     newQueue.splice(addedIndex, 0, payload)
 
     setQueue(this.$store, newQueue)
+    this.$apollo.queries.animes.refresh()
   }
 
   public getChildPayload(index: number) {
     return this.queue[index]
+  }
+
+  public setProvider(id: number) {
+    return (provider: Provider) => {
+      setQueueItemProvider(this.$store, { id, provider })
+
+      if (!this.getItem(id).open) {
+        toggleQueueItemOpen(this.$store, id)
+      }
+    }
   }
 
   public async importFromQuery(
@@ -354,6 +371,11 @@ export default class Queue extends Vue {
     & > .smooth-dnd-container {
       position: relative;
       height: 100%;
+
+      & > .smooth-dnd-draggable-wrapper {
+        position: relative;
+        overflow: visible;
+      }
     }
 
     & > .empty-message {

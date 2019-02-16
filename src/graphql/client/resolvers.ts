@@ -5,6 +5,7 @@ import { isNil, pathOr } from 'rambdax'
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
   AnimePageQueryAnime,
+  CacheEpisodesVariables,
   EpisodeListEpisodes,
   EpisodeListQuery,
   EpisodeListVariables,
@@ -47,7 +48,7 @@ const cacheEpisodes = (
 
       cache.writeQuery<EpisodeListQuery, EpisodeListVariables>({
         query: EPISODE_LIST,
-        variables: { id: Number(id) },
+        variables: { id: Number(id), provider },
         data: {
           episodes,
         },
@@ -108,17 +109,6 @@ const getNextEpisodeAiringAt = (
 }
 
 export const resolvers = {
-  Media: {
-    scoreMal: async (media: AnimePageQueryAnime): Promise<number | null> => {
-      if (isNil(media) || isNil(media.idMal)) return null
-
-      try {
-        return fetchRating(media.idMal)
-      } catch (err) {
-        return null
-      }
-    },
-  },
   Query: {
     Episodes: async (
       _: any,
@@ -137,7 +127,7 @@ export const resolvers = {
             EpisodeListVariables
           >({
             query: EPISODE_LIST,
-            variables: { id: Number(id) },
+            variables: { id: Number(id), provider },
           })
         } catch (err) {
           /* no-op */
@@ -198,11 +188,39 @@ export const resolvers = {
       return episodes
     },
   },
+  Media: {
+    scoreMal: async (media: AnimePageQueryAnime): Promise<number | null> => {
+      if (isNil(media) || isNil(media.idMal)) return null
+
+      try {
+        return fetchRating(media.idMal)
+      } catch (err) {
+        return null
+      }
+    },
+  },
   Episode: {
     isWatched: (
       episode: EpisodeListEpisodes,
       _: never,
       { cache }: { cache: RealProxy },
     ) => getIsWatched(cache, episode.animeId, episode.episodeNumber),
+  },
+  Mutation: {
+    CacheEpisodes(
+      _: any,
+      { id, provider, episodes }: CacheEpisodesVariables,
+      { cache }: { cache: RealProxy },
+    ) {
+      try {
+        cacheEpisodes(cache, provider, {
+          [id]: episodes,
+        })
+      } catch (err) {
+        return false
+      }
+
+      return true
+    },
   },
 }

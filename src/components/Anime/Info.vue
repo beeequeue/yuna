@@ -97,6 +97,7 @@ export default class Info extends Vue {
     align-items: center;
     color: $white;
     background: $dark;
+    box-shadow: $shadow;
     text-decoration: none;
 
     & > .next-episode-info {

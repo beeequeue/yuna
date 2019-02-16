@@ -26,6 +26,11 @@
       :visible="modalStates.edit"
       :toggleVisible="() => toggleModal('edit')"
     />
+
+    <manual-search-modal
+      :visible="modalStates.manualSearch"
+      :toggleVisible="() => toggleModal('manualSearch')"
+    />
   </div>
 </template>
 
@@ -52,12 +57,14 @@ import PlayerContainer from './components/Player/Container.vue'
 import ToastOverlay from './components/ToastOverlay.vue'
 import AboutModal from './components/Modals/AboutModal.vue'
 import EditModal from './components/Modals/EditModal.vue'
+import ManualSearchModal from '@/components/Modals/ManualSearch/ManualSearchModal.vue'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
 
 @Component({
   components: {
+    ManualSearchModal,
     TitleBar,
     PlayerContainer,
     Navbar,

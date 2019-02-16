@@ -97,6 +97,7 @@ export default class Episode extends Vue {
     setCurrentEpisode(this.$store, {
       id: this.episode.animeId,
       index: episodeNumber - 1,
+      provider: this.episode.provider,
     })
   }
 
