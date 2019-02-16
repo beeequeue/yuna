@@ -28,7 +28,7 @@
     />
 
     <manual-search-modal
-      :visible="true || modalStates.manualSearch"
+      :visible="modalStates.manualSearch"
       :toggleVisible="() => toggleModal('manualSearch')"
     />
   </div>
