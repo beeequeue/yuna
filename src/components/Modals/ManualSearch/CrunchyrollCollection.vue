@@ -6,9 +6,9 @@
       <span class="title">{{ collection.name }}</span>
 
       <span class="count">
-        {{ ownedSelectedEpisodes.length }}
+        {{ getEpisodeCount(ownedSelectedEpisodes) }}
         {{ ' / ' }}
-        {{ collection.episodes.length }}
+        {{ getEpisodeCount(collection.episodes) }}
       </span>
 
       <checkbox
@@ -17,28 +17,43 @@
         :onChange="handleCheckChange"
       />
     </div>
+
+    <div v-if="open" class="episodes">
+      <crunchyroll-episode
+        v-for="episode in collection.episodes"
+        :key="episode.key"
+        :episode="episode"
+        :selectedEpisode="getSelectedEpisode(episode.id)"
+        :selectEpisodes="selectEpisodes"
+        :unselectEpisodes="unselectEpisodes"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { includes, prop, pluck } from 'rambdax'
+import { includes, pluck, propEq } from 'rambdax'
 import { mdiChevronDown } from '@mdi/js'
 
+import { EpisodeListEpisodes } from '@/graphql/types'
 import Icon from '@/components/Icon.vue'
-import CButton from '@/components/CButton.vue'
 import Checkbox from '@/components/Checkbox.vue'
+import AnimatedHeight from '@/components/AnimatedHeight.vue'
+import CrunchyrollEpisode from './CrunchyrollEpisode.vue'
 
 import { Required } from '@/decorators'
 import { _CollectionWithEpisodes } from '@/lib/crunchyroll'
 import { SelectedEpisode } from '@/types'
 
-@Component({ components: { Checkbox, CButton, Icon } })
+@Component({
+  components: { AnimatedHeight, CrunchyrollEpisode, Checkbox, Icon },
+})
 export default class CrunchyrollCollection extends Vue {
   @Required(Object) collection!: _CollectionWithEpisodes
   @Required(Array) public selectedEpisodes!: SelectedEpisode[]
-  @Required(Function) selectEpisodes!: (...ids: number[]) => void
-  @Required(Function) unselectEpisodes!: (...ids: number[]) => void
+  @Required(Function) selectEpisodes!: (ids: EpisodeListEpisodes[]) => void
+  @Required(Function) unselectEpisodes!: (ids: number[]) => void
 
   public open = false
 
@@ -61,10 +76,19 @@ export default class CrunchyrollCollection extends Vue {
 
   public handleCheckChange(checked: boolean) {
     if (checked) {
-      this.selectEpisodes(...this.collection.episodes.map(prop('id')))
+      this.selectEpisodes(this.collection.episodes)
     } else {
-      this.unselectEpisodes(...this.collection.episodes.map(prop('id')))
+      this.unselectEpisodes(pluck('id', this.collection.episodes))
     }
+  }
+
+  public getEpisodeCount(episodes: Array<{ episodeNumber: number }>) {
+    const numbers = pluck('episodeNumber', this.selectedEpisodes)
+    return new Set(numbers).size
+  }
+
+  public getSelectedEpisode(id: number) {
+    return this.selectedEpisodes.find(propEq('id', id))
   }
 }
 </script>
@@ -113,6 +137,9 @@ export default class CrunchyrollCollection extends Vue {
       padding-left: 10px;
       margin: 0 10px 0 auto;
     }
+  }
+
+  & > .episodes {
   }
 }
 </style>

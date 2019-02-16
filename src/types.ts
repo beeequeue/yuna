@@ -31,5 +31,5 @@ export const SupportedSources = [
 
 export interface SelectedEpisode {
   id: number
-  epNumber: number
+  episodeNumber: number
 }

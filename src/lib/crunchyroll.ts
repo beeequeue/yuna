@@ -65,7 +65,7 @@ export interface _Stream {
   url: string
 }
 
-interface _Media {
+export interface _Media {
   class: string
   media_id: string
   etp_guid: string

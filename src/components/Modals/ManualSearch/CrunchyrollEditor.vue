@@ -21,16 +21,16 @@
         :selectEpisodes="selectEpisodes"
         :unselectEpisodes="unselectEpisodes"
       />
+    </div>
 
-      <div
-        class="status"
-        :class="{ error: selectedEpisodes.length !== episodeCount }"
-      >
-        Selected episodes:
-        <span class="selected">{{ selectedEpisodes.length }}</span>
-        {{ ' / ' }}
-        <span>{{ episodeCount }}</span>
-      </div>
+    <div
+      class="status"
+      :class="{ error: selectedEpisodeCount !== episodeCount }"
+    >
+      Selected episodes:
+      <span class="selected">{{ selectedEpisodeCount }}</span>
+      {{ ' / ' }}
+      <span>{{ episodeCount }}</span>
     </div>
   </div>
 </template>
@@ -41,7 +41,11 @@ import { isNil, pluck } from 'rambdax'
 import { mdiArrowLeft, mdiCheck } from '@mdi/js'
 
 import EPISODE_COUNT_QUERY from '@/graphql/EpisodeCount.graphql'
-import { EpisodeCountQuery, EpisodeCountVariables } from '@/graphql/types'
+import {
+  EpisodeCountQuery,
+  EpisodeCountVariables,
+  EpisodeListEpisodes,
+} from '@/graphql/types'
 import Loading from '@/components/Loading.vue'
 import Icon from '@/components/Icon.vue'
 import CButton from '@/components/CButton.vue'
@@ -49,7 +53,11 @@ import AnimeBanner from '@/components/AnimeBanner.vue'
 import CrunchyrollCollection from './CrunchyrollCollection.vue'
 
 import { Query, Required } from '@/decorators'
-import { ManualSearchOptions } from '@/state/app'
+import {
+  ManualSearchOptions,
+  selectCrunchyrollEpisodes,
+  unselectCrunchyrollEpisodes,
+} from '@/state/app'
 import { _SeriesWithCollections, Crunchyroll } from '@/lib/crunchyroll'
 import { SelectedEpisode } from '@/types'
 
@@ -78,8 +86,6 @@ export default class CrunchyrollEditor extends Vue {
   @Required(Number) id!: number
   @Required(Array) public selectedEpisodes!: SelectedEpisode[]
   @Required(Function) setSelectedId!: (id: number | null) => void
-  @Required(Function) selectEpisodes!: (...ids: number[]) => void
-  @Required(Function) unselectEpisodes!: (...ids: number[]) => void
 
   public loading = false
   public anime: _SeriesWithCollections | null = null
@@ -87,13 +93,27 @@ export default class CrunchyrollEditor extends Vue {
   public backSvg = mdiArrowLeft
   public confirmSvg = mdiCheck
 
+  // Remove duplicate episode numbers
+  public get selectedEpisodeCount() {
+    const numbers = pluck('episodeNumber', this.selectedEpisodes)
+    return new Set(numbers).size
+  }
+
   public mounted() {
     this.fetchAnime()
   }
 
   public goBack() {
-    this.unselectEpisodes(...pluck<number>('id', this.selectedEpisodes))
+    this.unselectEpisodes(pluck<number>('id', this.selectedEpisodes))
     this.setSelectedId(null)
+  }
+
+  public selectEpisodes(episodes: EpisodeListEpisodes[]) {
+    selectCrunchyrollEpisodes(this.$store, episodes)
+  }
+
+  public unselectEpisodes(episodes: number[]) {
+    unselectCrunchyrollEpisodes(this.$store, episodes)
   }
 
   @Watch('id')
@@ -167,21 +187,23 @@ export default class CrunchyrollEditor extends Vue {
     overflow: auto;
     display: flex;
     flex-direction: column;
+  }
 
-    & > .status {
-      padding: 10px;
-      font-size: 1.5em;
+  & > .status {
+    padding: 10px;
+    background: color($dark, 300);
+    border-top: 1px solid $dark;
+    font-size: 1.5em;
 
-      & > .selected {
-        color: $success;
-        font-weight: 500;
-        margin-left: 5px;
-        transition: color 0.25s;
-      }
+    & > .selected {
+      color: $success;
+      font-weight: 500;
+      margin-left: 5px;
+      transition: color 0.25s;
+    }
 
-      &.error > .selected {
-        color: $danger;
-      }
+    &.error > .selected {
+      color: $danger;
     }
   }
 }

@@ -1,5 +1,17 @@
 import { activeWindow } from 'electron-util'
-import { change, isNil, merge, propEq, reject } from 'rambdax'
+import {
+  change,
+  equals,
+  filter,
+  includes,
+  isNil,
+  map,
+  merge,
+  pipe,
+  pluck,
+  propEq,
+  reject,
+} from 'rambdax'
 import {
   NotificationFunctionOptions,
   NotificationTypes,
@@ -7,10 +19,11 @@ import {
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
 
-import { MediaListStatus, Provider } from '@/graphql/types'
+import { EpisodeListEpisodes, MediaListStatus, Provider } from '@/graphql/types'
 import { router } from '@/router'
 import { RootState } from '@/state/store'
 import { generateId } from '@/utils'
+import { SelectedEpisode } from '@/types'
 
 export interface Toast {
   id: string
@@ -69,6 +82,7 @@ export interface EditModalAnime {
 export interface ManualSearchOptions {
   provider: Provider
   anilistId: number | null
+  selectedEpisodes: SelectedEpisode[]
 }
 
 export interface AppState {
@@ -86,6 +100,8 @@ export interface AppState {
 }
 
 type AppContext = ActionContext<AppState, RootState>
+
+const doesNotInclude = <T>(array: T[], item?: T) => !includes(item, array)
 
 const initialModalBase: ModalBase = {
   visible: false,
@@ -105,7 +121,8 @@ const initialState: AppState = {
     manualSearch: {
       ...initialModalBase,
       provider: Provider.Crunchyroll,
-      anilistId: 21460,
+      anilistId: 21355,
+      selectedEpisodes: [],
     },
   },
 }
@@ -154,6 +171,10 @@ export const app = {
 
     getIsFullscreen(state: AppState) {
       return state.isFullscreen
+    },
+
+    getSelectedEpisodes(state: AppState) {
+      return state.modals.manualSearch.selectedEpisodes
     },
   },
 
@@ -231,6 +252,63 @@ export const app = {
 
       state.isFullscreen = b
       browserWindow.setFullScreen(b)
+    },
+
+    selectCrunchyrollEpisodes(
+      state: AppState,
+      episodes: EpisodeListEpisodes[],
+    ) {
+      const { selectedEpisodes } = state.modals.manualSearch
+      const count = selectedEpisodes.length
+      const selectedIds = pluck<number>('id', selectedEpisodes)
+
+      const getEpisodes = pipe<
+        EpisodeListEpisodes[],
+        EpisodeListEpisodes[],
+        SelectedEpisode[]
+      >(
+        filter<EpisodeListEpisodes>(({ id }) =>
+          doesNotInclude(selectedIds, id),
+        ),
+        map<EpisodeListEpisodes, SelectedEpisode>(
+          ({ id, episodeNumber }, prop) => ({
+            id,
+            episodeNumber: episodeNumber,
+          }),
+        ) as any,
+      )
+
+      state.modals.manualSearch.selectedEpisodes = [
+        ...state.modals.manualSearch.selectedEpisodes,
+        ...getEpisodes(episodes),
+      ]
+    },
+
+    unselectCrunchyrollEpisodes(state: AppState, ids: number[]) {
+      const { selectedEpisodes } = state.modals.manualSearch
+      const getFilteredEpisodes = filter<SelectedEpisode>(
+        ep => ids.findIndex(equals(ep.id)) === -1,
+      )
+
+      let lastEpNumber = 0
+      const updateEpisodeNumbers = map<SelectedEpisode, SelectedEpisode>(
+        ({ id }) => {
+          // TODO: implement fix for multiple episodes with same number
+          let realNum = lastEpNumber + 1
+          lastEpNumber = realNum
+
+          return { id, episodeNumber: realNum }
+        },
+      )
+
+      state.modals.manualSearch.selectedEpisodes = pipe<
+        SelectedEpisode[],
+        SelectedEpisode[],
+        SelectedEpisode[]
+      >(
+        getFilteredEpisodes,
+        updateEpisodeNumbers,
+      )(selectedEpisodes)
     },
   },
 
@@ -332,6 +410,7 @@ export const getModalStates = read(app.getters.getModalStates)
 export const getEditingAnime = read(app.getters.getEditingAnime)
 export const getManualSearchOptions = read(app.getters.getManualSearchOptions)
 export const getIsFullscreen = read(app.getters.getIsFullscreen)
+export const getSelectedEpisodes = read(app.getters.getSelectedEpisodes)
 
 export const setIsUpdateAvailable = commit(app.mutations.setIsUpdateAvailable)
 const setEditingAnime = commit(app.mutations.setEditingAnime)
@@ -346,6 +425,12 @@ export const toggleModal = commit(app.mutations.toggleModal)
 const addToast = commit(app.mutations.addToast)
 export const closeAllModals = commit(app.mutations.closeAllModals)
 export const setFullscreen = commit(app.mutations.setFullscreen)
+export const selectCrunchyrollEpisodes = commit(
+  app.mutations.selectCrunchyrollEpisodes,
+)
+export const unselectCrunchyrollEpisodes = commit(
+  app.mutations.unselectCrunchyrollEpisodes,
+)
 
 export const toggleFullscreen = dispatch(app.actions.toggleFullscreen)
 export const sendToast = dispatch(app.actions.sendToast)

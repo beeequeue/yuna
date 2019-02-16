@@ -2,7 +2,7 @@
   <div class="search-step">
     <text-input
       class="search-bar"
-      placeholder="..."
+      :placeholder="capitalizedProvider"
       :onChange="handleSearchChange"
     />
 
@@ -40,6 +40,7 @@ import { Provider } from '@/graphql/types'
 import { Required } from '@/decorators'
 import { ManualSearchOptions } from '@/state/app'
 import { Crunchyroll, SearchResult } from '@/lib/crunchyroll'
+import { capitalize } from '@/utils'
 
 @Component({ components: { Icon, AnimeBanner, Loading, TextInput } })
 export default class SearchStep extends Vue {
@@ -52,6 +53,10 @@ export default class SearchStep extends Vue {
 
   public searchSvg = mdiMagnify
   public emptySvg = mdiClose
+
+  public get capitalizedProvider() {
+    return capitalize(this.searchOptions.provider)
+  }
 
   public handleSearchChange(value: string) {
     this.loading = true
