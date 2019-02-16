@@ -90,6 +90,7 @@ export default class CrunchyrollEditor extends Vue {
   @Required(Number) id!: number
   @Required(Array) public selectedEpisodes!: EpisodeListEpisodes[]
   @Required(Function) setSelectedId!: (id: number | null) => void
+  @Required(Function) public toggleVisible!: () => any
 
   public loading = false
   public anime: _SeriesWithCollections | null = null
@@ -111,18 +112,26 @@ export default class CrunchyrollEditor extends Vue {
     this.fetchAnime()
   }
 
-  public goBack() {
+  public clearSelectedEpisodes() {
     this.unselectEpisodes(pluck<number>('id', this.selectedEpisodes))
+  }
+
+  public goBack() {
     this.setSelectedId(null)
+    this.clearSelectedEpisodes()
   }
 
   public async saveEpisodes() {
     await cacheEpisodes(
       this,
       this.searchOptions.anilistId as number,
-      Provider.Crunchyroll,
+      Provider.CrunchyrollManual,
       this.selectedEpisodes,
     )
+
+    this.toggleVisible()
+    this.setSelectedId(null)
+    this.clearSelectedEpisodes()
   }
 
   public selectEpisodes(episodes: EpisodeListEpisodes[]) {

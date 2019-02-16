@@ -58,6 +58,7 @@ import { Provider, QueueAnime, QueueExternalLinks } from '@/graphql/types'
 import { Required } from '@/decorators'
 import { StreamingSource, SupportedSources } from '@/types'
 import { getStreamingSources } from '@/utils'
+import { initManualSearch } from '@/state/app'
 
 const streamingSiteCtx = require.context('@/assets', false)
 const siteImages = streamingSiteCtx.keys()
@@ -111,6 +112,13 @@ export default class SourceSelect extends Vue {
   }
 
   public handleClick(provider: Provider) {
+    if (provider == Provider.CrunchyrollManual) {
+      initManualSearch(this.$store, {
+        anilistId: this.anime.id,
+        provider: Provider.Crunchyroll,
+      })
+    }
+
     this.setProvider(provider)
     this.toggleOpen()
   }

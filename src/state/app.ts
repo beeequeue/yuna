@@ -386,8 +386,14 @@ export const app = {
       toggleModal(context, 'edit')
     },
 
-    initManualSearch(context: AppContext, options: ManualSearchOptions) {
-      setManualSearchOptions(context, options)
+    initManualSearch(
+      context: AppContext,
+      options: Omit<ManualSearchOptions, 'selectedEpisodes'>,
+    ) {
+      setManualSearchOptions(context, {
+        ...options,
+        selectedEpisodes: [],
+      })
       toggleModal(context, 'manualSearch')
     },
 
