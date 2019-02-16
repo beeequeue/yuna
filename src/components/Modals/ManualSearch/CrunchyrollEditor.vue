@@ -5,11 +5,17 @@
 
   <div v-else-if="anime" class="crunchyroll-editor">
     <div class="header">
-      <c-button flat type="white" :icon="backSvg" @click.native="goBack" />
+      <c-button flat type="white" :icon="backSvg" :click="goBack" />
 
       <div class="title">{{ anime.title }}</div>
 
-      <c-button flat type="success" :icon="confirmSvg" />
+      <c-button
+        flat
+        type="success"
+        :icon="confirmSvg"
+        :disabled="!correctAmount"
+        :click="saveEpisodes"
+      />
     </div>
 
     <div class="editor">
@@ -23,10 +29,7 @@
       />
     </div>
 
-    <div
-      class="status"
-      :class="{ error: selectedEpisodeCount !== episodeCount }"
-    >
+    <div class="status" :class="{ error: !correctAmount }">
       Selected episodes:
       <span class="selected">{{ selectedEpisodeCount }}</span>
       {{ ' / ' }}
@@ -41,10 +44,12 @@ import { isNil, pluck } from 'rambdax'
 import { mdiArrowLeft, mdiCheck } from '@mdi/js'
 
 import EPISODE_COUNT_QUERY from '@/graphql/EpisodeCount.graphql'
+import { cacheEpisodes } from '@/graphql/mutations'
 import {
   EpisodeCountQuery,
   EpisodeCountVariables,
   EpisodeListEpisodes,
+  Provider,
 } from '@/graphql/types'
 import Loading from '@/components/Loading.vue'
 import Icon from '@/components/Icon.vue'
@@ -59,7 +64,6 @@ import {
   unselectCrunchyrollEpisodes,
 } from '@/state/app'
 import { _SeriesWithCollections, Crunchyroll } from '@/lib/crunchyroll'
-import { SelectedEpisode } from '@/types'
 
 @Component({
   components: { CrunchyrollCollection, CButton, AnimeBanner, Icon, Loading },
@@ -84,7 +88,7 @@ export default class CrunchyrollEditor extends Vue {
   @Required(Object)
   searchOptions!: ManualSearchOptions
   @Required(Number) id!: number
-  @Required(Array) public selectedEpisodes!: SelectedEpisode[]
+  @Required(Array) public selectedEpisodes!: EpisodeListEpisodes[]
   @Required(Function) setSelectedId!: (id: number | null) => void
 
   public loading = false
@@ -99,6 +103,10 @@ export default class CrunchyrollEditor extends Vue {
     return new Set(numbers).size
   }
 
+  public get correctAmount() {
+    return this.selectedEpisodeCount === this.episodeCount
+  }
+
   public mounted() {
     this.fetchAnime()
   }
@@ -106,6 +114,15 @@ export default class CrunchyrollEditor extends Vue {
   public goBack() {
     this.unselectEpisodes(pluck<number>('id', this.selectedEpisodes))
     this.setSelectedId(null)
+  }
+
+  public async saveEpisodes() {
+    await cacheEpisodes(
+      this,
+      this.searchOptions.anilistId as number,
+      Provider.Crunchyroll,
+      this.selectedEpisodes,
+    )
   }
 
   public selectEpisodes(episodes: EpisodeListEpisodes[]) {

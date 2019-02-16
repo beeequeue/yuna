@@ -25,13 +25,12 @@ import { EpisodeListEpisodes } from '@/graphql/types'
 import Checkbox from '@/components/Checkbox.vue'
 
 import { Required } from '@/decorators'
-import { SelectedEpisode } from '@/types'
 import { isNil } from 'rambdax'
 
 @Component({ components: { Checkbox } })
 export default class CrunchyrollEpisode extends Vue {
   @Required(Object) episode!: EpisodeListEpisodes
-  @Prop(Object) public selectedEpisode!: SelectedEpisode | null
+  @Prop(Object) public selectedEpisode!: EpisodeListEpisodes | null
   @Required(Function) selectEpisodes!: (ids: EpisodeListEpisodes[]) => void
   @Required(Function) unselectEpisodes!: (ids: number[]) => void
 

@@ -22,7 +22,6 @@ import { EpisodeListEpisodes, MediaListStatus, Provider } from '@/graphql/types'
 import { router } from '@/router'
 import { RootState } from '@/state/store'
 import { generateId } from '@/utils'
-import { SelectedEpisode } from '@/types'
 
 export interface Toast {
   id: string
@@ -81,7 +80,7 @@ export interface EditModalAnime {
 export interface ManualSearchOptions {
   provider: Provider
   anilistId: number | null
-  selectedEpisodes: SelectedEpisode[]
+  selectedEpisodes: EpisodeListEpisodes[]
 }
 
 export interface AppState {
@@ -267,15 +266,15 @@ export const app = {
       let duplicates = 0
 
       const episodeWithCorrectNumbers = filteredEpisodes.map(
-        ({ id, episodeNumber }) => {
+        ({ episodeNumber, ...rest }) => {
           let newNumber = count + 1
 
           if (episodeNumber === lastNumber) {
             newNumber = count
           }
 
-          const selectedEpisode = {
-            id,
+          const selectedEpisode: EpisodeListEpisodes = {
+            ...rest,
             episodeNumber: newNumber - duplicates,
           }
 
@@ -298,25 +297,29 @@ export const app = {
 
     unselectCrunchyrollEpisodes(state: AppState, ids: number[]) {
       const { selectedEpisodes } = state.modals.manualSearch
-      const getFilteredEpisodes = filter<SelectedEpisode>(
+      const getFilteredEpisodes = filter<EpisodeListEpisodes>(
         ep => ids.findIndex(equals(ep.id)) === -1,
       )
 
       let lastEpNumber = 0
-      const updateEpisodeNumbers = map<SelectedEpisode, SelectedEpisode>(
-        ({ id }) => {
-          // TODO: implement fix for multiple episodes with same number
-          let realNum = lastEpNumber + 1
-          lastEpNumber = realNum
+      const updateEpisodeNumbers = map<
+        EpisodeListEpisodes,
+        EpisodeListEpisodes
+      >(episode => {
+        // TODO: implement fix for multiple episodes with same number
+        let realNum = lastEpNumber + 1
+        lastEpNumber = realNum
 
-          return { id, episodeNumber: realNum }
-        },
-      )
+        return {
+          ...episode,
+          episodeNumber: realNum,
+        }
+      })
 
       state.modals.manualSearch.selectedEpisodes = pipe<
-        SelectedEpisode[],
-        SelectedEpisode[],
-        SelectedEpisode[]
+        EpisodeListEpisodes[],
+        EpisodeListEpisodes[],
+        EpisodeListEpisodes[]
       >(
         getFilteredEpisodes,
         updateEpisodeNumbers,

@@ -40,6 +40,31 @@ export interface AniChartHighlightInput {
   highlight: Maybe<string>;
 }
 
+export interface EpisodeInput {
+  
+  provider: Provider;
+  
+  id: number;
+  
+  animeId: number;
+  
+  title: string;
+  
+  duration: number;
+  
+  progress: Maybe<number>;
+  /** Index in the Array */
+  index: number;
+  /** Number in Season */
+  episodeNumber: number;
+  
+  isWatched: boolean;
+  
+  thumbnail: string;
+  
+  url: string;
+}
+
 export interface AiringScheduleInput {
   
   airingAt: Maybe<number>;
@@ -598,6 +623,18 @@ export type FuzzyDateInt = any;
     
     repeat: Maybe<number>;
   } 
+
+  export type CacheEpisodesVariables = {
+    id: number;
+    provider: Provider;
+    episodes: EpisodeInput[];
+  }
+
+  export type CacheEpisodesMutation = {
+    __typename?: "Mutation";
+    
+    CacheEpisodes: boolean;
+  }
 
   export type DeleteListEntryMutationVariables = {
     id: number;

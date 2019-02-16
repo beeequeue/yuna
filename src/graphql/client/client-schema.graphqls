@@ -20,10 +20,30 @@ type Episode {
   url: String!
 }
 
+input EpisodeInput {
+  provider: Provider!
+  id: Int!
+  animeId: Int!
+  title: String!
+  duration: Int!
+  progress: Int
+  # Index in the Array
+  index: Int!
+  # Number in Season
+  episodeNumber: Int!
+  isWatched: Boolean!
+  thumbnail: String!
+  url: String!
+}
+
 extend type Media {
   scoreMal: Int
 }
 
 type Query {
   Episodes(id: Int!, provider: Provider!): [Episode!]
+}
+
+type Mutation {
+  CacheEpisodes(id: Int!, provider: Provider!, episodes: [EpisodeInput!]!): Boolean!
 }

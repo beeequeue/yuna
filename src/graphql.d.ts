@@ -19,6 +19,16 @@ declare module '*/AnimePageQuery.graphql' {
   export default defaultDocument
 }
 
+declare module '*/CacheEpisodes.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const CacheEpisodes: DocumentNode
+
+  export { CacheEpisodes }
+
+  export default defaultDocument
+}
+
 declare module '*/DeleteListEntryMutation.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode

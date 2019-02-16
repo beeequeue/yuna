@@ -28,8 +28,3 @@ export const SupportedSources = [
   StreamingSource.Crunchyroll,
   StreamingSource.Hidive,
 ]
-
-export interface SelectedEpisode {
-  id: number
-  episodeNumber: number
-}

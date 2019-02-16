@@ -42,7 +42,6 @@ import CrunchyrollEpisode from './CrunchyrollEpisode.vue'
 
 import { Required } from '@/decorators'
 import { _CollectionWithEpisodes } from '@/lib/crunchyroll'
-import { SelectedEpisode } from '@/types'
 import { humanizeNumberList } from '@/utils'
 
 const pluckId = pluck<number>('id')
@@ -52,7 +51,7 @@ const pluckId = pluck<number>('id')
 })
 export default class CrunchyrollCollection extends Vue {
   @Required(Object) collection!: _CollectionWithEpisodes
-  @Required(Array) public selectedEpisodes!: SelectedEpisode[]
+  @Required(Array) public selectedEpisodes!: EpisodeListEpisodes[]
   @Required(Function) selectEpisodes!: (ids: EpisodeListEpisodes[]) => void
   @Required(Function) unselectEpisodes!: (ids: number[]) => void
 
@@ -76,7 +75,7 @@ export default class CrunchyrollCollection extends Vue {
 
     const selectedNumbers = this.ownedSelectedEpisodes
       .map(id => this.selectedEpisodes.find(propEq('id', id)))
-      .filter<SelectedEpisode>(complement(isNil) as any)
+      .filter<EpisodeListEpisodes>(complement(isNil) as any)
       .map(prop('episodeNumber'))
 
     return humanizeNumberList(selectedNumbers)

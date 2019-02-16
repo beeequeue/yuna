@@ -1,10 +1,12 @@
 import { DataProxy } from 'apollo-cache'
 import { Store } from 'vuex'
 
-import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
   AddEntryMutationMutation,
+  CacheEpisodesMutation,
+  CacheEpisodesVariables,
   DeleteListEntryMutationMutation,
+  EpisodeInput,
   EpisodeListEpisodes,
   EpisodeListQuery,
   EpisodeListVariables,
@@ -29,6 +31,8 @@ import SET_STATUS_MUTATION from './SetStatusMutation.graphql'
 import UPDATE_PROGRESS_MUTATION from './UpdateProgressMutation.graphql'
 import UPDATE_SCORE_MUTATION from './UpdateScoreMutation.graphql'
 import REWATCH_MUTATION from './RewatchMutation.graphql'
+import CACHE_EPISODES_MUTATION from './CacheEpisodes.graphql'
+import EPISODE_LIST_QUERY from './EpisodeList.graphql'
 
 const refetchListQuery = ($store: Store<any>) => {
   const userId = getAnilistUserId($store)
@@ -56,7 +60,7 @@ const writeEpisodeProgressToCache = (
 
   try {
     data = cache.readQuery<EpisodeListQuery, EpisodeListVariables>({
-      query: EPISODE_LIST,
+      query: EPISODE_LIST_QUERY,
       variables: {
         id: episode.animeId,
         provider: episode.provider,
@@ -82,7 +86,7 @@ const writeEpisodeProgressToCache = (
   }))
 
   cache.writeQuery<EpisodeListQuery>({
-    query: EPISODE_LIST,
+    query: EPISODE_LIST_QUERY,
     data: { episodes },
   })
 
@@ -225,4 +229,21 @@ export const deleteListEntryMutation = async (
 
       cache.writeQuery({ query: ANIME_PAGE_QUERY, data })
     },
+  })
+
+export const cacheEpisodes = async (
+  { $apollo }: Instance,
+  animeId: number,
+  provider: Provider,
+  episodes: EpisodeInput[],
+) =>
+  $apollo.mutate<CacheEpisodesMutation>({
+    mutation: CACHE_EPISODES_MUTATION,
+    variables: { id: animeId, provider, episodes } as CacheEpisodesVariables,
+    refetchQueries: [
+      {
+        query: EPISODE_LIST_QUERY,
+        variables: { id: animeId, provider } as EpisodeListVariables,
+      },
+    ],
   })
