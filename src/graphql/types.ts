@@ -628,6 +628,7 @@ export type FuzzyDateInt = any;
     id: number;
     provider: Provider;
     episodes: EpisodeInput[];
+    nextEpisodeAiringAt: Maybe<number>;
   }
 
   export type CacheEpisodesMutation = {

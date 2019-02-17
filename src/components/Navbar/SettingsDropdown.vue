@@ -15,7 +15,7 @@
 
       <a href="https://github.com/beeequeue/yuna">
         <div class="item github">
-          <icon :icon="githubSvg" /> <span>Source</span>
+          <icon :icon="githubSvg" /> <span>Source code</span>
         </div>
       </a>
 

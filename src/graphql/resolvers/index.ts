@@ -11,6 +11,7 @@ import {
   EpisodeListVariables,
   Provider,
 } from '@/graphql/types'
+
 import { fetchEpisodesOfSeries, fetchRating } from '@/lib/myanimelist'
 import { EpisodeRelations, getEpisodeRelations } from '@/lib/relations'
 import { EpisodeCache } from '@/lib/episode-cache'
@@ -34,10 +35,18 @@ interface RealProxy extends DataProxy {
   }
 }
 
+interface CachedAnime {
+  idMal: number | null
+  nextAiringEpisode: null | {
+    airingAt: number
+  }
+}
+
 const cacheEpisodes = (
   cache: RealProxy,
   provider: Provider,
   relations: EpisodeRelations,
+  nextEpisodeAiringAt: number | null,
 ) => {
   Object.entries(relations).forEach(
     ([id, episodes]: [string, EpisodeListEpisodes[]]) => {
@@ -54,7 +63,7 @@ const cacheEpisodes = (
         },
       })
 
-      EpisodeCache.set(Number(id), provider, episodes)
+      EpisodeCache.set(Number(id), provider, episodes, nextEpisodeAiringAt)
     },
   )
 }
@@ -80,34 +89,6 @@ const getIsWatched = (cache: RealProxy, animeId: number, episode: number) => {
   return data.mediaListEntry.progress >= episode
 }
 
-const getNextEpisodeAiringAt = (
-  cache: RealProxy,
-  animeId: number,
-): number | null => {
-  const cachedNextEpisode = cache.readFragment<{
-    nextAiringEpisode: { timeUntilAiring: number } | null
-  }>({
-    id: `Media:${animeId}`,
-    fragment: gql`
-      fragment nextEpisode on Media {
-        nextAiringEpisode {
-          timeUntilAiring
-        }
-      }
-    `,
-  })
-
-  const timeUntilAiring = pathOr(
-    null,
-    ['nextAiringEpisode', 'timeUntilAiring'],
-    cachedNextEpisode,
-  )
-
-  if (!timeUntilAiring) return null
-
-  return Date.now() + timeUntilAiring * 1000
-}
-
 export const resolvers = {
   Query: {
     Episodes: async (
@@ -115,8 +96,13 @@ export const resolvers = {
       { id, provider }: EpisodeVariables,
       { cache }: { cache: RealProxy },
     ): Promise<EpisodeListEpisodes[] | null> => {
-      const airingAt = getNextEpisodeAiringAt(cache, id)
-      const isStale = airingAt != null && Date.now() >= airingAt
+      const nextEpisodeAiringAt = EpisodeCache.getNextEpisodeAiringAt(
+        id,
+        provider,
+      )
+      const isStale =
+        !isNil(nextEpisodeAiringAt) && Date.now() >= nextEpisodeAiringAt
+
       let episodes: EpisodeListEpisodes[] | null = null
       let softCachedData
 
@@ -146,11 +132,14 @@ export const resolvers = {
 
       if (isStale || !episodes) {
         if (provider === Provider.Crunchyroll) {
-          const data = cache.readFragment<{ idMal: number | null }>({
+          const data = cache.readFragment<CachedAnime>({
             id: `Media:${id}`,
             fragment: gql`
-              fragment idMal on Media {
+              fragment cachedAnime on Media {
                 idMal
+                nextAiringEpisode {
+                  airingAt
+                }
               }
             `,
           })
@@ -159,6 +148,7 @@ export const resolvers = {
             throw new Error('Could not find Anime in cache!')
           }
 
+          const airingAt = pathOr(-1, 'airingAt', data.nextAiringEpisode) * 1000
           let unconfirmedEpisodes
 
           try {
@@ -179,7 +169,12 @@ export const resolvers = {
 
           const relations = getEpisodeRelations(id, unconfirmedEpisodes)
 
-          cacheEpisodes(cache, provider, relations)
+          cacheEpisodes(
+            cache,
+            provider,
+            relations,
+            airingAt < 0 ? null : airingAt,
+          )
 
           episodes = relations[id]
         }
@@ -209,13 +204,18 @@ export const resolvers = {
   Mutation: {
     CacheEpisodes(
       _: any,
-      { id, provider, episodes }: CacheEpisodesVariables,
+      { id, provider, episodes, nextEpisodeAiringAt }: CacheEpisodesVariables,
       { cache }: { cache: RealProxy },
     ) {
       try {
-        cacheEpisodes(cache, provider, {
-          [id]: episodes,
-        })
+        cacheEpisodes(
+          cache,
+          provider,
+          {
+            [id]: episodes,
+          },
+          nextEpisodeAiringAt,
+        )
       } catch (err) {
         return false
       }

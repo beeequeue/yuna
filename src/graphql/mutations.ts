@@ -1,5 +1,6 @@
 import { DataProxy } from 'apollo-cache'
 import { Store } from 'vuex'
+import { pathOr, isNil } from 'rambdax'
 
 import {
   AddEntryMutationMutation,
@@ -34,6 +35,10 @@ import REWATCH_MUTATION from './RewatchMutation.graphql'
 import CACHE_EPISODES_MUTATION from './CacheEpisodes.graphql'
 import EPISODE_LIST_QUERY from './EpisodeList.graphql'
 
+const getEpisodes = pathOr(null, 'episodes') as (
+  obj: { episodes: EpisodeListEpisodes[] | null } | null,
+) => EpisodeListEpisodes[] | null
+
 const refetchListQuery = ($store: Store<any>) => {
   const userId = getAnilistUserId($store)
 
@@ -56,10 +61,10 @@ const writeEpisodeProgressToCache = (
   episode: EpisodeMutationObject,
   progress: number,
 ) => {
-  let data: EpisodeListQuery | null = null
+  let softCachedData: EpisodeListQuery | null = null
 
   try {
-    data = cache.readQuery<EpisodeListQuery, EpisodeListVariables>({
+    softCachedData = cache.readQuery<EpisodeListQuery, EpisodeListVariables>({
       query: EPISODE_LIST_QUERY,
       variables: {
         id: episode.animeId,
@@ -70,17 +75,12 @@ const writeEpisodeProgressToCache = (
     // no-op
   }
 
-  if (!data || !data.episodes) {
-    const hardCachedData = EpisodeCache.get(episode.animeId, episode.provider)
+  const hardCachedData = EpisodeCache.get(episode.animeId, episode.provider)
+  let episodes = getEpisodes(softCachedData) || getEpisodes(hardCachedData)
 
-    data = {
-      episodes: hardCachedData ? hardCachedData.episodes : null,
-    }
-  }
+  if (isNil(episodes)) return
 
-  if (!data || !data.episodes) return
-
-  const episodes = data.episodes.map(ep => ({
+  episodes = episodes.map(ep => ({
     ...ep,
     isWatched: progress >= ep.episodeNumber,
   }))
@@ -90,7 +90,12 @@ const writeEpisodeProgressToCache = (
     data: { episodes },
   })
 
-  EpisodeCache.set(episode.animeId, episode.provider, episodes)
+  EpisodeCache.set(
+    episode.animeId,
+    episode.provider,
+    episodes,
+    hardCachedData!.nextEpisodeAiringAt,
+  )
 }
 
 export const setEpisodeWatched = async (
