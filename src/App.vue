@@ -1,5 +1,11 @@
 <template>
-  <div id="app" :style="`background-image: url(${backgroundImage})`">
+  <div
+    id="app"
+    tabindex="0"
+    :style="`background-image: url(${backgroundImage})`"
+    @keydown.q.ctrl.exact="quitApplication"
+    @keydown.q.meta.exact="quitApplication"
+  >
     <title-bar v-if="!isFullscreen" />
 
     <transition>
@@ -35,9 +41,10 @@
 </template>
 
 <script lang="ts">
+import { ipcRenderer } from 'electron'
+import { api } from 'electron-util'
 import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
-import { ipcRenderer } from 'electron'
 
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { getIsConnectedTo } from '@/state/auth'
@@ -122,6 +129,10 @@ export default class App extends Vue {
 
   public toggleModal(modal: keyof AppState['modals']) {
     toggleModal(this.$store, modal)
+  }
+
+  public quitApplication() {
+    api.app.quit()
   }
 }
 </script>
