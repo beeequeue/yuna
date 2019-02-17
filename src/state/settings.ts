@@ -6,6 +6,7 @@ import { resolve } from 'path'
 import { complement, contains, equals, filter, path } from 'rambdax'
 import { Key } from 'ts-key-enum'
 import Vue from 'vue'
+import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
 
 import { userStore } from '@/lib/user'
@@ -15,6 +16,7 @@ import {
 } from '@/messages'
 import { RootState } from '@/state/store'
 import { hasKey } from '@/utils'
+import { Crunchyroll } from '@/lib/crunchyroll'
 
 export enum KeybindingAction {
   PAUSE = 'PAUSE',
@@ -64,6 +66,7 @@ interface SetupSettings {
 export interface SettingsState {
   autoMarkAsPlanning: boolean
   useCRUnblocker: boolean
+  crLocale: string
   autoUpdate: boolean
   beta: boolean
   autoPlay: boolean
@@ -75,7 +78,9 @@ export interface SettingsState {
   window: Electron.Rectangle
 }
 
-const settingsStore = new Store<SettingsState>({ name: 'settings' })
+type SettingsContext = ActionContext<SettingsState, RootState>
+
+export const SettingsStore = new Store<SettingsState>({ name: 'settings' })
 
 const {
   PAUSE_PLAY,
@@ -120,20 +125,21 @@ const defaultSteps = filter(i => i != null, [
 ]) as SetupStep[]
 
 const initialState: SettingsState = {
-  autoMarkAsPlanning: settingsStore.get('autoMarkAsPlanning', true),
-  useCRUnblocker: settingsStore.get('useCRUnblocker', true),
-  autoUpdate: settingsStore.get('autoUpdate', true),
-  beta: settingsStore.get('beta', false),
-  autoPlay: settingsStore.get('autoPlay', true),
-  autoMarkWatched: settingsStore.get('autoMarkWatched', true),
-  discord: settingsStore.get('discord', { ...defaultDiscord }),
-  keybindings: settingsStore.get('keybindings', { ...defaultBindings }),
-  spoilers: settingsStore.get('spoilers', { ...defaultSpoilers }),
-  setup: settingsStore.get('setup', { finishedSteps: [...defaultSteps] }),
-  window: settingsStore.get('window', {}),
+  autoMarkAsPlanning: SettingsStore.get('autoMarkAsPlanning', true),
+  useCRUnblocker: SettingsStore.get('useCRUnblocker', true),
+  crLocale: SettingsStore.get('crLocale', 'enUS'),
+  autoUpdate: SettingsStore.get('autoUpdate', true),
+  beta: SettingsStore.get('beta', false),
+  autoPlay: SettingsStore.get('autoPlay', true),
+  autoMarkWatched: SettingsStore.get('autoMarkWatched', true),
+  discord: SettingsStore.get('discord', { ...defaultDiscord }),
+  keybindings: SettingsStore.get('keybindings', { ...defaultBindings }),
+  spoilers: SettingsStore.get('spoilers', { ...defaultSpoilers }),
+  setup: SettingsStore.get('setup', { finishedSteps: [...defaultSteps] }),
+  window: SettingsStore.get('window', {}),
 }
 
-settingsStore.set(initialState)
+SettingsStore.set(initialState)
 
 export const settings = {
   namespaced: true,
@@ -151,6 +157,10 @@ export const settings = {
 
     getShouldAutoMarkWatched(state: SettingsState) {
       return state.autoMarkWatched
+    },
+
+    getCrunchyrollLocale(state: SettingsState) {
+      return state.crLocale
     },
 
     getKeybindings(state: SettingsState) {
@@ -208,6 +218,12 @@ export const settings = {
   },
 
   mutations: {
+    _setCrunchyrollLocale(state: SettingsState, locale: string) {
+      state.crLocale = locale
+
+      SettingsStore.set('crLocale', locale)
+    },
+
     addKeybinding(
       state: SettingsState,
       options: {
@@ -230,7 +246,7 @@ export const settings = {
 
       Vue.set(state.keybindings, options.key, newActions)
 
-      settingsStore.set(`keybindings.${options.key}`, newActions)
+      SettingsStore.set(`keybindings.${options.key}`, newActions)
     },
 
     removeKeybinding(
@@ -253,16 +269,16 @@ export const settings = {
       Vue.set(state.keybindings, options.key, newActions)
 
       if (newActions.length > 0) {
-        settingsStore.set(`keybindings.${options.key}`, newActions)
+        SettingsStore.set(`keybindings.${options.key}`, newActions)
       } else {
-        settingsStore.delete(`keybindings.${options.key}`)
+        SettingsStore.delete(`keybindings.${options.key}`)
       }
     },
 
     resetKeybindings(state: SettingsState) {
       state.keybindings = { ...defaultBindings }
 
-      settingsStore.set('keybindings', state.keybindings)
+      SettingsStore.set('keybindings', state.keybindings)
     },
 
     setSpoiler(
@@ -281,7 +297,7 @@ export const settings = {
 
       ;(state.spoilers[payload.path[0]] as any)[payload.path[1]] = payload.value
 
-      settingsStore.set(['spoilers', ...payload.path].join('.'), payload.value)
+      SettingsStore.set(['spoilers', ...payload.path].join('.'), payload.value)
     },
 
     setDiscordRichPresence(state: SettingsState, enabled: boolean) {
@@ -293,7 +309,7 @@ export const settings = {
 
       state.discord.richPresence = enabled
 
-      settingsStore.set('discord.richPresence', enabled)
+      SettingsStore.set('discord.richPresence', enabled)
     },
 
     setSetting(
@@ -310,7 +326,7 @@ export const settings = {
 
       state[options.setting] = options.value
 
-      settingsStore.set(options.setting, options.value)
+      SettingsStore.set(options.setting, options.value)
     },
 
     addFinishedStep(state: SettingsState, step: SetupStep) {
@@ -319,21 +335,30 @@ export const settings = {
       if (!contains(step, steps)) {
         steps.push(step)
 
-        settingsStore.set('setup.finishedSteps', steps)
+        SettingsStore.set('setup.finishedSteps', steps)
       }
     },
   },
 
-  actions: {},
+  actions: {
+    async setCrunchyrollLocale(context: SettingsContext, locale: string) {
+      _setCrunchyrollLocale(context, locale)
+
+      await Crunchyroll.createSession(context)
+    },
+  },
 }
 
-const { read, commit } = getStoreAccessors<SettingsState, RootState>('settings')
+const { read, commit, dispatch } = getStoreAccessors<SettingsState, RootState>(
+  'settings',
+)
 
 export const getSettings = read(settings.getters.getSettings)
 export const getShouldAutoPlay = read(settings.getters.getShouldAutoPlay)
 export const getShouldAutoMarkWatched = read(
   settings.getters.getShouldAutoMarkWatched,
 )
+export const getCrunchyrollLocale = read(settings.getters.getCrunchyrollLocale)
 export const getKeybindings = read(settings.getters.getKeybindings)
 export const getKeysForAction = read(settings.getters.getKeysForAction)
 export const getKeydownHandler = read(settings.getters.getKeydownHandler)
@@ -343,6 +368,7 @@ export const getNextUnfinishedStep = read(
   settings.getters.getNextUnfinishedStep,
 )
 
+const _setCrunchyrollLocale = commit(settings.mutations._setCrunchyrollLocale)
 export const addKeybinding = commit(settings.mutations.addKeybinding)
 export const removeKeybinding = commit(settings.mutations.removeKeybinding)
 export const resetKeybindings = commit(settings.mutations.resetKeybindings)
@@ -352,3 +378,7 @@ export const setDiscordRichPresence = commit(
   settings.mutations.setDiscordRichPresence,
 )
 export const addFinishedStep = commit(settings.mutations.addFinishedStep)
+
+export const setCrunchyrollLocale = dispatch(
+  settings.actions.setCrunchyrollLocale,
+)

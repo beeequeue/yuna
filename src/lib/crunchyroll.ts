@@ -1,6 +1,6 @@
 /* eslint-disable class-name */
 import { activeWindow } from 'electron-util'
-import { anyPass, complement, T, mapAsync } from 'rambdax'
+import { anyPass, complement, mapAsync, T } from 'rambdax'
 import superagent from 'superagent/superagent'
 import { ActionContext, Store } from 'vuex'
 import uuid from 'uuid/v4'
@@ -12,17 +12,19 @@ import { userStore } from '@/lib/user'
 import { setCrunchyroll, setCrunchyrollCountry } from '@/state/auth'
 import { removeCookies, RequestError, RequestSuccess } from '@/utils'
 import { Stream } from '@/types'
-import { getSettings } from '@/state/settings'
+import { getSettings, SettingsStore } from '@/state/settings'
 import { error } from 'electron-log'
 
 const CR_UNBLOCKER_URL = 'api2.cr-unblocker.com'
 const API_URL = 'api.crunchyroll.com'
 const VERSION = '0'
-const locale = 'enUS'
+const ENGLISH = 'enUS'
 // eslint-disable-next-line variable-name
 const device_type = 'com.crunchyroll.windows.desktop'
 // eslint-disable-next-line variable-name
 const access_token = getConfig('ACCESS_TOKEN')
+
+export enum CrunchyrollLocale {}
 
 export interface User {
   class: 'user'
@@ -125,6 +127,11 @@ interface _Collection {
   created: string
 }
 
+interface _Locale {
+  locale_id: string
+  label: string
+}
+
 export interface _CollectionWithEpisodes extends _Collection {
   episodes: EpisodeListEpisodes[]
 }
@@ -201,6 +208,7 @@ type RequestTypes =
   | 'info'
   | 'list_collections'
   | 'list_media'
+  | 'list_locales'
   | 'log'
   | 'login'
   | 'logout'
@@ -219,6 +227,7 @@ const responseIsError = (
 }
 
 let _sessionId: string = userStore.get('crunchyroll.token', '')
+let _locales: _Locale[] = []
 
 export interface SessionResponse {
   session_id: string
@@ -233,6 +242,10 @@ interface StreamInfo {
 type StoreType = Store<any> | ActionContext<any, any>
 
 export class Crunchyroll {
+  public static get locales() {
+    return _locales
+  }
+
   public static createSession = async (store: StoreType) => {
     const { useCRUnblocker } = getSettings(store)
     let data: SessionResponse | null = null
@@ -255,6 +268,8 @@ export class Crunchyroll {
     if (data == null) {
       data = await Crunchyroll.createNormalSession(store)
     }
+
+    _locales = await Crunchyroll.fetchLocales()
 
     return data
   }
@@ -317,6 +332,20 @@ export class Crunchyroll {
       refreshToken: null as any,
       expires: null,
     })
+  }
+
+  public static fetchLocales = async (): Promise<_Locale[]> => {
+    const response = await Crunchyroll.request<_Locale[]>('list_locales')
+
+    if (responseIsError(response)) {
+      if (response.body.code === 'bad_session') {
+        activeWindow().reload()
+      }
+
+      throw new Error(response.body.message)
+    }
+
+    return response.body.data
   }
 
   public static fetchSeriesAndCollections = async (
@@ -499,11 +528,12 @@ export class Crunchyroll {
 
   private static request = async <B extends {}>(
     type: RequestTypes,
-    query: any,
+    query: any = {},
+    useCustomLocale?: boolean,
   ) =>
     (await superagent.get(`https://${API_URL}/${type}.${VERSION}.json`).query({
       session_id: _sessionId,
-      locale,
+      locale: useCustomLocale ? SettingsStore.get('crLocale') : ENGLISH,
       device_type,
       ...query,
     })) as CrunchyrollResponse<B>
@@ -559,10 +589,14 @@ export class Crunchyroll {
   private static fetchStreamInfo = async (
     mediaId: string,
   ): Promise<StreamInfo> => {
-    const response = await Crunchyroll.request<StreamInfo>('info', {
-      media_id: mediaId,
-      fields: ['media.stream_data', 'media.playhead'].join(','),
-    })
+    const response = await Crunchyroll.request<StreamInfo>(
+      'info',
+      {
+        media_id: mediaId,
+        fields: ['media.stream_data', 'media.playhead'].join(','),
+      },
+      true,
+    )
 
     if (responseIsError(response)) {
       if (response.body.code === 'bad_session') {

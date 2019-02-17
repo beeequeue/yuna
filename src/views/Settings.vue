@@ -12,7 +12,7 @@
         />
 
         <section id="discord">
-          <h3>Discord Rich Presence</h3>
+          <h3>Discord</h3>
 
           <checkbox
             setting="enable-discord-rp"
@@ -22,8 +22,8 @@
           />
         </section>
 
-        <section id="cr-unblocker">
-          <h3>Crunchyroll Unblocker</h3>
+        <section id="crunchyroll">
+          <h3>Crunchyroll</h3>
 
           <checkbox
             setting="use-cr-unblocker"
@@ -46,6 +46,22 @@
               :click="createUBSession"
             />
           </div>
+
+          <p>
+            Sub Language
+            <icon
+              :icon="infoSvg"
+              v-tooltip.top="
+                'Changing this may cause some<br/>shows to be unavailable unless<br/>changed back to English (US).'
+              "
+            />
+          </p>
+
+          <dropdown
+            :items="localeItems"
+            :value="crunchyrollLocale"
+            :onChange="setCrunchyrollLocale"
+          />
         </section>
       </section>
 
@@ -219,6 +235,7 @@ import Keybinding from '@/components/Settings/Keybinding.vue'
 import Checkbox from '@/components/Checkbox.vue'
 import CButton from '@/components/CButton.vue'
 import Icon from '@/components/Icon.vue'
+import Dropdown, { DropdownItem } from '@/components/Form/Dropdown.vue'
 
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { Page, trackPageView } from '@/lib/tracking'
@@ -226,10 +243,12 @@ import { getIsUpdateAvailable } from '@/state/app'
 import { getCrunchyrollCountry } from '@/state/auth'
 import {
   addKeybinding,
+  getCrunchyrollLocale,
   getSettings,
   KeybindingAction,
   removeKeybinding,
   resetKeybindings,
+  setCrunchyrollLocale,
   setDiscordRichPresence,
   setSetting,
   setSpoiler,
@@ -238,7 +257,7 @@ import {
 import { DOWNLOAD_UPDATE, OPEN_DEVTOOLS } from '@/messages'
 
 @Component({
-  components: { Connection, CButton, Checkbox, Keybinding, Icon },
+  components: { Dropdown, Connection, CButton, Checkbox, Keybinding, Icon },
 })
 export default class Settings extends Vue {
   public actionToBind: KeybindingAction | null = null
@@ -265,6 +284,17 @@ export default class Settings extends Vue {
     return getCrunchyrollCountry(this.$store) === 'US'
   }
 
+  public get crunchyrollLocale() {
+    return getCrunchyrollLocale(this.$store)
+  }
+
+  public get localeItems() {
+    return Crunchyroll.locales.map<DropdownItem>(locale => ({
+      label: locale.label,
+      value: locale.locale_id,
+    }))
+  }
+
   public mounted() {
     trackPageView(Page.SETTINGS)
   }
@@ -285,6 +315,10 @@ export default class Settings extends Vue {
       path: key.split('.') as any,
       value,
     })
+  }
+
+  public setCrunchyrollLocale(value: string) {
+    setCrunchyrollLocale(this.$store, value)
   }
 
   public async createUBSession() {
@@ -389,12 +423,16 @@ export default class Settings extends Vue {
     & h1,
     & h2,
     & h3,
-    & h4 {
+    & h4,
+    & p {
       display: flex;
       align-items: center;
       position: relative;
       font-family: 'Raleway', sans-serif;
-      font-weight: 500;
+
+      &:not(p) {
+        font-weight: 500;
+      }
 
       & > .icon {
         margin-left: 5px;

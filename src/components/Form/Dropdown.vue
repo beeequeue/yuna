@@ -1,6 +1,6 @@
 <template>
   <label class="dropdown" :class="classes" v-tooltip.bottom="error">
-    <span>{{ label }}</span>
+    <span v-if="label != null">{{ label }}</span>
 
     <select :value="value" @input="handleChange">
       <option v-for="item in items" :key="item.value" :value="item.value">
@@ -13,8 +13,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { MediaListStatus } from '@/graphql/types'
-
 import { Required } from '@/decorators'
 
 export interface DropdownItem {
@@ -24,10 +22,10 @@ export interface DropdownItem {
 
 @Component
 export default class Dropdown extends Vue {
-  @Required(String) public label!: string
   @Required(Array) public items!: DropdownItem[]
-  @Prop(String) public value!: MediaListStatus | null
   @Required(Function) public onChange!: (value: string) => any
+  @Prop(String) public label!: string | null
+  @Prop() public value!: any | null
   @Prop(String) public error!: string | null
   @Prop(Boolean) public disabled!: boolean | null
 
