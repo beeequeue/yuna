@@ -75,12 +75,12 @@
           :click="downloadUpdate"
         />
 
-        <checkbox
+        <!--<checkbox
           setting="auto-update"
           text="Automatically update the program."
           :checked="settings.autoUpdate"
           :onChange="checked => setSetting('autoUpdate', checked)"
-        />
+        />-->
 
         <checkbox
           setting="beta"
