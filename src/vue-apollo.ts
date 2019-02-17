@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueApollo from 'vue-apollo'
 import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
 
-import { resolvers } from '@/graphql/client/resolvers'
+import { resolvers } from '@/graphql/resolvers'
 import { EpisodeListEpisodes } from '@/graphql/types'
 import { userStore } from '@/lib/user'
 import { getEpisodeCacheKey, isOfTypename } from '@/utils'

@@ -1,7 +1,7 @@
 overwrite: true
 schema:
   - https://graphql.anilist.co
-  - src/graphql/client/client-schema.graphqls
+  - src/graphql/client-schema.graphqls
 documents: src/graphql/**/*.graphql
 config:
   avoidOptionals: true
