@@ -18,14 +18,21 @@
 
     <span class="separator" />
 
-    <icon :icon="minimizeSvg" @click.native="minimize" />
-    <icon :icon="closeSvg" @click.native="close" />
+    <span v-if="!isMac" class="menu-buttons">
+      <icon :icon="minimizeSvg" @click.native="minimize" />
+      <icon class="close" :icon="closeSvg" @click.native="close" />
+    </span>
+    <span v-else class="menu-buttons mac">
+      <span class="close" @click="close" />
+      <span class="minimize" @click="minimize" />
+      <span class="maximize" />
+    </span>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { activeWindow } from 'electron-util'
+import { activeWindow, is } from 'electron-util'
 import { mdiClose, mdiMinus, mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 
 import { closeAllModals } from '@/state/app'
@@ -36,9 +43,7 @@ import { version } from '../../package.json'
 
 const flagContext = require.context('svg-country-flags/svg')
 
-@Component<TitleBar>({
-  components: { Icon },
-})
+@Component<TitleBar>({ components: { Icon } })
 export default class TitleBar extends Vue {
   public version = version
 
@@ -74,6 +79,10 @@ export default class TitleBar extends Vue {
 
   public get isConnectedTo() {
     return getIsConnectedTo(this.$store).all
+  }
+
+  public get isMac() {
+    return is.macos
   }
 
   public minimize() {
@@ -123,6 +132,7 @@ export default class TitleBar extends Vue {
   }
 
   & > .nav-button {
+    order: 1;
     background: transparent;
     border: 0;
     padding: 0;
@@ -140,10 +150,12 @@ export default class TitleBar extends Vue {
   }
 
   & > .title {
+    order: 2;
     padding-left: 5px;
   }
 
   & > .flag {
+    order: 3;
     height: 100%;
     margin-left: 10px;
     -webkit-app-region: no-drag;
@@ -154,6 +166,7 @@ export default class TitleBar extends Vue {
   }
 
   & > .separator {
+    order: 4;
     flex-shrink: 1;
     width: 100%;
   }
@@ -164,9 +177,46 @@ export default class TitleBar extends Vue {
     padding: 2px;
     width: 35px;
     -webkit-app-region: no-drag;
+    transition: background 75ms;
 
     &:hover {
       background: rgba(150, 150, 200, 0.1);
+    }
+  }
+
+  & > .menu-buttons {
+    order: 10;
+
+    & > .close:hover {
+      background: $danger;
+    }
+
+    &.mac {
+      order: 0;
+      display: flex;
+      align-items: center;
+      margin-left: 12px;
+
+      & > span {
+        border-radius: 100%;
+        height: 12px;
+        width: 12px;
+        margin-right: 8px;
+        -webkit-app-region: no-drag;
+
+        &.close {
+          background: #ff6058;
+          border: 1px solid darken(#ff6058, 8%);
+        }
+        &.minimize {
+          background: #ffbd30;
+          border: 1px solid darken(#ffbd30, 8%);
+        }
+        &.maximize {
+          background: gray;
+          border: 1px solid darken(gray, 8%);
+        }
+      }
     }
   }
 }
