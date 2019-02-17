@@ -111,9 +111,12 @@ export default class EpisodeList extends Vue {
   position: absolute;
   left: 0;
   right: 0;
-
-  overflow: hidden;
+  overflow-x: scroll;
   transition: opacity 0.25s;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   & > .episode-wrapper {
     display: inline-flex;
