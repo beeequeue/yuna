@@ -65,6 +65,7 @@ import ToastOverlay from './components/ToastOverlay.vue'
 import AboutModal from './components/Modals/AboutModal.vue'
 import EditModal from './components/Modals/EditModal.vue'
 import ManualSearchModal from '@/components/Modals/ManualSearch/ManualSearchModal.vue'
+import { Hidive } from '@/lib/hidive'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
@@ -120,7 +121,8 @@ export default class App extends Vue {
       this.$router.push('login')
     }
 
-    await Crunchyroll.createSession(this.$store)
+    Hidive.createVisit(this.$store)
+    Crunchyroll.createSession(this.$store)
 
     if (process.env.NODE_ENV === 'production') {
       ipcRenderer.send(CHECK_FOR_UPDATES)

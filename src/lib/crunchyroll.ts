@@ -32,9 +32,7 @@ const ENGLISH = 'enUS'
 const device_type = 'com.crunchyroll.windows.desktop'
 const device_id = getDeviceUuid()
 // eslint-disable-next-line variable-name
-const access_token = getConfig('ACCESS_TOKEN')
-
-export enum CrunchyrollLocale {}
+const access_token = getConfig('CRUNCHYROLL_TOKEN')
 
 export interface User {
   class: 'user'
