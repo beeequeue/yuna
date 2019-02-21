@@ -7,6 +7,7 @@ module.exports = {
   rules: {
     'no-console': 'error',
     'no-debugger': 'error',
+    'prettier/prettier': 'off',
   },
   parserOptions: {
     parser: '@typescript-eslint/parser',
