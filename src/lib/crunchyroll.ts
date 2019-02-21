@@ -9,8 +9,12 @@ import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 
 import { getConfig } from '@/config'
 import { userStore } from '@/lib/user'
-import { setCrunchyroll, setCrunchyrollCountry } from '@/state/auth'
-import { removeCookies, RequestError, RequestSuccess } from '@/utils'
+import {
+  getIsConnectedTo,
+  setCrunchyroll,
+  setCrunchyrollCountry,
+} from '@/state/auth'
+import { delay, removeCookies, RequestError, RequestSuccess } from '@/utils'
 import { Stream } from '@/types'
 import { getSettings, SettingsStore } from '@/state/settings'
 import { error } from 'electron-log'
@@ -269,7 +273,9 @@ export class Crunchyroll {
       data = await Crunchyroll.createNormalSession(store)
     }
 
-    _locales = await Crunchyroll.fetchLocales()
+    if (getIsConnectedTo(store).crunchyroll) {
+      _locales = await Crunchyroll.fetchLocales()
+    }
 
     return data
   }
@@ -335,14 +341,15 @@ export class Crunchyroll {
   }
 
   public static fetchLocales = async (): Promise<_Locale[]> => {
-    const response = await Crunchyroll.request<_Locale[]>('list_locales')
+    let response = await Crunchyroll.request<_Locale[]>('list_locales')
 
     if (responseIsError(response)) {
-      if (response.body.code === 'bad_session') {
-        activeWindow().reload()
-      }
+      await delay(1500)
 
-      throw new Error(response.body.message)
+      response = await Crunchyroll.request<_Locale[]>('list_locales')
+      if (responseIsError(response)) {
+        throw new Error(response.body.message)
+      }
     }
 
     return response.body.data

@@ -50,7 +50,7 @@ interface DiscordSettings {
 
 export enum SetupStep {
   LOGIN_AL,
-  LOGIN_CR,
+  CONNECT,
   SPOILERS,
   DISCORD,
 }
@@ -118,7 +118,7 @@ const defaultDiscord: DiscordSettings = {
 
 const defaultSteps = filter(i => i != null, [
   userStore.get('anilist.token') != null ? SetupStep.LOGIN_AL : null,
-  userStore.get('crunchyroll.token') != null ? SetupStep.LOGIN_CR : null,
+  userStore.get('crunchyroll.token') != null ? SetupStep.CONNECT : null,
   existsSync(resolve(api.app.getPath('userData'), '.has-setup'))
     ? SetupStep.SPOILERS
     : null,
@@ -135,8 +135,8 @@ const initialState: SettingsState = {
   discord: SettingsStore.get('discord', { ...defaultDiscord }),
   keybindings: SettingsStore.get('keybindings', { ...defaultBindings }),
   spoilers: SettingsStore.get('spoilers', { ...defaultSpoilers }),
-  setup: SettingsStore.get('setup', { finishedSteps: [...defaultSteps] }),
   window: SettingsStore.get('window', {}),
+  setup: SettingsStore.get('setup', { finishedSteps: [...defaultSteps] }),
 }
 
 SettingsStore.set(initialState)
