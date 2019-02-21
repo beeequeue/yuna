@@ -4,7 +4,7 @@
       v-for="(_, i) in steps"
       :key="i"
       class="step"
-      :class="{ current: current === i, done: !current || current > i }"
+      :class="{ current: current === i, done: current == null || current > i }"
     >
       {{ i + 1 }}
     </div>
@@ -16,7 +16,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import { Required } from '@/decorators'
 
-@Component({ components: {} })
+@Component
 export default class Steps extends Vue {
   @Required(Array) public steps!: string[]
   @Prop(Number) public current!: number | null
