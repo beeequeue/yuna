@@ -1,5 +1,5 @@
 import electron from 'electron'
-import { log } from 'electron-log'
+import { info } from 'electron-log'
 import { captureException } from '@sentry/browser'
 import { ActionContext, Store } from 'vuex'
 import request from 'superagent/superagent'
@@ -34,7 +34,7 @@ const handleNewURL = async (
   // Due to dumb-ass American ISPs stealing our OAuth redirections
   url = decodeURIComponent(url)
 
-  log(
+  info(
     `${eventName}: got new url: `,
     url.replace(/access_token=.*&/, 'access_token=[secret]&'),
   )
