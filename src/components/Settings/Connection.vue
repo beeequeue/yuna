@@ -1,7 +1,6 @@
 <template>
   <div class="connection">
-    <img class="logo" v-if="type !== 'anilist'" :src="image" />
-    <span v-else class="logo" v-html="image" />
+    <span class="logo" :class="{ [type]: true }" v-html="image" />
 
     <c-button
       :icon="!isConnected ? connectSvg : disconnectSvg"
@@ -9,7 +8,7 @@
       :type="!isConnected ? null : 'danger'"
     />
 
-    <a class="name" v-if="user != null" :href="user.url">
+    <a v-if="user != null" :href="user.url" class="name">
       {{ user.name }}
     </a>
     <span v-else>{{ capitalize(type) }}</span>
@@ -21,7 +20,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { pathOr } from 'rambdax'
 import { mdiLinkVariant, mdiLinkVariantOff } from '@mdi/js'
 
-import crIcon from '@/assets/crunchyroll.webp'
+import crIcon from '@/assets/crunchyroll.svg'
 import alIcon from '@/assets/anilist.svg'
 
 import { Required } from '@/decorators'
@@ -31,9 +30,7 @@ import { AnilistData, CrunchyrollData, getIsConnectedTo } from '@/state/auth'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { logoutAnilist } from '@/lib/anilist'
 
-@Component({
-  components: { CButton },
-})
+@Component({ components: { CButton } })
 export default class Connection extends Vue {
   @Required(String) public type!: 'crunchyroll' | 'anilist'
 
@@ -102,7 +99,7 @@ export default class Connection extends Vue {
     height: 40px;
     width: 40px;
 
-    & /deep/ svg {
+    &.anilist /deep/ svg {
       position: absolute;
       height: calc(100% + 10px);
       width: calc(100% + 10px);

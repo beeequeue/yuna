@@ -1,6 +1,6 @@
 <template>
   <div class="step login-cr" @keydown.enter="login">
-    <img :src="crIcon" class="logo" />
+    <span v-html="crIcon" class="logo" />
 
     <text-input
       placeholder="Username"
@@ -26,7 +26,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import crIcon from '@/assets/crunchyroll.webp'
+import crIcon from '@/assets/crunchyroll.svg'
 import TextInput from '@/components/Form/TextInput.vue'
 import CButton from '@/components/CButton.vue'
 

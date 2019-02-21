@@ -1,8 +1,12 @@
 <template>
   <div class="source-list">
-    <a v-for="link in sources" :key="link.url" :href="link.url" class="link">
-      <img :src="getImageUrl(link.site)" :title="link.site" />
-    </a>
+    <a
+      v-for="link in sources"
+      :key="link.url"
+      :href="link.url"
+      v-html="getLogo(link.site)"
+      class="link"
+    />
   </div>
 </template>
 
@@ -30,8 +34,8 @@ export default class SourceList extends Vue {
     return getStreamingSources(this.links)
   }
 
-  public getImageUrl(source: keyof StreamingSource) {
-    const image = `./${StreamingSource[source as any]}.webp`
+  public getLogo(source: keyof StreamingSource) {
+    const image = `./${StreamingSource[source as any]}.svg`
 
     if (!siteImages.includes(image)) {
       return null
@@ -59,7 +63,7 @@ export default class SourceList extends Vue {
     filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.75));
     transition: transform 0.15s;
 
-    & > img {
+    & /deep/ svg {
       height: 100%;
     }
 

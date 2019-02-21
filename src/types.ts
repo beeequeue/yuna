@@ -16,12 +16,17 @@ export interface Instance {
 }
 
 export enum StreamingSource {
-  Crunchyroll = 'crunchyroll',
-  Hulu = 'hulu',
-  Hidive = 'hidive',
-  Animelab = 'animelab',
-  Funimation = 'funimation',
   Amazon = 'amazon',
+  Animelab = 'animelab',
+  Crunchyroll = 'crunchyroll',
+  Funimation = 'funimation',
+  Hidive = 'hidive',
+  Hulu = 'hulu',
+  Madman = 'madman',
+  Netflix = 'netflix',
+  Viewster = 'viewster',
+  Viz = 'viz',
+  Wakanim = 'wakanim',
 }
 
 export const SupportedSources = [
