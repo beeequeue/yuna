@@ -28,10 +28,6 @@
 
         <div class="details">
           <div class="title">{{ result.title.userPreferred }}</div>
-
-          <div class="sites">
-            <img v-if="getIsOnCrunchyroll(result)" class="cr" :src="crIcon" />
-          </div>
         </div>
       </div>
 
@@ -46,10 +42,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { pathEq, pathOr } from 'rambdax'
+import { pathOr } from 'rambdax'
 import { mdiClose, mdiLoading } from '@mdi/js'
-
-import crIcon from '@/assets/crunchyroll.webp'
 
 import SEARCH_QUERY from '@/graphql/SearchQuery.graphql'
 import {
@@ -89,7 +83,6 @@ export default class Search extends Vue {
 
   public emptySvg = mdiClose
   public loadingSvg = mdiLoading
-  public crIcon = crIcon
 
   public get results() {
     return pathOr(
@@ -97,16 +90,6 @@ export default class Search extends Vue {
       ['search', 'anime', 'results'],
       this,
     ) as SearchQueryResults[]
-  }
-
-  public getIsOnCrunchyroll(result: SearchQueryResults) {
-    const streamingEpisodes = pathOr([], 'streamingEpisodes' as any, result)
-    const externalLinks = pathOr([], 'externalLinks' as any, result)
-
-    return (
-      streamingEpisodes.some(pathEq('site', 'crunchyroll')) ||
-      externalLinks.some(pathEq('site', 'Crunchyroll'))
-    )
   }
 
   public selectAllInInput(e: MouseEvent) {

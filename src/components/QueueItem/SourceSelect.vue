@@ -1,10 +1,10 @@
 <template>
   <div v-if="supportedSources.length > 0" class="source-select">
     <div class="dropdown" @click="toggleOpen">
-      <img
+      <span
         v-for="source in supportedSources"
         :key="source.site"
-        :src="getImageUrl(source)"
+        v-html="getLogo(source)"
         class="source"
         :alt="source.site"
       />
@@ -19,7 +19,7 @@
           class="menu-item crunchyroll"
           @click="handleClick(Provider.Crunchyroll)"
         >
-          <img :src="crIcon" />
+          <span class="svg" v-html="crIcon" />
           Automatic
         </div>
 
@@ -27,7 +27,7 @@
           class="menu-item crunchyroll-search"
           @click="handleClick(Provider.CrunchyrollManual)"
         >
-          <img :src="crIcon" />
+          <span class="svg" v-html="crIcon" />
           Manual
         </div>
 
@@ -37,7 +37,7 @@
             :key="source.site"
             :href="source.url"
           >
-            <img :src="getImageUrl(source)" />
+            <span class="svg" v-html="getLogo(source)" />
           </a>
         </div>
       </div>
@@ -50,7 +50,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { isNil } from 'rambdax'
 import { mdiChevronDown } from '@mdi/js'
 
-import crIcon from '@/assets/crunchyroll.webp'
+import crIcon from '@/assets/crunchyroll.svg'
 import Icon from '@/components/Icon.vue'
 
 import { Provider, QueueAnime, QueueExternalLinks } from '@/graphql/types'
@@ -93,8 +93,8 @@ export default class SourceSelect extends Vue {
     )
   }
 
-  public getImageUrl(source: QueueExternalLinks) {
-    const image = `./${StreamingSource[source.site as any]}.webp`
+  public getLogo(source: QueueExternalLinks) {
+    const image = `./${StreamingSource[source.site as any]}.svg`
 
     if (!siteImages.includes(image)) {
       return null
@@ -150,6 +150,7 @@ export default class SourceSelect extends Vue {
 
     & > .source {
       height: 20px;
+      width: 20px;
       margin-right: 6px;
       order: 10;
       filter: drop-shadow(0 1px 1px black);
@@ -209,8 +210,9 @@ export default class SourceSelect extends Vue {
           }
         }
 
-        & img {
+        & .svg {
           height: 16px;
+          width: 16px;
         }
 
         &:hover {
@@ -227,8 +229,9 @@ export default class SourceSelect extends Vue {
         border-bottom-right-radius: 5px;
       }
 
-      & img {
+      & .svg {
         height: 20px;
+        width: 20px;
         filter: drop-shadow(0 1px 1px black);
         margin-right: 5px;
       }
