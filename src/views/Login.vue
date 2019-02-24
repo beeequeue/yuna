@@ -42,7 +42,10 @@ import LoginAL from '@/components/FirstTimeSetup/LoginAL.vue'
 import { loginAnilist } from '@/lib/anilist'
 import { Page, trackPageView } from '@/lib/tracking'
 import { Crunchyroll } from '@/lib/crunchyroll'
-import { getIsConnectedTo } from '@/state/auth'
+import {
+  getIsConnectedTo,
+  getIsConnectedToAStreamingService,
+} from '@/state/auth'
 
 @Component({
   components: {
@@ -57,16 +60,19 @@ export default class Login extends Vue {
 
   public crunchyrollError: string | null = null
 
-  public mounted() {
-    if (this.isConnectedTo.all) {
-      return this.$router.back()
-    }
+  private get isFinished() {
+    return (
+      this.isConnectedTo.anilist &&
+      getIsConnectedToAStreamingService(this.$store)
+    )
+  }
 
+  public created() {
     trackPageView(Page.LOGIN)
   }
 
   public onSuccessfulLogin() {
-    if (this.isConnectedTo.all) {
+    if (this.isFinished) {
       if (window.initialLogin) {
         window.initialLogin = false
         return this.$router.push('/')

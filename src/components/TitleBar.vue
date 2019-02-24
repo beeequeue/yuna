@@ -11,6 +11,7 @@
     <span class="title">{{ name }} | v{{ version }}</span>
 
     <span
+      v-if="isConnectedTo.crunchyroll"
       v-html="flag"
       class="flag"
       v-tooltip.bottom="`Using ${country} Crunchyroll`"
@@ -78,7 +79,14 @@ export default class TitleBar extends Vue {
   }
 
   public get isConnectedTo() {
-    return getIsConnectedTo(this.$store).all
+    return getIsConnectedTo(this.$store)
+  }
+
+  private restrictedViews = [/login/, /first-time-setup/]
+  public get isOnRestrictedView(): boolean {
+    return this.restrictedViews.some(
+      view => view.exec(this.$route.path) != null,
+    )
   }
 
   public get isMac() {
@@ -94,14 +102,14 @@ export default class TitleBar extends Vue {
   }
 
   public goBack() {
-    if (!this.isConnectedTo) return
+    if (this.isOnRestrictedView) return
 
     closeAllModals(this.$store)
     history.back()
   }
 
   public goForward() {
-    if (!this.isConnectedTo) return
+    if (this.isOnRestrictedView) return
 
     closeAllModals(this.$store)
     history.forward()

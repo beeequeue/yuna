@@ -47,7 +47,10 @@ import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 
 import { Crunchyroll } from '@/lib/crunchyroll'
-import { getIsConnectedTo } from '@/state/auth'
+import {
+  getIsConnectedTo,
+  getIsConnectedToAStreamingService,
+} from '@/state/auth'
 import { getHasFinishedSetup } from '@/state/settings'
 import {
   AppState,
@@ -86,6 +89,10 @@ export default class App extends Vue {
     return getIsConnectedTo(this.$store)
   }
 
+  get isConnectedToStreamingService() {
+    return getIsConnectedToAStreamingService(this.$store)
+  }
+
   get isFullscreen() {
     return getIsFullscreen(this.$store)
   }
@@ -116,7 +123,10 @@ export default class App extends Vue {
       this.$router.push('/first-time-setup')
     }
 
-    if (!this.isConnectedTo.all && this.hasFinishedSetup) {
+    if (
+      (!this.isConnectedTo.anilist || !this.isConnectedToStreamingService) &&
+      this.hasFinishedSetup
+    ) {
       window.initialLogin = true
       this.$router.push('login')
     }

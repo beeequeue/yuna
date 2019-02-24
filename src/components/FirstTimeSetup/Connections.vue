@@ -36,7 +36,11 @@
       </div>
     </div>
 
-    <c-button content="Continue" :click="this.continue" />
+    <c-button
+      :disabled="!isConnectedToStreamingService"
+      content="Continue"
+      :click="this.continue"
+    />
   </div>
 
   <login-cr
@@ -54,7 +58,10 @@ import TextInput from '@/components/Form/TextInput.vue'
 import CButton from '@/components/CButton.vue'
 import LoginCr from '@/components/FirstTimeSetup/LoginCR.vue'
 
-import { getIsConnectedTo } from '@/state/auth'
+import {
+  getIsConnectedTo,
+  getIsConnectedToAStreamingService,
+} from '@/state/auth'
 import { Crunchyroll } from '@/lib/crunchyroll'
 
 enum Window {
@@ -76,6 +83,10 @@ export default class Connections extends Vue {
 
   public get connectedTo() {
     return getIsConnectedTo(this.$store)
+  }
+
+  public get isConnectedToStreamingService() {
+    return getIsConnectedToAStreamingService(this.$store)
   }
 
   @Watch('connectedTo')

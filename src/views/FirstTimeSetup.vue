@@ -55,10 +55,10 @@ import Connections from '@/components/FirstTimeSetup/Connections.vue'
 
 import { getIsConnectedTo } from '@/state/auth'
 import {
-  getNextUnfinishedStep,
-  addFinishedStep,
-  SetupStep,
   _setupSteps,
+  addFinishedStep,
+  getNextUnfinishedStep,
+  SetupStep,
 } from '@/state/settings'
 import { loginAnilist } from '@/lib/anilist'
 import { Page, trackPageView } from '@/lib/tracking'

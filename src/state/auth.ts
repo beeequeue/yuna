@@ -89,8 +89,11 @@ export const auth = {
         anilist,
         crunchyroll,
         hidive,
-        all: anilist && crunchyroll,
       }
+    },
+
+    getIsConnectedToAStreamingService(state: AuthState) {
+      return !isNil(state.crunchyroll.user) || !isNil(state.hidive.user)
     },
 
     getCrunchyrollCountry(state: AuthState) {
@@ -197,6 +200,9 @@ export const auth = {
 const { commit, read } = getStoreAccessors<AuthState, RootState>('auth')
 
 export const getIsConnectedTo = read(auth.getters.getIsConnectedTo)
+export const getIsConnectedToAStreamingService = read(
+  auth.getters.getIsConnectedToAStreamingService,
+)
 export const getCrunchyrollCountry = read(auth.getters.getCrunchyrollCountry)
 export const getAnilistUserId = read(auth.getters.getAnilistUserId)
 export const getAnilistUsername = read(auth.getters.getAnilistUsername)

@@ -26,7 +26,12 @@ import alIcon from '@/assets/anilist.svg'
 import { Required } from '@/decorators'
 import { capitalize } from '@/utils'
 import CButton from '@/components/CButton.vue'
-import { AnilistData, CrunchyrollData, getIsConnectedTo } from '@/state/auth'
+import {
+  AnilistData,
+  CrunchyrollData,
+  getIsConnectedTo,
+  getIsConnectedToAStreamingService,
+} from '@/state/auth'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { logoutAnilist } from '@/lib/anilist'
 
@@ -63,7 +68,10 @@ export default class Connection extends Vue {
         break
     }
 
-    if (!getIsConnectedTo(this.$store).all) {
+    if (
+      !getIsConnectedTo(this.$store).anilist ||
+      !getIsConnectedToAStreamingService(this.$store)
+    ) {
       this.$router.push('/login')
     }
   }
