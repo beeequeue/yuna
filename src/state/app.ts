@@ -258,7 +258,7 @@ export const app = {
       const selectedIds = pluck<number>('id', selectedEpisodes)
 
       const filteredEpisodes = episodes.filter(
-        ({ id }) => !selectedIds.includes(id),
+        ({ id }) => !selectedIds.includes(Number(id)),
       )
 
       let count = selectedEpisodes.length
@@ -298,7 +298,7 @@ export const app = {
     unselectCrunchyrollEpisodes(state: AppState, ids: number[]) {
       const { selectedEpisodes } = state.modals.manualSearch
       const getFilteredEpisodes = filter<EpisodeListEpisodes>(
-        ep => ids.findIndex(equals(ep.id)) === -1,
+        ep => ids.findIndex(equals(Number(ep.id))) === -1,
       )
 
       let lastEpNumber = 0

@@ -128,6 +128,8 @@ export const auth = {
     },
 
     getHidiveLogin(state: AuthState) {
+      if (isNil(state.hidive.user)) return null
+
       const { user, password } = state.hidive.login
 
       return {
@@ -183,6 +185,7 @@ export const auth = {
           login: null as any,
         }
 
+        userStore.set('hidive', state.hidive)
         return
       }
 

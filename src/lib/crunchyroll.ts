@@ -477,7 +477,9 @@ export class Crunchyroll {
     return Crunchyroll.fetchEpisodesOfCollection(id, episode.collection_id)
   }
 
-  public static fetchStream = async (mediaId: number): Promise<Stream> => {
+  public static fetchStream = async (
+    mediaId: number | string,
+  ): Promise<Stream> => {
     const streamInfo = await Crunchyroll.fetchStreamInfo(mediaId.toString())
     const streams = streamInfo.stream_data.streams
 
@@ -666,7 +668,7 @@ const mediaToEpisode = (id: number) => (
 ): Omit<EpisodeListEpisodes, 'isWatched'> => ({
   __typename: 'Episode',
   provider: Provider.Crunchyroll,
-  id: Number(media_id),
+  id: media_id,
   animeId: id,
   title: name,
   index,

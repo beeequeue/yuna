@@ -44,7 +44,7 @@ export interface EpisodeInput {
   
   provider: Provider;
   
-  id: number;
+  id: string;
   
   animeId: number;
   
@@ -685,7 +685,7 @@ export type FuzzyDateInt = any;
     
     provider: Provider;
     
-    id: number;
+    id: string;
     
     animeId: number;
     
