@@ -1,6 +1,6 @@
 // eslint-disable no-use-before-declare
 import { getStoreAccessors } from 'vuex-typescript'
-import { omit, isNil } from 'rambdax'
+import { omit, isNil, propEq, path } from 'rambdax'
 
 import { userStore } from '@/lib/user'
 import { RootState } from '@/state/store'
@@ -96,6 +96,13 @@ export const auth = {
       return !isNil(state.crunchyroll.user) || !isNil(state.hidive.user)
     },
 
+    getFinishedConnecting(state: AuthState) {
+      return (
+        !isNil(state.anilist.token) &&
+        (!isNil(state.crunchyroll.user) || !isNil(state.hidive.user))
+      )
+    },
+
     getCrunchyrollCountry(state: AuthState) {
       return state.crunchyroll.country
     },
@@ -110,6 +117,14 @@ export const auth = {
 
     getHidiveProfiles(state: AuthState) {
       return state.hidive.profiles
+    },
+
+    getHidiveProfileIndex(state: AuthState) {
+      const selectedId = path('hidive.user.profile', state)
+
+      if (isNil(selectedId)) return -1
+
+      return state.hidive.profiles.findIndex(propEq('Id', selectedId))
     },
 
     getHidiveLogin(state: AuthState) {
@@ -200,13 +215,12 @@ export const auth = {
 const { commit, read } = getStoreAccessors<AuthState, RootState>('auth')
 
 export const getIsConnectedTo = read(auth.getters.getIsConnectedTo)
-export const getIsConnectedToAStreamingService = read(
-  auth.getters.getIsConnectedToAStreamingService,
-)
+export const getFinishedConnecting = read(auth.getters.getFinishedConnecting)
 export const getCrunchyrollCountry = read(auth.getters.getCrunchyrollCountry)
 export const getAnilistUserId = read(auth.getters.getAnilistUserId)
 export const getAnilistUsername = read(auth.getters.getAnilistUsername)
 export const getHidiveProfiles = read(auth.getters.getHidiveProfiles)
+export const getHidiveProfileIndex = read(auth.getters.getHidiveProfileIndex)
 export const getHidiveLogin = read(auth.getters.getHidiveLogin)
 
 export const setCrunchyroll = commit(auth.mutations.setCrunchyroll)

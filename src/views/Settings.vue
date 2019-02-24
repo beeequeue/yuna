@@ -199,6 +199,8 @@
         <connection type="anilist" />
 
         <connection type="crunchyroll" />
+
+        <connection type="hidive" />
       </section>
     </div>
 

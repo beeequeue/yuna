@@ -9,7 +9,9 @@
     <title-bar v-if="!isFullscreen" />
 
     <transition>
-      <navbar v-if="isConnectedTo.all && hasFinishedSetup && !isFullscreen" />
+      <navbar
+        v-if="isFinishedConnecting && hasFinishedSetup && !isFullscreen"
+      />
     </transition>
 
     <transition name="route">
@@ -19,7 +21,7 @@
       />
     </transition>
 
-    <player-container v-if="isConnectedTo.all" />
+    <player-container v-if="isFinishedConnecting" />
 
     <toast-overlay />
 
@@ -47,10 +49,7 @@ import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 
 import { Crunchyroll } from '@/lib/crunchyroll'
-import {
-  getIsConnectedTo,
-  getIsConnectedToAStreamingService,
-} from '@/state/auth'
+import { getIsConnectedTo, getFinishedConnecting } from '@/state/auth'
 import { getHasFinishedSetup } from '@/state/settings'
 import {
   AppState,
@@ -89,8 +88,8 @@ export default class App extends Vue {
     return getIsConnectedTo(this.$store)
   }
 
-  get isConnectedToStreamingService() {
-    return getIsConnectedToAStreamingService(this.$store)
+  get isFinishedConnecting() {
+    return getFinishedConnecting(this.$store)
   }
 
   get isFullscreen() {
@@ -123,10 +122,7 @@ export default class App extends Vue {
       this.$router.push('/first-time-setup')
     }
 
-    if (
-      (!this.isConnectedTo.anilist || !this.isConnectedToStreamingService) &&
-      this.hasFinishedSetup
-    ) {
+    if (!this.isFinishedConnecting && this.hasFinishedSetup) {
       window.initialLogin = true
       this.$router.push('login')
     }

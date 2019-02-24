@@ -30,14 +30,14 @@
         <c-button
           v-else
           type="danger"
-          :icon="disconnectSvg"
-          :click="() => {}"
+          content="Disconnect"
+          :click="logoutHidive"
         />
       </div>
     </div>
 
     <c-button
-      :disabled="!isConnectedToStreamingService"
+      :disabled="!isFinishedConnecting"
       content="Continue"
       :click="this.continue"
     />
@@ -47,22 +47,27 @@
     v-else-if="currentWindow === Window.Crunchyroll"
     :loginCrunchyroll="loginCrunchyroll"
   />
+
+  <login-hd
+    v-else-if="currentWindow === Window.Hidive"
+    :loginHidive="loginHidive"
+    :onFinished="goToMainWindow"
+  />
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import crIcon from '@/assets/crunchyroll.svg'
 import hidiveIcon from '@/assets/hidive.svg'
 import TextInput from '@/components/Form/TextInput.vue'
 import CButton from '@/components/CButton.vue'
 import LoginCr from '@/components/FirstTimeSetup/LoginCR.vue'
+import LoginHd from '@/components/FirstTimeSetup/LoginHD.vue'
 
-import {
-  getIsConnectedTo,
-  getIsConnectedToAStreamingService,
-} from '@/state/auth'
+import { getFinishedConnecting, getIsConnectedTo } from '@/state/auth'
 import { Crunchyroll } from '@/lib/crunchyroll'
+import { Hidive } from '@/lib/hidive'
 
 enum Window {
   Main = 'MAIN',
@@ -71,7 +76,7 @@ enum Window {
 }
 
 /* titleId */
-@Component({ components: { LoginCr, CButton, TextInput } })
+@Component({ components: { LoginHd, LoginCr, CButton, TextInput } })
 export default class Connections extends Vue {
   @Prop(Function) public continue!: () => void
 
@@ -85,20 +90,12 @@ export default class Connections extends Vue {
     return getIsConnectedTo(this.$store)
   }
 
-  public get isConnectedToStreamingService() {
-    return getIsConnectedToAStreamingService(this.$store)
+  public get isFinishedConnecting() {
+    return getFinishedConnecting(this.$store)
   }
 
-  @Watch('connectedTo')
-  public goBackIfShould() {
-    const isOnHidiveWhileConnected =
-      this.currentWindow === Window.Hidive && this.connectedTo.hidive
-    const isOnCrunchyrollWhileConnected =
-      this.currentWindow === Window.Crunchyroll && this.connectedTo.crunchyroll
-
-    if (isOnHidiveWhileConnected || isOnCrunchyrollWhileConnected) {
-      this.currentWindow = Window.Main
-    }
+  public goToMainWindow() {
+    this.currentWindow = Window.Main
   }
 
   public setCurrentWindow(win: Window) {
@@ -111,6 +108,14 @@ export default class Connections extends Vue {
 
   public async logoutCrunchyroll() {
     await Crunchyroll.logOut(this.$store)
+  }
+
+  public async loginHidive(user: string, pass: string) {
+    await Hidive.connect(this.$store, user, pass)
+  }
+
+  public async logoutHidive() {
+    await Hidive.disconnect(this.$store)
   }
 }
 </script>
