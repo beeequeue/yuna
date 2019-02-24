@@ -34,11 +34,14 @@ import { Required } from '@/decorators'
 
 @Component({ components: { CButton, TextInput } })
 export default class LoginCr extends Vue {
-  @Prop(Boolean) public loading!: boolean | null
-  @Prop(String) public error!: string | null
-  @Required(Function) public loginCrunchyroll!: (u: string, p: string) => any
+  @Required(Function) public loginCrunchyroll!: (
+    u: string,
+    p: string,
+  ) => Promise<any>
   @Prop(Boolean) public fullWidth!: boolean | null
 
+  public loading: boolean | null = null
+  public error: string | null = null
   public username = ''
   public password = ''
 
@@ -48,8 +51,17 @@ export default class LoginCr extends Vue {
     this[key] = value
   }
 
-  public login() {
-    this.loginCrunchyroll(this.username, this.password)
+  public async login() {
+    this.error = null
+
+    try {
+      this.loading = true
+      await this.loginCrunchyroll(this.username, this.password)
+      this.loading = false
+    } catch (err) {
+      this.loading = false
+      this.error = err
+    }
   }
 }
 </script>

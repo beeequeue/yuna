@@ -14,9 +14,15 @@
           :loginAnilist="loginAnilist"
         />
 
+        <connections
+          key="connections"
+          v-if="currentStep === SetupStep.CONNECT"
+          :continue="finishStep"
+        />
+
         <login-cr
           key="cr"
-          v-if="currentStep === SetupStep.LOGIN_CR"
+          v-if="false"
           :error="crunchyrollError"
           :loginCrunchyroll="loginCrunchyroll"
         />
@@ -45,6 +51,7 @@ import LoginAl from '@/components/FirstTimeSetup/LoginAL.vue'
 import LoginCr from '@/components/FirstTimeSetup/LoginCR.vue'
 import SpoilerSettings from '@/components/FirstTimeSetup/SpoilerSettings.vue'
 import Discord from '@/components/FirstTimeSetup/Discord.vue'
+import Connections from '@/components/FirstTimeSetup/Connections.vue'
 
 import { getIsConnectedTo } from '@/state/auth'
 import {
@@ -58,7 +65,14 @@ import { Page, trackPageView } from '@/lib/tracking'
 import { Crunchyroll } from '@/lib/crunchyroll'
 
 @Component({
-  components: { LoginAl, LoginCr, Steps, SpoilerSettings, Discord },
+  components: {
+    Connections,
+    LoginAl,
+    LoginCr,
+    Steps,
+    SpoilerSettings,
+    Discord,
+  },
 })
 export default class FirstTimeSetup extends Vue {
   public currentStep: SetupStep | null = SetupStep.LOGIN_AL
@@ -131,7 +145,7 @@ export default class FirstTimeSetup extends Vue {
 
     & > .steps {
       position: relative;
-      width: 300px;
+      width: 400px;
       transition: width 0.75s;
 
       &.hide {
@@ -142,7 +156,7 @@ export default class FirstTimeSetup extends Vue {
         position: absolute;
         top: 50%;
         left: 0;
-        width: 300px;
+        width: 400px;
         background: $dark;
         border-radius: 5px;
         transform: translateY(-50%);
