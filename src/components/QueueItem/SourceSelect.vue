@@ -6,6 +6,7 @@
         :key="source.site"
         v-html="getLogo(source)"
         class="source"
+        :class="getDropdownClasses(source)"
         :alt="source.site"
       />
 
@@ -31,6 +32,15 @@
           Manual
         </div>
 
+        <div
+          v-if="getIsSupported(Provider.Hidive)"
+          class="menu-item hidive"
+          @click="handleClick(Provider.Hidive)"
+        >
+          <span class="svg" v-html="hidiveIcon" />
+          Automatic
+        </div>
+
         <div v-if="unsupportedSources.length > 0" class="menu-item unsupported">
           <a
             v-for="source in unsupportedSources"
@@ -51,6 +61,7 @@ import { isNil } from 'rambdax'
 import { mdiChevronDown } from '@mdi/js'
 
 import crIcon from '@/assets/crunchyroll.svg'
+import hidiveIcon from '@/assets/hidive.svg'
 import Icon from '@/components/Icon.vue'
 
 import { Provider, QueueAnime, QueueExternalLinks } from '@/graphql/types'
@@ -66,12 +77,14 @@ const siteImages = streamingSiteCtx.keys()
 @Component({ components: { Icon } })
 export default class SourceSelect extends Vue {
   @Required(Object) public anime!: QueueAnime
+  @Required(String) public currentProvider!: Provider
   @Required(Function) public setProvider!: (provider: Provider) => void
 
   public open = false
 
   public Provider = Provider
   public crIcon = crIcon
+  public hidiveIcon = hidiveIcon
   public expandSvg = mdiChevronDown
 
   public get streamingSources() {
@@ -109,6 +122,14 @@ export default class SourceSelect extends Vue {
         source => source.site.toLowerCase() === provider.toLowerCase(),
       ),
     )
+  }
+
+  public getDropdownClasses(source: QueueExternalLinks) {
+    return {
+      fade:
+        source.site.toUpperCase() !==
+        this.currentProvider.replace('Manual', ''),
+    }
   }
 
   public handleClick(provider: Provider) {
@@ -154,6 +175,10 @@ export default class SourceSelect extends Vue {
       margin-right: 6px;
       order: 10;
       filter: drop-shadow(0 1px 1px black);
+
+      &.fade {
+        filter: brightness(0.5) drop-shadow(0 1px 1px black);
+      }
     }
 
     & > .expand {

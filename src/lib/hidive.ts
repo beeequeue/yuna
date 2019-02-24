@@ -5,12 +5,8 @@ import { ActionContext, Store } from 'vuex'
 
 import { isOfType, RequestError, RequestSuccess } from '@/utils'
 import { getConfig } from '@/config'
-import {
-  getHidiveLogin,
-  getIsConnectedTo,
-  setHidive,
-  setHidiveProfile,
-} from '@/state/auth'
+import { getHidiveLogin, getIsConnectedTo, setHidive } from '@/state/auth'
+import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 
 const API_URL = 'api.hidive.com'
 const TOKEN = getConfig('HIDIVE_TOKEN')
@@ -57,6 +53,63 @@ export interface HidiveProfile {
   Primary: boolean
 }
 
+interface _Title {
+  ContinueWatching: {
+    CreatedDT: string
+    CurrentTime: number
+    EpisodeId: number
+    Id: string
+    ModifiedDT: string | null
+    ProfileId: number
+    SeasonId: number
+    Status: string | null
+    TitleId: number
+    TotalSeconds: number
+    UserId: number
+    VideoId: number
+  }
+  EpisodeCount: number
+  Episodes: _Episode[]
+  FirstPremiereDate: string
+  Id: number
+  InQueue: boolean
+  IsContinueWatching: boolean
+  IsFavorite: boolean
+  IsRateable: boolean
+  KeyArtUrl: string
+  LoadTime: number
+  LongSynopsis: string
+  MasterArtUrl: string
+  MediumSynopsis: string
+  Name: string
+  OverallRating: number
+  Rating: string
+  RokuHDArtUrl: string
+  RokuSDArtUrl: string
+  RunTime: number
+  SeasonName: string
+  ShortSynopsis: string
+  ShowInfoTitle: string
+  UserRating: number
+}
+
+interface _Episode {
+  DisplayNameLong: string
+  EpisodeNumberValue: number
+  HIDIVEPremiereDate: string
+  Id: number
+  LoadTime: number
+  Name: string
+  Number: number
+  ScreenShotCompressedUrl: string
+  ScreenShotSmallUrl: string
+  SeasonNumber: number
+  SeasonNumberValue: number
+  Summary: string
+  TitleId: number
+  VideoKey: string
+}
+
 interface InitDeviceBody {
   DeviceId: string
   VisitId: string
@@ -72,6 +125,10 @@ interface AuthenticateBody {
     NextBillDate: string | null
     ServiceLevel: 'Gold' | string
   }
+}
+
+interface GetTitleBody {
+  Title: _Title
 }
 
 interface ReqResponse {
@@ -102,7 +159,12 @@ type HidiveResponse<D extends object = any> =
   | RequestSuccess<HidiveSuccess<D>>
   | RequestError<HidiveError>
 
-type RequestType = 'Ping' | 'InitDevice' | 'Authenticate'
+enum RequestType {
+  Ping = 'Ping',
+  InitDevice = 'InitDevice',
+  Authenticate = 'Authenticate',
+  GetTitle = 'GetTitle',
+}
 
 type StoreType = Store<any> | ActionContext<any, any>
 
@@ -120,14 +182,14 @@ export class Hidive {
   }
 
   public static async createVisit(store: StoreType) {
-    const ping = await this.request<{}>('Ping')
+    const ping = await this.request<{}>(RequestType.Ping)
     if (!ping.ok || ping.body.Code !== 0) {
       throw new Error(ping.body.Message!)
     }
 
     ipAddress = ping.body.IPAddress
 
-    const init = await this.request<InitDeviceBody>('InitDevice', {
+    const init = await this.request<InitDeviceBody>(RequestType.InitDevice, {
       DeviceName: DEVICE_NAME,
     })
     if (!init.ok || init.body.Code !== 0) {
@@ -168,8 +230,50 @@ export class Hidive {
     })
   }
 
-  public static async selectProfile(store: StoreType, index: number) {
-    setHidiveProfile(store, index)
+  public static async fetchEpisodesByUrl(anilistId: number, url: string) {
+    const response = await superagent.get(url)
+    if (!response.ok) {
+      throw new Error('Could not scrape info from Hidive.')
+    }
+
+    const idMatch = response.text.match(/data-json='{"titleID":\s+?(\d+),/)
+    if (!idMatch || !idMatch[1]) {
+      return []
+    }
+
+    const id = Number(idMatch[1])
+
+    return this.fetchEpisodesById(anilistId, id)
+  }
+
+  public static async fetchEpisodesById(anilistId: number, id: number) {
+    const response = await this.request<GetTitleBody>(RequestType.GetTitle, {
+      Id: id,
+    })
+
+    if (!response.ok || response.body.Code !== 0) {
+      throw new Error(response.body.Status)
+    }
+
+    const title = response.body.Data.Title
+
+    return title.Episodes.map<Omit<EpisodeListEpisodes, 'isWatched'>>(
+      (ep, index) => ({
+        __typename: 'Episode',
+        provider: Provider.Hidive,
+        id: ep.Id,
+        animeId: anilistId,
+        title: ep.Name,
+        duration: title.RunTime * 60,
+        progress: null,
+        index,
+        episodeNumber: ep.EpisodeNumberValue,
+        url: `https://hidive.com/tv/${this.convertName(title.Name)}/${
+          ep.VideoKey
+        }`,
+        thumbnail: ep.ScreenShotSmallUrl,
+      }),
+    )
   }
 
   public static async disconnect(store: StoreType) {
@@ -214,10 +318,13 @@ export class Hidive {
       password = options.password
     }
 
-    const response = await this.request<AuthenticateBody>('Authenticate', {
-      Email: user,
-      Password: password,
-    })
+    const response = await this.request<AuthenticateBody>(
+      RequestType.Authenticate,
+      {
+        Email: user,
+        Password: password,
+      },
+    )
 
     if (!response.ok || response.body.Code !== 0) {
       throw new Error(response.body.Message!)
@@ -259,5 +366,14 @@ export class Hidive {
       .createHash('sha256')
       .update(sigCleanStr)
       .digest('hex')
+  }
+
+  private static convertName(name: string) {
+    return name
+      .replace(/[^a-zA-Z\d]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-/, '')
+      .replace(/-$/, '')
+      .toLowerCase()
   }
 }

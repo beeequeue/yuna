@@ -75,7 +75,6 @@ enum Window {
   Hidive = 'HIDIVE',
 }
 
-/* titleId */
 @Component({ components: { LoginHd, LoginCr, CButton, TextInput } })
 export default class Connections extends Vue {
   @Prop(Function) public continue!: () => void

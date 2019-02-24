@@ -69,7 +69,7 @@ export default class LoginHd extends Vue {
 
   public hidiveIcon = hidiveIcon
 
-  public get hidiveProfiles(): DropdownItem {
+  public get hidiveProfiles(): DropdownItem[] {
     return getHidiveProfiles(this.$store).map<DropdownItem>((profile, i) => ({
       label: profile.Nickname,
       value: i as any,

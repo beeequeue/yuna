@@ -38,7 +38,11 @@
         @click.native="toggleItemOpen"
       />
 
-      <source-select :anime="anime" :setProvider="setProvider" />
+      <source-select
+        :anime="anime"
+        :currentProvider="item.provider"
+        :setProvider="setProvider"
+      />
 
       <span class="filler" />
 

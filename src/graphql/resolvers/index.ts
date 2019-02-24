@@ -1,6 +1,6 @@
 import { DataProxy } from 'apollo-cache'
 import gql from 'graphql-tag'
-import { isNil, pathOr } from 'rambdax'
+import { isNil, pathOr, propEq } from 'rambdax'
 
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
@@ -16,6 +16,7 @@ import { fetchEpisodesOfSeries, fetchRating } from '@/lib/myanimelist'
 import { EpisodeRelations, getEpisodeRelations } from '@/lib/relations'
 import { EpisodeCache } from '@/lib/episode-cache'
 import { AniDB } from '@/lib/anidb'
+import { Hidive } from '@/lib/hidive'
 
 interface EpisodeVariables {
   id: number
@@ -40,6 +41,7 @@ interface CachedAnime {
   nextAiringEpisode: null | {
     airingAt: number
   }
+  externalLinks: Array<{ site: string; url: string }>
 }
 
 const cacheEpisodes = (
@@ -131,24 +133,28 @@ export const resolvers = {
       }
 
       if (isStale || !episodes) {
-        if (provider === Provider.Crunchyroll) {
-          const data = cache.readFragment<CachedAnime>({
-            id: `Media:${id}`,
-            fragment: gql`
-              fragment cachedAnime on Media {
-                idMal
-                nextAiringEpisode {
-                  airingAt
-                }
+        const data = cache.readFragment<CachedAnime>({
+          id: `Media:${id}`,
+          fragment: gql`
+            fragment cachedAnime on Media {
+              idMal
+              nextAiringEpisode {
+                airingAt
               }
-            `,
-          })
+              externalLinks {
+                site
+                url
+              }
+            }
+          `,
+        })
+        const airingAt = pathOr(-1, 'nextAiringEpisode.airingAt', data) * 1000
 
-          if (!data || !data || !data.idMal) {
-            throw new Error('Could not find Anime in cache!')
-          }
+        if (!data || !data || !data.idMal) {
+          throw new Error('Could not find Anime in cache!')
+        }
 
-          const airingAt = pathOr(-1, 'airingAt', data.nextAiringEpisode) * 1000
+        if (provider === Provider.Crunchyroll) {
           let unconfirmedEpisodes
 
           try {
@@ -177,6 +183,34 @@ export const resolvers = {
           )
 
           episodes = relations[id]
+        } else if (provider === Provider.Hidive) {
+          const hidiveLink = data.externalLinks.find(propEq('site', 'Hidive'))
+
+          if (isNil(hidiveLink))
+            throw new Error('Could not find link to Hidive.')
+
+          let unconfirmedEpisodes: EpisodeListEpisodes[] | null = null
+          try {
+            unconfirmedEpisodes = (await Hidive.fetchEpisodesByUrl(
+              id,
+              hidiveLink.url,
+            )) as any
+          } catch (err) {
+            throw new Error(err)
+          }
+
+          if (isNil(unconfirmedEpisodes)) {
+            return []
+          }
+
+          episodes = unconfirmedEpisodes
+
+          cacheEpisodes(
+            cache,
+            Provider.Hidive,
+            { [id]: episodes },
+            nextEpisodeAiringAt,
+          )
         }
       }
 
