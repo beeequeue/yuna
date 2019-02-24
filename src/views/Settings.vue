@@ -22,7 +22,7 @@
           />
         </section>
 
-        <section id="crunchyroll">
+        <section v-if="connectedTo.crunchyroll" id="crunchyroll">
           <h3>Crunchyroll</h3>
 
           <checkbox
@@ -242,7 +242,7 @@ import Dropdown, { DropdownItem } from '@/components/Form/Dropdown.vue'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { Page, trackPageView } from '@/lib/tracking'
 import { getIsUpdateAvailable } from '@/state/app'
-import { getCrunchyrollCountry } from '@/state/auth'
+import { getCrunchyrollCountry, getIsConnectedTo } from '@/state/auth'
 import {
   addKeybinding,
   getCrunchyrollLocale,
@@ -295,6 +295,10 @@ export default class Settings extends Vue {
       label: locale.label,
       value: locale.locale_id,
     }))
+  }
+
+  public get connectedTo() {
+    return getIsConnectedTo(this.$store)
   }
 
   public mounted() {
