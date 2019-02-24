@@ -72,7 +72,7 @@ export default class LoginHd extends Vue {
   public get hidiveProfiles(): DropdownItem {
     return getHidiveProfiles(this.$store).map<DropdownItem>((profile, i) => ({
       label: profile.Nickname,
-      value: i,
+      value: i as any,
     }))
   }
 
