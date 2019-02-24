@@ -1,23 +1,28 @@
 /* eslint-disable class-name */
+import { error } from 'electron-log'
 import { activeWindow } from 'electron-util'
 import { anyPass, complement, mapAsync, T } from 'rambdax'
 import superagent from 'superagent/superagent'
 import { ActionContext, Store } from 'vuex'
-import uuid from 'uuid/v4'
 
 import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 
 import { getConfig } from '@/config'
+import { getSettings, SettingsStore } from '@/state/settings'
 import { userStore } from '@/lib/user'
 import {
   getIsConnectedTo,
   setCrunchyroll,
   setCrunchyrollCountry,
 } from '@/state/auth'
-import { delay, removeCookies, RequestError, RequestSuccess } from '@/utils'
+import {
+  delay,
+  getDeviceUuid,
+  removeCookies,
+  RequestError,
+  RequestSuccess,
+} from '@/utils'
 import { Stream } from '@/types'
-import { getSettings, SettingsStore } from '@/state/settings'
-import { error } from 'electron-log'
 
 const CR_UNBLOCKER_URL = 'api2.cr-unblocker.com'
 const API_URL = 'api.crunchyroll.com'
@@ -25,6 +30,7 @@ const VERSION = '0'
 const ENGLISH = 'enUS'
 // eslint-disable-next-line variable-name
 const device_type = 'com.crunchyroll.windows.desktop'
+const device_id = getDeviceUuid()
 // eslint-disable-next-line variable-name
 const access_token = getConfig('ACCESS_TOKEN')
 
@@ -250,13 +256,13 @@ export class Crunchyroll {
     return _locales
   }
 
-  public static createSession = async (store: StoreType) => {
+  public static createSession = async (store: StoreType, auth?: string) => {
     const { useCRUnblocker } = getSettings(store)
     let data: SessionResponse | null = null
 
     if (useCRUnblocker) {
       try {
-        data = await Crunchyroll.createUnblockedSession(store)
+        data = await Crunchyroll.createUnblockedSession(store, auth)
       } catch (e) {
         error(e)
         store.dispatch(
@@ -270,7 +276,7 @@ export class Crunchyroll {
     }
 
     if (data == null) {
-      data = await Crunchyroll.createNormalSession(store)
+      data = await Crunchyroll.createNormalSession(store, auth)
     }
 
     if (getIsConnectedTo(store).crunchyroll) {
@@ -300,7 +306,10 @@ export class Crunchyroll {
       return Promise.reject(response.body.message)
     }
 
-    const session = await Crunchyroll.createSession(store)
+    const session = await Crunchyroll.createSession(
+      store,
+      response.body.data.auth,
+    )
     const user = response.body.data.user
 
     _sessionId = session.session_id
@@ -539,22 +548,27 @@ export class Crunchyroll {
     useCustomLocale?: boolean,
   ) =>
     (await superagent.get(`https://${API_URL}/${type}.${VERSION}.json`).query({
-      session_id: _sessionId,
+      session_id: _sessionId.length > 0 ? _sessionId : undefined,
       locale: useCustomLocale ? SettingsStore.get('crLocale') : ENGLISH,
+      device_id,
       device_type,
       ...query,
     })) as CrunchyrollResponse<B>
 
-  private static createNormalSession = async (store: StoreType) => {
-    const response = await Crunchyroll.request<SessionResponse>(
-      'start_session',
-      {
+  private static createNormalSession = async (
+    store: StoreType,
+    auth?: string,
+  ) => {
+    const response = (await superagent
+      .get(getUrl('start_session'))
+      .query({
         access_token,
-        device_id: uuid(),
+        device_type,
+        device_id,
         version: '1.1',
-        auth: userStore.get('crunchyroll.refreshToken', null),
-      },
-    )
+        auth: auth || userStore.get('crunchyroll.refreshToken', null),
+      })
+      .ok(T)) as CrunchyrollResponse<SessionResponse>
 
     if (responseIsError(response)) {
       throw new Error(response.body.message)
@@ -570,14 +584,17 @@ export class Crunchyroll {
     return response.body.data
   }
 
-  private static createUnblockedSession = async (store: StoreType) => {
+  private static createUnblockedSession = async (
+    store: StoreType,
+    auth?: string,
+  ) => {
     const response = (await superagent
       .get(`https://${CR_UNBLOCKER_URL}/start_session`)
       .ok(T)
       .query({
         auth: userStore.get('crunchyroll.refreshToken', null),
         version: '1.1',
-        user_id: userStore.get('crunchyroll.user.id', null),
+        user_id: auth || userStore.get('crunchyroll.user.id', null),
       })) as CrunchyrollResponse<SessionResponse>
 
     if (responseIsError(response)) {
