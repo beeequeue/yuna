@@ -2,7 +2,7 @@
   "projects": {
     "anilist": {
       "schemaPath": "schema.graphql",
-      "includes": ["src/**/*.graphql", "./*.graphql"],
+      "includes": ["src/**/*.graphql", "src/**/*.graphqls"],
       "extensions": {
         "endpoints": {
           "default": "https://graphql.anilist.co"

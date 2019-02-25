@@ -53,16 +53,18 @@ export interface EpisodeInput {
   duration: number;
   
   progress: Maybe<number>;
-  /** Index in the Array */
+  
   index: number;
-  /** Number in Season */
+  
   episodeNumber: number;
   
-  isWatched: boolean;
+  subtitles: Maybe<string>;
   
   thumbnail: string;
   
   url: string;
+  
+  isWatched: boolean;
 }
 
 export interface AiringScheduleInput {
@@ -699,11 +701,13 @@ export type FuzzyDateInt = any;
     
     episodeNumber: number;
     
-    isWatched: boolean;
+    subtitles: Maybe<string>;
     
     url: string;
     
     thumbnail: string;
+    
+    isWatched: boolean;
   } 
 
   export type ListQueryVariables = {

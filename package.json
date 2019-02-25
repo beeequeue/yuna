@@ -64,6 +64,7 @@
     "eslint": "5.13.0",
     "eslint-plugin-prettier": "3.0.1",
     "eslint-plugin-vue": "5.1.0",
+    "graphql-cli": "3.0.11",
     "graphql-code-generator": "0.16.1",
     "graphql-codegen-add": "0.16.1",
     "graphql-codegen-introspection": "0.16.1",
@@ -116,7 +117,7 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production vue-cli-service electron:build",
     "codegen": "gql-gen",
-    "graphql:get-schema": "yarn apollo schema:download graphql.schema.json",
+    "get-schema": "yarn graphql get-schema",
     "lint": "vue-cli-service lint",
     "postinstall": "yarn electron-builder install-app-deps",
     "serve": "vue-cli-service electron:serve -c.productName=yuna-dev"

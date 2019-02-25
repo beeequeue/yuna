@@ -16,6 +16,6 @@ generates:
       - add: '/* THIS IS A GENERATED FILE */'
       - typescript-common
       - typescript-client
-  ./graphql.schema.json:
+  graphql.schema.json:
     plugins:
       - introspection

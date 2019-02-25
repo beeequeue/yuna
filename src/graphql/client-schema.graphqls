@@ -11,13 +11,15 @@ type Episode {
   title: String!
   duration: Int!
   progress: Int
-  # Index in the Array
+  """Index in the Array"""
   index: Int!
-  # Number in Season
+  """Number in Season"""
   episodeNumber: Int!
-  isWatched: Boolean!
+  """URL to .vtt file"""
+  subtitles: String
   thumbnail: String!
   url: String!
+  isWatched: Boolean!
 }
 
 input EpisodeInput {
@@ -27,23 +29,22 @@ input EpisodeInput {
   title: String!
   duration: Int!
   progress: Int
-  # Index in the Array
   index: Int!
-  # Number in Season
   episodeNumber: Int!
-  isWatched: Boolean!
+  subtitles: String
   thumbnail: String!
   url: String!
+  isWatched: Boolean!
 }
 
 extend type Media {
   scoreMal: Int
 }
 
-type Query {
+extend type Query {
   Episodes(id: Int!, provider: Provider!): [Episode!]
 }
 
-type Mutation {
+extend type Mutation {
   CacheEpisodes(id: Int!, provider: Provider!, episodes: [EpisodeInput!]!, nextEpisodeAiringAt: Int): Boolean!
 }
