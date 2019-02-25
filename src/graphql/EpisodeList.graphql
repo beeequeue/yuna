@@ -8,7 +8,6 @@ query EpisodeList($id: Int!, $provider: Provider!) {
     progress
     index
     episodeNumber
-    subtitles
     url
     thumbnail
     isWatched

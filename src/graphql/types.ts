@@ -58,8 +58,6 @@ export interface EpisodeInput {
   
   episodeNumber: number;
   
-  subtitles: Maybe<string>;
-  
   thumbnail: string;
   
   url: string;
@@ -700,8 +698,6 @@ export type FuzzyDateInt = any;
     index: number;
     
     episodeNumber: number;
-    
-    subtitles: Maybe<string>;
     
     url: string;
     

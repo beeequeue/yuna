@@ -15,8 +15,6 @@ type Episode {
   index: Int!
   """Number in Season"""
   episodeNumber: Int!
-  """URL to .vtt file"""
-  subtitles: String
   thumbnail: String!
   url: String!
   isWatched: Boolean!
@@ -31,7 +29,6 @@ input EpisodeInput {
   progress: Int
   index: Int!
   episodeNumber: Int!
-  subtitles: String
   thumbnail: String!
   url: String!
   isWatched: Boolean!
