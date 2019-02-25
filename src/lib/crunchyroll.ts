@@ -489,6 +489,7 @@ export class Crunchyroll {
 
     return {
       url: streams[0].url,
+      subtitles: null,
       progress: streamInfo.playhead,
     }
   }

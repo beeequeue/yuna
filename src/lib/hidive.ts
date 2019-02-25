@@ -325,8 +325,10 @@ export class Hidive {
     ) as string
 
     return {
-      progress: response.body.Data.CurrentTime,
       url: videoUrls[japaneseSubbedKey].hls[0],
+      subtitles:
+        response.body.Data.CaptionVttUrls[response.body.Data.CaptionLanguage],
+      progress: response.body.Data.CurrentTime,
     }
   }
 

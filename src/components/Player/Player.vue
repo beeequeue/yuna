@@ -15,7 +15,9 @@
         :poster="episode.thumbnail"
         ref="player"
         :class="{ ended }"
-      />
+      >
+        <track v-if="subtitleUrl" :src="subtitleUrl" default />
+      </video>
     </transition>
 
     <transition name="fade">
@@ -131,6 +133,7 @@ export default class Player extends Vue {
   @Required(Function) public setProgress!: (p: number) => any
 
   public streamUrl: string | null = null
+  public subtitleUrl: string | null = null
   public levels: Levels | null = null
 
   public initiated = !!this.shouldAutoPlay
@@ -259,6 +262,7 @@ export default class Player extends Vue {
       }
 
       this.streamUrl = stream.url
+      this.subtitleUrl = stream.subtitles
 
       this.playhead = stream.progress || 0
     } catch (e) {
@@ -547,6 +551,21 @@ export default class Player extends Vue {
     width: 100%;
     height: 100%;
     transition: filter 1s;
+
+    & > track {
+      pointer-events: none;
+    }
+
+    &::cue {
+      background: none;
+      font-family: 'Lato', sans-serif;
+      text-shadow: $outline;
+      font-weight: bold;
+
+      &:nth-child(odd) {
+        color: yellow;
+      }
+    }
 
     &.ended {
       filter: blur(10px);
