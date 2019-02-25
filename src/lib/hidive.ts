@@ -178,7 +178,7 @@ interface GetTitleBody {
 }
 
 interface ReqResponse {
-  Code: HidiveResponseCode
+  Code: number
   Data: any
   IPAddress: string
   Message: string | null
