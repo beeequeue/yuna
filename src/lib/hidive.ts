@@ -321,7 +321,7 @@ export class Hidive {
         url: `https://hidive.com/tv/${this.convertName(title.Name)}/${
           ep.VideoKey
         }`,
-        thumbnail: ep.ScreenShotSmallUrl,
+        thumbnail: ep.ScreenShotSmallUrl.replace(/^\/\//, 'https://'),
       }),
     )
   }
