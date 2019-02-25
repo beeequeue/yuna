@@ -2,11 +2,14 @@ import { format } from 'date-fns'
 import superagent from 'superagent/superagent'
 import crypto from 'crypto'
 import { ActionContext, Store } from 'vuex'
+import { pathOr } from 'rambdax'
 
-import { isOfType, RequestError, RequestSuccess } from '@/utils'
-import { getConfig } from '@/config'
-import { getHidiveLogin, getIsConnectedTo, setHidive } from '@/state/auth'
 import { EpisodeListEpisodes, Provider } from '@/graphql/types'
+import { getConfig } from '@/config'
+import { userStore } from '@/lib/user'
+import { getHidiveLogin, getIsConnectedTo, setHidive } from '@/state/auth'
+import { isOfType, RequestError, RequestSuccess } from '@/utils'
+import { Stream } from '@/types'
 
 const API_URL = 'api.hidive.com'
 const TOKEN = getConfig('HIDIVE_TOKEN')
@@ -16,10 +19,6 @@ const APP_ID = '24i-Android'
 let deviceId = ''
 let visitId = ''
 let ipAddress = ''
-let profile = {
-  userId: 0,
-  profileId: 0,
-}
 
 enum _ResponseCode {
   Success = 0,
@@ -27,6 +26,8 @@ enum _ResponseCode {
   InvalidSignature = 6,
   InvalidVisitId = 8,
   InvalidEmail = 29,
+  RegionRestricted = 54,
+  PremiumContentRestricted = 55,
 }
 
 // @ts-ignore
@@ -110,6 +111,32 @@ interface _Episode {
   VideoKey: string
 }
 
+interface _Stream {
+  AdUrl: null
+  AutoPlayNextEpisode: boolean
+  CaptionCssUrl: string
+  CaptionLanguage: string
+  CaptionLanguages: string[]
+  CaptionVttUrls: {
+    [key: string]: string
+  }
+  CurrentTime: number
+  FontColorCode: string
+  FontColorName: string
+  FontScale: number
+  FontSize: number
+  MaxStreams: number
+  RunTime: number
+  ShowAds: boolean
+  VideoLanguage: string
+  VideoLanguages: string[]
+  VideoUrls: {
+    [key: string]: {
+      hls: string[]
+    }
+  }
+}
+
 interface InitDeviceBody {
   DeviceId: string
   VisitId: string
@@ -164,13 +191,17 @@ enum RequestType {
   InitDevice = 'InitDevice',
   Authenticate = 'Authenticate',
   GetTitle = 'GetTitle',
+  GetVideos = 'GetVideos',
 }
 
 type StoreType = Store<any> | ActionContext<any, any>
 
 export class Hidive {
   public static get profile() {
-    return profile
+    const userId = userStore.get('hidive.user.id', 0)
+    const profileId = userStore.get('hidive.user.profile', 0)
+
+    return { userId, profileId }
   }
 
   public static get visitId() {
@@ -261,7 +292,7 @@ export class Hidive {
       (ep, index) => ({
         __typename: 'Episode',
         provider: Provider.Hidive,
-        id: ep.Id,
+        id: `${title.Id}-${ep.VideoKey}`,
         animeId: anilistId,
         title: ep.Name,
         duration: title.RunTime * 60,
@@ -274,6 +305,29 @@ export class Hidive {
         thumbnail: ep.ScreenShotSmallUrl,
       }),
     )
+  }
+
+  public static async fetchStream(id: string): Promise<Stream> {
+    const match = id.match(/^(.*)-(.*)$/) as RegExpMatchArray
+
+    const response = await this.request<_Stream>(RequestType.GetVideos, {
+      TitleId: match[1],
+      VideoKey: match[2],
+    })
+
+    if (!response.ok || response.body.Code !== 0) {
+      throw new Error(response.body.Status)
+    }
+
+    const videoUrls = response.body.Data.VideoUrls
+    const japaneseSubbedKey = Object.keys(videoUrls).find(str =>
+      str.includes('Japanese'),
+    ) as string
+
+    return {
+      progress: response.body.Data.CurrentTime,
+      url: videoUrls[japaneseSubbedKey].hls[0],
+    }
   }
 
   public static async disconnect(store: StoreType) {
@@ -295,8 +349,8 @@ export class Hidive {
         'X-ApplicationId': APP_ID,
         'X-DeviceId': deviceId,
         'X-VisitId': visitId,
-        'X-UserId': profile.userId,
-        'X-ProfileId': profile.profileId,
+        'X-UserId': this.profile.userId,
+        'X-ProfileId': this.profile.profileId,
         'X-Nonce': nonce,
         'X-Signature': signature,
       })
@@ -311,8 +365,8 @@ export class Hidive {
 
     if (isOfType<{ store: StoreType }>(options, 'store')) {
       const login = getHidiveLogin(options.store)
-      user = login.user
-      password = login.password
+      user = pathOr('', 'user', login)
+      password = pathOr('', 'password', login)
     } else {
       user = options.user
       password = options.password
@@ -356,8 +410,8 @@ export class Hidive {
       APP_ID +
       deviceId +
       visitId +
-      profile.userId +
-      profile.profileId +
+      this.profile.userId +
+      this.profile.profileId +
       JSON.stringify(body) +
       nonce +
       TOKEN

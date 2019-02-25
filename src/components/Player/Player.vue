@@ -115,6 +115,7 @@ import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
 import NextEpisodeOverlay from './NextEpisodeOverlay.vue'
 import EndOfSeasonOverlay from './EndOfSeasonOverlay.vue'
+import { Hidive } from '@/lib/hidive'
 
 @Component({
   components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
@@ -225,9 +226,13 @@ export default class Player extends Vue {
     this.fadeOutVolume()
   }
 
-  private async fetchStream(provider: Provider, id: number): Promise<Stream> {
+  private async fetchStream(provider: Provider, id: string): Promise<Stream> {
     if (provider === Provider.Crunchyroll) {
       return Crunchyroll.fetchStream(id)
+    }
+
+    if (provider === Provider.Hidive) {
+      return await Hidive.fetchStream(id)
     }
 
     return null as any
@@ -356,7 +361,12 @@ export default class Player extends Vue {
     ) {
       this.lastScrobble = this.progressInSeconds
 
-      Crunchyroll.setProgressOfEpisode(this.episode.id, this.progressInSeconds)
+      if (this.playerData.provider === Provider.Crunchyroll) {
+        Crunchyroll.setProgressOfEpisode(
+          Number(this.episode.id),
+          this.progressInSeconds,
+        )
+      }
     }
 
     if (
@@ -372,7 +382,13 @@ export default class Player extends Vue {
       this.softEnded = true
       this.lastScrobble = this.episode.duration
 
-      Crunchyroll.setProgressOfEpisode(this.episode.id, this.episode.duration)
+      if (this.playerData.provider === Provider.Crunchyroll) {
+        Crunchyroll.setProgressOfEpisode(
+          Number(this.episode.id),
+          this.episode.duration,
+        )
+      }
+
       this.updateProgressIfNecessary()
     }
   }
