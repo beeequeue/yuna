@@ -20,15 +20,34 @@ let deviceId = ''
 let visitId = ''
 let ipAddress = ''
 
-enum _ResponseCode {
-  Success = 0,
-  InvalidNonce = 5,
-  InvalidSignature = 6,
-  InvalidVisitId = 8,
-  InvalidEmail = 29,
-  RegionRestricted = 54,
-  PremiumContentRestricted = 55,
+export enum HidiveResponseCode {
+  Success = 'Success',
+  InvalidNonce = 'InvalidNonce',
+  InvalidSignature = 'InvalidSignature',
+  InvalidVisitId = 'InvalidVisitId',
+  InvalidEmail = 'InvalidEmail',
+  RegionRestricted = 'RegionRestricted',
+  PremiumContentRestricted = 'PremiumContentRestricted',
 }
+
+// const getErrorFromCode = (code: number) => {
+//   switch(code) {
+//     case 0:
+//       return HidiveResponseCode.Success
+//     case 5:
+//       return HidiveResponseCode.InvalidNonce
+//     case 6:
+//       return HidiveResponseCode.InvalidSignature
+//     case 8:
+//       return HidiveResponseCode.InvalidVisitId
+//     case 29:
+//       return HidiveResponseCode.InvalidEmail
+//     case 54:
+//       return HidiveResponseCode.RegionRestricted
+//     case 55:
+//       return HidiveResponseCode.PremiumContentRestricted
+//   }
+// }
 
 // @ts-ignore
 enum _Locale {
@@ -159,7 +178,7 @@ interface GetTitleBody {
 }
 
 interface ReqResponse {
-  Code: _ResponseCode
+  Code: HidiveResponseCode
   Data: any
   IPAddress: string
   Message: string | null

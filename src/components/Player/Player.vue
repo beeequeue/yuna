@@ -59,6 +59,7 @@
       :play="play"
       :pause="pause"
       :setProgress="setProgress"
+      :closePlayer="closePlayer"
     />
 
     <next-episode-overlay
@@ -105,6 +106,7 @@ import {
   getIsFullscreen,
   PlayerData,
   sendErrorToast,
+  setCurrentEpisode,
   toggleFullscreen,
 } from '@/state/app'
 import { getAnilistUsername } from '@/state/auth'
@@ -117,7 +119,7 @@ import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
 import NextEpisodeOverlay from './NextEpisodeOverlay.vue'
 import EndOfSeasonOverlay from './EndOfSeasonOverlay.vue'
-import { Hidive } from '@/lib/hidive'
+import { Hidive, HidiveResponseCode } from '@/lib/hidive'
 
 @Component({
   components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
@@ -229,13 +231,35 @@ export default class Player extends Vue {
     this.fadeOutVolume()
   }
 
+  public closePlayer() {
+    setCurrentEpisode(this.$store, null)
+
+    if (this.isFullscreen) {
+      this.toggleFullscreen()
+    }
+
+    // Toggle fullscreen already goes back so we only do it on big player, not full
+    if (this.$route.path === '/player-big') {
+      this.$router.back()
+    }
+  }
+
   private async fetchStream(provider: Provider, id: string): Promise<Stream> {
     if (provider === Provider.Crunchyroll) {
       return Crunchyroll.fetchStream(id)
     }
 
     if (provider === Provider.Hidive) {
-      return await Hidive.fetchStream(id)
+      try {
+        return await Hidive.fetchStream(id)
+      } catch (err) {
+        if (err.message === HidiveResponseCode.RegionRestricted) {
+          this.closePlayer()
+          throw new Error('This show is not available in your country.')
+        }
+
+        throw new Error(err)
+      }
     }
 
     return null as any
