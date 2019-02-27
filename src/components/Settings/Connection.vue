@@ -41,6 +41,7 @@ import { Hidive } from '@/lib/hidive'
 @Component({ components: { CButton } })
 export default class Connection extends Vue {
   @Required(String) public type!: 'crunchyroll' | 'anilist' | 'hidive'
+  @Required(Function) public setCurrentWindow!: (window: string) => any
 
   public connectSvg = mdiLinkVariant
   public disconnectSvg = mdiLinkVariantOff
@@ -58,7 +59,7 @@ export default class Connection extends Vue {
   }
 
   public async connect() {
-    /* no-op */
+    this.setCurrentWindow(capitalize(this.type))
   }
 
   public async disconnect() {

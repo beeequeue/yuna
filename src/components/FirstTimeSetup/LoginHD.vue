@@ -44,21 +44,17 @@ import hidiveIcon from '@/assets/hidive.svg'
 import TextInput from '@/components/Form/TextInput.vue'
 import CButton from '@/components/CButton.vue'
 import Loading from '@/components/Loading.vue'
+import Dropdown, { DropdownItem } from '@/components/Form/Dropdown.vue'
 
-import { Required } from '@/decorators'
+import { Hidive } from '@/lib/hidive'
 import {
   getHidiveProfileIndex,
   getHidiveProfiles,
   setHidiveProfile,
 } from '@/state/auth'
-import Dropdown, { DropdownItem } from '@/components/Form/Dropdown.vue'
 
 @Component({ components: { Dropdown, Loading, CButton, TextInput } })
 export default class LoginHd extends Vue {
-  @Required(Function) public loginHidive!: (
-    u: string,
-    p: string,
-  ) => Promise<any>
   @Prop(Function) public onFinished!: (() => any) | null
   @Prop(Boolean) public fullWidth!: boolean | null
 
@@ -93,7 +89,7 @@ export default class LoginHd extends Vue {
 
     try {
       this.loading = true
-      await this.loginHidive(this.email, this.password)
+      await Hidive.connect(this.$store, this.email, this.password)
       this.loading = false
     } catch (err) {
       this.loading = false

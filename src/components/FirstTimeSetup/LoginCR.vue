@@ -35,14 +35,11 @@ import TextInput from '@/components/Form/TextInput.vue'
 import CButton from '@/components/CButton.vue'
 import Loading from '@/components/Loading.vue'
 
-import { Required } from '@/decorators'
+import { Crunchyroll } from '@/lib/crunchyroll'
 
 @Component({ components: { Loading, CButton, TextInput } })
 export default class LoginCr extends Vue {
-  @Required(Function) public loginCrunchyroll!: (
-    u: string,
-    p: string,
-  ) => Promise<any>
+  @Prop(Function) public onFinished!: (() => any) | null
   @Prop(Boolean) public fullWidth!: boolean | null
 
   public loading: boolean | null = null
@@ -61,8 +58,12 @@ export default class LoginCr extends Vue {
 
     try {
       this.loading = true
-      await this.loginCrunchyroll(this.username, this.password)
+      await Crunchyroll.login(this.$store, this.username, this.password)
       this.loading = false
+
+      if (this.onFinished) {
+        this.onFinished()
+      }
     } catch (err) {
       this.loading = false
       this.error = err

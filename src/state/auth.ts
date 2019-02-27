@@ -211,6 +211,8 @@ export const auth = {
         name: profile.Nickname,
         profile: profile.Id,
       }
+
+      userStore.set('hidive', state.hidive)
     },
   },
 }
