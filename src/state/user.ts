@@ -1,16 +1,50 @@
 import { getStoreAccessors } from 'vuex-typescript'
-import { isNil, propEq } from 'rambdax'
+import { isNil, path, pathOr, propEq } from 'rambdax'
 
-import { Provider } from '@/graphql/types'
+import { MediaListStatus, Provider } from '@/graphql/types'
 import { RootState } from '@/state/store'
 import { QueueItem, userStore } from '@/lib/user'
+import { StreamingSource } from '@/types'
+import { getStreamingSources, stripFalsy } from '@/utils'
+import { ActionContext } from 'vuex'
+import { getIsConnectedTo } from '@/state/auth'
 
 const isInQueue = (state: UserState, id: number) =>
   !isNil(state.queue.find(propEq('id', id)))
 
+const addIfExistsAndIsConnected = (
+  store: UserContext,
+  provider: Provider,
+  source: StreamingSource,
+  sources: string[],
+): Provider => {
+  // Since enums are lowercase
+  const lowercaseSources = sources.map(str => str.toLowerCase())
+  const isConnectedToProvider: boolean = (getIsConnectedTo as any)(store)[
+    provider.toLowerCase()
+  ]
+
+  return isConnectedToProvider && lowercaseSources.includes(source)
+    ? provider
+    : (false as any)
+}
+
+const isCurrentlyWatching = (anime: AddToQueueOptions) =>
+  [MediaListStatus.Current, MediaListStatus.Repeating].includes(
+    pathOr(null, 'mediaListEntry.status', anime),
+  )
+
 interface SetProviderOptions {
   id: number
   provider: Provider
+}
+
+interface AddToQueueOptions {
+  id: number
+  externalLinks: Array<{ site: string; url: string }>
+  mediaListEntry: null | {
+    status: MediaListStatus
+  }
 }
 
 export interface UserState {
@@ -32,6 +66,8 @@ if (
     provider: Provider.Crunchyroll,
   }))
 }
+
+type UserContext = ActionContext<UserState, RootState>
 
 export const user = {
   namespaced: true,
@@ -55,13 +91,10 @@ export const user = {
       userStore.set('queue', queue)
     },
 
-    addToQueue(state: UserState, id: number) {
-      if (isInQueue(state, id)) return
+    addItemToQueue(state: UserState, item: QueueItem) {
+      if (isInQueue(state, item.id)) return
 
-      state.queue = [
-        ...state.queue,
-        { id, open: false, provider: Provider.Crunchyroll },
-      ]
+      state.queue = [...state.queue, item]
 
       userStore.set('queue', state.queue)
     },
@@ -99,19 +132,51 @@ export const user = {
     },
   },
 
-  actions: {},
+  actions: {
+    addToQueue(context: UserContext, anime: AddToQueueOptions) {
+      const sources = getStreamingSources(anime.externalLinks).map<string>(
+        path('site'),
+      )
+
+      const supportedProviders = [
+        addIfExistsAndIsConnected(
+          context,
+          Provider.Crunchyroll,
+          StreamingSource.Crunchyroll,
+          sources,
+        ),
+        addIfExistsAndIsConnected(
+          context,
+          Provider.Hidive,
+          StreamingSource.Hidive,
+          sources,
+        ),
+      ]
+      const provider = stripFalsy(supportedProviders)[0] || Provider.Crunchyroll
+
+      _addToQueue(context, {
+        id: anime.id,
+        open: isCurrentlyWatching(anime),
+        provider: provider,
+      })
+    },
+  },
 }
 
-const { read, commit } = getStoreAccessors<UserState, RootState>('user')
+const { read, commit, dispatch } = getStoreAccessors<UserState, RootState>(
+  'user',
+)
 
 export const getQueue = read(user.getters.getQueue)
 export const getIsInQueue = read(user.getters.getIsInQueue)
 
 export const setQueue = commit(user.mutations.setQueue)
-export const addToQueue = commit(user.mutations.addToQueue)
+const _addToQueue = commit(user.mutations.addItemToQueue)
 export const removeFromQueueByIndex = commit(
   user.mutations.removeFromQueueByIndex,
 )
 export const removeFromQueueById = commit(user.mutations.removeFromQueueById)
 export const toggleQueueItemOpen = commit(user.mutations.toggleQueueItemOpen)
 export const setQueueItemProvider = commit(user.mutations.setQueueItemProvider)
+
+export const addToQueue = dispatch(user.actions.addToQueue)

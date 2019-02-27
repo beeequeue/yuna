@@ -257,3 +257,6 @@ export const humanizeNumberList = (list: number[]) => {
 
 export const delay = async (ms: number) =>
   new Promise(resolve => setTimeout(resolve, ms))
+
+export const stripFalsy = <T extends any>(arr: T[]) =>
+  arr.filter(item => !!item)

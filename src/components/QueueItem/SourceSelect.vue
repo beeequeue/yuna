@@ -25,20 +25,20 @@
         </div>
 
         <div
-          class="menu-item crunchyroll-search"
-          @click="handleClick(Provider.CrunchyrollManual)"
-        >
-          <span class="svg" v-html="crIcon" />
-          Manual
-        </div>
-
-        <div
           v-if="getIsSupported(Provider.Hidive)"
           class="menu-item hidive"
           @click="handleClick(Provider.Hidive)"
         >
           <span class="svg" v-html="hidiveIcon" />
           Automatic
+        </div>
+
+        <div
+          class="menu-item crunchyroll-search"
+          @click="handleClick(Provider.CrunchyrollManual)"
+        >
+          <span class="svg" v-html="crIcon" />
+          Search
         </div>
 
         <div v-if="unsupportedSources.length > 0" class="menu-item unsupported">

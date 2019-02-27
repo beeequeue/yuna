@@ -90,6 +90,7 @@ import {
   QueueQuery,
   QueueVariables,
   WatchingQueryEntries,
+  WatchingQueryInfo,
   WatchingQueryLists,
 } from '@/graphql/types'
 import QUEUE_QUERY from '@/graphql/Queue.graphql'
@@ -233,13 +234,13 @@ export default class Queue extends Vue {
       )
     }
 
-    const ids = entries.map(path<number>('info.id'))
+    const animes = entries.map(path<WatchingQueryInfo>('info'))
 
     if (random) {
-      const randomIdx = Math.floor(Math.random() * ids.length)
-      addToQueue(this.$store, ids[randomIdx])
+      const randomIdx = Math.floor(Math.random() * entries.length)
+      addToQueue(this.$store, entries[randomIdx].info as any)
     } else {
-      ids.forEach(id => addToQueue(this.$store, id))
+      animes.forEach(anime => addToQueue(this.$store, anime as any))
     }
 
     const diff = this.queue.length - queueBefore.length
