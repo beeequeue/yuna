@@ -4,11 +4,9 @@
       <div class="steps">
         <div>
           <transition name="fade">
-            <login-c-r
-              v-if="!isConnectedTo.crunchyroll"
-              fullWidth
-              :error="crunchyrollError"
-              :loginCrunchyroll="loginCrunchyroll"
+            <login-a-l
+              v-if="!isConnectedTo.anilist"
+              :loginAnilist="loginAnilist"
             />
 
             <icon v-else :icon="checkSvg" />
@@ -17,9 +15,22 @@
 
         <div>
           <transition name="fade">
-            <login-a-l
-              v-if="!isConnectedTo.anilist"
-              :loginAnilist="loginAnilist"
+            <login-h-d
+              v-if="!isConnectedTo.hidive || !selectedHidiveProfile"
+              :onFinished="confirmHidiveProfile"
+              fullWidth
+            />
+
+            <icon v-else :icon="checkSvg" />
+          </transition>
+        </div>
+
+        <div>
+          <transition name="fade">
+            <login-c-r
+              v-if="!isConnectedTo.crunchyroll"
+              :onFinished="onSuccessfulLogin"
+              fullWidth
             />
 
             <icon v-else :icon="checkSvg" />
@@ -41,11 +52,12 @@ import LoginAL from '@/components/FirstTimeSetup/LoginAL.vue'
 
 import { loginAnilist } from '@/lib/anilist'
 import { Page, trackPageView } from '@/lib/tracking'
-import { Crunchyroll } from '@/lib/crunchyroll'
-import { getIsConnectedTo, getFinishedConnecting } from '@/state/auth'
+import { getFinishedConnecting, getIsConnectedTo } from '@/state/auth'
+import LoginHD from '@/components/FirstTimeSetup/LoginHD.vue'
 
 @Component({
   components: {
+    LoginHD,
     CButton,
     Icon,
     LoginCR,
@@ -55,7 +67,7 @@ import { getIsConnectedTo, getFinishedConnecting } from '@/state/auth'
 export default class Login extends Vue {
   public checkSvg = mdiCheck
 
-  public crunchyrollError: string | null = null
+  public selectedHidiveProfile = false
 
   private get isFinished() {
     return getFinishedConnecting(this.$store)
@@ -63,6 +75,10 @@ export default class Login extends Vue {
 
   public created() {
     trackPageView(Page.LOGIN)
+  }
+
+  public confirmHidiveProfile() {
+    this.selectedHidiveProfile = true
   }
 
   public onSuccessfulLogin() {
@@ -74,18 +90,6 @@ export default class Login extends Vue {
 
       this.$router.back()
     }
-  }
-
-  public async loginCrunchyroll(user: string, pass: string) {
-    this.crunchyrollError = null
-
-    try {
-      await Crunchyroll.login(this.$store, user, pass)
-    } catch (err) {
-      this.crunchyrollError = err.message
-    }
-
-    this.onSuccessfulLogin()
   }
 
   public async loginAnilist() {
