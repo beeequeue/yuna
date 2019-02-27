@@ -1,33 +1,14 @@
 import { getStoreAccessors } from 'vuex-typescript'
-import { isNil, path, pathOr, propEq } from 'rambdax'
+import { isNil, pathOr, propEq } from 'rambdax'
 
 import { MediaListStatus, Provider } from '@/graphql/types'
 import { RootState } from '@/state/store'
 import { QueueItem, userStore } from '@/lib/user'
-import { StreamingSource } from '@/types'
-import { getStreamingSources, stripFalsy } from '@/utils'
 import { ActionContext } from 'vuex'
-import { getIsConnectedTo } from '@/state/auth'
+import { getDefaultProvider } from '@/utils'
 
 const isInQueue = (state: UserState, id: number) =>
   !isNil(state.queue.find(propEq('id', id)))
-
-const addIfExistsAndIsConnected = (
-  store: UserContext,
-  provider: Provider,
-  source: StreamingSource,
-  sources: string[],
-): Provider => {
-  // Since enums are lowercase
-  const lowercaseSources = sources.map(str => str.toLowerCase())
-  const isConnectedToProvider: boolean = (getIsConnectedTo as any)(store)[
-    provider.toLowerCase()
-  ]
-
-  return isConnectedToProvider && lowercaseSources.includes(source)
-    ? provider
-    : (false as any)
-}
 
 const isCurrentlyWatching = (anime: AddToQueueOptions) =>
   [MediaListStatus.Current, MediaListStatus.Repeating].includes(
@@ -134,30 +115,10 @@ export const user = {
 
   actions: {
     addToQueue(context: UserContext, anime: AddToQueueOptions) {
-      const sources = getStreamingSources(anime.externalLinks).map<string>(
-        path('site'),
-      )
-
-      const supportedProviders = [
-        addIfExistsAndIsConnected(
-          context,
-          Provider.Crunchyroll,
-          StreamingSource.Crunchyroll,
-          sources,
-        ),
-        addIfExistsAndIsConnected(
-          context,
-          Provider.Hidive,
-          StreamingSource.Hidive,
-          sources,
-        ),
-      ]
-      const provider = stripFalsy(supportedProviders)[0] || Provider.Crunchyroll
-
       _addToQueue(context, {
         id: anime.id,
         open: isCurrentlyWatching(anime),
-        provider: provider,
+        provider: getDefaultProvider(context, anime),
       })
     },
   },

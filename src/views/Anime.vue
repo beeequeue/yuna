@@ -67,7 +67,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { path, pathOr, isNil } from 'rambdax'
+import { isNil, path, pathOr } from 'rambdax'
 
 import CoverImage from '@/components/Anime/CoverImage.vue'
 import AnimeTitle from '@/components/Anime/Title.vue'
@@ -86,13 +86,12 @@ import {
   EpisodeListEpisodes,
   EpisodeListQuery,
   EpisodeListVariables,
-  Provider,
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
 import { getSpoilerSettings } from '@/state/settings'
 import { Page, trackPageView } from '@/lib/tracking'
-import { getRelations } from '@/utils'
+import { getDefaultProvider, getRelations } from '@/utils'
 
 @Component({
   components: {
@@ -130,7 +129,7 @@ export default class Anime extends Vue {
     variables() {
       return {
         id: this.id,
-        provider: Provider.Crunchyroll,
+        provider: getDefaultProvider(this.$store, this.data.anime),
       }
     },
     skip() {

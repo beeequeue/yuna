@@ -229,6 +229,8 @@ export default class Player extends Vue {
 
   public beforeDestroy() {
     this.fadeOutVolume()
+
+    setTimeout(() => this.hls.destroy(), 500)
   }
 
   public closePlayer() {

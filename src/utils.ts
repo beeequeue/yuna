@@ -23,9 +23,12 @@ import {
   MediaListStatus,
   MediaRelation,
   PlayerAnimeQuery,
+  Provider,
 } from '@/graphql/types'
 import { StreamingSource } from '@/types'
 import Filter = Electron.Filter
+import { ActionContext, Store } from 'vuex'
+import { getIsConnectedTo } from '@/state/auth'
 
 const noop = () => {
   /* no-op */
@@ -260,3 +263,53 @@ export const delay = async (ms: number) =>
 
 export const stripFalsy = <T extends any>(arr: T[]) =>
   arr.filter(item => !!item)
+
+const addIfExistsAndIsConnected = (
+  store: Store<any> | ActionContext<any, any>,
+  provider: Provider,
+  source: StreamingSource,
+  sources: string[],
+): Provider => {
+  // Since enums are lowercase
+  const lowercaseSources = sources.map(str => str.toLowerCase())
+  const isConnectedToProvider: boolean = (getIsConnectedTo as any)(store)[
+    provider.toLowerCase()
+  ]
+
+  return isConnectedToProvider && lowercaseSources.includes(source)
+    ? provider
+    : (false as any)
+}
+
+interface _Anime {
+  id: number
+  externalLinks: Array<{ site: string; url: string }>
+  mediaListEntry: null | {
+    status: MediaListStatus
+  }
+}
+export const getDefaultProvider = (
+  store: Store<any> | ActionContext<any, any>,
+  anime: _Anime,
+) => {
+  const sources = getStreamingSources(anime.externalLinks).map<string>(
+    path('site'),
+  )
+
+  const supportedProviders = [
+    addIfExistsAndIsConnected(
+      store,
+      Provider.Crunchyroll,
+      StreamingSource.Crunchyroll,
+      sources,
+    ),
+    addIfExistsAndIsConnected(
+      store,
+      Provider.Hidive,
+      StreamingSource.Hidive,
+      sources,
+    ),
+  ]
+
+  return stripFalsy(supportedProviders)[0] || Provider.Crunchyroll
+}
