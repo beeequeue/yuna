@@ -203,14 +203,11 @@ export const resolvers = {
             return []
           }
 
-          episodes = unconfirmedEpisodes
+          const relations = getEpisodeRelations(id, unconfirmedEpisodes)
 
-          cacheEpisodes(
-            cache,
-            Provider.Hidive,
-            { [id]: episodes },
-            nextEpisodeAiringAt,
-          )
+          cacheEpisodes(cache, Provider.Hidive, relations, nextEpisodeAiringAt)
+
+          episodes = relations[id]
         }
       }
 
