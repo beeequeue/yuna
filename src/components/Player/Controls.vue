@@ -264,6 +264,7 @@ export default class Controls extends Vue {
   @Required(Function) public onChangeSpeed!: (e: Event) => void
   @Required(Function) public onChangeQuality!: (quality: number) => void
   @Required(Function) public setProgress!: (progress: number) => any
+  @Required(Function) public closePlayer!: (progress: number) => any
 
   public settingsOpen = false
   public hovering = this.settingsOpen || this.paused || false
@@ -358,19 +359,6 @@ export default class Controls extends Vue {
     this.hovering = false
 
     if (this.hoveringTimeout) window.clearTimeout(this.hoveringTimeout)
-  }
-
-  public closePlayer() {
-    setCurrentEpisode(this.$store, null)
-
-    if (this.isFullscreen) {
-      this._toggleFullscreen()
-    }
-
-    // Toggle fullscreen already goes back so we only do it on big player, not full
-    if (this.$route.path === '/player-big') {
-      this.$router.back()
-    }
   }
 
   public maximizePlayer() {

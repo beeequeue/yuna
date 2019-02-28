@@ -44,7 +44,7 @@ export interface EpisodeInput {
   
   provider: Provider;
   
-  id: number;
+  id: string;
   
   animeId: number;
   
@@ -53,16 +53,16 @@ export interface EpisodeInput {
   duration: number;
   
   progress: Maybe<number>;
-  /** Index in the Array */
-  index: number;
-  /** Number in Season */
-  episodeNumber: number;
   
-  isWatched: boolean;
+  index: number;
+  
+  episodeNumber: number;
   
   thumbnail: string;
   
   url: string;
+  
+  isWatched: boolean;
 }
 
 export interface AiringScheduleInput {
@@ -685,7 +685,7 @@ export type FuzzyDateInt = any;
     
     provider: Provider;
     
-    id: number;
+    id: string;
     
     animeId: number;
     
@@ -699,11 +699,11 @@ export type FuzzyDateInt = any;
     
     episodeNumber: number;
     
-    isWatched: boolean;
-    
     url: string;
     
     thumbnail: string;
+    
+    isWatched: boolean;
   } 
 
   export type ListQueryVariables = {

@@ -8,6 +8,7 @@ module.exports = {
     'no-console': 'error',
     'no-debugger': 'error',
     'prettier/prettier': 'off',
+    'no-extra-boolean-cast': 'off',
   },
   parserOptions: {
     parser: '@typescript-eslint/parser',

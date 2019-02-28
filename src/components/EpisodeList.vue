@@ -8,6 +8,12 @@
     ref="container"
     @wheel.prevent="handleScroll"
   >
+    <transition name="fade">
+      <div v-if="notAvailable" class="not-available-notice">
+        This show is not available in your country. 😢
+      </div>
+    </transition>
+
     <div class="episode-wrapper" :class="{ 'pad-right': !!padRight }">
       <episode
         v-for="episode in episodes"
@@ -24,15 +30,17 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { pathOr, isNil } from 'rambdax'
+import { isNil, pathOr } from 'rambdax'
 
 import {
   EpisodeListEpisodes,
+  Provider,
   QueueAnime,
   QueueMediaListEntry,
 } from '@/graphql/types'
 
 import { Required } from '@/decorators'
+import { Hidive, HidiveResponseCode } from '@/lib/hidive'
 import Episode from './Episode.vue'
 import Loading from './Loading.vue'
 import SourceList from './SourceList.vue'
@@ -46,6 +54,8 @@ export default class EpisodeList extends Vue {
   @Prop(Boolean) public scrollToNextEpisode!: boolean | null
   @Prop(Boolean) public small!: boolean | null
   @Prop(Boolean) public padRight!: boolean | null
+
+  public notAvailable = false
 
   public $refs!: {
     container: HTMLDivElement
@@ -66,6 +76,32 @@ export default class EpisodeList extends Vue {
 
   public handleScroll(e: WheelEvent) {
     this.$refs.container.scrollBy(e.deltaY + e.deltaX, 0)
+  }
+
+  @Watch('episodes')
+  public async tryToFetchEpisode() {
+    if (!this.episodes || this.episodes.length < 1) {
+      this.notAvailable = false
+      return
+    }
+
+    const episode = this.episodes[0]
+
+    if (episode.provider === Provider.Hidive) {
+      try {
+        return await Hidive.fetchStream(episode.id)
+      } catch (err) {
+        if (err.message === HidiveResponseCode.RegionRestricted) {
+          this.notAvailable = true
+          setTimeout(() => {
+            this.$refs.container!.scrollTo({ left: 0, behavior: 'smooth' })
+          }, 500)
+          return
+        }
+
+        throw new Error(err)
+      }
+    }
   }
 
   @Watch('episodes')
@@ -103,6 +139,8 @@ export default class EpisodeList extends Vue {
 </script>
 
 <style scoped lang="scss">
+@import '../colors';
+
 .loading-wrapper {
   padding: 10px;
 }
@@ -116,6 +154,21 @@ export default class EpisodeList extends Vue {
 
   &::-webkit-scrollbar {
     display: none;
+  }
+
+  & > .not-available-notice {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    padding: 10px;
+    padding-right: 100px;
+    background: linear-gradient(90deg, $danger, $danger, $danger, transparent);
+    font-family: 'Raleway', sans-serif;
+    font-weight: 500;
+    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    z-index: 10;
   }
 
   & > .episode-wrapper {

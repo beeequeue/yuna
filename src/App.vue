@@ -9,7 +9,9 @@
     <title-bar v-if="!isFullscreen" />
 
     <transition>
-      <navbar v-if="isConnectedTo.all && hasFinishedSetup && !isFullscreen" />
+      <navbar
+        v-if="isFinishedConnecting && hasFinishedSetup && !isFullscreen"
+      />
     </transition>
 
     <transition name="route">
@@ -19,7 +21,7 @@
       />
     </transition>
 
-    <player-container v-if="isConnectedTo.all" />
+    <player-container v-if="isFinishedConnecting" />
 
     <toast-overlay />
 
@@ -47,7 +49,7 @@ import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 
 import { Crunchyroll } from '@/lib/crunchyroll'
-import { getIsConnectedTo } from '@/state/auth'
+import { getIsConnectedTo, getFinishedConnecting } from '@/state/auth'
 import { getHasFinishedSetup } from '@/state/settings'
 import {
   AppState,
@@ -65,6 +67,7 @@ import ToastOverlay from './components/ToastOverlay.vue'
 import AboutModal from './components/Modals/AboutModal.vue'
 import EditModal from './components/Modals/EditModal.vue'
 import ManualSearchModal from '@/components/Modals/ManualSearch/ManualSearchModal.vue'
+import { Hidive } from '@/lib/hidive'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
@@ -83,6 +86,10 @@ const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
 export default class App extends Vue {
   get isConnectedTo() {
     return getIsConnectedTo(this.$store)
+  }
+
+  get isFinishedConnecting() {
+    return getFinishedConnecting(this.$store)
   }
 
   get isFullscreen() {
@@ -115,12 +122,13 @@ export default class App extends Vue {
       this.$router.push('/first-time-setup')
     }
 
-    if (!this.isConnectedTo.all && this.hasFinishedSetup) {
+    if (!this.isFinishedConnecting && this.hasFinishedSetup) {
       window.initialLogin = true
       this.$router.push('login')
     }
 
-    await Crunchyroll.createSession(this.$store)
+    Hidive.createVisit(this.$store)
+    Crunchyroll.createSession(this.$store)
 
     if (process.env.NODE_ENV === 'production') {
       ipcRenderer.send(CHECK_FOR_UPDATES)

@@ -122,16 +122,16 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { contains, propEq, findIndex, pathOr } from 'rambdax'
+import { contains, findIndex, pathOr, propEq } from 'rambdax'
 import {
+  mdiClose,
+  mdiPause,
+  mdiPencil,
+  mdiPlay,
   mdiPlaylistMinus,
   mdiPlaylistPlay,
   mdiPlaylistPlus,
   mdiRepeat,
-  mdiPlay,
-  mdiPause,
-  mdiClose,
-  mdiPencil,
 } from '@mdi/js'
 
 import {
@@ -140,10 +140,10 @@ import {
   setStatusMutation,
 } from '@/graphql/mutations'
 import {
-  AnimePageQueryMediaListEntry,
   AnimePageQueryAnime,
+  AnimePageQueryMediaListEntry,
+  MediaListStatus,
 } from '@/graphql/types'
-import { MediaListStatus } from '@/graphql/types'
 import { getAnilistUserId } from '@/state/auth'
 import {
   addToQueue,
@@ -152,9 +152,9 @@ import {
   removeFromQueueByIndex,
 } from '@/state/user'
 import {
+  initEditModal,
   sendErrorToast,
   sendNotImplementedToast,
-  initEditModal,
 } from '@/state/app'
 import { getSettings } from '@/state/settings'
 
@@ -271,7 +271,7 @@ export default class Actions extends Vue {
       await this.addEntryMutation(MediaListStatus.Planning)
     }
 
-    addToQueue(this.$store, this.anime.id)
+    addToQueue(this.$store, this.anime as any)
   }
 
   public async removeFromQueue() {

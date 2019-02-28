@@ -16,7 +16,11 @@
     />
 
     <transition>
-      <div v-if="true" class="error">{{ error }}</div>
+      <div v-if="error" class="error">{{ error }}</div>
+    </transition>
+
+    <transition name="fade">
+      <loading v-if="loading" class="loading" />
     </transition>
 
     <c-button content="Login" :click="login" />
@@ -29,16 +33,17 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import crIcon from '@/assets/crunchyroll.svg'
 import TextInput from '@/components/Form/TextInput.vue'
 import CButton from '@/components/CButton.vue'
+import Loading from '@/components/Loading.vue'
 
-import { Required } from '@/decorators'
+import { Crunchyroll } from '@/lib/crunchyroll'
 
-@Component({ components: { CButton, TextInput } })
+@Component({ components: { Loading, CButton, TextInput } })
 export default class LoginCr extends Vue {
-  @Prop(Boolean) public loading!: boolean | null
-  @Prop(String) public error!: string | null
-  @Required(Function) public loginCrunchyroll!: (u: string, p: string) => any
+  @Prop(Function) public onFinished!: (() => any) | null
   @Prop(Boolean) public fullWidth!: boolean | null
 
+  public loading: boolean | null = null
+  public error: string | null = null
   public username = ''
   public password = ''
 
@@ -48,8 +53,21 @@ export default class LoginCr extends Vue {
     this[key] = value
   }
 
-  public login() {
-    this.loginCrunchyroll(this.username, this.password)
+  public async login() {
+    this.error = null
+
+    try {
+      this.loading = true
+      await Crunchyroll.login(this.$store, this.username, this.password)
+      this.loading = false
+
+      if (this.onFinished) {
+        this.onFinished()
+      }
+    } catch (err) {
+      this.loading = false
+      this.error = err
+    }
   }
 }
 </script>
@@ -58,6 +76,7 @@ export default class LoginCr extends Vue {
 @import '../../colors';
 
 .login-cr {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -86,6 +105,26 @@ export default class LoginCr extends Vue {
     font-weight: 700;
     padding: 0 20px;
     margin-bottom: 15px;
+    max-height: 36px;
+    overflow: hidden;
+    transition: max-height 0.25s, margin 0.25s;
+  }
+
+  & > .loading {
+    position: absolute;
+    top: 50%;
+    right: 75px;
+    height: 25px;
+    width: 25px;
+  }
+
+  & > .error,
+  & > .loading {
+    &.v-enter,
+    &.v-leave-to {
+      max-height: 0;
+      margin-bottom: 0;
+    }
   }
 }
 

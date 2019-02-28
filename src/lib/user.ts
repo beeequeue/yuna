@@ -1,8 +1,9 @@
 import Store from 'electron-store'
 
 import { Provider } from '@/graphql/types'
-import { AnilistData, CrunchyrollData } from '@/state/auth'
+import { AnilistData, CrunchyrollData, HidiveData } from '@/state/auth'
 
+const { NODE_ENV } = process.env
 const CURRENT_VERSION = 4
 
 export interface QueueItem {
@@ -16,10 +17,15 @@ interface UserStore {
   queue: QueueItem[]
   crunchyroll: Omit<CrunchyrollData, 'country'>
   anilist: AnilistData
+  hidive: HidiveData
 }
 
 export const userStore = new Store<UserStore>({
-  name: process.env.NODE_ENV === 'development' ? 'user-d' : 'user',
+  name: NODE_ENV === 'development' ? 'user-d' : 'user',
+  encryptionKey:
+    NODE_ENV === 'production'
+      ? 'not really secure but better than nothing?'
+      : undefined,
 })
 
 // Ultra primitive migration

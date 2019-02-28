@@ -44,7 +44,7 @@ export default class CrunchyrollEpisode extends Vue {
     if (checked) {
       this.selectEpisodes([this.episode])
     } else if (!isNil(this.selectedEpisode)) {
-      this.unselectEpisodes([this.selectedEpisode.id])
+      this.unselectEpisodes([Number(this.selectedEpisode.id)])
     }
   }
 }

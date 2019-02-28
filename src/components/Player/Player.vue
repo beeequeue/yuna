@@ -15,7 +15,9 @@
         :poster="episode.thumbnail"
         ref="player"
         :class="{ ended }"
-      />
+      >
+        <track v-if="subtitleUrl" :src="subtitleUrl" default />
+      </video>
     </transition>
 
     <transition name="fade">
@@ -57,6 +59,7 @@
       :play="play"
       :pause="pause"
       :setProgress="setProgress"
+      :closePlayer="closePlayer"
     />
 
     <next-episode-overlay
@@ -103,6 +106,7 @@ import {
   getIsFullscreen,
   PlayerData,
   sendErrorToast,
+  setCurrentEpisode,
   toggleFullscreen,
 } from '@/state/app'
 import { getAnilistUsername } from '@/state/auth'
@@ -115,6 +119,7 @@ import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
 import NextEpisodeOverlay from './NextEpisodeOverlay.vue'
 import EndOfSeasonOverlay from './EndOfSeasonOverlay.vue'
+import { Hidive, HidiveResponseCode } from '@/lib/hidive'
 
 @Component({
   components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
@@ -130,6 +135,7 @@ export default class Player extends Vue {
   @Required(Function) public setProgress!: (p: number) => any
 
   public streamUrl: string | null = null
+  public subtitleUrl: string | null = null
   public levels: Levels | null = null
 
   public initiated = !!this.shouldAutoPlay
@@ -223,11 +229,39 @@ export default class Player extends Vue {
 
   public beforeDestroy() {
     this.fadeOutVolume()
+
+    setTimeout(() => this.hls.destroy(), 500)
   }
 
-  private async fetchStream(provider: Provider, id: number): Promise<Stream> {
+  public closePlayer() {
+    setCurrentEpisode(this.$store, null)
+
+    if (this.isFullscreen) {
+      this.toggleFullscreen()
+    }
+
+    // Toggle fullscreen already goes back so we only do it on big player, not full
+    if (this.$route.path === '/player-big') {
+      this.$router.back()
+    }
+  }
+
+  private async fetchStream(provider: Provider, id: string): Promise<Stream> {
     if (provider === Provider.Crunchyroll) {
       return Crunchyroll.fetchStream(id)
+    }
+
+    if (provider === Provider.Hidive) {
+      try {
+        return await Hidive.fetchStream(id)
+      } catch (err) {
+        if (err.message === HidiveResponseCode.RegionRestricted) {
+          this.closePlayer()
+          throw new Error('This show is not available in your country.')
+        }
+
+        throw new Error(err)
+      }
     }
 
     return null as any
@@ -254,6 +288,7 @@ export default class Player extends Vue {
       }
 
       this.streamUrl = stream.url
+      this.subtitleUrl = stream.subtitles
 
       this.playhead = stream.progress || 0
     } catch (e) {
@@ -356,7 +391,12 @@ export default class Player extends Vue {
     ) {
       this.lastScrobble = this.progressInSeconds
 
-      Crunchyroll.setProgressOfEpisode(this.episode.id, this.progressInSeconds)
+      if (this.playerData.provider === Provider.Crunchyroll) {
+        Crunchyroll.setProgressOfEpisode(
+          Number(this.episode.id),
+          this.progressInSeconds,
+        )
+      }
     }
 
     if (
@@ -372,7 +412,13 @@ export default class Player extends Vue {
       this.softEnded = true
       this.lastScrobble = this.episode.duration
 
-      Crunchyroll.setProgressOfEpisode(this.episode.id, this.episode.duration)
+      if (this.playerData.provider === Provider.Crunchyroll) {
+        Crunchyroll.setProgressOfEpisode(
+          Number(this.episode.id),
+          this.episode.duration,
+        )
+      }
+
       this.updateProgressIfNecessary()
     }
   }
@@ -531,6 +577,21 @@ export default class Player extends Vue {
     width: 100%;
     height: 100%;
     transition: filter 1s;
+
+    & > track {
+      pointer-events: none;
+    }
+
+    &::cue {
+      background: none;
+      font-family: 'Lato', sans-serif;
+      text-shadow: $outline;
+      font-weight: bold;
+
+      &:nth-child(odd) {
+        color: yellow;
+      }
+    }
 
     &.ended {
       filter: blur(10px);

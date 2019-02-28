@@ -1,6 +1,7 @@
 const config = {
   all: {
-    ACCESS_TOKEN: 'LNDJgOit5yaRIWN',
+    CRUNCHYROLL_TOKEN: 'LNDJgOit5yaRIWN',
+    HIDIVE_TOKEN: '6e6b1afcf0800e2ba312bce28d1dbccc87120904',
     ANIDB_CLIENT: 'application',
     ANIDB_CLIENTVER: '2',
     ANILIST_ID: '913',

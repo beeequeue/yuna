@@ -22,17 +22,26 @@ import { mdiLinkVariant, mdiLinkVariantOff } from '@mdi/js'
 
 import crIcon from '@/assets/crunchyroll.svg'
 import alIcon from '@/assets/anilist.svg'
+import hidiveIcon from '@/assets/hidive.svg'
 
 import { Required } from '@/decorators'
 import { capitalize } from '@/utils'
 import CButton from '@/components/CButton.vue'
-import { AnilistData, CrunchyrollData, getIsConnectedTo } from '@/state/auth'
+import {
+  AnilistData,
+  CrunchyrollData,
+  getIsConnectedTo,
+  getFinishedConnecting,
+  HidiveData,
+} from '@/state/auth'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { logoutAnilist } from '@/lib/anilist'
+import { Hidive } from '@/lib/hidive'
 
 @Component({ components: { CButton } })
 export default class Connection extends Vue {
-  @Required(String) public type!: 'crunchyroll' | 'anilist'
+  @Required(String) public type!: 'crunchyroll' | 'anilist' | 'hidive'
+  @Required(Function) public setCurrentWindow!: (window: string) => any
 
   public connectSvg = mdiLinkVariant
   public disconnectSvg = mdiLinkVariantOff
@@ -45,11 +54,12 @@ export default class Connection extends Vue {
     return pathOr(null, ['auth', this.type, 'user'], this.$store.state) as
       | CrunchyrollData['user']
       | AnilistData['user']
+      | HidiveData['user']
       | null
   }
 
   public async connect() {
-    /* no-op */
+    this.setCurrentWindow(capitalize(this.type))
   }
 
   public async disconnect() {
@@ -61,9 +71,13 @@ export default class Connection extends Vue {
       case 'anilist':
         await logoutAnilist(this.$store)
         break
+
+      case 'hidive':
+        await Hidive.disconnect(this.$store)
+        break
     }
 
-    if (!getIsConnectedTo(this.$store).all) {
+    if (!getFinishedConnecting(this.$store)) {
       this.$router.push('/login')
     }
   }
@@ -75,6 +89,8 @@ export default class Connection extends Vue {
         return crIcon
       case 'anilist':
         return alIcon
+      case 'hidive':
+        return hidiveIcon
     }
   }
 

@@ -32,9 +32,7 @@ const ENGLISH = 'enUS'
 const device_type = 'com.crunchyroll.windows.desktop'
 const device_id = getDeviceUuid()
 // eslint-disable-next-line variable-name
-const access_token = getConfig('ACCESS_TOKEN')
-
-export enum CrunchyrollLocale {}
+const access_token = getConfig('CRUNCHYROLL_TOKEN')
 
 export interface User {
   class: 'user'
@@ -479,7 +477,9 @@ export class Crunchyroll {
     return Crunchyroll.fetchEpisodesOfCollection(id, episode.collection_id)
   }
 
-  public static fetchStream = async (mediaId: number): Promise<Stream> => {
+  public static fetchStream = async (
+    mediaId: number | string,
+  ): Promise<Stream> => {
     const streamInfo = await Crunchyroll.fetchStreamInfo(mediaId.toString())
     const streams = streamInfo.stream_data.streams
 
@@ -489,6 +489,7 @@ export class Crunchyroll {
 
     return {
       url: streams[0].url,
+      subtitles: null,
       progress: streamInfo.playhead,
     }
   }
@@ -668,7 +669,7 @@ const mediaToEpisode = (id: number) => (
 ): Omit<EpisodeListEpisodes, 'isWatched'> => ({
   __typename: 'Episode',
   provider: Provider.Crunchyroll,
-  id: Number(media_id),
+  id: media_id,
   animeId: id,
   title: name,
   index,

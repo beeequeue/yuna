@@ -22,7 +22,7 @@
           />
         </section>
 
-        <section id="crunchyroll">
+        <section v-if="connectedTo.crunchyroll" id="crunchyroll">
           <h3>Crunchyroll</h3>
 
           <checkbox
@@ -196,13 +196,29 @@
       <section class="category" id="accounts">
         <h1>Accounts</h1>
 
-        <connection type="anilist" />
+        <connection type="anilist" :setCurrentWindow="setCurrentWindow" />
 
-        <connection type="crunchyroll" />
+        <connection type="crunchyroll" :setCurrentWindow="setCurrentWindow" />
+
+        <connection type="hidive" :setCurrentWindow="setCurrentWindow" />
       </section>
     </div>
 
-    <div class="info-container"></div>
+    <div class="info-container">
+      <transition name="fade">
+        <div v-if="currentWindow" class="login-window">
+          <login-c-r
+            v-if="currentWindow === Window.Crunchyroll"
+            :onFinished="() => setCurrentWindow(null)"
+          />
+
+          <login-h-d
+            v-if="currentWindow === Window.Hidive"
+            :onFinished="() => setCurrentWindow(null)"
+          />
+        </div>
+      </transition>
+    </div>
 
     <transition name="fade">
       <div
@@ -236,11 +252,13 @@ import Checkbox from '@/components/Checkbox.vue'
 import CButton from '@/components/CButton.vue'
 import Icon from '@/components/Icon.vue'
 import Dropdown, { DropdownItem } from '@/components/Form/Dropdown.vue'
+import LoginHD from '@/components/FirstTimeSetup/LoginHD.vue'
+import LoginCR from '@/components/FirstTimeSetup/LoginCR.vue'
 
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { Page, trackPageView } from '@/lib/tracking'
 import { getIsUpdateAvailable } from '@/state/app'
-import { getCrunchyrollCountry } from '@/state/auth'
+import { getCrunchyrollCountry, getIsConnectedTo } from '@/state/auth'
 import {
   addKeybinding,
   getCrunchyrollLocale,
@@ -256,15 +274,31 @@ import {
 } from '@/state/settings'
 import { DOWNLOAD_UPDATE, OPEN_DEVTOOLS } from '@/messages'
 
+enum Window {
+  Crunchyroll = 'Crunchyroll',
+  Hidive = 'Hidive',
+}
+
 @Component({
-  components: { Dropdown, Connection, CButton, Checkbox, Keybinding, Icon },
+  components: {
+    LoginCR,
+    LoginHD,
+    Dropdown,
+    Connection,
+    CButton,
+    Checkbox,
+    Keybinding,
+    Icon,
+  },
 })
 export default class Settings extends Vue {
+  public currentWindow: Window | null = null
   public actionToBind: KeybindingAction | null = null
 
   public infoSvg = mdiInformationOutline
   public retrySvg = mdiRefresh
   public resetSvg = mdiUndoVariant
+  public Window = Window
 
   public get keybindingActions(): string[] {
     return Object.keys(KeybindingAction)
@@ -295,6 +329,10 @@ export default class Settings extends Vue {
     }))
   }
 
+  public get connectedTo() {
+    return getIsConnectedTo(this.$store)
+  }
+
   public mounted() {
     trackPageView(Page.SETTINGS)
   }
@@ -319,6 +357,10 @@ export default class Settings extends Vue {
 
   public setCrunchyrollLocale(value: string) {
     setCrunchyrollLocale(this.$store, value)
+  }
+
+  public setCurrentWindow(window: Window | null) {
+    this.currentWindow = window
   }
 
   public async createUBSession() {
@@ -503,22 +545,12 @@ export default class Settings extends Vue {
     width: 100%;
     height: 100%;
 
-    & > .spoiler-window {
-      height: 350px;
-      width: 300px;
+    & > .login-window {
+      padding: 10px 25px 25px;
+      width: 350px;
+      border-radius: 5px;
       background: $dark;
       box-shadow: $shadow;
-
-      &.v-enter-active,
-      &.v-leave-active {
-        transition: transform 0.25s, opacity 0.25s;
-      }
-
-      &.v-enter,
-      &.v-leave-to {
-        transform: translateY(2.5%);
-        opacity: 0;
-      }
     }
   }
 }
