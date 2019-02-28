@@ -81,6 +81,7 @@ export default class EpisodeList extends Vue {
   @Watch('episodes')
   public async tryToFetchEpisode() {
     if (!this.episodes || this.episodes.length < 1) {
+      this.notAvailable = false
       return
     }
 
@@ -92,6 +93,9 @@ export default class EpisodeList extends Vue {
       } catch (err) {
         if (err.message === HidiveResponseCode.RegionRestricted) {
           this.notAvailable = true
+          setTimeout(() => {
+            this.$refs.container!.scrollTo({ left: 0, behavior: 'smooth' })
+          }, 500)
           return
         }
 
@@ -154,9 +158,11 @@ export default class EpisodeList extends Vue {
 
   & > .not-available-notice {
     position: absolute;
-    top: 0;
+    top: 50%;
     left: 0;
-    padding: 5px;
+    right: 0;
+    transform: translateY(-50%);
+    padding: 10px;
     padding-right: 100px;
     background: linear-gradient(90deg, $danger, $danger, $danger, transparent);
     font-family: 'Raleway', sans-serif;
