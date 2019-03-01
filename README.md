@@ -38,6 +38,12 @@
   <a href="https://github.com/BeeeQueue/yuna/releases" target="_blank">Download</a>
 </h4>
 
+<p align="center">
+  <a href="https://yuna.moe" target="_blank">
+    <img src="https://yuna.moe/img/flow/anime.jpg" width="500" alt="Screenshot"/>
+  </a>
+</p>
+
 ## Tech Stack
 
 - Vue + Vuex + Apollo
