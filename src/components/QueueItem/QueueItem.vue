@@ -1,6 +1,10 @@
 <template>
   <div class="queue-item">
-    <div class="status" v-tooltip.right="capitalize(status)">
+    <div
+      v-if="listEntry != null"
+      class="status"
+      v-tooltip.right="capitalize(status)"
+    >
       <icon v-if="iconForStatus" :icon="iconForStatus" />
 
       <animated-height>
