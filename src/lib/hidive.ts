@@ -288,7 +288,7 @@ export class Hidive {
 
     const idMatch = response.text.match(/data-json='{"titleID":\s+?(\d+),/)
     if (!idMatch || !idMatch[1]) {
-      return []
+      return null
     }
 
     const id = Number(idMatch[1])
