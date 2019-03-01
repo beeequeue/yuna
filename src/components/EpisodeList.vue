@@ -80,8 +80,9 @@ export default class EpisodeList extends Vue {
 
   @Watch('episodes')
   public async tryToFetchEpisode() {
+    this.notAvailable = false
+
     if (!this.episodes || this.episodes.length < 1) {
-      this.notAvailable = false
       return
     }
 
@@ -89,7 +90,7 @@ export default class EpisodeList extends Vue {
 
     if (episode.provider === Provider.Hidive) {
       try {
-        return await Hidive.fetchStream(episode.id)
+        await Hidive.fetchStream(episode.id)
       } catch (err) {
         if (err.message === HidiveResponseCode.RegionRestricted) {
           this.notAvailable = true
