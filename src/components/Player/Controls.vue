@@ -166,8 +166,6 @@
         <label v-if="levels != null">
           Quality:
           <select @input="handleChangeQuality" :value="quality">
-            <option :value="-1">Auto</option>
-
             <option
               v-for="(level, quality) in levels"
               :key="level"
@@ -255,14 +253,14 @@ export default class Controls extends Vue {
   @Required(Number) public loadedPercentage!: number
   @Required(Number) public speed!: number
   @Required(Number) public quality!: number
-  @Prop(Object) public levels!: Levels | null
+  @Required(Object) public levels!: Levels
   @Required(Function) public play!: () => void
   @Required(Function) public pause!: () => void
   @Required(Function) public onSetTime!: (e: Event) => void
   @Required(Function) public onSetVolume!: (e: Event) => void
   @Required(Function) public onToggleMute!: (e: Event) => void
   @Required(Function) public onChangeSpeed!: (e: Event) => void
-  @Required(Function) public onChangeQuality!: (quality: number) => void
+  @Required(Function) public onChangeQuality!: (quality: string) => void
   @Required(Function) public setProgress!: (progress: number) => any
   @Required(Function) public closePlayer!: (progress: number) => any
 
@@ -341,7 +339,8 @@ export default class Controls extends Vue {
 
   public handleChangeQuality(e: Event) {
     const element = e.target as HTMLSelectElement
-    this.onChangeQuality(Number(element.value))
+    const qualities = Object.keys(this.levels!)
+    this.onChangeQuality(qualities[Number(element.value)])
   }
 
   public goVisible() {

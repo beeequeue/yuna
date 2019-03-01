@@ -35,7 +35,7 @@
     </transition>
 
     <controls
-      v-if="anime && episode"
+      v-if="anime && episode && levels"
       :episode="episode"
       :nextEpisode="nextEpisode"
       :anime="anime"
@@ -49,7 +49,7 @@
       :progressInSeconds="progressInSeconds"
       :loadedPercentage="loadedPercentage"
       :speed="speed"
-      :quality="quality"
+      :quality="levels[quality]"
       :levels="levels"
       :onSetTime="onSetTime"
       :onSetVolume="onSetVolume"
@@ -87,7 +87,7 @@
 import { ipcRenderer } from 'electron'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import Hls from 'hls.js'
-import { contains, pathOr } from 'rambdax'
+import { contains, pathOr, last } from 'rambdax'
 import { mdiLoading, mdiPlayCircle } from '@mdi/js'
 
 import {
@@ -121,6 +121,9 @@ import NextEpisodeOverlay from './NextEpisodeOverlay.vue'
 import EndOfSeasonOverlay from './EndOfSeasonOverlay.vue'
 import { Hidive, HidiveResponseCode } from '@/lib/hidive'
 
+const QUALITY_LOCALSTORAGE_KEY = 'quality_v2'
+localStorage.removeItem('quality')
+
 @Component({
   components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
 })
@@ -148,7 +151,8 @@ export default class Player extends Vue {
   public muted = localStorage.getItem('muted') === 'true'
   public volume = Number(localStorage.getItem('volume') || 70)
   public speed = Number(localStorage.getItem('speed') || 1)
-  public quality: number = Number(localStorage.getItem('quality') || -1)
+  public quality: string =
+    localStorage.getItem(QUALITY_LOCALSTORAGE_KEY) || '1080'
   public progressPercentage = 0
   public progressInSeconds = 0
   public playhead = 0
@@ -329,10 +333,18 @@ export default class Player extends Vue {
           return map
         },
         {} as any,
-      )
+      ) as Levels
 
       this.levels = qualities
-      this.hls.loadLevel = this.quality
+
+      if (this.levels[this.quality] == null) {
+        const newQuality = last(Object.keys(this.levels)) as string
+
+        localStorage.setItem(QUALITY_LOCALSTORAGE_KEY, newQuality)
+        this.quality = newQuality
+      }
+
+      this.hls.loadLevel = this.levels[this.quality]
     })
 
     this.hls.on('hlsMediaAttached', () => {
@@ -464,10 +476,10 @@ export default class Player extends Vue {
     this.$refs.player.playbackRate = this.speed
   }
 
-  public onChangeQuality(quality: number) {
+  public onChangeQuality(quality: string) {
     this.quality = quality
-    this.hls.currentLevel = quality
-    localStorage.setItem('quality', quality.toString())
+    this.hls.currentLevel = this.levels![quality]
+    localStorage.setItem(QUALITY_LOCALSTORAGE_KEY, quality)
   }
 
   public onKeyDown(e: KeyboardEvent) {
