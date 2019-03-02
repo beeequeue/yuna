@@ -293,7 +293,7 @@ export default class Queue extends Vue {
       writeFileSync(filePath, JSON.stringify(this.queue))
     }
 
-    const savePath: string | null = remote.dialog.showSaveDialog(
+    const savePath: string | undefined = remote.dialog.showSaveDialog(
       activeWindow(),
       {
         title: 'Export Queue...',
@@ -318,7 +318,7 @@ export default class Queue extends Vue {
   }
 
   public importQueueFromBackup() {
-    const openPaths: string[] | null = remote.dialog.showOpenDialog({
+    const openPaths: string[] | undefined = remote.dialog.showOpenDialog({
       title: 'Import Backup...',
       buttonLabel: 'Import',
       defaultPath: this.defaultBackupPath,
