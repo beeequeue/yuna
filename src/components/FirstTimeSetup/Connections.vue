@@ -46,6 +46,7 @@
   <login-cr
     v-else-if="currentWindow === Window.Crunchyroll"
     :loginCrunchyroll="loginCrunchyroll"
+    :onFinished="goToMainWindow"
   />
 
   <login-hd
