@@ -69,11 +69,8 @@ const options = {
     dataIdFromObject,
   },
 
-  // Client local data (see apollo-link-state)
-  clientState: {
-    resolvers,
-    defaults: {},
-  },
+  // Client local data
+  resolvers,
 }
 
 // Call this in the Vue app file

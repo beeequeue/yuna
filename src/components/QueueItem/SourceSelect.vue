@@ -113,7 +113,7 @@ export default class SourceSelect extends Vue {
       return null
     }
 
-    return streamingSiteCtx(image)
+    return streamingSiteCtx(image).default
   }
 
   public getIsSupported(provider: Provider) {

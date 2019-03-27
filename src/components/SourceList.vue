@@ -41,7 +41,7 @@ export default class SourceList extends Vue {
       return null
     }
 
-    return streamingSiteCtx(image)
+    return streamingSiteCtx(image).default
   }
 }
 </script>

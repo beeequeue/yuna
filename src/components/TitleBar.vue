@@ -70,7 +70,7 @@ export default class TitleBar extends Vue {
     let flagSvg: any = null
 
     try {
-      flagSvg = flagContext(`./${this.country.toLowerCase()}.svg`)
+      flagSvg = flagContext(`./${this.country.toLowerCase()}.svg`).default
     } catch (e) {
       return null
     }
