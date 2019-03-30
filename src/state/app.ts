@@ -1,16 +1,5 @@
 import { activeWindow } from 'electron-util'
-import {
-  change,
-  equals,
-  filter,
-  isNil,
-  map,
-  merge,
-  pipe,
-  pluck,
-  propEq,
-  reject,
-} from 'rambdax'
+import { change, merge, pluck, propEq, reject } from 'rambdax'
 import {
   NotificationFunctionOptions,
   NotificationTypes,
@@ -21,7 +10,7 @@ import { getStoreAccessors } from 'vuex-typescript'
 import { EpisodeListEpisodes, MediaListStatus, Provider } from '@/graphql/types'
 import { router } from '@/router'
 import { RootState } from '@/state/store'
-import { generateId } from '@/utils'
+import { generateId, isNil } from '@/utils'
 
 export interface Toast {
   id: string
@@ -295,17 +284,15 @@ export const app = {
       ]
     },
 
-    unselectCrunchyrollEpisodes(state: AppState, ids: number[]) {
+    unselectCrunchyrollEpisodes(state: AppState, ids: string[]) {
       const { selectedEpisodes } = state.modals.manualSearch
-      const getFilteredEpisodes = filter<EpisodeListEpisodes>(
-        ep => ids.findIndex(equals(Number(ep.id))) === -1,
+
+      const remainingEpisodes = selectedEpisodes.filter(
+        episode => !ids.find(id => id === episode.id),
       )
 
       let lastEpNumber = 0
-      const updateEpisodeNumbers = map<
-        EpisodeListEpisodes,
-        EpisodeListEpisodes
-      >(episode => {
+      const episodesWithFixedNumbers = remainingEpisodes.map(episode => {
         // TODO: implement fix for multiple episodes with same number
         let realNum = lastEpNumber + 1
         lastEpNumber = realNum
@@ -316,14 +303,7 @@ export const app = {
         }
       })
 
-      state.modals.manualSearch.selectedEpisodes = pipe<
-        EpisodeListEpisodes[],
-        EpisodeListEpisodes[],
-        EpisodeListEpisodes[]
-      >(
-        getFilteredEpisodes,
-        updateEpisodeNumbers,
-      )(selectedEpisodes)
+      state.modals.manualSearch.selectedEpisodes = episodesWithFixedNumbers
     },
   },
 

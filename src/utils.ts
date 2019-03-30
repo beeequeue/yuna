@@ -1,7 +1,7 @@
 import electron from 'electron'
 import { api } from 'electron-util'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
-import { filter, isNil, map, path, pathEq, pathOr } from 'rambdax'
+import { filter, map, path, pathEq, pathOr } from 'rambdax'
 import { Response } from 'superagent'
 import uuid from 'uuid/v4'
 import { resolve } from 'path'
@@ -312,4 +312,12 @@ export const getDefaultProvider = (
   ]
 
   return stripFalsy(supportedProviders)[0] || Provider.Crunchyroll
+}
+
+// Ramda replacements
+export const pluck = <K extends keyof T, T extends {}>(key: K, objArray: T[]) =>
+  objArray.map(obj => obj[key])
+
+export const isNil = (variable: any): variable is null | undefined => {
+  return variable === null || variable === undefined
 }

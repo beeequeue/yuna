@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { isNil, pluck } from 'rambdax'
+import { TooltipSettings } from 'v-tooltip'
 import { mdiArrowLeft, mdiCheck } from '@mdi/js'
 
 import EPISODE_COUNT_QUERY from '@/graphql/EpisodeCount.graphql'
@@ -66,7 +66,7 @@ import {
   unselectCrunchyrollEpisodes,
 } from '@/state/app'
 import { _SeriesWithCollections, Crunchyroll } from '@/lib/crunchyroll'
-import { TooltipSettings } from 'v-tooltip'
+import { isNil, pluck } from '@/utils'
 
 @Component({
   components: { CrunchyrollCollection, CButton, AnimeBanner, Icon, Loading },
@@ -125,7 +125,7 @@ export default class CrunchyrollEditor extends Vue {
   }
 
   public clearSelectedEpisodes() {
-    this.unselectEpisodes(pluck<number>('id', this.selectedEpisodes))
+    this.unselectEpisodes(pluck('id', this.selectedEpisodes))
   }
 
   public goBack() {
@@ -162,7 +162,7 @@ export default class CrunchyrollEditor extends Vue {
     selectCrunchyrollEpisodes(this.$store, episodes)
   }
 
-  public unselectEpisodes(episodes: number[]) {
+  public unselectEpisodes(episodes: string[]) {
     unselectCrunchyrollEpisodes(this.$store, episodes)
   }
 
