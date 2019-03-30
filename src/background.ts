@@ -7,6 +7,8 @@ import {
   MenuItemConstructorOptions,
 } from 'electron'
 import electronDebug, { openDevTools } from 'electron-debug'
+import Store from 'electron-store'
+import { init } from '@sentry/electron'
 import { join } from 'path'
 import { format as formatUrl } from 'url'
 import {
@@ -17,7 +19,7 @@ import {
 import { destroyDiscord, registerDiscord } from './lib/discord'
 import { OPEN_DEVTOOLS } from './messages'
 import { initAutoUpdater } from './updater'
-import Store from 'electron-store'
+import { version } from '../package.json'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 if (isDevelopment) {
@@ -25,6 +27,13 @@ if (isDevelopment) {
   // eslint-disable-next-line
   require('module').globalPaths.push(process.env.NODE_MODULES_PATH)
 }
+
+init({
+  enabled: process.env.NODE_ENV === 'production',
+  dsn: 'https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205',
+  environment: process.env.NODE_ENV,
+  release: `yuna-v${version}`,
+})
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow: any

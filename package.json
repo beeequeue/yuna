@@ -6,6 +6,7 @@
   "dependencies": {
     "@mdi/js": "3.5.95",
     "@sentry/browser": "4.6.5",
+    "@sentry/electron": "0.17.0",
     "apollo-boost": "0.3.1",
     "bottleneck": "2.17.1",
     "date-fns": "2.0.0-alpha.26",

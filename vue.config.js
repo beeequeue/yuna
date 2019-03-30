@@ -4,6 +4,9 @@ module.exports = {
   },
   configureWebpack: {
     target: 'electron-renderer',
+    external: {
+      electron: 'commonjs electron',
+    },
   },
   lintOnSave: false,
   chainWebpack: config => {
