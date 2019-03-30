@@ -1,4 +1,4 @@
-import superagent from 'superagent/superagent'
+import superagent from 'superagent/dist/superagent'
 import { T, isNil } from 'rambdax'
 import Bottleneck from 'bottleneck'
 import { OptionsV2, parseString as _parseString } from 'xml2js'

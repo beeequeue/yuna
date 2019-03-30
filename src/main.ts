@@ -3,7 +3,6 @@ import Tooltip from 'v-tooltip'
 import Vue from 'vue'
 import { init } from '@sentry/electron'
 import { Integrations } from '@sentry/browser'
-import { SentryException, SentryEvent } from '@sentry/types'
 
 import { updateRelations } from '@/lib/relations'
 

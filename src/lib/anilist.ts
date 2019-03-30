@@ -2,7 +2,7 @@ import electron from 'electron'
 import { info } from 'electron-log'
 import { captureException } from '@sentry/browser'
 import { ActionContext, Store } from 'vuex'
-import request from 'superagent/superagent'
+import request from 'superagent/dist/superagent'
 
 import { getConfig } from '@/config'
 import { AnilistData, setAnilist } from '@/state/auth'

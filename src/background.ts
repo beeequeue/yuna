@@ -8,7 +8,7 @@ import {
 } from 'electron'
 import electronDebug, { openDevTools } from 'electron-debug'
 import Store from 'electron-store'
-import { init } from '@sentry/electron'
+import { init } from '@sentry/electron/dist/main'
 import { join } from 'path'
 import { format as formatUrl } from 'url'
 import {

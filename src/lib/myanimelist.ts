@@ -1,5 +1,5 @@
 import Bottleneck from 'bottleneck'
-import request from 'superagent/superagent'
+import request from 'superagent/dist/superagent'
 import { T } from 'rambdax'
 
 import { EpisodeListEpisodes } from '@/graphql/types'

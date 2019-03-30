@@ -38,7 +38,7 @@ declare module '*.webp' {
   export default content
 }
 
-declare module 'superagent/superagent' {
+declare module 'superagent/dist/superagent' {
   import request from 'superagent'
   export = request
 }

@@ -1,5 +1,5 @@
 import { format } from 'date-fns'
-import superagent from 'superagent/superagent'
+import superagent from 'superagent/dist/superagent'
 import crypto from 'crypto'
 import { ActionContext, Store } from 'vuex'
 import { pathOr } from 'rambdax'

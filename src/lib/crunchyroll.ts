@@ -2,7 +2,7 @@
 import { error } from 'electron-log'
 import { activeWindow } from 'electron-util'
 import { anyPass, complement, mapAsync, T } from 'rambdax'
-import superagent from 'superagent/superagent'
+import superagent from 'superagent/dist/superagent'
 import { ActionContext, Store } from 'vuex'
 
 import { EpisodeListEpisodes, Provider } from '@/graphql/types'
