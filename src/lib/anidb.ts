@@ -1,5 +1,5 @@
 import superagent from 'superagent/superagent'
-import { T } from 'rambdax'
+import { T, isNil } from 'rambdax'
 import Bottleneck from 'bottleneck'
 import { OptionsV2, parseString as _parseString } from 'xml2js'
 
@@ -93,11 +93,18 @@ const query = {
 
 export class AniDB {
   public static async getEpisodesForAnime(id: number) {
-    const anidbId = await AniDB.getId(id)
-    if (!anidbId) return null
+    let anidbId
+
+    try {
+      anidbId = await AniDB.getId(id)
+    } catch (e) {
+      anidbId = null
+    }
+
+    if (isNil(anidbId)) return null
 
     const mediaId = await AniDB.getFirstEpisodeCrunchyrollId(anidbId)
-    if (!mediaId) return null
+    if (isNil(mediaId)) return null
 
     return Crunchyroll.fetchSeasonFromEpisode(id, mediaId.toString())
   }
@@ -135,7 +142,7 @@ export class AniDB {
       ep => ep.epno.type === EpisodeType.EPISODE && ep.epno._ === 1,
     )
 
-    if (!firstEpisode) return []
+    if (isNil(firstEpisode)) return null
 
     return getIdentifier(firstEpisode)
   }
