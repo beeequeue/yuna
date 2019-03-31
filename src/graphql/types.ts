@@ -11,13 +11,13 @@ export interface NotificationOptionInput {
 /** A user's list options for anime or manga lists */
 export interface MediaListOptionsInput {
   /** The order each list should be displayed in */
-  sectionOrder: Maybe<string[]>;
+  sectionOrder: Maybe<(Maybe<string>)[]>;
   /** If the completed sections of the list should be separated by format */
   splitCompletedSectionByFormat: Maybe<boolean>;
   /** The names of the user's custom lists */
-  customLists: Maybe<string[]>;
+  customLists: Maybe<(Maybe<string>)[]>;
   /** The names of the user's advanced scoring sections */
-  advancedScoring: Maybe<string[]>;
+  advancedScoring: Maybe<(Maybe<string>)[]>;
   /** If advanced scoring is enabled */
   advancedScoringEnabled: Maybe<boolean>;
   /** list theme */
@@ -82,7 +82,7 @@ export interface CharacterNameInput {
   /** The character's full name in their native language */
   native: Maybe<string>;
   /** Other names the character might be referred by */
-  alternative: Maybe<string[]>;
+  alternative: Maybe<(Maybe<string>)[]>;
 }
 /** An external link to another site related to the media */
 export interface MediaExternalLinkInput {
@@ -535,7 +535,7 @@ export type FuzzyDateInt = any;
     
     nextAiringEpisode: Maybe<AnimePageQueryNextAiringEpisode>;
     
-    externalLinks: Maybe<AnimePageQueryExternalLinks[]>;
+    externalLinks: Maybe<(Maybe<AnimePageQueryExternalLinks>)[]>;
     
     relations: Maybe<AnimePageQueryRelations>;
     
@@ -583,7 +583,7 @@ export type FuzzyDateInt = any;
   export type AnimePageQueryRelations = {
     __typename?: "MediaConnection";
     
-    edges: Maybe<AnimePageQueryEdges[]>;
+    edges: Maybe<(Maybe<AnimePageQueryEdges>)[]>;
   } 
 
   export type AnimePageQueryEdges = {
@@ -706,6 +706,54 @@ export type FuzzyDateInt = any;
     isWatched: boolean;
   } 
 
+  export type ExportQueueVariables = {
+    ids: number[];
+  }
+
+  export type ExportQueueQuery = {
+    __typename?: "Query";
+    
+    queue: Maybe<ExportQueueQueue>;
+  }
+
+  export type ExportQueueQueue = {
+    __typename?: "Page";
+    
+    anime: Maybe<(Maybe<ExportQueueAnime>)[]>;
+  } 
+
+  export type ExportQueueAnime = {
+    __typename?: "Media";
+    
+    id: number;
+    
+    externalLinks: Maybe<(Maybe<ExportQueueExternalLinks>)[]>;
+    
+    mediaListEntry: Maybe<ExportQueueMediaListEntry>;
+  } 
+
+  export type ExportQueueExternalLinks = {
+    __typename?: "MediaExternalLink";
+    
+    site: string;
+    
+    url: string;
+  } 
+
+  export type ExportQueueMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    progress: Maybe<number>;
+    
+    status: Maybe<MediaListStatus>;
+    
+    repeat: Maybe<number>;
+    
+    score: Maybe<number>;
+  } 
+
   export type ListQueryVariables = {
     userId: number;
     statuses: Maybe<MediaListStatus[]>;
@@ -720,7 +768,7 @@ export type FuzzyDateInt = any;
   export type ListQueryListCollection = {
     __typename?: "MediaListCollection";
     
-    lists: Maybe<ListQueryLists[]>;
+    lists: Maybe<(Maybe<ListQueryLists>)[]>;
   } 
 
   export type ListQueryLists = {
@@ -730,7 +778,7 @@ export type FuzzyDateInt = any;
     
     name: Maybe<string>;
     
-    entries: Maybe<ListQueryEntries[]>;
+    entries: Maybe<(Maybe<ListQueryEntries>)[]>;
   } 
 
   export type ListQueryEntries = {
@@ -796,7 +844,7 @@ export type FuzzyDateInt = any;
   export type PausedQueryListCollection = {
     __typename?: "MediaListCollection";
     
-    lists: Maybe<PausedQueryLists[]>;
+    lists: Maybe<(Maybe<PausedQueryLists>)[]>;
   } 
 
   export type PausedQueryLists = {
@@ -804,7 +852,7 @@ export type FuzzyDateInt = any;
     
     isCustomList: Maybe<boolean>;
     
-    entries: Maybe<PausedQueryEntries[]>;
+    entries: Maybe<(Maybe<PausedQueryEntries>)[]>;
   } 
 
   export type PausedQueryEntries = {
@@ -817,6 +865,24 @@ export type FuzzyDateInt = any;
     __typename?: "Media";
     
     id: number;
+    
+    externalLinks: Maybe<(Maybe<PausedQueryExternalLinks>)[]>;
+    
+    mediaListEntry: Maybe<PausedQueryMediaListEntry>;
+  } 
+
+  export type PausedQueryExternalLinks = {
+    __typename?: "MediaExternalLink";
+    
+    site: string;
+    
+    url: string;
+  } 
+
+  export type PausedQueryMediaListEntry = {
+    __typename?: "MediaList";
+    
+    status: Maybe<MediaListStatus>;
   } 
 
   export type PlanningQueryVariables = {
@@ -832,7 +898,7 @@ export type FuzzyDateInt = any;
   export type PlanningQueryListCollection = {
     __typename?: "MediaListCollection";
     
-    lists: Maybe<PlanningQueryLists[]>;
+    lists: Maybe<(Maybe<PlanningQueryLists>)[]>;
   } 
 
   export type PlanningQueryLists = {
@@ -840,7 +906,7 @@ export type FuzzyDateInt = any;
     
     isCustomList: Maybe<boolean>;
     
-    entries: Maybe<PlanningQueryEntries[]>;
+    entries: Maybe<(Maybe<PlanningQueryEntries>)[]>;
   } 
 
   export type PlanningQueryEntries = {
@@ -853,6 +919,24 @@ export type FuzzyDateInt = any;
     __typename?: "Media";
     
     id: number;
+    
+    externalLinks: Maybe<(Maybe<PlanningQueryExternalLinks>)[]>;
+    
+    mediaListEntry: Maybe<PlanningQueryMediaListEntry>;
+  } 
+
+  export type PlanningQueryExternalLinks = {
+    __typename?: "MediaExternalLink";
+    
+    site: string;
+    
+    url: string;
+  } 
+
+  export type PlanningQueryMediaListEntry = {
+    __typename?: "MediaList";
+    
+    status: Maybe<MediaListStatus>;
   } 
 
   export type PlayerAnimeVariables = {
@@ -900,7 +984,7 @@ export type FuzzyDateInt = any;
   export type PlayerAnimeRelations = {
     __typename?: "MediaConnection";
     
-    edges: Maybe<PlayerAnimeEdges[]>;
+    edges: Maybe<(Maybe<PlayerAnimeEdges>)[]>;
   } 
 
   export type PlayerAnimeEdges = {
@@ -952,7 +1036,7 @@ export type FuzzyDateInt = any;
   export type QueueQueue = {
     __typename?: "Page";
     
-    anime: Maybe<QueueAnime[]>;
+    anime: Maybe<(Maybe<QueueAnime>)[]>;
   } 
 
   export type QueueAnime = {
@@ -974,7 +1058,7 @@ export type FuzzyDateInt = any;
     
     nextAiringEpisode: Maybe<QueueNextAiringEpisode>;
     
-    externalLinks: Maybe<QueueExternalLinks[]>;
+    externalLinks: Maybe<(Maybe<QueueExternalLinks>)[]>;
     
     mediaListEntry: Maybe<QueueMediaListEntry>;
   } 
@@ -1082,7 +1166,7 @@ export type FuzzyDateInt = any;
     
     pageInfo: Maybe<SearchQueryPageInfo>;
     
-    results: Maybe<SearchQueryResults[]>;
+    results: Maybe<(Maybe<SearchQueryResults>)[]>;
   } 
 
   export type SearchQueryPageInfo = {
@@ -1102,9 +1186,9 @@ export type FuzzyDateInt = any;
     
     coverImage: Maybe<SearchQueryCoverImage>;
     
-    streamingEpisodes: Maybe<SearchQueryStreamingEpisodes[]>;
+    streamingEpisodes: Maybe<(Maybe<SearchQueryStreamingEpisodes>)[]>;
     
-    externalLinks: Maybe<SearchQueryExternalLinks[]>;
+    externalLinks: Maybe<(Maybe<SearchQueryExternalLinks>)[]>;
   } 
 
   export type SearchQueryTitle = {
@@ -1211,7 +1295,7 @@ export type FuzzyDateInt = any;
   export type WatchingQueryListCollection = {
     __typename?: "MediaListCollection";
     
-    lists: Maybe<WatchingQueryLists[]>;
+    lists: Maybe<(Maybe<WatchingQueryLists>)[]>;
   } 
 
   export type WatchingQueryLists = {
@@ -1219,7 +1303,7 @@ export type FuzzyDateInt = any;
     
     isCustomList: Maybe<boolean>;
     
-    entries: Maybe<WatchingQueryEntries[]>;
+    entries: Maybe<(Maybe<WatchingQueryEntries>)[]>;
   } 
 
   export type WatchingQueryEntries = {
@@ -1232,5 +1316,23 @@ export type FuzzyDateInt = any;
     __typename?: "Media";
     
     id: number;
+    
+    externalLinks: Maybe<(Maybe<WatchingQueryExternalLinks>)[]>;
+    
+    mediaListEntry: Maybe<WatchingQueryMediaListEntry>;
+  } 
+
+  export type WatchingQueryExternalLinks = {
+    __typename?: "MediaExternalLink";
+    
+    site: string;
+    
+    url: string;
+  } 
+
+  export type WatchingQueryMediaListEntry = {
+    __typename?: "MediaList";
+    
+    status: Maybe<MediaListStatus>;
   } 
 

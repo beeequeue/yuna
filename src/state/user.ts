@@ -22,9 +22,9 @@ interface SetProviderOptions {
 
 interface AddToQueueOptions {
   id: number
-  externalLinks: Array<{ site: string; url: string }>
+  externalLinks: null | Array<null | { site: string; url: string }>
   mediaListEntry: null | {
-    status: MediaListStatus
+    status: null | MediaListStatus
   }
 }
 

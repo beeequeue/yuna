@@ -1,0 +1,18 @@
+query ExportQueue($ids: [Int!]!) {
+  queue: Page {
+    anime: media(id_in: $ids, type: ANIME) {
+      id
+      externalLinks {
+        site
+        url
+      }
+      mediaListEntry {
+        id
+        progress
+        status
+        repeat
+        score(format: POINT_100)
+      }
+    }
+  }
+}

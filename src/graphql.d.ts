@@ -59,6 +59,16 @@ declare module '*/EpisodeList.graphql' {
   export default defaultDocument
 }
 
+declare module '*/ExportQueue.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const ExportQueue: DocumentNode
+
+  export { ExportQueue }
+
+  export default defaultDocument
+}
+
 declare module '*/ListQuery.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode

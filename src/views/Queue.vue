@@ -9,6 +9,7 @@
       >
         <draggable v-for="anime in animes" :key="anime.id">
           <queue-item
+            v-if="anime != null"
             :key="anime.id"
             :anime="anime"
             :item="getItem(anime.id)"
@@ -106,7 +107,7 @@ import {
 } from '@/state/user'
 import { Page, trackPageView } from '@/lib/tracking'
 import { QueueItem as IQueueItem } from '@/lib/user'
-import { prop, propEq, sortNumber } from '@/utils'
+import { isNotNil, pick, prop, propEq, sortNumber } from '@/utils'
 
 @Component({
   components: {
@@ -228,7 +229,9 @@ export default class Queue extends Vue {
       )
     }
 
-    const entries = prop<typeof list, 'entries'>('entries')(list)
+    const entries = prop<typeof list, 'entries'>('entries')(list)!.filter(
+      isNotNil,
+    )
 
     if (errors || !entries || entries.length < 1) {
       return sendErrorToast(
@@ -237,13 +240,13 @@ export default class Queue extends Vue {
       )
     }
 
-    const animes = entries.map(prop('info'))
+    const animes = entries.map(prop('info')).filter(isNotNil)
 
     if (random) {
       const randomIdx = Math.floor(Math.random() * entries.length)
       addToQueue(this.$store, entries[randomIdx].info as any)
     } else {
-      animes.forEach(anime => addToQueue(this.$store, anime as any))
+      animes.forEach(anime => addToQueue(this.$store, anime))
     }
 
     const diff = this.queue.length - queueBefore.length
@@ -290,10 +293,12 @@ export default class Queue extends Vue {
       `queue-${getAnilistUsername(this.$store)}-${Date.now()}.json`,
     )
 
+    const data = this.animes.map(anime =>
+      pick(anime, ['id', 'externalLinks', 'mediaListEntry']),
+    )
+
     if (!existsSync(this.defaultBackupPath)) {
       mkdirSync(this.defaultBackupPath)
-
-      writeFileSync(filePath, JSON.stringify(this.queue))
     }
 
     const savePath: string | undefined = remote.dialog.showSaveDialog(
@@ -309,7 +314,7 @@ export default class Queue extends Vue {
 
     if (!savePath) return
 
-    writeFileSync(savePath, JSON.stringify(this.queue))
+    writeFileSync(savePath, JSON.stringify(data))
 
     sendToast(this.$store, {
       type: 'success',
@@ -335,13 +340,17 @@ export default class Queue extends Vue {
     try {
       const data = JSON.parse(readFileSync(openPath).toString())
 
-      if (typeof data !== 'object' || !Array.isArray(data)) throw new Error()
+      if (typeof data !== 'object' || !Array.isArray(data)) {
+        throw new Error('Could not parse backup file!')
+      }
 
-      if (data.some(item => typeof item !== 'number')) throw new Error()
+      if (data.some(({ id }) => typeof id !== 'number')) {
+        throw new Error('This backup is too old and is not supported anymore.')
+      }
 
-      data.forEach(id => addToQueue(this.$store, id))
+      ;(data as any[]).forEach(item => addToQueue(this.$store, item))
     } catch (err) {
-      sendErrorToast(this.$store, 'Could not parse backup file!')
+      sendErrorToast(this.$store, err.message)
     }
   }
 

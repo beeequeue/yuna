@@ -222,9 +222,9 @@ export const getRelations = (
 
   if (relations.length < 1) return []
 
-  const filtered = relations.filter(
-    propEq('relationType', type as MediaRelation),
-  )
+  const filtered = relations
+    .filter(isNotNil)
+    .filter(propEq('relationType', type as MediaRelation))
 
   return filtered.map(relation => oc(relation).node(null))
 }
@@ -288,16 +288,17 @@ const addIfExistsAndIsConnected = (
 
 interface _Anime {
   id: number
-  externalLinks: Array<{ site: string; url: string }>
-  mediaListEntry: null | {
-    status: MediaListStatus
-  }
+  externalLinks: null | Array<null | { site: string; url: string }>
 }
 export const getDefaultProvider = (
   store: Store<any> | ActionContext<any, any>,
   anime: _Anime,
 ) => {
-  const sources = getStreamingSources(anime.externalLinks).map(
+  const links = oc(anime).externalLinks([])
+
+  if (isNil(links)) return Provider.Crunchyroll
+
+  const sources = getStreamingSources(links.filter(isNotNil)).map(
     source => source.site,
   )
 

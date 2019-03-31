@@ -9,6 +9,13 @@ query WatchingQuery($userId: Int!) {
       entries {
         info: media {
           id
+          externalLinks {
+            site
+            url
+          }
+          mediaListEntry {
+            status
+          }
         }
       }
     }
