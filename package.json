@@ -26,6 +26,7 @@
     "superagent": "5.0.2",
     "svg-country-flags": "1.2.6",
     "ts-key-enum": "2.0.0",
+    "ts-optchain": "0.1.3",
     "uuid": "3.3.2",
     "v-tooltip": "2.0.0-rc.33",
     "vue": "2.6.10",

@@ -1,8 +1,8 @@
 import electron from 'electron'
 import { api } from 'electron-util'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
-import { filter, map, path, pathEq, pathOr } from 'rambdax'
 import { Response } from 'superagent'
+import { oc } from 'ts-optchain'
 import uuid from 'uuid/v4'
 import { resolve } from 'path'
 import {
@@ -55,7 +55,11 @@ export const responseIsError = (
 ): res is RequestError<any> | null => {
   if (!res) return true
 
-  return path('body.error', res) != null || path<boolean>('error', res)
+  const resGetter = oc(res) as any
+
+  return (
+    resGetter.body.error(null) != null || resGetter.body.error(null) != null
+  )
 }
 
 export const secondsToTimeString = (input: number) => {
@@ -214,14 +218,15 @@ export const getRelations = (
   data: AnimePageQueryQuery | PlayerAnimeQuery,
   type: string | MediaRelation,
 ) => {
-  const relations = pathOr<any[]>([], ['anime', 'relations', 'edges'], data)
+  const relations = oc(data).anime.relations.edges([])!
 
   if (relations.length < 1) return []
 
-  return map(
-    pathOr(null, ['node']),
-    filter(pathEq('relationType', type), relations),
+  const filtered = relations.filter(
+    propEq('relationType', type as MediaRelation),
   )
+
+  return filtered.map(relation => oc(relation).node(null))
 }
 
 interface ExternalLink {
@@ -292,8 +297,8 @@ export const getDefaultProvider = (
   store: Store<any> | ActionContext<any, any>,
   anime: _Anime,
 ) => {
-  const sources = getStreamingSources(anime.externalLinks).map<string>(
-    path('site'),
+  const sources = getStreamingSources(anime.externalLinks).map(
+    source => source.site,
   )
 
   const supportedProviders = [
@@ -316,6 +321,11 @@ export const getDefaultProvider = (
 
 // Ramda replacements
 export const T = () => true
+
+export const propEq = <O extends {}, P extends keyof O>(
+  prop: P,
+  value: O[P],
+) => (obj: O) => obj[prop] === value
 
 export const pluck = <K extends keyof T, T extends {}>(key: K, objArray: T[]) =>
   objArray.map(obj => obj[key])
