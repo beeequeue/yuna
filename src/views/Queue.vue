@@ -107,7 +107,7 @@ import {
 } from '@/state/user'
 import { Page, trackPageView } from '@/lib/tracking'
 import { QueueItem as IQueueItem } from '@/lib/user'
-import { isNil, isNotNil, pick, prop, propEq, sortNumber } from '@/utils'
+import { isNotNil, pick, prop, propEq, sortNumber } from '@/utils'
 
 @Component({
   components: {
