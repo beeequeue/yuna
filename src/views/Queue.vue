@@ -9,7 +9,7 @@
       >
         <draggable v-for="anime in animes" :key="anime.id">
           <queue-item
-            v-if="anime != null"
+            v-if="anime != null && getItem(anime.id) != null"
             :key="anime.id"
             :anime="anime"
             :item="getItem(anime.id)"
@@ -107,7 +107,7 @@ import {
 } from '@/state/user'
 import { Page, trackPageView } from '@/lib/tracking'
 import { QueueItem as IQueueItem } from '@/lib/user'
-import { isNotNil, pick, prop, propEq, sortNumber } from '@/utils'
+import { isNil, isNotNil, pick, prop, propEq, sortNumber } from '@/utils'
 
 @Component({
   components: {
@@ -243,10 +243,17 @@ export default class Queue extends Vue {
     const animes = entries.map(prop('info')).filter(isNotNil)
 
     if (random) {
-      do {
-        const randomIdx = Math.floor(Math.random() * entries.length)
-        addToQueue(this.$store, entries[randomIdx].info as any)
-      } while (queueBefore.length - this.queue.length === 0)
+      const entriesNotInQueue = entries.filter(entry => {
+        const { id } = entry.info!
+
+        return !this.queue.some(item => item.id === id)
+      })
+
+      if (entriesNotInQueue.length > 0) {
+        const randomIdx = Math.floor(Math.random() * entriesNotInQueue.length)
+
+        addToQueue(this.$store, entriesNotInQueue[randomIdx].info!)
+      }
     } else {
       animes.forEach(anime => addToQueue(this.$store, anime))
     }
