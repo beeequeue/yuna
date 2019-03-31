@@ -1,7 +1,7 @@
 /* eslint-disable class-name */
 import { error } from 'electron-log'
 import { activeWindow } from 'electron-util'
-import { anyPass, complement, mapAsync, T } from 'rambdax'
+import { anyPass, complement } from 'rambdax'
 import superagent from 'superagent/dist/superagent'
 import { ActionContext, Store } from 'vuex'
 
@@ -18,9 +18,11 @@ import {
 import {
   delay,
   getDeviceUuid,
+  mapAsync,
   removeCookies,
   RequestError,
   RequestSuccess,
+  T,
 } from '@/utils'
 import { Stream } from '@/types'
 
@@ -431,16 +433,13 @@ export class Crunchyroll {
       throw new Error(response.body.message)
     }
 
-    return mapAsync<_CollectionWithEpisodes>(
-      async (coll: _Collection) => ({
-        ...coll,
-        episodes: await Crunchyroll.fetchEpisodesOfCollection(
-          id,
-          coll.collection_id,
-        ),
-      }),
-      response.body.data,
-    )
+    return mapAsync(response.body.data, async (coll: _Collection) => ({
+      ...coll,
+      episodes: await Crunchyroll.fetchEpisodesOfCollection(
+        id,
+        coll.collection_id,
+      ),
+    }))
   }
 
   public static fetchEpisodesOfCollection = async (

@@ -315,9 +315,20 @@ export const getDefaultProvider = (
 }
 
 // Ramda replacements
+export const T = () => true
+
 export const pluck = <K extends keyof T, T extends {}>(key: K, objArray: T[]) =>
   objArray.map(obj => obj[key])
 
 export const isNil = (variable: any): variable is null | undefined => {
   return variable === null || variable === undefined
+}
+
+export const mapAsync = async <T, R>(
+  items: T[],
+  fn: (item: T) => Promise<R>,
+) => {
+  const promises = items.map(fn)
+
+  return await Promise.all(promises)
 }
