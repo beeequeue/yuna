@@ -3,7 +3,6 @@ import Store from 'electron-store'
 import { api } from 'electron-util'
 import { existsSync } from 'fs'
 import { resolve } from 'path'
-import { complement, contains, equals, filter, path } from 'rambdax'
 import { Key } from 'ts-key-enum'
 import Vue from 'vue'
 import { ActionContext } from 'vuex'
@@ -15,8 +14,8 @@ import {
   DISCORD_ENABLE_RICH_PRESENCE,
 } from '@/messages'
 import { RootState } from '@/state/store'
-import { hasKey } from '@/utils'
 import { Crunchyroll } from '@/lib/crunchyroll'
+import { hasKey, isNil } from '@/utils'
 
 export enum KeybindingAction {
   PAUSE = 'PAUSE',
@@ -116,13 +115,15 @@ const defaultDiscord: DiscordSettings = {
   richPresence: true,
 }
 
-const defaultSteps = filter(i => i != null, [
+const _steps: Array<SetupStep | null> = [
   userStore.get('anilist.token') != null ? SetupStep.LOGIN_AL : null,
   userStore.get('crunchyroll.token') != null ? SetupStep.CONNECT : null,
   existsSync(resolve(api.app.getPath('userData'), '.has-setup'))
     ? SetupStep.SPOILERS
     : null,
-]) as SetupStep[]
+]
+
+const defaultSteps: SetupStep[] = _steps.filter(step => !isNil(step)) as any
 
 const initialState: SettingsState = {
   autoMarkAsPlanning: SettingsStore.get('autoMarkAsPlanning', true),
@@ -208,7 +209,7 @@ export const settings = {
 
     getNextUnfinishedStep(state: SettingsState) {
       const remainingSteps = _setupSteps.filter(
-        i => !contains<SetupStep>(i, state.setup.finishedSteps),
+        i => !state.setup.finishedSteps.includes(i),
       )
 
       if (!remainingSteps) return null
@@ -261,9 +262,8 @@ export const settings = {
         return
       }
 
-      const newActions = filter(
-        complement(equals(options.action)),
-        storedActions,
+      const newActions = storedActions.filter(
+        newAction => newAction === options.action,
       )
 
       Vue.set(state.keybindings, options.key, newActions)
@@ -330,9 +330,9 @@ export const settings = {
     },
 
     addFinishedStep(state: SettingsState, step: SetupStep) {
-      const steps: SetupStep[] = path('setup.finishedSteps', state)
+      const steps = state.setup.finishedSteps
 
-      if (!contains(step, steps)) {
+      if (!steps.includes(step)) {
         steps.push(step)
 
         SettingsStore.set('setup.finishedSteps', steps)

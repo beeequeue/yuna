@@ -1,8 +1,7 @@
 import superagent from 'superagent'
-import { T } from 'rambdax'
 
 import { getConfig } from '@/config'
-import { getDeviceUuid } from '@/utils'
+import { getDeviceUuid, T } from '@/utils'
 
 import { version } from '../../package.json'
 

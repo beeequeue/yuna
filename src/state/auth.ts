@@ -1,10 +1,11 @@
 // eslint-disable no-use-before-declare
 import { getStoreAccessors } from 'vuex-typescript'
-import { omit, isNil, propEq, path } from 'rambdax'
+import { oc } from 'ts-optchain'
 
 import { userStore } from '@/lib/user'
 import { RootState } from '@/state/store'
 import { HidiveProfile } from '@/lib/hidive'
+import { isNil, omit, propEq } from '@/utils'
 
 interface ServiceData {
   user: null | {
@@ -120,7 +121,7 @@ export const auth = {
     },
 
     getHidiveProfileIndex(state: AuthState) {
-      const selectedId = path('hidive.user.profile', state)
+      const selectedId = oc(state).hidive.user.profile()
 
       if (isNil(selectedId)) return -1
 
@@ -147,7 +148,7 @@ export const auth = {
       state.crunchyroll.expires = data.expires
 
       const extraKeys = Object.keys(
-        omit(['user', 'token', 'refreshToken', 'expires'], data),
+        omit(data, ['user', 'token', 'refreshToken', 'expires']),
       )
       if (extraKeys.length > 0) {
         // eslint-disable-next-line no-console
@@ -168,7 +169,7 @@ export const auth = {
       state.anilist.token = data.token
       state.anilist.expires = data.expires
 
-      const extraKeys = Object.keys(omit(['user', 'token', 'expires'], data))
+      const extraKeys = Object.keys(omit(data, ['user', 'token', 'expires']))
       if (extraKeys.length > 0) {
         // eslint-disable-next-line no-console
         console.warn(`Tried to set ${extraKeys} without setters in setAnilist`)

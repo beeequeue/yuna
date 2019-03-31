@@ -31,7 +31,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { includes, pluck, propEq, complement, isNil, prop } from 'rambdax'
 import { mdiChevronDown } from '@mdi/js'
 
 import { EpisodeListEpisodes } from '@/graphql/types'
@@ -42,9 +41,9 @@ import CrunchyrollEpisode from './CrunchyrollEpisode.vue'
 
 import { Required } from '@/decorators'
 import { _CollectionWithEpisodes } from '@/lib/crunchyroll'
-import { humanizeNumberList } from '@/utils'
+import { humanizeNumberList, isNotNil, pluck, prop, propEq } from '@/utils'
 
-const pluckId = pluck<number>('id')
+const pluckId = (obj: Array<{ id: string }>) => pluck('id', obj)
 
 @Component({
   components: { AnimatedHeight, CrunchyrollEpisode, Checkbox, Icon },
@@ -53,7 +52,7 @@ export default class CrunchyrollCollection extends Vue {
   @Required(Object) collection!: _CollectionWithEpisodes
   @Required(Array) public selectedEpisodes!: EpisodeListEpisodes[]
   @Required(Function) selectEpisodes!: (ids: EpisodeListEpisodes[]) => void
-  @Required(Function) unselectEpisodes!: (ids: number[]) => void
+  @Required(Function) unselectEpisodes!: (ids: string[]) => void
 
   public open = false
 
@@ -63,7 +62,7 @@ export default class CrunchyrollCollection extends Vue {
     const selectedIds = pluckId(this.selectedEpisodes)
     const ownedIds = pluckId(this.collection.episodes)
 
-    return selectedIds.filter(id => includes(id, ownedIds))
+    return selectedIds.filter(id => ownedIds.includes(id))
   }
 
   public get isFullySelected() {
@@ -75,7 +74,7 @@ export default class CrunchyrollCollection extends Vue {
 
     const selectedNumbers = this.ownedSelectedEpisodes
       .map(id => this.selectedEpisodes.find(propEq('id', id)))
-      .filter<EpisodeListEpisodes>(complement(isNil) as any)
+      .filter(isNotNil)
       .map(prop('episodeNumber'))
 
     return humanizeNumberList(selectedNumbers)
@@ -93,7 +92,7 @@ export default class CrunchyrollCollection extends Vue {
     }
   }
 
-  public getSelectedEpisode(id: number) {
+  public getSelectedEpisode(id: string) {
     return this.selectedEpisodes.find(propEq('id', id))
   }
 }

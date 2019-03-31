@@ -322,17 +322,29 @@ export const getDefaultProvider = (
 // Ramda replacements
 export const T = () => true
 
+export const prop = <O extends {}, P extends keyof O>(prop: P) => (obj: O) =>
+  obj[prop]
+
 export const propEq = <O extends {}, P extends keyof O>(
   prop: P,
   value: O[P],
 ) => (obj: O) => obj[prop] === value
 
+export const lastItem = <T>(arr: T[]) => {
+  if (arr.length < 1) return null
+
+  return arr[arr.length - 1]
+}
+
 export const pluck = <K extends keyof T, T extends {}>(key: K, objArray: T[]) =>
   objArray.map(obj => obj[key])
 
-export const isNil = (variable: any): variable is null | undefined => {
-  return variable === null || variable === undefined
-}
+export const isNil = <T>(
+  variable: T | null | undefined,
+): variable is null | undefined => variable === null || variable === undefined
+
+export const isNotNil = <T>(variable: T | null | undefined): variable is T =>
+  !isNil(variable)
 
 export const complement = (fn: (...a: any[]) => any) => (input: any) =>
   !fn(input)
@@ -353,3 +365,50 @@ export const anyPass = <
   item: P,
   predicates: F,
 ) => predicates.some(predicate => predicate(item))
+
+export const pick = <T extends {}, K extends Array<keyof T>>(
+  obj: T,
+  keys: K,
+): Pick<T, K[number]> =>
+  Object.entries(obj)
+    .filter(([key]) => keys.includes(key as any))
+    .reduce<Pick<T, K[number]>>(
+      (obj, [key, val]) => Object.assign(obj, { [key]: val }),
+      {} as any,
+    )
+
+export const omit = <T extends {}, K extends Array<keyof T>>(
+  obj: T,
+  keys: K,
+): Omit<T, K[number]> =>
+  Object.entries(obj)
+    .filter(([key]) => !keys.includes(key as any))
+    .reduce<Pick<T, K[number]>>(
+      (obj, [key, val]) => Object.assign(obj, { [key]: val }),
+      {} as any,
+    )
+
+export const debounce = <P extends Array<any>>(
+  func: (...a: P) => any,
+  ms: number,
+  immediate = false,
+) => {
+  let timeout: number | null = null
+
+  return (...input: P) => {
+    const later = function() {
+      timeout = null
+      if (!immediate) {
+        func.apply(null, input)
+      }
+    }
+
+    window.clearTimeout(timeout!)
+    timeout = window.setTimeout(later, ms)
+
+    const callNow = immediate && !timeout
+    if (callNow) {
+      func.apply(null, input)
+    }
+  }
+}

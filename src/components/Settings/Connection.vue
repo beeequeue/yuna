@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { pathOr } from 'rambdax'
+import { oc } from 'ts-optchain'
 import { mdiLinkVariant, mdiLinkVariantOff } from '@mdi/js'
 
 import crIcon from '@/assets/crunchyroll.svg'
@@ -27,13 +27,8 @@ import hidiveIcon from '@/assets/hidive.svg'
 import { Required } from '@/decorators'
 import { capitalize } from '@/utils'
 import CButton from '@/components/CButton.vue'
-import {
-  AnilistData,
-  CrunchyrollData,
-  getIsConnectedTo,
-  getFinishedConnecting,
-  HidiveData,
-} from '@/state/auth'
+import { RootState } from '@/state/store'
+import { getIsConnectedTo, getFinishedConnecting } from '@/state/auth'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { logoutAnilist } from '@/lib/anilist'
 import { Hidive } from '@/lib/hidive'
@@ -51,11 +46,7 @@ export default class Connection extends Vue {
   }
 
   public get user() {
-    return pathOr(null, ['auth', this.type, 'user'], this.$store.state) as
-      | CrunchyrollData['user']
-      | AnilistData['user']
-      | HidiveData['user']
-      | null
+    return oc(this.$store.state as RootState).auth[this.type].user() || null
   }
 
   public async connect() {

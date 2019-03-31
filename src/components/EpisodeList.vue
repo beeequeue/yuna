@@ -30,17 +30,14 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { isNil, pathOr } from 'rambdax'
+import { oc } from 'ts-optchain'
 
-import {
-  EpisodeListEpisodes,
-  Provider,
-  QueueAnime,
-  QueueMediaListEntry,
-} from '@/graphql/types'
+import { EpisodeListEpisodes, Provider, QueueAnime } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import { Hidive, HidiveResponseCode } from '@/lib/hidive'
+import { isNil } from '@/utils'
+
 import Episode from './Episode.vue'
 import Loading from './Loading.vue'
 import SourceList from './SourceList.vue'
@@ -63,11 +60,7 @@ export default class EpisodeList extends Vue {
   }
 
   public get listEntry() {
-    return pathOr(
-      null,
-      ['mediaListEntry'],
-      this.anime,
-    ) as QueueMediaListEntry | null
+    return oc(this.anime).mediaListEntry(null)
   }
 
   public mounted() {

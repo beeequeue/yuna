@@ -1,6 +1,6 @@
 import { DataProxy } from 'apollo-cache'
 import gql from 'graphql-tag'
-import { isNil, pathOr, propEq } from 'rambdax'
+import { oc } from 'ts-optchain'
 
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
@@ -17,6 +17,7 @@ import { EpisodeRelations, getEpisodeRelations } from '@/lib/relations'
 import { EpisodeCache } from '@/lib/episode-cache'
 import { AniDB } from '@/lib/anidb'
 import { Hidive } from '@/lib/hidive'
+import { isNil, propEq } from '@/utils'
 
 interface EpisodeVariables {
   id: number
@@ -148,7 +149,7 @@ export const resolvers = {
             }
           `,
         })
-        const airingAt = pathOr(-1, 'nextAiringEpisode.airingAt', data) * 1000
+        const airingAt = oc(data).nextAiringEpisode.airingAt(-1) * 1000
 
         if (!data || !data || !data.idMal) {
           throw new Error('Could not find Anime in cache!')

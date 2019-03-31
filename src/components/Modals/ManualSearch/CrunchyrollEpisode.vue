@@ -25,7 +25,7 @@ import { EpisodeListEpisodes } from '@/graphql/types'
 import Checkbox from '@/components/Checkbox.vue'
 
 import { Required } from '@/decorators'
-import { isNil } from 'rambdax'
+import { isNil, isNotNil } from '@/utils'
 
 @Component({ components: { Checkbox } })
 export default class CrunchyrollEpisode extends Vue {
@@ -43,7 +43,7 @@ export default class CrunchyrollEpisode extends Vue {
   public handleCheckChange(checked: boolean) {
     if (checked) {
       this.selectEpisodes([this.episode])
-    } else if (!isNil(this.selectedEpisode)) {
+    } else if (isNotNil(this.selectedEpisode)) {
       this.unselectEpisodes([Number(this.selectedEpisode.id)])
     }
   }

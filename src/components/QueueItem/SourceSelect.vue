@@ -57,7 +57,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { isNil } from 'rambdax'
 import { mdiChevronDown } from '@mdi/js'
 
 import crIcon from '@/assets/crunchyroll.svg'
@@ -68,7 +67,7 @@ import { Provider, QueueAnime, QueueExternalLinks } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import { StreamingSource, SupportedSources } from '@/types'
-import { getStreamingSources } from '@/utils'
+import { getStreamingSources, isNil, isNotNil } from '@/utils'
 import { initManualSearch } from '@/state/app'
 
 const streamingSiteCtx = require.context('@/assets', false)
@@ -117,7 +116,7 @@ export default class SourceSelect extends Vue {
   }
 
   public getIsSupported(provider: Provider) {
-    return !isNil(
+    return isNotNil(
       this.supportedSources.find(
         source => source.site.toLowerCase() === provider.toLowerCase(),
       ),

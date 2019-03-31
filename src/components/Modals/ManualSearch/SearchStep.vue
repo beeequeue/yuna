@@ -28,7 +28,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { debounce } from 'rambdax'
 import { mdiClose, mdiMagnify } from '@mdi/js'
 
 import TextInput from '@/components/Form/TextInput.vue'
@@ -40,7 +39,7 @@ import { Provider } from '@/graphql/types'
 import { Required } from '@/decorators'
 import { ManualSearchOptions } from '@/state/app'
 import { Crunchyroll, SearchResult } from '@/lib/crunchyroll'
-import { capitalize } from '@/utils'
+import { capitalize, debounce } from '@/utils'
 
 @Component({ components: { Icon, AnimeBanner, Loading, TextInput } })
 export default class SearchStep extends Vue {

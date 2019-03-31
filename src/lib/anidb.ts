@@ -1,10 +1,9 @@
 import superagent from 'superagent/dist/superagent'
-import { T, isNil } from 'rambdax'
 import Bottleneck from 'bottleneck'
 import { OptionsV2, parseString as _parseString } from 'xml2js'
 
 import { getConfig } from '@/config'
-import { RequestResponse, responseIsError } from '@/utils'
+import { isNil, RequestResponse, responseIsError, T } from '@/utils'
 import { parseBooleans, parseNumbers, stripPrefix } from 'xml2js/lib/processors'
 import { Crunchyroll } from '@/lib/crunchyroll'
 

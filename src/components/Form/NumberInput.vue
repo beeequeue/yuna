@@ -15,7 +15,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Required } from '@/decorators'
-import { isNil } from 'rambdax'
+import { isNotNil } from '@/utils'
 
 @Component
 export default class NumberInput extends Vue {
@@ -33,7 +33,7 @@ export default class NumberInput extends Vue {
 
   public get classes() {
     return {
-      error: !isNil(this.validationError) || !isNil(this.error),
+      error: isNotNil(this.validationError) || isNotNil(this.error),
       disabled: this.disabled,
     }
   }
@@ -49,12 +49,12 @@ export default class NumberInput extends Vue {
       return
     }
 
-    if (!isNil(this.min) && value < this.min) {
+    if (isNotNil(this.min) && value < this.min) {
       this.validationError = `Too low! (Minimum ${this.min})`
       return
     }
 
-    if (!isNil(this.max) && value > this.max) {
+    if (isNotNil(this.max) && value > this.max) {
       this.validationError = `Too high! (Max ${this.max})`
       return
     }

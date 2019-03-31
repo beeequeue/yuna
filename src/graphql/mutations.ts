@@ -1,6 +1,6 @@
 import { DataProxy } from 'apollo-cache'
 import { Store } from 'vuex'
-import { pathOr, isNil } from 'rambdax'
+import { oc } from 'ts-optchain'
 
 import {
   AddEntryMutationMutation,
@@ -22,6 +22,7 @@ import {
 
 import { EpisodeCache } from '@/lib/episode-cache'
 import { getAnilistUserId } from '@/state/auth'
+import { isNil } from '@/utils'
 import { Instance } from '@/types'
 
 import ADD_ENTRY_MUTATION from './AddEntryMutation.graphql'
@@ -35,9 +36,8 @@ import REWATCH_MUTATION from './RewatchMutation.graphql'
 import CACHE_EPISODES_MUTATION from './CacheEpisodes.graphql'
 import EPISODE_LIST_QUERY from './EpisodeList.graphql'
 
-const getEpisodes = pathOr(null, 'episodes') as (
-  obj: { episodes: EpisodeListEpisodes[] | null } | null,
-) => EpisodeListEpisodes[] | null
+const getEpisodes = (obj: { episodes: EpisodeListEpisodes[] | null } | null) =>
+  oc(obj).episodes(null)
 
 const refetchListQuery = ($store: Store<any>) => {
   const userId = getAnilistUserId($store)

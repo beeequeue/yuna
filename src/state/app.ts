@@ -1,5 +1,5 @@
 import { activeWindow } from 'electron-util'
-import { change, merge, pluck, propEq, reject } from 'rambdax'
+import { change, reject } from 'rambdax'
 import {
   NotificationFunctionOptions,
   NotificationTypes,
@@ -10,7 +10,7 @@ import { getStoreAccessors } from 'vuex-typescript'
 import { EpisodeListEpisodes, MediaListStatus, Provider } from '@/graphql/types'
 import { router } from '@/router'
 import { RootState } from '@/state/store'
-import { generateId, isNil } from '@/utils'
+import { generateId, isNil, pluck, propEq } from '@/utils'
 
 export interface Toast {
   id: string
@@ -244,10 +244,10 @@ export const app = {
       episodes: EpisodeListEpisodes[],
     ) {
       const { selectedEpisodes } = state.modals.manualSearch
-      const selectedIds = pluck<number>('id', selectedEpisodes)
+      const selectedIds = pluck('id', selectedEpisodes)
 
       const filteredEpisodes = episodes.filter(
-        ({ id }) => !selectedIds.includes(Number(id)),
+        ({ id }) => !selectedIds.includes(id),
       )
 
       let count = selectedEpisodes.length
@@ -314,7 +314,8 @@ export const app = {
     },
 
     sendToast(context: AppContext, options: ToastOptions) {
-      const realOptions = merge(
+      const realOptions = Object.assign(
+        {},
         {
           timeout: 4000,
         },

@@ -38,7 +38,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import Fuse from 'fuse.js'
-import { debounce, path } from 'rambdax'
+import { oc } from 'ts-optchain'
 
 import anilistLogoSvg from '@/assets/anilist.svg'
 import ListEntry from '@/components/ListEntry.vue'
@@ -56,6 +56,7 @@ import {
 import { Query } from '@/decorators'
 import { Page, trackPageView } from '@/lib/tracking'
 import { getAnilistUserId } from '@/state/auth'
+import { debounce } from '@/utils'
 
 @Component({ components: { ListEntry, TextInput, NumberInput } })
 export default class List extends Vue {
@@ -84,7 +85,7 @@ export default class List extends Vue {
   }
 
   public getLists(data: ListQueryQuery) {
-    const lists = path<ListQueryLists[]>('listCollection.lists', data)
+    const lists = oc(data).listCollection.lists([] as ListQueryLists[])
 
     if (!lists) return []
 

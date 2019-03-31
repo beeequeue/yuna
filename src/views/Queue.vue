@@ -77,7 +77,8 @@ import { remote, shell } from 'electron'
 import { activeWindow, api } from 'electron-util'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
-import { complement, indexBy, path, pathEq, pathOr } from 'rambdax'
+import { complement, indexBy } from 'rambdax'
+import { oc } from 'ts-optchain'
 import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 
 import CButton from '@/components/CButton.vue'
@@ -89,8 +90,6 @@ import {
   QueueAnime,
   QueueQuery,
   QueueVariables,
-  WatchingQueryEntries,
-  WatchingQueryInfo,
   WatchingQueryLists,
 } from '@/graphql/types'
 import QUEUE_QUERY from '@/graphql/Queue.graphql'
@@ -107,7 +106,7 @@ import {
 } from '@/state/user'
 import { Page, trackPageView } from '@/lib/tracking'
 import { QueueItem as IQueueItem } from '@/lib/user'
-import { sortNumber } from '@/utils'
+import { prop, propEq, sortNumber } from '@/utils'
 
 @Component({
   components: {
@@ -125,14 +124,14 @@ export default class Queue extends Vue {
     query: QUEUE_QUERY,
     variables() {
       return {
-        ids: this.queue.map(path('id')).sort(sortNumber),
+        ids: this.queue.map(prop<any, any>('id')).sort(sortNumber),
       }
     },
     update(data) {
-      const items = indexBy(anime => path('id', anime), pathOr(
-        [],
-        ['queue', 'anime'],
-      )(data) as QueueAnime[])
+      const items = indexBy(
+        anime => anime.id.toString(),
+        oc(data).queue.anime([] as QueueAnime[]),
+      )
 
       return this.queue.map(item => items[item.id])
     },
@@ -174,7 +173,7 @@ export default class Queue extends Vue {
   }
 
   public getItem(id: number) {
-    return this.queue.find(pathEq('id', id)) as IQueueItem
+    return this.queue.find(propEq('id', id)) as IQueueItem
   }
 
   public handleDrop({ removedIndex, addedIndex, payload }: any) {
@@ -211,10 +210,7 @@ export default class Queue extends Vue {
 
     const { data, errors } = await query(this.$apollo, this.anilistUserId)
 
-    const lists = path<WatchingQueryLists[] | null>(
-      'listCollection.lists',
-      data,
-    )
+    const lists = oc(data).listCollection.lists([] as WatchingQueryLists[])
 
     if (!lists || lists.length < 1) {
       return sendErrorToast(
@@ -223,9 +219,16 @@ export default class Queue extends Vue {
       )
     }
 
-    const list = lists.find(complement(path<boolean>('isCustomList')))
+    const list = lists.find(complement(prop('isCustomList')))
 
-    const entries = path<WatchingQueryEntries[]>('entries', list)
+    if (!list) {
+      return sendErrorToast(
+        this.$store,
+        "Couldn't find any shows in that state!",
+      )
+    }
+
+    const entries = prop<typeof list, 'entries'>('entries')(list)
 
     if (errors || !entries || entries.length < 1) {
       return sendErrorToast(
@@ -234,7 +237,7 @@ export default class Queue extends Vue {
       )
     }
 
-    const animes = entries.map(path<WatchingQueryInfo>('info'))
+    const animes = entries.map(prop('info'))
 
     if (random) {
       const randomIdx = Math.floor(Math.random() * entries.length)

@@ -193,7 +193,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Route } from 'vue-router'
-import { pathOr } from 'rambdax'
 import {
   mdiArrowCollapse,
   mdiArrowExpand,
@@ -208,6 +207,7 @@ import {
   mdiSkipNext,
   mdiSkipPrevious,
 } from '@mdi/js'
+import { oc } from 'ts-optchain'
 
 import {
   EpisodeListEpisodes,
@@ -274,12 +274,8 @@ export default class Controls extends Vue {
     return this.settingsOpen || this.paused || this.hovering
   }
 
-  public get listEntry() {
-    return pathOr(
-      null,
-      ['anime', 'mediaListEntry'],
-      this,
-    ) as PlayerAnimeMediaListEntry | null
+  public get listEntry(): PlayerAnimeMediaListEntry | null {
+    return oc(this).anime.mediaListEntry(null)
   }
 
   public get timeString() {

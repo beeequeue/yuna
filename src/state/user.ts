@@ -1,18 +1,18 @@
+import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
-import { isNil, pathOr, propEq } from 'rambdax'
+import { oc } from 'ts-optchain'
 
 import { MediaListStatus, Provider } from '@/graphql/types'
 import { RootState } from '@/state/store'
 import { QueueItem, userStore } from '@/lib/user'
-import { ActionContext } from 'vuex'
-import { getDefaultProvider } from '@/utils'
+import { getDefaultProvider, isNil, propEq } from '@/utils'
 
 const isInQueue = (state: UserState, id: number) =>
   !isNil(state.queue.find(propEq('id', id)))
 
 const isCurrentlyWatching = (anime: AddToQueueOptions) =>
   [MediaListStatus.Current, MediaListStatus.Repeating].includes(
-    pathOr(null, 'mediaListEntry.status', anime),
+    oc(anime).mediaListEntry.status(null as any)!,
   )
 
 interface SetProviderOptions {

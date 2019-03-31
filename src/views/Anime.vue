@@ -67,7 +67,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { isNil, path, pathOr } from 'rambdax'
+import { oc } from 'ts-optchain'
 
 import CoverImage from '@/components/Anime/CoverImage.vue'
 import AnimeTitle from '@/components/Anime/Title.vue'
@@ -91,7 +91,7 @@ import {
 import { Query } from '@/decorators'
 import { getSpoilerSettings } from '@/state/settings'
 import { Page, trackPageView } from '@/lib/tracking'
-import { getDefaultProvider, getRelations } from '@/utils'
+import { getDefaultProvider, getRelations, isNil } from '@/utils'
 
 @Component({
   components: {
@@ -166,8 +166,8 @@ export default class Anime extends Vue {
     trackPageView(
       Page.ANIME,
       this.id,
-      path('anime.title.english', data) ||
-        path('anime.title.userPreferred', data),
+      oc(data).anime.title.english(null) ||
+        oc(data).anime.title.userPreferred('MISSING_TITLE'),
     )
 
     this.tracked = true
@@ -178,7 +178,7 @@ export default class Anime extends Vue {
       return false
     }
 
-    const progress = pathOr(0, ['progress'], this.getMediaListEntry(data))
+    const progress = oc(this.getMediaListEntry(data)).progress(0)
     const setting = getSpoilerSettings(this.$store).anime.description
     const shouldBlur =
       progress < Math.ceil((data.anime.episodes as number) * 0.33)
@@ -189,7 +189,7 @@ export default class Anime extends Vue {
   public getMediaListEntry(
     data: AnimePageQueryQuery,
   ): AnimePageQueryMediaListEntry | null {
-    return pathOr(null, ['anime', 'mediaListEntry'], data)
+    return oc(data).anime.mediaListEntry(null)
   }
 
   public getRelations = getRelations

@@ -42,7 +42,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { pathOr } from 'rambdax'
 import { mdiClose, mdiLoading } from '@mdi/js'
 
 import SEARCH_QUERY from '@/graphql/SearchQuery.graphql'
@@ -55,6 +54,7 @@ import {
 import { Query } from '@/decorators'
 
 import Icon from '../Icon.vue'
+import { oc } from 'ts-optchain'
 
 @Component({ components: { Icon } })
 export default class Search extends Vue {
@@ -85,11 +85,7 @@ export default class Search extends Vue {
   public loadingSvg = mdiLoading
 
   public get results() {
-    return pathOr(
-      [],
-      ['search', 'anime', 'results'],
-      this,
-    ) as SearchQueryResults[]
+    return oc(this.search).anime.results([] as SearchQueryResults[])
   }
 
   public selectAllInInput(e: MouseEvent) {

@@ -87,14 +87,14 @@
 import { ipcRenderer } from 'electron'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import Hls from 'hls.js'
-import { contains, pathOr, last } from 'rambdax'
+import { oc } from 'ts-optchain'
+
 import { mdiLoading, mdiPlayCircle } from '@mdi/js'
 
 import {
   EpisodeListEpisodes,
   MediaRelation,
   PlayerAnimeAnime,
-  PlayerAnimeMediaListEntry,
   PlayerAnimeTitle,
   Provider,
 } from '@/graphql/types'
@@ -113,7 +113,7 @@ import { getAnilistUsername } from '@/state/auth'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
 import { DISCORD_PAUSE_WATCHING, DISCORD_SET_WATCHING } from '@/messages'
 import { Levels, Stream } from '@/types'
-import { capitalize, clamp, getRelations } from '@/utils'
+import { capitalize, clamp, getRelations, lastItem } from '@/utils'
 
 import Icon from '../Icon.vue'
 import Controls from './Controls.vue'
@@ -175,7 +175,7 @@ export default class Player extends Vue {
   }
 
   public get isPlayerMaximized() {
-    return contains(this.$route.path, ['/player-big', '/player-full'])
+    return ['/player-big', '/player-full'].includes(this.$route.path)
   }
 
   private get actionFunctionMap() {
@@ -206,11 +206,7 @@ export default class Player extends Vue {
   }
 
   public get listEntry() {
-    return pathOr(
-      null,
-      ['anime', 'mediaListEntry'],
-      this,
-    ) as PlayerAnimeMediaListEntry | null
+    return oc(this.anime).mediaListEntry(null)
   }
 
   public get sequels() {
@@ -338,7 +334,7 @@ export default class Player extends Vue {
       this.levels = qualities
 
       if (this.levels[this.quality] == null) {
-        const newQuality = last(Object.keys(this.levels)) as string
+        const newQuality = lastItem(Object.keys(this.levels)) as string
 
         localStorage.setItem(QUALITY_LOCALSTORAGE_KEY, newQuality)
         this.quality = newQuality

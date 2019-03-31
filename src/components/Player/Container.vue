@@ -18,14 +18,13 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { isNil, pathOr } from 'rambdax'
+import { oc } from 'ts-optchain'
 
 import ANIME_QUERY from '@/graphql/PlayerAnime.graphql'
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import { setEpisodeUnwatched, setEpisodeWatched } from '@/graphql/mutations'
 import {
   PlayerAnimeAnime,
-  PlayerAnimeMediaListEntry,
   PlayerAnimeQuery,
   PlayerAnimeVariables,
   EpisodeListEpisodes,
@@ -37,6 +36,7 @@ import { Query } from '@/decorators'
 import { Page, trackPageView } from '@/lib/tracking'
 import { getPlayerData } from '@/state/app'
 import { getShouldAutoMarkWatched, getShouldAutoPlay } from '@/state/settings'
+import { isNil } from '@/utils'
 
 import Player from './Player.vue'
 
@@ -84,25 +84,21 @@ export default class PlayerContainer extends Vue {
   }
 
   get episode() {
-    const index = pathOr(null, ['playerData', 'index'], this)
+    const index = oc(this.playerData).index()
     if (isNil(this.episodes) || isNil(index)) return null
 
     return this.episodes[index] as EpisodeListEpisodes
   }
 
   get nextEpisode() {
-    const index = pathOr(null, ['playerData', 'index'], this)
+    const index = oc(this.playerData).index()
     if (isNil(this.episodes) || isNil(index)) return null
 
     return this.episodes[index + 1] as EpisodeListEpisodes
   }
 
   get listEntry() {
-    return pathOr(
-      null,
-      ['anime', 'mediaListEntry'],
-      this,
-    ) as PlayerAnimeMediaListEntry | null
+    return oc(this.anime).mediaListEntry(null)
   }
 
   get shouldAutoPlay() {

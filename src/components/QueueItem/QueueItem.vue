@@ -119,7 +119,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { isNil, path, pathOr } from 'rambdax'
+import { oc } from 'ts-optchain'
 import { mdiChevronDown, mdiMenu } from '@mdi/js'
 
 import {
@@ -136,7 +136,6 @@ import {
   MediaListStatus,
   Provider,
   QueueAnime,
-  QueueMediaListEntry,
 } from '@/graphql/types'
 
 import Icon from '@/components/Icon.vue'
@@ -152,7 +151,7 @@ import { Query, Required } from '@/decorators'
 import { removeFromQueueById, toggleQueueItemOpen } from '@/state/user'
 import { sendErrorToast } from '@/state/app'
 import { QueueItem as IQueueItem } from '@/lib/user'
-import { capitalize, getIconForStatus } from '@/utils'
+import { capitalize, getIconForStatus, isNil } from '@/utils'
 
 @Component({
   components: {
@@ -210,11 +209,7 @@ export default class QueueItem extends Vue {
   public capitalize = capitalize
 
   public get listEntry() {
-    return pathOr(
-      null,
-      ['mediaListEntry'],
-      this.anime,
-    ) as QueueMediaListEntry | null
+    return oc(this.anime).mediaListEntry(null)
   }
 
   public get status() {
@@ -252,9 +247,9 @@ export default class QueueItem extends Vue {
   }
 
   public async statusMutation(status: MediaListStatus) {
-    const listEntryId = path<number>('mediaListEntry.id', this.anime)
+    const listEntryId = oc(this.anime).mediaListEntry.id()
 
-    if (!listEntryId) {
+    if (isNil(listEntryId)) {
       return sendErrorToast(this.$store, 'No entry found..?')
     }
 

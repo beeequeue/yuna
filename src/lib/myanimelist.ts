@@ -1,11 +1,10 @@
 import Bottleneck from 'bottleneck'
 import request from 'superagent/dist/superagent'
-import { T } from 'rambdax'
 
 import { EpisodeListEpisodes } from '@/graphql/types'
 
 import { Crunchyroll } from '@/lib/crunchyroll'
-import { RequestResponse, responseIsError } from '@/utils'
+import { RequestResponse, responseIsError, T } from '@/utils'
 
 const baseUrl = `https://myanimelist.net/anime`
 const CRUNCHYROLL_PROVIDER_ID = '1'

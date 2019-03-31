@@ -18,8 +18,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { pathOr } from 'rambdax'
 import { mdiRepeat } from '@mdi/js'
+import { oc } from 'ts-optchain'
 
 import { AnimePageQueryMediaListEntry, MediaListStatus } from '@/graphql/types'
 
@@ -40,11 +40,11 @@ export default class CoverImage extends Vue {
   public repeatSvg = mdiRepeat
 
   public get mediaListStatus(): MediaListStatus | null {
-    return pathOr(null, ['status'], this.mediaListEntry)
+    return oc(this.mediaListEntry).status(null)!
   }
 
   public get repeatedTimes(): number {
-    return pathOr(0, ['repeat'], this.mediaListEntry)
+    return oc(this.mediaListEntry).repeat(0)
   }
 
   public get lowercaseStatus() {

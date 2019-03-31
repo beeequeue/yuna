@@ -1,8 +1,8 @@
 import { format } from 'date-fns'
-import superagent from 'superagent/dist/superagent'
 import crypto from 'crypto'
+import superagent from 'superagent/dist/superagent'
+import { oc } from 'ts-optchain'
 import { ActionContext, Store } from 'vuex'
-import { pathOr } from 'rambdax'
 
 import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 import { getConfig } from '@/config'
@@ -386,8 +386,8 @@ export class Hidive {
 
     if (isOfType<{ store: StoreType }>(options, 'store')) {
       const login = getHidiveLogin(options.store)
-      user = pathOr('', 'user', login)
-      password = pathOr('', 'password', login)
+      user = oc(login).user('')
+      password = oc(login).password('')
     } else {
       user = options.user
       password = options.password

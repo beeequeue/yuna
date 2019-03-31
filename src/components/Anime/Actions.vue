@@ -122,7 +122,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { contains, findIndex, pathOr, propEq } from 'rambdax'
+import { oc } from 'ts-optchain'
 import {
   mdiClose,
   mdiPause,
@@ -157,6 +157,7 @@ import {
   sendNotImplementedToast,
 } from '@/state/app'
 import { getSettings } from '@/state/settings'
+import { propEq } from '@/utils'
 
 import CButton from '../CButton.vue'
 
@@ -183,7 +184,7 @@ export default class Actions extends Vue {
   public exclude!: string[]
 
   public get mediaListStatus(): MediaListStatus | null {
-    return pathOr(null, ['status'], this.mediaListEntry)
+    return oc(this.mediaListEntry).status(null)!
   }
 
   public ActionKeys = ActionKeys
@@ -241,7 +242,7 @@ export default class Actions extends Vue {
   }
 
   public isNotExcluded(key: string) {
-    return !contains(key, this.exclude)
+    return !this.exclude.includes(key)
   }
 
   public ifBig(value: any) {
@@ -279,10 +280,9 @@ export default class Actions extends Vue {
       return sendErrorToast(this.$store, 'No anime found..?')
     }
 
-    removeFromQueueByIndex(
-      this.$store,
-      findIndex(propEq('id', this.anime.id), getQueue(this.$store)),
-    )
+    const index = getQueue(this.$store).findIndex(propEq('id', this.anime.id))
+
+    removeFromQueueByIndex(this.$store, index)
   }
 
   public async statusMutation(status: MediaListStatus) {

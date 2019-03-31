@@ -92,7 +92,8 @@
 import { ApolloError } from 'apollo-client'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { ApolloCache } from 'apollo-cache'
-import { change, path, propEq } from 'rambdax'
+import { change } from 'rambdax'
+import { oc } from 'ts-optchain'
 import { mdiCloseCircle } from '@mdi/js'
 
 import SAVE_LIST_ENTRY_MUTATION from '@/graphql/SaveListEntryMutation.graphql'
@@ -111,7 +112,7 @@ import {
   getEditingAnime,
   setEditingAnimeValue,
 } from '@/state/app'
-import { capitalize, enumToArray } from '@/utils'
+import { capitalize, enumToArray, propEq } from '@/utils'
 
 import Modal from './Modal.vue'
 import AnimeBanner from '../AnimeBanner.vue'
@@ -176,7 +177,7 @@ export default class EditModal extends Vue {
     let data =
       cache.readQuery<AnimePageQueryQuery, AnimePageQueryVariables>({
         query: ANIME_PAGE_QUERY,
-        variables: { id: path('id', this.anime) },
+        variables: { id: this.anime!.id },
       }) || ({} as any)
 
     data = change(data, 'anime.mediaListEntry', payload.data.SaveMediaListEntry)
@@ -184,7 +185,7 @@ export default class EditModal extends Vue {
     data = change(
       data,
       'anime.mediaListEntry.score',
-      path('mediaListEntry.score', this.anime),
+      oc(this.anime).mediaListEntry.score(),
     )
 
     cache.writeQuery({ query: ANIME_PAGE_QUERY, data })
@@ -194,7 +195,7 @@ export default class EditModal extends Vue {
     if (!error || !error.networkError) return null
 
     const errors = (error.networkError as any).result.errors.find(
-      propEq('message', 'validation'),
+      propEq<any, any>('validation', 'message'),
     ).validation[key]
 
     return errors && errors.length > 0 ? errors[0] : null
