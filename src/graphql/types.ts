@@ -874,6 +874,8 @@ export type FuzzyDateInt = any;
   export type PausedQueryExternalLinks = {
     __typename?: "MediaExternalLink";
     
+    id: number;
+    
     site: string;
     
     url: string;
@@ -881,6 +883,8 @@ export type FuzzyDateInt = any;
 
   export type PausedQueryMediaListEntry = {
     __typename?: "MediaList";
+    
+    id: number;
     
     status: Maybe<MediaListStatus>;
   } 
@@ -928,6 +932,8 @@ export type FuzzyDateInt = any;
   export type PlanningQueryExternalLinks = {
     __typename?: "MediaExternalLink";
     
+    id: number;
+    
     site: string;
     
     url: string;
@@ -935,6 +941,8 @@ export type FuzzyDateInt = any;
 
   export type PlanningQueryMediaListEntry = {
     __typename?: "MediaList";
+    
+    id: number;
     
     status: Maybe<MediaListStatus>;
   } 
@@ -1325,6 +1333,8 @@ export type FuzzyDateInt = any;
   export type WatchingQueryExternalLinks = {
     __typename?: "MediaExternalLink";
     
+    id: number;
+    
     site: string;
     
     url: string;
@@ -1332,6 +1342,8 @@ export type FuzzyDateInt = any;
 
   export type WatchingQueryMediaListEntry = {
     __typename?: "MediaList";
+    
+    id: number;
     
     status: Maybe<MediaListStatus>;
   } 

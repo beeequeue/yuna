@@ -10,10 +10,12 @@ query PlanningQuery($userId: Int!) {
         info: media {
           id
           externalLinks {
+            id
             site
             url
           }
           mediaListEntry {
+            id
             status
           }
         }

@@ -243,8 +243,10 @@ export default class Queue extends Vue {
     const animes = entries.map(prop('info')).filter(isNotNil)
 
     if (random) {
-      const randomIdx = Math.floor(Math.random() * entries.length)
-      addToQueue(this.$store, entries[randomIdx].info as any)
+      do {
+        const randomIdx = Math.floor(Math.random() * entries.length)
+        addToQueue(this.$store, entries[randomIdx].info as any)
+      } while (queueBefore.length - this.queue.length === 0)
     } else {
       animes.forEach(anime => addToQueue(this.$store, anime))
     }
