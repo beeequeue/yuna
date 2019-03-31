@@ -1,7 +1,6 @@
 /* eslint-disable class-name */
 import { error } from 'electron-log'
 import { activeWindow } from 'electron-util'
-import { anyPass, complement } from 'rambdax'
 import superagent from 'superagent/dist/superagent'
 import { ActionContext, Store } from 'vuex'
 
@@ -16,6 +15,7 @@ import {
   setCrunchyrollCountry,
 } from '@/state/auth'
 import {
+  anyPass,
   delay,
   getDeviceUuid,
   mapAsync,
@@ -706,6 +706,9 @@ const isSpecialEpisode = ({ episode_number }: _Media) =>
 
 const isShorterThanFiveMinutes = ({ duration }: _Media) => duration < 300
 
-const isRealEpisode = complement(
-  anyPass([episodeNumberIsHalf, isSpecialEpisode, isShorterThanFiveMinutes]),
-)
+const isRealEpisode = (ep: _Media) =>
+  !anyPass(ep, [
+    episodeNumberIsHalf,
+    isSpecialEpisode,
+    isShorterThanFiveMinutes,
+  ])

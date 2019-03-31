@@ -324,6 +324,9 @@ export const isNil = (variable: any): variable is null | undefined => {
   return variable === null || variable === undefined
 }
 
+export const complement = (fn: (...a: any[]) => any) => (input: any) =>
+  !fn(input)
+
 export const mapAsync = async <T, R>(
   items: T[],
   fn: (item: T) => Promise<R>,
@@ -332,3 +335,11 @@ export const mapAsync = async <T, R>(
 
   return await Promise.all(promises)
 }
+
+export const anyPass = <
+  P,
+  F extends Array<(item: P, index?: number, array?: P[]) => boolean>
+>(
+  item: P,
+  predicates: F,
+) => predicates.some(predicate => predicate(item))
