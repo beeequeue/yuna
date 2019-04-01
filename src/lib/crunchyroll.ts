@@ -18,6 +18,7 @@ import {
   anyPass,
   delay,
   getDeviceUuid,
+  isNil,
   mapAsync,
   removeCookies,
   RequestError,
@@ -187,7 +188,7 @@ interface CrunchyrollSuccess<D extends object = any> {
 }
 
 interface CrunchyrollError {
-  code: 'bad_request' | 'bad_session'
+  code: 'bad_request' | 'bad_session' | 'object_not_found'
   error: true
   message: string
 }
@@ -397,7 +398,9 @@ export class Crunchyroll {
     }
   }
 
-  public static fetchEpisode = async (mediaId: string): Promise<_Media> => {
+  public static fetchEpisode = async (
+    mediaId: string,
+  ): Promise<_Media | null> => {
     const response = await Crunchyroll.request<_Media>('info', {
       media_id: mediaId,
       fields: mediaFields.join(','),
@@ -406,6 +409,10 @@ export class Crunchyroll {
     if (responseIsError(response)) {
       if (response.body.code === 'bad_session') {
         activeWindow().reload()
+      }
+
+      if (response.body.code === 'object_not_found') {
+        return null
       }
 
       throw new Error(response.body.message)
@@ -472,6 +479,10 @@ export class Crunchyroll {
     mediaId: string,
   ): Promise<EpisodeListEpisodes[]> => {
     const episode = await Crunchyroll.fetchEpisode(mediaId)
+
+    if (isNil(episode)) {
+      return []
+    }
 
     return Crunchyroll.fetchEpisodesOfCollection(id, episode.collection_id)
   }
