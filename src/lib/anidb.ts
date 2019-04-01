@@ -137,9 +137,18 @@ export class AniDB {
       valueProcessors: [parseNumbers, parseBooleans],
     })
 
-    const firstEpisode = (data.episodes.episode as XmlEpisode[]).find(
-      ep => ep.epno.type === EpisodeType.EPISODE && ep.epno._ === 1,
-    )
+    const episode = data.episodes.episode as XmlEpisode[] | XmlEpisode
+
+    let firstEpisode: XmlEpisode | null = null
+
+    if (Array.isArray(episode)) {
+      firstEpisode =
+        episode.find(
+          ep => ep.epno.type === EpisodeType.EPISODE && ep.epno._ === 1,
+        ) || null
+    } else {
+      firstEpisode = episode
+    }
 
     if (isNil(firstEpisode)) return null
 
