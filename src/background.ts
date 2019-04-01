@@ -8,6 +8,7 @@ import {
 } from 'electron'
 import electronDebug, { openDevTools } from 'electron-debug'
 import Store from 'electron-store'
+import { enforceMacOSAppLocation } from 'electron-util'
 import { init } from '@sentry/electron/dist/main'
 import { join } from 'path'
 import { format as formatUrl } from 'url'
@@ -174,6 +175,8 @@ app.on('activate', () => {
 
 // create main BrowserWindow when electron is ready
 app.on('ready', async () => {
+  enforceMacOSAppLocation()
+
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
     await installVueDevtools()

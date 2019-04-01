@@ -4,7 +4,8 @@
     "category": "Video"
   },
   "mac": {
-    "category": "public.app-category.entertainment"
+    "category": "public.app-category.entertainment",
+    "background": "#000"
   },
   "directories": {
     "buildResources": "public"
