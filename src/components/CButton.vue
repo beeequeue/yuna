@@ -1,12 +1,12 @@
 <template>
-  <button class="button" :class="classes" @click="handleClick">
+  <button class="button" :id="id" :class="classes" @click="handleClick">
     <icon v-if="icon != null && !confirmTimeout" :icon="icon" />
 
     <icon v-if="confirmTimeout" class="alert" :icon="alertSvg" />
 
-    <span v-if="content" class="content">{{
-      confirm && confirmTimeout ? confirmText || 'Confirm' : content
-    }}</span>
+    <span v-if="content" class="content">
+      {{ confirm && confirmTimeout ? confirmText || 'Confirm' : content }}
+    </span>
   </button>
 </template>
 
@@ -14,6 +14,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import Icon from './Icon.vue'
 import { mdiAlertCircleOutline } from '@mdi/js'
+import { isNotNil } from '@/utils'
 
 @Component({ components: { Icon } })
 export default class CButton extends Vue {
@@ -33,6 +34,14 @@ export default class CButton extends Vue {
 
   public alertSvg = mdiAlertCircleOutline
 
+  public get id() {
+    if (isNotNil(this.content)) {
+      return this.content.replace(/ /g, '-').toLowerCase()
+    }
+
+    return `${this.type || 'normal'}`
+  }
+
   public get classes() {
     return {
       [this.type as string]: !!this.type,
@@ -40,6 +49,7 @@ export default class CButton extends Vue {
       raised: this.raised || (!this.flat && !this.raised),
       flat: this.flat,
       disabled: this.disabled,
+      confirming: !!this.confirmText,
     }
   }
 
