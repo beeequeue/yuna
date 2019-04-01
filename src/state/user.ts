@@ -5,10 +5,10 @@ import { oc } from 'ts-optchain'
 import { MediaListStatus, Provider } from '@/graphql/types'
 import { RootState } from '@/state/store'
 import { QueueItem, userStore } from '@/lib/user'
-import { getDefaultProvider, isNil, propEq } from '@/utils'
+import { getDefaultProvider, isNotNil, propEq } from '@/utils'
 
 const isInQueue = (state: UserState, id: number) =>
-  !isNil(state.queue.find(propEq('id', id)))
+  isNotNil(state.queue.find(propEq('id', id)))
 
 const isCurrentlyWatching = (anime: AddToQueueOptions) =>
   [MediaListStatus.Current, MediaListStatus.Repeating].includes(

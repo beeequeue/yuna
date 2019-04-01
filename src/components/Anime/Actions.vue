@@ -157,7 +157,7 @@ import {
   sendNotImplementedToast,
 } from '@/state/app'
 import { getSettings } from '@/state/settings'
-import { propEq } from '@/utils'
+import { isNil, propEq } from '@/utils'
 
 import CButton from '../CButton.vue'
 
@@ -202,10 +202,6 @@ export default class Actions extends Vue {
     return getAnilistUserId(this.$store)
   }
 
-  public get id() {
-    return Number(this.$route.params.id)
-  }
-
   public get isOnList() {
     return this.mediaListStatus != null
   }
@@ -232,9 +228,9 @@ export default class Actions extends Vue {
   }
 
   public get isInQueue() {
-    if (!this.anime) return false
+    if (isNil(this.anime)) return false
 
-    return getIsInQueue(this.$store)(this.id)
+    return getIsInQueue(this.$store)(this.anime.id)
   }
 
   public get shouldAddToListAsWell() {
