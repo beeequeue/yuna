@@ -26,6 +26,7 @@
 <script lang="ts">
 import gql from 'graphql-tag'
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { oc } from 'ts-optchain'
 import { mdiChevronDown } from '@mdi/js'
 
 import malLogo from '@/assets/myanimelist.webp'
@@ -59,7 +60,7 @@ export default class Info extends Vue {
     variables() {
       return { id: this.id }
     },
-    update: data => data.anime.scoreMal,
+    update: data => oc(data).anime.scoreMal(null),
   })
   public scoreMal!: number | null
 
