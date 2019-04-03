@@ -10,6 +10,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { isNil } from '@/utils'
 
 @Component
 export default class AnimatedHeight extends Vue {
@@ -33,6 +34,10 @@ export default class AnimatedHeight extends Vue {
 
   public updateHeight() {
     this.$nextTick(() => {
+      if (isNil(this.$refs.container)) {
+        return
+      }
+
       const children = Array.from(
         this.$refs.container.children,
       ) as HTMLElement[]
