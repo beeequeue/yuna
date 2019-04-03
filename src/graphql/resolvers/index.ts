@@ -155,7 +155,9 @@ export const resolvers = {
           throw new Error('Could not find Anime in cache!')
         }
 
-        if (provider === Provider.Crunchyroll) {
+        if (
+          [Provider.Crunchyroll, Provider.CrunchyrollManual].includes(provider)
+        ) {
           let unconfirmedEpisodes
 
           try {

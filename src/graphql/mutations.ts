@@ -1,4 +1,5 @@
 import { DataProxy } from 'apollo-cache'
+import gql from 'graphql-tag'
 import { Store } from 'vuex'
 import { oc } from 'ts-optchain'
 
@@ -236,19 +237,51 @@ export const deleteListEntryMutation = async (
     },
   })
 
+interface CacheEpisodesAiring {
+  AiringSchedule: null | {
+    id: number
+    episode: number
+    airingAt: number
+  }
+}
+
 export const cacheEpisodes = async (
   { $apollo }: Instance,
   animeId: number,
   provider: Provider,
   episodes: EpisodeInput[],
-) =>
-  $apollo.mutate<CacheEpisodesMutation>({
+) => {
+  const { data } = await $apollo.query<CacheEpisodesAiring>({
+    query: gql`
+      query CacheEpisodesAiring($id: Int!) {
+        AiringSchedule(mediaId: $id, notYetAired: true) {
+          id
+          episode
+          airingAt
+        }
+      }
+    `,
+    variables: { id: animeId },
+  })
+
+  const airing = oc(data).AiringSchedule.airingAt(0) * 1000
+
+  return $apollo.mutate<CacheEpisodesMutation>({
     mutation: CACHE_EPISODES_MUTATION,
-    variables: { id: animeId, provider, episodes } as CacheEpisodesVariables,
+    variables: {
+      id: animeId,
+      provider,
+      episodes,
+      nextEpisodeAiringAt: airing !== 0 ? airing : null,
+    } as CacheEpisodesVariables,
     refetchQueries: [
       {
         query: EPISODE_LIST_QUERY,
-        variables: { id: animeId, provider } as EpisodeListVariables,
+        variables: {
+          id: animeId,
+          provider,
+        } as EpisodeListVariables,
       },
     ],
   })
+}
