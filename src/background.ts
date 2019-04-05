@@ -33,7 +33,7 @@ init({
   enabled: process.env.NODE_ENV === 'production',
   dsn: 'https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205',
   environment: process.env.NODE_ENV,
-  release: `yuna-v${version}`,
+  release: `v${version}`,
 })
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)

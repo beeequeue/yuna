@@ -26,7 +26,7 @@ init({
   dsn: 'https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205',
   integrations: [new Integrations.Vue({ Vue })],
   environment: process.env.NODE_ENV,
-  release: `yuna-v${version}`,
+  release: `v${version}`,
 })
 
 // Handle outside links
