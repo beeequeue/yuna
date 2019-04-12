@@ -90,7 +90,6 @@ import {
 
 import { Query } from '@/decorators'
 import { getSpoilerSettings } from '@/state/settings'
-import { Page, trackPageView } from '@/lib/tracking'
 import { getDefaultProvider, getRelations, isNil } from '@/utils'
 
 @Component({
@@ -114,9 +113,6 @@ export default class Anime extends Vue {
     },
     error(err: Error) {
       this.error = err.message
-    },
-    result(data) {
-      this.fetchedAnime(data)
     },
   })
   public data!: AnimePageQueryQuery | null
@@ -154,23 +150,8 @@ export default class Anime extends Vue {
   public episodesLoading = 0
   public episodesFetchingError: string | null = null
 
-  tracked = false
-
   public get id() {
     return Number(this.$route.params.id)
-  }
-
-  public async fetchedAnime(data: AnimePageQueryQuery) {
-    if (this.tracked) return
-
-    trackPageView(
-      Page.ANIME,
-      this.id,
-      oc(data).anime.title.english(null) ||
-        oc(data).anime.title.userPreferred('MISSING_TITLE'),
-    )
-
-    this.tracked = true
   }
 
   public getShouldBlurDescription(data: AnimePageQueryQuery) {

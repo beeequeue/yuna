@@ -105,7 +105,6 @@ import {
   setQueueItemProvider,
   toggleQueueItemOpen,
 } from '@/state/user'
-import { Page, trackPageView } from '@/lib/tracking'
 import { QueueItem as IQueueItem } from '@/lib/user'
 import { isNotNil, pick, prop, propEq, sortNumber } from '@/utils'
 
@@ -167,10 +166,6 @@ export default class Queue extends Vue {
 
   public set queue(value: IQueueItem[]) {
     setQueue(this.$store, value)
-  }
-
-  public mounted() {
-    trackPageView(Page.QUEUE)
   }
 
   public getItem(id: number) {

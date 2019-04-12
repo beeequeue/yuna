@@ -256,7 +256,6 @@ import LoginHD from '@/components/FirstTimeSetup/LoginHD.vue'
 import LoginCR from '@/components/FirstTimeSetup/LoginCR.vue'
 
 import { Crunchyroll } from '@/lib/crunchyroll'
-import { Page, trackPageView } from '@/lib/tracking'
 import { getIsUpdateAvailable } from '@/state/app'
 import { getCrunchyrollCountry, getIsConnectedTo } from '@/state/auth'
 import {
@@ -331,10 +330,6 @@ export default class Settings extends Vue {
 
   public get connectedTo() {
     return getIsConnectedTo(this.$store)
-  }
-
-  public mounted() {
-    trackPageView(Page.SETTINGS)
   }
 
   public openDevTools() {

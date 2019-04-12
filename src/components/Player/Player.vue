@@ -101,7 +101,6 @@ import {
 
 import { Required } from '@/decorators'
 import { Crunchyroll } from '@/lib/crunchyroll'
-import { trackStillWatching } from '@/lib/tracking'
 import {
   getIsFullscreen,
   PlayerData,
@@ -412,8 +411,6 @@ export default class Player extends Vue {
       this.lastHeartbeat < this.progressInSeconds
     ) {
       this.lastHeartbeat = this.progressInSeconds
-
-      trackStillWatching()
     }
 
     if (!this.softEnded && this.progressPercentage >= 0.8) {

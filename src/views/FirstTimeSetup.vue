@@ -61,7 +61,6 @@ import {
   SetupStep,
 } from '@/state/settings'
 import { loginAnilist } from '@/lib/anilist'
-import { Page, trackPageView } from '@/lib/tracking'
 import { Crunchyroll } from '@/lib/crunchyroll'
 
 @Component({
@@ -91,10 +90,6 @@ export default class FirstTimeSetup extends Vue {
 
   public created() {
     this.currentStep = getNextUnfinishedStep(this.$store)
-  }
-
-  public mounted() {
-    trackPageView(Page.FIRST_TIME_SETUP)
   }
 
   public finishStep() {

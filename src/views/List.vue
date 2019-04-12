@@ -54,7 +54,6 @@ import {
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
-import { Page, trackPageView } from '@/lib/tracking'
 import { getAnilistUserId } from '@/state/auth'
 import { debounce } from '@/utils'
 
@@ -78,10 +77,6 @@ export default class List extends Vue {
 
   public get userId() {
     return getAnilistUserId(this.$store)
-  }
-
-  public mounted() {
-    trackPageView(Page.LIST)
   }
 
   public getLists(data: ListQueryQuery) {

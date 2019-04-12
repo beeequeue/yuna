@@ -33,7 +33,6 @@ import {
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
-import { Page, trackPageView } from '@/lib/tracking'
 import { getPlayerData } from '@/state/app'
 import { getShouldAutoMarkWatched, getShouldAutoPlay } from '@/state/settings'
 import { isNil } from '@/utils'
@@ -115,7 +114,6 @@ export default class PlayerContainer extends Vue {
     switch (pathWithoutSlash) {
       case 'player-big':
       case 'player-full':
-        trackPageView(Page.PLAYER)
         return pathWithoutSlash
       case 'queue':
         return pathWithoutSlash

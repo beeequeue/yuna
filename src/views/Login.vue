@@ -51,7 +51,6 @@ import LoginCR from '@/components/FirstTimeSetup/LoginCR.vue'
 import LoginAL from '@/components/FirstTimeSetup/LoginAL.vue'
 
 import { loginAnilist } from '@/lib/anilist'
-import { Page, trackPageView } from '@/lib/tracking'
 import { getFinishedConnecting, getIsConnectedTo } from '@/state/auth'
 import LoginHD from '@/components/FirstTimeSetup/LoginHD.vue'
 
@@ -71,10 +70,6 @@ export default class Login extends Vue {
 
   private get isFinished() {
     return getFinishedConnecting(this.$store)
-  }
-
-  public created() {
-    trackPageView(Page.LOGIN)
   }
 
   public confirmHidiveProfile() {
