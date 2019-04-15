@@ -4,11 +4,11 @@ import { EpisodeListEpisodes } from '@/graphql/types'
 
 // Branches
 
-interface RelationsCacheSchema {
-  updatedAt: number
-  relations: any
-}
-const relationsCache = new Store<RelationsCacheSchema>({
+// interface RelationsCacheSchema {
+//   updatedAt: number
+//   relations: any
+// }
+const relationsCache = new Store<any>({
   name: 'relationsCache',
 })
 

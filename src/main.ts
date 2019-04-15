@@ -1,8 +1,8 @@
 import { shell } from 'electron'
-import Tooltip from 'v-tooltip'
 import Vue from 'vue'
-import { init } from '@sentry/electron'
-import { Integrations } from '@sentry/browser'
+import Tooltip from 'v-tooltip'
+import { init } from '@sentry/browser'
+import * as Integrations from '@sentry/integrations'
 
 import { updateRelations } from '@/lib/relations'
 
@@ -10,6 +10,7 @@ import App from './App.vue'
 import { router } from './router'
 import { store } from './state/store'
 import { createProvider } from './vue-apollo'
+import { normalizeEvent } from './normalize'
 import { version } from '../package.json'
 
 import 'normalize.css'
@@ -22,9 +23,9 @@ Vue.use(Tooltip)
 
 // Sentry
 init({
-  enabled: process.env.NODE_ENV === 'production',
   dsn: 'https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205',
-  integrations: [new Integrations.Vue({ Vue })],
+  integrations: [new Integrations.Vue({ Vue, attachProps: true })],
+  beforeSend: normalizeEvent,
   environment: process.env.NODE_ENV,
   release: `v${version}`,
 })

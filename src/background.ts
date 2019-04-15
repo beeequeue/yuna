@@ -9,7 +9,7 @@ import {
 import electronDebug, { openDevTools } from 'electron-debug'
 import Store from 'electron-store'
 import { enforceMacOSAppLocation } from 'electron-util'
-import { init } from '@sentry/electron/dist/main'
+import { init } from '@sentry/node'
 import { join } from 'path'
 import { format as formatUrl } from 'url'
 import {
@@ -46,7 +46,7 @@ protocol.registerStandardSchemes(['app'], { secure: true })
 electronDebug({})
 
 function createMainWindow() {
-  const settingsStore = new Store({ name: 'settings' })
+  const settingsStore = new Store<any>({ name: 'settings' })
 
   const position = settingsStore.get('window', {})
 

@@ -12,7 +12,7 @@ import {
   CHECK_FOR_UPDATES,
 } from './messages'
 
-const settingsStore = new Store({ name: 'settings' })
+const settingsStore = new Store<any>({ name: 'settings' })
 
 log.transports.file.level = 'debug'
 autoUpdater.logger = log

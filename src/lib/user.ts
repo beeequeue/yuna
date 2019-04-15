@@ -1,7 +1,7 @@
 import Store from 'electron-store'
 
 import { Provider } from '@/graphql/types'
-import { AnilistData, CrunchyrollData, HidiveData } from '@/state/auth'
+// import { AnilistData, CrunchyrollData, HidiveData } from '@/state/auth'
 
 const { NODE_ENV } = process.env
 const CURRENT_VERSION = 4
@@ -12,15 +12,15 @@ export interface QueueItem {
   provider: Provider
 }
 
-interface UserStore {
-  __version: number
-  queue: QueueItem[]
-  crunchyroll: Omit<CrunchyrollData, 'country'>
-  anilist: AnilistData
-  hidive: HidiveData
-}
+// interface UserStore {
+//   __version: number
+//   queue: QueueItem[]
+//   crunchyroll: Omit<CrunchyrollData, 'country'>
+//   anilist: AnilistData
+//   hidive: HidiveData
+// }
 
-export const userStore = new Store<UserStore>({
+export const userStore = new Store<any>({
   name: NODE_ENV === 'development' ? 'user-d' : 'user',
   encryptionKey:
     NODE_ENV === 'production'
@@ -59,7 +59,7 @@ if (oldVersion !== CURRENT_VERSION) {
   if (oldVersion === 3) {
     const queue = userStore.get('queue', [])
 
-    const newQueue = queue.map(item => ({
+    const newQueue = queue.map((item: QueueItem) => ({
       ...item,
       provider: Provider.Crunchyroll,
     }))

@@ -2,16 +2,16 @@ import Store from 'electron-store'
 
 import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 
-interface VersionSchema {
-  __version: number
-}
+// interface VersionSchema {
+//   __version: number
+// }
 interface EpisodeCacheSchema {
   [id: string]: {
     nextEpisodeAiringAt: number
     episodes: EpisodeListEpisodes[]
   }
 }
-const episodeCache = new Store<VersionSchema & EpisodeCacheSchema>({
+const episodeCache = new Store<any>({
   name: 'episodeCache',
 })
 

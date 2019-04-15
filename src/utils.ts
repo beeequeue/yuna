@@ -55,11 +55,7 @@ export const responseIsError = (
 ): res is RequestError<any> | null => {
   if (!res) return true
 
-  const resGetter = oc(res) as any
-
-  return (
-    resGetter.body.error(null) != null || resGetter.body.error(null) != null
-  )
+  return !!(oc(res) as any).body.error() || !!oc(res).error()
 }
 
 export const secondsToTimeString = (input: number) => {

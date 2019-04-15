@@ -79,7 +79,7 @@ export interface SettingsState {
 
 type SettingsContext = ActionContext<SettingsState, RootState>
 
-export const SettingsStore = new Store<SettingsState>({ name: 'settings' })
+export const SettingsStore = new Store<any>({ name: 'settings' })
 
 const {
   PAUSE_PLAY,
