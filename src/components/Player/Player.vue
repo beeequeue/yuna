@@ -8,11 +8,10 @@
   >
     <transition name="fade">
       <video
-        v-if="episode"
         preload
         :muted="muted"
         :autoplay="shouldAutoPlay"
-        :poster="episode.thumbnail"
+        :poster="episode && episode.thumbnail"
         ref="player"
         :class="{ ended }"
       >
@@ -246,7 +245,7 @@ export default class Player extends Vue {
   }
 
   private async fetchStream(provider: Provider, id: string): Promise<Stream> {
-    if (provider === Provider.Crunchyroll) {
+    if ([Provider.Crunchyroll, Provider.CrunchyrollManual].includes(provider)) {
       return Crunchyroll.fetchStream(id)
     }
 

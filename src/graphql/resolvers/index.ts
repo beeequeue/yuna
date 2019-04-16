@@ -174,9 +174,14 @@ export const resolvers = {
             }
           }
 
-          if (!unconfirmedEpisodes) return null
+          if (unconfirmedEpisodes == null) return null
 
-          const relations = getEpisodeRelations(id, unconfirmedEpisodes)
+          const episodesWithCorrectProvider = unconfirmedEpisodes.map(ep => ({
+            ...ep,
+            provider: provider,
+          }))
+
+          const relations = getEpisodeRelations(id, episodesWithCorrectProvider)
 
           cacheEpisodes(
             cache,

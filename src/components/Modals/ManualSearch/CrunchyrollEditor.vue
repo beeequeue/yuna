@@ -175,6 +175,14 @@ export default class CrunchyrollEditor extends Vue {
       this.id,
     )
 
+    this.anime.collections = this.anime.collections.map(coll => ({
+      ...coll,
+      episodes: coll.episodes.map(ep => ({
+        ...ep,
+        provider: Provider.CrunchyrollManual,
+      })),
+    }))
+
     this.loading = false
   }
 }
