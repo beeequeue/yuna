@@ -8,7 +8,6 @@
     "@sentry/browser": "5.0.8",
     "@sentry/integrations": "5.0.8",
     "@sentry/node": "5.0.8",
-    "apollo-boost": "0.3.1",
     "bottleneck": "2.18.0",
     "date-fns": "2.0.0-alpha.26",
     "discord-rpc": "3.0.1",

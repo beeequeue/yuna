@@ -262,6 +262,7 @@ export const cacheEpisodes = async (
       }
     `,
     variables: { id: animeId },
+    errorPolicy: 'ignore',
   })
 
   const airing = oc(data).AiringSchedule.airingAt(0) * 1000
