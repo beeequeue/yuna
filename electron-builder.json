@@ -4,7 +4,7 @@
     "category": "Video"
   },
   "mac": {
-    "category": "public.app-category.entertainment",
+    "category": "public.app-category.entertainment"
   },
   "directories": {
     "buildResources": "public"
