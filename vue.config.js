@@ -1,3 +1,6 @@
+/**
+ * @type { ProjectOptions }
+ */
 module.exports = {
   css: {
     sourceMap: true,
