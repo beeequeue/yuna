@@ -83,7 +83,7 @@ import { oc } from 'ts-optchain'
 import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 
 import CButton from '@/components/CButton.vue'
-import QueueItem from '@/components/QueueItem/QueueItem.vue'
+import QueueItem from './components/queue-item.vue'
 
 import { pausedQuery, planningQuery, watchingQuery } from '@/graphql/query'
 import {
@@ -93,7 +93,7 @@ import {
   QueueVariables,
   WatchingQueryLists,
 } from '@/graphql/types'
-import QUEUE_QUERY from '@/graphql/Queue.graphql'
+import QUEUE_QUERY from '@/views/queue/queue.graphql'
 
 import { Query } from '@/decorators'
 import { getPlayerData, sendErrorToast, sendToast } from '@/state/app'

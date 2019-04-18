@@ -138,14 +138,14 @@ import {
   QueueAnime,
 } from '@/graphql/types'
 
+import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import Icon from '@/components/Icon.vue'
 import AnimeBanner from '@/components/AnimeBanner.vue'
 import EpisodeList from '@/components/EpisodeList.vue'
 import AnimatedHeight from '@/components/AnimatedHeight.vue'
 import SourceList from '@/components/SourceList.vue'
-import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import CButton from '@/components/CButton.vue'
-import SourceSelect from '@/components/QueueItem/SourceSelect.vue'
+import SourceSelect from './source-select.vue'
 
 import { Query, Required } from '@/decorators'
 import { removeFromQueueById, toggleQueueItemOpen } from '@/state/user'
@@ -311,7 +311,7 @@ export default class QueueItem extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import '../../../colors';
 
 @function gradient($color, $opacity: 0.5) {
   @return linear-gradient(90deg, transparentize($color, $opacity), transparent);
