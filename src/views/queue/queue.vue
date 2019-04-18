@@ -365,7 +365,7 @@ export default class Queue extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../colors';
+@import '../../colors';
 
 .queue {
   position: relative;

@@ -4,7 +4,7 @@ import { oc } from 'ts-optchain'
 
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
-  AnimePageQueryAnime,
+  AnimeViewAnime,
   CacheEpisodesVariables,
   EpisodeListEpisodes,
   EpisodeListQuery,
@@ -223,7 +223,7 @@ export const resolvers = {
     },
   },
   Media: {
-    scoreMal: async (media: AnimePageQueryAnime): Promise<number | null> => {
+    scoreMal: async (media: AnimeViewAnime): Promise<number | null> => {
       if (isNil(media) || isNil(media.idMal)) return null
 
       try {

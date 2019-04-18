@@ -21,12 +21,12 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiRepeat } from '@mdi/js'
 import { oc } from 'ts-optchain'
 
-import { AnimePageQueryMediaListEntry, MediaListStatus } from '@/graphql/types'
+import { AnimeViewMediaListEntry, MediaListStatus } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import { getIconForStatus, humanizeMediaListStatus } from '@/utils'
 
-import Icon from '../Icon.vue'
+import Icon from '../../components/Icon.vue'
 
 @Component({
   components: { Icon },
@@ -34,7 +34,7 @@ import Icon from '../Icon.vue'
 export default class CoverImage extends Vue {
   @Required(String) public src!: string
   @Prop(String) public color!: string | null
-  @Prop(Object) public mediaListEntry!: AnimePageQueryMediaListEntry | null
+  @Prop(Object) public mediaListEntry!: AnimeViewMediaListEntry | null
   @Prop(Number) public length!: number | null
 
   public repeatSvg = mdiRepeat
@@ -57,7 +57,7 @@ export default class CoverImage extends Vue {
     if (!this.mediaListEntry) return 'Not in List'
 
     return humanizeMediaListStatus(
-      this.mediaListEntry as AnimePageQueryMediaListEntry,
+      this.mediaListEntry as AnimeViewMediaListEntry,
       this.length,
     )
   }

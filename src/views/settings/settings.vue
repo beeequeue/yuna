@@ -432,7 +432,7 @@ export default class Settings extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../colors';
+@import '../../colors';
 
 .container {
   position: absolute;

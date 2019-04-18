@@ -27,7 +27,7 @@ import { isNil } from '@/utils'
 import { Instance } from '@/types'
 
 import ADD_ENTRY_MUTATION from './AddEntryMutation.graphql'
-import ANIME_PAGE_QUERY from './AnimePageQuery.graphql'
+import ANIME_PAGE_QUERY from '../views/anime/anime.graphql'
 import DELETE_LIST_ENTRY_MUTATION from './DeleteListEntryMutation.graphql'
 import LIST_QUERY from './ListQuery.graphql'
 import SET_STATUS_MUTATION from './SetStatusMutation.graphql'

@@ -69,20 +69,20 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 
-import CoverImage from '@/components/Anime/CoverImage.vue'
-import AnimeTitle from '@/components/Anime/Title.vue'
-import Actions from '@/components/Anime/Actions.vue'
-import CenterContainer from '@/components/Anime/CenterContainer.vue'
-import Relations from '@/components/Anime/Relations.vue'
 import CButton from '@/components/CButton.vue'
 import EpisodeList from '@/components/EpisodeList.vue'
+import CoverImage from '@/common/components/cover-image.vue'
+import Actions from '@/common/components/actions.vue'
+import AnimeTitle from './components/title.vue'
+import CenterContainer from './components/center-container.vue'
+import Relations from './components/relations.vue'
 
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
-import ANIME_PAGE_QUERY from '@/graphql/AnimePageQuery.graphql'
+import ANIME_QUERY from './anime.graphql'
 import {
-  AnimePageQueryMediaListEntry,
-  AnimePageQueryQuery,
-  AnimePageQueryVariables,
+  AnimeViewMediaListEntry,
+  AnimeViewQuery,
+  AnimeViewVariables,
   EpisodeListEpisodes,
   EpisodeListQuery,
   EpisodeListVariables,
@@ -104,8 +104,8 @@ import { getDefaultProvider, getRelations, isNil } from '@/utils'
   },
 })
 export default class Anime extends Vue {
-  @Query<Anime, AnimePageQueryQuery, AnimePageQueryVariables>({
-    query: ANIME_PAGE_QUERY,
+  @Query<Anime, AnimeViewQuery, AnimeViewVariables>({
+    query: ANIME_QUERY,
     variables() {
       return {
         id: this.id,
@@ -115,7 +115,7 @@ export default class Anime extends Vue {
       this.error = err.message
     },
   })
-  public data!: AnimePageQueryQuery | null
+  public data!: AnimeViewQuery | null
   error: string | null = null
 
   @Query<Anime, EpisodeListQuery, EpisodeListVariables>({
@@ -154,7 +154,7 @@ export default class Anime extends Vue {
     return Number(this.$route.params.id)
   }
 
-  public getShouldBlurDescription(data: AnimePageQueryQuery) {
+  public getShouldBlurDescription(data: AnimeViewQuery) {
     if (!data || !data.anime) {
       return false
     }
@@ -168,8 +168,8 @@ export default class Anime extends Vue {
   }
 
   public getMediaListEntry(
-    data: AnimePageQueryQuery,
-  ): AnimePageQueryMediaListEntry | null {
+    data: AnimeViewQuery,
+  ): AnimeViewMediaListEntry | null {
     return oc(data).anime.mediaListEntry(null)
   }
 
@@ -178,7 +178,7 @@ export default class Anime extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../colors';
+@import '../../colors';
 
 .anime {
   position: absolute;

@@ -14,12 +14,12 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { AnimePageQueryNextAiringEpisode } from '@/graphql/types'
+import { AnimeViewNextAiringEpisode } from '@/graphql/types'
 import { Required } from '@/decorators'
 
-import Description from './Description.vue'
-import Info from './Info.vue'
-import Icon from '../Icon.vue'
+import Icon from '@/components/Icon.vue'
+import Description from './description.vue'
+import Info from './info.vue'
 
 @Component({
   components: { Description, Icon, Info },
@@ -31,12 +31,12 @@ export default class CenterContainer extends Vue {
   @Prop(Number) public idMal!: number | null
   @Prop(Number) public score!: number | null
   @Prop(Object)
-  public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
+  public nextAiringEpisode!: AnimeViewNextAiringEpisode | null
 }
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import '../../../colors';
 
 .center-container {
   position: relative;

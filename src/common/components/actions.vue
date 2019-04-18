@@ -140,8 +140,8 @@ import {
   setStatusMutation,
 } from '@/graphql/mutations'
 import {
-  AnimePageQueryAnime,
-  AnimePageQueryMediaListEntry,
+  AnimeViewAnime,
+  AnimeViewMediaListEntry,
   MediaListStatus,
 } from '@/graphql/types'
 import { getAnilistUserId } from '@/state/auth'
@@ -159,7 +159,7 @@ import {
 import { getSettings } from '@/state/settings'
 import { isNil, propEq } from '@/utils'
 
-import CButton from '../CButton.vue'
+import CButton from '../../components/CButton.vue'
 
 export enum ActionKeys {
   ADD = 'addEntry',
@@ -177,8 +177,8 @@ export enum ActionKeys {
   components: { CButton },
 })
 export default class Actions extends Vue {
-  @Prop(Object) public mediaListEntry!: AnimePageQueryMediaListEntry | null
-  @Prop(Object) public anime!: AnimePageQueryAnime | null
+  @Prop(Object) public mediaListEntry!: AnimeViewMediaListEntry | null
+  @Prop(Object) public anime!: AnimeViewAnime | null
   @Prop(Boolean) public small!: boolean | null
   @Prop({ type: Array, default: () => [] })
   public exclude!: string[]

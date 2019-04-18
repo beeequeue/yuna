@@ -39,17 +39,17 @@ import { MediaRelation } from '../../graphql/types'
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiArrowLeftBold, mdiArrowRightBold } from '@mdi/js'
 
-import { AnimePageQueryRelations } from '@/graphql/types'
+import { AnimeViewRelations } from '@/graphql/types'
 
-import Icon from '../Icon.vue'
+import Icon from '../../../components/Icon.vue'
 import { Required } from '@/decorators'
 
 @Component({
   components: { Icon },
 })
 export default class Relations extends Vue {
-  @Required(Array) public prequels!: AnimePageQueryRelations[]
-  @Required(Array) public sequels!: AnimePageQueryRelations[]
+  @Required(Array) public prequels!: AnimeViewRelations[]
+  @Required(Array) public sequels!: AnimeViewRelations[]
 
   public getRelationIcon(relation: 'PREQUEL' | 'SEQUEL') {
     switch (relation) {
@@ -63,7 +63,7 @@ export default class Relations extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import '../../../colors';
 
 .relations {
   display: flex;

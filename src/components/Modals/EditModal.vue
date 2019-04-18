@@ -97,11 +97,11 @@ import { oc } from 'ts-optchain'
 import { mdiCloseCircle } from '@mdi/js'
 
 import SAVE_LIST_ENTRY_MUTATION from '@/graphql/SaveListEntryMutation.graphql'
-import ANIME_PAGE_QUERY from '@/graphql/AnimePageQuery.graphql'
+import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import { deleteListEntryMutation } from '@/graphql/mutations'
 import {
-  AnimePageQueryQuery,
-  AnimePageQueryVariables,
+  AnimeViewQuery,
+  AnimeViewVariables,
   MediaListStatus,
   SaveListEntryMutationMutation,
 } from '@/graphql/types'
@@ -175,7 +175,7 @@ export default class EditModal extends Vue {
     payload: { data: SaveListEntryMutationMutation },
   ) {
     let data =
-      cache.readQuery<AnimePageQueryQuery, AnimePageQueryVariables>({
+      cache.readQuery<AnimeViewQuery, AnimeViewVariables>({
         query: ANIME_PAGE_QUERY,
         variables: { id: this.anime!.id },
       }) || ({} as any)

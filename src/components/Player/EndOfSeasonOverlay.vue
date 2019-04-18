@@ -38,7 +38,7 @@ import { mdiStar, mdiStarOutline } from '@mdi/js'
 
 import { setScoreMutation } from '@/graphql/mutations'
 import {
-  AnimePageQueryNextAiringEpisode,
+  AnimeViewNextAiringEpisode,
   PlayerAnimeMediaListEntry,
 } from '@/graphql/types'
 
@@ -58,7 +58,7 @@ export default class EndOfSeasonOverlay extends Vue {
   @Required(Number) public episodeNumber!: number
   @Prop(Number) public episodesInAnime!: number | null
   @Prop(Object)
-  public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
+  public nextAiringEpisode!: AnimeViewNextAiringEpisode | null
   @Required(Boolean) public isPlayerMaximized!: boolean
 
   public scores = [1, 25, 50, 75, 100]

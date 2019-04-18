@@ -13,7 +13,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-import { AnimePageQueryExternalLinks } from '@/graphql/types'
+import { AnimeViewExternalLinks } from '@/graphql/types'
 
 import { Default } from '@/decorators'
 import { StreamingSource } from '@/types'
@@ -28,7 +28,7 @@ const siteImages = streamingSiteCtx.keys()
 @Component({ components: { CButton, Icon } })
 export default class SourceList extends Vue {
   @Default(Array, [])
-  public links!: AnimePageQueryExternalLinks[]
+  public links!: AnimeViewExternalLinks[]
 
   public get sources() {
     return getStreamingSources(this.links)

@@ -31,12 +31,12 @@ import { mdiChevronDown } from '@mdi/js'
 
 import malLogo from '@/assets/myanimelist.webp'
 import alLogo from '@/assets/anilist.svg'
-import NextEpisodeInfo from '@/components/Anime/NextEpisodeInfo.vue'
 
 import { Query, Required } from '@/decorators'
-import { AnimePageQueryNextAiringEpisode } from '@/graphql/types'
+import { AnimeViewNextAiringEpisode } from '@/graphql/types'
 
-import Icon from '../Icon.vue'
+import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
+import Icon from '@/components/Icon.vue'
 
 @Component({
   components: { NextEpisodeInfo, Icon },
@@ -46,7 +46,7 @@ export default class Info extends Vue {
   @Prop(Number) public idMal!: number | null
   @Prop(Number) public score!: number | null
   @Prop(Object)
-  public nextAiringEpisode!: AnimePageQueryNextAiringEpisode | null
+  public nextAiringEpisode!: AnimeViewNextAiringEpisode | null
 
   @Query<Info, { anime: { scoreMal: number | null } }, { id: number }>({
     query: gql`
@@ -83,7 +83,7 @@ export default class Info extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import '../../../colors';
 
 .info-container {
   display: flex;

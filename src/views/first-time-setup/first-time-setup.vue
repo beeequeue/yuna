@@ -120,7 +120,7 @@ export default class FirstTimeSetup extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../colors';
+@import '../../colors';
 
 .first-time-setup {
   position: absolute;

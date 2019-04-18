@@ -24,9 +24,9 @@ import { Component, Vue } from 'vue-property-decorator'
 import { ListQueryEntries } from '@/graphql/types'
 import { Required } from '@/decorators'
 
-import CoverImage from './Anime/CoverImage.vue'
+import CoverImage from '../common/components/cover-image.vue'
 import CButton from './CButton.vue'
-import Actions from './Anime/Actions.vue'
+import Actions from '../common/components/actions.vue'
 
 @Component({ components: { CoverImage, CButton, Actions } })
 export default class ListEntry extends Vue {

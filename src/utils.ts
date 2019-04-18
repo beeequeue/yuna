@@ -18,7 +18,7 @@ import {
 } from '@mdi/js'
 
 import {
-  AnimePageQueryQuery,
+  AnimeViewQuery,
   EpisodeListEpisodes,
   MediaListStatus,
   MediaRelation,
@@ -211,7 +211,7 @@ export const removeCookies = (filter: Filter) => {
 }
 
 export const getRelations = (
-  data: AnimePageQueryQuery | PlayerAnimeQuery,
+  data: AnimeViewQuery | PlayerAnimeQuery,
   type: string | MediaRelation,
 ) => {
   const relations = oc(data).anime.relations.edges([])!

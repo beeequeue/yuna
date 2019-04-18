@@ -9,16 +9,6 @@ declare module '*/AddEntryMutation.graphql' {
   export default defaultDocument
 }
 
-declare module '*/AnimePageQuery.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const AnimePageQuery: DocumentNode
-
-  export { AnimePageQuery }
-
-  export default defaultDocument
-}
-
 declare module '*/CacheEpisodes.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
@@ -185,6 +175,16 @@ declare module '*/WatchingQuery.graphql' {
   const WatchingQuery: DocumentNode
 
   export { WatchingQuery }
+
+  export default defaultDocument
+}
+
+declare module '*/anime.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const AnimeView: DocumentNode
+
+  export { AnimeView }
 
   export default defaultDocument
 }

@@ -130,7 +130,7 @@ export default class List extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../colors';
+@import '../../colors';
 
 .list-page {
   position: absolute;
