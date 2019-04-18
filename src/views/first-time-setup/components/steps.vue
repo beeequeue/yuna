@@ -24,7 +24,7 @@ export default class Steps extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import '../../../colors';
 
 .steps-container {
   display: flex;

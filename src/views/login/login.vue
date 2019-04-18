@@ -47,12 +47,12 @@ import { mdiCheck } from '@mdi/js'
 
 import Icon from '@/components/Icon.vue'
 import CButton from '@/components/CButton.vue'
-import LoginCR from '@/components/FirstTimeSetup/LoginCR.vue'
-import LoginAL from '@/components/FirstTimeSetup/LoginAL.vue'
+import LoginCR from '@/common/components/login/crunchyroll.vue'
+import LoginAL from '@/common/components/login/anilist.vue'
+import LoginHD from '@/common/components/login/hidive.vue'
 
 import { loginAnilist } from '@/lib/anilist'
 import { getFinishedConnecting, getIsConnectedTo } from '@/state/auth'
-import LoginHD from '@/components/FirstTimeSetup/LoginHD.vue'
 
 @Component({
   components: {

@@ -47,7 +47,7 @@ export default class Discord extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import '../../../colors';
 
 .login-discord {
   display: flex;

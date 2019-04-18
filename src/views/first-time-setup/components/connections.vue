@@ -61,10 +61,10 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import crIcon from '@/assets/crunchyroll.svg'
 import hidiveIcon from '@/assets/hidive.svg'
+import LoginCr from '@/common/components/login/crunchyroll.vue'
+import LoginHd from '@/common/components/login/hidive.vue'
 import TextInput from '@/components/Form/TextInput.vue'
 import CButton from '@/components/CButton.vue'
-import LoginCr from '@/components/FirstTimeSetup/LoginCR.vue'
-import LoginHd from '@/components/FirstTimeSetup/LoginHD.vue'
 
 import { getFinishedConnecting, getIsConnectedTo } from '@/state/auth'
 import { Crunchyroll } from '@/lib/crunchyroll'
@@ -121,7 +121,7 @@ export default class Connections extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import '../../../colors';
 
 .connections {
   display: flex;

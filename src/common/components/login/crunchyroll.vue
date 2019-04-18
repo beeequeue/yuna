@@ -73,7 +73,7 @@ export default class LoginCr extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import '../../../colors';
 
 .login-cr {
   position: relative;

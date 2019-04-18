@@ -96,7 +96,7 @@ export default class SpoilerSettings extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import '../../../colors';
 
 .spoiler-settings {
   & > .checkbox-container {

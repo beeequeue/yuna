@@ -46,12 +46,12 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-import Steps from '@/components/FirstTimeSetup/Steps.vue'
-import LoginAl from '@/components/FirstTimeSetup/LoginAL.vue'
-import LoginCr from '@/components/FirstTimeSetup/LoginCR.vue'
-import SpoilerSettings from '@/components/FirstTimeSetup/SpoilerSettings.vue'
-import Discord from '@/components/FirstTimeSetup/Discord.vue'
-import Connections from '@/components/FirstTimeSetup/Connections.vue'
+import LoginAl from '@/common/components/login/anilist.vue'
+import LoginCr from '@/common/components/login/crunchyroll.vue'
+import Steps from './components/steps.vue'
+import SpoilerSettings from './components/spoiler-settings.vue'
+import Discord from './components/discord.vue'
+import Connections from './components/connections.vue'
 
 import { getIsConnectedTo } from '@/state/auth'
 import {
