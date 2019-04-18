@@ -14,7 +14,7 @@
         :icon="addToListSvg"
         :content="ifBig('Set as Planning')"
         v-tooltip.right="ifSmall('Set as Planning')"
-        :click="() => addEntryMutation(MediaListStatus.Planning)"
+        :click="() => createListEntry(MediaListStatus.Planning)"
       />
 
       <c-button
@@ -134,16 +134,14 @@ import {
   mdiRepeat,
 } from '@mdi/js'
 
-import {
-  addEntryMutation,
-  rewatchMutation,
-  setStatusMutation,
-} from '@/graphql/mutations'
+import { createListEntry } from '@/common/mutations/list-entry'
+import { rewatchMutation, setStatusMutation } from '@/graphql/mutations'
 import {
   AnimeViewAnime,
   AnimeViewMediaListEntry,
   MediaListStatus,
 } from '@/graphql/types'
+
 import { getAnilistUserId } from '@/state/auth'
 import {
   addToQueue,
@@ -159,7 +157,7 @@ import {
 import { getSettings } from '@/state/settings'
 import { isNil, propEq } from '@/utils'
 
-import CButton from '../../components/CButton.vue'
+import CButton from '@/components/CButton.vue'
 
 export enum ActionKeys {
   ADD = 'addEntry',
@@ -298,7 +296,7 @@ export default class Actions extends Vue {
       return sendErrorToast(this.$store, 'No anime found..?')
     }
 
-    await addEntryMutation(this, this.anime.id, status)
+    await createListEntry(this, this.anime.id, status)
   }
 }
 </script>

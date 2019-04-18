@@ -513,18 +513,18 @@ export type FuzzyDateInt = any;
     repeat: Maybe<number>;
   } 
 
-  export type AddEntryMutationVariables = {
+  export type AddListEntryVariables = {
     mediaId: Maybe<number>;
     status: Maybe<MediaListStatus>;
   }
 
-  export type AddEntryMutationMutation = {
+  export type AddListEntryMutation = {
     __typename?: "Mutation";
     
-    SaveMediaListEntry: Maybe<AddEntryMutationSaveMediaListEntry>;
+    SaveMediaListEntry: Maybe<AddListEntrySaveMediaListEntry>;
   }
 
-  export type AddEntryMutationSaveMediaListEntry = {
+  export type AddListEntrySaveMediaListEntry = {
     __typename?: "MediaList";
     
     id: number;
@@ -538,17 +538,17 @@ export type FuzzyDateInt = any;
     repeat: Maybe<number>;
   } 
 
-  export type DeleteListEntryMutationVariables = {
+  export type DeleteListEntryVariables = {
     id: number;
   }
 
-  export type DeleteListEntryMutationMutation = {
+  export type DeleteListEntryMutation = {
     __typename?: "Mutation";
     
-    DeleteMediaListEntry: Maybe<DeleteListEntryMutationDeleteMediaListEntry>;
+    DeleteMediaListEntry: Maybe<DeleteListEntryDeleteMediaListEntry>;
   }
 
-  export type DeleteListEntryMutationDeleteMediaListEntry = {
+  export type DeleteListEntryDeleteMediaListEntry = {
     __typename?: "Deleted";
     
     deleted: Maybe<boolean>;

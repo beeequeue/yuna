@@ -19,22 +19,22 @@ declare module '*/update-progress.graphql' {
   export default defaultDocument
 }
 
-declare module '*/AddEntryMutation.graphql' {
+declare module '*/add-entry.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const AddEntryMutation: DocumentNode
+  const AddListEntry: DocumentNode
 
-  export { AddEntryMutation }
+  export { AddListEntry }
 
   export default defaultDocument
 }
 
-declare module '*/DeleteListEntryMutation.graphql' {
+declare module '*/delete-entry.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const DeleteListEntryMutation: DocumentNode
+  const DeleteListEntry: DocumentNode
 
-  export { DeleteListEntryMutation }
+  export { DeleteListEntry }
 
   export default defaultDocument
 }

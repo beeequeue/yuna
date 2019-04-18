@@ -1,4 +1,4 @@
-mutation DeleteListEntryMutation($id: Int!) {
+mutation DeleteListEntry($id: Int!) {
   DeleteMediaListEntry(
     id: $id
   ) {
