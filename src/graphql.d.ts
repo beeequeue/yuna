@@ -1,20 +1,30 @@
 /* THIS IS A GENERATED FILE */
+declare module '*/cache-episodes.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const CacheEpisodes: DocumentNode
+
+  export { CacheEpisodes }
+
+  export default defaultDocument
+}
+
+declare module '*/update-progress.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const UpdateProgress: DocumentNode
+
+  export { UpdateProgress }
+
+  export default defaultDocument
+}
+
 declare module '*/AddEntryMutation.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
   const AddEntryMutation: DocumentNode
 
   export { AddEntryMutation }
-
-  export default defaultDocument
-}
-
-declare module '*/CacheEpisodes.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const CacheEpisodes: DocumentNode
-
-  export { CacheEpisodes }
 
   export default defaultDocument
 }
@@ -85,16 +95,6 @@ declare module '*/SetStatusMutation.graphql' {
   const SetStatusMutation: DocumentNode
 
   export { SetStatusMutation }
-
-  export default defaultDocument
-}
-
-declare module '*/UpdateProgressMutation.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const UpdateProgressMutation: DocumentNode
-
-  export { UpdateProgressMutation }
 
   export default defaultDocument
 }

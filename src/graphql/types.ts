@@ -477,6 +477,42 @@ export type FuzzyDateInt = any;
 
 
 
+  export type CacheEpisodesVariables = {
+    id: number;
+    provider: Provider;
+    episodes: EpisodeInput[];
+    nextEpisodeAiringAt: Maybe<number>;
+  }
+
+  export type CacheEpisodesMutation = {
+    __typename?: "Mutation";
+    
+    CacheEpisodes: boolean;
+  }
+
+  export type UpdateProgressVariables = {
+    id: Maybe<number>;
+    progress: Maybe<number>;
+  }
+
+  export type UpdateProgressMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<UpdateProgressSaveMediaListEntry>;
+  }
+
+  export type UpdateProgressSaveMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    progress: Maybe<number>;
+    
+    status: Maybe<MediaListStatus>;
+    
+    repeat: Maybe<number>;
+  } 
+
   export type AddEntryMutationVariables = {
     mediaId: Maybe<number>;
     status: Maybe<MediaListStatus>;
@@ -501,19 +537,6 @@ export type FuzzyDateInt = any;
     
     repeat: Maybe<number>;
   } 
-
-  export type CacheEpisodesVariables = {
-    id: number;
-    provider: Provider;
-    episodes: EpisodeInput[];
-    nextEpisodeAiringAt: Maybe<number>;
-  }
-
-  export type CacheEpisodesMutation = {
-    __typename?: "Mutation";
-    
-    CacheEpisodes: boolean;
-  }
 
   export type DeleteListEntryMutationVariables = {
     id: number;
@@ -783,29 +806,6 @@ export type FuzzyDateInt = any;
     id: number;
     
     status: Maybe<MediaListStatus>;
-  } 
-
-  export type UpdateProgressMutationVariables = {
-    id: Maybe<number>;
-    progress: Maybe<number>;
-  }
-
-  export type UpdateProgressMutationMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<UpdateProgressMutationSaveMediaListEntry>;
-  }
-
-  export type UpdateProgressMutationSaveMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    progress: Maybe<number>;
-    
-    status: Maybe<MediaListStatus>;
-    
-    repeat: Maybe<number>;
   } 
 
   export type UpdateScoreMutationVariables = {

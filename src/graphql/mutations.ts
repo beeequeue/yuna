@@ -1,18 +1,11 @@
-import gql from 'graphql-tag'
-import { oc } from 'ts-optchain'
-
 import {
   AddEntryMutationMutation,
-  CacheEpisodesMutation,
-  CacheEpisodesVariables,
   DeleteListEntryMutationMutation,
-  EpisodeInput,
-  EpisodeListVariables,
   MediaListStatus,
   Provider,
   RewatchMutationMutation,
   SetStatusMutationMutation,
-  UpdateProgressMutationSaveMediaListEntry,
+  UpdateProgressSaveMediaListEntry,
   UpdateScoreMutationMutation,
 } from '@/graphql/types'
 import { Instance } from '@/types'
@@ -23,8 +16,6 @@ import DELETE_LIST_ENTRY_MUTATION from './DeleteListEntryMutation.graphql'
 import SET_STATUS_MUTATION from './SetStatusMutation.graphql'
 import UPDATE_SCORE_MUTATION from './UpdateScoreMutation.graphql'
 import REWATCH_MUTATION from './RewatchMutation.graphql'
-import CACHE_EPISODES_MUTATION from './CacheEpisodes.graphql'
-import EPISODE_LIST_QUERY from './EpisodeList.graphql'
 import {
   EpisodeMutationObject,
   refetchListQuery,
@@ -90,7 +81,7 @@ export const setScoreMutation = async (
   { $apollo }: Instance,
   id: number,
   score: number,
-  oldValues: Partial<UpdateProgressMutationSaveMediaListEntry> = {},
+  oldValues: Partial<UpdateProgressSaveMediaListEntry> = {},
 ) =>
   $apollo.mutate<UpdateScoreMutationMutation>({
     mutation: UPDATE_SCORE_MUTATION,
@@ -128,53 +119,3 @@ export const deleteListEntryMutation = async (
       cache.writeQuery({ query: ANIME_PAGE_QUERY, data })
     },
   })
-
-interface CacheEpisodesAiring {
-  AiringSchedule: null | {
-    id: number
-    episode: number
-    airingAt: number
-  }
-}
-
-export const cacheEpisodes = async (
-  { $apollo }: Instance,
-  animeId: number,
-  provider: Provider,
-  episodes: EpisodeInput[],
-) => {
-  const { data } = await $apollo.query<CacheEpisodesAiring>({
-    query: gql`
-      query CacheEpisodesAiring($id: Int!) {
-        AiringSchedule(mediaId: $id, notYetAired: true) {
-          id
-          episode
-          airingAt
-        }
-      }
-    `,
-    variables: { id: animeId },
-    errorPolicy: 'ignore',
-  })
-
-  const airing = oc(data).AiringSchedule.airingAt(0) * 1000
-
-  return $apollo.mutate<CacheEpisodesMutation>({
-    mutation: CACHE_EPISODES_MUTATION,
-    variables: {
-      id: animeId,
-      provider,
-      episodes,
-      nextEpisodeAiringAt: airing !== 0 ? airing : null,
-    } as CacheEpisodesVariables,
-    refetchQueries: [
-      {
-        query: EPISODE_LIST_QUERY,
-        variables: {
-          id: animeId,
-          provider,
-        } as EpisodeListVariables,
-      },
-    ],
-  })
-}

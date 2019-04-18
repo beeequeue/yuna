@@ -46,7 +46,7 @@ import { TooltipSettings } from 'v-tooltip'
 import gql from 'graphql-tag'
 import { mdiArrowLeft, mdiCheck } from '@mdi/js'
 
-import { cacheEpisodes } from '@/graphql/mutations'
+import { cacheEpisodes } from '@/common/mutations/episodes'
 import { EpisodeListEpisodes, Provider, Maybe } from '@/graphql/types'
 import Loading from '@/components/Loading.vue'
 import Icon from '@/components/Icon.vue'
