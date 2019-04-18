@@ -32,8 +32,8 @@ import {
   mdiSubdirectoryArrowLeft,
 } from '@mdi/js'
 
-import { getKeysForAction, KeybindingAction } from '../../state/settings'
-import CButton from '../CButton.vue'
+import CButton from '@/components/CButton.vue'
+import { getKeysForAction, KeybindingAction } from '@/state/settings'
 
 @Component({
   components: { CButton },

@@ -23,15 +23,15 @@ import { mdiLinkVariant, mdiLinkVariantOff } from '@mdi/js'
 import crIcon from '@/assets/crunchyroll.svg'
 import alIcon from '@/assets/anilist.svg'
 import hidiveIcon from '@/assets/hidive.svg'
+import CButton from '@/components/CButton.vue'
 
 import { Required } from '@/decorators'
-import { capitalize } from '@/utils'
-import CButton from '@/components/CButton.vue'
 import { RootState } from '@/state/store'
 import { getIsConnectedTo, getFinishedConnecting } from '@/state/auth'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { logoutAnilist } from '@/lib/anilist'
 import { Hidive } from '@/lib/hidive'
+import { capitalize } from '@/utils'
 
 @Component({ components: { CButton } })
 export default class Connection extends Vue {
@@ -90,7 +90,7 @@ export default class Connection extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import '../../../colors';
 
 .connection {
   position: relative;
