@@ -14,6 +14,8 @@ generates:
   src/graphql/types.ts:
     plugins:
       - add: '/* THIS IS A GENERATED FILE */'
+      - add: '/* /Maybe<\(Maybe<(.*)>\)\[\]>/ */'
+      - add: '/* /Maybe<$1[]>/ */'
       - typescript-common
       - typescript-client
   graphql.schema.json:

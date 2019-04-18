@@ -1,4 +1,4 @@
-query ListQuery(
+query ListView(
   $userId: Int!
   $statuses: [MediaListStatus!] = [
     PLANNING

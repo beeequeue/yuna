@@ -59,16 +59,6 @@ declare module '*/ExportQueue.graphql' {
   export default defaultDocument
 }
 
-declare module '*/ListQuery.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const ListQuery: DocumentNode
-
-  export { ListQuery }
-
-  export default defaultDocument
-}
-
 declare module '*/PausedQuery.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
@@ -185,6 +175,16 @@ declare module '*/anime.graphql' {
   const AnimeView: DocumentNode
 
   export { AnimeView }
+
+  export default defaultDocument
+}
+
+declare module '*/list.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const ListView: DocumentNode
+
+  export { ListView }
 
   export default defaultDocument
 }

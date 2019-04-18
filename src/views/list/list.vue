@@ -41,16 +41,16 @@ import Fuse from 'fuse.js'
 import { oc } from 'ts-optchain'
 
 import anilistLogoSvg from '@/assets/anilist.svg'
-import ListEntry from '@/components/ListEntry.vue'
 import TextInput from '@/components/Form/TextInput.vue'
 import NumberInput from '@/components/Form/NumberInput.vue'
+import ListEntry from './components/list-entry.vue'
 
-import LIST_QUERY from '@/graphql/ListQuery.graphql'
+import LIST_QUERY from '@/views/list/list.graphql'
 import {
-  ListQueryQuery,
-  ListQueryLists,
-  ListQueryEntries,
-  ListQueryVariables,
+  ListViewQuery,
+  ListViewLists,
+  ListViewEntries,
+  ListViewVariables,
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
@@ -59,7 +59,7 @@ import { debounce } from '@/utils'
 
 @Component({ components: { ListEntry, TextInput, NumberInput } })
 export default class List extends Vue {
-  @Query<List, ListQueryQuery, ListQueryVariables>({
+  @Query<List, ListViewQuery, ListViewVariables>({
     fetchPolicy: 'cache-and-network',
     query: LIST_QUERY,
     variables() {
@@ -69,7 +69,7 @@ export default class List extends Vue {
       }
     },
   })
-  public data!: ListQueryQuery
+  public data!: ListViewQuery
   public filterString = ''
   public limit = Number(localStorage.getItem('list-limit') || 25)
 
@@ -79,22 +79,22 @@ export default class List extends Vue {
     return getAnilistUserId(this.$store)
   }
 
-  public getLists(data: ListQueryQuery) {
-    const lists = oc(data).listCollection.lists([] as ListQueryLists[])
+  public getLists(data: ListViewQuery) {
+    const lists = oc(data).listCollection.lists([] as ListViewLists[])
 
     if (!lists) return []
 
     if (this.filterString.length < 1) {
       return lists.map(list => ({
         ...list,
-        entries: (list.entries as ListQueryEntries[]).slice(0, this.limit),
+        entries: (list.entries as ListViewEntries[]).slice(0, this.limit),
       }))
     }
 
     const filteredLists = lists.map(list => {
       if (!list.entries) return
 
-      const fuse = new Fuse<ListQueryEntries>(list.entries as any, {
+      const fuse = new Fuse<ListViewEntries>(list.entries as any, {
         caseSensitive: false,
         shouldSort: true,
         keys: [
