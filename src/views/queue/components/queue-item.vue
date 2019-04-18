@@ -122,12 +122,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 import { mdiChevronDown, mdiMenu } from '@mdi/js'
 
-import {
-  rewatchMutation,
-  setEpisodeUnwatched,
-  setEpisodeWatched,
-  setStatusMutation,
-} from '@/graphql/mutations'
+import { rewatchMutation, setStatusMutation } from '@/graphql/mutations'
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
 import {
   EpisodeListEpisodes,
@@ -138,6 +133,7 @@ import {
   QueueAnime,
 } from '@/graphql/types'
 
+import { setProgress } from '@/common/mutations/episodes'
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import Icon from '@/components/Icon.vue'
 import AnimeBanner from '@/components/AnimeBanner.vue'
@@ -281,15 +277,12 @@ export default class QueueItem extends Vue {
       return
     }
 
-    return setEpisodeWatched(
-      this,
-      {
-        animeId: this.anime.id,
-        provider: Provider.Crunchyroll,
-        episodeNumber: this.listEntry.progress + 1,
-      },
-      this.listEntry,
-    )
+    return setProgress(this, {
+      animeId: this.anime.id,
+      provider: Provider.Crunchyroll,
+      episodeNumber: this.listEntry.progress + 1,
+      ...this.listEntry,
+    })
   }
 
   public async decrementProgress() {
@@ -297,15 +290,12 @@ export default class QueueItem extends Vue {
       return
     }
 
-    return setEpisodeUnwatched(
-      this,
-      {
-        animeId: this.anime.id,
-        provider: Provider.Crunchyroll,
-        episodeNumber: this.listEntry.progress,
-      },
-      this.listEntry,
-    )
+    return setProgress(this, {
+      animeId: this.anime.id,
+      provider: Provider.Crunchyroll,
+      episodeNumber: this.listEntry.progress - 1,
+      ...this.listEntry,
+    })
   }
 }
 </script>

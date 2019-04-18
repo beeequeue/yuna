@@ -43,16 +43,11 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { TooltipSettings } from 'v-tooltip'
+import gql from 'graphql-tag'
 import { mdiArrowLeft, mdiCheck } from '@mdi/js'
 
-import EPISODE_COUNT_QUERY from '@/graphql/EpisodeCount.graphql'
 import { cacheEpisodes } from '@/graphql/mutations'
-import {
-  EpisodeCountQuery,
-  EpisodeCountVariables,
-  EpisodeListEpisodes,
-  Provider,
-} from '@/graphql/types'
+import { EpisodeListEpisodes, Provider, Maybe } from '@/graphql/types'
 import Loading from '@/components/Loading.vue'
 import Icon from '@/components/Icon.vue'
 import CButton from '@/components/CButton.vue'
@@ -68,12 +63,32 @@ import {
 import { _SeriesWithCollections, Crunchyroll } from '@/lib/crunchyroll'
 import { isNil, pluck } from '@/utils'
 
+type EpisodeCountVariables = {
+  id: Maybe<number>
+}
+
+type EpisodeCountQuery = {
+  __typename?: 'Query'
+
+  anime: Maybe<{
+    __typename?: 'Media'
+
+    episodes: Maybe<number>
+  }>
+}
+
 @Component({
   components: { CrunchyrollCollection, CButton, AnimeBanner, Icon, Loading },
 })
 export default class CrunchyrollEditor extends Vue {
   @Query<CrunchyrollEditor, EpisodeCountQuery, EpisodeCountVariables>({
-    query: EPISODE_COUNT_QUERY,
+    query: gql`
+      query EpisodeCount($id: Int) {
+        anime: Media(id: $id) {
+          episodes
+        }
+      }
+    `,
     skip() {
       return isNil(this.searchOptions.anilistId)
     },

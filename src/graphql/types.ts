@@ -531,22 +531,6 @@ export type FuzzyDateInt = any;
     deleted: Maybe<boolean>;
   } 
 
-  export type EpisodeCountVariables = {
-    id: Maybe<number>;
-  }
-
-  export type EpisodeCountQuery = {
-    __typename?: "Query";
-    
-    anime: Maybe<EpisodeCountAnime>;
-  }
-
-  export type EpisodeCountAnime = {
-    __typename?: "Media";
-    
-    episodes: Maybe<number>;
-  } 
-
   export type EpisodeListVariables = {
     id: number;
     provider: Provider;
@@ -582,54 +566,6 @@ export type FuzzyDateInt = any;
     thumbnail: string;
     
     isWatched: boolean;
-  } 
-
-  export type ExportQueueVariables = {
-    ids: number[];
-  }
-
-  export type ExportQueueQuery = {
-    __typename?: "Query";
-    
-    queue: Maybe<ExportQueueQueue>;
-  }
-
-  export type ExportQueueQueue = {
-    __typename?: "Page";
-    
-    anime: Maybe<ExportQueueAnime[]>;
-  } 
-
-  export type ExportQueueAnime = {
-    __typename?: "Media";
-    
-    id: number;
-    
-    externalLinks: Maybe<ExportQueueExternalLinks[]>;
-    
-    mediaListEntry: Maybe<ExportQueueMediaListEntry>;
-  } 
-
-  export type ExportQueueExternalLinks = {
-    __typename?: "MediaExternalLink";
-    
-    site: string;
-    
-    url: string;
-  } 
-
-  export type ExportQueueMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    progress: Maybe<number>;
-    
-    status: Maybe<MediaListStatus>;
-    
-    repeat: Maybe<number>;
-    
-    score: Maybe<number>;
   } 
 
   export type PlayerAnimeVariables = {

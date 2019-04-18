@@ -1,6 +1,4 @@
-import { DataProxy } from 'apollo-cache'
 import gql from 'graphql-tag'
-import { Store } from 'vuex'
 import { oc } from 'ts-optchain'
 
 import {
@@ -9,135 +7,29 @@ import {
   CacheEpisodesVariables,
   DeleteListEntryMutationMutation,
   EpisodeInput,
-  EpisodeListEpisodes,
-  EpisodeListQuery,
   EpisodeListVariables,
   MediaListStatus,
   Provider,
   RewatchMutationMutation,
   SetStatusMutationMutation,
-  UpdateProgressMutationMutation,
   UpdateProgressMutationSaveMediaListEntry,
   UpdateScoreMutationMutation,
 } from '@/graphql/types'
-
-import { EpisodeCache } from '@/lib/episode-cache'
-import { getAnilistUserId } from '@/state/auth'
-import { isNil } from '@/utils'
 import { Instance } from '@/types'
 
 import ADD_ENTRY_MUTATION from './AddEntryMutation.graphql'
 import ANIME_PAGE_QUERY from '../views/anime/anime.graphql'
 import DELETE_LIST_ENTRY_MUTATION from './DeleteListEntryMutation.graphql'
-import LIST_QUERY from '@/views/list/list.graphql'
 import SET_STATUS_MUTATION from './SetStatusMutation.graphql'
-import UPDATE_PROGRESS_MUTATION from './UpdateProgressMutation.graphql'
 import UPDATE_SCORE_MUTATION from './UpdateScoreMutation.graphql'
 import REWATCH_MUTATION from './RewatchMutation.graphql'
 import CACHE_EPISODES_MUTATION from './CacheEpisodes.graphql'
 import EPISODE_LIST_QUERY from './EpisodeList.graphql'
-
-const getEpisodes = (obj: { episodes: EpisodeListEpisodes[] | null } | null) =>
-  oc(obj).episodes(null)
-
-const refetchListQuery = ($store: Store<any>) => {
-  const userId = getAnilistUserId($store)
-
-  if (!userId) return () => []
-
-  return () => [
-    {
-      query: LIST_QUERY,
-      variables: { userId },
-    },
-  ]
-}
-
-export type EpisodeMutationObject = Pick<
-  EpisodeListEpisodes,
-  'animeId' | 'provider' | 'episodeNumber'
->
-const writeEpisodeProgressToCache = (
-  cache: DataProxy,
-  episode: EpisodeMutationObject,
-  progress: number,
-) => {
-  let softCachedData: EpisodeListQuery | null = null
-
-  try {
-    softCachedData = cache.readQuery<EpisodeListQuery, EpisodeListVariables>({
-      query: EPISODE_LIST_QUERY,
-      variables: {
-        id: episode.animeId,
-        provider: episode.provider,
-      },
-    })
-  } catch (e) {
-    // no-op
-  }
-
-  const hardCachedData = EpisodeCache.get(episode.animeId, episode.provider)
-  let episodes = getEpisodes(softCachedData) || getEpisodes(hardCachedData)
-
-  if (isNil(episodes)) return
-
-  episodes = episodes.map(ep => ({
-    ...ep,
-    isWatched: progress >= ep.episodeNumber,
-  }))
-
-  cache.writeQuery<EpisodeListQuery>({
-    query: EPISODE_LIST_QUERY,
-    data: { episodes },
-  })
-
-  EpisodeCache.set(
-    episode.animeId,
-    episode.provider,
-    episodes,
-    hardCachedData!.nextEpisodeAiringAt,
-  )
-}
-
-export const setEpisodeWatched = async (
-  { $apollo, $store }: Instance,
-  episode: EpisodeMutationObject,
-  listEntry: UpdateProgressMutationSaveMediaListEntry,
-) => {
-  const progress = episode.episodeNumber
-
-  return $apollo.mutate<UpdateProgressMutationMutation>({
-    mutation: UPDATE_PROGRESS_MUTATION,
-    variables: { id: listEntry.id, progress },
-    optimisticResponse: {
-      SaveMediaListEntry: {
-        __typename: 'MediaList',
-        id: listEntry.id,
-        progress,
-        repeat: listEntry.repeat || 0,
-        status: listEntry.status || MediaListStatus.Current,
-      },
-    } as UpdateProgressMutationMutation,
-    refetchQueries: refetchListQuery($store),
-    update: cache => {
-      writeEpisodeProgressToCache(cache, episode, progress)
-    },
-  })
-}
-
-export const setEpisodeUnwatched = async (
-  instance: Instance,
-  episode: EpisodeMutationObject,
-  listEntry: UpdateProgressMutationSaveMediaListEntry,
-) =>
-  setEpisodeWatched(
-    instance,
-    {
-      ...episode,
-      episodeNumber: episode.episodeNumber - 1,
-    },
-    listEntry,
-  )
+import {
+  EpisodeMutationObject,
+  refetchListQuery,
+  writeEpisodeProgressToCache,
+} from '@/utils/cache'
 
 export const setStatusMutation = async (
   { $apollo, $store }: Instance,

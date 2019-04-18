@@ -20,9 +20,9 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 
+import { setProgress } from '@/common/mutations/episodes'
 import ANIME_QUERY from '@/graphql/PlayerAnime.graphql'
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
-import { setEpisodeUnwatched, setEpisodeWatched } from '@/graphql/mutations'
 import {
   PlayerAnimeAnime,
   PlayerAnimeQuery,
@@ -148,9 +148,13 @@ export default class PlayerContainer extends Vue {
     if (!this.episode || !this.listEntry) return
 
     if (!this.episode.isWatched) {
-      setEpisodeWatched(this, this.episode, this.listEntry as any)
+      setProgress(this, { ...this.episode, ...this.listEntry })
     } else {
-      setEpisodeUnwatched(this, this.episode, this.listEntry as any)
+      setProgress(this, {
+        ...this.episode,
+        episodeNumber: this.episode.episodeNumber - 1,
+        ...this.listEntry,
+      })
     }
   }
 }

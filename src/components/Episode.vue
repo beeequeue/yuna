@@ -37,7 +37,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiBookmark, mdiBookmarkRemove, mdiCheckCircleOutline } from '@mdi/js'
 
-import { setEpisodeUnwatched, setEpisodeWatched } from '@/graphql/mutations'
+import { setProgress } from '@/common/mutations/episodes'
 import { EpisodeListEpisodes } from '@/graphql/types'
 
 import { Required } from '@/decorators'
@@ -105,9 +105,13 @@ export default class Episode extends Vue {
     if (!this.listEntry) return
 
     if (!this.episode.isWatched) {
-      setEpisodeWatched(this, this.episode, this.listEntry as any)
+      setProgress(this, { ...this.episode, ...this.listEntry })
     } else {
-      setEpisodeUnwatched(this, this.episode, this.listEntry as any)
+      setProgress(this, {
+        ...this.episode,
+        episodeNumber: this.episode.episodeNumber - 1,
+        ...this.listEntry,
+      })
     }
   }
 }
