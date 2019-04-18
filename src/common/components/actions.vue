@@ -134,8 +134,11 @@ import {
   mdiRepeat,
 } from '@mdi/js'
 
-import { createListEntry } from '@/common/mutations/list-entry'
-import { rewatchMutation, setStatusMutation } from '@/graphql/mutations'
+import {
+  createListEntry,
+  startRewatching,
+  setStatus,
+} from '@/common/mutations/list-entry'
 import {
   AnimeViewAnime,
   AnimeViewMediaListEntry,
@@ -285,10 +288,10 @@ export default class Actions extends Vue {
     }
 
     if (status === MediaListStatus.Repeating) {
-      return rewatchMutation(this, this.mediaListEntry.id)
+      return startRewatching(this, this.mediaListEntry.id)
     }
 
-    await setStatusMutation(this, this.mediaListEntry.id, status)
+    await setStatus(this, this.mediaListEntry.id, status)
   }
 
   public async addEntryMutation(status: MediaListStatus) {

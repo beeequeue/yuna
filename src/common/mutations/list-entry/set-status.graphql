@@ -1,4 +1,4 @@
-mutation SetStatusMutation($id: Int, $status: MediaListStatus) {
+mutation SetStatus($id: Int, $status: MediaListStatus) {
   SaveMediaListEntry(id: $id, status: $status) {
     id
     status

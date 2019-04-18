@@ -1,4 +1,4 @@
-mutation AddListEntry($mediaId: Int, $status: MediaListStatus) {
+mutation CreateEntry($mediaId: Int, $status: MediaListStatus) {
   SaveMediaListEntry(mediaId: $mediaId, status: $status) {
     id
     progress

@@ -122,8 +122,9 @@ import { Component, Vue } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 import { mdiChevronDown, mdiMenu } from '@mdi/js'
 
-import { rewatchMutation, setStatusMutation } from '@/graphql/mutations'
 import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
+import { setProgress } from '@/common/mutations/episodes'
+import { startRewatching, setStatus } from '@/common/mutations/list-entry'
 import {
   EpisodeListEpisodes,
   EpisodeListQuery,
@@ -133,7 +134,6 @@ import {
   QueueAnime,
 } from '@/graphql/types'
 
-import { setProgress } from '@/common/mutations/episodes'
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import Icon from '@/components/Icon.vue'
 import AnimeBanner from '@/components/AnimeBanner.vue'
@@ -263,10 +263,10 @@ export default class QueueItem extends Vue {
 
     try {
       if (status === MediaListStatus.Repeating) {
-        return rewatchMutation(this, listEntryId)
+        return startRewatching(this, listEntryId)
       }
 
-      await setStatusMutation(this, listEntryId, status)
+      await setStatus(this, listEntryId, status)
     } catch (err) {
       this.setOpenState(!this.item.open)
     }
@@ -328,6 +328,7 @@ export default class QueueItem extends Vue {
     align-items: center;
     font-weight: 500;
     border-top-left-radius: 5px;
+    //noinspection CssInvalidPropertyValue
     background: gradient(black, 0.5);
     z-index: 5;
 
@@ -369,6 +370,7 @@ export default class QueueItem extends Vue {
       width: 25px;
       padding: 2px;
       background: $dark;
+      //noinspection CssInvalidPropertyValue
       cursor: -webkit-grab;
       z-index: 5;
 

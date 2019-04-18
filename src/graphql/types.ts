@@ -513,18 +513,18 @@ export type FuzzyDateInt = any;
     repeat: Maybe<number>;
   } 
 
-  export type AddListEntryVariables = {
+  export type CreateEntryVariables = {
     mediaId: Maybe<number>;
     status: Maybe<MediaListStatus>;
   }
 
-  export type AddListEntryMutation = {
+  export type CreateEntryMutation = {
     __typename?: "Mutation";
     
-    SaveMediaListEntry: Maybe<AddListEntrySaveMediaListEntry>;
+    SaveMediaListEntry: Maybe<CreateEntrySaveMediaListEntry>;
   }
 
-  export type AddListEntrySaveMediaListEntry = {
+  export type CreateEntrySaveMediaListEntry = {
     __typename?: "MediaList";
     
     id: number;
@@ -538,20 +538,86 @@ export type FuzzyDateInt = any;
     repeat: Maybe<number>;
   } 
 
-  export type DeleteListEntryVariables = {
+  export type DeleteEntryVariables = {
     id: number;
   }
 
-  export type DeleteListEntryMutation = {
+  export type DeleteEntryMutation = {
     __typename?: "Mutation";
     
-    DeleteMediaListEntry: Maybe<DeleteListEntryDeleteMediaListEntry>;
+    DeleteMediaListEntry: Maybe<DeleteEntryDeleteMediaListEntry>;
   }
 
-  export type DeleteListEntryDeleteMediaListEntry = {
+  export type DeleteEntryDeleteMediaListEntry = {
     __typename?: "Deleted";
     
     deleted: Maybe<boolean>;
+  } 
+
+  export type RewatchVariables = {
+    id: Maybe<number>;
+  }
+
+  export type RewatchMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<RewatchSaveMediaListEntry>;
+  }
+
+  export type RewatchSaveMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    mediaId: number;
+    
+    status: Maybe<MediaListStatus>;
+    
+    progress: Maybe<number>;
+  } 
+
+  export type SetScoreVariables = {
+    id: Maybe<number>;
+    score: Maybe<number>;
+  }
+
+  export type SetScoreMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<SetScoreSaveMediaListEntry>;
+  }
+
+  export type SetScoreSaveMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    score: Maybe<number>;
+    
+    progress: Maybe<number>;
+    
+    status: Maybe<MediaListStatus>;
+    
+    repeat: Maybe<number>;
+  } 
+
+  export type SetStatusVariables = {
+    id: Maybe<number>;
+    status: Maybe<MediaListStatus>;
+  }
+
+  export type SetStatusMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<SetStatusSaveMediaListEntry>;
+  }
+
+  export type SetStatusSaveMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    status: Maybe<MediaListStatus>;
   } 
 
   export type EpisodeListVariables = {
@@ -675,28 +741,6 @@ export type FuzzyDateInt = any;
     score: Maybe<number>;
   } 
 
-  export type RewatchMutationVariables = {
-    id: Maybe<number>;
-  }
-
-  export type RewatchMutationMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<RewatchMutationSaveMediaListEntry>;
-  }
-
-  export type RewatchMutationSaveMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    mediaId: number;
-    
-    status: Maybe<MediaListStatus>;
-    
-    progress: Maybe<number>;
-  } 
-
   export type SaveListEntryMutationVariables = {
     id: number;
     progress: number;
@@ -787,50 +831,6 @@ export type FuzzyDateInt = any;
     __typename?: "MediaExternalLink";
     
     site: string;
-  } 
-
-  export type SetStatusMutationVariables = {
-    id: Maybe<number>;
-    status: Maybe<MediaListStatus>;
-  }
-
-  export type SetStatusMutationMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<SetStatusMutationSaveMediaListEntry>;
-  }
-
-  export type SetStatusMutationSaveMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    status: Maybe<MediaListStatus>;
-  } 
-
-  export type UpdateScoreMutationVariables = {
-    id: Maybe<number>;
-    score: Maybe<number>;
-  }
-
-  export type UpdateScoreMutationMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<UpdateScoreMutationSaveMediaListEntry>;
-  }
-
-  export type UpdateScoreMutationSaveMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    score: Maybe<number>;
-    
-    progress: Maybe<number>;
-    
-    status: Maybe<MediaListStatus>;
-    
-    repeat: Maybe<number>;
   } 
 
   export type AnimeViewVariables = {
