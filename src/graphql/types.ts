@@ -632,122 +632,6 @@ export type FuzzyDateInt = any;
     score: Maybe<number>;
   } 
 
-  export type PausedQueryVariables = {
-    userId: number;
-  }
-
-  export type PausedQueryQuery = {
-    __typename?: "Query";
-    
-    listCollection: Maybe<PausedQueryListCollection>;
-  }
-
-  export type PausedQueryListCollection = {
-    __typename?: "MediaListCollection";
-    
-    lists: Maybe<PausedQueryLists[]>;
-  } 
-
-  export type PausedQueryLists = {
-    __typename?: "MediaListGroup";
-    
-    isCustomList: Maybe<boolean>;
-    
-    entries: Maybe<PausedQueryEntries[]>;
-  } 
-
-  export type PausedQueryEntries = {
-    __typename?: "MediaList";
-    
-    info: Maybe<PausedQueryInfo>;
-  } 
-
-  export type PausedQueryInfo = {
-    __typename?: "Media";
-    
-    id: number;
-    
-    externalLinks: Maybe<PausedQueryExternalLinks[]>;
-    
-    mediaListEntry: Maybe<PausedQueryMediaListEntry>;
-  } 
-
-  export type PausedQueryExternalLinks = {
-    __typename?: "MediaExternalLink";
-    
-    id: number;
-    
-    site: string;
-    
-    url: string;
-  } 
-
-  export type PausedQueryMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    status: Maybe<MediaListStatus>;
-  } 
-
-  export type PlanningQueryVariables = {
-    userId: number;
-  }
-
-  export type PlanningQueryQuery = {
-    __typename?: "Query";
-    
-    listCollection: Maybe<PlanningQueryListCollection>;
-  }
-
-  export type PlanningQueryListCollection = {
-    __typename?: "MediaListCollection";
-    
-    lists: Maybe<PlanningQueryLists[]>;
-  } 
-
-  export type PlanningQueryLists = {
-    __typename?: "MediaListGroup";
-    
-    isCustomList: Maybe<boolean>;
-    
-    entries: Maybe<PlanningQueryEntries[]>;
-  } 
-
-  export type PlanningQueryEntries = {
-    __typename?: "MediaList";
-    
-    info: Maybe<PlanningQueryInfo>;
-  } 
-
-  export type PlanningQueryInfo = {
-    __typename?: "Media";
-    
-    id: number;
-    
-    externalLinks: Maybe<PlanningQueryExternalLinks[]>;
-    
-    mediaListEntry: Maybe<PlanningQueryMediaListEntry>;
-  } 
-
-  export type PlanningQueryExternalLinks = {
-    __typename?: "MediaExternalLink";
-    
-    id: number;
-    
-    site: string;
-    
-    url: string;
-  } 
-
-  export type PlanningQueryMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    status: Maybe<MediaListStatus>;
-  } 
-
   export type PlayerAnimeVariables = {
     id: number;
   }
@@ -1013,64 +897,6 @@ export type FuzzyDateInt = any;
     repeat: Maybe<number>;
   } 
 
-  export type WatchingQueryVariables = {
-    userId: number;
-  }
-
-  export type WatchingQueryQuery = {
-    __typename?: "Query";
-    
-    listCollection: Maybe<WatchingQueryListCollection>;
-  }
-
-  export type WatchingQueryListCollection = {
-    __typename?: "MediaListCollection";
-    
-    lists: Maybe<WatchingQueryLists[]>;
-  } 
-
-  export type WatchingQueryLists = {
-    __typename?: "MediaListGroup";
-    
-    isCustomList: Maybe<boolean>;
-    
-    entries: Maybe<WatchingQueryEntries[]>;
-  } 
-
-  export type WatchingQueryEntries = {
-    __typename?: "MediaList";
-    
-    info: Maybe<WatchingQueryInfo>;
-  } 
-
-  export type WatchingQueryInfo = {
-    __typename?: "Media";
-    
-    id: number;
-    
-    externalLinks: Maybe<WatchingQueryExternalLinks[]>;
-    
-    mediaListEntry: Maybe<WatchingQueryMediaListEntry>;
-  } 
-
-  export type WatchingQueryExternalLinks = {
-    __typename?: "MediaExternalLink";
-    
-    id: number;
-    
-    site: string;
-    
-    url: string;
-  } 
-
-  export type WatchingQueryMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    status: Maybe<MediaListStatus>;
-  } 
-
   export type AnimeViewVariables = {
     id: Maybe<number>;
   }
@@ -1270,6 +1096,180 @@ export type FuzzyDateInt = any;
     medium: Maybe<string>;
     
     color: Maybe<string>;
+  } 
+
+  export type PausedQueryVariables = {
+    userId: number;
+  }
+
+  export type PausedQueryQuery = {
+    __typename?: "Query";
+    
+    listCollection: Maybe<PausedQueryListCollection>;
+  }
+
+  export type PausedQueryListCollection = {
+    __typename?: "MediaListCollection";
+    
+    lists: Maybe<PausedQueryLists[]>;
+  } 
+
+  export type PausedQueryLists = {
+    __typename?: "MediaListGroup";
+    
+    isCustomList: Maybe<boolean>;
+    
+    entries: Maybe<PausedQueryEntries[]>;
+  } 
+
+  export type PausedQueryEntries = {
+    __typename?: "MediaList";
+    
+    info: Maybe<PausedQueryInfo>;
+  } 
+
+  export type PausedQueryInfo = {
+    __typename?: "Media";
+    
+    id: number;
+    
+    externalLinks: Maybe<PausedQueryExternalLinks[]>;
+    
+    mediaListEntry: Maybe<PausedQueryMediaListEntry>;
+  } 
+
+  export type PausedQueryExternalLinks = {
+    __typename?: "MediaExternalLink";
+    
+    id: number;
+    
+    site: string;
+    
+    url: string;
+  } 
+
+  export type PausedQueryMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    status: Maybe<MediaListStatus>;
+  } 
+
+  export type PlanningQueryVariables = {
+    userId: number;
+  }
+
+  export type PlanningQueryQuery = {
+    __typename?: "Query";
+    
+    listCollection: Maybe<PlanningQueryListCollection>;
+  }
+
+  export type PlanningQueryListCollection = {
+    __typename?: "MediaListCollection";
+    
+    lists: Maybe<PlanningQueryLists[]>;
+  } 
+
+  export type PlanningQueryLists = {
+    __typename?: "MediaListGroup";
+    
+    isCustomList: Maybe<boolean>;
+    
+    entries: Maybe<PlanningQueryEntries[]>;
+  } 
+
+  export type PlanningQueryEntries = {
+    __typename?: "MediaList";
+    
+    info: Maybe<PlanningQueryInfo>;
+  } 
+
+  export type PlanningQueryInfo = {
+    __typename?: "Media";
+    
+    id: number;
+    
+    externalLinks: Maybe<PlanningQueryExternalLinks[]>;
+    
+    mediaListEntry: Maybe<PlanningQueryMediaListEntry>;
+  } 
+
+  export type PlanningQueryExternalLinks = {
+    __typename?: "MediaExternalLink";
+    
+    id: number;
+    
+    site: string;
+    
+    url: string;
+  } 
+
+  export type PlanningQueryMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    status: Maybe<MediaListStatus>;
+  } 
+
+  export type WatchingQueryVariables = {
+    userId: number;
+  }
+
+  export type WatchingQueryQuery = {
+    __typename?: "Query";
+    
+    listCollection: Maybe<WatchingQueryListCollection>;
+  }
+
+  export type WatchingQueryListCollection = {
+    __typename?: "MediaListCollection";
+    
+    lists: Maybe<WatchingQueryLists[]>;
+  } 
+
+  export type WatchingQueryLists = {
+    __typename?: "MediaListGroup";
+    
+    isCustomList: Maybe<boolean>;
+    
+    entries: Maybe<WatchingQueryEntries[]>;
+  } 
+
+  export type WatchingQueryEntries = {
+    __typename?: "MediaList";
+    
+    info: Maybe<WatchingQueryInfo>;
+  } 
+
+  export type WatchingQueryInfo = {
+    __typename?: "Media";
+    
+    id: number;
+    
+    externalLinks: Maybe<WatchingQueryExternalLinks[]>;
+    
+    mediaListEntry: Maybe<WatchingQueryMediaListEntry>;
+  } 
+
+  export type WatchingQueryExternalLinks = {
+    __typename?: "MediaExternalLink";
+    
+    id: number;
+    
+    site: string;
+    
+    url: string;
+  } 
+
+  export type WatchingQueryMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    status: Maybe<MediaListStatus>;
   } 
 
   export type QueueVariables = {

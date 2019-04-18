@@ -85,7 +85,8 @@ import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 import CButton from '@/components/CButton.vue'
 import QueueItem from './components/queue-item.vue'
 
-import { pausedQuery, planningQuery, watchingQuery } from '@/graphql/query'
+import { pausedQuery, planningQuery, watchingQuery } from './queries'
+import QUEUE_QUERY from './queue.graphql'
 import {
   Provider,
   QueueAnime,
@@ -93,7 +94,6 @@ import {
   QueueVariables,
   WatchingQueryLists,
 } from '@/graphql/types'
-import QUEUE_QUERY from '@/views/queue/queue.graphql'
 
 import { Query } from '@/decorators'
 import { getPlayerData, sendErrorToast, sendToast } from '@/state/app'

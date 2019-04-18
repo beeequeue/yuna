@@ -3,20 +3,12 @@ import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 import {
   PausedQueryQuery,
   PlanningQueryQuery,
-  SearchQueryQuery,
   WatchingQueryQuery,
 } from '@/graphql/types'
 
-import PAUSED_QUERY from './PausedQuery.graphql'
-import PLANNING_QUERY from './PlanningQuery.graphql'
-import SEARCH_QUERY from './SearchQuery.graphql'
-import WATCHING_QUERY from './WatchingQuery.graphql'
-
-export const searchQuery = (apollo: DollarApollo<any>, search: string) =>
-  apollo.query<SearchQueryQuery>({
-    query: SEARCH_QUERY,
-    variables: { search },
-  })
+import WATCHING_QUERY from './watching.graphql'
+import PLANNING_QUERY from './planning.graphql'
+import PAUSED_QUERY from './paused.graphql'
 
 export const watchingQuery = (apollo: DollarApollo<any>, userId: number) =>
   apollo.query<WatchingQueryQuery>({

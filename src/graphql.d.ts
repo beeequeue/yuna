@@ -59,26 +59,6 @@ declare module '*/ExportQueue.graphql' {
   export default defaultDocument
 }
 
-declare module '*/PausedQuery.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const PausedQuery: DocumentNode
-
-  export { PausedQuery }
-
-  export default defaultDocument
-}
-
-declare module '*/PlanningQuery.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const PlanningQuery: DocumentNode
-
-  export { PlanningQuery }
-
-  export default defaultDocument
-}
-
 declare module '*/PlayerAnime.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
@@ -149,16 +129,6 @@ declare module '*/UpdateScoreMutation.graphql' {
   export default defaultDocument
 }
 
-declare module '*/WatchingQuery.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const WatchingQuery: DocumentNode
-
-  export { WatchingQuery }
-
-  export default defaultDocument
-}
-
 declare module '*/anime.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
@@ -175,6 +145,36 @@ declare module '*/list.graphql' {
   const ListView: DocumentNode
 
   export { ListView }
+
+  export default defaultDocument
+}
+
+declare module '*/paused.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const PausedQuery: DocumentNode
+
+  export { PausedQuery }
+
+  export default defaultDocument
+}
+
+declare module '*/planning.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const PlanningQuery: DocumentNode
+
+  export { PlanningQuery }
+
+  export default defaultDocument
+}
+
+declare module '*/watching.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const WatchingQuery: DocumentNode
+
+  export { WatchingQuery }
 
   export default defaultDocument
 }
