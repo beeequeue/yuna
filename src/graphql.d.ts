@@ -69,7 +69,7 @@ declare module '*/set-status.graphql' {
   export default defaultDocument
 }
 
-declare module '*/EpisodeList.graphql' {
+declare module '*/episode-list.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
   const EpisodeList: DocumentNode
@@ -79,7 +79,17 @@ declare module '*/EpisodeList.graphql' {
   export default defaultDocument
 }
 
-declare module '*/PlayerAnime.graphql' {
+declare module '*/edit-list-entry.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const EditListEntry: DocumentNode
+
+  export { EditListEntry }
+
+  export default defaultDocument
+}
+
+declare module '*/player-anime.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
   const PlayerAnime: DocumentNode
@@ -89,22 +99,12 @@ declare module '*/PlayerAnime.graphql' {
   export default defaultDocument
 }
 
-declare module '*/SaveListEntryMutation.graphql' {
+declare module '*/search.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const SaveListEntryMutation: DocumentNode
+  const Search: DocumentNode
 
-  export { SaveListEntryMutation }
-
-  export default defaultDocument
-}
-
-declare module '*/SearchQuery.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const SearchQuery: DocumentNode
-
-  export { SearchQuery }
+  export { Search }
 
   export default defaultDocument
 }

@@ -1,7 +1,7 @@
 <template>
   <modal :visible="visible" :toggleVisible="toggleVisible">
     <ApolloMutation
-      :mutation="SAVE_LIST_ENTRY_MUTATION"
+      :mutation="EDIT_LIST_ENTRY"
       :variables="anime && anime.mediaListEntry"
       :update="handleUpdate"
       @done="toggleVisible"
@@ -96,14 +96,14 @@ import { change } from 'rambdax'
 import { oc } from 'ts-optchain'
 import { mdiCloseCircle } from '@mdi/js'
 
-import SAVE_LIST_ENTRY_MUTATION from '@/graphql/SaveListEntryMutation.graphql'
+import EDIT_LIST_ENTRY from './edit-list-entry.graphql'
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import { deleteListEntry } from '@/common/mutations/list-entry'
 import {
   AnimeViewQuery,
   AnimeViewVariables,
+  EditListEntryMutation,
   MediaListStatus,
-  SaveListEntryMutationMutation,
 } from '@/graphql/types'
 
 import { Required } from '@/decorators'
@@ -135,7 +135,7 @@ export default class EditModal extends Vue {
     }),
   )
 
-  public SAVE_LIST_ENTRY_MUTATION = SAVE_LIST_ENTRY_MUTATION
+  public EDIT_LIST_ENTRY = EDIT_LIST_ENTRY
   public deleteSvg = mdiCloseCircle
 
   public get anime() {
@@ -172,7 +172,7 @@ export default class EditModal extends Vue {
 
   public handleUpdate(
     cache: ApolloCache<any>,
-    payload: { data: SaveListEntryMutationMutation },
+    payload: { data: EditListEntryMutation },
   ) {
     let data =
       cache.readQuery<AnimeViewQuery, AnimeViewVariables>({

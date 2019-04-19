@@ -77,7 +77,7 @@ import AnimeTitle from './components/title.vue'
 import CenterContainer from './components/center-container.vue'
 import Relations from './components/relations.vue'
 
-import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
+import EPISODE_LIST from '@/common/queries/episode-list.graphql'
 import ANIME_QUERY from './anime.graphql'
 import {
   AnimeViewMediaListEntry,

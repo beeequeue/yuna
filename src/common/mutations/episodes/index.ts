@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import { oc } from 'ts-optchain'
 
-import EPISODE_LIST_QUERY from '@/graphql/EpisodeList.graphql'
+import EPISODE_LIST_QUERY from '@/common/queries/episode-list.graphql'
 import UPDATE_PROGRESS from './update-progress.graphql'
 import CACHE_EPISODES from './cache-episodes.graphql'
 import {

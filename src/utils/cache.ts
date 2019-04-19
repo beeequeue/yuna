@@ -1,7 +1,7 @@
 import { DataProxy } from 'apollo-cache'
 import { oc } from 'ts-optchain'
 
-import EPISODE_LIST_QUERY from '@/graphql/EpisodeList.graphql'
+import EPISODE_LIST_QUERY from '@/common/queries/episode-list.graphql'
 import {
   EpisodeListEpisodes,
   EpisodeListQuery,

@@ -1,4 +1,4 @@
-query SearchQuery($search: String) {
+query Search($search: String) {
   anime: Page(perPage: 8) {
     pageInfo {
       total

@@ -2,7 +2,7 @@ import { DataProxy } from 'apollo-cache'
 import gql from 'graphql-tag'
 import { oc } from 'ts-optchain'
 
-import EPISODE_LIST from '@/graphql/EpisodeList.graphql'
+import EPISODE_LIST from '@/common/queries/episode-list.graphql'
 import {
   AnimeViewAnime,
   CacheEpisodesVariables,

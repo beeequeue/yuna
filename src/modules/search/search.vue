@@ -44,12 +44,8 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiClose, mdiLoading } from '@mdi/js'
 
-import SEARCH_QUERY from '@/graphql/SearchQuery.graphql'
-import {
-  SearchQueryQuery,
-  SearchQueryResults,
-  SearchQueryVariables,
-} from '@/graphql/types'
+import SEARCH_QUERY from './search.graphql'
+import { SearchQuery, SearchResults, SearchVariables } from '@/graphql/types'
 
 import { Query } from '@/decorators'
 
@@ -58,9 +54,9 @@ import { oc } from 'ts-optchain'
 
 @Component({ components: { Icon } })
 export default class Search extends Vue {
-  @Query<Search, SearchQueryQuery, SearchQueryVariables>({
+  @Query<Search, SearchQuery, SearchVariables>({
     query: SEARCH_QUERY,
-    variables(): SearchQueryVariables {
+    variables(): SearchVariables {
       return {
         search: this.searchString,
       }
@@ -75,7 +71,7 @@ export default class Search extends Vue {
       this.onFinish()
     },
   })
-  public search: SearchQueryQuery | null = null
+  public search: SearchQuery | null = null
 
   public isOpen = false
   public fakeLoading = false
@@ -85,7 +81,7 @@ export default class Search extends Vue {
   public loadingSvg = mdiLoading
 
   public get results() {
-    return oc(this.search).anime.results([] as SearchQueryResults[])
+    return oc(this.search).anime.results([] as SearchResults[])
   }
 
   public selectAllInInput(e: MouseEvent) {

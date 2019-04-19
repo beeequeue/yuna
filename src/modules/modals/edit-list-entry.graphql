@@ -1,4 +1,4 @@
-mutation SaveListEntryMutation(
+mutation EditListEntry(
   $id: Int!
   $progress: Int!
   $status: MediaListStatus!

@@ -657,6 +657,34 @@ export type FuzzyDateInt = any;
     isWatched: boolean;
   } 
 
+  export type EditListEntryVariables = {
+    id: number;
+    progress: number;
+    status: MediaListStatus;
+    repeat: number;
+    score: number;
+  }
+
+  export type EditListEntryMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<EditListEntrySaveMediaListEntry>;
+  }
+
+  export type EditListEntrySaveMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    score: Maybe<number>;
+    
+    progress: Maybe<number>;
+    
+    status: Maybe<MediaListStatus>;
+    
+    repeat: Maybe<number>;
+  } 
+
   export type PlayerAnimeVariables = {
     id: number;
   }
@@ -741,93 +769,65 @@ export type FuzzyDateInt = any;
     score: Maybe<number>;
   } 
 
-  export type SaveListEntryMutationVariables = {
-    id: number;
-    progress: number;
-    status: MediaListStatus;
-    repeat: number;
-    score: number;
-  }
-
-  export type SaveListEntryMutationMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<SaveListEntryMutationSaveMediaListEntry>;
-  }
-
-  export type SaveListEntryMutationSaveMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    score: Maybe<number>;
-    
-    progress: Maybe<number>;
-    
-    status: Maybe<MediaListStatus>;
-    
-    repeat: Maybe<number>;
-  } 
-
-  export type SearchQueryVariables = {
+  export type SearchVariables = {
     search: Maybe<string>;
   }
 
-  export type SearchQueryQuery = {
+  export type SearchQuery = {
     __typename?: "Query";
     
-    anime: Maybe<SearchQueryAnime>;
+    anime: Maybe<SearchAnime>;
   }
 
-  export type SearchQueryAnime = {
+  export type SearchAnime = {
     __typename?: "Page";
     
-    pageInfo: Maybe<SearchQueryPageInfo>;
+    pageInfo: Maybe<SearchPageInfo>;
     
-    results: Maybe<SearchQueryResults[]>;
+    results: Maybe<SearchResults[]>;
   } 
 
-  export type SearchQueryPageInfo = {
+  export type SearchPageInfo = {
     __typename?: "PageInfo";
     
     total: Maybe<number>;
   } 
 
-  export type SearchQueryResults = {
+  export type SearchResults = {
     __typename?: "Media";
     
     id: number;
     
     type: Maybe<MediaType>;
     
-    title: Maybe<SearchQueryTitle>;
+    title: Maybe<SearchTitle>;
     
-    coverImage: Maybe<SearchQueryCoverImage>;
+    coverImage: Maybe<SearchCoverImage>;
     
-    streamingEpisodes: Maybe<SearchQueryStreamingEpisodes[]>;
+    streamingEpisodes: Maybe<SearchStreamingEpisodes[]>;
     
-    externalLinks: Maybe<SearchQueryExternalLinks[]>;
+    externalLinks: Maybe<SearchExternalLinks[]>;
   } 
 
-  export type SearchQueryTitle = {
+  export type SearchTitle = {
     __typename?: "MediaTitle";
     
     userPreferred: Maybe<string>;
   } 
 
-  export type SearchQueryCoverImage = {
+  export type SearchCoverImage = {
     __typename?: "MediaCoverImage";
     
     medium: Maybe<string>;
   } 
 
-  export type SearchQueryStreamingEpisodes = {
+  export type SearchStreamingEpisodes = {
     __typename?: "MediaStreamingEpisode";
     
     site: Maybe<string>;
   } 
 
-  export type SearchQueryExternalLinks = {
+  export type SearchExternalLinks = {
     __typename?: "MediaExternalLink";
     
     site: string;
