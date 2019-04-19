@@ -12,10 +12,10 @@ import {
   MediaListStatus,
   Provider,
   UpdateProgressMutation,
+  UpdateProgressVariables,
 } from '@/graphql/types'
 
 import { Instance } from '@/types'
-import { isNil } from '@/utils'
 import {
   EpisodeMutationObject,
   refetchListQuery,
@@ -36,41 +36,38 @@ export const setProgress = async (
   let listEntry: ListEntry | null = null
 
   try {
-    listEntry = $apollo.provider.defaultClient.cache.readQuery({
-      query: gql`
-        query ProgressListEntry($id: Int!) {
-          listEntry: MediaList(mediaId: $id) {
+    listEntry = $apollo.provider.defaultClient.cache.readFragment({
+      fragment: gql`
+        fragment ProgressListEntry on Media {
+          mediaListEntry {
             id
             repeat
             status
           }
         }
       `,
-      variables: {
-        id: options.animeId,
-      },
+      id: `Media:${options.animeId}`,
     })
   } catch (e) {
     /* no-op */
   }
 
-  if (isNil(listEntry)) {
-    throw new Error('Tried to update progress of show not in List!')
-  }
-
   const optimisticResponse: UpdateProgressMutation = {
     SaveMediaListEntry: {
       __typename: 'MediaList',
-      id: listEntry.id,
+      id: oc(listEntry).id(-1),
       progress,
-      repeat: listEntry.repeat || 0,
-      status: listEntry.status || MediaListStatus.Current,
+      repeat: oc(listEntry).repeat(0),
+      status: oc(listEntry).status(MediaListStatus.Current),
     },
   }
 
   return $apollo.mutate<UpdateProgressMutation>({
     mutation: UPDATE_PROGRESS,
-    variables: { id: listEntry.id, progress },
+    variables: {
+      mediaId: options.animeId,
+      progress,
+    } as UpdateProgressVariables,
     optimisticResponse,
     refetchQueries: refetchListQuery($store),
     update: cache => {

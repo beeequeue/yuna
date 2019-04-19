@@ -1,6 +1,6 @@
 /* THIS IS A GENERATED FILE */
 /* /Maybe<\(Maybe<(.*)>\)\[\]>/ */
-/* /Maybe<$1[]>/ */
+/* Maybe<$1[]> */
 export type Maybe<T> = T | null;
 
 /** Notification option input */
@@ -491,7 +491,7 @@ export type FuzzyDateInt = any;
   }
 
   export type UpdateProgressVariables = {
-    id: Maybe<number>;
+    mediaId: Maybe<number>;
     progress: Maybe<number>;
   }
 
