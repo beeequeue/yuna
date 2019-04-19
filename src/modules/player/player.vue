@@ -114,9 +114,9 @@ import { Levels, Stream } from '@/types'
 import { capitalize, clamp, getRelations, lastItem } from '@/utils'
 
 import Icon from '@/common/components/icon.vue'
-import Controls from './Controls.vue'
-import NextEpisodeOverlay from './NextEpisodeOverlay.vue'
-import EndOfSeasonOverlay from './EndOfSeasonOverlay.vue'
+import Controls from './controls.vue'
+import NextEpisodeOverlay from './next-episode-overlay.vue'
+import EndOfSeasonOverlay from './end-of-season-overlay.vue'
 import { Hidive, HidiveResponseCode } from '@/lib/hidive'
 
 const QUALITY_LOCALSTORAGE_KEY = 'quality_v2'

@@ -52,7 +52,7 @@ import Loading from '@/common/components/loading.vue'
 import Icon from '@/common/components/icon.vue'
 import CButton from '@/common/components/button.vue'
 import AnimeBanner from '@/common/components/anime-banner.vue'
-import CrunchyrollCollection from './CrunchyrollCollection.vue'
+import CrunchyrollCollection from './crunchyroll-collection.vue'
 
 import { Query, Required } from '@/decorators'
 import {

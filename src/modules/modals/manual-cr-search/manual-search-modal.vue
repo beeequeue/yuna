@@ -22,9 +22,9 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import AnimatedHeight from '@/common/components/animated-height.vue'
-import Modal from '../Modal.vue'
-import CrunchyrollEditor from './CrunchyrollEditor.vue'
-import SearchStep from './SearchStep.vue'
+import Modal from '../modal.vue'
+import CrunchyrollEditor from './crunchyroll-editor.vue'
+import SearchStep from './search-step.vue'
 
 import { Required } from '@/decorators'
 import { getManualSearchOptions, getSelectedEpisodes } from '@/state/app'

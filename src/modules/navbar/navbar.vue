@@ -40,24 +40,24 @@ import { Component, Vue } from 'vue-property-decorator'
 import { TooltipSettings } from 'v-tooltip'
 import { mdiHomeOutline, mdiMenu } from '@mdi/js'
 
-import Search from '../Search/Search.vue'
 import Icon from '@/common/components/icon.vue'
-import Item from './Item.vue'
-import SettingsDropdown from './SettingsDropdown.vue'
+import Search from '@/modules/search/search.vue'
+import Item from './item.vue'
+import SettingsDropdown from './settings-dropdown.vue'
 
 @Component({
   components: { Search, SettingsDropdown, Icon, Item },
 })
 export default class Navbar extends Vue {
   public settingsOpen = false
-  public showFirstTimetooltips = false
+  public showFirstTimeTooltips = false
 
   public homeOutlineSvg = mdiHomeOutline
   public menuSvg = mdiMenu
 
   public mounted() {
     setTimeout(() => {
-      this.showFirstTimetooltips = this.isInFirstSetup
+      this.showFirstTimeTooltips = this.isInFirstSetup
     }, 500)
   }
 
@@ -85,7 +85,7 @@ export default class Navbar extends Vue {
 
     return {
       content,
-      show: this.showFirstTimetooltips && this.isInFirstSetup,
+      show: this.showFirstTimeTooltips && this.isInFirstSetup,
       autoHide: false,
       trigger: 'manual',
     }

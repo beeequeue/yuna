@@ -22,7 +22,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { chromeVersion, electronVersion } from 'electron-util'
 
 import { Required } from '@/decorators'
-import Modal from './Modal.vue'
+import Modal from './modal.vue'
 import { version } from '../../../package.json'
 
 @Component({ components: { Modal } })

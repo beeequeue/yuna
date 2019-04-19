@@ -37,7 +37,7 @@ import { getPlayerData } from '@/state/app'
 import { getShouldAutoMarkWatched, getShouldAutoPlay } from '@/state/settings'
 import { isNil } from '@/utils'
 
-import Player from './Player.vue'
+import Player from './player.vue'
 
 @Component({ components: { Player } })
 export default class PlayerContainer extends Vue {

@@ -37,7 +37,7 @@ import { EpisodeListEpisodes } from '@/graphql/types'
 import Icon from '@/common/components/icon.vue'
 import Checkbox from '@/common/components/form/checkbox.vue'
 import AnimatedHeight from '@/common/components/animated-height.vue'
-import CrunchyrollEpisode from './CrunchyrollEpisode.vue'
+import CrunchyrollEpisode from './crunchyroll-episode.vue'
 
 import { Required } from '@/decorators'
 import { _CollectionWithEpisodes } from '@/lib/crunchyroll'

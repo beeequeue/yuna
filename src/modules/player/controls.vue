@@ -226,9 +226,9 @@ import { Levels } from '@/types'
 import { secondsToTimeString } from '@/utils'
 
 import Icon from '@/common/components/icon.vue'
-import PlayerTitle from './Title.vue'
-import ProgressBar from './ProgressBar.vue'
-import VolumeSlider from './VolumeSlider.vue'
+import PlayerTitle from './title.vue'
+import ProgressBar from './progress-bar.vue'
+import VolumeSlider from './volume-slider.vue'
 
 @Component<Controls>({
   components: { PlayerTitle, VolumeSlider, ProgressBar, Icon },

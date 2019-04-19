@@ -61,12 +61,12 @@ import {
 import { CHECK_FOR_UPDATES } from '@/messages'
 
 import TitleBar from '@/common/components/title-bar.vue'
-import Navbar from '@/components/Navbar/Navbar.vue'
-import PlayerContainer from '@/components/Player/Container.vue'
+import Navbar from '@/modules/navbar/navbar.vue'
+import PlayerContainer from '@/modules/player/player-container.vue'
 import ToastOverlay from '@/common/components/toast-overlay.vue'
-import AboutModal from '@/components/Modals/AboutModal.vue'
-import EditModal from '@/components/Modals/EditModal.vue'
-import ManualSearchModal from '@/components/Modals/ManualSearch/ManualSearchModal.vue'
+import AboutModal from '@/modules/modals/about-modal.vue'
+import EditModal from '@/modules/modals/edit-modal.vue'
+import ManualSearchModal from '@/modules/modals/manual-cr-search/manual-search-modal.vue'
 import { Hidive } from '@/lib/hidive'
 
 const requireBg = require.context('@/assets/bg')
