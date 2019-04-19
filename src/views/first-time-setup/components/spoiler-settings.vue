@@ -58,7 +58,7 @@ import { mdiInformationOutline } from '@mdi/js'
 import Icon from '@/components/Icon.vue'
 import Checkbox from '@/components/Checkbox.vue'
 import CButton from '@/components/CButton.vue'
-import Episode from '@/components/Episode.vue'
+import Episode from '@/common/components/episode.vue'
 
 import { EpisodeListEpisodes } from '@/graphql/types'
 import thumbnailWebp from '@/assets/setup/episode_thumb.webp'

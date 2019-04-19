@@ -21,7 +21,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import AnimatedHeight from '@/components/AnimatedHeight.vue'
+import AnimatedHeight from '@/common/components/animated-height.vue'
 import Modal from '../Modal.vue'
 import CrunchyrollEditor from './CrunchyrollEditor.vue'
 import SearchStep from './SearchStep.vue'

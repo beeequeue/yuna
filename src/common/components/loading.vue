@@ -9,7 +9,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiLoading } from '@mdi/js'
 
-import Icon from './Icon.vue'
+import Icon from '../../components/Icon.vue'
 
 @Component({ components: { Icon } })
 export default class Loading extends Vue {
@@ -20,7 +20,7 @@ export default class Loading extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../colors';
+@import '../../colors';
 
 @keyframes spin {
   from {

@@ -19,8 +19,8 @@ import { Default } from '@/decorators'
 import { StreamingSource } from '@/types'
 import { getStreamingSources } from '@/utils'
 
-import CButton from './CButton.vue'
-import Icon from './Icon.vue'
+import CButton from '../../components/CButton.vue'
+import Icon from '../../components/Icon.vue'
 
 const streamingSiteCtx = require.context('@/assets', false)
 const siteImages = streamingSiteCtx.keys()
@@ -47,7 +47,7 @@ export default class SourceList extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../colors';
+@import '../../colors';
 
 .source-list {
   width: 100%;

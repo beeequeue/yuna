@@ -44,8 +44,8 @@ import { Required } from '@/decorators'
 import { ListEntry, setCurrentEpisode } from '@/state/app'
 import { getSpoilerSettings } from '@/state/settings'
 
-import CButton from './CButton.vue'
-import Icon from './Icon.vue'
+import CButton from '../../components/CButton.vue'
+import Icon from '../../components/Icon.vue'
 
 @Component({ components: { CButton, Icon } })
 export default class Episode extends Vue {
@@ -118,7 +118,7 @@ export default class Episode extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../colors';
+@import '../../colors';
 
 .episode {
   position: relative;

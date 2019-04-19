@@ -251,7 +251,7 @@ import LoginCR from '@/common/components/login/crunchyroll.vue'
 import Checkbox from '@/components/Checkbox.vue'
 import CButton from '@/components/CButton.vue'
 import Icon from '@/components/Icon.vue'
-import Dropdown, { DropdownItem } from '@/components/Form/Dropdown.vue'
+import Dropdown, { DropdownItem } from '@/common/components/form/dropdown.vue'
 import Connection from './components/connection.vue'
 import Keybinding from './components/keybinding.vue'
 

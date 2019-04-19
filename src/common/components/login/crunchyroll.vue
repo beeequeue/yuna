@@ -31,9 +31,9 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import crIcon from '@/assets/crunchyroll.svg'
-import TextInput from '@/components/Form/TextInput.vue'
+import TextInput from '@/common/components/form/text-input.vue'
 import CButton from '@/components/CButton.vue'
-import Loading from '@/components/Loading.vue'
+import Loading from '@/common/components/loading.vue'
 
 import { Crunchyroll } from '@/lib/crunchyroll'
 

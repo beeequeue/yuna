@@ -48,7 +48,7 @@ import { mdiArrowLeft, mdiCheck } from '@mdi/js'
 
 import { cacheEpisodes } from '@/common/mutations/episodes'
 import { EpisodeListEpisodes, Provider, Maybe } from '@/graphql/types'
-import Loading from '@/components/Loading.vue'
+import Loading from '@/common/components/loading.vue'
 import Icon from '@/components/Icon.vue'
 import CButton from '@/components/CButton.vue'
 import AnimeBanner from '@/components/AnimeBanner.vue'

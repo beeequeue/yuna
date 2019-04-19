@@ -41,8 +41,8 @@ import Fuse from 'fuse.js'
 import { oc } from 'ts-optchain'
 
 import anilistLogoSvg from '@/assets/anilist.svg'
-import TextInput from '@/components/Form/TextInput.vue'
-import NumberInput from '@/components/Form/NumberInput.vue'
+import TextInput from '@/common/components/form/text-input.vue'
+import NumberInput from '@/common/components/form/number-input.vue'
 import ListEntry from './components/list-entry.vue'
 
 import LIST_QUERY from '@/views/list/list.graphql'

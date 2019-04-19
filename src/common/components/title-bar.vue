@@ -39,8 +39,8 @@ import { mdiClose, mdiMinus, mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 import { closeAllModals } from '@/state/app'
 import { getCrunchyrollCountry, getIsConnectedTo } from '@/state/auth'
 
-import Icon from './Icon.vue'
-import { version } from '../../package.json'
+import Icon from '../../components/Icon.vue'
+import { version } from '../../../package.json'
 
 const flagContext = require.context('svg-country-flags/svg')
 
@@ -118,7 +118,7 @@ export default class TitleBar extends Vue {
 </script>
 
 <style lang="scss">
-@import '../colors';
+@import '../../colors';
 
 .title-bar {
   position: relative;

@@ -41,10 +41,10 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import hidiveIcon from '@/assets/hidive.svg'
-import TextInput from '@/components/Form/TextInput.vue'
+import TextInput from '@/common/components/form/text-input.vue'
 import CButton from '@/components/CButton.vue'
-import Loading from '@/components/Loading.vue'
-import Dropdown, { DropdownItem } from '@/components/Form/Dropdown.vue'
+import Loading from '@/common/components/loading.vue'
+import Dropdown, { DropdownItem } from '@/common/components/form/dropdown.vue'
 
 import { Hidive } from '@/lib/hidive'
 import {

@@ -30,8 +30,8 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiClose, mdiMagnify } from '@mdi/js'
 
-import TextInput from '@/components/Form/TextInput.vue'
-import Loading from '@/components/Loading.vue'
+import TextInput from '@/common/components/form/text-input.vue'
+import Loading from '@/common/components/loading.vue'
 import Icon from '@/components/Icon.vue'
 import AnimeBanner from '@/components/AnimeBanner.vue'
 

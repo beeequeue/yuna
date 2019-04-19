@@ -137,9 +137,9 @@ import {
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import Icon from '@/components/Icon.vue'
 import AnimeBanner from '@/components/AnimeBanner.vue'
-import EpisodeList from '@/components/EpisodeList.vue'
-import AnimatedHeight from '@/components/AnimatedHeight.vue'
-import SourceList from '@/components/SourceList.vue'
+import EpisodeList from '@/common/components/episode-list.vue'
+import AnimatedHeight from '@/common/components/animated-height.vue'
+import SourceList from '@/common/components/source-list.vue'
 import CButton from '@/components/CButton.vue'
 import SourceSelect from './source-select.vue'
 

@@ -36,7 +36,7 @@ import { mdiChevronDown } from '@mdi/js'
 import { EpisodeListEpisodes } from '@/graphql/types'
 import Icon from '@/components/Icon.vue'
 import Checkbox from '@/components/Checkbox.vue'
-import AnimatedHeight from '@/components/AnimatedHeight.vue'
+import AnimatedHeight from '@/common/components/animated-height.vue'
 import CrunchyrollEpisode from './CrunchyrollEpisode.vue'
 
 import { Required } from '@/decorators'
