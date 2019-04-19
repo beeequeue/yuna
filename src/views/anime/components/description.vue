@@ -18,7 +18,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiChevronDown } from '@mdi/js'
 
-import Icon from '@/components/Icon.vue'
+import Icon from '@/common/components/icon.vue'
 
 @Component({
   components: { Icon },

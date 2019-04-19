@@ -26,7 +26,7 @@ import { Required } from '@/decorators'
 
 import CoverImage from '@/common/components/cover-image.vue'
 import Actions from '@/common/components/actions.vue'
-import CButton from '@/components/CButton.vue'
+import CButton from '@/common/components/button.vue'
 
 @Component({ components: { CoverImage, CButton, Actions } })
 export default class ListEntry extends Vue {

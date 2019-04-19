@@ -55,9 +55,9 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiInformationOutline } from '@mdi/js'
 
-import Icon from '@/components/Icon.vue'
-import Checkbox from '@/components/Checkbox.vue'
-import CButton from '@/components/CButton.vue'
+import Icon from '@/common/components/icon.vue'
+import Checkbox from '@/common/components/form/checkbox.vue'
+import CButton from '@/common/components/button.vue'
 import Episode from '@/common/components/episode.vue'
 
 import { EpisodeListEpisodes } from '@/graphql/types'

@@ -42,7 +42,7 @@ import {
 
 import { EpisodeCache } from '@/lib/episode-cache'
 import { toggleModal } from '@/state/app'
-import Icon from '../Icon.vue'
+import Icon from '@/common/components/icon.vue'
 
 @Component({ components: { Icon } })
 export default class SettingsDropdown extends Vue {

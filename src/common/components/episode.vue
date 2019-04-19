@@ -44,8 +44,8 @@ import { Required } from '@/decorators'
 import { ListEntry, setCurrentEpisode } from '@/state/app'
 import { getSpoilerSettings } from '@/state/settings'
 
-import CButton from '../../components/CButton.vue'
-import Icon from '../../components/Icon.vue'
+import CButton from './button.vue'
+import Icon from './icon.vue'
 
 @Component({ components: { CButton, Icon } })
 export default class Episode extends Vue {

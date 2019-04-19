@@ -39,7 +39,7 @@ import { mdiClose, mdiMinus, mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 import { closeAllModals } from '@/state/app'
 import { getCrunchyrollCountry, getIsConnectedTo } from '@/state/auth'
 
-import Icon from '../../components/Icon.vue'
+import Icon from './icon.vue'
 import { version } from '../../../package.json'
 
 const flagContext = require.context('svg-country-flags/svg')

@@ -22,7 +22,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import { EpisodeListEpisodes } from '@/graphql/types'
-import Checkbox from '@/components/Checkbox.vue'
+import Checkbox from '@/common/components/form/checkbox.vue'
 
 import { Required } from '@/decorators'
 import { isNil, isNotNil } from '@/utils'

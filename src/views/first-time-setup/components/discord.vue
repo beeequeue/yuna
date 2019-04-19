@@ -22,8 +22,8 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import CButton from '@/components/CButton.vue'
-import Checkbox from '@/components/Checkbox.vue'
+import CButton from '@/common/components/button.vue'
+import Checkbox from '@/common/components/form/checkbox.vue'
 
 import discordSvg from '@/assets/discord.svg'
 import richPresenceWebp from '@/assets/setup/discord.webp'

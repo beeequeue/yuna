@@ -45,8 +45,8 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiCheck } from '@mdi/js'
 
-import Icon from '@/components/Icon.vue'
-import CButton from '@/components/CButton.vue'
+import Icon from '@/common/components/icon.vue'
+import CButton from '@/common/components/button.vue'
 import LoginCR from '@/common/components/login/crunchyroll.vue'
 import LoginAL from '@/common/components/login/anilist.vue'
 import LoginHD from '@/common/components/login/hidive.vue'

@@ -45,9 +45,9 @@ import {
 import { Required } from '@/decorators'
 import { Sequel } from '@/state/app'
 
-import AnimeBanner from '../AnimeBanner.vue'
-import CButton from '../CButton.vue'
-import Icon from '../Icon.vue'
+import CButton from '@/common/components/button.vue'
+import AnimeBanner from '@/common/components/anime-banner.vue'
+import Icon from '@/common/components/icon.vue'
 
 @Component({
   components: { AnimeBanner, CButton, Icon },

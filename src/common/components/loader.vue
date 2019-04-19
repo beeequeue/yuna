@@ -5,7 +5,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiLoading } from '@mdi/js'
-import Icon from './Icon.vue'
+import Icon from '@/common/components/icon.vue'
 
 @Component({
   components: { Icon },
@@ -16,7 +16,7 @@ export default class Loader extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../colors';
+@import '../../colors';
 
 @keyframes loader {
   0% {

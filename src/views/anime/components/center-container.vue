@@ -17,7 +17,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { AnimeViewNextAiringEpisode } from '@/graphql/types'
 import { Required } from '@/decorators'
 
-import Icon from '@/components/Icon.vue'
+import Icon from '@/common/components/icon.vue'
 import Description from './description.vue'
 import Info from './info.vue'
 

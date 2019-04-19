@@ -9,7 +9,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiLoading } from '@mdi/js'
 
-import Icon from '../../components/Icon.vue'
+import Icon from './icon.vue'
 
 @Component({ components: { Icon } })
 export default class Loading extends Vue {

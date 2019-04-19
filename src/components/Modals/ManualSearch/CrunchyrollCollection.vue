@@ -34,8 +34,8 @@ import { Component, Vue } from 'vue-property-decorator'
 import { mdiChevronDown } from '@mdi/js'
 
 import { EpisodeListEpisodes } from '@/graphql/types'
-import Icon from '@/components/Icon.vue'
-import Checkbox from '@/components/Checkbox.vue'
+import Icon from '@/common/components/icon.vue'
+import Checkbox from '@/common/components/form/checkbox.vue'
 import AnimatedHeight from '@/common/components/animated-height.vue'
 import CrunchyrollEpisode from './CrunchyrollEpisode.vue'
 

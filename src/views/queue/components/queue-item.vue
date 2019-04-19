@@ -135,12 +135,12 @@ import {
 } from '@/graphql/types'
 
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
-import Icon from '@/components/Icon.vue'
-import AnimeBanner from '@/components/AnimeBanner.vue'
+import Icon from '@/common/components/icon.vue'
+import AnimeBanner from '@/common/components/anime-banner.vue'
 import EpisodeList from '@/common/components/episode-list.vue'
 import AnimatedHeight from '@/common/components/animated-height.vue'
 import SourceList from '@/common/components/source-list.vue'
-import CButton from '@/components/CButton.vue'
+import CButton from '@/common/components/button.vue'
 import SourceSelect from './source-select.vue'
 
 import { Query, Required } from '@/decorators'

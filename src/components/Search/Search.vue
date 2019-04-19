@@ -53,7 +53,7 @@ import {
 
 import { Query } from '@/decorators'
 
-import Icon from '../Icon.vue'
+import Icon from '@/common/components/icon.vue'
 import { oc } from 'ts-optchain'
 
 @Component({ components: { Icon } })

@@ -58,8 +58,8 @@ import { Required } from '@/decorators'
 import { setCurrentEpisode } from '@/state/app'
 import { getSpoilerSettings } from '@/state/settings'
 
-import CButton from '../CButton.vue'
-import Icon from '../Icon.vue'
+import CButton from '@/common/components/button.vue'
+import Icon from '@/common/components/icon.vue'
 
 @Component({
   components: { CButton, Icon },

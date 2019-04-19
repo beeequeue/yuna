@@ -64,7 +64,7 @@ import hidiveIcon from '@/assets/hidive.svg'
 import LoginCr from '@/common/components/login/crunchyroll.vue'
 import LoginHd from '@/common/components/login/hidive.vue'
 import TextInput from '@/common/components/form/text-input.vue'
-import CButton from '@/components/CButton.vue'
+import CButton from '@/common/components/button.vue'
 
 import { getFinishedConnecting, getIsConnectedTo } from '@/state/auth'
 import { Crunchyroll } from '@/lib/crunchyroll'

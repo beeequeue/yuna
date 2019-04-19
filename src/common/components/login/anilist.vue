@@ -10,7 +10,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 import anilistLogoSvg from '@/assets/anilist.svg'
-import CButton from '@/components/CButton.vue'
+import CButton from '@/common/components/button.vue'
 
 import { Required } from '@/decorators'
 

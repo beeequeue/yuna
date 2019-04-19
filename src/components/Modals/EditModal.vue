@@ -114,12 +114,12 @@ import {
 } from '@/state/app'
 import { capitalize, enumToArray, propEq } from '@/utils'
 
+import CButton from '@/common/components/button.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
 import Dropdown, { DropdownItem } from '@/common/components/form/dropdown.vue'
 import Modal from './Modal.vue'
-import AnimeBanner from '../AnimeBanner.vue'
-import Icon from '../Icon.vue'
-import CButton from '../CButton.vue'
+import AnimeBanner from '@/common/components/anime-banner.vue'
+import Icon from '@/common/components/icon.vue'
 
 @Component({
   components: { Modal, AnimeBanner, Icon, NumberInput, Dropdown, CButton },

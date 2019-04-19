@@ -32,8 +32,8 @@ import { mdiClose, mdiMagnify } from '@mdi/js'
 
 import TextInput from '@/common/components/form/text-input.vue'
 import Loading from '@/common/components/loading.vue'
-import Icon from '@/components/Icon.vue'
-import AnimeBanner from '@/components/AnimeBanner.vue'
+import Icon from '@/common/components/icon.vue'
+import AnimeBanner from '@/common/components/anime-banner.vue'
 
 import { Provider } from '@/graphql/types'
 import { Required } from '@/decorators'

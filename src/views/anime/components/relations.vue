@@ -41,7 +41,7 @@ import { mdiArrowLeftBold, mdiArrowRightBold } from '@mdi/js'
 
 import { AnimeViewRelations } from '@/graphql/types'
 
-import Icon from '../../../components/Icon.vue'
+import Icon from '@/common/components/icon.vue'
 import { Required } from '@/decorators'
 
 @Component({

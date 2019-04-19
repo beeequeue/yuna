@@ -82,7 +82,7 @@ import { complement, indexBy } from 'rambdax'
 import { oc } from 'ts-optchain'
 import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 
-import CButton from '@/components/CButton.vue'
+import CButton from '@/common/components/button.vue'
 import QueueItem from './components/queue-item.vue'
 
 import { pausedQuery, planningQuery, watchingQuery } from './queries'

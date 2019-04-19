@@ -19,8 +19,8 @@ import { Default } from '@/decorators'
 import { StreamingSource } from '@/types'
 import { getStreamingSources } from '@/utils'
 
-import CButton from '../../components/CButton.vue'
-import Icon from '../../components/Icon.vue'
+import CButton from './button.vue'
+import Icon from './icon.vue'
 
 const streamingSiteCtx = require.context('@/assets', false)
 const siteImages = streamingSiteCtx.keys()

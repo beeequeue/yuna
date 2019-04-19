@@ -160,7 +160,7 @@ import {
 import { getSettings } from '@/state/settings'
 import { isNil, propEq } from '@/utils'
 
-import CButton from '@/components/CButton.vue'
+import CButton from '@/common/components/button.vue'
 
 export enum ActionKeys {
   ADD = 'addEntry',

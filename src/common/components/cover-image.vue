@@ -26,7 +26,7 @@ import { AnimeViewMediaListEntry, MediaListStatus } from '@/graphql/types'
 import { Required } from '@/decorators'
 import { getIconForStatus, humanizeMediaListStatus } from '@/utils'
 
-import Icon from '../../components/Icon.vue'
+import Icon from './icon.vue'
 
 @Component({
   components: { Icon },

@@ -53,7 +53,7 @@ export default class AnimeBanner extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../colors';
+@import '../../colors';
 
 .anime-banner {
   display: block;

@@ -22,7 +22,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { mdiClose } from '@mdi/js'
 
 import { getToasts, removeToast, Toast } from '@/state/app'
-import Icon from './Icon.vue'
+import Icon from '@/common/components/icon.vue'
 
 @Component({
   components: { Icon },
@@ -63,7 +63,7 @@ export default class ToastOverlay extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../colors';
+@import '../../colors';
 
 .toast-container {
   position: absolute;

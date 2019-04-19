@@ -36,7 +36,7 @@ import { Query, Required } from '@/decorators'
 import { AnimeViewNextAiringEpisode } from '@/graphql/types'
 
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
-import Icon from '@/components/Icon.vue'
+import Icon from '@/common/components/icon.vue'
 
 @Component({
   components: { NextEpisodeInfo, Icon },

@@ -61,7 +61,7 @@ import { mdiChevronDown } from '@mdi/js'
 
 import crIcon from '@/assets/crunchyroll.svg'
 import hidiveIcon from '@/assets/hidive.svg'
-import Icon from '@/components/Icon.vue'
+import Icon from '@/common/components/icon.vue'
 
 import { Provider, QueueAnime, QueueExternalLinks } from '@/graphql/types'
 

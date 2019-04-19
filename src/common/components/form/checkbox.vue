@@ -21,10 +21,10 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiCheck } from '@mdi/js'
 
-import { Required } from '../decorators'
+import { Required } from '@/decorators'
 
-import CButton from './CButton.vue'
-import Icon from './Icon.vue'
+import CButton from '@/common/components/button.vue'
+import Icon from '@/common/components/icon.vue'
 
 @Component({
   components: { CButton, Icon },
@@ -46,7 +46,7 @@ export default class Checkbox extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../colors';
+@import '../../../colors';
 
 .checkbox-container {
   position: relative;

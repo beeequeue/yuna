@@ -41,7 +41,7 @@ import { TooltipSettings } from 'v-tooltip'
 import { mdiHomeOutline, mdiMenu } from '@mdi/js'
 
 import Search from '../Search/Search.vue'
-import Icon from '../Icon.vue'
+import Icon from '@/common/components/icon.vue'
 import Item from './Item.vue'
 import SettingsDropdown from './SettingsDropdown.vue'
 

@@ -225,7 +225,7 @@ import {
 import { Levels } from '@/types'
 import { secondsToTimeString } from '@/utils'
 
-import Icon from '../Icon.vue'
+import Icon from '@/common/components/icon.vue'
 import PlayerTitle from './Title.vue'
 import ProgressBar from './ProgressBar.vue'
 import VolumeSlider from './VolumeSlider.vue'

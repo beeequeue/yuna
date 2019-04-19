@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import Icon from './Icon.vue'
+import Icon from './icon.vue'
 import { mdiAlertCircleOutline } from '@mdi/js'
 import { isNotNil } from '@/utils'
 
@@ -75,7 +75,7 @@ export default class CButton extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../colors';
+@import '../../colors';
 
 @mixin raised($color) {
   background: $color;

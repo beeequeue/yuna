@@ -32,7 +32,7 @@ import {
   mdiSubdirectoryArrowLeft,
 } from '@mdi/js'
 
-import CButton from '@/components/CButton.vue'
+import CButton from '@/common/components/button.vue'
 import { getKeysForAction, KeybindingAction } from '@/state/settings'
 
 @Component({

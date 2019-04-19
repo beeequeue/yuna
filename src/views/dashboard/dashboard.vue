@@ -24,7 +24,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import marked from 'marked'
 import superagent from 'superagent'
 
-import CButton from '@/components/CButton.vue'
+import CButton from '@/common/components/button.vue'
 import { RequestResponse, responseIsError } from '@/utils'
 
 const CHANGELOG_KEY = 'changelog'

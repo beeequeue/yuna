@@ -23,7 +23,7 @@ import { mdiLinkVariant, mdiLinkVariantOff } from '@mdi/js'
 import crIcon from '@/assets/crunchyroll.svg'
 import alIcon from '@/assets/anilist.svg'
 import hidiveIcon from '@/assets/hidive.svg'
-import CButton from '@/components/CButton.vue'
+import CButton from '@/common/components/button.vue'
 
 import { Required } from '@/decorators'
 import { RootState } from '@/state/store'

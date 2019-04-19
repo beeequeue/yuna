@@ -33,7 +33,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiVolumeHigh, mdiVolumeMute } from '@mdi/js'
 
-import Icon from '../Icon.vue'
+import Icon from '@/common/components/icon.vue'
 import { clamp } from '@/utils'
 
 @Component({
