@@ -62,9 +62,6 @@ export const deleteListEntry = async (
       if (!data || !data.anime) return
 
       data.anime.mediaListEntry = null
-
-      // cache.writeQuery({ query: ANIME_PAGE_QUERY, data })
-      cache.writeData({ id: `MediaList:${entryId}`, data: null })
     },
   })
 

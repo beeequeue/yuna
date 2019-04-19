@@ -152,11 +152,7 @@ import {
   getQueue,
   removeFromQueueByIndex,
 } from '@/state/user'
-import {
-  initEditModal,
-  sendErrorToast,
-  sendNotImplementedToast,
-} from '@/state/app'
+import { initEditModal, sendErrorToast } from '@/state/app'
 import { getSettings } from '@/state/settings'
 import { isNil, propEq } from '@/utils'
 
@@ -256,17 +252,13 @@ export default class Actions extends Vue {
     initEditModal(this.$store, this.anime as any)
   }
 
-  public sendNotImplementedToast() {
-    sendNotImplementedToast(this.$store)
-  }
-
   public async addToQueue() {
     if (!this.anime) {
       return sendErrorToast(this.$store, 'No anime found..?')
     }
 
     if (!this.mediaListEntry && this.shouldAddToListAsWell) {
-      await this.addEntryMutation(MediaListStatus.Planning)
+      await this.createListEntry(MediaListStatus.Planning)
     }
 
     addToQueue(this.$store, this.anime as any)
@@ -294,7 +286,7 @@ export default class Actions extends Vue {
     await setStatus(this, this.mediaListEntry.id, status)
   }
 
-  public async addEntryMutation(status: MediaListStatus) {
+  public async createListEntry(status: MediaListStatus) {
     if (!this.anime) {
       return sendErrorToast(this.$store, 'No anime found..?')
     }
