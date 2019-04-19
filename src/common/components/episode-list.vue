@@ -14,7 +14,7 @@
       </div>
     </transition>
 
-    <div class="episode-wrapper" :class="{ 'pad-right': !!padRight }">
+    <div class="episode-wrapper" :class="episodeWrapperClasses">
       <episode
         v-for="episode in episodes"
         :key="`${episode.name}:${episode.id}`"
@@ -51,6 +51,7 @@ export default class EpisodeList extends Vue {
   @Prop(Boolean) public scrollToNextEpisode!: boolean | null
   @Prop(Boolean) public small!: boolean | null
   @Prop(Boolean) public padRight!: boolean | null
+  @Prop(Boolean) public padding!: boolean | null
 
   public notAvailable = false
 
@@ -69,6 +70,13 @@ export default class EpisodeList extends Vue {
 
   public handleScroll(e: WheelEvent) {
     this.$refs.container.scrollBy(e.deltaY + e.deltaX, 0)
+  }
+
+  public get episodeWrapperClasses() {
+    return {
+      'pad-right': !!this.padRight,
+      padding: isNil(this.padding) || this.padding,
+    }
   }
 
   @Watch('episodes')
@@ -168,7 +176,10 @@ export default class EpisodeList extends Vue {
   & > .episode-wrapper {
     display: inline-flex;
     align-items: center;
-    padding: 15px;
+
+    &.padding {
+      padding: 15px;
+    }
 
     &.pad-right {
       padding-right: 320px;

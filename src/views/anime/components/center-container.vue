@@ -41,6 +41,7 @@ export default class CenterContainer extends Vue {
 .center-container {
   position: relative;
   pointer-events: none;
+  z-index: 1;
 
   & > * {
     pointer-events: all;
