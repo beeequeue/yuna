@@ -1,7 +1,9 @@
 import { DataProxy } from 'apollo-cache'
 import { oc } from 'ts-optchain'
+import { Store } from 'vuex'
 
 import EPISODE_LIST_QUERY from '@/common/queries/episode-list.graphql'
+import LIST_QUERY from '@/views/list/list.graphql'
 import {
   EpisodeListEpisodes,
   EpisodeListQuery,
@@ -10,10 +12,8 @@ import {
 } from '@/graphql/types'
 
 import { EpisodeCache } from '@/lib/episode-cache'
-import { isNil } from '@/utils'
-import { Store } from 'vuex'
 import { getAnilistUserId } from '@/state/auth'
-import LIST_QUERY from '@/views/list/list.graphql'
+import { isNil } from '.'
 
 export interface EpisodeMutationObject {
   animeId: number
