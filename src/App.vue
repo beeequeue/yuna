@@ -61,9 +61,9 @@ import {
 import { CHECK_FOR_UPDATES } from '@/messages'
 
 import TitleBar from '@/common/components/title-bar.vue'
-import Navbar from '@/modules/navbar/navbar.vue'
-import PlayerContainer from '@/modules/player/player-container.vue'
 import ToastOverlay from '@/common/components/toast-overlay.vue'
+import PlayerContainer from '@/modules/player/player-container.vue'
+import Navbar from '@/modules/navbar/navbar.vue'
 import AboutModal from '@/modules/modals/about-modal.vue'
 import EditModal from '@/modules/modals/edit-modal.vue'
 import ManualSearchModal from '@/modules/modals/manual-cr-search/manual-search-modal.vue'
