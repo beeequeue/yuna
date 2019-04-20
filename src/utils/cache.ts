@@ -17,14 +17,25 @@ import { EpisodeRelations } from '@/lib/relations'
 import { getAnilistUserId } from '@/state/auth'
 import { isNil } from '.'
 
+const getFragment = <R extends {}, V = void>(
+  cache: DataProxy,
+  { id, fragment, variables }: DataProxy.Fragment<V>,
+): R | null => {
+  try {
+    return cache.readFragment<R, V>({ id, fragment, variables })
+  } catch (e) {
+    return null
+  }
+}
+
 export const getIsWatched = (
   cache: DataProxy,
   animeId: number,
   episode: number,
 ) => {
-  const data = cache.readFragment<{
+  const data = getFragment<{
     mediaListEntry: { progress: number } | null
-  }>({
+  }>(cache, {
     id: `Media:${animeId}`,
     fragment: gql`
       fragment listEntry on Media {
@@ -35,11 +46,51 @@ export const getIsWatched = (
     `,
   })
 
-  if (!data || !data.mediaListEntry || !data.mediaListEntry.progress) {
+  const progress = oc(data).mediaListEntry.progress()
+  if (isNil(progress)) {
     return false
   }
 
-  return data.mediaListEntry.progress >= episode
+  return progress >= episode
+}
+
+export const getCachedAnimeIdMal = (
+  cache: DataProxy,
+  animeId: number,
+): number | null => {
+  const data = getFragment<{ idMal: number | null }>(cache, {
+    id: `Media:${animeId}`,
+    fragment: gql`
+      fragment cachedAnime on Media {
+        idMal
+      }
+    `,
+  })
+
+  return oc(data).idMal() || null
+}
+
+interface CachedExternalLinks {
+  externalLinks: Array<{ site: string; url: string }>
+}
+
+export const getCachedExternalLinks = (
+  cache: DataProxy,
+  animeId: number,
+): CachedExternalLinks['externalLinks'] | null => {
+  const data = getFragment<CachedExternalLinks>(cache, {
+    id: `Media:${animeId}`,
+    fragment: gql`
+      fragment cachedAnime on Media {
+        externalLinks {
+          site
+          url
+        }
+      }
+    `,
+  })
+
+  return oc(data).externalLinks() || null
 }
 
 interface CachedAiringData {
@@ -52,27 +103,23 @@ const getNextEpisodeAiringAt = (
   cache: DataProxy,
   animeId: number,
 ): number | null => {
-  try {
-    const data = cache.readFragment<CachedAiringData, void>({
-      fragment: gql`
-        fragment CacheAiringData on Media {
-          nextAiringEpisode {
-            airingAt
-          }
+  const data = getFragment<CachedAiringData, void>(cache, {
+    fragment: gql`
+      fragment CacheAiringData on Media {
+        nextAiringEpisode {
+          airingAt
         }
-      `,
-      id: `Media:${animeId}`,
-    })
+      }
+    `,
+    id: `Media:${animeId}`,
+  })
 
-    const airingAt = oc(data).nextAiringEpisode.airingAt()
+  const airingAt = oc(data).nextAiringEpisode.airingAt()
 
-    return !isNil(airingAt) ? airingAt * 1000 : null
-  } catch (err) {
-    return null
-  }
+  return !isNil(airingAt) ? airingAt * 1000 : null
 }
 
-const getSoftCachedEpisodes = (
+export const getSoftCachedEpisodes = (
   cache: DataProxy,
   animeId: number,
   provider: Provider,

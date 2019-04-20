@@ -1,12 +1,7 @@
-import gql from 'graphql-tag'
-
-import EPISODE_LIST from '@/common/queries/episode-list.graphql'
 import {
   AnimeViewAnime,
   CacheEpisodesVariables,
   EpisodeListEpisodes,
-  EpisodeListQuery,
-  EpisodeListVariables,
   Provider,
 } from '@/graphql/types'
 
@@ -16,22 +11,25 @@ import { EpisodeCache } from '@/lib/episode-cache'
 import { AniDB } from '@/lib/anidb'
 import { Hidive } from '@/lib/hidive'
 import { isNil, propEq } from '@/utils'
+import {
+  cacheEpisodes,
+  cacheRelations,
+  getCachedExternalLinks,
+  getCachedAnimeIdMal,
+  getSoftCachedEpisodes,
+} from '@/utils/cache'
 
 import { isWatched } from './is-watched'
-import { cacheEpisodes, cacheRelations } from '@/utils/cache'
+import { oc } from 'ts-optchain'
 
 interface EpisodeVariables {
   id: number
   provider: Provider
 }
 
-interface CachedAnime {
-  idMal: number | null
-  nextAiringEpisode: null | {
-    airingAt: number
-  }
-  externalLinks: Array<{ site: string; url: string }>
-}
+const episodesExist = (
+  episodes: EpisodeListEpisodes[] | null,
+): episodes is EpisodeListEpisodes[] => !isNil(episodes) && episodes.length >= 1
 
 export const resolvers = {
   Query: {
@@ -48,59 +46,34 @@ export const resolvers = {
         !isNil(nextEpisodeAiringAt) && Date.now() >= nextEpisodeAiringAt
 
       let episodes: EpisodeListEpisodes[] | null = null
-      let softCachedData
 
       if (!isStale) {
-        try {
-          softCachedData = cache.readQuery<
-            EpisodeListQuery,
-            EpisodeListVariables
-          >({
-            query: EPISODE_LIST,
-            variables: { id: Number(id), provider },
-          })
-        } catch (err) {
-          /* no-op */
-        }
+        episodes = getSoftCachedEpisodes(cache, id, provider)
 
-        if (softCachedData && softCachedData.episodes) {
-          episodes = softCachedData.episodes
-        }
+        if (!episodesExist(episodes)) {
+          const hardCachedEpisodes =
+            oc(EpisodeCache.get(id, provider)).episodes() || null
 
-        const hardCachedData = EpisodeCache.get(id, provider)
-
-        if (hardCachedData && hardCachedData.episodes) {
-          episodes = hardCachedData.episodes
+          if (!episodesExist(hardCachedEpisodes)) {
+            episodes = hardCachedEpisodes
+          }
         }
       }
 
-      if (isStale || !episodes) {
-        const data = cache.readFragment<CachedAnime>({
-          id: `Media:${id}`,
-          fragment: gql`
-            fragment cachedAnime on Media {
-              idMal
-              externalLinks {
-                site
-                url
-              }
-            }
-          `,
-        })
-
-        if (!data || !data || !data.idMal) {
-          throw new Error('Could not find Anime in cache!')
-        }
-
+      // Don't check providers if episodes == [] as that means they don't have it. null means we don't know.
+      if (isStale || isNil(episodes)) {
         if (
           [Provider.Crunchyroll, Provider.CrunchyrollManual].includes(provider)
         ) {
+          const idMal = getCachedAnimeIdMal(cache, id)
           let unconfirmedEpisodes
 
-          try {
-            unconfirmedEpisodes = await fetchEpisodesOfSeries(id, data.idMal)
-          } catch (err) {
-            throw new Error(err)
+          if (!isNil(idMal)) {
+            try {
+              unconfirmedEpisodes = await fetchEpisodesOfSeries(id, idMal)
+            } catch (err) {
+              throw new Error(err)
+            }
           }
 
           if (unconfirmedEpisodes == null || unconfirmedEpisodes.length === 0) {
@@ -124,10 +97,12 @@ export const resolvers = {
 
           episodes = relations[id]
         } else if (provider === Provider.Hidive) {
-          const hidiveLink = data.externalLinks.find(propEq('site', 'Hidive'))
+          const externalLinks = getCachedExternalLinks(cache, id) || []
+          const hidiveLink = externalLinks.find(propEq('site', 'Hidive'))
 
-          if (isNil(hidiveLink))
+          if (isNil(hidiveLink)) {
             throw new Error('Could not find link to Hidive.')
+          }
 
           let unconfirmedEpisodes: EpisodeListEpisodes[] | null = null
           try {
