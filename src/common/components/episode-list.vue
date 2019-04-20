@@ -47,11 +47,11 @@ export default class EpisodeList extends Vue {
   @Required(Object) public anime!: QueueAnime
   @Prop(Array) public episodes!: EpisodeListEpisodes[] | null
   @Prop(String) public error!: string | null
-  @Prop(Boolean) public loading!: boolean | null
-  @Prop(Boolean) public scrollToNextEpisode!: boolean | null
-  @Prop(Boolean) public small!: boolean | null
-  @Prop(Boolean) public padRight!: boolean | null
-  @Prop(Boolean) public padding!: boolean | null
+  @Prop(Boolean) public loading!: boolean
+  @Prop(Boolean) public scrollToNextEpisode!: boolean
+  @Prop(Boolean) public small!: boolean
+  @Prop(Boolean) public padRight!: boolean
+  @Prop(Boolean) public noVerticalPadding!: boolean
 
   public notAvailable = false
 
@@ -74,8 +74,8 @@ export default class EpisodeList extends Vue {
 
   public get episodeWrapperClasses() {
     return {
-      'pad-right': !!this.padRight,
-      padding: isNil(this.padding) || this.padding,
+      'pad-right': this.padRight,
+      padding: !this.noVerticalPadding,
     }
   }
 

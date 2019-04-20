@@ -52,7 +52,7 @@
         :anime="data.anime"
         :episodes="episodes"
         padRight
-        :padding="false"
+        noVerticalPadding
       />
 
       <relations
