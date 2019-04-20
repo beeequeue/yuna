@@ -1,7 +1,7 @@
 import { EpisodeListEpisodes } from '@/graphql/types'
 import { getIsWatched } from '@/utils/cache'
 
-export const isWatched = (
+export const isWatchedResolver = (
   episode: EpisodeListEpisodes,
   _: never,
   { cache }: { cache: RealProxy },
