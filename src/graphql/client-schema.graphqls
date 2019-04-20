@@ -43,5 +43,5 @@ extend type Query {
 }
 
 extend type Mutation {
-  CacheEpisodes(id: Int!, provider: Provider!, episodes: [EpisodeInput!]!, nextEpisodeAiringAt: Int): Boolean!
+  CacheEpisodes(episodes: [EpisodeInput!]!): Boolean!
 }

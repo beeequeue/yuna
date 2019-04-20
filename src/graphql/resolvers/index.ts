@@ -1,6 +1,4 @@
-import { DataProxy } from 'apollo-cache'
 import gql from 'graphql-tag'
-import { oc } from 'ts-optchain'
 
 import EPISODE_LIST from '@/common/queries/episode-list.graphql'
 import {
@@ -13,28 +11,18 @@ import {
 } from '@/graphql/types'
 
 import { fetchEpisodesOfSeries, fetchRating } from '@/lib/myanimelist'
-import { EpisodeRelations, getEpisodeRelations } from '@/lib/relations'
+import { getEpisodeRelations } from '@/lib/relations'
 import { EpisodeCache } from '@/lib/episode-cache'
 import { AniDB } from '@/lib/anidb'
 import { Hidive } from '@/lib/hidive'
 import { isNil, propEq } from '@/utils'
 
+import { isWatched } from './is-watched'
+import { cacheEpisodes, cacheRelations } from '@/utils/cache'
+
 interface EpisodeVariables {
   id: number
   provider: Provider
-}
-
-interface RealProxy extends DataProxy {
-  data: {
-    data: {
-      [key: string]:
-        | undefined
-        | {
-            __typename: string
-            [key: string]: any | undefined
-          }
-    }
-  }
 }
 
 interface CachedAnime {
@@ -43,53 +31,6 @@ interface CachedAnime {
     airingAt: number
   }
   externalLinks: Array<{ site: string; url: string }>
-}
-
-const cacheEpisodes = (
-  cache: RealProxy,
-  provider: Provider,
-  relations: EpisodeRelations,
-  nextEpisodeAiringAt: number | null,
-) => {
-  Object.entries(relations).forEach(
-    ([id, episodes]: [string, EpisodeListEpisodes[]]) => {
-      episodes = episodes.map(ep => ({
-        ...ep,
-        isWatched: getIsWatched(cache, ep.animeId, ep.episodeNumber),
-      }))
-
-      cache.writeQuery<EpisodeListQuery, EpisodeListVariables>({
-        query: EPISODE_LIST,
-        variables: { id: Number(id), provider },
-        data: {
-          episodes,
-        },
-      })
-
-      EpisodeCache.set(Number(id), provider, episodes, nextEpisodeAiringAt)
-    },
-  )
-}
-
-const getIsWatched = (cache: RealProxy, animeId: number, episode: number) => {
-  const data = cache.readFragment<{
-    mediaListEntry: { progress: number } | null
-  }>({
-    id: `Media:${animeId}`,
-    fragment: gql`
-      fragment listEntry on Media {
-        mediaListEntry {
-          progress
-        }
-      }
-    `,
-  })
-
-  if (!data || !data.mediaListEntry || !data.mediaListEntry.progress) {
-    return false
-  }
-
-  return data.mediaListEntry.progress >= episode
 }
 
 export const resolvers = {
@@ -139,9 +80,6 @@ export const resolvers = {
           fragment: gql`
             fragment cachedAnime on Media {
               idMal
-              nextAiringEpisode {
-                airingAt
-              }
               externalLinks {
                 site
                 url
@@ -149,7 +87,6 @@ export const resolvers = {
             }
           `,
         })
-        const airingAt = oc(data).nextAiringEpisode.airingAt(-1) * 1000
 
         if (!data || !data || !data.idMal) {
           throw new Error('Could not find Anime in cache!')
@@ -183,12 +120,7 @@ export const resolvers = {
 
           const relations = getEpisodeRelations(id, episodesWithCorrectProvider)
 
-          cacheEpisodes(
-            cache,
-            provider,
-            relations,
-            airingAt < 0 ? null : airingAt,
-          )
+          cacheRelations(cache, relations)
 
           episodes = relations[id]
         } else if (provider === Provider.Hidive) {
@@ -213,7 +145,7 @@ export const resolvers = {
 
           const relations = getEpisodeRelations(id, unconfirmedEpisodes)
 
-          cacheEpisodes(cache, Provider.Hidive, relations, nextEpisodeAiringAt)
+          cacheRelations(cache, relations)
 
           episodes = relations[id]
         }
@@ -234,27 +166,16 @@ export const resolvers = {
     },
   },
   Episode: {
-    isWatched: (
-      episode: EpisodeListEpisodes,
-      _: never,
-      { cache }: { cache: RealProxy },
-    ) => getIsWatched(cache, episode.animeId, episode.episodeNumber),
+    isWatched,
   },
   Mutation: {
     CacheEpisodes(
       _: any,
-      { id, provider, episodes, nextEpisodeAiringAt }: CacheEpisodesVariables,
+      { episodes }: CacheEpisodesVariables,
       { cache }: { cache: RealProxy },
     ) {
       try {
-        cacheEpisodes(
-          cache,
-          provider,
-          {
-            [id]: episodes,
-          },
-          nextEpisodeAiringAt,
-        )
+        cacheEpisodes(cache, episodes)
       } catch (err) {
         return false
       }

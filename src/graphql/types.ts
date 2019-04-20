@@ -478,10 +478,7 @@ export type FuzzyDateInt = any;
 
 
   export type CacheEpisodesVariables = {
-    id: number;
-    provider: Provider;
     episodes: EpisodeInput[];
-    nextEpisodeAiringAt: Maybe<number>;
   }
 
   export type CacheEpisodesMutation = {
