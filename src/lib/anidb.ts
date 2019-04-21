@@ -1,6 +1,7 @@
 import superagent from 'superagent/dist/superagent'
 import Bottleneck from 'bottleneck'
 import { OptionsV2, parseString as _parseString } from 'xml2js'
+import { oc } from 'ts-optchain'
 
 import { getConfig } from '@/config'
 import { isNil, RequestResponse, responseIsError, T } from '@/utils'
@@ -55,7 +56,7 @@ interface RelationError {
   messages: string[]
 }
 
-const parseString = async (xml: string, options: OptionsV2) =>
+const parseString = async (xml: string, options: OptionsV2): Promise<any> =>
   new Promise((resolve, reject) => {
     _parseString(xml, options, (err, result) => {
       if (err) return reject(err)
@@ -63,6 +64,14 @@ const parseString = async (xml: string, options: OptionsV2) =>
       resolve(result)
     })
   })
+
+const isXMLError = async (response: RequestResponse): Promise<boolean> => {
+  if (responseIsError(response)) return true
+
+  const xmlBody = await parseString(response.text, {})
+
+  return oc(xmlBody).error() != null
+}
 
 const getIdentifier = (ep: XmlEpisode) => {
   if (ep.resources == null) return null
@@ -123,7 +132,7 @@ export class AniDB {
       request(),
     )) as RequestResponse
 
-    if (responseIsError(response)) {
+    if (isXMLError(response)) {
       return null
     }
 

@@ -1,25 +1,5 @@
 /* THIS IS A GENERATED FILE */
-declare module '*/AddEntryMutation.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const AddEntryMutation: DocumentNode
-
-  export { AddEntryMutation }
-
-  export default defaultDocument
-}
-
-declare module '*/AnimePageQuery.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const AnimePageQuery: DocumentNode
-
-  export { AnimePageQuery }
-
-  export default defaultDocument
-}
-
-declare module '*/CacheEpisodes.graphql' {
+declare module '*/cache-episodes.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
   const CacheEpisodes: DocumentNode
@@ -29,27 +9,67 @@ declare module '*/CacheEpisodes.graphql' {
   export default defaultDocument
 }
 
-declare module '*/DeleteListEntryMutation.graphql' {
+declare module '*/update-progress.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const DeleteListEntryMutation: DocumentNode
+  const UpdateProgress: DocumentNode
 
-  export { DeleteListEntryMutation }
+  export { UpdateProgress }
 
   export default defaultDocument
 }
 
-declare module '*/EpisodeCount.graphql' {
+declare module '*/create-entry.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const EpisodeCount: DocumentNode
+  const CreateEntry: DocumentNode
 
-  export { EpisodeCount }
+  export { CreateEntry }
 
   export default defaultDocument
 }
 
-declare module '*/EpisodeList.graphql' {
+declare module '*/delete-entry.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const DeleteEntry: DocumentNode
+
+  export { DeleteEntry }
+
+  export default defaultDocument
+}
+
+declare module '*/rewatch.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const Rewatch: DocumentNode
+
+  export { Rewatch }
+
+  export default defaultDocument
+}
+
+declare module '*/set-score.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const SetScore: DocumentNode
+
+  export { SetScore }
+
+  export default defaultDocument
+}
+
+declare module '*/set-status.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const SetStatus: DocumentNode
+
+  export { SetStatus }
+
+  export default defaultDocument
+}
+
+declare module '*/episode-list.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
   const EpisodeList: DocumentNode
@@ -59,47 +79,17 @@ declare module '*/EpisodeList.graphql' {
   export default defaultDocument
 }
 
-declare module '*/ExportQueue.graphql' {
+declare module '*/edit-list-entry.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const ExportQueue: DocumentNode
+  const EditListEntry: DocumentNode
 
-  export { ExportQueue }
+  export { EditListEntry }
 
   export default defaultDocument
 }
 
-declare module '*/ListQuery.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const ListQuery: DocumentNode
-
-  export { ListQuery }
-
-  export default defaultDocument
-}
-
-declare module '*/PausedQuery.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const PausedQuery: DocumentNode
-
-  export { PausedQuery }
-
-  export default defaultDocument
-}
-
-declare module '*/PlanningQuery.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const PlanningQuery: DocumentNode
-
-  export { PlanningQuery }
-
-  export default defaultDocument
-}
-
-declare module '*/PlayerAnime.graphql' {
+declare module '*/player-anime.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
   const PlayerAnime: DocumentNode
@@ -109,82 +99,72 @@ declare module '*/PlayerAnime.graphql' {
   export default defaultDocument
 }
 
-declare module '*/Queue.graphql' {
+declare module '*/search.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const Queue: DocumentNode
+  const Search: DocumentNode
 
-  export { Queue }
+  export { Search }
 
   export default defaultDocument
 }
 
-declare module '*/RewatchMutation.graphql' {
+declare module '*/anime.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const RewatchMutation: DocumentNode
+  const AnimeView: DocumentNode
 
-  export { RewatchMutation }
+  export { AnimeView }
 
   export default defaultDocument
 }
 
-declare module '*/SaveListEntryMutation.graphql' {
+declare module '*/list.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const SaveListEntryMutation: DocumentNode
+  const ListView: DocumentNode
 
-  export { SaveListEntryMutation }
+  export { ListView }
 
   export default defaultDocument
 }
 
-declare module '*/SearchQuery.graphql' {
+declare module '*/paused.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const SearchQuery: DocumentNode
+  const PausedQuery: DocumentNode
 
-  export { SearchQuery }
+  export { PausedQuery }
 
   export default defaultDocument
 }
 
-declare module '*/SetStatusMutation.graphql' {
+declare module '*/planning.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const SetStatusMutation: DocumentNode
+  const PlanningQuery: DocumentNode
 
-  export { SetStatusMutation }
+  export { PlanningQuery }
 
   export default defaultDocument
 }
 
-declare module '*/UpdateProgressMutation.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const UpdateProgressMutation: DocumentNode
-
-  export { UpdateProgressMutation }
-
-  export default defaultDocument
-}
-
-declare module '*/UpdateScoreMutation.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const UpdateScoreMutation: DocumentNode
-
-  export { UpdateScoreMutation }
-
-  export default defaultDocument
-}
-
-declare module '*/WatchingQuery.graphql' {
+declare module '*/watching.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
   const WatchingQuery: DocumentNode
 
   export { WatchingQuery }
+
+  export default defaultDocument
+}
+
+declare module '*/queue.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const Queue: DocumentNode
+
+  export { Queue }
 
   export default defaultDocument
 }

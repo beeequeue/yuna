@@ -1,4 +1,6 @@
 /* THIS IS A GENERATED FILE */
+/* /Maybe<\(Maybe<(.*)>\)\[\]>/ */
+/* Maybe<$1[]> */
 export type Maybe<T> = T | null;
 
 /** Notification option input */
@@ -475,160 +477,8 @@ export type FuzzyDateInt = any;
 
 
 
-  export type AddEntryMutationVariables = {
-    mediaId: Maybe<number>;
-    status: Maybe<MediaListStatus>;
-  }
-
-  export type AddEntryMutationMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<AddEntryMutationSaveMediaListEntry>;
-  }
-
-  export type AddEntryMutationSaveMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    progress: Maybe<number>;
-    
-    status: Maybe<MediaListStatus>;
-    
-    score: Maybe<number>;
-    
-    repeat: Maybe<number>;
-  } 
-
-  export type AnimePageQueryVariables = {
-    id: Maybe<number>;
-  }
-
-  export type AnimePageQueryQuery = {
-    __typename?: "Query";
-    
-    anime: Maybe<AnimePageQueryAnime>;
-  }
-
-  export type AnimePageQueryAnime = {
-    __typename?: "Media";
-    
-    id: number;
-    
-    idMal: Maybe<number>;
-    
-    title: Maybe<AnimePageQueryTitle>;
-    
-    description: Maybe<string>;
-    
-    duration: Maybe<number>;
-    
-    episodes: Maybe<number>;
-    
-    isFavourite: boolean;
-    
-    averageScore: Maybe<number>;
-    
-    bannerImage: Maybe<string>;
-    
-    coverImage: Maybe<AnimePageQueryCoverImage>;
-    
-    nextAiringEpisode: Maybe<AnimePageQueryNextAiringEpisode>;
-    
-    externalLinks: Maybe<AnimePageQueryExternalLinks[]>;
-    
-    relations: Maybe<AnimePageQueryRelations>;
-    
-    mediaListEntry: Maybe<AnimePageQueryMediaListEntry>;
-  } 
-
-  export type AnimePageQueryTitle = {
-    __typename?: "MediaTitle";
-    
-    english: Maybe<string>;
-    
-    native: Maybe<string>;
-    
-    romaji: Maybe<string>;
-    
-    userPreferred: Maybe<string>;
-  } 
-
-  export type AnimePageQueryCoverImage = {
-    __typename?: "MediaCoverImage";
-    
-    extraLarge: Maybe<string>;
-    
-    color: Maybe<string>;
-  } 
-
-  export type AnimePageQueryNextAiringEpisode = {
-    __typename?: "AiringSchedule";
-    
-    airingAt: number;
-    
-    timeUntilAiring: number;
-    
-    episode: number;
-  } 
-
-  export type AnimePageQueryExternalLinks = {
-    __typename?: "MediaExternalLink";
-    
-    site: string;
-    
-    url: string;
-  } 
-
-  export type AnimePageQueryRelations = {
-    __typename?: "MediaConnection";
-    
-    edges: Maybe<AnimePageQueryEdges[]>;
-  } 
-
-  export type AnimePageQueryEdges = {
-    __typename?: "MediaEdge";
-    
-    relationType: Maybe<MediaRelation>;
-    
-    node: Maybe<AnimePageQueryNode>;
-  } 
-
-  export type AnimePageQueryNode = {
-    __typename?: "Media";
-    
-    id: number;
-    
-    title: Maybe<AnimePageQuery_Title>;
-    
-    bannerImage: Maybe<string>;
-  } 
-
-  export type AnimePageQuery_Title = {
-    __typename?: "MediaTitle";
-    
-    userPreferred: Maybe<string>;
-  } 
-
-  export type AnimePageQueryMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    progress: Maybe<number>;
-    
-    status: Maybe<MediaListStatus>;
-    
-    score: Maybe<number>;
-    
-    repeat: Maybe<number>;
-  } 
-
   export type CacheEpisodesVariables = {
-    id: number;
-    provider: Provider;
     episodes: EpisodeInput[];
-    nextEpisodeAiringAt: Maybe<number>;
   }
 
   export type CacheEpisodesMutation = {
@@ -637,36 +487,134 @@ export type FuzzyDateInt = any;
     CacheEpisodes: boolean;
   }
 
-  export type DeleteListEntryMutationVariables = {
+  export type UpdateProgressVariables = {
+    mediaId: Maybe<number>;
+    progress: Maybe<number>;
+  }
+
+  export type UpdateProgressMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<UpdateProgressSaveMediaListEntry>;
+  }
+
+  export type UpdateProgressSaveMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    progress: Maybe<number>;
+    
+    status: Maybe<MediaListStatus>;
+    
+    repeat: Maybe<number>;
+  } 
+
+  export type CreateEntryVariables = {
+    mediaId: Maybe<number>;
+    status: Maybe<MediaListStatus>;
+  }
+
+  export type CreateEntryMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<CreateEntrySaveMediaListEntry>;
+  }
+
+  export type CreateEntrySaveMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    progress: Maybe<number>;
+    
+    status: Maybe<MediaListStatus>;
+    
+    score: Maybe<number>;
+    
+    repeat: Maybe<number>;
+  } 
+
+  export type DeleteEntryVariables = {
     id: number;
   }
 
-  export type DeleteListEntryMutationMutation = {
+  export type DeleteEntryMutation = {
     __typename?: "Mutation";
     
-    DeleteMediaListEntry: Maybe<DeleteListEntryMutationDeleteMediaListEntry>;
+    DeleteMediaListEntry: Maybe<DeleteEntryDeleteMediaListEntry>;
   }
 
-  export type DeleteListEntryMutationDeleteMediaListEntry = {
+  export type DeleteEntryDeleteMediaListEntry = {
     __typename?: "Deleted";
     
     deleted: Maybe<boolean>;
   } 
 
-  export type EpisodeCountVariables = {
+  export type RewatchVariables = {
     id: Maybe<number>;
   }
 
-  export type EpisodeCountQuery = {
-    __typename?: "Query";
+  export type RewatchMutation = {
+    __typename?: "Mutation";
     
-    anime: Maybe<EpisodeCountAnime>;
+    SaveMediaListEntry: Maybe<RewatchSaveMediaListEntry>;
   }
 
-  export type EpisodeCountAnime = {
-    __typename?: "Media";
+  export type RewatchSaveMediaListEntry = {
+    __typename?: "MediaList";
     
-    episodes: Maybe<number>;
+    id: number;
+    
+    mediaId: number;
+    
+    status: Maybe<MediaListStatus>;
+    
+    progress: Maybe<number>;
+  } 
+
+  export type SetScoreVariables = {
+    id: Maybe<number>;
+    score: Maybe<number>;
+  }
+
+  export type SetScoreMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<SetScoreSaveMediaListEntry>;
+  }
+
+  export type SetScoreSaveMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    score: Maybe<number>;
+    
+    progress: Maybe<number>;
+    
+    status: Maybe<MediaListStatus>;
+    
+    repeat: Maybe<number>;
+  } 
+
+  export type SetStatusVariables = {
+    id: Maybe<number>;
+    status: Maybe<MediaListStatus>;
+  }
+
+  export type SetStatusMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<SetStatusSaveMediaListEntry>;
+  }
+
+  export type SetStatusSaveMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    status: Maybe<MediaListStatus>;
   } 
 
   export type EpisodeListVariables = {
@@ -706,33 +654,255 @@ export type FuzzyDateInt = any;
     isWatched: boolean;
   } 
 
-  export type ExportQueueVariables = {
-    ids: number[];
+  export type EditListEntryVariables = {
+    id: number;
+    progress: number;
+    status: MediaListStatus;
+    repeat: number;
+    score: number;
   }
 
-  export type ExportQueueQuery = {
-    __typename?: "Query";
+  export type EditListEntryMutation = {
+    __typename?: "Mutation";
     
-    queue: Maybe<ExportQueueQueue>;
+    SaveMediaListEntry: Maybe<EditListEntrySaveMediaListEntry>;
   }
 
-  export type ExportQueueQueue = {
-    __typename?: "Page";
+  export type EditListEntrySaveMediaListEntry = {
+    __typename?: "MediaList";
     
-    anime: Maybe<ExportQueueAnime[]>;
+    id: number;
+    
+    score: Maybe<number>;
+    
+    progress: Maybe<number>;
+    
+    status: Maybe<MediaListStatus>;
+    
+    repeat: Maybe<number>;
   } 
 
-  export type ExportQueueAnime = {
+  export type PlayerAnimeVariables = {
+    id: number;
+  }
+
+  export type PlayerAnimeQuery = {
+    __typename?: "Query";
+    
+    anime: Maybe<PlayerAnimeAnime>;
+  }
+
+  export type PlayerAnimeAnime = {
     __typename?: "Media";
     
     id: number;
     
-    externalLinks: Maybe<ExportQueueExternalLinks[]>;
+    idMal: Maybe<number>;
     
-    mediaListEntry: Maybe<ExportQueueMediaListEntry>;
+    title: Maybe<PlayerAnimeTitle>;
+    
+    episodes: Maybe<number>;
+    
+    nextAiringEpisode: Maybe<PlayerAnimeNextAiringEpisode>;
+    
+    relations: Maybe<PlayerAnimeRelations>;
+    
+    mediaListEntry: Maybe<PlayerAnimeMediaListEntry>;
   } 
 
-  export type ExportQueueExternalLinks = {
+  export type PlayerAnimeTitle = {
+    __typename?: "MediaTitle";
+    
+    userPreferred: Maybe<string>;
+  } 
+
+  export type PlayerAnimeNextAiringEpisode = {
+    __typename?: "AiringSchedule";
+    
+    airingAt: number;
+    
+    timeUntilAiring: number;
+  } 
+
+  export type PlayerAnimeRelations = {
+    __typename?: "MediaConnection";
+    
+    edges: Maybe<PlayerAnimeEdges[]>;
+  } 
+
+  export type PlayerAnimeEdges = {
+    __typename?: "MediaEdge";
+    
+    relationType: Maybe<MediaRelation>;
+    
+    node: Maybe<PlayerAnimeNode>;
+  } 
+
+  export type PlayerAnimeNode = {
+    __typename?: "Media";
+    
+    id: number;
+    
+    title: Maybe<PlayerAnime_Title>;
+    
+    bannerImage: Maybe<string>;
+  } 
+
+  export type PlayerAnime_Title = {
+    __typename?: "MediaTitle";
+    
+    userPreferred: Maybe<string>;
+  } 
+
+  export type PlayerAnimeMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    status: Maybe<MediaListStatus>;
+    
+    progress: Maybe<number>;
+    
+    score: Maybe<number>;
+  } 
+
+  export type SearchVariables = {
+    search: Maybe<string>;
+  }
+
+  export type SearchQuery = {
+    __typename?: "Query";
+    
+    anime: Maybe<SearchAnime>;
+  }
+
+  export type SearchAnime = {
+    __typename?: "Page";
+    
+    pageInfo: Maybe<SearchPageInfo>;
+    
+    results: Maybe<SearchResults[]>;
+  } 
+
+  export type SearchPageInfo = {
+    __typename?: "PageInfo";
+    
+    total: Maybe<number>;
+  } 
+
+  export type SearchResults = {
+    __typename?: "Media";
+    
+    id: number;
+    
+    type: Maybe<MediaType>;
+    
+    title: Maybe<SearchTitle>;
+    
+    coverImage: Maybe<SearchCoverImage>;
+    
+    streamingEpisodes: Maybe<SearchStreamingEpisodes[]>;
+    
+    externalLinks: Maybe<SearchExternalLinks[]>;
+  } 
+
+  export type SearchTitle = {
+    __typename?: "MediaTitle";
+    
+    userPreferred: Maybe<string>;
+  } 
+
+  export type SearchCoverImage = {
+    __typename?: "MediaCoverImage";
+    
+    medium: Maybe<string>;
+  } 
+
+  export type SearchStreamingEpisodes = {
+    __typename?: "MediaStreamingEpisode";
+    
+    site: Maybe<string>;
+  } 
+
+  export type SearchExternalLinks = {
+    __typename?: "MediaExternalLink";
+    
+    site: string;
+  } 
+
+  export type AnimeViewVariables = {
+    id: Maybe<number>;
+  }
+
+  export type AnimeViewQuery = {
+    __typename?: "Query";
+    
+    anime: Maybe<AnimeViewAnime>;
+  }
+
+  export type AnimeViewAnime = {
+    __typename?: "Media";
+    
+    id: number;
+    
+    idMal: Maybe<number>;
+    
+    title: Maybe<AnimeViewTitle>;
+    
+    description: Maybe<string>;
+    
+    duration: Maybe<number>;
+    
+    episodes: Maybe<number>;
+    
+    isFavourite: boolean;
+    
+    averageScore: Maybe<number>;
+    
+    bannerImage: Maybe<string>;
+    
+    coverImage: Maybe<AnimeViewCoverImage>;
+    
+    nextAiringEpisode: Maybe<AnimeViewNextAiringEpisode>;
+    
+    externalLinks: Maybe<AnimeViewExternalLinks[]>;
+    
+    relations: Maybe<AnimeViewRelations>;
+    
+    mediaListEntry: Maybe<AnimeViewMediaListEntry>;
+  } 
+
+  export type AnimeViewTitle = {
+    __typename?: "MediaTitle";
+    
+    english: Maybe<string>;
+    
+    native: Maybe<string>;
+    
+    romaji: Maybe<string>;
+    
+    userPreferred: Maybe<string>;
+  } 
+
+  export type AnimeViewCoverImage = {
+    __typename?: "MediaCoverImage";
+    
+    extraLarge: Maybe<string>;
+    
+    color: Maybe<string>;
+  } 
+
+  export type AnimeViewNextAiringEpisode = {
+    __typename?: "AiringSchedule";
+    
+    airingAt: number;
+    
+    timeUntilAiring: number;
+    
+    episode: number;
+  } 
+
+  export type AnimeViewExternalLinks = {
     __typename?: "MediaExternalLink";
     
     site: string;
@@ -740,7 +910,37 @@ export type FuzzyDateInt = any;
     url: string;
   } 
 
-  export type ExportQueueMediaListEntry = {
+  export type AnimeViewRelations = {
+    __typename?: "MediaConnection";
+    
+    edges: Maybe<AnimeViewEdges[]>;
+  } 
+
+  export type AnimeViewEdges = {
+    __typename?: "MediaEdge";
+    
+    relationType: Maybe<MediaRelation>;
+    
+    node: Maybe<AnimeViewNode>;
+  } 
+
+  export type AnimeViewNode = {
+    __typename?: "Media";
+    
+    id: number;
+    
+    title: Maybe<AnimeView_Title>;
+    
+    bannerImage: Maybe<string>;
+  } 
+
+  export type AnimeView_Title = {
+    __typename?: "MediaTitle";
+    
+    userPreferred: Maybe<string>;
+  } 
+
+  export type AnimeViewMediaListEntry = {
     __typename?: "MediaList";
     
     id: number;
@@ -749,39 +949,39 @@ export type FuzzyDateInt = any;
     
     status: Maybe<MediaListStatus>;
     
-    repeat: Maybe<number>;
-    
     score: Maybe<number>;
+    
+    repeat: Maybe<number>;
   } 
 
-  export type ListQueryVariables = {
+  export type ListViewVariables = {
     userId: number;
     statuses: Maybe<MediaListStatus[]>;
   }
 
-  export type ListQueryQuery = {
+  export type ListViewQuery = {
     __typename?: "Query";
     
-    listCollection: Maybe<ListQueryListCollection>;
+    listCollection: Maybe<ListViewListCollection>;
   }
 
-  export type ListQueryListCollection = {
+  export type ListViewListCollection = {
     __typename?: "MediaListCollection";
     
-    lists: Maybe<ListQueryLists[]>;
+    lists: Maybe<ListViewLists[]>;
   } 
 
-  export type ListQueryLists = {
+  export type ListViewLists = {
     __typename?: "MediaListGroup";
     
     isCustomList: Maybe<boolean>;
     
     name: Maybe<string>;
     
-    entries: Maybe<ListQueryEntries[]>;
+    entries: Maybe<ListViewEntries[]>;
   } 
 
-  export type ListQueryEntries = {
+  export type ListViewEntries = {
     __typename?: "MediaList";
     
     id: number;
@@ -794,24 +994,24 @@ export type FuzzyDateInt = any;
     
     repeat: Maybe<number>;
     
-    anime: Maybe<ListQueryAnime>;
+    anime: Maybe<ListViewAnime>;
   } 
 
-  export type ListQueryAnime = {
+  export type ListViewAnime = {
     __typename?: "Media";
     
     id: number;
     
-    title: Maybe<ListQueryTitle>;
+    title: Maybe<ListViewTitle>;
     
-    coverImage: Maybe<ListQueryCoverImage>;
+    coverImage: Maybe<ListViewCoverImage>;
     
     isFavourite: boolean;
     
     episodes: Maybe<number>;
   } 
 
-  export type ListQueryTitle = {
+  export type ListViewTitle = {
     __typename?: "MediaTitle";
     
     userPreferred: Maybe<string>;
@@ -823,7 +1023,7 @@ export type FuzzyDateInt = any;
     native: Maybe<string>;
   } 
 
-  export type ListQueryCoverImage = {
+  export type ListViewCoverImage = {
     __typename?: "MediaCoverImage";
     
     medium: Maybe<string>;
@@ -947,88 +1147,62 @@ export type FuzzyDateInt = any;
     status: Maybe<MediaListStatus>;
   } 
 
-  export type PlayerAnimeVariables = {
-    id: number;
+  export type WatchingQueryVariables = {
+    userId: number;
   }
 
-  export type PlayerAnimeQuery = {
+  export type WatchingQueryQuery = {
     __typename?: "Query";
     
-    anime: Maybe<PlayerAnimeAnime>;
+    listCollection: Maybe<WatchingQueryListCollection>;
   }
 
-  export type PlayerAnimeAnime = {
+  export type WatchingQueryListCollection = {
+    __typename?: "MediaListCollection";
+    
+    lists: Maybe<WatchingQueryLists[]>;
+  } 
+
+  export type WatchingQueryLists = {
+    __typename?: "MediaListGroup";
+    
+    isCustomList: Maybe<boolean>;
+    
+    entries: Maybe<WatchingQueryEntries[]>;
+  } 
+
+  export type WatchingQueryEntries = {
+    __typename?: "MediaList";
+    
+    info: Maybe<WatchingQueryInfo>;
+  } 
+
+  export type WatchingQueryInfo = {
     __typename?: "Media";
     
     id: number;
     
-    idMal: Maybe<number>;
+    externalLinks: Maybe<WatchingQueryExternalLinks[]>;
     
-    title: Maybe<PlayerAnimeTitle>;
-    
-    episodes: Maybe<number>;
-    
-    nextAiringEpisode: Maybe<PlayerAnimeNextAiringEpisode>;
-    
-    relations: Maybe<PlayerAnimeRelations>;
-    
-    mediaListEntry: Maybe<PlayerAnimeMediaListEntry>;
+    mediaListEntry: Maybe<WatchingQueryMediaListEntry>;
   } 
 
-  export type PlayerAnimeTitle = {
-    __typename?: "MediaTitle";
-    
-    userPreferred: Maybe<string>;
-  } 
-
-  export type PlayerAnimeNextAiringEpisode = {
-    __typename?: "AiringSchedule";
-    
-    airingAt: number;
-    
-    timeUntilAiring: number;
-  } 
-
-  export type PlayerAnimeRelations = {
-    __typename?: "MediaConnection";
-    
-    edges: Maybe<PlayerAnimeEdges[]>;
-  } 
-
-  export type PlayerAnimeEdges = {
-    __typename?: "MediaEdge";
-    
-    relationType: Maybe<MediaRelation>;
-    
-    node: Maybe<PlayerAnimeNode>;
-  } 
-
-  export type PlayerAnimeNode = {
-    __typename?: "Media";
+  export type WatchingQueryExternalLinks = {
+    __typename?: "MediaExternalLink";
     
     id: number;
     
-    title: Maybe<PlayerAnime_Title>;
+    site: string;
     
-    bannerImage: Maybe<string>;
+    url: string;
   } 
 
-  export type PlayerAnime_Title = {
-    __typename?: "MediaTitle";
-    
-    userPreferred: Maybe<string>;
-  } 
-
-  export type PlayerAnimeMediaListEntry = {
+  export type WatchingQueryMediaListEntry = {
     __typename?: "MediaList";
     
     id: number;
     
     status: Maybe<MediaListStatus>;
-    
-    progress: Maybe<number>;
-    
-    score: Maybe<number>;
   } 
 
   export type QueueVariables = {
@@ -1107,244 +1281,5 @@ export type FuzzyDateInt = any;
     repeat: Maybe<number>;
     
     score: Maybe<number>;
-  } 
-
-  export type RewatchMutationVariables = {
-    id: Maybe<number>;
-  }
-
-  export type RewatchMutationMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<RewatchMutationSaveMediaListEntry>;
-  }
-
-  export type RewatchMutationSaveMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    mediaId: number;
-    
-    status: Maybe<MediaListStatus>;
-    
-    progress: Maybe<number>;
-  } 
-
-  export type SaveListEntryMutationVariables = {
-    id: number;
-    progress: number;
-    status: MediaListStatus;
-    repeat: number;
-    score: number;
-  }
-
-  export type SaveListEntryMutationMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<SaveListEntryMutationSaveMediaListEntry>;
-  }
-
-  export type SaveListEntryMutationSaveMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    score: Maybe<number>;
-    
-    progress: Maybe<number>;
-    
-    status: Maybe<MediaListStatus>;
-    
-    repeat: Maybe<number>;
-  } 
-
-  export type SearchQueryVariables = {
-    search: Maybe<string>;
-  }
-
-  export type SearchQueryQuery = {
-    __typename?: "Query";
-    
-    anime: Maybe<SearchQueryAnime>;
-  }
-
-  export type SearchQueryAnime = {
-    __typename?: "Page";
-    
-    pageInfo: Maybe<SearchQueryPageInfo>;
-    
-    results: Maybe<SearchQueryResults[]>;
-  } 
-
-  export type SearchQueryPageInfo = {
-    __typename?: "PageInfo";
-    
-    total: Maybe<number>;
-  } 
-
-  export type SearchQueryResults = {
-    __typename?: "Media";
-    
-    id: number;
-    
-    type: Maybe<MediaType>;
-    
-    title: Maybe<SearchQueryTitle>;
-    
-    coverImage: Maybe<SearchQueryCoverImage>;
-    
-    streamingEpisodes: Maybe<SearchQueryStreamingEpisodes[]>;
-    
-    externalLinks: Maybe<SearchQueryExternalLinks[]>;
-  } 
-
-  export type SearchQueryTitle = {
-    __typename?: "MediaTitle";
-    
-    userPreferred: Maybe<string>;
-  } 
-
-  export type SearchQueryCoverImage = {
-    __typename?: "MediaCoverImage";
-    
-    medium: Maybe<string>;
-  } 
-
-  export type SearchQueryStreamingEpisodes = {
-    __typename?: "MediaStreamingEpisode";
-    
-    site: Maybe<string>;
-  } 
-
-  export type SearchQueryExternalLinks = {
-    __typename?: "MediaExternalLink";
-    
-    site: string;
-  } 
-
-  export type SetStatusMutationVariables = {
-    id: Maybe<number>;
-    status: Maybe<MediaListStatus>;
-  }
-
-  export type SetStatusMutationMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<SetStatusMutationSaveMediaListEntry>;
-  }
-
-  export type SetStatusMutationSaveMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    status: Maybe<MediaListStatus>;
-  } 
-
-  export type UpdateProgressMutationVariables = {
-    id: Maybe<number>;
-    progress: Maybe<number>;
-  }
-
-  export type UpdateProgressMutationMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<UpdateProgressMutationSaveMediaListEntry>;
-  }
-
-  export type UpdateProgressMutationSaveMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    progress: Maybe<number>;
-    
-    status: Maybe<MediaListStatus>;
-    
-    repeat: Maybe<number>;
-  } 
-
-  export type UpdateScoreMutationVariables = {
-    id: Maybe<number>;
-    score: Maybe<number>;
-  }
-
-  export type UpdateScoreMutationMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<UpdateScoreMutationSaveMediaListEntry>;
-  }
-
-  export type UpdateScoreMutationSaveMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    score: Maybe<number>;
-    
-    progress: Maybe<number>;
-    
-    status: Maybe<MediaListStatus>;
-    
-    repeat: Maybe<number>;
-  } 
-
-  export type WatchingQueryVariables = {
-    userId: number;
-  }
-
-  export type WatchingQueryQuery = {
-    __typename?: "Query";
-    
-    listCollection: Maybe<WatchingQueryListCollection>;
-  }
-
-  export type WatchingQueryListCollection = {
-    __typename?: "MediaListCollection";
-    
-    lists: Maybe<WatchingQueryLists[]>;
-  } 
-
-  export type WatchingQueryLists = {
-    __typename?: "MediaListGroup";
-    
-    isCustomList: Maybe<boolean>;
-    
-    entries: Maybe<WatchingQueryEntries[]>;
-  } 
-
-  export type WatchingQueryEntries = {
-    __typename?: "MediaList";
-    
-    info: Maybe<WatchingQueryInfo>;
-  } 
-
-  export type WatchingQueryInfo = {
-    __typename?: "Media";
-    
-    id: number;
-    
-    externalLinks: Maybe<WatchingQueryExternalLinks[]>;
-    
-    mediaListEntry: Maybe<WatchingQueryMediaListEntry>;
-  } 
-
-  export type WatchingQueryExternalLinks = {
-    __typename?: "MediaExternalLink";
-    
-    id: number;
-    
-    site: string;
-    
-    url: string;
-  } 
-
-  export type WatchingQueryMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    status: Maybe<MediaListStatus>;
   } 
 

@@ -1,0 +1,9 @@
+mutation SetScore($id: Int, $score: Int) {
+  SaveMediaListEntry(id: $id, scoreRaw: $score) {
+    id
+    score(format: POINT_100)
+    progress
+    status
+    repeat
+  }
+}

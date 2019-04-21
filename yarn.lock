@@ -11765,10 +11765,10 @@ ts-node@8.1.0, ts-node@^8.0.3:
     source-map-support "^0.5.6"
     yn "^3.0.0"
 
-ts-optchain@0.1.5:
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/ts-optchain/-/ts-optchain-0.1.5.tgz#fc9fe8d6f72957a04a5791cf19a141a6f6eb52b5"
-  integrity sha512-3Qq8eFG9t15E0YvsVWh99kOWZ2hpea8KqxALEoEjoqCHzYYv9S81MM9Hb3yHfNlVTmM67ZhAv0bJ3cB7OhVIAA==
+ts-optchain@0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/ts-optchain/-/ts-optchain-0.1.6.tgz#5b0a72f5de0106a0163bc123be7923e2f290598e"
+  integrity sha512-ZjfEWXqG1PQrQ7730w0Ts/obgkuSFE4PvzwwA8GnzfQpba09cDAnrO+SfgKHyWpq/6OMfp2YJpYdR3I87LXfWg==
 
 tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0, tslib@^1.9.3:
   version "1.9.3"

@@ -1,6 +1,0 @@
-mutation SetStatusMutation($id: Int, $status: MediaListStatus) {
-  SaveMediaListEntry(id: $id, status: $status) {
-    id
-    status
-  }
-}

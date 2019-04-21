@@ -22,13 +22,15 @@ Vue.use(Tooltip)
 // Register services
 
 // Sentry
-init({
-  dsn: 'https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205',
-  integrations: [new Integrations.Vue({ Vue, attachProps: true })],
-  beforeSend: normalizeEvent,
-  environment: process.env.NODE_ENV,
-  release: `v${version}`,
-})
+if (process.env.NODE_ENV === 'production') {
+  init({
+    dsn: 'https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205',
+    integrations: [new Integrations.Vue({ Vue, attachProps: true })],
+    beforeSend: normalizeEvent,
+    environment: process.env.NODE_ENV,
+    release: `v${version}`,
+  })
+}
 
 // Handle outside links
 document.addEventListener('click', event => {

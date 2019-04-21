@@ -1,0 +1,23 @@
+query Search($search: String) {
+  anime: Page(perPage: 8) {
+    pageInfo {
+      total
+    }
+    results: media(type: ANIME, search: $search, isAdult: false) {
+      id
+      type
+      title {
+        userPreferred
+      }
+      coverImage {
+        medium
+      }
+      streamingEpisodes {
+        site
+      }
+      externalLinks {
+        site
+      }
+    }
+  }
+}
