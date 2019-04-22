@@ -37,6 +37,7 @@ export default class Dashboard extends Vue {}
 .route-leave-active {
   transition: none 0.5s; // Required for Vue to realize there are transitions
 
+  & > .episode-feed,
   & > .changelog {
     transition: opacity 0.5s, transform 0.5s;
   }
@@ -44,6 +45,10 @@ export default class Dashboard extends Vue {}
 
 .route-enter,
 .route-leave-to {
+  & > .episode-feed {
+    transform: translateX(-100%);
+  }
+
   & > .changelog {
     opacity: 0;
     transform: translateY(-10%);
