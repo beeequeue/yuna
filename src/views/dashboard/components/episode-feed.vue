@@ -27,7 +27,15 @@
       </router-link>
     </div>
 
-    <div class="control-panel"></div>
+    <div class="control-panel">
+      <div class="switch list" v-tooltip.top="'All shows in List'">
+        <icon :icon="listSvg" />
+      </div>
+
+      <div class="switch queue active" v-tooltip.top="'Shows in Queue'">
+        <icon :icon="queueSvg" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -35,7 +43,9 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 import { addDays as _addDays } from 'date-fns'
+import { mdiClipboardTextOutline, mdiPlaylistCheck } from '@mdi/js'
 
+import Icon from '@/common/components/icon.vue'
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import EPISODE_FEED_QUERY from './episode-feed.graphql'
 import {
@@ -49,9 +59,7 @@ import { Query } from '@/decorators'
 const addDays = (days: number) =>
   Math.round(_addDays(new Date(), days).valueOf() / 1000)
 
-@Component({
-  components: { NextEpisodeInfo },
-})
+@Component({ components: { Icon, NextEpisodeInfo } })
 export default class EpisodeFeed extends Vue {
   @Query<EpisodeFeed, EpisodeFeedQuery, EpisodeFeedVariables>({
     query: EPISODE_FEED_QUERY,
@@ -71,6 +79,9 @@ export default class EpisodeFeed extends Vue {
   public airingSchedules!: EpisodeFeedAiringSchedules
   public hasNextPage = false
   public page = 1
+
+  public listSvg = mdiClipboardTextOutline
+  public queueSvg = mdiPlaylistCheck
 }
 </script>
 
@@ -87,9 +98,30 @@ export default class EpisodeFeed extends Vue {
 
   & > .control-panel {
     flex-shrink: 0;
-    height: 60px;
+    height: 45px;
     width: 100%;
     background: color($dark, 300);
+    border-top-right-radius: 5px;
+    overflow: hidden;
+
+    display: flex;
+
+    & > .switch {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+
+      &.active {
+        background: color($dark, 700);
+      }
+
+      & > .icon {
+        height: 30px;
+        fill: $white;
+      }
+    }
   }
 
   & > .episodes {
@@ -114,7 +146,7 @@ export default class EpisodeFeed extends Vue {
       overflow: hidden;
 
       background: $dark;
-      border-radius: 10px;
+      border-radius: 5px;
       color: $white;
       text-decoration: none;
       box-shadow: $shadow;
