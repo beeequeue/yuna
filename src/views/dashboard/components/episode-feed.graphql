@@ -1,13 +1,15 @@
 query EpisodeFeed(
   $page: Int!,
-  $weekBack: Int!,
-  $weekAhead: Int!
+  $startDate: Int!,
+  $endDate: Int!,
+  $ids: [Int!]!
 ) {
   Page(page: $page, perPage: 10) {
     airingSchedules(
-      airingAt_lesser: $weekAhead,
-      airingAt_greater: $weekBack,
-      sort: [TIME]
+      airingAt_lesser: $endDate,
+      airingAt_greater: $startDate,
+      sort: [TIME],
+      mediaId_in: $ids
     ) {
       id
       episode

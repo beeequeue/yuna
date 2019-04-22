@@ -954,10 +954,41 @@ export type FuzzyDateInt = any;
     repeat: Maybe<number>;
   } 
 
+  export type EpisodeFeedListIdsVariables = {
+    userId: number;
+  }
+
+  export type EpisodeFeedListIdsQuery = {
+    __typename?: "Query";
+    
+    listCollection: Maybe<EpisodeFeedListIdsListCollection>;
+  }
+
+  export type EpisodeFeedListIdsListCollection = {
+    __typename?: "MediaListCollection";
+    
+    lists: Maybe<EpisodeFeedListIdsLists[]>;
+  } 
+
+  export type EpisodeFeedListIdsLists = {
+    __typename?: "MediaListGroup";
+    
+    name: Maybe<string>;
+    
+    entries: Maybe<EpisodeFeedListIdsEntries[]>;
+  } 
+
+  export type EpisodeFeedListIdsEntries = {
+    __typename?: "MediaList";
+    
+    mediaId: number;
+  } 
+
   export type EpisodeFeedVariables = {
     page: number;
-    weekBack: number;
-    weekAhead: number;
+    startDate: number;
+    endDate: number;
+    ids: number[];
   }
 
   export type EpisodeFeedQuery = {

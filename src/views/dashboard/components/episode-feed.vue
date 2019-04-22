@@ -28,11 +28,21 @@
     </div>
 
     <div class="control-panel">
-      <div class="switch list" v-tooltip.top="'All shows in List'">
+      <div
+        class="switch list"
+        :class="{ active: mode === EpisodeFeedMode.LIST }"
+        v-tooltip.top="'All shows in List'"
+        @click="updateMode(EpisodeFeedMode.LIST)"
+      >
         <icon :icon="listSvg" />
       </div>
 
-      <div class="switch queue active" v-tooltip.top="'Shows in Queue'">
+      <div
+        class="switch queue"
+        :class="{ active: mode === EpisodeFeedMode.QUEUE }"
+        v-tooltip.top="'Shows in Queue'"
+        @click="updateMode(EpisodeFeedMode.QUEUE)"
+      >
         <icon :icon="queueSvg" />
       </div>
     </div>
@@ -48,26 +58,55 @@ import { mdiClipboardTextOutline, mdiPlaylistCheck } from '@mdi/js'
 import Icon from '@/common/components/icon.vue'
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import EPISODE_FEED_QUERY from './episode-feed.graphql'
+import LIST_IDS_QUERY from './episode-feed-list-ids.graphql'
 import {
   EpisodeFeedAiringSchedules,
+  EpisodeFeedListIdsQuery,
+  EpisodeFeedListIdsVariables,
   EpisodeFeedQuery,
   EpisodeFeedVariables,
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
+import {
+  EpisodeFeedMode,
+  getEpisodeFeedMode,
+  setEpisodeFeedMode,
+} from '@/state/settings'
+import { getAnilistUserId } from '@/state/auth'
+import { getQueue } from '@/state/user'
+import { prop } from '@/utils'
 
 const addDays = (days: number) =>
   Math.round(_addDays(new Date(), days).valueOf() / 1000)
 
 @Component({ components: { Icon, NextEpisodeInfo } })
 export default class EpisodeFeed extends Vue {
+  @Query<EpisodeFeed, EpisodeFeedListIdsQuery, EpisodeFeedListIdsVariables>({
+    query: LIST_IDS_QUERY,
+    variables() {
+      return {
+        userId: this.userId,
+      }
+    },
+    update(data) {
+      const lists = oc(data).listCollection.lists([])
+
+      const entries = lists.map(prop('entries')).flat()
+
+      return entries.map(prop('mediaId'))
+    },
+  })
+  public listIds!: number[]
+
   @Query<EpisodeFeed, EpisodeFeedQuery, EpisodeFeedVariables>({
     query: EPISODE_FEED_QUERY,
     variables() {
       return {
         page: this.page,
-        weekBack: addDays(0),
-        weekAhead: addDays(7),
+        startDate: addDays(-2),
+        endDate: addDays(7),
+        ids: this.mode === EpisodeFeedMode.LIST ? this.listIds : this.queueIds,
       }
     },
     update(data) {
@@ -80,6 +119,23 @@ export default class EpisodeFeed extends Vue {
   public hasNextPage = false
   public page = 1
 
+  public get userId() {
+    return getAnilistUserId(this.$store)
+  }
+
+  public get mode(): EpisodeFeedMode {
+    return getEpisodeFeedMode(this.$store)
+  }
+
+  public get queueIds(): number[] {
+    return getQueue(this.$store).map(prop('id'))
+  }
+
+  public updateMode(mode: EpisodeFeedMode) {
+    setEpisodeFeedMode(this.$store, mode)
+  }
+
+  public EpisodeFeedMode = EpisodeFeedMode
   public listSvg = mdiClipboardTextOutline
   public queueSvg = mdiPlaylistCheck
 }
@@ -112,6 +168,7 @@ export default class EpisodeFeed extends Vue {
       justify-content: center;
       align-items: center;
       cursor: pointer;
+      transition: background 0.15s;
 
       &.active {
         background: color($dark, 700);
@@ -130,7 +187,7 @@ export default class EpisodeFeed extends Vue {
 
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: flex-start;
     overflow: auto;
     direction: rtl;

@@ -1,0 +1,10 @@
+query EpisodeFeedListIds($userId: Int!) {
+  listCollection: MediaListCollection(userId: $userId, type: ANIME) {
+    lists {
+      name
+      entries {
+        mediaId
+      }
+    }
+  }
+}
