@@ -52,7 +52,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
-import { addDays as _addDays } from 'date-fns'
+import { addDays as _addDays, startOfDay } from 'date-fns'
 import { mdiClipboardTextOutline, mdiPlaylistCheck } from '@mdi/js'
 
 import Icon from '@/common/components/icon.vue'
@@ -77,8 +77,10 @@ import { getAnilistUserId } from '@/state/auth'
 import { getQueue } from '@/state/user'
 import { prop } from '@/utils'
 
+// startOfDay is used to make sure we can cache the results properly
+// if we don't, every query will have different time variables
 const addDays = (days: number) =>
-  Math.round(_addDays(new Date(), days).valueOf() / 1000)
+  Math.round(startOfDay(_addDays(new Date(), days)).valueOf() / 1000)
 
 @Component({ components: { Icon, NextEpisodeInfo } })
 export default class EpisodeFeed extends Vue {
@@ -100,6 +102,7 @@ export default class EpisodeFeed extends Vue {
   public listIds!: number[]
 
   @Query<EpisodeFeed, EpisodeFeedQuery, EpisodeFeedVariables>({
+    fetchPolicy: 'cache-first',
     query: EPISODE_FEED_QUERY,
     variables() {
       return {
