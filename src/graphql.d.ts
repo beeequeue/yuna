@@ -119,6 +119,16 @@ declare module '*/anime.graphql' {
   export default defaultDocument
 }
 
+declare module '*/episode-feed.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const EpisodeFeed: DocumentNode
+
+  export { EpisodeFeed }
+
+  export default defaultDocument
+}
+
 declare module '*/list.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode

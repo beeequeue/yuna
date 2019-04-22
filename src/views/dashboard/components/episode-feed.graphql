@@ -1,0 +1,31 @@
+query EpisodeFeed(
+  $page: Int!,
+  $weekBack: Int!,
+  $weekAhead: Int!
+) {
+  Page(page: $page, perPage: 10) {
+    airingSchedules(
+      airingAt_lesser: $weekAhead,
+      airingAt_greater: $weekBack,
+      sort: [TIME]
+    ) {
+      id
+      episode
+      airingAt
+      media {
+        id
+        title {
+          userPreferred
+        }
+        coverImage {
+          color
+          medium
+        }
+      }
+    }
+
+    pageInfo {
+      hasNextPage
+    }
+  }
+}

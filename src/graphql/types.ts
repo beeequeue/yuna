@@ -954,6 +954,68 @@ export type FuzzyDateInt = any;
     repeat: Maybe<number>;
   } 
 
+  export type EpisodeFeedVariables = {
+    page: number;
+    weekBack: number;
+    weekAhead: number;
+  }
+
+  export type EpisodeFeedQuery = {
+    __typename?: "Query";
+    
+    Page: Maybe<EpisodeFeedPage>;
+  }
+
+  export type EpisodeFeedPage = {
+    __typename?: "Page";
+    
+    airingSchedules: Maybe<EpisodeFeedAiringSchedules[]>;
+    
+    pageInfo: Maybe<EpisodeFeedPageInfo>;
+  } 
+
+  export type EpisodeFeedAiringSchedules = {
+    __typename?: "AiringSchedule";
+    
+    id: number;
+    
+    episode: number;
+    
+    airingAt: number;
+    
+    media: Maybe<EpisodeFeedMedia>;
+  } 
+
+  export type EpisodeFeedMedia = {
+    __typename?: "Media";
+    
+    id: number;
+    
+    title: Maybe<EpisodeFeedTitle>;
+    
+    coverImage: Maybe<EpisodeFeedCoverImage>;
+  } 
+
+  export type EpisodeFeedTitle = {
+    __typename?: "MediaTitle";
+    
+    userPreferred: Maybe<string>;
+  } 
+
+  export type EpisodeFeedCoverImage = {
+    __typename?: "MediaCoverImage";
+    
+    color: Maybe<string>;
+    
+    medium: Maybe<string>;
+  } 
+
+  export type EpisodeFeedPageInfo = {
+    __typename?: "PageInfo";
+    
+    hasNextPage: Maybe<boolean>;
+  } 
+
   export type ListViewVariables = {
     userId: number;
     statuses: Maybe<MediaListStatus[]>;

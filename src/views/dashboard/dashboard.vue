@@ -1,5 +1,7 @@
 <template>
   <div class="container">
+    <episode-feed />
+
     <changelog />
   </div>
 </template>
@@ -8,9 +10,10 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 import CButton from '@/common/components/button.vue'
+import EpisodeFeed from './components/episode-feed.vue'
 import Changelog from './components/changelog.vue'
 
-@Component({ components: { Changelog, CButton } })
+@Component({ components: { EpisodeFeed, Changelog, CButton } })
 export default class Dashboard extends Vue {}
 </script>
 
@@ -23,8 +26,10 @@ export default class Dashboard extends Vue {}
   bottom: 0;
   width: 100%;
 
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 25% 1fr;
+  grid-template-rows: 100%;
+  justify-items: center;
   align-items: center;
 }
 
