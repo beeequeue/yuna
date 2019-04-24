@@ -1,6 +1,10 @@
 <template>
-  <div v-if="supportedSources.length > 0" class="source-select">
-    <div class="dropdown" @click="toggleOpen">
+  <div
+    v-if="supportedSources.length > 0"
+    class="source-select"
+    :class="{ highlight }"
+  >
+    <div :id="`source-select-${anime.id}`" class="dropdown" @click="toggleOpen">
       <span
         v-for="source in supportedSources"
         :key="source.site"
@@ -56,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiChevronDown } from '@mdi/js'
 
 import crIcon from '@/assets/crunchyroll.svg'
@@ -78,6 +82,7 @@ export default class SourceSelect extends Vue {
   @Required(Object) public anime!: QueueAnime
   @Required(String) public currentProvider!: Provider
   @Required(Function) public setProvider!: (provider: Provider) => void
+  @Prop(Boolean) public highlight!: boolean
 
   public open = false
 
@@ -154,6 +159,11 @@ export default class SourceSelect extends Vue {
 
 .source-select {
   position: relative;
+  transition: box-shadow 0.5s;
+
+  &.highlight {
+    box-shadow: 0 0 20px white;
+  }
 
   & > .dropdown {
     background: $main;

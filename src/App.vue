@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <div v-if="!anilistOnline" class="error">
+    <div v-if="!anilistOnline" class="anilist-down-error">
       <loading v-if="anilistOnline == null" :size="80" />
       <div v-else>
         Seems like AniList is down. Please try again later! :(
@@ -214,7 +214,7 @@ body,
   text-align: center;
 }
 
-.error {
+.anilist-down-error {
   height: 100%;
   width: 100%;
   display: flex;
