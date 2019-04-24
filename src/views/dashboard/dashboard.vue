@@ -27,7 +27,7 @@ export default class Dashboard extends Vue {}
   width: 100%;
 
   display: grid;
-  grid-template-columns: 25% 1fr;
+  grid-template-columns: 28% 1fr;
   grid-template-rows: 100%;
   justify-items: center;
   align-items: center;

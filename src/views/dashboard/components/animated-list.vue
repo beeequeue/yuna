@@ -6,10 +6,11 @@
       :to="`/anime/${schedule.media.id}`"
       :data-index="i"
       class="episode"
+      :class="getEpisodeClass(schedule)"
     >
       <img
         :src="schedule.media.coverImage.medium"
-        class="banner"
+        class="cover-image"
         :style="{ backgroundColor: schedule.media.coverImage.color }"
       />
 
@@ -58,7 +59,7 @@ export default class AnimatedList extends Vue {
     variables() {
       return {
         page: this.page,
-        startDate: addDays(-2),
+        startDate: addDays(-1),
         endDate: addDays(7),
         ids: this.ids,
       }
@@ -69,9 +70,15 @@ export default class AnimatedList extends Vue {
       return oc(data).Page.airingSchedules(null)
     },
   })
-  public airingSchedules!: EpisodeFeedAiringSchedules
+  public airingSchedules!: EpisodeFeedAiringSchedules[]
   public hasNextPage = false
   public page = 1
+
+  public getEpisodeClass(schedule: AnimatedList['airingSchedules'][number]) {
+    return {
+      aired: schedule.airingAt * 1000 < Date.now(),
+    }
+  }
 }
 </script>
 
@@ -105,6 +112,11 @@ export default class AnimatedList extends Vue {
       margin-bottom: 15px;
     }
 
+    &.aired {
+      background: color($dark, 600);
+      opacity: 0.9;
+    }
+
     &.v-move {
       transition: transform 500ms;
     }
@@ -129,10 +141,11 @@ export default class AnimatedList extends Vue {
       transform: translateY(0);
     }
 
-    & > .banner {
+    & > .cover-image {
+      position: relative;
       flex-shrink: 0;
       height: 100%;
-      width: 60px;
+      width: 55px;
       object-fit: cover;
     }
 
