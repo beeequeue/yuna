@@ -10,6 +10,5 @@ action "sentry.io" {
     ENVIRONMENT = "production"
     SENTRY_PROJECT = "yuna"
     SENTRY_ORG = "yuna"
-    RELEASE_VERSION = "$(git describe --always)"
   }
 }
