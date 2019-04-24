@@ -1,5 +1,4 @@
 /* eslint-disable class-name */
-import { error } from 'electron-log'
 import { activeWindow } from 'electron-util'
 import superagent from 'superagent/dist/superagent'
 import { ActionContext, Store } from 'vuex'
@@ -265,14 +264,15 @@ export class Crunchyroll {
       try {
         data = await Crunchyroll.createUnblockedSession(store, auth)
       } catch (e) {
-        error(e)
-        store.dispatch(
-          'app/sendErrorToast',
-          'Could not create US session. 😞',
-          {
-            root: true,
-          },
-        )
+        if (getIsConnectedTo(store).crunchyroll) {
+          store.dispatch(
+            'app/sendErrorToast',
+            'Could not create US session. 😞',
+            {
+              root: true,
+            },
+          )
+        }
       }
     }
 

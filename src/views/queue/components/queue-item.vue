@@ -46,6 +46,7 @@
         :anime="anime"
         :currentProvider="item.provider"
         :setProvider="setProvider"
+        :highlight="highlightSourceSelector"
       />
 
       <span class="filler" />
@@ -147,7 +148,7 @@ import { Query, Required } from '@/decorators'
 import { removeFromQueueById, toggleQueueItemOpen } from '@/state/user'
 import { sendErrorToast } from '@/state/app'
 import { QueueItem as IQueueItem } from '@/lib/user'
-import { capitalize, getIconForStatus, isNil } from '@/utils'
+import { capitalize, delay, getIconForStatus, isNil } from '@/utils'
 
 @Component({
   components: {
@@ -189,6 +190,20 @@ export default class QueueItem extends Vue {
       this.episodesFetchingError =
         'Something went wrong fetching the episodes. :('
     },
+    async result(data) {
+      if (!isNil(data.episodes)) return
+
+      sendErrorToast(
+        this.$store,
+        'Could not find episodes on Crunchyroll! Try using the manual search!',
+      )
+
+      this.highlightSourceSelector = true
+
+      await delay(5000)
+
+      this.highlightSourceSelector = false
+    },
   })
   public episodes!: EpisodeListEpisodes[] | null
   public episodesLoading = 0
@@ -197,6 +212,8 @@ export default class QueueItem extends Vue {
   @Required(Object) public anime!: QueueAnime
   @Required(Object) public item!: IQueueItem
   @Required(Function) public setProvider!: (provider: Provider) => void
+
+  public highlightSourceSelector = false
 
   public MediaListStatus = MediaListStatus
   public expandSvg = mdiChevronDown

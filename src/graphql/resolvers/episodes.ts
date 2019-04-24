@@ -64,7 +64,9 @@ const fetchEpisodesFromCrunchyroll = async (
     }
   }
 
-  if (unconfirmedEpisodes == null) return null
+  if (unconfirmedEpisodes == null) {
+    return null
+  }
 
   const episodesWithCorrectProvider = unconfirmedEpisodes.map(ep => ({
     ...ep,

@@ -1,45 +1,59 @@
 <template>
-  <div
-    id="app"
-    tabindex="0"
-    :style="`background-image: url(${backgroundImage})`"
-    @keydown.q.ctrl.exact="quitApplication"
-    @keydown.q.meta.exact="quitApplication"
-  >
-    <title-bar v-if="!isFullscreen" />
+  <transition name="fade">
+    <div v-if="!anilistOnline" class="anilist-down-error">
+      <loading v-if="anilistOnline == null" :size="80" />
+      <div v-else>
+        Seems like AniList is down. Please try again later! :(
 
-    <transition>
-      <navbar
-        v-if="isFinishedConnecting && hasFinishedSetup && !isFullscreen"
+        <br />
+        <br />
+        <c-button type="danger" content="Close" />
+      </div>
+    </div>
+
+    <div
+      v-else
+      id="app"
+      tabindex="0"
+      :style="`background-image: url(${backgroundImage})`"
+      @keydown.q.ctrl.exact="quitApplication"
+      @keydown.q.meta.exact="quitApplication"
+    >
+      <title-bar v-if="!isFullscreen" />
+
+      <transition>
+        <navbar
+          v-if="isFinishedConnecting && hasFinishedSetup && !isFullscreen"
+        />
+      </transition>
+
+      <transition name="route">
+        <router-view
+          :key="$route.params.id ? $route.params.id : $route.path"
+          class="route"
+        />
+      </transition>
+
+      <player-container v-if="isFinishedConnecting" />
+
+      <toast-overlay />
+
+      <about-modal
+        :visible="modalStates.about"
+        :toggleVisible="() => toggleModal('about')"
       />
-    </transition>
 
-    <transition name="route">
-      <router-view
-        :key="$route.params.id ? $route.params.id : $route.path"
-        class="route"
+      <edit-modal
+        :visible="modalStates.edit"
+        :toggleVisible="() => toggleModal('edit')"
       />
-    </transition>
 
-    <player-container v-if="isFinishedConnecting" />
-
-    <toast-overlay />
-
-    <about-modal
-      :visible="modalStates.about"
-      :toggleVisible="() => toggleModal('about')"
-    />
-
-    <edit-modal
-      :visible="modalStates.edit"
-      :toggleVisible="() => toggleModal('edit')"
-    />
-
-    <manual-search-modal
-      :visible="modalStates.manualSearch"
-      :toggleVisible="() => toggleModal('manualSearch')"
-    />
-  </div>
+      <manual-search-modal
+        :visible="modalStates.manualSearch"
+        :toggleVisible="() => toggleModal('manualSearch')"
+      />
+    </div>
+  </transition>
 </template>
 
 <script lang="ts">
@@ -47,8 +61,22 @@ import { ipcRenderer } from 'electron'
 import { api } from 'electron-util'
 import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
+import gql from 'graphql-tag'
+import { oc } from 'ts-optchain'
 
+import CButton from '@/common/components/button.vue'
+import TitleBar from '@/common/components/title-bar.vue'
+import ToastOverlay from '@/common/components/toast-overlay.vue'
+import Loading from '@/common/components/loading.vue'
+import PlayerContainer from '@/modules/player/player-container.vue'
+import Navbar from '@/modules/navbar/navbar.vue'
+import AboutModal from '@/modules/modals/about-modal.vue'
+import EditModal from '@/modules/modals/edit-modal.vue'
+import ManualSearchModal from '@/modules/modals/manual-cr-search/manual-search-modal.vue'
+
+import { Query } from '@/decorators'
 import { Crunchyroll } from '@/lib/crunchyroll'
+import { Hidive } from '@/lib/hidive'
 import { getIsConnectedTo, getFinishedConnecting } from '@/state/auth'
 import { getHasFinishedSetup } from '@/state/settings'
 import {
@@ -56,24 +84,18 @@ import {
   getEditingAnime,
   getIsFullscreen,
   getModalStates,
+  sendErrorToast,
   toggleModal,
 } from '@/state/app'
 import { CHECK_FOR_UPDATES } from '@/messages'
-
-import TitleBar from '@/common/components/title-bar.vue'
-import ToastOverlay from '@/common/components/toast-overlay.vue'
-import PlayerContainer from '@/modules/player/player-container.vue'
-import Navbar from '@/modules/navbar/navbar.vue'
-import AboutModal from '@/modules/modals/about-modal.vue'
-import EditModal from '@/modules/modals/edit-modal.vue'
-import ManualSearchModal from '@/modules/modals/manual-cr-search/manual-search-modal.vue'
-import { Hidive } from '@/lib/hidive'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
 
 @Component({
   components: {
+    CButton,
+    Loading,
     ManualSearchModal,
     TitleBar,
     PlayerContainer,
@@ -84,33 +106,58 @@ const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
   },
 })
 export default class App extends Vue {
-  get isConnectedTo() {
+  @Query({
+    fetchPolicy: 'no-cache',
+    query: gql`
+      {
+        Viewer {
+          id
+        }
+      }
+    `,
+    variables: null,
+    update(data) {
+      return oc(data).Viewer.id() != null
+    },
+    error() {
+      return false
+    },
+    errorPolicy: 'all',
+    pollInterval: 15 * 1000,
+  })
+  public anilistOnline!: boolean | null
+
+  public get isConnectedTo() {
     return getIsConnectedTo(this.$store)
   }
 
-  get isFinishedConnecting() {
+  public get isFinishedConnecting() {
     return getFinishedConnecting(this.$store)
   }
 
-  get isFullscreen() {
+  public get isFullscreen() {
     return getIsFullscreen(this.$store)
   }
 
-  get modalStates() {
+  public get modalStates() {
     return getModalStates(this.$store)
   }
 
-  get editingAnime() {
+  public get editingAnime() {
     return getEditingAnime(this.$store)
   }
 
-  get hasFinishedSetup() {
+  public get hasFinishedSetup() {
     return getHasFinishedSetup(this.$store)
   }
 
   public errorCaptured(err: any) {
     //eslint-disable-next-line no-console
     console.error(err)
+
+    if (process.env.NODE_ENV === 'development') {
+      sendErrorToast(this.$store, err)
+    }
   }
 
   public backgroundImage = requireBg(
@@ -152,9 +199,31 @@ export default class App extends Vue {
 html,
 body,
 #app {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   overflow: hidden;
+
+  color: $white;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+}
+
+.anilist-down-error {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.25em;
+  font-weight: 800;
+  font-family: 'Raleway', sans-serif;
+  color: color($danger, 600);
 }
 
 #app {
@@ -163,13 +232,6 @@ body,
 
   background-size: cover;
   background-position: center, center;
-
-  color: $white;
-  font-family: 'Lato', sans-serif;
-  font-weight: 300;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
 
   & > .route {
     z-index: 1;

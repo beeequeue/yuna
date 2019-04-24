@@ -4,7 +4,7 @@ import { OptionsV2, parseString as _parseString } from 'xml2js'
 import { oc } from 'ts-optchain'
 
 import { getConfig } from '@/config'
-import { isNil, RequestResponse, responseIsError, T } from '@/utils'
+import { delay, isNil, RequestResponse, responseIsError, T } from '@/utils'
 import { parseBooleans, parseNumbers, stripPrefix } from 'xml2js/lib/processors'
 import { Crunchyroll } from '@/lib/crunchyroll'
 
@@ -127,6 +127,11 @@ export class AniDB {
           aid: anidbId,
         })
         .ok(T)
+
+    // When developing we lose the rate limiting between refreshes, leading to temporary bans
+    if (process.env.NODE_ENV === 'development') {
+      await delay(2000)
+    }
 
     const response = (await limiter.schedule(() =>
       request(),
