@@ -56,6 +56,7 @@ import {
   getEditingAnime,
   getIsFullscreen,
   getModalStates,
+  sendErrorToast,
   toggleModal,
 } from '@/state/app'
 import { CHECK_FOR_UPDATES } from '@/messages'
@@ -111,6 +112,10 @@ export default class App extends Vue {
   public errorCaptured(err: any) {
     //eslint-disable-next-line no-console
     console.error(err)
+
+    if (process.env.NODE_ENV === 'development') {
+      sendErrorToast(this.$store, err)
+    }
   }
 
   public backgroundImage = requireBg(
