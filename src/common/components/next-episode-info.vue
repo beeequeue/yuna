@@ -4,7 +4,7 @@
     class="next-episode-info"
     v-tooltip.top="nextEpisodeDateString"
   >
-    Episode {{ nextAiringEpisode.episode }} in {{ nextEpisodeDistanceString }}
+    Episode {{ nextAiringEpisode.episode }} {{ nextEpisodeDistanceString }}
   </div>
 </template>
 
@@ -35,7 +35,9 @@ export default class NextEpisodeInfo extends Vue {
   public get nextEpisodeDistanceString() {
     if (!this.nextAiringEpisode) return null
 
-    return formatDistance(new Date(), this.nextAiringEpisode.airingAt * 1000)
+    return formatDistance(this.nextAiringEpisode.airingAt * 1000, new Date(), {
+      addSuffix: true,
+    })
   }
 }
 </script>

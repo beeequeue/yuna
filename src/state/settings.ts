@@ -62,7 +62,13 @@ interface SetupSettings {
   finishedSteps: SetupStep[]
 }
 
+export enum EpisodeFeedMode {
+  LIST = 'LIST',
+  QUEUE = 'QUEUE',
+}
+
 export interface SettingsState {
+  episodeFeedMode: EpisodeFeedMode
   autoMarkAsPlanning: boolean
   useCRUnblocker: boolean
   crLocale: string
@@ -126,6 +132,7 @@ const _steps: Array<SetupStep | null> = [
 const defaultSteps: SetupStep[] = _steps.filter(step => !isNil(step)) as any
 
 const initialState: SettingsState = {
+  episodeFeedMode: SettingsStore.get('episodeFeedMode', EpisodeFeedMode.QUEUE),
   autoMarkAsPlanning: SettingsStore.get('autoMarkAsPlanning', true),
   useCRUnblocker: SettingsStore.get('useCRUnblocker', true),
   crLocale: SettingsStore.get('crLocale', 'enUS'),
@@ -150,6 +157,10 @@ export const settings = {
   getters: {
     getSettings(state: SettingsState) {
       return state
+    },
+
+    getEpisodeFeedMode(state: SettingsState) {
+      return state.episodeFeedMode
     },
 
     getShouldAutoPlay(state: SettingsState) {
@@ -219,6 +230,12 @@ export const settings = {
   },
 
   mutations: {
+    setEpisodeFeedMode(state: SettingsState, mode: EpisodeFeedMode) {
+      state.episodeFeedMode = mode
+
+      SettingsStore.set('episodeFeedMode', mode)
+    },
+
     _setCrunchyrollLocale(state: SettingsState, locale: string) {
       state.crLocale = locale
 
@@ -354,6 +371,7 @@ const { read, commit, dispatch } = getStoreAccessors<SettingsState, RootState>(
 )
 
 export const getSettings = read(settings.getters.getSettings)
+export const getEpisodeFeedMode = read(settings.getters.getEpisodeFeedMode)
 export const getShouldAutoPlay = read(settings.getters.getShouldAutoPlay)
 export const getShouldAutoMarkWatched = read(
   settings.getters.getShouldAutoMarkWatched,
@@ -368,6 +386,7 @@ export const getNextUnfinishedStep = read(
   settings.getters.getNextUnfinishedStep,
 )
 
+export const setEpisodeFeedMode = commit(settings.mutations.setEpisodeFeedMode)
 const _setCrunchyrollLocale = commit(settings.mutations._setCrunchyrollLocale)
 export const addKeybinding = commit(settings.mutations.addKeybinding)
 export const removeKeybinding = commit(settings.mutations.removeKeybinding)
