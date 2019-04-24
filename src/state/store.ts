@@ -1,4 +1,4 @@
-import { ipcRenderer } from 'electron'
+import { ipcRenderer, shell } from 'electron'
 import Vue from 'vue'
 import Vuex from 'vuex'
 
@@ -52,14 +52,19 @@ ipcRenderer.on(UPDATE_DOWNLOADED, () => {
   })
 })
 
-ipcRenderer.on(UPDATE_ERROR, () => {
+ipcRenderer.on(UPDATE_ERROR, (_e: any, version: string) => {
   setIsUpdateAvailable(store, false)
 
   sendToast(store, {
     type: 'error',
     title: 'An error occurred downloading update.',
-    message: 'Please try downloading it from GitHub.',
-    timeout: 10 * 1000,
+    message: 'Click here to download it manually from GitHub.',
+    click: () => {
+      shell.openExternal(
+        `https://github.com/BeeeQueue/yuna/releases/tag/v${version}`,
+      )
+    },
+    timeout: 30 * 1000,
   })
 })
 

@@ -24,6 +24,12 @@ const timeBetweenUpdateChecks = 30 * 60 * 1000
 let mainWindow: Electron.BrowserWindow
 let updateInterval: NodeJS.Timer | null = null
 
+interface Version {
+  version: string
+  releaseName: string
+}
+let availableVersion: Version | null = null
+
 const setAllProgressBars = (progress: number) => {
   mainWindow.setProgressBar(progress)
 }
@@ -52,11 +58,12 @@ const initCheckForUpdates = () => {
   }, timeBetweenUpdateChecks)
 }
 
-const sendMessage = (message: string) => {
-  mainWindow.webContents.send(message)
+const sendMessage = (message: string, arg?: string) => {
+  mainWindow.webContents.send(message, arg)
 }
 
-autoUpdater.on('update-available', () => {
+autoUpdater.on('update-available', (info: Version) => {
+  availableVersion = info
   clearInterval(updateInterval as any)
   sendMessage(UPDATE_AVAILABLE)
 })
@@ -71,11 +78,9 @@ autoUpdater.signals.updateDownloaded(() => {
   sendMessage(UPDATE_DOWNLOADED)
 })
 
-autoUpdater.on('error', info => {
-  log.error(info)
-
+autoUpdater.on('error', () => {
   clearInterval(updateInterval as any)
-  sendMessage(UPDATE_ERROR)
+  sendMessage(UPDATE_ERROR, availableVersion!.version)
 
   setAllProgressBars(-1)
 })
