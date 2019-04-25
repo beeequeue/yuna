@@ -63,6 +63,27 @@
             :onChange="setCrunchyrollLocale"
           />
         </section>
+
+        <section id="local-files">
+          <h3>Local Files</h3>
+
+          <div class="path-container">
+            <c-button
+              v-if="!localFilesFolder"
+              content="Set path"
+              :click="setLocalFilesFolder"
+            />
+            <c-button v-else :icon="editSvg" :click="setLocalFilesFolder" />
+
+            <div
+              class="path"
+              v-tooltip.top="localFilesFolder"
+              @click="pathClick"
+            >
+              {{ localFilesFolder }}
+            </div>
+          </div>
+        </section>
       </section>
 
       <section class="category" id="updates">
@@ -242,9 +263,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { ipcRenderer } from 'electron'
+import { ipcRenderer, remote, shell } from 'electron'
 import { Key } from 'ts-key-enum'
-import { mdiInformationOutline, mdiRefresh, mdiUndoVariant } from '@mdi/js'
+import {
+  mdiInformationOutline,
+  mdiPencilOutline,
+  mdiRefresh,
+  mdiUndoVariant,
+} from '@mdi/js'
 
 import LoginHD from '@/common/components/login/hidive.vue'
 import LoginCR from '@/common/components/login/crunchyroll.vue'
@@ -261,17 +287,20 @@ import { getCrunchyrollCountry, getIsConnectedTo } from '@/state/auth'
 import {
   addKeybinding,
   getCrunchyrollLocale,
+  getLocalFilesFolder,
   getSettings,
   KeybindingAction,
   removeKeybinding,
   resetKeybindings,
   setCrunchyrollLocale,
   setDiscordRichPresence,
+  setLocalFilesFolder,
   setSetting,
   setSpoiler,
   SettingsState,
 } from '@/state/settings'
 import { DOWNLOAD_UPDATE, OPEN_DEVTOOLS } from '@/messages'
+import { isNil } from '@/utils'
 
 enum Window {
   Crunchyroll = 'Crunchyroll',
@@ -296,6 +325,7 @@ export default class Settings extends Vue {
 
   public infoSvg = mdiInformationOutline
   public retrySvg = mdiRefresh
+  public editSvg = mdiPencilOutline
   public resetSvg = mdiUndoVariant
   public Window = Window
 
@@ -319,6 +349,10 @@ export default class Settings extends Vue {
 
   public get crunchyrollLocale() {
     return getCrunchyrollLocale(this.$store)
+  }
+
+  public get localFilesFolder() {
+    return getLocalFilesFolder(this.$store)
   }
 
   public get localeItems() {
@@ -366,6 +400,24 @@ export default class Settings extends Vue {
     this.setSetting('useCRUnblocker', checked)
 
     await Crunchyroll.createSession(this.$store)
+  }
+
+  public setLocalFilesFolder() {
+    const path = remote.dialog.showOpenDialog({
+      title: 'Set directory for Local Files',
+      buttonLabel: 'Select',
+      properties: ['openDirectory'],
+    })
+
+    if (isNil(path)) return
+
+    setLocalFilesFolder(this.$store, path[0])
+  }
+
+  public pathClick() {
+    if (isNil(this.localFilesFolder)) return
+
+    shell.openItem(this.localFilesFolder)
   }
 
   public handleDiscordPresenceChange(checked: boolean) {
@@ -484,6 +536,7 @@ export default class Settings extends Vue {
     }
 
     & > .category {
+      position: relative;
       width: 100%;
       padding: 25px 50px 0;
 
@@ -504,6 +557,26 @@ export default class Settings extends Vue {
 
         & > .button {
           margin-top: 5px;
+        }
+      }
+
+      & .path-container {
+        display: flex;
+        align-items: center;
+
+        & > .button {
+          flex-shrink: 0;
+        }
+
+        & > .path {
+          direction: rtl;
+          margin-left: 10px;
+          padding: 5px;
+          white-space: nowrap;
+          max-width: 100%;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          cursor: pointer;
         }
       }
 
