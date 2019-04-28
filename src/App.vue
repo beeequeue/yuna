@@ -16,8 +16,6 @@
       id="app"
       tabindex="0"
       :style="`background-image: url(${backgroundImage})`"
-      @keydown.q.ctrl.exact="quitApplication"
-      @keydown.q.meta.exact="quitApplication"
     >
       <title-bar v-if="!isFullscreen" />
 
@@ -184,10 +182,6 @@ export default class App extends Vue {
 
   public toggleModal(modal: keyof AppState['modals']) {
     toggleModal(this.$store, modal)
-  }
-
-  public quitApplication() {
-    api.app.quit()
   }
 }
 </script>
