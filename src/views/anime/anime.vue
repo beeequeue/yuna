@@ -63,6 +63,8 @@
         :sequels="getRelations(data, 'SEQUEL')"
       />
     </transition-group>
+
+    <edit-modal />
   </div>
 </template>
 
@@ -77,6 +79,7 @@ import Actions from '@/common/components/actions.vue'
 import AnimeTitle from './components/title.vue'
 import CenterContainer from './components/center-container.vue'
 import Relations from './components/relations.vue'
+import EditModal from './modals/edit-modal.vue'
 
 import EPISODE_LIST from '@/common/queries/episode-list.graphql'
 import ANIME_QUERY from './anime.graphql'
@@ -95,6 +98,7 @@ import { getDefaultProvider, getRelations, isNil } from '@/utils'
 
 @Component({
   components: {
+    EditModal,
     EpisodeList,
     CenterContainer,
     Relations,

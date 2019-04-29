@@ -1,5 +1,5 @@
 <template>
-  <modal :visible="visible" :toggleVisible="toggleVisible">
+  <modal-base>
     <ApolloMutation
       :mutation="EDIT_LIST_ENTRY"
       :variables="anime && anime.mediaListEntry"
@@ -85,12 +85,12 @@
         </div>
       </template>
     </ApolloMutation>
-  </modal>
+  </modal-base>
 </template>
 
 <script lang="ts">
 import { ApolloError } from 'apollo-client'
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { ApolloCache } from 'apollo-cache'
 import { change } from 'rambdax'
 import { oc } from 'ts-optchain'
@@ -106,28 +106,25 @@ import {
   MediaListStatus,
 } from '@/graphql/types'
 
-import { Required } from '@/decorators'
 import {
   EditModalAnime,
   getEditingAnime,
   setEditingAnimeValue,
+  toggleModal,
 } from '@/state/app'
 import { capitalize, enumToArray, propEq } from '@/utils'
 
 import CButton from '@/common/components/button.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
 import Dropdown, { DropdownItem } from '@/common/components/form/dropdown.vue'
-import Modal from './modal.vue'
+import ModalBase from '@/common/components/modals/base.vue'
 import AnimeBanner from '@/common/components/anime-banner.vue'
 import Icon from '@/common/components/icon.vue'
 
 @Component({
-  components: { Modal, AnimeBanner, Icon, NumberInput, Dropdown, CButton },
+  components: { ModalBase, AnimeBanner, Icon, NumberInput, Dropdown, CButton },
 })
 export default class EditModal extends Vue {
-  @Prop(Boolean) public visible!: boolean | null
-  @Required(Function) public toggleVisible!: () => any
-
   public statusItems: DropdownItem[] = enumToArray(MediaListStatus).map(
     status => ({
       label: capitalize((status as unknown) as string),
@@ -206,13 +203,13 @@ export default class EditModal extends Vue {
 
     await deleteListEntry(this, this.anime.id, this.anime.mediaListEntry.id)
 
-    this.toggleVisible()
+    toggleModal(this.$store, 'edit')
   }
 }
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import '../../../colors';
 
 $gutter: 25px;
 
