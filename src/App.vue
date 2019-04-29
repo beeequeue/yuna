@@ -41,8 +41,6 @@
       <portal-target name="modal" />
 
       <about-modal />
-
-      <manual-search-modal />
     </div>
   </transition>
 </template>
@@ -62,7 +60,6 @@ import Loading from '@/common/components/loading.vue'
 import AboutModal from '@/common/components/modals/about-modal.vue'
 import PlayerContainer from '@/modules/player/player-container.vue'
 import Navbar from '@/modules/navbar/navbar.vue'
-import ManualSearchModal from '@/modules/modals/manual-cr-search/manual-search-modal.vue'
 
 import { Query } from '@/decorators'
 import { Crunchyroll } from '@/lib/crunchyroll'
@@ -86,7 +83,6 @@ const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
   components: {
     CButton,
     Loading,
-    ManualSearchModal,
     TitleBar,
     PlayerContainer,
     Navbar,

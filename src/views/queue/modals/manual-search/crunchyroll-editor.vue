@@ -204,7 +204,7 @@ export default class CrunchyrollEditor extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import '../../../../colors';
 
 .loading-wrapper {
   position: absolute;

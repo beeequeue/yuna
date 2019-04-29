@@ -99,7 +99,7 @@ export default class CrunchyrollCollection extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import '../../../../colors';
 
 .collection {
   position: relative;
