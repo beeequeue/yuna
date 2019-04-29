@@ -11,15 +11,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 
+import { Required } from '@/decorators'
 import { RootState } from '@/state/store'
 import { getModalStates, toggleModal } from '@/state/app'
 
 @Component
 export default class ModalBase extends Vue {
-  @Prop(String) public name!: keyof RootState['app']['modals']
+  @Required(String) public name!: keyof RootState['app']['modals']
 
   public get visible(): boolean {
     return oc(getModalStates(this.$store))[this.name!](false)

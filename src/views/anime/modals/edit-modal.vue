@@ -1,5 +1,5 @@
 <template>
-  <modal-base>
+  <modal-base name="edit">
     <ApolloMutation
       :mutation="EDIT_LIST_ENTRY"
       :variables="anime && anime.mediaListEntry"
@@ -198,12 +198,16 @@ export default class EditModal extends Vue {
     return errors && errors.length > 0 ? errors[0] : null
   }
 
+  public toggleVisible() {
+    toggleModal(this.$store, 'edit')
+  }
+
   public async deleteEntry() {
     if (!this.anime || !this.anime.mediaListEntry) return
 
     await deleteListEntry(this, this.anime.id, this.anime.mediaListEntry.id)
 
-    toggleModal(this.$store, 'edit')
+    this.toggleVisible()
   }
 }
 </script>
