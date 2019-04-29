@@ -2,6 +2,7 @@ enum Provider {
   CRUNCHYROLL,
   CRUNCHYROLL_MANUAL,
   HIDIVE,
+  LOCAL,
 }
 
 type Episode {

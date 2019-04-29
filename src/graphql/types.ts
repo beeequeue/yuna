@@ -149,6 +149,7 @@ export interface StaffNameInput {
     ThreadLike = "THREAD_LIKE",
     ThreadCommentLike = "THREAD_COMMENT_LIKE",
     ActivityReplySubscribed = "ACTIVITY_REPLY_SUBSCRIBED",
+    RelatedMediaAddition = "RELATED_MEDIA_ADDITION",
   }
 /** Media list scoring type */
   export enum ScoreFormat {
@@ -435,11 +436,17 @@ export interface StaffNameInput {
     IsSticky = "IS_STICKY",
     SearchMatch = "SEARCH_MATCH",
   }
+/** Thread comments sort enums */
+  export enum ThreadCommentSort {
+    Id = "ID",
+    IdDesc = "ID_DESC",
+  }
 
   export enum Provider {
     Crunchyroll = "CRUNCHYROLL",
     CrunchyrollManual = "CRUNCHYROLL_MANUAL",
     Hidive = "HIDIVE",
+    Local = "LOCAL",
   }
 /** Types that can be liked */
   export enum LikeableType {
@@ -652,34 +659,6 @@ export type FuzzyDateInt = any;
     thumbnail: string;
     
     isWatched: boolean;
-  } 
-
-  export type EditListEntryVariables = {
-    id: number;
-    progress: number;
-    status: MediaListStatus;
-    repeat: number;
-    score: number;
-  }
-
-  export type EditListEntryMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<EditListEntrySaveMediaListEntry>;
-  }
-
-  export type EditListEntrySaveMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    score: Maybe<number>;
-    
-    progress: Maybe<number>;
-    
-    status: Maybe<MediaListStatus>;
-    
-    repeat: Maybe<number>;
   } 
 
   export type PlayerAnimeVariables = {
@@ -950,6 +929,34 @@ export type FuzzyDateInt = any;
     status: Maybe<MediaListStatus>;
     
     score: Maybe<number>;
+    
+    repeat: Maybe<number>;
+  } 
+
+  export type EditListEntryVariables = {
+    id: number;
+    progress: number;
+    status: MediaListStatus;
+    repeat: number;
+    score: number;
+  }
+
+  export type EditListEntryMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<EditListEntrySaveMediaListEntry>;
+  }
+
+  export type EditListEntrySaveMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    score: Maybe<number>;
+    
+    progress: Maybe<number>;
+    
+    status: Maybe<MediaListStatus>;
     
     repeat: Maybe<number>;
   } 
