@@ -136,11 +136,18 @@ export const app = {
       return state.player.id
     },
 
-    getModalStates(state: AppState) {
-      return Object.keys(state.modals).reduce(
-        (map, key) => {
-          map[key] = (state.modals as any)[key].visible
-          return map
+    getModalStates(
+      state: AppState,
+    ): { [key in keyof AppState['modals']]: boolean } {
+      const entries = Object.entries(state.modals).map(
+        ([key, obj]) => [key, obj.visible] as [string, boolean],
+      )
+
+      return entries.reduce(
+        (obj, [key, value]) => {
+          obj[key] = value
+
+          return obj
         },
         {} as any,
       )
