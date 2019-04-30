@@ -68,6 +68,8 @@
         :click="clearQueue"
       />
     </div>
+
+    <manual-search-modal />
   </div>
 </template>
 
@@ -84,6 +86,7 @@ import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 
 import CButton from '@/common/components/button.vue'
 import QueueItem from './components/queue-item.vue'
+import ManualSearchModal from './modals/manual-search/manual-search-modal.vue'
 
 import { pausedQuery, planningQuery, watchingQuery } from './queries'
 import QUEUE_QUERY from './queue.graphql'
@@ -110,6 +113,7 @@ import { isNotNil, pick, prop, propEq, sortNumber } from '@/utils'
 
 @Component({
   components: {
+    ManualSearchModal,
     QueueItem,
     CButton,
     Container,

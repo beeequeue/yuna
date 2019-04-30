@@ -21,6 +21,7 @@
     "hls.js": "0.12.4",
     "marked": "0.6.2",
     "normalize.css": "8.0.1",
+    "portal-vue": "2.1.3",
     "rambdax": "2.2.0",
     "raw-loader": "2.0.0",
     "register-scheme": "0.0.2",

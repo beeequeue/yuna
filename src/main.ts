@@ -1,6 +1,7 @@
 import { shell } from 'electron'
 import Vue from 'vue'
 import Tooltip from 'v-tooltip'
+import Portal from 'portal-vue'
 import { init } from '@sentry/browser'
 import * as Integrations from '@sentry/integrations'
 
@@ -18,6 +19,7 @@ import 'normalize.css'
 // Vue config
 Vue.config.productionTip = false
 Vue.use(Tooltip)
+Vue.use(Portal)
 
 // Register services
 

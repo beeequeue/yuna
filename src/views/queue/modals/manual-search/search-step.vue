@@ -83,7 +83,7 @@ export default class SearchStep extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import '../../../../colors';
 
 .search-step {
   position: relative;

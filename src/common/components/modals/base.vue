@@ -1,25 +1,39 @@
 <template>
-  <transition>
-    <div v-if="visible" class="modal">
-      <div class="cover" @click="toggleVisible" />
+  <portal to="modal">
+    <transition>
+      <div v-if="visible" class="modal">
+        <div class="cover" @click="toggleVisible" />
 
-      <slot />
-    </div>
-  </transition>
+        <slot />
+      </div>
+    </transition>
+  </portal>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
+import { oc } from 'ts-optchain'
+
+import { Required } from '@/decorators'
+import { RootState } from '@/state/store'
+import { getModalStates, toggleModal } from '@/state/app'
 
 @Component
-export default class Modal extends Vue {
-  @Prop(Boolean) public visible!: boolean | null
-  @Prop(Function) public toggleVisible!: () => any
+export default class ModalBase extends Vue {
+  @Required(String) public name!: keyof RootState['app']['modals']
+
+  public get visible(): boolean {
+    return oc(getModalStates(this.$store))[this.name!](false)
+  }
+
+  public toggleVisible() {
+    toggleModal(this.$store, this.name!)
+  }
 }
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import '../../../colors';
 
 .modal {
   position: absolute;

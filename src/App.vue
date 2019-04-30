@@ -36,20 +36,9 @@
 
       <toast-overlay />
 
-      <about-modal
-        :visible="modalStates.about"
-        :toggleVisible="() => toggleModal('about')"
-      />
+      <portal-target name="modal" />
 
-      <edit-modal
-        :visible="modalStates.edit"
-        :toggleVisible="() => toggleModal('edit')"
-      />
-
-      <manual-search-modal
-        :visible="modalStates.manualSearch"
-        :toggleVisible="() => toggleModal('manualSearch')"
-      />
+      <about-modal />
     </div>
   </transition>
 </template>
@@ -66,11 +55,9 @@ import CButton from '@/common/components/button.vue'
 import TitleBar from '@/common/components/title-bar.vue'
 import ToastOverlay from '@/common/components/toast-overlay.vue'
 import Loading from '@/common/components/loading.vue'
+import AboutModal from '@/common/components/modals/about-modal.vue'
 import PlayerContainer from '@/modules/player/player-container.vue'
 import Navbar from '@/modules/navbar/navbar.vue'
-import AboutModal from '@/modules/modals/about-modal.vue'
-import EditModal from '@/modules/modals/edit-modal.vue'
-import ManualSearchModal from '@/modules/modals/manual-cr-search/manual-search-modal.vue'
 
 import { Query } from '@/decorators'
 import { Crunchyroll } from '@/lib/crunchyroll'
@@ -94,13 +81,11 @@ const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
   components: {
     CButton,
     Loading,
-    ManualSearchModal,
     TitleBar,
     PlayerContainer,
     Navbar,
     ToastOverlay,
     AboutModal,
-    EditModal,
   },
 })
 export default class App extends Vue {
