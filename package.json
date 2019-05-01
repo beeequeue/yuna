@@ -121,7 +121,7 @@
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production vue-cli-service electron:build",
-    "codegen": "gql-gen",
+    "codegen": "bin/codegen",
     "get-schema": "yarn graphql get-schema",
     "lint": "vue-cli-service lint",
     "postinstall": "yarn electron-builder install-app-deps",
