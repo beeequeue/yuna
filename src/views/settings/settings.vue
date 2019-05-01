@@ -1,6 +1,6 @@
 <template>
   <div class="container" tabindex="0" @keydown.ctrl.d="openDevTools">
-    <div class="settings">
+    <div class="settings" ref="settings">
       <section class="category" id="general">
         <h1>General</h1>
 
@@ -73,12 +73,17 @@
               content="Set path"
               :click="setLocalFilesFolder"
             />
-            <c-button v-else :icon="editSvg" :click="setLocalFilesFolder" />
+            <c-button
+              v-else
+              type="danger"
+              :icon="removeSvg"
+              :click="clearLocalFilesFolder"
+            />
 
             <div
               class="path"
               v-tooltip.top="localFilesFolder"
-              @click="pathClick"
+              @click="!!localFilesFolder ? setLocalFilesFolder() : null"
             >
               {{ localFilesFolder }}
             </div>
@@ -266,8 +271,8 @@ import { Component, Vue } from 'vue-property-decorator'
 import { ipcRenderer, remote, shell } from 'electron'
 import { Key } from 'ts-key-enum'
 import {
+  mdiDelete,
   mdiInformationOutline,
-  mdiPencilOutline,
   mdiRefresh,
   mdiUndoVariant,
 } from '@mdi/js'
@@ -325,9 +330,28 @@ export default class Settings extends Vue {
 
   public infoSvg = mdiInformationOutline
   public retrySvg = mdiRefresh
-  public editSvg = mdiPencilOutline
+  public removeSvg = mdiDelete
   public resetSvg = mdiUndoVariant
   public Window = Window
+
+  public $refs!: {
+    settings: HTMLDivElement
+    keybindModal: HTMLDivElement
+  }
+
+  public mounted() {
+    const { hash } = this.$route
+
+    if (!isNil(hash) && hash.length > 2) {
+      const section = document
+        .getElementById(hash.replace('#', ''))!
+        .getBoundingClientRect()
+      this.$refs.settings.scrollTo({
+        top: section.top - 90,
+        behavior: 'smooth',
+      })
+    }
+  }
 
   public get keybindingActions(): string[] {
     return Object.keys(KeybindingAction)
@@ -414,6 +438,10 @@ export default class Settings extends Vue {
     setLocalFilesFolder(this.$store, path[0])
   }
 
+  public clearLocalFilesFolder() {
+    setLocalFilesFolder(this.$store, null)
+  }
+
   public pathClick() {
     if (isNil(this.localFilesFolder)) return
 
@@ -432,7 +460,7 @@ export default class Settings extends Vue {
     this.actionToBind = action
 
     setImmediate(() => {
-      const modalEl = this.$refs.keybindModal as HTMLElement
+      const modalEl = this.$refs.keybindModal
       modalEl.focus()
     })
   }
