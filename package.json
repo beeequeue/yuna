@@ -8,7 +8,7 @@
     "@sentry/browser": "5.2.1",
     "@sentry/integrations": "5.2.0",
     "@sentry/node": "5.2.0",
-    "anitomyjs": "1.5.2",
+    "anitomyscript": "1.0.2",
     "bottleneck": "2.18.1",
     "date-fns": "2.0.0-alpha.26",
     "discord-rpc": "3.0.1",
