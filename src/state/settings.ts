@@ -323,7 +323,7 @@ export const settings = {
       SettingsStore.set(['spoilers', ...payload.path].join('.'), payload.value)
     },
 
-    setLocalFilesFolder(state: SettingsState, path: string) {
+    setLocalFilesFolder(state: SettingsState, path: string | null) {
       state.localFilesFolder = path
 
       SettingsStore.set('localFilesFolder', path)
