@@ -109,16 +109,16 @@ import {
 import {
   EditModalAnime,
   getEditingAnime,
+  ModalName,
   setEditingAnimeValue,
   toggleModal,
 } from '@/state/app'
-import { RootState } from '@/state/store'
 import { capitalize, enumToArray, propEq } from '@/utils'
 
 import CButton from '@/common/components/button.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
 import Dropdown, { DropdownItem } from '@/common/components/form/dropdown.vue'
-import ModalBase from '@/common/components/modals/base.vue'
+import ModalBase from '@/common/modals/base.vue'
 import AnimeBanner from '@/common/components/anime-banner.vue'
 import Icon from '@/common/components/icon.vue'
 
@@ -133,7 +133,7 @@ export default class EditModal extends Vue {
     }),
   )
 
-  public readonly modalName: keyof RootState['app']['modals'] = 'edit'
+  public readonly modalName: ModalName = 'edit'
   public readonly EDIT_LIST_ENTRY = EDIT_LIST_ENTRY
   public readonly deleteSvg = mdiCloseCircle
 
@@ -201,7 +201,7 @@ export default class EditModal extends Vue {
   }
 
   public toggleVisible() {
-    toggleModal(this.$store, 'edit')
+    toggleModal(this.$store, this.modalName)
   }
 
   public async deleteEntry() {

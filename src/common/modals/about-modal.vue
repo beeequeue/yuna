@@ -21,25 +21,22 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { chromeVersion, electronVersion } from 'electron-util'
 
-import { RootState } from '@/state/store'
+import ModalBase from '@/common/modals/base.vue'
+import { ModalName } from '@/state/app'
+import { version } from '../../../package.json'
 
-import ModalBase from '@/common/components/modals/base.vue'
-import { version } from '../../../../package.json'
-
-@Component({
-  components: { ModalBase },
-})
+@Component({ components: { ModalBase } })
 export default class AboutModal extends Vue {
-  public readonly modalName: keyof RootState['app']['modals'] = 'about'
+  public readonly modalName: ModalName = 'about'
 
-  public version = version
-  public electronVersion = electronVersion
-  public chromeVersion = chromeVersion
+  public readonly version = version
+  public readonly electronVersion = electronVersion
+  public readonly chromeVersion = chromeVersion
 }
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import '../../colors';
 
 .about-modal {
   position: relative;
