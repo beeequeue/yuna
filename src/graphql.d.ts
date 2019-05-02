@@ -1,4 +1,14 @@
 /* THIS IS A GENERATED FILE */
+declare module '*/local-source-anime.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const LocalSourceAnime: DocumentNode
+
+  export { LocalSourceAnime }
+
+  export default defaultDocument
+}
+
 declare module '*/cache-episodes.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
