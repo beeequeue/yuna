@@ -39,13 +39,14 @@
       <portal-target name="modal" />
 
       <about-modal />
+
+      <local-source-modal />
     </div>
   </transition>
 </template>
 
 <script lang="ts">
 import { ipcRenderer } from 'electron'
-import { api } from 'electron-util'
 import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 import gql from 'graphql-tag'
@@ -55,7 +56,8 @@ import CButton from '@/common/components/button.vue'
 import TitleBar from '@/common/components/title-bar.vue'
 import ToastOverlay from '@/common/components/toast-overlay.vue'
 import Loading from '@/common/components/loading.vue'
-import AboutModal from '@/common/components/modals/about-modal.vue'
+import AboutModal from '@/common/modals/about-modal.vue'
+import LocalSourceModal from '@/common/modals/local-source/local-source.vue'
 import PlayerContainer from '@/modules/player/player-container.vue'
 import Navbar from '@/modules/navbar/navbar.vue'
 
@@ -79,6 +81,7 @@ const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
 
 @Component({
   components: {
+    LocalSourceModal,
     CButton,
     Loading,
     TitleBar,
