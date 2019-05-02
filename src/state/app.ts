@@ -86,6 +86,8 @@ export interface AppState {
   }
 }
 
+export type ModalName = keyof AppState['modals']
+
 type AppContext = ActionContext<AppState, RootState>
 
 const initialModalBase: ModalBase = {

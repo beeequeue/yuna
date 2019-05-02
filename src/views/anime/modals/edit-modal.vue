@@ -117,7 +117,7 @@ import { capitalize, enumToArray, propEq } from '@/utils'
 import CButton from '@/common/components/button.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
 import Dropdown, { DropdownItem } from '@/common/components/form/dropdown.vue'
-import ModalBase from '@/common/components/modals/base.vue'
+import ModalBase from '@/common/modals/base.vue'
 import AnimeBanner from '@/common/components/anime-banner.vue'
 import Icon from '@/common/components/icon.vue'
 

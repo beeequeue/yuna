@@ -22,7 +22,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 import AnimatedHeight from '@/common/components/animated-height.vue'
-import ModalBase from '@/common/components/modals/base.vue'
+import ModalBase from '@/common/modals/base.vue'
 import CrunchyrollEditor from './crunchyroll-editor.vue'
 import SearchStep from './search-step.vue'
 
