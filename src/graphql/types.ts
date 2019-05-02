@@ -484,6 +484,34 @@ export type FuzzyDateInt = any;
 
 
 
+  export type LocalSourceAnimeVariables = {
+    id: number;
+  }
+
+  export type LocalSourceAnimeQuery = {
+    __typename?: "Query";
+    
+    anime: Maybe<LocalSourceAnimeAnime>;
+  }
+
+  export type LocalSourceAnimeAnime = {
+    __typename?: "Media";
+    
+    title: Maybe<LocalSourceAnimeTitle>;
+    
+    episodes: Maybe<number>;
+  } 
+
+  export type LocalSourceAnimeTitle = {
+    __typename?: "MediaTitle";
+    
+    english: Maybe<string>;
+    
+    romaji: Maybe<string>;
+    
+    userPreferred: Maybe<string>;
+  } 
+
   export type CacheEpisodesVariables = {
     episodes: EpisodeInput[];
   }

@@ -5,6 +5,12 @@ import { SettingsStore } from '@/state/settings'
 import { join } from 'path'
 import { isNil } from '@/utils'
 
+export interface LocalAnime {
+  title: string
+  folder: string
+  episodes: number
+}
+
 const acceptedExtensions = ['mp4', 'mkv']
 
 const isDirectory = (path: string) => {
@@ -15,23 +21,20 @@ const isDirectory = (path: string) => {
 
 const removeDuplicates = (array: LocalAnime[]) => {
   const newArray: LocalAnime[] = []
-  const uniques: string[] = []
 
   array.forEach(anime => {
-    if (uniques.includes(anime.title)) {
+    const index = newArray.findIndex(item => item.title === anime.title)
+
+    if (index !== -1) {
+      newArray[index].episodes++
+
       return
     }
 
-    uniques.push(anime.title)
     newArray.push(anime)
   })
 
   return newArray
-}
-
-interface LocalAnime {
-  title: string
-  folder: string
 }
 
 export class LocalFiles {
@@ -78,6 +81,7 @@ export class LocalFiles {
       .map<LocalAnime>(el => ({
         folder: folderPath,
         title: el.anime_title!,
+        episodes: 1,
       }))
       .forEach(el => results.push(el))
 

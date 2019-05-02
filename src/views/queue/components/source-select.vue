@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-if="supportedSources.length > 0"
-    class="source-select"
-    :class="{ highlight }"
-  >
+  <div class="source-select" :class="{ highlight }">
     <div :id="`source-select-${anime.id}`" class="dropdown" @click="toggleOpen">
       <span
         v-for="source in supportedSources"
@@ -75,11 +71,10 @@ import Icon from '@/common/components/icon.vue'
 import { Provider, QueueAnime, QueueExternalLinks } from '@/graphql/types'
 
 import { Required } from '@/decorators'
-import { LocalFiles } from '@/lib/local-files'
-import { initManualSearch } from '@/state/app'
+import { initManualSearch, setLocalSourceAnime } from '@/state/app'
 import { getLocalFilesFolder } from '@/state/settings'
 import { StreamingSource, SupportedSources } from '@/types'
-import { getStreamingSources, isNil, isNotNil, prop } from '@/utils'
+import { getStreamingSources, isNil, isNotNil } from '@/utils'
 
 const streamingSiteCtx = require.context('@/assets', false)
 const siteImages = streamingSiteCtx.keys()
@@ -163,8 +158,7 @@ export default class SourceSelect extends Vue {
         return
       }
 
-      const shows = LocalFiles.getLocalAnime()
-      alert(shows.map(prop('title')).join(',\n'))
+      setLocalSourceAnime(this.$store, this.anime.id)
     }
 
     this.setProvider(provider)
