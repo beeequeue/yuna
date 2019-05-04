@@ -145,7 +145,8 @@ export const cacheEpisodes = (
 ) => {
   episodes = episodes.map(ep => ({
     ...ep,
-    isWatched: getIsWatched(cache, ep.animeId, ep.episodeNumber),
+    isWatched:
+      ep.isWatched || getIsWatched(cache, ep.animeId, ep.episodeNumber),
   }))
 
   if (episodes.length < 1) {

@@ -6,5 +6,8 @@ query LocalSourceAnime($id: Int!) {
       userPreferred
     }
     episodes
+    mediaListEntry {
+      progress
+    }
   }
 }
