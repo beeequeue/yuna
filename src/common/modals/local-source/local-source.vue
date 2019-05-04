@@ -10,12 +10,17 @@
       <div class="anime-container">
         <div
           v-for="local in localAnime"
-          :key="local.title + local.folder"
-          :title="local.folder"
+          :key="local.title + local.folderPath"
+          :title="local.folderPath"
+          @click="select(local)"
         >
           {{ local.title }} ({{ local.episodes }})
         </div>
       </div>
+
+      <video v-if="source">
+        <source :src="source" type="video/mp4" />
+      </video>
     </div>
   </modal-base>
 </template>
@@ -26,15 +31,18 @@ import Fuse from 'fuse.js'
 import { oc } from 'ts-optchain'
 
 import ModalBase from '@/common/modals/base.vue'
+import { cacheEpisodes } from '@/common/mutations/episodes'
 import LOCAL_SOURCE_ANIME from './local-source-anime.graphql'
 import {
+  EpisodeListEpisodes,
   LocalSourceAnimeQuery,
   LocalSourceAnimeVariables,
+  Provider,
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
-import { getLocalSourceOptions, ModalName } from '@/state/app'
-import { LocalFiles, LocalAnime } from '@/lib/local-files'
+import { getLocalSourceOptions, ModalName, toggleModal } from '@/state/app'
+import { LocalAnime, LocalFiles } from '@/lib/local-files'
 import { isNil } from '@/utils'
 
 const combineDuplicatesBasedOnScore = (
@@ -115,6 +123,31 @@ export default class LocalSourceModal extends Vue {
       .sort((a, b) => a.score! - b.score!)
       // Map back to the anime
       .map(result => result.item)
+  }
+
+  public source: string | null = null
+
+  public async select(localAnime: LocalAnime) {
+    const files = await LocalFiles.getLocalAnimeFiles(this.animeId!, localAnime)
+
+    const episodes = files.map<EpisodeListEpisodes>(file => ({
+      __typename: 'Episode',
+      id: file.id,
+      animeId: this.animeId!,
+      episodeNumber: file.episodeNumber,
+      provider: Provider.Local,
+      title: file.title,
+      thumbnail: file.thumbnail,
+      url: file.filePath,
+      progress: 0,
+      duration: file.duration,
+      index: file.episodeNumber - 1,
+      isWatched: false,
+    }))
+
+    await cacheEpisodes(this, this.animeId!, Provider.Local, episodes)
+
+    toggleModal(this.$store, this.modalName)
   }
 }
 </script>

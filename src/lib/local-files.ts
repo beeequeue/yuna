@@ -1,15 +1,32 @@
-import { existsSync, readdirSync, statSync } from 'fs'
+import { api } from 'electron-util'
 import { parse } from 'anitomyscript'
+import ffmpeg from 'fluent-ffmpeg'
+import { existsSync, readdirSync, statSync } from 'fs'
+import { join, resolve } from 'path'
+import crypto from 'crypto'
 
 import { SettingsStore } from '@/state/settings'
-import { join } from 'path'
 import { isNil } from '@/utils'
+import { FFMPEG_PATH, FFPROBE_PATH } from '@/utils/paths'
 
 export interface LocalAnime {
   title: string
-  folder: string
+  folderPath: string
   episodes: number
 }
+
+interface LocalAnimeFile {
+  id: string
+  filePath: string
+  title: string
+  thumbnail: string
+  episodeNumber: number
+  duration: number
+  format: string
+}
+
+ffmpeg.setFfmpegPath(FFMPEG_PATH)
+ffmpeg.setFfprobePath(FFPROBE_PATH)
 
 const acceptedExtensions = ['mp4', 'mkv']
 
@@ -18,6 +35,11 @@ const isDirectory = (path: string) => {
 
   return statSync(path).isDirectory()
 }
+
+const isPlayableFile = (path: string) =>
+  !isDirectory(path) &&
+  // eslint-disable-next-line no-useless-escape
+  path.match(new RegExp(`\.${acceptedExtensions.join('|')}$`))
 
 const removeDuplicates = (array: LocalAnime[]) => {
   const newArray: LocalAnime[] = []
@@ -38,12 +60,71 @@ const removeDuplicates = (array: LocalAnime[]) => {
 }
 
 export class LocalFiles {
+  public static readonly thumbnailFolder = resolve(
+    api.app.getPath('userData'),
+    'thumbnails',
+  )
+
   private static get folderPath() {
     return SettingsStore.get('localFilesFolder', null)
   }
 
   public static getLocalAnime(): LocalAnime[] {
     return this.getAnimeInFolder(this.folderPath)
+  }
+
+  public static async getLocalAnimeFiles(
+    anilistId: number,
+    localAnime: LocalAnime,
+  ): Promise<LocalAnimeFile[]> {
+    // Get files in directory
+    const files = readdirSync(localAnime.folderPath).filter(isPlayableFile)
+
+    const promises = files
+      // Parse file names
+      .map(f => parse(f))
+      // Filter out files that don't belong to our anime
+      .filter(item => item.anime_title === localAnime.title)
+      // Map to result
+      .map<Promise<LocalAnimeFile>>(async (item, i) => {
+        const filePath = join(localAnime.folderPath, files[i])
+        const id = this.generateId(filePath)
+
+        const command = ffmpeg(filePath)
+
+        const probeData = await this.probeFile(command)
+
+        command.screenshot({
+          count: 1,
+          timestamps: ['50%'],
+          filename: `${anilistId}-${Number(item.episode_number)}`,
+          size: '?x250',
+          folder: this.thumbnailFolder,
+        })
+
+        return {
+          id,
+          filePath,
+          title: item.episode_title || `Episode ${item.episode_number}`,
+          thumbnail: join(
+            this.thumbnailFolder,
+            `${anilistId}-${item.episode_number}.png`,
+          ),
+          episodeNumber: Number(item.episode_number),
+          duration: probeData.format.duration,
+          format: item.file_extension!,
+        }
+      })
+
+    return await Promise.all(promises)
+  }
+
+  private static generateId(path: string) {
+    return crypto
+      .createHash('md5')
+      .update(path)
+      .digest('hex')
+      .substr(0, 10)
   }
 
   /**
@@ -77,9 +158,8 @@ export class LocalFiles {
           !isNil(element.episode_number)
         )
       })
-      .filter(element => !isNil(element.anime_title))
       .map<LocalAnime>(el => ({
-        folder: folderPath,
+        folderPath,
         title: el.anime_title!,
         episodes: 1,
       }))
@@ -94,5 +174,17 @@ export class LocalFiles {
     }
 
     return removeDuplicates(results)
+  }
+
+  private static probeFile(command: ffmpeg.FfmpegCommand) {
+    return new Promise<ffmpeg.FfprobeData>((resolve, reject) => {
+      command.ffprobe((err, data) => {
+        if (!isNil(err)) {
+          reject(err)
+        }
+
+        resolve(data)
+      })
+    })
   }
 }

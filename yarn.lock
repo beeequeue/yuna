@@ -972,6 +972,23 @@
     "@types/express-serve-static-core" "*"
     "@types/serve-static" "*"
 
+"@types/ffmpeg-static@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@types/ffmpeg-static/-/ffmpeg-static-2.0.0.tgz#f97b5f75cae5fa1d66465c4d075f953029c5fa10"
+  integrity sha512-ytooy2ZoIW+nahlxsJaugfY9Q5VYkRb8vzcOQGf1k0OFlwAnpRn59wIuYx04oFjqFvXjszTwJSdVx3qaM3nISQ==
+
+"@types/ffprobe-static@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@types/ffprobe-static/-/ffprobe-static-2.0.0.tgz#e89f978dd1a836f0e8100784def753960589548a"
+  integrity sha512-rjyutd/DyrjuWqux7oswuH9kox71HjvlSTO0TKW+tqQVcP3RN570D/G/vzy41/KSZe3NAaOJvxkHXnAxaHAjdg==
+
+"@types/fluent-ffmpeg@2.1.9":
+  version "2.1.9"
+  resolved "https://registry.yarnpkg.com/@types/fluent-ffmpeg/-/fluent-ffmpeg-2.1.9.tgz#260e155b14b1c7f9cdccab7e1600c1f74444f25a"
+  integrity sha512-ASkD4gb8FngbTZe8x4iM5bKWmswHYGSuA5A5sauBroIDA7B7Uu7hrk+W7pEUQLG63fR+Zo2iDpSVWyTeoPuwRA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/glob@^7.1.1":
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/@types/glob/-/glob-7.1.1.tgz#aa59a1c6e3fbc421e07ccd31a944c30eba521575"
@@ -2427,17 +2444,17 @@ async-retry@^1.2.1:
   dependencies:
     retry "0.12.0"
 
+async@>=0.2.9, async@^2.0.0, async@^2.6.1:
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/async/-/async-2.6.2.tgz#18330ea7e6e313887f5d2f2a904bac6fe4dd5381"
+  integrity sha512-H1qVYh1MYhEEFLsP97cVKqCGo7KfCyTt6uEWqsTBr9SO84oK9Uwbyd/yCW+6rKJLHksBNUVWZDAjfS+Ccx0Bbg==
+  dependencies:
+    lodash "^4.17.11"
+
 async@^1.5.2:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
   integrity sha1-7GphrlZIDAw8skHJVhjiCJL5Zyo=
-
-async@^2.0.0, async@^2.6.1:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/async/-/async-2.6.1.tgz#b245a23ca71930044ec53fa46aa00a3e87c6a610"
-  integrity sha512-fNEiL2+AZt6AlAw/29Cr0UDe4sRAHCpEHh54WMz+Bb7QfNcFw4h3loofyJpLeQs4Yx7yuqu/2dLgM5hKOs6HlQ==
-  dependencies:
-    lodash "^4.17.10"
 
 asynckit@^0.4.0:
   version "0.4.0"
@@ -5372,6 +5389,16 @@ fecha@^2.3.3:
   resolved "https://registry.yarnpkg.com/fecha/-/fecha-2.3.3.tgz#948e74157df1a32fd1b12c3a3c3cdcb6ec9d96cd"
   integrity sha512-lUGBnIamTAwk4znq5BcqsDaxSmZ9nDVJaij6NvRt/Tg4R69gERA+otPKbS86ROw9nxVMw2/mp1fnaiWqbs6Sdg==
 
+ffmpeg-static@2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/ffmpeg-static/-/ffmpeg-static-2.4.0.tgz#eb3a248849943d493c2a311c0e5e45a06259103a"
+  integrity sha512-OcYTewd3we/Zi4W+VJtEqrfDzRSMwLs0NyAa61qw/FqtbttidGrm+BFsq44prtT3s6/LV6+aoXNpyNBOshXBuA==
+
+ffprobe-static@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/ffprobe-static/-/ffprobe-static-3.0.0.tgz#479689c8a237987beca5627968f3d87429bf569d"
+  integrity sha512-LZ1Sj4RHS95t/ReZtRbCmMEWDDl7cfIMwmhNgCZcdtOgRlAHaGGOupoc166Q9AV+T7lXnUvu5HYczcsn69c6fw==
+
 figgy-pudding@^3.1.0, figgy-pudding@^3.5.1:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/figgy-pudding/-/figgy-pudding-3.5.1.tgz#862470112901c727a0e495a80744bd5baa1d6790"
@@ -5540,6 +5567,14 @@ flatted@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-2.0.0.tgz#55122b6536ea496b4b44893ee2608141d10d9916"
   integrity sha512-R+H8IZclI8AAkSBRQJLVOsxwAoHd6WC40b4QTNWIjzAa6BXOBfQcM587MXDTVPeYaopFNWHUFLx7eNmHDSxMWg==
+
+fluent-ffmpeg@2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/fluent-ffmpeg/-/fluent-ffmpeg-2.1.2.tgz#c952de2240f812ebda0aa8006d7776ee2acf7d74"
+  integrity sha1-yVLeIkD4EuvaCqgAbXd27irPfXQ=
+  dependencies:
+    async ">=0.2.9"
+    which "^1.1.1"
 
 flush-write-stream@^1.0.0:
   version "1.0.3"
@@ -12695,7 +12730,7 @@ which-module@^2.0.0:
   resolved "https://registry.yarnpkg.com/which-module/-/which-module-2.0.0.tgz#d9ef07dce77b9902b8a3a8fa4b31c3e3f7e6e87a"
   integrity sha1-2e8H3Od7mQK4o6j6SzHD4/fm6Ho=
 
-which@1, which@^1.2.10, which@^1.2.14, which@^1.2.9:
+which@1, which@^1.1.1, which@^1.2.10, which@^1.2.14, which@^1.2.9:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/which/-/which-1.3.1.tgz#a45043d54f5805316da8d62f9f50918d3da70b0a"
   integrity sha512-HxJdYWq1MTIQbJ3nw0cqssHoTNU267KlrDuGZ1WYlxDStUtKUhOaJmh112/TZmHxxUfuJqPXSOm7tDyas0OSIQ==

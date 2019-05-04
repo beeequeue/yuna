@@ -1,12 +1,26 @@
 {
   "productName": "Yuna",
-  "linux": {
-    "category": "Video"
-  },
-  "mac": {
-    "category": "public.app-category.entertainment"
-  },
   "directories": {
     "buildResources": "public"
+  },
+  "win": {
+    "extraResources": [
+      "node_modules/ffmpeg-static/bin/win32/**/*",
+      "node_modules/ffprobe-static/bin/win32/**/*"
+    ]
+  },
+  "linux": {
+    "category": "Video",
+    "extraResources": [
+      "node_modules/ffmpeg-static/bin/linux/**/*",
+      "node_modules/ffprobe-static/bin/linux/**/*"
+    ]
+  },
+  "mac": {
+    "category": "public.app-category.entertainment",
+    "extraResources": [
+      "node_modules/ffmpeg-static/bin/darwin/**/*",
+      "node_modules/ffprobe-static/bin/darwin/**/*"
+    ]
   }
 }
