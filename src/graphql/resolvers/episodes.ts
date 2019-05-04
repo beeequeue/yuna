@@ -33,7 +33,7 @@ const getEpisodesFromCache = (
     const hardCachedEpisodes =
       oc(EpisodeCache.get(id, provider)).episodes() || null
 
-    if (!episodesExist(hardCachedEpisodes)) {
+    if (episodesExist(hardCachedEpisodes)) {
       episodes = hardCachedEpisodes
     }
   }

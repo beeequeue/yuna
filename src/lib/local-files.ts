@@ -89,6 +89,8 @@ export class LocalFiles {
       .map<Promise<LocalAnimeFile>>(async (item, i) => {
         const filePath = join(localAnime.folderPath, files[i])
         const id = this.generateId(filePath)
+        const episodeNumber = Number(item.episode_number)
+        const thumbnailName = `${anilistId}-${episodeNumber}`
 
         const command = ffmpeg(filePath)
 
@@ -97,7 +99,7 @@ export class LocalFiles {
         command.screenshot({
           count: 1,
           timestamps: ['50%'],
-          filename: `${anilistId}-${Number(item.episode_number)}`,
+          filename: thumbnailName,
           size: '?x250',
           folder: this.thumbnailFolder,
         })
@@ -105,13 +107,10 @@ export class LocalFiles {
         return {
           id,
           filePath,
-          title: item.episode_title || `Episode ${item.episode_number}`,
-          thumbnail: join(
-            this.thumbnailFolder,
-            `${anilistId}-${item.episode_number}.png`,
-          ),
-          episodeNumber: Number(item.episode_number),
-          duration: probeData.format.duration,
+          title: item.episode_title || `Episode ${episodeNumber}`,
+          thumbnail: join(this.thumbnailFolder, `${thumbnailName}.png`),
+          episodeNumber,
+          duration: Math.round(probeData.format.duration),
           format: item.file_extension!,
         }
       })
