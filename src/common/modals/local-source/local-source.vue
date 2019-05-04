@@ -17,10 +17,6 @@
           {{ local.title }} ({{ local.episodes }})
         </div>
       </div>
-
-      <video v-if="source">
-        <source :src="source" type="video/mp4" />
-      </video>
     </div>
   </modal-base>
 </template>
@@ -124,8 +120,6 @@ export default class LocalSourceModal extends Vue {
       // Map back to the anime
       .map(result => result.item)
   }
-
-  public source: string | null = null
 
   public async select(localAnime: LocalAnime) {
     const files = await LocalFiles.getLocalAnimeFiles(this.animeId!, localAnime)
