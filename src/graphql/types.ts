@@ -500,6 +500,8 @@ export type FuzzyDateInt = any;
     title: Maybe<LocalSourceAnimeTitle>;
     
     episodes: Maybe<number>;
+    
+    mediaListEntry: Maybe<LocalSourceAnimeMediaListEntry>;
   } 
 
   export type LocalSourceAnimeTitle = {
@@ -510,6 +512,12 @@ export type FuzzyDateInt = any;
     romaji: Maybe<string>;
     
     userPreferred: Maybe<string>;
+  } 
+
+  export type LocalSourceAnimeMediaListEntry = {
+    __typename?: "MediaList";
+    
+    progress: Maybe<number>;
   } 
 
   export type CacheEpisodesVariables = {

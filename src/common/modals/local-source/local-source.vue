@@ -129,6 +129,7 @@ export default class LocalSourceModal extends Vue {
 
   public async select(localAnime: LocalAnime) {
     const files = await LocalFiles.getLocalAnimeFiles(this.animeId!, localAnime)
+    const progress = oc(this.anime).mediaListEntry.progress(0)
 
     const episodes = files.map<EpisodeListEpisodes>(file => ({
       __typename: 'Episode',
@@ -142,7 +143,7 @@ export default class LocalSourceModal extends Vue {
       progress: 0,
       duration: file.duration,
       index: file.episodeNumber - 1,
-      isWatched: false,
+      isWatched: progress >= file.episodeNumber,
     }))
 
     await cacheEpisodes(this, this.animeId!, Provider.Local, episodes)
