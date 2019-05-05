@@ -262,6 +262,14 @@ export default class Player extends Vue {
       }
     }
 
+    if (provider === Provider.Local) {
+      return {
+        progress: 0,
+        subtitles: null,
+        url: this.episode!.url,
+      }
+    }
+
     return null as any
   }
 
