@@ -1,5 +1,6 @@
 import { Store } from 'vuex'
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
+import { Provider } from '@/graphql/types'
 
 export interface Levels {
   [key: string]: number
@@ -33,4 +34,9 @@ export enum StreamingSource {
 export const SupportedSources = [
   StreamingSource.Crunchyroll,
   StreamingSource.Hidive,
+]
+
+export const CrunchyrollProviders = [
+  Provider.Crunchyroll,
+  Provider.CrunchyrollManual,
 ]
