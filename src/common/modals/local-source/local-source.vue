@@ -7,16 +7,19 @@
         <div>({{ anime.episodes }} episodes)</div>
       </div>
 
-      <div class="anime-container">
-        <div
-          v-for="local in localAnime"
-          :key="local.title + local.folderPath"
-          :title="local.folderPath"
-          @click="select(local)"
-        >
-          {{ local.title }} ({{ local.episodes }})
+      <animated-height>
+        <loading v-if="creatingEpisodes" :size="50" />
+        <div v-else class="anime-container">
+          <div
+            v-for="local in localAnime"
+            :key="local.title + local.folderPath"
+            :title="local.folderPath"
+            @click="select(local)"
+          >
+            {{ local.title }} ({{ local.episodes }})
+          </div>
         </div>
-      </div>
+      </animated-height>
     </div>
   </modal-base>
 </template>
@@ -27,6 +30,7 @@ import Fuse from 'fuse.js'
 import { oc } from 'ts-optchain'
 
 import ModalBase from '@/common/modals/base.vue'
+import Loading from '@/common/components/loading.vue'
 import { cacheEpisodes } from '@/common/mutations/episodes'
 import LOCAL_SOURCE_ANIME from './local-source-anime.graphql'
 import {
@@ -40,6 +44,7 @@ import { Query } from '@/decorators'
 import { getLocalSourceOptions, ModalName, toggleModal } from '@/state/app'
 import { LocalAnime, LocalFiles } from '@/lib/local-files'
 import { isNil } from '@/utils'
+import AnimatedHeight from '@/common/components/animated-height.vue'
 
 const combineDuplicatesBasedOnScore = (
   anime: Fuse.FuseResult<LocalAnime>[],
@@ -63,7 +68,7 @@ const combineDuplicatesBasedOnScore = (
   return newArray
 }
 
-@Component({ components: { ModalBase } })
+@Component({ components: { AnimatedHeight, Loading, ModalBase } })
 export default class LocalSourceModal extends Vue {
   public readonly modalName: ModalName = 'localSource'
 
@@ -81,6 +86,7 @@ export default class LocalSourceModal extends Vue {
   public anime!: LocalSourceAnimeQuery['anime']
 
   public localAnime: LocalAnime[] = []
+  public creatingEpisodes = false
 
   public get animeId() {
     return oc(getLocalSourceOptions(this.$store)).anilistId() || null
@@ -122,6 +128,8 @@ export default class LocalSourceModal extends Vue {
   }
 
   public async select(localAnime: LocalAnime) {
+    this.creatingEpisodes = true
+
     const files = await LocalFiles.getLocalAnimeFiles(this.animeId!, localAnime)
     const progress = oc(this.anime).mediaListEntry.progress(0)
 
@@ -142,6 +150,10 @@ export default class LocalSourceModal extends Vue {
 
     await cacheEpisodes(this, this.animeId!, Provider.Local, episodes)
 
+    setTimeout(() => {
+      this.creatingEpisodes = false
+    }, 500)
+
     toggleModal(this.$store, this.modalName)
   }
 }
@@ -154,6 +166,7 @@ export default class LocalSourceModal extends Vue {
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: center;
   background: $dark;
   border-radius: 5px;
   box-shadow: $shadow;
@@ -175,7 +188,12 @@ export default class LocalSourceModal extends Vue {
     }
   }
 
-  & > .anime-container {
+  & .loader {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  & .anime-container {
     position: relative;
     max-height: 45vh;
     overflow-y: auto;

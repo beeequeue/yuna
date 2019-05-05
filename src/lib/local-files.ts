@@ -96,13 +96,7 @@ export class LocalFiles {
 
         const probeData = await this.probeFile(command)
 
-        command.screenshot({
-          count: 1,
-          timestamps: ['50%'],
-          filename: thumbnailName,
-          size: '?x250',
-          folder: this.thumbnailFolder,
-        })
+        await this.generateScreenshot(command, thumbnailName)
 
         return {
           id,
@@ -184,6 +178,24 @@ export class LocalFiles {
 
         resolve(data)
       })
+    })
+  }
+
+  private static generateScreenshot(
+    command: ffmpeg.FfmpegCommand,
+    filename: string,
+  ) {
+    return new Promise<ffmpeg.FfprobeData>((resolve, reject) => {
+      command
+        .screenshot({
+          count: 1,
+          timestamps: ['50%'],
+          filename,
+          size: '?x250',
+          folder: this.thumbnailFolder,
+        })
+        .on('end', resolve)
+        .on('error', reject)
     })
   }
 }

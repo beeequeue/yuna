@@ -2,6 +2,7 @@
   <icon
     :icon="loadingSvg"
     :style="{ height: `${size}px`, width: `${size}px` }"
+    class="loader loading"
   />
 </template>
 
