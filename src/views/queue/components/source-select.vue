@@ -10,6 +10,10 @@
         :alt="source.site"
       />
 
+      <span class="text">
+        Select source...
+      </span>
+
       <icon :icon="expandSvg" class="expand" />
     </div>
 
@@ -205,6 +209,13 @@ export default class SourceSelect extends Vue {
       &.fade {
         filter: brightness(0.5) drop-shadow(0 1px 1px black);
       }
+    }
+
+    & > .text {
+      margin: 0 5px;
+      order: 98;
+      color: color($gray, 600);
+      font-weight: 400;
     }
 
     & > .expand {
