@@ -4,23 +4,14 @@
     "buildResources": "public"
   },
   "win": {
-    "extraResources": [
-      "node_modules/ffmpeg-static/bin/win32/**/*",
-      "node_modules/ffprobe-static/bin/win32/**/*"
-    ]
+    "extraResources": ["node_modules/*/bin/win32/**/*"]
   },
   "linux": {
     "category": "Video",
-    "extraResources": [
-      "node_modules/ffmpeg-static/bin/linux/**/*",
-      "node_modules/ffprobe-static/bin/linux/**/*"
-    ]
+    "extraResources": ["node_modules/*/bin/linux/**/*"]
   },
   "mac": {
     "category": "public.app-category.entertainment",
-    "extraResources": [
-      "node_modules/ffmpeg-static/bin/darwin/**/*",
-      "node_modules/ffprobe-static/bin/darwin/**/*"
-    ]
+    "extraResources": ["node_modules/*/bin/darwin/**/*"]
   }
 }
