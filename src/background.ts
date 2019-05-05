@@ -2,9 +2,9 @@ import {
   app,
   BrowserWindow,
   ipcMain,
-  protocol,
   Menu,
   MenuItemConstructorOptions,
+  protocol,
 } from 'electron'
 import electronDebug, { openDevTools } from 'electron-debug'
 import Store from 'electron-store'
@@ -20,6 +20,7 @@ import {
 import { destroyDiscord, registerDiscord } from './lib/discord'
 import { OPEN_DEVTOOLS } from './messages'
 import { initAutoUpdater } from './updater'
+import { fileServer } from './processes/file-server'
 import { version } from '../package.json'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -37,7 +38,7 @@ init({
 })
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
-let mainWindow: any
+let mainWindow: BrowserWindow | null = null
 
 // Standard scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -52,7 +53,7 @@ protocol.registerSchemesAsPrivileged([
 // Register extra stuff
 electronDebug({})
 
-function createMainWindow() {
+const createMainWindow = () => {
   const settingsStore = new Store<any>({ name: 'settings' })
 
   const position = settingsStore.get('window', {})
@@ -162,7 +163,7 @@ function createMainWindow() {
   })
 
   window.on('close', () => {
-    settingsStore.set('window', mainWindow.getBounds())
+    settingsStore.set('window', mainWindow!.getBounds())
   })
 
   window.on('closed', () => {
@@ -177,6 +178,13 @@ function createMainWindow() {
   })
 
   return window
+}
+
+const createFileServer = () => {
+  fileServer.listen(8888, () => {
+    // eslint-disable-next-line
+    console.log('listening on 8888')
+  })
 }
 
 app.commandLine.appendSwitch('force-color-profile', 'srgb')
@@ -195,7 +203,7 @@ app.on('activate', () => {
   // on macOS it is common to re-create a window even after all windows have been closed
   if (mainWindow === null) {
     mainWindow = createMainWindow()
-    mainWindow.once('did-finish-load', () => mainWindow.show)
+    mainWindow.once('did-finish-load' as any, () => mainWindow!.show)
   }
 })
 
@@ -209,5 +217,7 @@ app.on('ready', async () => {
   }
 
   mainWindow = createMainWindow()
-  mainWindow.once('did-finish-load', () => mainWindow.show)
+  // @ts-ignore
+  fileServer = createFileServer()
+  mainWindow.once('did-finish-load' as any, () => mainWindow!.show)
 })
