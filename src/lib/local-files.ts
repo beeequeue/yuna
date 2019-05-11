@@ -91,18 +91,21 @@ export class LocalFiles {
         const id = this.generateId(filePath)
         const episodeNumber = Number(item.episode_number)
         const thumbnailName = `${anilistId}-${episodeNumber}`
+        const thumbnailPath = join(this.thumbnailFolder, `${thumbnailName}.png`)
 
         const command = ffmpeg(filePath)
 
         const probeData = await this.probeFile(command)
 
-        await this.generateScreenshot(command, thumbnailName)
+        if (!existsSync(thumbnailPath)) {
+          await this.generateScreenshot(command, thumbnailName)
+        }
 
         return {
           id,
           filePath,
           title: item.episode_title || `Episode ${episodeNumber}`,
-          thumbnail: join(this.thumbnailFolder, `${thumbnailName}.png`),
+          thumbnail: thumbnailPath,
           episodeNumber,
           duration: Math.round(probeData.format.duration),
           format: item.file_extension!,
