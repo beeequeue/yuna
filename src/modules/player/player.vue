@@ -160,7 +160,7 @@ export default class Player extends Vue {
   )
   public speed: number = this.getNumberFromLocalStorage(
     LocalStorageKey.SPEED,
-    70,
+    1,
   )
   public quality: string =
     localStorage.getItem(QUALITY_LOCALSTORAGE_KEY) || '1080'
