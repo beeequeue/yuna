@@ -166,12 +166,9 @@
         <label v-if="levels != null">
           Quality:
           <select @input="handleChangeQuality" :value="quality">
-            <option
-              v-for="(level, quality) in levels"
-              :key="level"
-              :value="level"
-              >{{ quality }}p</option
-            >
+            <option v-for="(_, q) in levels" :key="q" :value="q">
+              {{ q }}p
+            </option>
           </select>
         </label>
 
@@ -252,8 +249,8 @@ export default class Controls extends Vue {
   @Required(Number) public progressPercentage!: number
   @Required(Number) public loadedPercentage!: number
   @Required(Number) public speed!: number
-  @Required(Number) public quality!: number
-  @Required(Object) public levels!: Levels
+  @Required(String) public quality!: string
+  @Prop(Object) public levels!: Levels | null
   @Required(Function) public play!: () => void
   @Required(Function) public pause!: () => void
   @Required(Function) public onSetTime!: (e: Event) => void
@@ -335,8 +332,7 @@ export default class Controls extends Vue {
 
   public handleChangeQuality(e: Event) {
     const element = e.target as HTMLSelectElement
-    const qualities = Object.keys(this.levels!)
-    this.onChangeQuality(qualities[Number(element.value)])
+    this.onChangeQuality(element.value)
   }
 
   public goVisible() {

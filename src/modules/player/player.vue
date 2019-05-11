@@ -34,7 +34,7 @@
     </transition>
 
     <controls
-      v-if="anime && episode && levels"
+      v-if="anime && episode"
       :episode="episode"
       :nextEpisode="nextEpisode"
       :anime="anime"
@@ -48,7 +48,7 @@
       :progressInSeconds="progressInSeconds"
       :loadedPercentage="loadedPercentage"
       :speed="speed"
-      :quality="levels[quality]"
+      :quality="quality"
       :levels="levels"
       :onSetTime="onSetTime"
       :onSetVolume="onSetVolume"
@@ -126,9 +126,6 @@ enum LocalStorageKey {
   SPEED = 'speed',
 }
 
-const QUALITY_LOCALSTORAGE_KEY = 'quality_v2'
-localStorage.removeItem('quality')
-
 @Component({
   components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
 })
@@ -163,7 +160,7 @@ export default class Player extends Vue {
     1,
   )
   public quality: string =
-    localStorage.getItem(QUALITY_LOCALSTORAGE_KEY) || '1080'
+    localStorage.getItem(LocalStorageKey.QUALITY) || '1080'
   public progressPercentage = 0
   public progressInSeconds = 0
   public playhead = 0
@@ -363,7 +360,7 @@ export default class Player extends Vue {
       if (this.levels[this.quality] == null) {
         const newQuality = lastItem(Object.keys(this.levels)) as string
 
-        localStorage.setItem(QUALITY_LOCALSTORAGE_KEY, newQuality)
+        localStorage.setItem(LocalStorageKey.QUALITY, newQuality)
         this.quality = newQuality
       }
 
@@ -479,7 +476,7 @@ export default class Player extends Vue {
     const value = clamp(+Number(element.value).toFixed(2), 0, 200)
 
     this.volume = value
-    localStorage.setItem('volume', value.toString())
+    localStorage.setItem(LocalStorageKey.VOLUME, value.toString())
 
     this.gainNode.gain.value = value / 100
   }
@@ -487,7 +484,7 @@ export default class Player extends Vue {
   public onToggleMute() {
     this.muted = !this.muted
 
-    localStorage.setItem('muted', this.muted.toString())
+    localStorage.setItem(LocalStorageKey.MUTED, this.muted.toString())
   }
 
   public onChangeSpeed(e: Event) {
@@ -500,7 +497,7 @@ export default class Player extends Vue {
   public onChangeQuality(quality: string) {
     this.quality = quality
     this.hls.currentLevel = this.levels![quality]
-    localStorage.setItem(QUALITY_LOCALSTORAGE_KEY, quality)
+    localStorage.setItem(LocalStorageKey.QUALITY, quality)
   }
 
   public onKeyDown(e: KeyboardEvent) {
