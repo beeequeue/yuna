@@ -636,6 +636,12 @@ export default class Player extends Vue {
       }
     }
 
+    // Makes sure subtitles aren't too far down on the screen
+    //noinspection CssInvalidPseudoSelector
+    &::-webkit-media-text-track-container {
+      padding: 5px 0;
+    }
+
     &.ended {
       filter: blur(10px);
     }
