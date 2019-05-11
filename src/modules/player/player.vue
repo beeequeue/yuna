@@ -321,6 +321,7 @@ export default class Player extends Vue {
     this.paused = true
     this.loadingVideo = true
     this.loaded = false
+    this.levels = null
 
     const oldHls = this.hls
 
