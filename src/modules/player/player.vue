@@ -111,13 +111,20 @@ import { getAnilistUsername } from '@/state/auth'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
 import { DISCORD_PAUSE_WATCHING, DISCORD_SET_WATCHING } from '@/messages'
 import { Levels, Stream } from '@/types'
-import { capitalize, clamp, getRelations, lastItem } from '@/utils'
+import { capitalize, clamp, getRelations, isNil, lastItem } from '@/utils'
 
 import Icon from '@/common/components/icon.vue'
 import Controls from './controls.vue'
 import NextEpisodeOverlay from './next-episode-overlay.vue'
 import EndOfSeasonOverlay from './end-of-season-overlay.vue'
 import { Hidive, HidiveResponseCode } from '@/lib/hidive'
+
+enum LocalStorageKey {
+  QUALITY = 'quality_v2',
+  VOLUME = 'volume',
+  MUTED = 'muted',
+  SPEED = 'speed',
+}
 
 const QUALITY_LOCALSTORAGE_KEY = 'quality_v2'
 localStorage.removeItem('quality')
@@ -146,9 +153,15 @@ export default class Player extends Vue {
   public loaded = false
   public loadingVideo = false
   public paused = true
-  public muted = localStorage.getItem('muted') === 'true'
-  public volume = Number(localStorage.getItem('volume') || 70)
-  public speed = Number(localStorage.getItem('speed') || 1)
+  public muted: boolean = localStorage.getItem(LocalStorageKey.MUTED) === 'true'
+  public volume: number = this.getNumberFromLocalStorage(
+    LocalStorageKey.VOLUME,
+    70,
+  )
+  public speed: number = this.getNumberFromLocalStorage(
+    LocalStorageKey.SPEED,
+    70,
+  )
   public quality: string =
     localStorage.getItem(QUALITY_LOCALSTORAGE_KEY) || '1080'
   public progressPercentage = 0
@@ -312,12 +325,20 @@ export default class Player extends Vue {
     this.loadingVideo = true
     this.loaded = false
 
+    const oldHls = this.hls
+
     const hls = new Hls()
 
-    hls.loadSource(this.streamUrl)
-    hls.attachMedia(this.$refs.player)
+    if (this.episode.provider !== Provider.Local) {
+      hls.loadSource(this.streamUrl)
+      hls.attachMedia(this.$refs.player)
+    } else {
+      this.$refs.player.src = this.streamUrl
+    }
 
     this.hls = hls
+
+    oldHls && oldHls.destroy()
 
     this.registerEvents()
   }
@@ -561,6 +582,18 @@ export default class Player extends Vue {
         username: this.username,
       },
     )
+  }
+
+  private getNumberFromLocalStorage(key: LocalStorageKey, def: number) {
+    const storedValue = localStorage.getItem(key)
+    const numberValue = Number(storedValue)
+
+    if (isNil(storedValue) || isNaN(numberValue)) {
+      localStorage.setItem(key, def.toString())
+      return def
+    }
+
+    return numberValue
   }
 }
 </script>

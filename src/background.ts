@@ -20,7 +20,6 @@ import {
 import { destroyDiscord, registerDiscord } from './lib/discord'
 import { OPEN_DEVTOOLS } from './messages'
 import { initAutoUpdater } from './updater'
-import { fileServer } from './processes/file-server'
 import { version } from '../package.json'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -180,13 +179,6 @@ const createMainWindow = () => {
   return window
 }
 
-const createFileServer = () => {
-  fileServer.listen(8888, () => {
-    // eslint-disable-next-line
-    console.log('listening on 8888')
-  })
-}
-
 app.commandLine.appendSwitch('force-color-profile', 'srgb')
 
 // quit application when all windows are closed
@@ -217,7 +209,5 @@ app.on('ready', async () => {
   }
 
   mainWindow = createMainWindow()
-  // @ts-ignore
-  fileServer = createFileServer()
   mainWindow.once('did-finish-load' as any, () => mainWindow!.show)
 })
