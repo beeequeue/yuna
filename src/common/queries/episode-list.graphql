@@ -9,6 +9,7 @@ query EpisodeList($id: Int!, $provider: Provider!) {
     index
     episodeNumber
     url
+    subtitles
     thumbnail
     isWatched
   }

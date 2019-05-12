@@ -64,6 +64,8 @@ export interface EpisodeInput {
   
   url: string;
   
+  subtitles: Maybe<string[]>;
+  
   isWatched: boolean;
 }
 
@@ -691,6 +693,8 @@ export type FuzzyDateInt = any;
     episodeNumber: number;
     
     url: string;
+    
+    subtitles: Maybe<string[]>;
     
     thumbnail: string;
     
