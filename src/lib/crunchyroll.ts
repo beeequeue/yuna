@@ -682,12 +682,13 @@ const mediaToEpisode = (id: number) => (
   id: media_id,
   animeId: id,
   title: name,
+  progress: playhead || null,
   index,
   episodeNumber: episode_number as any,
   duration,
-  progress: playhead || null,
-  thumbnail: screenshot_image.full_url,
   url,
+  subtitles: null,
+  thumbnail: screenshot_image.full_url,
 })
 
 const notNumberRegex = /[^\d.]/g

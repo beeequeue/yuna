@@ -8,7 +8,12 @@
       </div>
 
       <animated-height>
-        <loading v-if="creatingEpisodes" :size="50" />
+        <div v-if="creatingEpisodes">
+          <loading :size="50" />
+          <div class="anime-container">
+            Extracting thumbnails and subtitles...
+          </div>
+        </div>
         <div v-else class="anime-container">
           <div
             v-for="local in localAnime"
@@ -41,7 +46,12 @@ import {
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
-import { getLocalSourceOptions, ModalName, toggleModal } from '@/state/app'
+import {
+  getLocalSourceOptions,
+  ModalName,
+  sendToast,
+  toggleModal,
+} from '@/state/app'
 import { LocalAnime, LocalFiles } from '@/lib/local-files'
 import { isNil } from '@/utils'
 import AnimatedHeight from '@/common/components/animated-height.vue'
@@ -130,21 +140,40 @@ export default class LocalSourceModal extends Vue {
   public async select(localAnime: LocalAnime) {
     this.creatingEpisodes = true
 
-    const files = await LocalFiles.getLocalAnimeFiles(this.animeId!, localAnime)
+    let files
+
+    try {
+      files = await LocalFiles.getLocalAnimeFiles(this.animeId!, localAnime)
+    } catch (err) {
+      toggleModal(this.$store, this.modalName)
+      setTimeout(() => {
+        this.creatingEpisodes = false
+      }, 750)
+
+      const [title, message] = err.message.split('|')
+      return sendToast(this.$store, {
+        type: 'error',
+        title,
+        message,
+        timeout: 10000,
+      })
+    }
+
     const progress = oc(this.anime).mediaListEntry.progress(0)
 
     const episodes = files.map<EpisodeListEpisodes>(file => ({
       __typename: 'Episode',
+      provider: Provider.Local,
       id: file.id,
       animeId: this.animeId!,
-      episodeNumber: file.episodeNumber,
-      provider: Provider.Local,
       title: file.title,
+      duration: file.duration,
+      progress: 0,
+      index: file.episodeNumber - 1,
+      episodeNumber: file.episodeNumber,
       thumbnail: file.thumbnail,
       url: file.filePath,
-      progress: 0,
-      duration: file.duration,
-      index: file.episodeNumber - 1,
+      subtitles: file.subtitleFiles,
       isWatched: progress >= file.episodeNumber,
     }))
 
