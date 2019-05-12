@@ -298,7 +298,13 @@ export class LocalFiles {
         return path.resolve(this.subtitleFolder, `${filename}-${title}.vtt`)
       })
 
-      if (filePaths.every(path => existsSync(path))) {
+      const allFilesAreValid = filePaths.every(path => {
+        if (!existsSync(path)) return false
+
+        return statSync(path).size > 7
+      })
+
+      if (allFilesAreValid) {
         return resolve(filePaths)
       }
 
@@ -317,14 +323,12 @@ export class LocalFiles {
       const onError = (err: Error | string) => {
         reject(err)
       }
-
       const process = spawn(FFMPEG_PATH, args)
 
-      process
-        .on('close', () => {
-          resolve(filePaths)
-        })
-        .stderr.on('error', onError)
+      process.on('close', () => {
+        resolve(filePaths)
+      })
+      process.stderr.on('error', onError)
     })
   }
 }
