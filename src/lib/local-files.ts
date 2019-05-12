@@ -298,6 +298,10 @@ export class LocalFiles {
         return path.resolve(this.subtitleFolder, `${filename}-${title}.vtt`)
       })
 
+      if (filePaths.every(path => existsSync(path))) {
+        return resolve(filePaths)
+      }
+
       const mappingArgs = subtitleStreams
         .map((_, i) => ['-map', `0:s:${i}`, filePaths[i]])
         .flat()
