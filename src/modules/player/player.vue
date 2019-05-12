@@ -15,7 +15,7 @@
         ref="player"
         :class="{ ended }"
       >
-        <track v-if="subtitleUrl" :src="subtitleUrl" default />
+        <track v-if="subtitlesUrl" :src="subtitlesUrl" default />
       </video>
     </transition>
 
@@ -50,11 +50,14 @@
       :speed="speed"
       :quality="quality"
       :levels="levels"
+      :subtitles="subtitles"
+      :subtitlesIndex="selectedSubtitles"
       :onSetTime="onSetTime"
       :onSetVolume="onSetVolume"
       :onToggleMute="onToggleMute"
       :onChangeSpeed="onChangeSpeed"
       :onChangeQuality="onChangeQuality"
+      :onChangeSubtitles="onChangeSubtitles"
       :play="play"
       :pause="pause"
       :setProgress="setProgress"
@@ -124,6 +127,7 @@ enum LocalStorageKey {
   VOLUME = 'volume',
   MUTED = 'muted',
   SPEED = 'speed',
+  SUBTITLE = 'subtitle',
 }
 
 @Component({
@@ -140,7 +144,6 @@ export default class Player extends Vue {
   @Required(Function) public setProgress!: (p: number) => any
 
   public streamUrl: string | null = null
-  public subtitleUrl: string | null = null
   public levels: Levels | null = null
 
   public initiated = !!this.shouldAutoPlay
@@ -166,6 +169,27 @@ export default class Player extends Vue {
   public playhead = 0
   public loadedSeconds = 0
   public loadedPercentage = 0
+
+  // Subtitles
+  public get subtitles() {
+    const subtitles = oc(this.episode).subtitles([])
+
+    if (subtitles.length > 0) {
+      subtitles.push('None')
+    }
+
+    return subtitles
+  }
+  public get subtitlesUrl() {
+    return oc(this.episode).subtitles[this.selectedSubtitles]() || null
+  }
+  public selectedSubtitles = this.getNumberFromLocalStorage(
+    LocalStorageKey.SUBTITLE,
+    0,
+  )
+  public onChangeSubtitles(index: number) {
+    this.selectedSubtitles = index
+  }
 
   private lastScrobble = 0
   private lastHeartbeat = 0
@@ -304,7 +328,6 @@ export default class Player extends Vue {
       }
 
       this.streamUrl = stream.url
-      this.subtitleUrl = stream.subtitles
 
       this.playhead = stream.progress || 0
     } catch (e) {
