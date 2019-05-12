@@ -3,12 +3,6 @@
   "directories": {
     "buildResources": "public"
   },
-  "extraResources": [
-    {
-      "from": "src/processes/file-server.js",
-      "to": "./processes/file-server.js"
-    }
-  ],
   "win": {
     "extraResources": ["node_modules/*/bin/win32/**/*"]
   },
