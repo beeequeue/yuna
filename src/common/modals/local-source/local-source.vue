@@ -10,8 +10,12 @@
       <animated-height>
         <div v-if="creatingEpisodes">
           <loading :size="50" />
-          <div class="anime-container">
+          <div class="creating-info">
             Extracting thumbnails and subtitles...
+          </div>
+          <div class="creating-info">
+            This will take a while, you can close this modal.<br />
+            You will get a notification when it's done!
           </div>
         </div>
         <div v-else class="anime-container">
@@ -154,7 +158,7 @@ export default class LocalSourceModal extends Vue {
       return sendToast(this.$store, {
         type: 'error',
         title,
-        message,
+        message: message || '😢',
         timeout: 10000,
       })
     }
@@ -184,6 +188,20 @@ export default class LocalSourceModal extends Vue {
     }, 500)
 
     toggleModal(this.$store, this.modalName)
+
+    const notification = {
+      title: 'Finished extracting!',
+      message: `${localAnime.title} is ready for watching!`,
+    }
+
+    sendToast(this.$store, {
+      type: 'success',
+      title: notification.title,
+      message: notification.message,
+      timeout: 10_000,
+    })
+
+    new Notification(notification.title, { body: notification.message })
   }
 }
 </script>
@@ -220,6 +238,14 @@ export default class LocalSourceModal extends Vue {
   & .loader {
     margin-top: 10px;
     margin-bottom: 10px;
+  }
+
+  & .creating-info {
+    margin-bottom: 10px;
+
+    &:last-child {
+      padding-bottom: 15px;
+    }
   }
 
   & .anime-container {
