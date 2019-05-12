@@ -4,6 +4,8 @@ import ffmpeg from 'fluent-ffmpeg'
 import { existsSync, mkdirSync, readdirSync, statSync } from 'fs'
 import path from 'path'
 import crypto from 'crypto'
+import { cpus } from 'os'
+import Bottleneck from 'bottleneck'
 import { oc } from 'ts-optchain'
 
 import { SettingsStore } from '@/state/settings'
@@ -44,6 +46,12 @@ const AUDIO_CODECS = [
   'pcm_s16le',
   'pcm_f32le',
 ]
+const SUBTITLE_CODECS = ['srt', 'ass', 'vtt']
+const CPUS = cpus().length
+
+const spawnLimiter = new Bottleneck({
+  maxConcurrent: 4,
+})
 
 const isDirectory = (path: string) => {
   if (!existsSync(path)) return false
@@ -57,12 +65,13 @@ const isPlayableFile = (path: string) =>
   path.match(new RegExp(`\.${ACCEPTED_EXTENSIONS.join('|')}$`))
 
 const getSubtitleStreams = (data: ffmpeg.FfprobeData) => {
-  const subtitleStreams = data.streams.filter(
-    stream => stream.codec_type === 'subtitle',
-  )
+  const subtitleStreams = data.streams
+    .filter(stream => stream.codec_type === 'subtitle')
+    .filter(stream => SUBTITLE_CODECS.includes(stream.codec_name))
 
   return subtitleStreams.map(stream => ({
     index: stream.index as number,
+    codec: stream.codec_name as string,
     title: oc(stream).tags.title('UNKNOWN_TITLE') as string,
     language: oc(stream).tags.language('UNKNOWN_LANGUAGE') as string,
   }))
@@ -315,20 +324,29 @@ export class LocalFiles {
       const args = [
         '-hide_banner',
         '-y',
+        '-threads',
+        Math.max(1, Math.round(CPUS / 4)).toString(),
         '-i',
-        `${path.resolve(filePath)}`,
+        path.resolve(filePath),
         ...mappingArgs,
       ]
 
-      const onError = (err: Error | string) => {
-        reject(err)
-      }
-      const process = spawn(FFMPEG_PATH, args)
+      spawnLimiter.submit(
+        cb => {
+          const onError = (err: Error | string) => {
+            cb(err)
+          }
+          const process = spawn(FFMPEG_PATH, args)
 
-      process.on('close', () => {
-        resolve(filePaths)
-      })
-      process.stderr.on('error', onError)
+          process.on('close', () => cb(null))
+          process.stderr.on('error', onError)
+        },
+        (err: Error | undefined, _: void) => {
+          if (err) return reject(err)
+
+          resolve(filePaths)
+        },
+      )
     })
   }
 }
