@@ -221,7 +221,7 @@ export default class LocalSourceModal extends Vue {
 
   & > .header {
     padding: 15px 35px;
-    border-bottom: 2px solid color($dark, 200);
+    border-bottom: 2px solid color($dark, 600);
 
     & > .title {
       margin: 15px 0 0;
@@ -242,6 +242,7 @@ export default class LocalSourceModal extends Vue {
 
   & .creating-info {
     margin-bottom: 10px;
+    padding: 0 15px;
 
     &:last-child {
       padding-bottom: 15px;
