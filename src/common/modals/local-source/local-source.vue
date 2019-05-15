@@ -14,7 +14,8 @@
             Extracting thumbnails and subtitles...
           </div>
           <div class="creating-info">
-            This will take a while, you can close this modal.<br />
+            This will take a while.<br />
+            You can close this modal, but not Yuna.<br />
             You will get a notification when it's done!
           </div>
         </div>
