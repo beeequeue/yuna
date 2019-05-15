@@ -45,7 +45,6 @@
 
 <script lang="ts">
 import { ipcRenderer } from 'electron'
-import { api } from 'electron-util'
 import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 import gql from 'graphql-tag'
