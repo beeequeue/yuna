@@ -6,7 +6,6 @@ const config = {
     ANIDB_CLIENTVER: '2',
     ANILIST_ID: '913',
     DISCORD_ID: '527978676525072386',
-    GA_ID: '527978676525072386',
   },
   production: {
     ANILIST_ID: '1410',
