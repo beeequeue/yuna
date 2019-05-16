@@ -112,7 +112,11 @@ export class Simkl {
       )
     }
 
-    return oc(fullResponse).body.ids.anidb()
+    const id = oc(fullResponse).body.ids.anidb()
+
+    if (isNil(id)) return null
+
+    return Number(id)
   }
 
   private static async getRequest<

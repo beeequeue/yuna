@@ -61,19 +61,15 @@ const fetchEpisodesFromCrunchyroll = async (
   // Try to get AniDB ID, and episodes from there
   if (!episodesExist(unconfirmedEpisodes) && idMal) {
     try {
-      const anidbId = await Simkl.getAnidbID(idMal)
+      let anidbId = await Simkl.getAnidbID(idMal)
+
+      if (isNil(anidbId)) {
+        anidbId = await AniDB.getIdFromAnilistId(id)
+      }
 
       if (!isNil(anidbId)) {
         unconfirmedEpisodes = await AniDB.getEpisodesFromId(id, Number(anidbId))
       }
-    } catch (err) {
-      throw new Error(err)
-    }
-  }
-
-  if (!episodesExist(unconfirmedEpisodes)) {
-    try {
-      unconfirmedEpisodes = await AniDB.getEpisodesOfAnilistId(id)
     } catch (err) {
       throw new Error(err)
     }

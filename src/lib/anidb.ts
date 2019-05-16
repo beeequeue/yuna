@@ -70,7 +70,7 @@ const isXMLError = async (response: RequestResponse): Promise<boolean> => {
 
   const xmlBody = await parseString(response.text, {})
 
-  return oc(xmlBody).error() != null
+  return !isNil(oc(xmlBody).error())
 }
 
 const getIdentifier = (ep: XmlEpisode) => {
@@ -90,7 +90,7 @@ const getIdentifier = (ep: XmlEpisode) => {
 
 const limiter = new Bottleneck({
   maxConcurrent: 1,
-  minTime: 2250,
+  minTime: 2750,
 })
 
 const query = {
@@ -100,26 +100,25 @@ const query = {
 }
 
 export class AniDB {
-  public static async getEpisodesOfAnilistId(id: number) {
-    let anidbId
-
-    try {
-      anidbId = await AniDB.getId(id)
-    } catch (e) {
-      anidbId = null
-    }
-
-    if (isNil(anidbId)) return null
-
-    return this.getEpisodesFromId(id, anidbId)
-  }
-
   public static async getEpisodesFromId(anilistId: number, anidbId: number) {
     const mediaId = await AniDB.getFirstEpisodeCrunchyrollId(anidbId)
 
     if (isNil(mediaId)) return null
 
     return Crunchyroll.fetchSeasonFromEpisode(anilistId, mediaId.toString())
+  }
+
+  public static async getIdFromAnilistId(id: number) {
+    const response = (await superagent
+      .get('https://relations.yuna.moe/api/ids')
+      .query({ source: 'anilist', id })
+      .ok(T)) as RequestResponse<Relation, RelationError>
+
+    if (responseIsError(response)) {
+      return null
+    }
+
+    return response.body.anidb
   }
 
   private static async getFirstEpisodeCrunchyrollId(anidbId: number) {
@@ -142,11 +141,11 @@ export class AniDB {
       request(),
     )) as RequestResponse
 
-    if (isXMLError(response)) {
+    if (await isXMLError(response)) {
       return null
     }
 
-    const data: any = await parseString(response.text, {
+    const data = await parseString(response.text, {
       normalize: true,
       explicitRoot: false,
       explicitArray: false,
@@ -172,18 +171,5 @@ export class AniDB {
     if (isNil(firstEpisode)) return null
 
     return getIdentifier(firstEpisode)
-  }
-
-  private static async getId(id: number) {
-    const response = (await superagent
-      .get('https://relations.yuna.moe/api/ids')
-      .query({ source: 'anilist', id })
-      .ok(T)) as RequestResponse<Relation, RelationError>
-
-    if (responseIsError(response)) {
-      return null
-    }
-
-    return response.body.anidb
   }
 }
