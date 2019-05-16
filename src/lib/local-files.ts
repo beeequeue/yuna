@@ -1,17 +1,13 @@
 import { api } from 'electron-util'
 import { parse } from 'anitomyscript'
 import ffmpeg from 'fluent-ffmpeg'
-import { existsSync, mkdirSync, readdirSync, statSync } from 'fs'
+import { existsSync, readdirSync, statSync } from 'fs'
 import path from 'path'
 import crypto from 'crypto'
-import { cpus } from 'os'
-import Bottleneck from 'bottleneck'
-import { oc } from 'ts-optchain'
 
 import { SettingsStore } from '@/state/settings'
 import { isNil } from '@/utils'
 import { FFMPEG_PATH, FFPROBE_PATH } from '@/utils/paths'
-import { spawn } from 'child_process'
 
 export interface LocalAnime {
   title: string
@@ -22,7 +18,6 @@ export interface LocalAnime {
 interface LocalAnimeFile {
   id: string
   filePath: string
-  subtitleFiles: string[] | null
   title: string
   thumbnail: string
   episodeNumber: number
@@ -34,24 +29,6 @@ ffmpeg.setFfmpegPath(FFMPEG_PATH)
 ffmpeg.setFfprobePath(FFPROBE_PATH)
 
 const ACCEPTED_EXTENSIONS = ['mp4', 'mkv', 'av1']
-const VIDEO_CODECS = ['h264', 'vp8', 'vp9', 'theora', 'av1']
-const AUDIO_CODECS = [
-  'mp3',
-  'flac',
-  'ogg',
-  'opus',
-  'vorbis',
-  'aac',
-  'pcm_s8',
-  'pcm_s16le',
-  'pcm_f32le',
-]
-const SUBTITLE_CODECS = ['srt', 'ass', 'vtt']
-const CPUS = cpus().length
-
-const spawnLimiter = new Bottleneck({
-  maxConcurrent: 4,
-})
 
 const isDirectory = (path: string) => {
   if (!existsSync(path)) return false
@@ -63,19 +40,6 @@ const isPlayableFile = (path: string) =>
   !isDirectory(path) &&
   // eslint-disable-next-line no-useless-escape
   path.match(new RegExp(`\.${ACCEPTED_EXTENSIONS.join('|')}$`))
-
-const getSubtitleStreams = (data: ffmpeg.FfprobeData) => {
-  const subtitleStreams = data.streams
-    .filter(stream => stream.codec_type === 'subtitle')
-    .filter(stream => SUBTITLE_CODECS.includes(stream.codec_name))
-
-  return subtitleStreams.map(stream => ({
-    index: stream.index as number,
-    codec: stream.codec_name as string,
-    title: oc(stream).tags.title('UNKNOWN_TITLE') as string,
-    language: oc(stream).tags.language('UNKNOWN_LANGUAGE') as string,
-  }))
-}
 
 const removeDuplicates = (array: LocalAnime[]) => {
   const newArray: LocalAnime[] = []
@@ -99,11 +63,6 @@ export class LocalFiles {
   public static readonly thumbnailFolder = path.resolve(
     api.app.getPath('userData'),
     'thumbnails',
-  )
-
-  public static readonly subtitleFolder = path.resolve(
-    api.app.getPath('userData'),
-    'subtitles',
   )
 
   private static get folderPath() {
@@ -137,41 +96,14 @@ export class LocalFiles {
 
         const probeData = await this.probeFile(command)
 
-        const videoStream = probeData.streams.find(
-          stream => stream.codec_type === 'video',
-        )
-        const videoCodec = oc(videoStream).codec_name('UNKNOWN_CODEC')
-        if (!VIDEO_CODECS.includes(videoCodec)) {
-          throw new Error(
-            "The files' video codecs are not supported.|I will try to add solutions for this in the future.",
-          )
-        }
-
-        const audioStream = probeData.streams.find(
-          stream => stream.codec_type === 'audio',
-        )
-        const audioCodec = oc(audioStream).codec_name('UNKNOWN_CODEC')
-        if (!AUDIO_CODECS.includes(audioCodec)) {
-          throw new Error(
-            "The files' audio codecs are not supported.|I will try to add solutions for this in the future.",
-          )
-        }
-
         const thumbnailPath = path.join(this.thumbnailFolder, `${filename}.png`)
         if (!existsSync(thumbnailPath)) {
           await this.generateScreenshot(command, filename)
         }
 
-        const subtitleFiles = await this.extractSubtitles(
-          filePath,
-          probeData,
-          filename,
-        )
-
         return {
           id,
           filePath,
-          subtitleFiles,
           title: item.episode_title || `Episode ${episodeNumber}`,
           thumbnail: thumbnailPath,
           episodeNumber,
@@ -267,86 +199,6 @@ export class LocalFiles {
         })
         .on('end', resolve)
         .on('error', reject)
-    })
-  }
-
-  private static __subtitleDirExists = false
-
-  private static ensureSubtitleDirectoryExists() {
-    if (this.__subtitleDirExists) return true
-
-    const exists = existsSync(this.subtitleFolder)
-
-    this.__subtitleDirExists = true
-
-    if (exists) return true
-
-    mkdirSync(this.subtitleFolder)
-    this.__subtitleDirExists = true
-
-    return true
-  }
-
-  private static extractSubtitles(
-    filePath: string,
-    probeData: ffmpeg.FfprobeData,
-    filename: string,
-  ) {
-    return new Promise<string[]>((resolve, reject) => {
-      this.ensureSubtitleDirectoryExists()
-
-      const subtitleStreams = getSubtitleStreams(probeData)
-
-      if (subtitleStreams.length < 1) {
-        return resolve([])
-      }
-
-      const filePaths = subtitleStreams.map(stream => {
-        const title = stream.title.replace(/ /g, '_').replace(/[\\/]/g, '-')
-
-        return path.resolve(this.subtitleFolder, `${filename}-${title}.vtt`)
-      })
-
-      const allFilesAreValid = filePaths.every(path => {
-        if (!existsSync(path)) return false
-
-        return statSync(path).size > 7
-      })
-
-      if (allFilesAreValid) {
-        return resolve(filePaths)
-      }
-
-      const mappingArgs = subtitleStreams
-        .map((_, i) => ['-map', `0:s:${i}`, filePaths[i]])
-        .flat()
-
-      const args = [
-        '-hide_banner',
-        '-y',
-        '-threads',
-        Math.max(1, Math.round(CPUS / 4)).toString(),
-        '-i',
-        path.resolve(filePath),
-        ...mappingArgs,
-      ]
-
-      spawnLimiter.submit(
-        cb => {
-          const onError = (err: Error | string) => {
-            cb(err)
-          }
-          const process = spawn(FFMPEG_PATH, args)
-
-          process.on('close', () => cb(null))
-          process.stderr.on('error', onError)
-        },
-        (err: Error | undefined, _: void) => {
-          if (err) return reject(err)
-
-          resolve(filePaths)
-        },
-      )
     })
   }
 }
