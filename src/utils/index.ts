@@ -40,7 +40,7 @@ export interface RequestSuccess<B extends object> extends Response {
   body: B
 }
 
-export interface RequestError<B extends object> extends Response {
+export interface RequestError<B extends object | null> extends Response {
   status: 200 | 400 | 401 | 404 | 500 | 502 | 429
   ok: false
   body: B

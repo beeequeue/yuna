@@ -6,6 +6,8 @@ const config = {
     ANIDB_CLIENTVER: '2',
     ANILIST_ID: '913',
     DISCORD_ID: '527978676525072386',
+    SIMKL_ID:
+      'a47e17953193ad39a3a3c1a6c0b60967de10694476c9d9d277fa51c81f3a5849',
   },
   production: {
     ANILIST_ID: '1410',

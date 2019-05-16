@@ -7,6 +7,7 @@ import { getEpisodeRelations } from '@/lib/relations'
 import { EpisodeCache } from '@/lib/episode-cache'
 import { AniDB } from '@/lib/anidb'
 import { Hidive } from '@/lib/hidive'
+import { Simkl } from '@/lib/simkl'
 import { isNil, propEq } from '@/utils'
 import {
   cacheRelations,
@@ -48,6 +49,7 @@ const fetchEpisodesFromCrunchyroll = async (
   const idMal = getCachedAnimeIdMal(cache, id)
   let unconfirmedEpisodes
 
+  // Try MAL's episode listings
   if (!isNil(idMal)) {
     try {
       unconfirmedEpisodes = await fetchEpisodesOfSeries(id, idMal)
@@ -56,9 +58,18 @@ const fetchEpisodesFromCrunchyroll = async (
     }
   }
 
-  if (!episodesExist(unconfirmedEpisodes)) {
+  // Try to get AniDB ID, and episodes from there
+  if (!episodesExist(unconfirmedEpisodes) && idMal) {
     try {
-      unconfirmedEpisodes = await AniDB.getEpisodesForAnime(id)
+      let anidbId = await Simkl.getAnidbID(idMal)
+
+      if (isNil(anidbId)) {
+        anidbId = await AniDB.getIdFromAnilistId(id)
+      }
+
+      if (!isNil(anidbId)) {
+        unconfirmedEpisodes = await AniDB.getEpisodesFromId(id, Number(anidbId))
+      }
     } catch (err) {
       throw new Error(err)
     }
