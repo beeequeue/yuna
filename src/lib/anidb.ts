@@ -1,12 +1,12 @@
 import superagent from 'superagent/dist/superagent'
 import Bottleneck from 'bottleneck'
 import { OptionsV2, parseString as _parseString } from 'xml2js'
+import { parseBooleans, parseNumbers, stripPrefix } from 'xml2js/lib/processors'
 import { oc } from 'ts-optchain'
 
 import { getConfig } from '@/config'
-import { delay, isNil, RequestResponse, responseIsError, T } from '@/utils'
-import { parseBooleans, parseNumbers, stripPrefix } from 'xml2js/lib/processors'
 import { Crunchyroll } from '@/lib/crunchyroll'
+import { delay, isNil, RequestResponse, responseIsError, T } from '@/utils'
 
 interface XmlTitle {
   _: string
@@ -100,7 +100,7 @@ const query = {
 }
 
 export class AniDB {
-  public static async getEpisodesForAnime(id: number) {
+  public static async getEpisodesOfAnilistId(id: number) {
     let anidbId
 
     try {
@@ -111,10 +111,15 @@ export class AniDB {
 
     if (isNil(anidbId)) return null
 
+    return this.getEpisodesFromId(id, anidbId)
+  }
+
+  public static async getEpisodesFromId(anilistId: number, anidbId: number) {
     const mediaId = await AniDB.getFirstEpisodeCrunchyrollId(anidbId)
+
     if (isNil(mediaId)) return null
 
-    return Crunchyroll.fetchSeasonFromEpisode(id, mediaId.toString())
+    return Crunchyroll.fetchSeasonFromEpisode(anilistId, mediaId.toString())
   }
 
   private static async getFirstEpisodeCrunchyrollId(anidbId: number) {
