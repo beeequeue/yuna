@@ -11,12 +11,7 @@
         <div v-if="creatingEpisodes">
           <loading :size="50" />
           <div class="creating-info">
-            Extracting thumbnails and subtitles...
-          </div>
-          <div class="creating-info">
-            This will take a while.<br />
-            You can close this modal, but not Yuna.<br />
-            You will get a notification when it's done!
+            Extracting thumbnails...
           </div>
         </div>
         <div v-else class="anime-container">

@@ -278,7 +278,10 @@ export default class Player extends Vue {
     }
   }
 
-  private async fetchStream(provider: Provider, id: string): Promise<Stream> {
+  private async fetchStream(
+    provider: Provider,
+    id: string,
+  ): Promise<Stream | null> {
     if ([Provider.Crunchyroll, Provider.CrunchyrollManual].includes(provider)) {
       return Crunchyroll.fetchStream(id)
     }
@@ -296,15 +299,7 @@ export default class Player extends Vue {
       }
     }
 
-    if (provider === Provider.Local) {
-      return {
-        progress: 0,
-        subtitles: null,
-        url: this.episode!.url,
-      }
-    }
-
-    return null as any
+    return null
   }
 
   @Watch('episode.id')
