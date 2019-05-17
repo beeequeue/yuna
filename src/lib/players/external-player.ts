@@ -1,14 +1,11 @@
 import { ChildProcess, spawn } from 'child_process'
 import { EventEmitter } from 'events'
 import { Store } from 'vuex'
-import { parse } from 'anitomyscript'
 import { setCurrentEpisode } from '@/state/app'
 
-export interface FileMetaData {
+export interface ExternalMetaData {
   animeId: number
   title: string
-  episodeNumber: number
-  fileName: string
 }
 
 export enum ExternalPlayerEvent {
@@ -20,22 +17,17 @@ export enum ExternalPlayerEvent {
 export abstract class ExternalPlayer extends EventEmitter {
   protected readonly process: ChildProcess
 
-  protected readonly fileMetaData: FileMetaData
+  protected metaData: ExternalMetaData
 
   protected constructor(
     store: Store<any>,
     playerPath: string,
     args: string[],
-    meta: Pick<FileMetaData, 'animeId' | 'title' | 'fileName'>,
+    meta: ExternalMetaData,
   ) {
     super()
 
-    const anitomyResult = parse(meta.fileName)
-
-    this.fileMetaData = {
-      ...meta,
-      episodeNumber: Number(anitomyResult.episode_number),
-    }
+    this.metaData = meta
 
     this.process = spawn(playerPath, args)
 

@@ -1,5 +1,4 @@
 import { existsSync } from 'fs'
-import { basename } from 'path'
 import { parseString } from 'xml2js'
 import { parseBooleans, parseNumbers, stripPrefix } from 'xml2js/lib/processors'
 import superagent from 'superagent/dist/superagent'
@@ -7,10 +6,9 @@ import { Store } from 'vuex'
 import {
   ExternalPlayer,
   ExternalPlayerEvent,
-  FileMetaData,
 } from '@/lib/players/external-player'
 
-interface StatusReport {
+interface VLCStatusReport {
   fullscreen: false
   aspectratio: string
   audiodelay: number
@@ -62,6 +60,11 @@ interface StatusReport {
   }
 }
 
+export interface ExternalMetaData {
+  animeId: number
+  title: string
+}
+
 const findVLCPath = () => {
   const paths: string[] = [
     '/Applications/VLC.app/Contents/MacOS/VLC',
@@ -81,11 +84,7 @@ export class VLC extends ExternalPlayer {
 
   private readonly checkInterval: number
 
-  constructor(
-    store: Store<any>,
-    filePath: string,
-    meta: Pick<FileMetaData, 'animeId' | 'title'>,
-  ) {
+  constructor(store: Store<any>, filePaths: string[], meta: ExternalMetaData) {
     super(
       store,
       vlcPath,
@@ -94,12 +93,10 @@ export class VLC extends ExternalPlayer {
         '--http-host=127.0.0.1',
         '--http-port=9090',
         '--http-password=yuna',
-        filePath,
+        '--play-and-exit',
+        ...filePaths,
       ],
-      {
-        ...meta,
-        fileName: basename(filePath),
-      },
+      meta,
     )
 
     this.checkInterval = window.setInterval(() => {
@@ -120,14 +117,11 @@ export class VLC extends ExternalPlayer {
     const result = await this.parseStatus(response.text)
 
     if (result.position >= 0.8 && !this.finished) {
-      const { episodeNumber, animeId } = this.fileMetaData
+      // const { episodeNumber, animeId } = this.fileMetaData
 
       this.finished = true
 
-      this.emit(ExternalPlayerEvent.FINISHED_EPISODE, {
-        animeId,
-        episodeNumber,
-      })
+      this.emit(ExternalPlayerEvent.FINISHED_EPISODE)
     }
 
     if (result.state === 'playing') {
@@ -136,7 +130,7 @@ export class VLC extends ExternalPlayer {
   }
 
   private parseStatus(xml: string) {
-    return new Promise<StatusReport>(resolve => {
+    return new Promise<VLCStatusReport>(resolve => {
       parseString(
         xml,
         {

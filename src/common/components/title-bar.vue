@@ -79,7 +79,7 @@ export default class TitleBar extends Vue {
       return false
     },
     errorPolicy: 'all',
-    pollInterval: 15 * 1000,
+    pollInterval: 60 * 1000,
   })
   public anilistOnline = true
 

@@ -32,7 +32,10 @@
       </transition>
     </div>
 
-    <div class="sidebar" :class="{ small: isPlayerOpen }">
+    <div
+      class="sidebar"
+      :class="{ small: isPlayerOpen, external: isExternalPlayer }"
+    >
       <span class="fill" />
 
       <c-button
@@ -161,6 +164,10 @@ export default class Queue extends Vue {
 
   public get isPlayerOpen() {
     return !!getPlayerData(this.$store)
+  }
+
+  public get isExternalPlayer() {
+    return oc(getPlayerData(this.$store)).provider() === Provider.Local
   }
 
   public get queue() {
@@ -430,6 +437,10 @@ export default class Queue extends Vue {
 
     &.small {
       margin-bottom: 183px;
+    }
+
+    &.external {
+      margin-bottom: 50px !important;
     }
 
     & > .button {
