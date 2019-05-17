@@ -345,12 +345,8 @@ export default class Player extends Vue {
 
     const hls = new Hls()
 
-    if (this.episode.provider !== Provider.Local) {
-      hls.loadSource(this.streamUrl)
-      hls.attachMedia(this.$refs.player)
-    } else {
-      this.$refs.player.src = this.streamUrl
-    }
+    hls.loadSource(this.streamUrl)
+    hls.attachMedia(this.$refs.player)
 
     this.hls = hls
 
