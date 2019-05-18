@@ -4,6 +4,7 @@ import ffmpeg from 'fluent-ffmpeg'
 import { existsSync, readdirSync, statSync } from 'fs'
 import path from 'path'
 import crypto from 'crypto'
+import { oc } from 'ts-optchain'
 
 import { SettingsStore } from '@/state/settings'
 import { isNil } from '@/utils'
@@ -104,7 +105,10 @@ export class LocalFiles {
         return {
           id,
           filePath,
-          title: item.episode_title || `Episode ${episodeNumber}`,
+          title:
+            item.episode_title ||
+            this.getVideoStreamTitle(probeData) ||
+            `Episode ${episodeNumber}`,
           thumbnail: thumbnailPath,
           episodeNumber,
           duration: Math.round(probeData.format.duration),
@@ -182,6 +186,14 @@ export class LocalFiles {
         resolve(data)
       })
     })
+  }
+
+  private static getVideoStreamTitle(data: ffmpeg.FfprobeData) {
+    const videoStream = data.streams.find(
+      stream => stream.codec_type === 'video',
+    )
+
+    return oc(videoStream).tags.title(null) as string | null
   }
 
   private static generateScreenshot(
