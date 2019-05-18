@@ -16,6 +16,8 @@ export enum ExternalPlayerEvent {
 }
 
 export abstract class ExternalPlayer extends EventEmitter {
+  protected readonly store: Store<any>
+
   protected readonly process: ChildProcess
 
   protected metaData: ExternalMetaData
@@ -29,6 +31,8 @@ export abstract class ExternalPlayer extends EventEmitter {
     meta: ExternalMetaData,
   ) {
     super()
+
+    this.store = store
 
     this.metaData = meta
 

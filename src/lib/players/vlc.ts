@@ -8,8 +8,9 @@ import {
   ExternalPlayer,
   ExternalPlayerEvent,
 } from '@/lib/players/external-player'
-import { VLCMeta, VLCStatusReport } from '@/lib/players/vlc.types'
-import { noop, RequestSuccess } from '@/utils'
+import { VLCStatusReport } from '@/lib/players/vlc.types'
+import { NO_OP, RequestSuccess } from '@/utils'
+import { sendToast } from '@/state/app'
 
 export interface ExternalMetaData {
   animeId: number
@@ -35,6 +36,8 @@ export class VLC extends ExternalPlayer {
 
   private readonly checkInterval: number
 
+  private readonly files: string[]
+
   constructor(store: Store<any>, filePaths: string[], meta: ExternalMetaData) {
     super(
       store,
@@ -52,6 +55,7 @@ export class VLC extends ExternalPlayer {
     )
 
     this.currentFile = basename(filePaths[0])
+    this.files = filePaths.map(path => basename(path))
 
     this.checkInterval = window.setInterval(() => {
       this.checkStatus()
@@ -70,7 +74,7 @@ export class VLC extends ExternalPlayer {
         .get('http://127.0.0.1:9090/requests/status.json')
         .auth('', 'yuna')
         .timeout(500)
-        .on('error', noop)) as RequestSuccess<VLCStatusReport>
+        .on('error', NO_OP)) as RequestSuccess<VLCStatusReport>
     } catch (e) {
       return
     }
@@ -80,6 +84,19 @@ export class VLC extends ExternalPlayer {
     const fileName = VLC.getFileName(result)
 
     if (fileName !== this.currentFile) {
+      if (!this.files.includes(fileName)) {
+        this.close()
+
+        sendToast(this.store, {
+          type: 'error',
+          title: 'VLC started playing an unknown file',
+          message: `Cancelling playback of '${this.metaData.title}'.`,
+          timeout: 8000,
+        })
+
+        return
+      }
+
       this.currentFile = fileName
       this.finished = false
 
@@ -98,6 +115,6 @@ export class VLC extends ExternalPlayer {
   }
 
   private static getFileName(report: VLCStatusReport) {
-    return oc(report.information.category.meta as VLCMeta).filename() || null
+    return oc(report as any).information.category.meta.filename() || null
   }
 }
