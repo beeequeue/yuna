@@ -60,10 +60,6 @@ export class VLC extends ExternalPlayer {
     this.on(ExternalPlayerEvent.EXITED, () => {
       window.clearInterval(this.checkInterval)
     })
-
-    this.on(ExternalPlayerEvent.CHANGED_EPISODE, () => {
-      this.finished = false
-    })
   }
 
   private async checkStatus() {
@@ -85,6 +81,7 @@ export class VLC extends ExternalPlayer {
 
     if (fileName !== this.currentFile) {
       this.currentFile = fileName
+      this.finished = false
 
       this.emit(ExternalPlayerEvent.CHANGED_EPISODE, { fileName })
     }
