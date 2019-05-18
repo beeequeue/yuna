@@ -9,7 +9,7 @@ import {
   ExternalPlayerEvent,
 } from '@/lib/players/external-player'
 import { VLCStatusReport } from '@/lib/players/vlc.types'
-import { NO_OP, RequestSuccess } from '@/utils'
+import { isNil, NO_OP, RequestSuccess } from '@/utils'
 import { sendToast } from '@/state/app'
 
 export interface ExternalMetaData {
@@ -84,7 +84,11 @@ export class VLC extends ExternalPlayer {
     const fileName = VLC.getFileName(result)
 
     if (fileName !== this.currentFile) {
-      if (!this.files.includes(fileName)) {
+      if (
+        !isNil(fileName) &&
+        fileName.length > 0 &&
+        !this.files.includes(fileName)
+      ) {
         this.close()
 
         sendToast(this.store, {

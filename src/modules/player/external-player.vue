@@ -9,7 +9,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { basename } from 'path'
 
 import { setProgress } from '@/common/mutations/episodes'
-import { EpisodeListEpisodes, Provider } from '@/graphql/types'
+import { EpisodeListEpisodes } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import {
@@ -20,7 +20,7 @@ import { VLC } from '@/lib/players/vlc'
 
 @Component
 export default class ExternalPlayer extends Vue {
-  @Required(Number) currentEpisodeNumber!: number
+  @Required(Number) index!: number
   @Required(Array) episodes!: EpisodeListEpisodes[]
   @Prop(Object) title!: { userPreferred: string }
 
@@ -38,14 +38,12 @@ export default class ExternalPlayer extends Vue {
     this.handleNewFile()
   }
 
-  @Watch('currentEpisodeNumber')
+  @Watch('index')
   public async handleNewFile() {
-    if (this.firstEpisode.provider !== Provider.Local) return
-
     // Open VLC/MPC-HC/whatever
     this.process = new VLC(
       this.$store,
-      this.episodes.map(ep => ep.url).slice(this.currentEpisodeNumber - 1),
+      this.episodes.map(ep => ep.url).slice(this.index),
       {
         animeId: this.firstEpisode.animeId,
         title: this.title.userPreferred,

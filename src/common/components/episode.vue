@@ -5,7 +5,7 @@
       class="thumbnail"
       :class="{ blur: blur.thumbnail }"
       :src="episode.thumbnail"
-      @click="handleThumbnailClick(episode.episodeNumber)"
+      @click="handleThumbnailClick"
     />
 
     <div v-if="!empty" class="title-container">
@@ -93,10 +93,10 @@ export default class Episode extends Vue {
     }
   }
 
-  public handleThumbnailClick(episodeNumber: number) {
+  public handleThumbnailClick() {
     setCurrentEpisode(this.$store, {
       id: this.episode.animeId,
-      index: episodeNumber - 1,
+      index: this.episode.index,
       provider: this.episode.provider,
     })
   }

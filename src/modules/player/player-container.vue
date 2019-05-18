@@ -15,7 +15,7 @@
       />
       <external-player
         v-else-if="anime != null"
-        :currentEpisodeNumber="this.episode.episodeNumber"
+        :index="this.episode.index"
         :episodes="episodes"
         :title="anime.title"
       />
@@ -92,10 +92,9 @@ export default class PlayerContainer extends Vue {
   }
 
   get episode() {
-    const index = oc(this.playerData).index()
-    if (isNil(this.episodes) || isNil(index)) return null
+    const index = oc(this.playerData).index(-1)
 
-    return this.episodes[index] as EpisodeListEpisodes
+    return oc(this.episodes)[index]() || null
   }
 
   get nextEpisode() {
