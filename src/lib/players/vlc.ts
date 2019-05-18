@@ -1,7 +1,5 @@
 import { existsSync } from 'fs'
 import { basename } from 'path'
-import { parseString } from 'xml2js'
-import { parseBooleans, parseNumbers, stripPrefix } from 'xml2js/lib/processors'
 import superagent from 'superagent/dist/superagent'
 import { Store } from 'vuex'
 import { oc } from 'ts-optchain'
@@ -10,69 +8,8 @@ import {
   ExternalPlayer,
   ExternalPlayerEvent,
 } from '@/lib/players/external-player'
-import { isNil, noop } from '@/utils'
-
-interface VLCInfoCategory {
-  name: string
-  info: any[]
-}
-
-interface VLCInfoCategoryMeta extends VLCInfoCategory {
-  name: 'meta'
-  info: Array<{ name: 'filename' | 'title'; _: string }>
-}
-
-interface VLCStatusReport {
-  fullscreen: false
-  aspectratio: string
-  audiodelay: number
-  apiversion: number
-  currentplid: number
-  time: number
-  volume: number
-  length: number
-  random: false
-  audiofilters: any
-  rate: number
-  videoeffects: {
-    hue: number
-    saturation: number
-    contrast: number
-    brightness: number
-    gamma: number
-  }
-  state: 'playing' | 'paused'
-  loop: true
-  version: string
-  position: number
-  repeat: false
-  subtitledelay: number
-  equalizer: ''
-  information: {
-    category: Array<VLCInfoCategory | VLCInfoCategoryMeta>
-  }
-  stats: {
-    lostabuffers: number
-    readpackets: number
-    lostpictures: number
-    demuxreadbytes: number
-    demuxbitrate: number
-    playedabuffers: number
-    demuxcorrupted: number
-    sendbitrate: number
-    sentbytes: number
-    displayedpictures: number
-    demuxreadpackets: number
-    sentpackets: number
-    inputbitrate: number
-    demuxdiscontinuity: number
-    averagedemuxbitrate: number
-    decodedvideo: number
-    averageinputbitrate: number
-    readbytes: number
-    decodedaudio: number
-  }
-}
+import { VLCMeta, VLCStatusReport } from '@/lib/players/vlc.types'
+import { noop, RequestSuccess } from '@/utils'
 
 export interface ExternalMetaData {
   animeId: number
@@ -133,16 +70,16 @@ export class VLC extends ExternalPlayer {
     let response
 
     try {
-      response = await superagent
-        .get('http://127.0.0.1:9090/requests/status.xml')
+      response = (await superagent
+        .get('http://127.0.0.1:9090/requests/status.json')
         .auth('', 'yuna')
         .timeout(500)
-        .on('error', noop)
+        .on('error', noop)) as RequestSuccess<VLCStatusReport>
     } catch (e) {
       return
     }
 
-    const result = await this.parseStatus(response.text)
+    const result = JSON.parse(response.text)
 
     const fileName = VLC.getFileName(result)
 
@@ -164,38 +101,6 @@ export class VLC extends ExternalPlayer {
   }
 
   private static getFileName(report: VLCStatusReport) {
-    const simpleResult =
-      (oc(report as any).information.category.info._() as string) || null
-    if (!isNil(simpleResult)) {
-      return simpleResult
-    }
-
-    const metaCategory = report.information.category.find<VLCInfoCategoryMeta>(
-      (c): c is VLCInfoCategoryMeta => c.name === 'meta',
-    )
-
-    const info = oc(metaCategory)
-      .info([])
-      .find(i => i.name === 'filename')
-
-    return oc(info)._() || null
-  }
-
-  private parseStatus(xml: string) {
-    return new Promise<VLCStatusReport>(resolve => {
-      parseString(
-        xml,
-        {
-          normalize: true,
-          explicitRoot: false,
-          explicitArray: false,
-          mergeAttrs: true,
-          attrNameProcessors: [stripPrefix],
-          attrValueProcessors: [parseNumbers, parseBooleans],
-          valueProcessors: [parseNumbers, parseBooleans],
-        },
-        (_err, xml) => resolve(xml),
-      )
-    })
+    return oc(report.information.category.meta as VLCMeta).filename() || null
   }
 }
