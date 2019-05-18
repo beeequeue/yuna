@@ -4,10 +4,13 @@ import { parseString } from 'xml2js'
 import { parseBooleans, parseNumbers, stripPrefix } from 'xml2js/lib/processors'
 import superagent from 'superagent/dist/superagent'
 import { Store } from 'vuex'
+import { oc } from 'ts-optchain'
+
 import {
   ExternalPlayer,
   ExternalPlayerEvent,
 } from '@/lib/players/external-player'
+import { isNil, noop } from '@/utils'
 
 interface VLCInfoCategory {
   name: string
@@ -105,6 +108,7 @@ export class VLC extends ExternalPlayer {
         '--http-port=9090',
         '--http-password=yuna',
         '--play-and-exit',
+        '--one-instance',
         ...filePaths,
       ],
       meta,
@@ -133,6 +137,7 @@ export class VLC extends ExternalPlayer {
         .get('http://127.0.0.1:9090/requests/status.xml')
         .auth('', 'yuna')
         .timeout(500)
+        .on('error', noop)
     } catch (e) {
       return
     }
@@ -159,11 +164,21 @@ export class VLC extends ExternalPlayer {
   }
 
   private static getFileName(report: VLCStatusReport) {
+    const simpleResult =
+      (oc(report as any).information.category.info._() as string) || null
+    if (!isNil(simpleResult)) {
+      return simpleResult
+    }
+
     const metaCategory = report.information.category.find<VLCInfoCategoryMeta>(
       (c): c is VLCInfoCategoryMeta => c.name === 'meta',
-    )!
+    )
 
-    return metaCategory.info.find(i => i.name === 'filename')!._
+    const info = oc(metaCategory)
+      .info([])
+      .find(i => i.name === 'filename')
+
+    return oc(info)._() || null
   }
 
   private parseStatus(xml: string) {

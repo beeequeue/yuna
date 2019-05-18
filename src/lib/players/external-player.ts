@@ -20,7 +20,7 @@ export abstract class ExternalPlayer extends EventEmitter {
 
   protected metaData: ExternalMetaData
 
-  protected currentFile!: string
+  protected currentFile: string | null = null
 
   protected constructor(
     store: Store<any>,

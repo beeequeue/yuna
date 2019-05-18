@@ -17,7 +17,6 @@ import {
   ExternalPlayerEvent,
 } from '@/lib/players/external-player'
 import { VLC } from '@/lib/players/vlc'
-import { isNil } from '@/utils'
 
 @Component
 export default class ExternalPlayer extends Vue {
@@ -39,13 +38,9 @@ export default class ExternalPlayer extends Vue {
     this.handleNewFile()
   }
 
-  @Watch('episodeFilePath')
+  @Watch('currentEpisodeNumber')
   public async handleNewFile() {
     if (this.firstEpisode.provider !== Provider.Local) return
-
-    if (!isNil(this.process)) {
-      this.process.close()
-    }
 
     // Open VLC/MPC-HC/whatever
     this.process = new VLC(

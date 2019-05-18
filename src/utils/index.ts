@@ -30,7 +30,7 @@ import Filter = Electron.Filter
 import { ActionContext, Store } from 'vuex'
 import { getIsConnectedTo } from '@/state/auth'
 
-const noop = () => {
+export const noop = () => {
   /* no-op */
 }
 
