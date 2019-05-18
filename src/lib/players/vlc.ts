@@ -1,4 +1,5 @@
 import { existsSync } from 'fs'
+import { basename } from 'path'
 import { parseString } from 'xml2js'
 import { parseBooleans, parseNumbers, stripPrefix } from 'xml2js/lib/processors'
 import superagent from 'superagent/dist/superagent'
@@ -7,6 +8,16 @@ import {
   ExternalPlayer,
   ExternalPlayerEvent,
 } from '@/lib/players/external-player'
+
+interface VLCInfoCategory {
+  name: string
+  info: any[]
+}
+
+interface VLCInfoCategoryMeta extends VLCInfoCategory {
+  name: 'meta'
+  info: Array<{ name: 'filename' | 'title'; _: string }>
+}
 
 interface VLCStatusReport {
   fullscreen: false
@@ -35,7 +46,7 @@ interface VLCStatusReport {
   subtitledelay: number
   equalizer: ''
   information: {
-    category: any[]
+    category: Array<VLCInfoCategory | VLCInfoCategoryMeta>
   }
   stats: {
     lostabuffers: number
@@ -99,6 +110,8 @@ export class VLC extends ExternalPlayer {
       meta,
     )
 
+    this.currentFile = basename(filePaths[0])
+
     this.checkInterval = window.setInterval(() => {
       this.checkStatus()
     }, 1000)
@@ -106,27 +119,51 @@ export class VLC extends ExternalPlayer {
     this.on(ExternalPlayerEvent.EXITED, () => {
       window.clearInterval(this.checkInterval)
     })
+
+    this.on(ExternalPlayerEvent.CHANGED_EPISODE, () => {
+      this.finished = false
+    })
   }
 
   private async checkStatus() {
-    const response = await superagent
-      .get('http://127.0.0.1:9090/requests/status.xml')
-      .auth('', 'yuna')
-      .timeout(500)
+    let response
+
+    try {
+      response = await superagent
+        .get('http://127.0.0.1:9090/requests/status.xml')
+        .auth('', 'yuna')
+        .timeout(500)
+    } catch (e) {
+      return
+    }
 
     const result = await this.parseStatus(response.text)
 
-    if (result.position >= 0.8 && !this.finished) {
-      // const { episodeNumber, animeId } = this.fileMetaData
+    const fileName = VLC.getFileName(result)
 
+    if (fileName !== this.currentFile) {
+      this.currentFile = fileName
+
+      this.emit(ExternalPlayerEvent.CHANGED_EPISODE, { fileName })
+    }
+
+    if (result.position >= 0.8 && !this.finished) {
       this.finished = true
 
-      this.emit(ExternalPlayerEvent.FINISHED_EPISODE)
+      this.emit(ExternalPlayerEvent.FINISHED_EPISODE, { fileName })
     }
 
     if (result.state === 'playing') {
       this.emit(ExternalPlayerEvent.PROGRESS, { progress: result.position })
     }
+  }
+
+  private static getFileName(report: VLCStatusReport) {
+    const metaCategory = report.information.category.find<VLCInfoCategoryMeta>(
+      (c): c is VLCInfoCategoryMeta => c.name === 'meta',
+    )!
+
+    return metaCategory.info.find(i => i.name === 'filename')!._
   }
 
   private parseStatus(xml: string) {

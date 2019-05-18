@@ -12,12 +12,15 @@ export enum ExternalPlayerEvent {
   EXITED = 'EXITED',
   PROGRESS = 'PROGRESS',
   FINISHED_EPISODE = 'FINISHED_EPISODE',
+  CHANGED_EPISODE = 'CHANGED_EPISODE',
 }
 
 export abstract class ExternalPlayer extends EventEmitter {
   protected readonly process: ChildProcess
 
   protected metaData: ExternalMetaData
+
+  protected currentFile!: string
 
   protected constructor(
     store: Store<any>,

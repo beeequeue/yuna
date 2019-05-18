@@ -6,8 +6,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { parse } from 'anitomyscript'
+import { basename } from 'path'
 
+import { setProgress } from '@/common/mutations/episodes'
 import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 
 import { Required } from '@/decorators'
@@ -55,8 +56,12 @@ export default class ExternalPlayer extends Vue {
         title: this.title.userPreferred,
       },
     )
-      .on(ExternalPlayerEvent.FINISHED_EPISODE, () => {
-        const anitomy = parse()
+      .on(ExternalPlayerEvent.FINISHED_EPISODE, ({ fileName }) => {
+        const episode = this.episodes.find(
+          episode => basename(episode.url) === fileName,
+        )!
+
+        setProgress(this, episode)
       })
       .on(
         ExternalPlayerEvent.PROGRESS,
