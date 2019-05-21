@@ -40,7 +40,14 @@ init({
 let mainWindow: any
 
 // Standard scheme must be registered before the app is ready
-protocol.registerStandardSchemes(['app'], { secure: true })
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'app',
+    privileges: {
+      secure: true,
+    },
+  },
+])
 
 // Register extra stuff
 electronDebug({})
@@ -62,6 +69,7 @@ function createMainWindow() {
     webPreferences: {
       webSecurity: false,
       allowRunningInsecureContent: false,
+      nodeIntegration: true,
     },
   })
 
@@ -104,7 +112,7 @@ function createMainWindow() {
           type: 'normal',
           label: 'Select All',
           accelerator: 'CmdOrCtrl+A',
-          role: 'selectAll',
+          role: 'selectall',
         },
       ],
     },

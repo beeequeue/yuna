@@ -1,5 +1,5 @@
 import { activeWindow } from 'electron-util'
-import { change, reject } from 'rambdax'
+import change from 'lodash.set'
 import {
   NotificationFunctionOptions,
   NotificationTypes,
@@ -189,7 +189,9 @@ export const app = {
     },
 
     removeToast(state: AppState, id: string) {
-      state.toasts = reject(propEq('id', id), state.toasts)
+      state.toasts = state.toasts.filter(
+        toast => !propEq<typeof toast, 'id'>('id', id)(toast),
+      )
     },
 
     setPlaylist(state: AppState, options: PlayerData | null) {

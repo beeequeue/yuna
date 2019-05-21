@@ -80,7 +80,7 @@ import { remote, shell } from 'electron'
 import { activeWindow, api } from 'electron-util'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
-import { complement, indexBy } from 'rambdax'
+import indexBy from 'lodash.keyby'
 import { oc } from 'ts-optchain'
 import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 
@@ -109,7 +109,7 @@ import {
   toggleQueueItemOpen,
 } from '@/state/user'
 import { QueueItem as IQueueItem } from '@/lib/user'
-import { isNotNil, pick, prop, propEq, sortNumber } from '@/utils'
+import { complement, isNotNil, pick, prop, propEq, sortNumber } from '@/utils'
 
 @Component({
   components: {
@@ -132,9 +132,8 @@ export default class Queue extends Vue {
       }
     },
     update(data) {
-      const items = indexBy(
-        anime => anime.id.toString(),
-        oc(data).queue.anime([] as QueueAnime[]),
+      const items = indexBy(oc(data).queue.anime([] as QueueAnime[]), anime =>
+        anime.id.toString(),
       )
 
       return this.queue.map(item => items[item.id])

@@ -92,7 +92,7 @@
 import { ApolloError } from 'apollo-client'
 import { Component, Vue } from 'vue-property-decorator'
 import { ApolloCache } from 'apollo-cache'
-import { change } from 'rambdax'
+import change from 'lodash.set'
 import { oc } from 'ts-optchain'
 import { mdiCloseCircle } from '@mdi/js'
 
