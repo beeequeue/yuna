@@ -67,7 +67,7 @@
         <section id="local-files">
           <h3>Local Files</h3>
 
-          <div class="path-container">
+          <div class="path-container" id="local-files-path">
             <c-button
               v-if="!localFilesFolder"
               content="Set path"
@@ -86,6 +86,15 @@
               @click="!!localFilesFolder ? setLocalFilesFolder() : null"
             >
               {{ localFilesFolder }}
+            </div>
+          </div>
+
+          <div class="path-container vlc" id="vlc-path">
+            <icon :icon="vlcSvg" />
+
+            <div class="path" v-tooltip.top="vlcPath" @click="setVLCPath()">
+              <c-button v-if="!vlcPath" content="Set VLC path" />
+              <span v-else>{{ vlcPath }}</span>
             </div>
           </div>
         </section>
@@ -275,6 +284,7 @@ import {
   mdiInformationOutline,
   mdiRefresh,
   mdiUndoVariant,
+  mdiVlc,
 } from '@mdi/js'
 
 import LoginHD from '@/common/components/login/hidive.vue'
@@ -303,6 +313,7 @@ import {
   setSetting,
   setSpoiler,
   SettingsState,
+  setVLCPath,
 } from '@/state/settings'
 import { DOWNLOAD_UPDATE, OPEN_DEVTOOLS } from '@/messages'
 import { isNil } from '@/utils'
@@ -332,6 +343,7 @@ export default class Settings extends Vue {
   public retrySvg = mdiRefresh
   public removeSvg = mdiDelete
   public resetSvg = mdiUndoVariant
+  public vlcSvg = mdiVlc
   public Window = Window
 
   public $refs!: {
@@ -377,6 +389,10 @@ export default class Settings extends Vue {
 
   public get localFilesFolder() {
     return getLocalFilesFolder(this.$store)
+  }
+
+  public get vlcPath() {
+    return getSettings(this.$store).externalPlayers.vlc
   }
 
   public get localeItems() {
@@ -440,6 +456,19 @@ export default class Settings extends Vue {
 
   public clearLocalFilesFolder() {
     setLocalFilesFolder(this.$store, null)
+  }
+
+  public setVLCPath() {
+    const path = remote.dialog.showOpenDialog({
+      title: 'Set directory for Local Files',
+      buttonLabel: 'Select file',
+      properties: ['openFile'],
+      filters: [{ name: 'vlc', extensions: ['exe'] }],
+    })
+
+    if (isNil(path)) return
+
+    setVLCPath(this.$store, path[0])
   }
 
   public pathClick() {
@@ -527,7 +556,7 @@ export default class Settings extends Vue {
     flex-direction: column;
     align-items: flex-start;
     text-align: left;
-    background: color($dark, 300);
+    background: linear-gradient(90deg, color($dark, 350), color($dark, 300));
     min-width: 425px;
     padding-bottom: 35px;
     user-select: none;
@@ -591,6 +620,16 @@ export default class Settings extends Vue {
       & .path-container {
         display: flex;
         align-items: center;
+
+        &.vlc {
+          margin-top: 10px;
+
+          & > .icon {
+            height: 30px;
+            width: 30px;
+            fill: #e85e00;
+          }
+        }
 
         & > .button {
           flex-shrink: 0;

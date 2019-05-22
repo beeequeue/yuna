@@ -335,6 +335,12 @@ export const settings = {
       SettingsStore.set('localFilesFolder', path)
     },
 
+    setVLCPath(state: SettingsState, path: string | null) {
+      state.externalPlayers.vlc = path
+
+      SettingsStore.set('externalPlayers', state.externalPlayers)
+    },
+
     setDiscordRichPresence(state: SettingsState, enabled: boolean) {
       if (enabled) {
         ipcRenderer.send(DISCORD_ENABLE_RICH_PRESENCE)
@@ -414,6 +420,7 @@ export const setSpoiler = commit(settings.mutations.setSpoiler)
 export const setLocalFilesFolder = commit(
   settings.mutations.setLocalFilesFolder,
 )
+export const setVLCPath = commit(settings.mutations.setVLCPath)
 export const setSetting = commit(settings.mutations.setSetting)
 export const setDiscordRichPresence = commit(
   settings.mutations.setDiscordRichPresence,
