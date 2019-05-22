@@ -33,6 +33,10 @@ interface KeybindingSettings {
   [key: string]: KeybindingAction[]
 }
 
+interface ExternalPlayerPaths {
+  vlc: string | null
+}
+
 interface SpoilerSettings {
   anime: {
     description: boolean
@@ -79,6 +83,7 @@ export interface SettingsState {
   discord: DiscordSettings
   keybindings: KeybindingSettings
   spoilers: SpoilerSettings
+  externalPlayers: ExternalPlayerPaths
   localFilesFolder: string | null
   setup: SetupSettings
   window: Electron.Rectangle
@@ -144,6 +149,7 @@ const initialState: SettingsState = {
   discord: SettingsStore.get('discord', { ...defaultDiscord }),
   keybindings: SettingsStore.get('keybindings', { ...defaultBindings }),
   spoilers: SettingsStore.get('spoilers', { ...defaultSpoilers }),
+  externalPlayers: SettingsStore.get('externalPlayers', { vlc: null }),
   localFilesFolder: SettingsStore.get('localFilesFolder', null),
   window: SettingsStore.get('window', {}),
   setup: SettingsStore.get('setup', { finishedSteps: [...defaultSteps] }),

@@ -9,8 +9,9 @@ import {
   ExternalPlayerEvent,
 } from '@/lib/players/external-player'
 import { VLCStatusReport } from '@/lib/players/vlc.types'
-import { isNil, NO_OP, RequestSuccess } from '@/utils'
 import { sendToast } from '@/state/app'
+import { SettingsStore } from '@/state/settings'
+import { isNil, NO_OP, RequestSuccess } from '@/utils'
 
 export interface ExternalMetaData {
   animeId: number
@@ -26,10 +27,10 @@ const findVLCPath = () => {
     'C:\\Program Files\\VideoLAN\\VLC\\vlc.exe',
   ]
 
-  return paths.find(path => existsSync(path))
+  return paths.find(path => existsSync(path)) || null
 }
 
-const vlcPath = /* SettingsStore.get('vlcPath') || */ findVLCPath()!
+const vlcPath = SettingsStore.get('externalPlayers.vlc') || findVLCPath()!
 
 export class VLC extends ExternalPlayer {
   private finished = false
@@ -121,4 +122,6 @@ export class VLC extends ExternalPlayer {
   private static getFileName(report: VLCStatusReport) {
     return oc(report as any).information.category.meta.filename() || null
   }
+
+  public static getVLCPath = findVLCPath
 }

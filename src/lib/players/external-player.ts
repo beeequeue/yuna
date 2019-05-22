@@ -1,7 +1,8 @@
 import { ChildProcess, spawn } from 'child_process'
 import { EventEmitter } from 'events'
 import { Store } from 'vuex'
-import { setCurrentEpisode } from '@/state/app'
+
+import { sendToast, setCurrentEpisode } from '@/state/app'
 
 export interface ExternalMetaData {
   animeId: number
@@ -38,11 +39,23 @@ export abstract class ExternalPlayer extends EventEmitter {
 
     this.process = spawn(playerPath, args)
 
-    this.process.on('exit', () => {
-      this.emit(ExternalPlayerEvent.EXITED)
+    this.process.on('error', () => {
+      sendToast(this.store, {
+        title: "Couldn't start VLC!",
+        message: 'Check that the path is correct in the settings!',
+        type: 'error',
+      })
 
-      setCurrentEpisode(store, null)
+      this.exit()
     })
+
+    this.process.on('exit', this.exit)
+  }
+
+  private exit() {
+    this.emit(ExternalPlayerEvent.EXITED)
+
+    setCurrentEpisode(this.store, null)
   }
 
   public close() {
