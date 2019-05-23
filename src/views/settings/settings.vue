@@ -627,7 +627,7 @@ export default class Settings extends Vue {
           & > .icon {
             height: 30px;
             width: 30px;
-            fill: #e85e00;
+            fill: $vlc;
           }
         }
 

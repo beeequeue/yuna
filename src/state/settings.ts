@@ -56,6 +56,7 @@ export enum SetupStep {
   CONNECT,
   SPOILERS,
   DISCORD,
+  LOCAL_FILES,
 }
 
 export const _setupSteps = Object.keys(SetupStep)

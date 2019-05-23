@@ -20,13 +20,6 @@
           :continue="finishStep"
         />
 
-        <login-cr
-          key="cr"
-          v-if="false"
-          :error="crunchyrollError"
-          :loginCrunchyroll="loginCrunchyroll"
-        />
-
         <spoiler-settings
           key="s-s"
           v-if="currentStep === SetupStep.SPOILERS"
@@ -38,6 +31,12 @@
           v-if="currentStep === SetupStep.DISCORD"
           :goToNextStep="finishStep"
         />
+
+        <local-files-setup
+          key="local-files-setup"
+          v-if="currentStep === SetupStep.LOCAL_FILES"
+          :goToNextStep="finishStep"
+        />
       </transition-group>
     </div>
   </div>
@@ -47,27 +46,25 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 import LoginAl from '@/common/components/login/anilist.vue'
-import LoginCr from '@/common/components/login/crunchyroll.vue'
+import Connections from './components/connections.vue'
 import Steps from './components/steps.vue'
 import SpoilerSettings from './components/spoiler-settings.vue'
 import Discord from './components/discord.vue'
-import Connections from './components/connections.vue'
+import LocalFilesSetup from './components/local-files-setup.vue'
 
-import { getIsConnectedTo } from '@/state/auth'
+import { loginAnilist } from '@/lib/anilist'
 import {
   _setupSteps,
   addFinishedStep,
   getNextUnfinishedStep,
   SetupStep,
 } from '@/state/settings'
-import { loginAnilist } from '@/lib/anilist'
-import { Crunchyroll } from '@/lib/crunchyroll'
 
 @Component({
   components: {
+    LocalFilesSetup,
     Connections,
     LoginAl,
-    LoginCr,
     Steps,
     SpoilerSettings,
     Discord,
@@ -78,14 +75,8 @@ export default class FirstTimeSetup extends Vue {
   public steps = _setupSteps
   public SetupStep = SetupStep
 
-  public crunchyrollError: string | null = null
-
   public get nextUnfinishedStep() {
     return getNextUnfinishedStep(this.$store)
-  }
-
-  public get isLoggedIn() {
-    return getIsConnectedTo(this.$store)
   }
 
   public created() {
@@ -101,18 +92,6 @@ export default class FirstTimeSetup extends Vue {
 
   public async loginAnilist() {
     await loginAnilist(this.$store)
-
-    this.finishStep()
-  }
-
-  public async loginCrunchyroll(user: string, pass: string) {
-    this.crunchyrollError = null
-
-    try {
-      await Crunchyroll.login(this.$store, user, pass)
-    } catch (err) {
-      this.crunchyrollError = err.message
-    }
 
     this.finishStep()
   }
@@ -152,7 +131,7 @@ export default class FirstTimeSetup extends Vue {
         top: 50%;
         left: 0;
         width: 400px;
-        background: $dark;
+        background: linear-gradient(color($dark, 350), $dark);
         border-radius: 5px;
         transform: translateY(-50%);
         box-shadow: $shadow;
