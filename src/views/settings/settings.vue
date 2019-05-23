@@ -277,7 +277,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { ipcRenderer, remote, shell } from 'electron'
+import { ipcRenderer, shell } from 'electron'
 import { Key } from 'ts-key-enum'
 import {
   mdiDelete,
@@ -317,6 +317,7 @@ import {
 } from '@/state/settings'
 import { DOWNLOAD_UPDATE, OPEN_DEVTOOLS } from '@/messages'
 import { isNil } from '@/utils'
+import { getFilePath, getFolderPath } from '@/utils/paths'
 
 enum Window {
   Crunchyroll = 'Crunchyroll',
@@ -443,15 +444,13 @@ export default class Settings extends Vue {
   }
 
   public setLocalFilesFolder() {
-    const path = remote.dialog.showOpenDialog({
+    const path = getFolderPath({
       title: 'Set directory for Local Files',
-      buttonLabel: 'Select',
-      properties: ['openDirectory'],
     })
 
     if (isNil(path)) return
 
-    setLocalFilesFolder(this.$store, path[0])
+    setLocalFilesFolder(this.$store, path)
   }
 
   public clearLocalFilesFolder() {
@@ -459,16 +458,14 @@ export default class Settings extends Vue {
   }
 
   public setVLCPath() {
-    const path = remote.dialog.showOpenDialog({
+    const path = getFilePath({
       title: 'Set directory for Local Files',
-      buttonLabel: 'Select file',
-      properties: ['openFile'],
       filters: [{ name: 'vlc', extensions: ['exe'] }],
     })
 
     if (isNil(path)) return
 
-    setVLCPath(this.$store, path[0])
+    setVLCPath(this.$store, path)
   }
 
   public pathClick() {
