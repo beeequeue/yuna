@@ -2,7 +2,8 @@ import { ChildProcess, spawn } from 'child_process'
 import { EventEmitter } from 'events'
 import { Store } from 'vuex'
 
-import { sendToast, setCurrentEpisode } from '@/state/app'
+import { sendErrorToast, sendToast, setCurrentEpisode } from '@/state/app'
+import { isNil } from '@/utils'
 
 export interface ExternalMetaData {
   animeId: number
@@ -27,7 +28,7 @@ export abstract class ExternalPlayer extends EventEmitter {
 
   protected constructor(
     store: Store<any>,
-    playerPath: string,
+    playerPath: string | null,
     args: string[],
     meta: ExternalMetaData,
   ) {
@@ -36,6 +37,10 @@ export abstract class ExternalPlayer extends EventEmitter {
     this.store = store
 
     this.metaData = meta
+
+    if (isNil(playerPath)) {
+      throw new Error('Could not start external player!')
+    }
 
     this.process = spawn(playerPath, args)
 
@@ -49,7 +54,9 @@ export abstract class ExternalPlayer extends EventEmitter {
       this.exit()
     })
 
-    this.process.on('exit', this.exit)
+    this.process.on('exit', () => {
+      this.exit()
+    })
   }
 
   private exit() {
