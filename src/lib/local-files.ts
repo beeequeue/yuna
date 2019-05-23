@@ -109,7 +109,7 @@ export class LocalFiles {
             item.episode_title ||
             this.getVideoStreamTitle(probeData) ||
             `Episode ${episodeNumber}`,
-          thumbnail: thumbnailPath,
+          thumbnail: `file://${thumbnailPath}`,
           episodeNumber,
           duration: Math.round(probeData.format.duration),
           format: item.file_extension!,
