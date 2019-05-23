@@ -2,7 +2,7 @@ import { ChildProcess, spawn } from 'child_process'
 import { EventEmitter } from 'events'
 import { Store } from 'vuex'
 
-import { sendErrorToast, sendToast, setCurrentEpisode } from '@/state/app'
+import { sendToast, setCurrentEpisode } from '@/state/app'
 import { isNil } from '@/utils'
 
 export interface ExternalMetaData {

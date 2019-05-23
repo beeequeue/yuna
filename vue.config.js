@@ -22,6 +22,10 @@ module.exports = {
 
       options['process.env'].FLUENTFFMPEG_COV = false
 
+      if (process.env.NODE_ENV === 'development') {
+        options['process.env'].DEV_BASE_PATH = JSON.stringify(__dirname)
+      }
+
       return [options]
     })
   },

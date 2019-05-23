@@ -1,5 +1,6 @@
 import { existsSync } from 'fs'
 import { basename } from 'path'
+import * as os from 'os'
 import superagent from 'superagent/dist/superagent'
 import { Store } from 'vuex'
 import { oc } from 'ts-optchain'
@@ -11,12 +12,17 @@ import {
 import { VLCStatusReport } from '@/lib/players/vlc.types'
 import { sendToast } from '@/state/app'
 import { SettingsStore } from '@/state/settings'
-import { isNil, NO_OP, RequestSuccess } from '@/utils'
+import { isNil, isNotNil, NO_OP, RequestSuccess } from '@/utils'
 
 export interface ExternalMetaData {
   animeId: number
   title: string
 }
+
+const PLATFORM = os.platform()
+
+const noNulls = <T>(arr: Array<T | null | undefined>): T[] =>
+  arr.filter(isNotNil)
 
 const findVLCPath = () => {
   const paths: string[] = [
@@ -30,7 +36,8 @@ const findVLCPath = () => {
   return paths.find(path => existsSync(path)) || null
 }
 
-const vlcPath = SettingsStore.get('externalPlayers.vlc') || findVLCPath()!
+const vlcPath: string | null =
+  SettingsStore.get('externalPlayers.vlc') || findVLCPath()
 
 export class VLC extends ExternalPlayer {
   private finished = false
@@ -43,15 +50,15 @@ export class VLC extends ExternalPlayer {
     super(
       store,
       vlcPath,
-      [
+      noNulls([
         '--extraintf=http',
         '--http-host=127.0.0.1',
         '--http-port=9090',
         '--http-password=yuna',
         '--play-and-exit',
-        '--one-instance',
+        PLATFORM !== 'darwin' ? '--one-instance' : null,
         ...filePaths,
-      ],
+      ]),
       meta,
     )
 

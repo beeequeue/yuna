@@ -6,8 +6,9 @@ const isDevelopment = process.env.NODE_ENV === 'development'
 
 const getDevPath = (name: string, path: string) =>
   join(
-    __dirname,
-    `../../../../../${name}`,
+    process.env.DEV_BASE_PATH!,
+    'node_modules',
+    name,
     path.substr(path.lastIndexOf('bin')),
   )
 const getProdPath = (name: string, path: string) =>
