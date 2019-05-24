@@ -38,14 +38,19 @@ export default class AnimatedHeight extends Vue {
         return
       }
 
-      const children = Array.from(
-        this.$refs.container.children,
-      ) as HTMLElement[]
-      this.height = children.reduce(
-        (previous, child) =>
-          previous + child.offsetHeight - previous + child.offsetTop,
-        0,
-      )
+      const children = this.$refs.container.children
+
+      if (children.length < 1) {
+        this.height = 0
+
+        return
+      }
+
+      const lastChild = children.item(children.length - 1) as HTMLElement
+      this.height =
+        lastChild.offsetHeight +
+        lastChild.offsetTop +
+        parseInt(getComputedStyle(lastChild).marginBottom || '0')
     })
   }
 }

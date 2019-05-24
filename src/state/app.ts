@@ -72,6 +72,10 @@ export interface ManualSearchOptions {
   selectedEpisodes: EpisodeListEpisodes[]
 }
 
+export interface LocalSourceOptions {
+  anilistId: number
+}
+
 export interface AppState {
   isUpdateAvailable: boolean
   toasts: Toast[]
@@ -83,8 +87,13 @@ export interface AppState {
       anime: EditModalAnime | null
     }
     manualSearch: ModalBase & ManualSearchOptions
+    localSource: ModalBase & {
+      options: LocalSourceOptions | null
+    }
   }
 }
+
+export type ModalName = keyof AppState['modals']
 
 type AppContext = ActionContext<AppState, RootState>
 
@@ -108,6 +117,10 @@ const initialState: AppState = {
       provider: Provider.Crunchyroll,
       anilistId: null,
       selectedEpisodes: [],
+    },
+    localSource: {
+      ...initialModalBase,
+      options: null,
     },
   },
 }
@@ -153,6 +166,10 @@ export const app = {
 
     getManualSearchOptions(state: AppState) {
       return state.modals.manualSearch
+    },
+
+    getLocalSourceAnime(state: AppState) {
+      return state.modals.localSource.options
     },
 
     getIsFullscreen(state: AppState) {
@@ -232,6 +249,13 @@ export const app = {
       state.modals.manualSearch = {
         ...state.modals.manualSearch,
         ...options,
+      }
+    },
+
+    setLocalSourceAnime(state: AppState, animeId: number) {
+      state.modals.localSource.visible = true
+      state.modals.localSource.options = {
+        anilistId: animeId,
       }
     },
 
@@ -400,6 +424,7 @@ export const getPlayerData = read(app.getters.getPlayerData)
 export const getModalStates = read(app.getters.getModalStates)
 export const getEditingAnime = read(app.getters.getEditingAnime)
 export const getManualSearchOptions = read(app.getters.getManualSearchOptions)
+export const getLocalSourceOptions = read(app.getters.getLocalSourceAnime)
 export const getIsFullscreen = read(app.getters.getIsFullscreen)
 export const getSelectedEpisodes = read(app.getters.getSelectedEpisodes)
 
@@ -409,6 +434,7 @@ export const setEditingAnimeValue = commit(app.mutations.setEditingAnimeValue)
 export const setManualSearchOptions = commit(
   app.mutations.setManualSearchOptions,
 )
+export const setLocalSourceAnime = commit(app.mutations.setLocalSourceAnime)
 export const removeToast = commit(app.mutations.removeToast)
 const setPlaylist = commit(app.mutations.setPlaylist)
 const _setCurrentEpisode = commit(app.mutations.setCurrentEpisode)

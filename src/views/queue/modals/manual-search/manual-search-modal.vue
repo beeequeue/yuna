@@ -22,13 +22,14 @@
 import { Component, Vue } from 'vue-property-decorator'
 
 import AnimatedHeight from '@/common/components/animated-height.vue'
-import ModalBase from '@/common/components/modals/base.vue'
+import ModalBase from '@/common/modals/base.vue'
 import CrunchyrollEditor from './crunchyroll-editor.vue'
 import SearchStep from './search-step.vue'
 
 import {
   getManualSearchOptions,
   getSelectedEpisodes,
+  ModalName,
   toggleModal,
 } from '@/state/app'
 
@@ -36,6 +37,7 @@ import {
   components: { CrunchyrollEditor, SearchStep, AnimatedHeight, ModalBase },
 })
 export default class ManualSearchModal extends Vue {
+  public readonly modalName: ModalName = 'manualSearch'
   public selectedId: number | null = null
 
   public get searchOptions() {
@@ -51,7 +53,7 @@ export default class ManualSearchModal extends Vue {
   }
 
   public closeModal() {
-    toggleModal(this.$store, 'manualSearch')
+    toggleModal(this.$store, this.modalName)
 
     setTimeout(() => this.setSelectedId(null), 500)
   }

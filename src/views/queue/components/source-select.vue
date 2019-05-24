@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-if="supportedSources.length > 0"
-    class="source-select"
-    :class="{ highlight }"
-  >
+  <div class="source-select" :class="{ highlight }">
     <div :id="`source-select-${anime.id}`" class="dropdown" @click="toggleOpen">
       <span
         v-for="source in supportedSources"
@@ -13,6 +9,10 @@
         :class="getDropdownClasses(source)"
         :alt="source.site"
       />
+
+      <span class="text">
+        Select source...
+      </span>
 
       <icon :icon="expandSvg" class="expand" />
     </div>
@@ -45,6 +45,11 @@
           Search
         </div>
 
+        <div class="menu-item local-file" @click="handleClick(Provider.Local)">
+          <icon class="svg file" :icon="fileSvg" />
+          Local files
+        </div>
+
         <div v-if="unsupportedSources.length > 0" class="menu-item unsupported">
           <a
             v-for="source in unsupportedSources"
@@ -61,7 +66,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mdiChevronDown } from '@mdi/js'
+import { mdiChevronDown, mdiFile } from '@mdi/js'
 
 import crIcon from '@/assets/crunchyroll.svg'
 import hidiveIcon from '@/assets/hidive.svg'
@@ -70,9 +75,10 @@ import Icon from '@/common/components/icon.vue'
 import { Provider, QueueAnime, QueueExternalLinks } from '@/graphql/types'
 
 import { Required } from '@/decorators'
+import { initManualSearch, setLocalSourceAnime } from '@/state/app'
+import { getLocalFilesFolder } from '@/state/settings'
 import { StreamingSource, SupportedSources } from '@/types'
 import { getStreamingSources, isNil, isNotNil } from '@/utils'
-import { initManualSearch } from '@/state/app'
 
 const streamingSiteCtx = require.context('@/assets', false)
 const siteImages = streamingSiteCtx.keys()
@@ -90,6 +96,7 @@ export default class SourceSelect extends Vue {
   public crIcon = crIcon
   public hidiveIcon = hidiveIcon
   public expandSvg = mdiChevronDown
+  public fileSvg = mdiFile
 
   public get streamingSources() {
     if (isNil(this.anime.externalLinks)) return []
@@ -108,6 +115,10 @@ export default class SourceSelect extends Vue {
       ({ site }) =>
         !SupportedSources.includes(site.toLowerCase() as StreamingSource),
     )
+  }
+
+  public get localFilesFolder() {
+    return getLocalFilesFolder(this.$store)
   }
 
   public getLogo(source: QueueExternalLinks) {
@@ -137,11 +148,21 @@ export default class SourceSelect extends Vue {
   }
 
   public handleClick(provider: Provider) {
-    if (provider == Provider.CrunchyrollManual) {
+    if (provider === Provider.CrunchyrollManual) {
       initManualSearch(this.$store, {
         anilistId: this.anime.id,
         provider: Provider.Crunchyroll,
       })
+    }
+
+    if (provider === Provider.Local) {
+      if (isNil(this.localFilesFolder)) {
+        this.$router.push('/settings#local-files')
+
+        return
+      }
+
+      setLocalSourceAnime(this.$store, this.anime.id)
     }
 
     this.setProvider(provider)
@@ -188,6 +209,13 @@ export default class SourceSelect extends Vue {
       &.fade {
         filter: brightness(0.5) drop-shadow(0 1px 1px black);
       }
+    }
+
+    & > .text {
+      margin: 0 5px;
+      order: 98;
+      color: color($gray, 600);
+      font-weight: 400;
     }
 
     & > .expand {
@@ -268,6 +296,10 @@ export default class SourceSelect extends Vue {
         width: 20px;
         filter: drop-shadow(0 1px 1px black);
         margin-right: 5px;
+
+        &.file {
+          fill: $white;
+        }
       }
     }
   }

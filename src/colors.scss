@@ -7,8 +7,12 @@
     @return darken($color, 5%);
   } @else if($shade == 300) {
     @return darken($color, 2.5%);
+  } @else if($shade == 350) {
+    @return darken($color, 1.25%);
   } @else if ($shade == 400) {
     @return $color;
+  } @else if ($shade == 450) {
+    @return lighten($color, 1.25%);
   } @else if ($shade == 500) {
     @return lighten($color, 2.5%);
   } @else if ($shade == 600) {
@@ -23,6 +27,7 @@
 $black: #111;
 $dark: #151724;
 $highlight: #363f87;
+$highlightText: #5b61b6;
 $main: #202650;
 $gray: #bbb9bb;
 $white: #e5e5e5;
@@ -30,6 +35,8 @@ $white: #e5e5e5;
 $success: #3f8d3d;
 $warning: #b3701f;
 $danger: #aa2c2c;
+
+$vlc: #e85e00;
 
 $shadow: 1px 4px 10px rgba(0, 0, 0, 0.5);
 $outline: -1px -1px 1px #000, 1px -1px 1px #000, -1px 1px 1px #000, 1px 1px 1px #000;

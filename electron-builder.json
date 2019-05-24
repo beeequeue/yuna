@@ -1,12 +1,17 @@
 {
   "productName": "Yuna",
-  "linux": {
-    "category": "Video"
-  },
-  "mac": {
-    "category": "public.app-category.entertainment"
-  },
   "directories": {
     "buildResources": "public"
+  },
+  "win": {
+    "extraResources": ["node_modules/*/bin/win32/**/*"]
+  },
+  "linux": {
+    "category": "Video",
+    "extraResources": ["node_modules/*/bin/linux/**/*"]
+  },
+  "mac": {
+    "category": "public.app-category.entertainment",
+    "extraResources": ["node_modules/*/bin/darwin/**/*"]
   }
 }

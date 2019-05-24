@@ -32,7 +32,10 @@
       </transition>
     </div>
 
-    <div class="sidebar" :class="{ small: isPlayerOpen }">
+    <div
+      class="sidebar"
+      :class="{ small: isPlayerOpen, external: isExternalPlayer }"
+    >
       <span class="fill" />
 
       <c-button
@@ -161,6 +164,10 @@ export default class Queue extends Vue {
 
   public get isPlayerOpen() {
     return !!getPlayerData(this.$store)
+  }
+
+  public get isExternalPlayer() {
+    return oc(getPlayerData(this.$store)).provider() === Provider.Local
   }
 
   public get queue() {
@@ -371,11 +378,13 @@ export default class Queue extends Vue {
 @import '../../colors';
 
 .queue {
-  position: relative;
   display: flex;
 
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 80px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.85);
 
   .queue-container {
@@ -430,6 +439,10 @@ export default class Queue extends Vue {
 
     &.small {
       margin-bottom: 183px;
+    }
+
+    &.external {
+      margin-bottom: 50px !important;
     }
 
     & > .button {

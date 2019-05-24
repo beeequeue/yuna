@@ -2,6 +2,7 @@
   <transition>
     <div v-if="playerData" class="player-container" :class="classFromRoute">
       <player
+        v-if="playerData.provider !== 'LOCAL'"
         key="player"
         :loading="$apollo.loading || !anime || !episode"
         :anime="anime"
@@ -12,6 +13,12 @@
         :getShouldAutoMarkWatched="getShouldAutoMarkWatched"
         :setProgress="setProgress"
       />
+      <external-player
+        v-else-if="anime != null"
+        :index="this.episode.index"
+        :episodes="episodes"
+        :title="anime.title"
+      />
     </div>
   </transition>
 </template>
@@ -20,16 +27,18 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 
+import ExternalPlayer from '@/modules/player/external-player.vue'
 import { setProgress } from '@/common/mutations/episodes'
 import ANIME_QUERY from './player-anime.graphql'
 import EPISODE_LIST from '@/common/queries/episode-list.graphql'
 import {
-  PlayerAnimeAnime,
-  PlayerAnimeQuery,
-  PlayerAnimeVariables,
   EpisodeListEpisodes,
   EpisodeListQuery,
   EpisodeListVariables,
+  PlayerAnimeAnime,
+  PlayerAnimeQuery,
+  PlayerAnimeVariables,
+  Provider,
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
@@ -39,7 +48,7 @@ import { isNil } from '@/utils'
 
 import Player from './player.vue'
 
-@Component({ components: { Player } })
+@Component({ components: { ExternalPlayer, Player } })
 export default class PlayerContainer extends Vue {
   @Query<PlayerContainer, PlayerAnimeQuery, PlayerAnimeVariables>({
     fetchPolicy: 'network-only',
@@ -83,10 +92,9 @@ export default class PlayerContainer extends Vue {
   }
 
   get episode() {
-    const index = oc(this.playerData).index()
-    if (isNil(this.episodes) || isNil(index)) return null
+    const index = oc(this.playerData).index(-1)
 
-    return this.episodes[index] as EpisodeListEpisodes
+    return oc(this.episodes)[index]() || null
   }
 
   get nextEpisode() {
@@ -109,17 +117,27 @@ export default class PlayerContainer extends Vue {
   }
 
   get classFromRoute() {
+    let classNames = []
+
+    if (oc(this.episode).provider() === Provider.Local) {
+      classNames.push('external')
+    }
+
     const pathWithoutSlash = this.$route.path.substr(1)
 
     switch (pathWithoutSlash) {
       case 'player-big':
       case 'player-full':
-        return pathWithoutSlash
+        classNames.push(pathWithoutSlash)
+        break
       case 'queue':
-        return pathWithoutSlash
+        classNames.push(pathWithoutSlash)
+        break
       default:
-        return 'small'
+        classNames.push('small')
     }
+
+    return classNames.join(' ')
   }
 
   public mounted() {
@@ -214,5 +232,9 @@ $anim-speed: 0.5s;
   max-height: 180px;
   right: 15px;
   bottom: 15px;
+}
+
+.external {
+  max-height: 50px !important;
 }
 </style>

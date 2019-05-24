@@ -2,9 +2,9 @@ import {
   app,
   BrowserWindow,
   ipcMain,
-  protocol,
   Menu,
   MenuItemConstructorOptions,
+  protocol,
 } from 'electron'
 import electronDebug, { openDevTools } from 'electron-debug'
 import Store from 'electron-store'
@@ -37,7 +37,7 @@ init({
 })
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
-let mainWindow: any
+let mainWindow: BrowserWindow | null = null
 
 // Standard scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -52,7 +52,7 @@ protocol.registerSchemesAsPrivileged([
 // Register extra stuff
 electronDebug({})
 
-function createMainWindow() {
+const createMainWindow = () => {
   const settingsStore = new Store<any>({ name: 'settings' })
 
   const position = settingsStore.get('window', {})
@@ -162,7 +162,7 @@ function createMainWindow() {
   })
 
   window.on('close', () => {
-    settingsStore.set('window', mainWindow.getBounds())
+    settingsStore.set('window', mainWindow!.getBounds())
   })
 
   window.on('closed', () => {
@@ -181,6 +181,8 @@ function createMainWindow() {
 
 app.commandLine.appendSwitch('force-color-profile', 'srgb')
 
+app.setAppUserModelId(process.execPath)
+
 // quit application when all windows are closed
 app.on('window-all-closed', () => {
   // on macOS it is common for applications to stay open until the user explicitly quits
@@ -195,7 +197,7 @@ app.on('activate', () => {
   // on macOS it is common to re-create a window even after all windows have been closed
   if (mainWindow === null) {
     mainWindow = createMainWindow()
-    mainWindow.once('did-finish-load', () => mainWindow.show)
+    mainWindow.once('did-finish-load' as any, () => mainWindow!.show)
   }
 })
 
@@ -209,5 +211,5 @@ app.on('ready', async () => {
   }
 
   mainWindow = createMainWindow()
-  mainWindow.once('did-finish-load', () => mainWindow.show)
+  mainWindow.once('did-finish-load' as any, () => mainWindow!.show)
 })

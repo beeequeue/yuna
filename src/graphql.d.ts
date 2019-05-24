@@ -1,4 +1,14 @@
 /* THIS IS A GENERATED FILE */
+declare module '*/local-source-anime.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const LocalSourceAnime: DocumentNode
+
+  export { LocalSourceAnime }
+
+  export default defaultDocument
+}
+
 declare module '*/cache-episodes.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
@@ -79,16 +89,6 @@ declare module '*/episode-list.graphql' {
   export default defaultDocument
 }
 
-declare module '*/edit-list-entry.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const EditListEntry: DocumentNode
-
-  export { EditListEntry }
-
-  export default defaultDocument
-}
-
 declare module '*/player-anime.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
@@ -115,6 +115,16 @@ declare module '*/anime.graphql' {
   const AnimeView: DocumentNode
 
   export { AnimeView }
+
+  export default defaultDocument
+}
+
+declare module '*/edit-list-entry.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const EditListEntry: DocumentNode
+
+  export { EditListEntry }
 
   export default defaultDocument
 }

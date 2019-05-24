@@ -30,7 +30,7 @@ import Filter = Electron.Filter
 import { ActionContext, Store } from 'vuex'
 import { getIsConnectedTo } from '@/state/auth'
 
-const noop = () => {
+export const NO_OP = () => {
   /* no-op */
 }
 
@@ -205,7 +205,7 @@ export const removeCookies = (filter: Filter) => {
       const prefix = cookie.domain.includes('crunchyroll') ? 'api.' : ''
       const url = 'https://' + prefix + cookie.domain.replace(/^\./, '')
 
-      cookies.remove(url, cookie.name, noop)
+      cookies.remove(url, cookie.name, NO_OP)
     })
   })
 }

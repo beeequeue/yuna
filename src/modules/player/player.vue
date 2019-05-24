@@ -15,7 +15,7 @@
         ref="player"
         :class="{ ended }"
       >
-        <track v-if="subtitleUrl" :src="subtitleUrl" default />
+        <track v-if="subtitlesUrl" :src="subtitlesUrl" default />
       </video>
     </transition>
 
@@ -34,7 +34,7 @@
     </transition>
 
     <controls
-      v-if="anime && episode && levels"
+      v-if="anime && episode"
       :episode="episode"
       :nextEpisode="nextEpisode"
       :anime="anime"
@@ -48,13 +48,16 @@
       :progressInSeconds="progressInSeconds"
       :loadedPercentage="loadedPercentage"
       :speed="speed"
-      :quality="levels[quality]"
+      :quality="quality"
       :levels="levels"
+      :subtitles="subtitles"
+      :subtitlesIndex="selectedSubtitles"
       :onSetTime="onSetTime"
       :onSetVolume="onSetVolume"
       :onToggleMute="onToggleMute"
       :onChangeSpeed="onChangeSpeed"
       :onChangeQuality="onChangeQuality"
+      :onChangeSubtitles="onChangeSubtitles"
       :play="play"
       :pause="pause"
       :setProgress="setProgress"
@@ -111,7 +114,7 @@ import { getAnilistUsername } from '@/state/auth'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
 import { DISCORD_PAUSE_WATCHING, DISCORD_SET_WATCHING } from '@/messages'
 import { Levels, Stream } from '@/types'
-import { capitalize, clamp, getRelations, lastItem } from '@/utils'
+import { capitalize, clamp, getRelations, isNil, lastItem } from '@/utils'
 
 import Icon from '@/common/components/icon.vue'
 import Controls from './controls.vue'
@@ -119,8 +122,13 @@ import NextEpisodeOverlay from './next-episode-overlay.vue'
 import EndOfSeasonOverlay from './end-of-season-overlay.vue'
 import { Hidive, HidiveResponseCode } from '@/lib/hidive'
 
-const QUALITY_LOCALSTORAGE_KEY = 'quality_v2'
-localStorage.removeItem('quality')
+enum LocalStorageKey {
+  QUALITY = 'quality_v2',
+  VOLUME = 'volume',
+  MUTED = 'muted',
+  SPEED = 'speed',
+  SUBTITLE = 'subtitle',
+}
 
 @Component({
   components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
@@ -136,7 +144,6 @@ export default class Player extends Vue {
   @Required(Function) public setProgress!: (p: number) => any
 
   public streamUrl: string | null = null
-  public subtitleUrl: string | null = null
   public levels: Levels | null = null
 
   public initiated = !!this.shouldAutoPlay
@@ -146,16 +153,43 @@ export default class Player extends Vue {
   public loaded = false
   public loadingVideo = false
   public paused = true
-  public muted = localStorage.getItem('muted') === 'true'
-  public volume = Number(localStorage.getItem('volume') || 70)
-  public speed = Number(localStorage.getItem('speed') || 1)
+  public muted: boolean = localStorage.getItem(LocalStorageKey.MUTED) === 'true'
+  public volume: number = this.getNumberFromLocalStorage(
+    LocalStorageKey.VOLUME,
+    70,
+  )
+  public speed: number = this.getNumberFromLocalStorage(
+    LocalStorageKey.SPEED,
+    1,
+  )
   public quality: string =
-    localStorage.getItem(QUALITY_LOCALSTORAGE_KEY) || '1080'
+    localStorage.getItem(LocalStorageKey.QUALITY) || '1080'
   public progressPercentage = 0
   public progressInSeconds = 0
   public playhead = 0
   public loadedSeconds = 0
   public loadedPercentage = 0
+
+  // Subtitles
+  public get subtitles() {
+    const subtitles = oc(this.episode).subtitles([])
+
+    if (subtitles.length > 0) {
+      subtitles.push('None')
+    }
+
+    return subtitles
+  }
+  public get subtitlesUrl() {
+    return oc(this.episode).subtitles[this.selectedSubtitles]() || null
+  }
+  public selectedSubtitles = this.getNumberFromLocalStorage(
+    LocalStorageKey.SUBTITLE,
+    0,
+  )
+  public onChangeSubtitles(index: number) {
+    this.selectedSubtitles = index
+  }
 
   private lastScrobble = 0
   private lastHeartbeat = 0
@@ -244,7 +278,10 @@ export default class Player extends Vue {
     }
   }
 
-  private async fetchStream(provider: Provider, id: string): Promise<Stream> {
+  private async fetchStream(
+    provider: Provider,
+    id: string,
+  ): Promise<Stream | null> {
     if ([Provider.Crunchyroll, Provider.CrunchyrollManual].includes(provider)) {
       return Crunchyroll.fetchStream(id)
     }
@@ -262,7 +299,7 @@ export default class Player extends Vue {
       }
     }
 
-    return null as any
+    return null
   }
 
   @Watch('episode.id')
@@ -286,7 +323,6 @@ export default class Player extends Vue {
       }
 
       this.streamUrl = stream.url
-      this.subtitleUrl = stream.subtitles
 
       this.playhead = stream.progress || 0
     } catch (e) {
@@ -303,6 +339,9 @@ export default class Player extends Vue {
     this.paused = true
     this.loadingVideo = true
     this.loaded = false
+    this.levels = null
+
+    const oldHls = this.hls
 
     const hls = new Hls()
 
@@ -310,6 +349,8 @@ export default class Player extends Vue {
     hls.attachMedia(this.$refs.player)
 
     this.hls = hls
+
+    oldHls && oldHls.destroy()
 
     this.registerEvents()
   }
@@ -334,7 +375,7 @@ export default class Player extends Vue {
       if (this.levels[this.quality] == null) {
         const newQuality = lastItem(Object.keys(this.levels)) as string
 
-        localStorage.setItem(QUALITY_LOCALSTORAGE_KEY, newQuality)
+        localStorage.setItem(LocalStorageKey.QUALITY, newQuality)
         this.quality = newQuality
       }
 
@@ -450,7 +491,7 @@ export default class Player extends Vue {
     const value = clamp(+Number(element.value).toFixed(2), 0, 200)
 
     this.volume = value
-    localStorage.setItem('volume', value.toString())
+    localStorage.setItem(LocalStorageKey.VOLUME, value.toString())
 
     this.gainNode.gain.value = value / 100
   }
@@ -458,7 +499,7 @@ export default class Player extends Vue {
   public onToggleMute() {
     this.muted = !this.muted
 
-    localStorage.setItem('muted', this.muted.toString())
+    localStorage.setItem(LocalStorageKey.MUTED, this.muted.toString())
   }
 
   public onChangeSpeed(e: Event) {
@@ -471,7 +512,7 @@ export default class Player extends Vue {
   public onChangeQuality(quality: string) {
     this.quality = quality
     this.hls.currentLevel = this.levels![quality]
-    localStorage.setItem(QUALITY_LOCALSTORAGE_KEY, quality)
+    localStorage.setItem(LocalStorageKey.QUALITY, quality)
   }
 
   public onKeyDown(e: KeyboardEvent) {
@@ -554,6 +595,18 @@ export default class Player extends Vue {
       },
     )
   }
+
+  private getNumberFromLocalStorage(key: LocalStorageKey, def: number) {
+    const storedValue = localStorage.getItem(key)
+    const numberValue = Number(storedValue)
+
+    if (isNil(storedValue) || isNaN(numberValue)) {
+      localStorage.setItem(key, def.toString())
+      return def
+    }
+
+    return numberValue
+  }
 }
 </script>
 
@@ -595,6 +648,12 @@ export default class Player extends Vue {
       &:nth-child(odd) {
         color: yellow;
       }
+    }
+
+    // Makes sure subtitles aren't too far down on the screen
+    //noinspection CssInvalidPseudoSelector
+    &::-webkit-media-text-track-container {
+      padding: 5px 0;
     }
 
     &.ended {

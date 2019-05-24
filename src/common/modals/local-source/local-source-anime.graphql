@@ -1,0 +1,13 @@
+query LocalSourceAnime($id: Int!) {
+  anime: Media(id: $id) {
+    title {
+      english
+      romaji
+      userPreferred
+    }
+    episodes
+    mediaListEntry {
+      progress
+    }
+  }
+}
