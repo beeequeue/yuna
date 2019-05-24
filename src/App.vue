@@ -24,7 +24,7 @@
 
       <toast-overlay />
 
-      <portal-target name="modal" />
+      <portal-target slim name="modal" transition="transition-group" />
 
       <about-modal />
     </div>

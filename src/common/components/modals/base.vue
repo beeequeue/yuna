@@ -1,18 +1,15 @@
 <template>
   <portal to="modal">
-    <transition>
-      <div v-if="visible" class="modal">
-        <div class="cover" @click="toggleVisible" />
+    <div v-if="visible" :key="name" class="modal">
+      <div class="cover" @click="toggleVisible" />
 
-        <slot />
-      </div>
-    </transition>
+      <slot />
+    </div>
   </portal>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { oc } from 'ts-optchain'
 
 import { Required } from '@/decorators'
 import { RootState } from '@/state/store'
@@ -23,7 +20,7 @@ export default class ModalBase extends Vue {
   @Required(String) public name!: keyof RootState['app']['modals']
 
   public get visible(): boolean {
-    return oc(getModalStates(this.$store))[this.name!](false)
+    return getModalStates(this.$store)[this.name!]
   }
 
   public toggleVisible() {

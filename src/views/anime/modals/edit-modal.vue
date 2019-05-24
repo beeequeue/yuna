@@ -1,5 +1,5 @@
 <template>
-  <modal-base name="edit">
+  <modal-base :name="modalName">
     <ApolloMutation
       :mutation="EDIT_LIST_ENTRY"
       :variables="anime && anime.mediaListEntry"
@@ -112,6 +112,7 @@ import {
   setEditingAnimeValue,
   toggleModal,
 } from '@/state/app'
+import { RootState } from '@/state/store'
 import { capitalize, enumToArray, propEq } from '@/utils'
 
 import CButton from '@/common/components/button.vue'
@@ -132,8 +133,9 @@ export default class EditModal extends Vue {
     }),
   )
 
-  public EDIT_LIST_ENTRY = EDIT_LIST_ENTRY
-  public deleteSvg = mdiCloseCircle
+  public readonly modalName: keyof RootState['app']['modals'] = 'edit'
+  public readonly EDIT_LIST_ENTRY = EDIT_LIST_ENTRY
+  public readonly deleteSvg = mdiCloseCircle
 
   public get anime() {
     return getEditingAnime(this.$store)
@@ -286,7 +288,7 @@ $gutter: 25px;
 
   & > .buttons {
     width: 100%;
-    padding: 0px $gutter;
+    padding: 0 $gutter;
     margin-bottom: 20px;
     display: flex;
     justify-content: space-between;

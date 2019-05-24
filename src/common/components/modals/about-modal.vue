@@ -21,6 +21,8 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { chromeVersion, electronVersion } from 'electron-util'
 
+import { RootState } from '@/state/store'
+
 import ModalBase from '@/common/components/modals/base.vue'
 import { version } from '../../../../package.json'
 
@@ -28,7 +30,7 @@ import { version } from '../../../../package.json'
   components: { ModalBase },
 })
 export default class AboutModal extends Vue {
-  public modalName = 'about' as 'about'
+  public readonly modalName: keyof RootState['app']['modals'] = 'about'
 
   public version = version
   public electronVersion = electronVersion
