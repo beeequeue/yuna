@@ -93,10 +93,6 @@ export const auth = {
       }
     },
 
-    getIsConnectedToAStreamingService(state: AuthState) {
-      return !isNil(state.crunchyroll.user) || !isNil(state.hidive.user)
-    },
-
     getFinishedConnecting(state: AuthState) {
       return (
         !isNil(state.anilist.token) &&

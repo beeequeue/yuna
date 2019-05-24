@@ -130,12 +130,6 @@ export const app = {
       return state.player
     },
 
-    getPlaylistAnimeId(state: AppState) {
-      if (!state.player) return null
-
-      return state.player.id
-    },
-
     getModalStates(
       state: AppState,
     ): { [key in keyof AppState['modals']]: boolean } {
@@ -317,11 +311,6 @@ export const app = {
   },
 
   actions: {
-    notifyDownloadDone() {
-      // eslint-disable-next-line no-unused-expression
-      new Notification('New version downloaded, restart to start using it!')
-    },
-
     sendToast(context: AppContext, options: ToastOptions) {
       const realOptions = Object.assign(
         {},
@@ -348,14 +337,6 @@ export const app = {
         type: 'error',
         title: 'An error occurred!',
         message: error,
-      })
-    },
-
-    sendNotImplementedToast(context: AppContext) {
-      sendToast(context, {
-        type: 'error',
-        title: 'Not implemented',
-        message: 'This has not been added yet!',
       })
     },
 
@@ -416,7 +397,6 @@ const { read, commit, dispatch } = getStoreAccessors<AppState, RootState>('app')
 export const getIsUpdateAvailable = read(app.getters.getIsUpdateAvailable)
 export const getToasts = read(app.getters.getToasts)
 export const getPlayerData = read(app.getters.getPlayerData)
-export const getPlaylistAnimeId = read(app.getters.getPlaylistAnimeId)
 export const getModalStates = read(app.getters.getModalStates)
 export const getEditingAnime = read(app.getters.getEditingAnime)
 export const getManualSearchOptions = read(app.getters.getManualSearchOptions)
@@ -446,10 +426,6 @@ export const unselectCrunchyrollEpisodes = commit(
 export const toggleFullscreen = dispatch(app.actions.toggleFullscreen)
 export const sendToast = dispatch(app.actions.sendToast)
 export const sendErrorToast = dispatch(app.actions.sendErrorToast)
-export const sendNotImplementedToast = dispatch(
-  app.actions.sendNotImplementedToast,
-)
-export const notifyDownloadDone = dispatch(app.actions.notifyDownloadDone)
 export const initEditModal = dispatch(app.actions.initEditModal)
 export const initManualSearch = dispatch(app.actions.initManualSearch)
 export const setCurrentEpisode = dispatch(app.actions.setCurrentEpisode)
