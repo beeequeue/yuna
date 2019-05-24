@@ -81,7 +81,7 @@ export default class TitleBar extends Vue {
     errorPolicy: 'all',
     pollInterval: 15 * 1000,
   })
-  public anilistOnline!: boolean | null
+  public anilistOnline = true
 
   public version = version
 
