@@ -837,13 +837,13 @@
     "@sentry/utils" "5.2.0"
     tslib "^1.9.3"
 
-"@sentry/integrations@5.2.0":
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/@sentry/integrations/-/integrations-5.2.0.tgz#752bab3e6f39e4f1c4c7dd46a674a32268af9607"
-  integrity sha512-wvGgOAGTcTbVY7DAHfnX3ZiBsfTtYriFCo6HlLM83UODXqnSb0GpYZSpZSBR/8x3gxI7zxj+BRAYSL3hTtSNJA==
+"@sentry/integrations@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@sentry/integrations/-/integrations-5.3.0.tgz#fcf2eb1e07a8a8200728d9fbc469bb542ac2a8e9"
+  integrity sha512-K5IyneZxgAIZd/NwE2O6xeLZCdpa9vhupkCv6+BqynwPdwfRbicf9NOP0TfQtLYeYqF6ciBvsCKvu8834C30HQ==
   dependencies:
     "@sentry/types" "5.2.0"
-    "@sentry/utils" "5.2.0"
+    "@sentry/utils" "5.3.0"
     tslib "^1.9.3"
 
 "@sentry/minimal@5.2.0":
@@ -878,6 +878,14 @@
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-5.2.0.tgz#1b97fbe9a9bf2f9a355670da6531dcac79d9e748"
   integrity sha512-/0gWzWSot22P/Zkfz2lxXvuOiHAtM4uwkADlt1yN3mMPTaHD8feV9MTwjg+Z3KxKSZ005riJFncCO+PZQaydSQ==
+  dependencies:
+    "@sentry/types" "5.2.0"
+    tslib "^1.9.3"
+
+"@sentry/utils@5.3.0":
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/@sentry/utils/-/utils-5.3.0.tgz#9f86b6addcb762e53c7b659bba9298ac498ccb6b"
+  integrity sha512-4nfv6p2/PPWt7jk/AE73K7YydFHiBs3GvJLpO+PHgNyU3GBtQGST5HggdkGy+mCbtoBdkCIf1CRNeabCxTZ92g==
   dependencies:
     "@sentry/types" "5.2.0"
     tslib "^1.9.3"
