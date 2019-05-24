@@ -6,7 +6,7 @@
   "dependencies": {
     "@mdi/js": "3.6.95",
     "@sentry/browser": "5.2.1",
-    "@sentry/integrations": "5.2.0",
+    "@sentry/integrations": "5.3.1",
     "@sentry/node": "5.2.0",
     "anitomyscript": "1.0.2",
     "bottleneck": "2.18.1",
