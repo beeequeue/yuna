@@ -332,6 +332,7 @@ export const getEpisodeRelations = (
           ...ep,
           index: i,
           episodeNumber: to[0] + i,
+          animeId: rel.id,
         }))
     }
   })
