@@ -21,7 +21,7 @@
     "ffprobe-static": "3.0.0",
     "fluent-ffmpeg": "2.1.2",
     "fuse.js": "3.4.4",
-    "graphql": "14.3.0",
+    "graphql": "14.3.1",
     "hls.js": "0.12.4",
     "lodash.keyby": "4.6.0",
     "lodash.set": "4.3.2",
@@ -127,7 +127,7 @@
   },
   "resolutions": {
     "@types/graphql": "14.2.0",
-    "graphql": "14.3.0"
+    "graphql": "14.3.1"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production vue-cli-service electron:build",
