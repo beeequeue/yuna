@@ -215,7 +215,7 @@ export const settings = {
     },
 
     getHasFinishedSetup(state: SettingsState) {
-      return state.setup.finishedSteps.length === _setupSteps.length
+      return state.setup.finishedSteps.length >= _setupSteps.length
     },
 
     getNextUnfinishedStep(state: SettingsState) {
