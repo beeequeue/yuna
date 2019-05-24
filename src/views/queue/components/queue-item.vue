@@ -191,9 +191,9 @@ export default class QueueItem extends Vue {
       this.episodesFetchingError =
         'Something went wrong fetching the episodes. :('
     },
-    async result(data) {
+    async result() {
       if (
-        !isNil(data.episodes) ||
+        !isNil(this.episodes) ||
         !CrunchyrollProviders.includes(this.item.provider)
       ) {
         return
