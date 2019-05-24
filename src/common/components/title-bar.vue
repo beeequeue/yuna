@@ -19,8 +19,15 @@
 
     <span class="separator" />
 
+    <transition name="fade">
+      <a v-if="!anilistOnline" class="alert" href="http://status.anilist.co/">
+        It seems like AniList is down, most features will not work.
+        <icon :icon="infoSvg" />
+      </a>
+    </transition>
+
     <span v-if="!isMac" class="menu-buttons">
-      <icon :icon="minimizeSvg" @click.native="minimize" />
+      <icon class="button" :icon="minimizeSvg" @click.native="minimize" />
       <icon class="close" :icon="closeSvg" @click.native="close" />
     </span>
     <span v-else class="menu-buttons mac">
@@ -34,10 +41,19 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { activeWindow, is } from 'electron-util'
-import { mdiClose, mdiMinus, mdiChevronLeft, mdiChevronRight } from '@mdi/js'
+import gql from 'graphql-tag'
+import { oc } from 'ts-optchain'
+import {
+  mdiChevronLeft,
+  mdiChevronRight,
+  mdiClose,
+  mdiInformationOutline,
+  mdiMinus,
+} from '@mdi/js'
 
 import { closeAllModals } from '@/state/app'
 import { getCrunchyrollCountry, getIsConnectedTo } from '@/state/auth'
+import { Query } from '@/decorators'
 
 import Icon from './icon.vue'
 import { version } from '../../../package.json'
@@ -46,10 +62,32 @@ const flagContext = require.context('svg-country-flags/svg')
 
 @Component<TitleBar>({ components: { Icon } })
 export default class TitleBar extends Vue {
+  @Query({
+    fetchPolicy: 'no-cache',
+    query: gql`
+      {
+        Viewer {
+          id
+        }
+      }
+    `,
+    variables: null,
+    update(data) {
+      return oc(data).Viewer.id() != null
+    },
+    error() {
+      return false
+    },
+    errorPolicy: 'all',
+    pollInterval: 15 * 1000,
+  })
+  public anilistOnline!: boolean | null
+
   public version = version
 
   public backSvg = mdiChevronLeft
   public forwardSvg = mdiChevronRight
+  public infoSvg = mdiInformationOutline
   public minimizeSvg = mdiMinus
   public closeSvg = mdiClose
 
@@ -179,6 +217,19 @@ export default class TitleBar extends Vue {
     width: 100%;
   }
 
+  & > .alert {
+    order: 5;
+    color: $danger;
+    font-weight: 600;
+    font-size: 0.85em;
+    -webkit-app-region: no-drag;
+
+    & > .icon {
+      fill: $danger;
+      padding: 6px;
+    }
+  }
+
   & .icon {
     fill: $white;
     height: 30px;
@@ -187,7 +238,7 @@ export default class TitleBar extends Vue {
     -webkit-app-region: no-drag;
     transition: background 75ms;
 
-    &:hover {
+    &.button:hover {
       background: rgba(150, 150, 200, 0.1);
     }
   }

@@ -1,18 +1,6 @@
 <template>
   <transition name="fade">
-    <div v-if="!anilistOnline" class="anilist-down-error">
-      <loading v-if="anilistOnline == null" :size="80" />
-      <div v-else>
-        Seems like AniList is down. Please try again later! :(
-
-        <br />
-        <br />
-        <c-button type="danger" content="Close" />
-      </div>
-    </div>
-
     <div
-      v-else
       id="app"
       tabindex="0"
       :style="`background-image: url(${backgroundImage})`"
@@ -47,8 +35,6 @@
 import { ipcRenderer } from 'electron'
 import { Vue } from 'vue-property-decorator'
 import Component from 'vue-class-component'
-import gql from 'graphql-tag'
-import { oc } from 'ts-optchain'
 
 import CButton from '@/common/components/button.vue'
 import TitleBar from '@/common/components/title-bar.vue'
@@ -57,11 +43,9 @@ import Loading from '@/common/components/loading.vue'
 import AboutModal from '@/common/components/modals/about-modal.vue'
 import PlayerContainer from '@/modules/player/player-container.vue'
 import Navbar from '@/modules/navbar/navbar.vue'
-
-import { Query } from '@/decorators'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { Hidive } from '@/lib/hidive'
-import { getIsConnectedTo, getFinishedConnecting } from '@/state/auth'
+import { getFinishedConnecting, getIsConnectedTo } from '@/state/auth'
 import { getHasFinishedSetup } from '@/state/settings'
 import {
   AppState,
@@ -88,27 +72,6 @@ const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
   },
 })
 export default class App extends Vue {
-  @Query({
-    fetchPolicy: 'no-cache',
-    query: gql`
-      {
-        Viewer {
-          id
-        }
-      }
-    `,
-    variables: null,
-    update(data) {
-      return oc(data).Viewer.id() != null
-    },
-    error() {
-      return false
-    },
-    errorPolicy: 'all',
-    pollInterval: 15 * 1000,
-  })
-  public anilistOnline!: boolean | null
-
   public get isConnectedTo() {
     return getIsConnectedTo(this.$store)
   }
@@ -190,18 +153,6 @@ body,
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-}
-
-.anilist-down-error {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.25em;
-  font-weight: 800;
-  font-family: 'Raleway', sans-serif;
-  color: color($danger, 600);
 }
 
 #app {
