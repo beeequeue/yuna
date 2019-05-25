@@ -35,6 +35,7 @@ export default class PlayerTitle extends Vue {
 
 <style scoped lang="scss">
 @import '../../colors';
+@import '../../utils';
 
 .episode-info {
   position: absolute;
@@ -55,11 +56,11 @@ export default class PlayerTitle extends Vue {
   }
 
   & > .episode-number {
+    @include RalewayNumber;
     display: flex;
     align-items: center;
     margin: 0 15px;
     font-size: 2.5em;
-    font-family: 'Lato', sans-serif !important;
   }
 
   & > .titles {
