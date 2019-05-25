@@ -21,7 +21,7 @@
 
     <div class="toolbar">
       <progress-bar
-        :duration="episode.duration"
+        :duration="duration"
         :progressPercentage="progressPercentage"
         :loadedPercentage="loadedPercentage"
         :onSetTime="onSetTime"
@@ -254,6 +254,7 @@ export default class Controls extends Vue {
   @Required(Boolean) public muted!: boolean
   @Required(Boolean) public isPlayerMaximized!: boolean
   @Required(Number) public volume!: number
+  @Required(Number) public duration!: number
   @Required(Number) public progressInSeconds!: number
   @Required(Number) public progressPercentage!: number
   @Required(Number) public loadedPercentage!: number
@@ -291,9 +292,9 @@ export default class Controls extends Vue {
 
   public get timeString() {
     const current = secondsToTimeString(
-      Math.min(this.progressInSeconds, this.episode.duration),
+      Math.min(this.progressInSeconds, this.duration),
     )
-    const duration = secondsToTimeString(this.episode.duration)
+    const duration = secondsToTimeString(this.duration)
 
     return `${current} / ${duration}`
   }
@@ -564,6 +565,7 @@ $buttonSize: 50px;
     font-weight: 400;
     font-size: 1.5em;
     cursor: default;
+    font-variant-numeric: tabular-nums;
   }
 
   & > .button-collapser {

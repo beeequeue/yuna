@@ -44,6 +44,7 @@
       :isPlayerMaximized="isPlayerMaximized"
       :muted="muted"
       :volume="volume"
+      :duration="duration || episode.duration"
       :progressPercentage="progressPercentage"
       :progressInSeconds="progressInSeconds"
       :loadedPercentage="loadedPercentage"
@@ -164,6 +165,7 @@ export default class Player extends Vue {
   )
   public quality: string =
     localStorage.getItem(LocalStorageKey.QUALITY) || '1080'
+  public duration = 0
   public progressPercentage = 0
   public progressInSeconds = 0
   public playhead = 0
@@ -331,6 +333,7 @@ export default class Player extends Vue {
 
     if (!this.streamUrl) return
 
+    this.duration = 0
     this.progressInSeconds = 0
     this.progressPercentage = 0
     this.ended = false
@@ -402,6 +405,7 @@ export default class Player extends Vue {
     this.$refs.player.oncanplay = () => {
       this.loadingVideo = false
       this.loaded = true
+      this.duration = Math.round(this.$refs.player.duration)
     }
     this.$refs.player.onwaiting = () => {
       this.loadingVideo = true
@@ -417,7 +421,7 @@ export default class Player extends Vue {
 
     const element = e.target as HTMLVideoElement
     this.loadedSeconds = element.buffered.end(0)
-    this.loadedPercentage = this.loadedSeconds / this.episode.duration
+    this.loadedPercentage = this.loadedSeconds / this.duration
   }
 
   public onTimeUpdate(e: Event) {
@@ -430,7 +434,7 @@ export default class Player extends Vue {
     }
 
     this.progressInSeconds = Math.round(element.currentTime)
-    this.progressPercentage = element.currentTime / this.episode.duration
+    this.progressPercentage = element.currentTime / this.duration
 
     if (
       this.progressInSeconds % 10 === 0 &&
@@ -455,13 +459,10 @@ export default class Player extends Vue {
 
     if (!this.softEnded && this.progressPercentage >= 0.8) {
       this.softEnded = true
-      this.lastScrobble = this.episode.duration
+      this.lastScrobble = this.duration
 
       if (this.playerData.provider === Provider.Crunchyroll) {
-        Crunchyroll.setProgressOfEpisode(
-          Number(this.episode.id),
-          this.episode.duration,
-        )
+        Crunchyroll.setProgressOfEpisode(Number(this.episode.id), this.duration)
       }
 
       this.updateProgressIfNecessary()
