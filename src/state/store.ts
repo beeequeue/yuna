@@ -52,17 +52,21 @@ ipcRenderer.on(UPDATE_DOWNLOADED, () => {
   })
 })
 
-ipcRenderer.on(UPDATE_ERROR, (_e: any, version: string) => {
+ipcRenderer.on(UPDATE_ERROR, (_e: any, version?: string) => {
   setIsUpdateAvailable(store, false)
+
+  let url = 'https://github.com/BeeeQueue/yuna/releases'
+
+  if (version) {
+    url += `/tag/v${version}`
+  }
 
   sendToast(store, {
     type: 'error',
     title: 'An error occurred downloading update.',
     message: 'Click here to download it manually from GitHub.',
     click: () => {
-      shell.openExternal(
-        `https://github.com/BeeeQueue/yuna/releases/tag/v${version}`,
-      )
+      shell.openExternal(url)
     },
     timeout: 30 * 1000,
   })
