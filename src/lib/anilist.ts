@@ -8,7 +8,7 @@ import { getConfig } from '@/config'
 import { AnilistData, setAnilist } from '@/state/auth'
 
 import { userStore } from './user'
-import { removeCookies } from '@/utils'
+import { NO_OP, removeCookies } from '@/utils'
 
 type BrowserWindow = electron.BrowserWindow
 type StoreType = Store<any> | ActionContext<any, any>
@@ -47,6 +47,7 @@ const handleNewURL = async (
     )
 
     authWindow.close()
+    return
   }
 
   const matches = url.match(
@@ -90,11 +91,14 @@ export const loginAnilist = (store: StoreType) =>
       handleNewURL(store, url, 'will-navigate'),
     )
 
-    authWindow.loadURL(
-      `https://anilist.co/api/v2/oauth/authorize?client_id=${getConfig(
-        'ANILIST_ID',
-      )}&response_type=token`,
-    )
+    authWindow
+      .loadURL(
+        `https://anilist.co/api/v2/oauth/authorize?client_id=${getConfig(
+          'ANILIST_ID',
+        )}&response_type=token`,
+      )
+      .catch(NO_OP)
+
     authWindow.show()
   })
 
