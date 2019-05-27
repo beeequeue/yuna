@@ -12359,10 +12359,10 @@ vue-cli-plugin-apollo@0.20.0:
     subscriptions-transport-ws "^0.9.16"
     ts-node "^8.0.3"
 
-vue-cli-plugin-electron-builder@1.3.2:
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/vue-cli-plugin-electron-builder/-/vue-cli-plugin-electron-builder-1.3.2.tgz#53ef85132399677542e47e0f4d10770cb23a2ae4"
-  integrity sha512-0GP4wCJMqGgH2tTGNIGACzt2JLu5wJVL9dELQYAaBfw0sxOjKDFNhoBgy3P8YI2aDn3ddZ0qgWprG2BwJmaRhg==
+vue-cli-plugin-electron-builder@1.3.4:
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/vue-cli-plugin-electron-builder/-/vue-cli-plugin-electron-builder-1.3.4.tgz#6f16b1254a29086498cb5e90de488b1bae6bfe2b"
+  integrity sha512-VepICI6s4ChKaJ/jHE86QYQAxVqOIiMTeqEAITe82QuYTjNiDSYKNk3HxVOOpPJNu+eSmLFaskgqHs7M+HXJIg==
   dependencies:
     chokidar "^2.1.5"
     electron-builder "^20.29.0"
