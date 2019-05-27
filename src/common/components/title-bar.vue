@@ -72,6 +72,9 @@ export default class TitleBar extends Vue {
       }
     `,
     variables: null,
+    skip() {
+      return !this.isConnectedTo.anilist
+    },
     update(data) {
       return oc(data).Viewer.id() != null
     },
