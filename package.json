@@ -37,7 +37,7 @@
     "uuid": "3.3.2",
     "v-tooltip": "2.0.2",
     "vue": "2.6.10",
-    "vue-apollo": "3.0.0-beta.29",
+    "vue-apollo": "3.0.0-beta.30",
     "vue-class-component": "7.1.0",
     "vue-property-decorator": "8.1.1",
     "vue-router": "3.0.6",
