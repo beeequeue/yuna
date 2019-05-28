@@ -18,7 +18,7 @@ import {
 } from 'vue-cli-plugin-electron-builder/lib'
 
 import { destroyDiscord, registerDiscord } from './lib/discord'
-import { OPEN_DEVTOOLS } from './messages'
+import { ANILIST_LOGIN, LOGGED_INTO_ANILIST, OPEN_DEVTOOLS } from './messages'
 import { initAutoUpdater } from './updater'
 import { version } from '../package.json'
 
@@ -45,6 +45,12 @@ protocol.registerSchemesAsPrivileged([
     scheme: 'app',
     privileges: {
       secure: true,
+    },
+  },
+  {
+    scheme: 'yuna',
+    privileges: {
+      supportFetchAPI: true,
     },
   },
 ])
@@ -209,6 +215,22 @@ app.on('ready', async () => {
     // Install Vue Devtools
     await installVueDevtools()
   }
+
+  protocol.registerStringProtocol('yuna', async (req, cb) => {
+    const matches = req.url!.match(
+      /access_token=(.*)&.*&expires_in=(\d+)/,
+    ) as RegExpMatchArray
+
+    if (!matches || !matches[1]) {
+      return cb('Failed to get token')
+    }
+
+    mainWindow!.webContents.send(ANILIST_LOGIN, {
+      token: matches[1],
+      expires: Date.now() + Number(matches[2]),
+    })
+    cb(LOGGED_INTO_ANILIST)
+  })
 
   mainWindow = createMainWindow()
   mainWindow.once('did-finish-load' as any, () => mainWindow!.show)

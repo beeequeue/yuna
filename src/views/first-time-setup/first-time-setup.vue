@@ -52,7 +52,7 @@ import SpoilerSettings from './components/spoiler-settings.vue'
 import Discord from './components/discord.vue'
 import LocalFilesSetup from './components/local-files-setup.vue'
 
-import { loginAnilist } from '@/lib/anilist'
+import { Anilist } from '@/lib/anilist'
 import {
   _setupSteps,
   addFinishedStep,
@@ -91,7 +91,7 @@ export default class FirstTimeSetup extends Vue {
   }
 
   public async loginAnilist() {
-    await loginAnilist(this.$store)
+    await Anilist.login()
 
     this.finishStep()
   }

@@ -3,16 +3,18 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import {
+  ANILIST_LOGIN,
+  DOWNLOAD_UPDATE,
   UPDATE_AVAILABLE,
   UPDATE_DOWNLOADED,
   UPDATE_ERROR,
-  DOWNLOAD_UPDATE,
 } from '@/messages'
 
 import { app, AppState, sendToast, setIsUpdateAvailable } from './app'
 import { auth, AuthState } from './auth'
 import { settings, SettingsState } from './settings'
 import { user, UserState } from './user'
+import { Anilist } from '@/lib/anilist'
 
 Vue.use(Vuex)
 
@@ -70,6 +72,15 @@ ipcRenderer.on(UPDATE_ERROR, (_e: any, version?: string) => {
     },
     timeout: 30 * 1000,
   })
+})
+
+interface Parameters {
+  token: string
+  expires: number
+}
+
+ipcRenderer.on(ANILIST_LOGIN, async (_: any, params: Parameters) => {
+  await Anilist.updateUserData(store, params)
 })
 
 export interface RootState {

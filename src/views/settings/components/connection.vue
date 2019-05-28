@@ -29,7 +29,7 @@ import { Required } from '@/decorators'
 import { RootState } from '@/state/store'
 import { getIsConnectedTo, getFinishedConnecting } from '@/state/auth'
 import { Crunchyroll } from '@/lib/crunchyroll'
-import { logoutAnilist } from '@/lib/anilist'
+import { Anilist } from '@/lib/anilist'
 import { Hidive } from '@/lib/hidive'
 import { capitalize } from '@/utils'
 
@@ -60,7 +60,7 @@ export default class Connection extends Vue {
         break
 
       case 'anilist':
-        await logoutAnilist(this.$store)
+        await Anilist.logOut(this.$store)
         break
 
       case 'hidive':

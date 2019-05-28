@@ -51,7 +51,7 @@ import LoginCR from '@/common/components/login/crunchyroll.vue'
 import LoginAL from '@/common/components/login/anilist.vue'
 import LoginHD from '@/common/components/login/hidive.vue'
 
-import { loginAnilist } from '@/lib/anilist'
+import { Anilist } from '@/lib/anilist'
 import { getFinishedConnecting, getIsConnectedTo } from '@/state/auth'
 
 @Component({
@@ -88,7 +88,7 @@ export default class Login extends Vue {
   }
 
   public async loginAnilist() {
-    await loginAnilist(this.$store)
+    await Anilist.login()
 
     this.onSuccessfulLogin()
   }
