@@ -47,6 +47,7 @@
 
     <div class="example">
       <episode :episode="episodes[0]" :setCurrentEpisode="() => {}" small />
+      <span class="cover" />
     </div>
   </div>
 </template>
@@ -137,5 +138,13 @@ export default class SpoilerSettings extends Vue {
   border-radius: 5px;
   box-shadow: $shadow;
   user-select: none;
+
+  & > .cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
 }
 </style>
