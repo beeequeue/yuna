@@ -4418,13 +4418,13 @@ dir-glob@^2.0.0, dir-glob@^2.2.2:
   dependencies:
     path-type "^3.0.0"
 
-discord-rpc@3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/discord-rpc/-/discord-rpc-3.0.1.tgz#bb376d4d84531375f1b33ddc0f4fa81afb60aba0"
-  integrity sha512-PvkVpIlbFowih2mPIOAwUlX+w+9AGtpVUpQrGP6Mu7TPHDjfclsYoRuquIYiSHsS/n5EfhFgMZfsSTRPkvj22w==
+discord-rpc@3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/discord-rpc/-/discord-rpc-3.0.2.tgz#afad36937d8bc001a4fef70bf49c17e22d267a6f"
+  integrity sha512-13JDueH1geWUlS0aLzVl2nLoEQx9U69Ie3vxMM3D6nOSKASq/irohqxT3AU0zhZDEtkp23AWWMLRwOlXcfCvWg==
   dependencies:
-    node-fetch "^2.1.2"
-    ws "^5.2.1"
+    node-fetch "^2.3.0"
+    ws "^6.1.1"
 
 disparity@^2.0.0:
   version "2.0.0"
@@ -12897,17 +12897,17 @@ write@^0.2.1:
   dependencies:
     mkdirp "^0.5.1"
 
-ws@^5.2.0, ws@^5.2.1:
+ws@^5.2.0:
   version "5.2.2"
   resolved "https://registry.yarnpkg.com/ws/-/ws-5.2.2.tgz#dffef14866b8e8dc9133582514d1befaf96e980f"
   integrity sha512-jaHFD6PFv6UgoIVda6qZllptQsMlDEJkTQcybzzXDYM1XO9Y8em691FGMPmM46WGyLU4z9KMgQN+qrux/nhlHA==
   dependencies:
     async-limiter "~1.0.0"
 
-ws@^6.0.0:
-  version "6.1.2"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-6.1.2.tgz#3cc7462e98792f0ac679424148903ded3b9c3ad8"
-  integrity sha512-rfUqzvz0WxmSXtJpPMX2EeASXabOrSMk1ruMOV3JBTBjo4ac2lDjGGsbQSyxj8Odhw5fBib8ZKEjDNvgouNKYw==
+ws@^6.0.0, ws@^6.1.1:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-6.2.1.tgz#442fdf0a47ed64f59b6a5d8ff130f4748ed524fb"
+  integrity sha512-GIyAXC2cB7LjvpgMt9EKS2ldqr0MTrORaleiOno6TweZ6r3TKtoFQWay/2PceJ3RuBasOHzXNn5Lrw1X0bEjqA==
   dependencies:
     async-limiter "~1.0.0"
 
