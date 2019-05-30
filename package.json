@@ -20,7 +20,7 @@
     "ffmpeg-static": "2.4.0",
     "ffprobe-static": "3.0.0",
     "fluent-ffmpeg": "2.1.2",
-    "fuse.js": "3.4.4",
+    "fuse.js": "3.4.5",
     "graphql": "14.3.1",
     "hls.js": "0.12.4",
     "lodash.keyby": "4.6.0",
