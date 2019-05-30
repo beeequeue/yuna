@@ -366,7 +366,7 @@ export const settings = {
         return console.error('Tried to set unknown setting: ' + options.setting)
       }
 
-      state[options.setting] = options.value
+      ;(state[options.setting] as any) = options.value
 
       SettingsStore.set(options.setting, options.value)
     },
