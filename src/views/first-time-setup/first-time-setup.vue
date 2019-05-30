@@ -57,8 +57,10 @@ import {
   _setupSteps,
   addFinishedStep,
   getNextUnfinishedStep,
+  removeFinishedStep,
   SetupStep,
 } from '@/state/settings'
+import { getIsConnectedTo } from '@/state/auth'
 
 @Component({
   components: {
@@ -80,6 +82,8 @@ export default class FirstTimeSetup extends Vue {
   }
 
   public created() {
+    this.confirmStepsCompleted()
+
     this.currentStep = getNextUnfinishedStep(this.$store)
   }
 
@@ -94,6 +98,18 @@ export default class FirstTimeSetup extends Vue {
     await Anilist.login()
 
     this.finishStep()
+  }
+
+  private confirmStepsCompleted() {
+    const isConnectedTo = getIsConnectedTo(this.$store)
+
+    if (!isConnectedTo.anilist) {
+      removeFinishedStep(this.$store, SetupStep.LOGIN_AL)
+    }
+
+    if (!isConnectedTo.crunchyroll && !isConnectedTo.hidive) {
+      removeFinishedStep(this.$store, SetupStep.CONNECT)
+    }
   }
 }
 </script>

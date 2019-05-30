@@ -380,6 +380,15 @@ export const settings = {
         SettingsStore.set('setup.finishedSteps', steps)
       }
     },
+
+    removeFinishedStep(state: SettingsState, step: SetupStep) {
+      const index = state.setup.finishedSteps.indexOf(step)
+
+      if (index === -1) return
+
+      state.setup.finishedSteps.splice(index, 1)
+      SettingsStore.set('setup.finishedSteps', state.setup.finishedSteps)
+    },
   },
 
   actions: {
@@ -427,6 +436,7 @@ export const setDiscordRichPresence = commit(
   settings.mutations.setDiscordRichPresence,
 )
 export const addFinishedStep = commit(settings.mutations.addFinishedStep)
+export const removeFinishedStep = commit(settings.mutations.removeFinishedStep)
 
 export const setCrunchyrollLocale = dispatch(
   settings.actions.setCrunchyrollLocale,
