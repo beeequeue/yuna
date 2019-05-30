@@ -3,10 +3,7 @@
     <h1 class="episode-number">{{ episode.episodeNumber }}</h1>
 
     <div class="titles">
-      <h1
-        class="episode-title"
-        :class="{ blur: listEntry.progress < episode.episodeNumber }"
-      >
+      <h1 class="episode-title" :class="{ blur: shouldHideTitle }">
         {{ episode.title }}
       </h1>
 
@@ -24,12 +21,20 @@ import { EpisodeListEpisodes, PlayerAnimeAnime } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import { ListEntry } from '@/state/app'
+import { getSpoilerSettings } from '@/state/settings'
 
 @Component
 export default class PlayerTitle extends Vue {
   @Required(Object) public anime!: PlayerAnimeAnime
   @Required(Object) public episode!: EpisodeListEpisodes
   @Prop(Object) public listEntry!: ListEntry
+
+  public get shouldHideTitle() {
+    return (
+      getSpoilerSettings(this.$store).episode.name &&
+      this.listEntry.progress < this.episode.episodeNumber
+    )
+  }
 }
 </script>
 
