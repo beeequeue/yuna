@@ -51,7 +51,9 @@ export class Anilist {
         })
       })
 
-      authWindow.webContents.on('found-in-page', () => {
+      authWindow.webContents.on('found-in-page', (_, result) => {
+        if (result.matches < 1) return
+
         resolve()
 
         if (!authWindow) return
