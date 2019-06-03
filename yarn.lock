@@ -9463,10 +9463,10 @@ popper.js@^1.15.0:
   resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.15.0.tgz#5560b99bbad7647e9faa475c6b8056621f5a4ff2"
   integrity sha512-w010cY1oCUmI+9KwwlWki+r5jxKfTFDVoadl7MSrIujHU5MJ5OR6HTDj6Xo8aoR/QsA56x8jKjA59qGH4ELtrA==
 
-portal-vue@2.1.4:
-  version "2.1.4"
-  resolved "https://registry.yarnpkg.com/portal-vue/-/portal-vue-2.1.4.tgz#1fc679d77e294dc8d026f1eb84aa467de11b392e"
-  integrity sha512-Mr2h+RvoOOGHS7N0E3QPP+UQMt1OhSjQ7eMSGTXqkLiO0AjGEDw2x4kzmHATsZfDqQumiaYSDRzlUP2By3lvsA==
+portal-vue@2.1.5:
+  version "2.1.5"
+  resolved "https://registry.yarnpkg.com/portal-vue/-/portal-vue-2.1.5.tgz#ecd0997cb32958205151cb72f40fd4f38d175e5c"
+  integrity sha512-vZmdMn0mOo7puvxoMQ5zju6S29aFD+9yygJxyWQtPaMXS9xunAeoYdnx6yzfL9J8HD8pMZYgSieEIbioAKhrSQ==
 
 portfinder@^1.0.16, portfinder@^1.0.20:
   version "1.0.20"
