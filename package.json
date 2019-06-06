@@ -28,7 +28,7 @@
     "marked": "0.6.2",
     "normalize.css": "8.0.1",
     "portal-vue": "2.1.5",
-    "raw-loader": "2.0.0",
+    "raw-loader": "3.0.0",
     "register-scheme": "0.0.2",
     "superagent": "5.0.5",
     "svg-country-flags": "1.2.6",
