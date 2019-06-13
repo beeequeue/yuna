@@ -58,7 +58,7 @@
     "@types/lodash.keyby": "4.6.6",
     "@types/lodash.set": "4.3.6",
     "@types/marked": "0.6.5",
-    "@types/node": "10.12.21",
+    "@types/node": "11.13.14",
     "@types/semver": "6.0.0",
     "@types/superagent": "4.1.1",
     "@types/uuid": "3.4.4",
