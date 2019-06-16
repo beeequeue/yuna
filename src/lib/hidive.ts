@@ -14,7 +14,7 @@ import { Stream } from '@/types'
 const API_URL = 'api.hidive.com'
 const TOKEN = getConfig('HIDIVE_TOKEN')
 const DEVICE_NAME = 'Android'
-const APP_ID = '24i-Android'
+const APP_ID = '24i-Android2'
 
 let deviceId = ''
 let visitId = ''
