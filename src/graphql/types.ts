@@ -64,7 +64,7 @@ export interface EpisodeInput {
   
   url: string;
   
-  subtitles: Maybe<string[]>;
+  subtitles: string[][];
   
   isWatched: boolean;
 }
@@ -114,6 +114,8 @@ export interface StaffNameInput {
   last: Maybe<string>;
   /** The person's full name in their native language */
   native: Maybe<string>;
+  /** Other names the character might be referred by */
+  alternative: Maybe<string[]>;
 }
 /** User sort enums */
   export enum UserSort {
@@ -694,7 +696,7 @@ export type FuzzyDateInt = any;
     
     url: string;
     
-    subtitles: Maybe<string[]>;
+    subtitles: string[][];
     
     thumbnail: string;
     

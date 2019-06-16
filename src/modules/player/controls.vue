@@ -175,8 +175,8 @@
         <label v-if="subtitles.length > 0">
           Subtitles:
           <select @input="handleChangeSubtitles" :value="subtitlesIndex">
-            <option v-for="(path, q) in subtitles" :key="q" :value="q">
-              {{ formatSubtitlePath(path) }}
+            <option v-for="(subtitle, q) in subtitles" :key="q" :value="q">
+              {{ subtitle[0] }}
             </option>
           </select>
         </label>

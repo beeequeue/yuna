@@ -321,7 +321,7 @@ export class Hidive {
         url: `https://hidive.com/tv/${this.convertName(title.Name)}/${
           ep.VideoKey
         }`,
-        subtitles: null,
+        subtitles: [],
         thumbnail: ep.ScreenShotSmallUrl.replace(/^\/\//, 'https://'),
       }),
     )
@@ -339,16 +339,18 @@ export class Hidive {
       throw new Error(response.body.Status)
     }
 
-    const videoUrls = response.body.Data.VideoUrls
+    const { Data } = response.body
+    const videoUrls = Data.VideoUrls
     const japaneseSubbedKey = Object.keys(videoUrls).find(str =>
       str.includes('Japanese'),
     ) as string
 
     return {
       url: videoUrls[japaneseSubbedKey].hls[0],
-      subtitles:
-        response.body.Data.CaptionVttUrls[response.body.Data.CaptionLanguage],
-      progress: response.body.Data.CurrentTime,
+      subtitles: Data.CaptionLanguages.map(
+        lang => [lang, Data.CaptionVttUrls[lang]] as [string, string],
+      ),
+      progress: Data.CurrentTime,
     }
   }
 

@@ -15,7 +15,11 @@
         ref="player"
         :class="{ ended }"
       >
-        <track v-if="subtitlesUrl" :src="subtitlesUrl" default />
+        <track
+          v-if="subtitlesUrl && subtitlesUrl.length > 0"
+          :src="subtitlesUrl"
+          default
+        />
       </video>
     </transition>
 
@@ -173,23 +177,24 @@ export default class Player extends Vue {
   public loadedPercentage = 0
 
   // Subtitles
-  public get subtitles() {
-    const subtitles = oc(this.episode).subtitles([])
-
-    if (subtitles.length > 0) {
-      subtitles.push('None')
+  private subtitles: [string, string][] = []
+  private setSubtitles(arr: [string, string][]) {
+    if (arr.length < 1) {
+      return (this.subtitles = arr)
     }
 
-    return subtitles
+    this.subtitles = [...arr, ['None', '']]
   }
+
   public get subtitlesUrl() {
-    return oc(this.episode).subtitles[this.selectedSubtitles]() || null
+    return oc(this.subtitles)[this.selectedSubtitles][1]('')
   }
   public selectedSubtitles = this.getNumberFromLocalStorage(
     LocalStorageKey.SUBTITLE,
     0,
   )
   public onChangeSubtitles(index: number) {
+    localStorage.setItem(LocalStorageKey.SUBTITLE, index.toString())
     this.selectedSubtitles = index
   }
 
@@ -324,8 +329,10 @@ export default class Player extends Vue {
         )
       }
 
+      if (stream.subtitles.length > 0) {
+        this.setSubtitles(stream.subtitles)
+      }
       this.streamUrl = stream.url
-
       this.playhead = stream.progress || 0
     } catch (e) {
       return sendErrorToast(this.$store, e.message)
@@ -343,6 +350,10 @@ export default class Player extends Vue {
     this.loadingVideo = true
     this.loaded = false
     this.levels = null
+
+    if (this.subtitles.length < 1) {
+      this.setSubtitles(this.episode.subtitles as any)
+    }
 
     const oldHls = this.hls
 

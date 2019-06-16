@@ -499,7 +499,7 @@ export class Crunchyroll {
 
     return {
       url: streams[0].url,
-      subtitles: null,
+      subtitles: [],
       progress: streamInfo.playhead,
     }
   }
@@ -687,7 +687,7 @@ const mediaToEpisode = (id: number) => (
   episodeNumber: episode_number as any,
   duration,
   url,
-  subtitles: null,
+  subtitles: [],
   thumbnail: screenshot_image.full_url,
 })
 

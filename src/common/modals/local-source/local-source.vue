@@ -173,7 +173,7 @@ export default class LocalSourceModal extends Vue {
       episodeNumber: file.episodeNumber,
       thumbnail: file.thumbnail,
       url: file.filePath,
-      subtitles: null,
+      subtitles: [],
       isWatched: progress >= file.episodeNumber,
     }))
 
