@@ -1,5 +1,5 @@
 <template>
-  <div class="step login-hidive" @keydown.enter="login">
+  <div class="step login-hidive" :class="{ disabled }" @keydown.enter="login">
     <span v-html="hidiveIcon" class="logo" />
 
     <div class="container" v-if="hidiveProfiles.length < 1">
@@ -32,6 +32,8 @@
       <loading v-if="loading" class="loading" />
     </transition>
 
+    <div style="margin-bottom: 10px">HIDIVE integration is broken until we get access to their API again. 😞</div>
+
     <c-button v-if="hidiveProfiles.length < 1" content="Login" :click="login" />
     <c-button v-else content="Continue" :click="onFinished" />
   </div>
@@ -57,6 +59,7 @@ import {
 export default class LoginHd extends Vue {
   @Prop(Function) public onFinished!: (() => any) | null
   @Prop(Boolean) public fullWidth!: boolean | null
+  @Prop(Boolean) public disabled!: boolean | null
 
   public loading: boolean | null = null
   public error: string | null = null
@@ -85,6 +88,8 @@ export default class LoginHd extends Vue {
   }
 
   public async login() {
+    if (this.disabled === true) return
+
     this.error = null
 
     try {
@@ -101,12 +106,15 @@ export default class LoginHd extends Vue {
 
 <style scoped lang="scss">
 @import '../../../colors';
+@import '../../../utils';
 
 .login-hidive {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @include disabled();
 
   & > .logo {
     width: 75px;

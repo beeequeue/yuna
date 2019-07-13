@@ -250,6 +250,7 @@
           <login-h-d
             v-if="currentWindow === Window.Hidive"
             :onFinished="() => setCurrentWindow(null)"
+            disabled
           />
         </div>
       </transition>

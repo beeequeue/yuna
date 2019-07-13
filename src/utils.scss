@@ -2,3 +2,10 @@
   font-family: 'Raleway', sans-serif;
   font-variant-numeric: lining-nums;
 }
+
+@mixin disabled($opacity: 0.5) {
+  &.disabled {
+    pointer-events: none;
+    filter: grayscale(0.8) opacity($opacity);
+  }
+}
