@@ -83,7 +83,7 @@ export default class EpisodeList extends Vue {
   public async tryToFetchEpisode() {
     this.notAvailable = false
 
-    if (!this.episodes || this.episodes.length < 1) {
+    if (isNil(this.episodes) || this.episodes.length < 1) {
       return
     }
 

@@ -1,5 +1,6 @@
 import { format } from 'date-fns'
 import crypto from 'crypto'
+import { captureException } from '@sentry/browser'
 import superagent from 'superagent/dist/superagent'
 import { oc } from 'ts-optchain'
 import { ActionContext, Store } from 'vuex'
@@ -8,7 +9,7 @@ import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 import { getConfig } from '@/config'
 import { userStore } from '@/lib/user'
 import { getHidiveLogin, getIsConnectedTo, setHidive } from '@/state/auth'
-import { isOfType, RequestError, RequestSuccess } from '@/utils'
+import { isNil, isOfType, RequestError, RequestSuccess } from '@/utils'
 import { Stream } from '@/types'
 
 const API_URL = 'api.hidive.com'
@@ -234,7 +235,8 @@ export class Hidive {
   public static async createVisit(store: StoreType) {
     const ping = await this.request<{}>(RequestType.Ping)
     if (!ping.ok || ping.body.Code !== 0) {
-      throw new Error(ping.body.Message!)
+      captureException(new Error(ping.body.Message!))
+      return
     }
 
     ipAddress = ping.body.IPAddress
@@ -243,7 +245,8 @@ export class Hidive {
       DeviceName: DEVICE_NAME,
     })
     if (!init.ok || init.body.Code !== 0) {
-      throw new Error(init.body.Status)
+      captureException(new Error(init.body.Status))
+      return
     }
 
     deviceId = init.body.Data.DeviceId
@@ -264,6 +267,8 @@ export class Hidive {
     password: string,
   ) {
     const response = await this.authenticate({ user, password })
+
+    if (isNil(response)) return
 
     setHidive(store, {
       login: {
@@ -302,7 +307,9 @@ export class Hidive {
     })
 
     if (!response.ok || response.body.Code !== 0) {
-      throw new Error(response.body.Status)
+      captureException(new Error(response.body.Status))
+
+      return null
     }
 
     const title = response.body.Data.Title
@@ -327,7 +334,7 @@ export class Hidive {
     )
   }
 
-  public static async fetchStream(id: string): Promise<Stream> {
+  public static async fetchStream(id: string): Promise<Stream | null> {
     const match = id.match(/^(.*)-(.*)$/) as RegExpMatchArray
 
     const response = await this.request<_Stream>(RequestType.GetVideos, {
@@ -336,7 +343,8 @@ export class Hidive {
     })
 
     if (!response.ok || response.body.Code !== 0) {
-      throw new Error(response.body.Status)
+      captureException(new Error(response.body.Status))
+      return null
     }
 
     const { Data } = response.body
@@ -405,7 +413,8 @@ export class Hidive {
     )
 
     if (!response.ok || response.body.Code !== 0) {
-      throw new Error(response.body.Message!)
+      captureException(new Error(response.body.Message!))
+      return null
     }
 
     return response
