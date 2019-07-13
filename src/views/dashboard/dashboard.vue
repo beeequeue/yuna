@@ -2,7 +2,11 @@
   <div class="container">
     <episode-feed />
 
-    <changelog />
+    <div class="main">
+      <patreon />
+
+      <changelog />
+    </div>
   </div>
 </template>
 
@@ -11,9 +15,10 @@ import { Component, Vue } from 'vue-property-decorator'
 
 import CButton from '@/common/components/button.vue'
 import EpisodeFeed from './components/episode-feed.vue'
+import Patreon from './components/patreon.vue'
 import Changelog from './components/changelog.vue'
 
-@Component({ components: { EpisodeFeed, Changelog, CButton } })
+@Component({ components: { Patreon, EpisodeFeed, Changelog, CButton } })
 export default class Dashboard extends Vue {}
 </script>
 
@@ -31,6 +36,16 @@ export default class Dashboard extends Vue {}
   grid-template-rows: 100%;
   justify-items: center;
   align-items: center;
+
+  & > .main {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .route-enter-active,
