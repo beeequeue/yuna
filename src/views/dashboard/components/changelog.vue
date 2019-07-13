@@ -89,7 +89,6 @@ export default class Changelog extends Vue {
   public compileMarkdown(str: string) {
     return marked(str, {
       gfm: true,
-      sanitize: true,
       renderer,
     })
   }
