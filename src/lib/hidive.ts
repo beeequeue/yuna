@@ -1,6 +1,6 @@
 import { format } from 'date-fns'
 import crypto from 'crypto'
-import { captureException } from '@sentry/browser'
+// import { captureException } from '@sentry/browser'
 import superagent from 'superagent/dist/superagent'
 import { oc } from 'ts-optchain'
 import { ActionContext, Store } from 'vuex'
@@ -235,7 +235,7 @@ export class Hidive {
   public static async createVisit(store: StoreType) {
     const ping = await this.request<{}>(RequestType.Ping)
     if (!ping.ok || ping.body.Code !== 0) {
-      captureException(new Error(ping.body.Message!))
+      // captureException(new Error(ping.body.Message!))
       return
     }
 
@@ -245,7 +245,7 @@ export class Hidive {
       DeviceName: DEVICE_NAME,
     })
     if (!init.ok || init.body.Code !== 0) {
-      captureException(new Error(init.body.Status))
+      // captureException(new Error(init.body.Status))
       return
     }
 
@@ -307,7 +307,7 @@ export class Hidive {
     })
 
     if (!response.ok || response.body.Code !== 0) {
-      captureException(new Error(response.body.Status))
+      // captureException(new Error(response.body.Status))
 
       return null
     }
@@ -343,7 +343,7 @@ export class Hidive {
     })
 
     if (!response.ok || response.body.Code !== 0) {
-      captureException(new Error(response.body.Status))
+      // captureException(new Error(response.body.Status))
       return null
     }
 
@@ -413,7 +413,7 @@ export class Hidive {
     )
 
     if (!response.ok || response.body.Code !== 0) {
-      captureException(new Error(response.body.Message!))
+      // captureException(new Error(response.body.Message!))
       return null
     }
 
