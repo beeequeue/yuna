@@ -29,15 +29,17 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { secondsToTimeString } from '@/utils'
+import { Required } from '@/decorators'
 
 @Component
 export default class ProgressBar extends Vue {
-  @Prop(Number) public duration!: number
-  @Prop(Number) public progressPercentage!: number
-  @Prop(Number) public loadedPercentage!: number
-  @Prop(Function) public onSetTime!: (value: number) => void
+  @Required(Number) public duration!: number
+  @Required(Number) public progressPercentage!: number
+  @Required(Number) public loadedPercentage!: number
+  @Required(Boolean) public visible!: boolean
+  @Required(Function) public onSetTime!: (value: number) => void
 
   public hovering = false
   public mouseDown = false
@@ -53,7 +55,7 @@ export default class ProgressBar extends Vue {
     return {
       content: this.hoverTime,
       placement: 'top',
-      show: this.hovering,
+      show: this.visible && this.hovering,
     }
   }
 

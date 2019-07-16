@@ -25,6 +25,7 @@
         :progressPercentage="progressPercentage"
         :loadedPercentage="loadedPercentage"
         :onSetTime="onSetTime"
+        :visible="visible"
       />
 
       <transition name="shrink">
