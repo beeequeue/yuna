@@ -53,7 +53,8 @@ export default class Dashboard extends Vue {}
   transition: none 0.5s; // Required for Vue to realize there are transitions
 
   & > .episode-feed,
-  & > .changelog {
+  & .changelog,
+  & .patreon {
     transition: opacity 0.5s, transform 0.5s;
   }
 }
@@ -64,9 +65,16 @@ export default class Dashboard extends Vue {}
     transform: translateX(-100%);
   }
 
-  & > .changelog {
-    opacity: 0;
-    transform: translateY(-10%);
+  & > .main {
+    & > .patreon {
+      opacity: 0;
+      transform: translateY(-10%);
+    }
+
+    & > .changelog {
+      opacity: 0;
+      transform: translateY(2.5%);
+    }
   }
 }
 </style>
