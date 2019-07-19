@@ -32,7 +32,7 @@ export default class CrunchyrollEpisode extends Vue {
   @Required(Object) episode!: EpisodeListEpisodes
   @Prop(Object) public selectedEpisode!: EpisodeListEpisodes | null
   @Required(Function) selectEpisodes!: (ids: EpisodeListEpisodes[]) => void
-  @Required(Function) unselectEpisodes!: (ids: number[]) => void
+  @Required(Function) unselectEpisodes!: (ids: string[]) => void
 
   public get episodeNumber() {
     if (isNil(this.selectedEpisode)) return null
@@ -44,7 +44,7 @@ export default class CrunchyrollEpisode extends Vue {
     if (checked) {
       this.selectEpisodes([this.episode])
     } else if (isNotNil(this.selectedEpisode)) {
-      this.unselectEpisodes([Number(this.selectedEpisode.id)])
+      this.unselectEpisodes([this.selectedEpisode.id])
     }
   }
 }
