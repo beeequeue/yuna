@@ -274,6 +274,7 @@ export default class Player extends Vue {
 
   public closePlayer() {
     setCurrentEpisode(this.$store, null)
+    this.setDiscordState('paused')
 
     if (this.isFullscreen) {
       this.toggleFullscreen()
@@ -283,6 +284,7 @@ export default class Player extends Vue {
     if (this.$route.path === '/player-big') {
       this.$router.back()
     }
+
   }
 
   private async fetchStream(
