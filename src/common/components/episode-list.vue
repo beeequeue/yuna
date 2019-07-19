@@ -17,7 +17,7 @@
     <div class="episode-wrapper" :class="episodeWrapperClasses">
       <episode
         v-for="episode in episodes"
-        :key="`${episode.name}:${episode.id}`"
+        :key="`${episode.episodeNumber}:${episode.id}`"
         ref="episodes"
         :episode="episode"
         :listEntry="listEntry"

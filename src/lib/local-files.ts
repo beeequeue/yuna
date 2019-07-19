@@ -83,17 +83,19 @@ export class LocalFiles {
 
     const promises = files
       // Parse file names
-      .map(f => parse(f))
+      .map((f, i) => ({
+        filePath: path.join(localAnime.folderPath, files[i]),
+        ...parse(f),
+      }))
       // Filter out files that don't belong to our anime
       .filter(item => item.anime_title === localAnime.title)
       // Map to result
-      .map<Promise<LocalAnimeFile>>(async (item, i) => {
-        const filePath = path.join(localAnime.folderPath, files[i])
-        const id = this.generateId(filePath)
+      .map<Promise<LocalAnimeFile>>(async item => {
+        const id = this.generateId(item.filePath)
         const episodeNumber = Number(item.episode_number)
         const filename = `${anilistId}-${episodeNumber}`
 
-        const command = ffmpeg(filePath)
+        const command = ffmpeg(item.filePath)
 
         const probeData = await this.probeFile(command)
 
@@ -104,7 +106,7 @@ export class LocalFiles {
 
         return {
           id,
-          filePath,
+          filePath: item.filePath,
           title:
             item.episode_title ||
             this.getVideoStreamTitle(probeData) ||
@@ -116,7 +118,7 @@ export class LocalFiles {
         }
       })
 
-    return await Promise.all(promises)
+    return Promise.all(promises)
   }
 
   private static generateId(path: string) {
