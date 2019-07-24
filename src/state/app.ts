@@ -289,9 +289,12 @@ export const app = {
             newNumber = count
           }
 
+          const newEpisodeNumber = newNumber - duplicates
+
           const selectedEpisode: EpisodeListEpisodes = {
             ...rest,
-            episodeNumber: newNumber - duplicates,
+            index: newEpisodeNumber - 1,
+            episodeNumber: newEpisodeNumber,
           }
 
           if (episodeNumber === lastNumber) {
