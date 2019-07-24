@@ -27,6 +27,8 @@ export enum KeybindingAction {
   VOLUME_DOWN = 'VOLUME_DOWN',
   TOGGLE_MUTED = 'TOGGLE_MUTED',
   TOGGLE_FULLSCREEN = 'TOGGLE_FULLSCREEN',
+  FRAME_FORWARD = 'FRAME_FORWARD',
+  FRAME_BACK = 'FRAME_BACK',
 }
 
 interface KeybindingSettings {
@@ -102,6 +104,8 @@ const {
   SKIP_FORWARD,
   SKIP_BACK,
   TOGGLE_FULLSCREEN,
+  FRAME_FORWARD,
+  FRAME_BACK
 } = KeybindingAction
 
 const defaultBindings: KeybindingSettings = {
@@ -112,6 +116,8 @@ const defaultBindings: KeybindingSettings = {
   [Key.ArrowRight]: [SKIP_FORWARD],
   [Key.ArrowLeft]: [SKIP_BACK],
   f: [TOGGLE_FULLSCREEN],
+  '.': [FRAME_FORWARD],
+  ',': [FRAME_BACK],
 }
 
 const defaultSpoilers: SpoilerSettings = {

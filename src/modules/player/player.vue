@@ -229,6 +229,8 @@ export default class Player extends Vue {
       [KeybindingAction.VOLUME_UP]: () => this.increaseVolume(10),
       [KeybindingAction.TOGGLE_MUTED]: () => this.onToggleMute(),
       [KeybindingAction.TOGGLE_FULLSCREEN]: () => this.toggleFullscreen(),
+      [KeybindingAction.FRAME_FORWARD]: () => this.pauseAndTraverseFrames(1),
+      [KeybindingAction.FRAME_BACK]: () => this.pauseAndTraverseFrames(-1),
     }
   }
 
@@ -593,6 +595,13 @@ export default class Player extends Vue {
     }
 
     this.setProgress(this.episode.episodeNumber)
+  }
+
+  private pauseAndTraverseFrames(frames: number) {
+    this.pause()
+
+    // We assume framerate to be 24 since there's no way to get it from the player :(
+    this.skipBySeconds(frames / 24)
   }
 
   private setDiscordState(state: 'watching' | 'paused') {
