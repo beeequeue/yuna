@@ -1,5 +1,12 @@
 <template>
-  <button class="button" :id="id" :class="classes" @click="handleClick">
+  <button
+    ref="button"
+    class="button"
+    :id="id"
+    :class="classes"
+    :style="{ minWidth: `${minWidth}px` }"
+    @click="handleClick"
+  >
     <icon v-if="icon != null && !confirmTimeout" :icon="icon" />
 
     <icon v-if="confirmTimeout" class="alert" :icon="alertSvg" />
@@ -31,8 +38,13 @@ export default class CButton extends Vue {
   @Prop(String) public confirmText?: string
 
   public confirmTimeout: number | null = null
+  public minWidth: number | null = null
 
   public alertSvg = mdiAlertCircleOutline
+
+  public $refs!: {
+    button: HTMLButtonElement
+  }
 
   public get id() {
     if (isNotNil(this.content)) {
@@ -50,6 +62,12 @@ export default class CButton extends Vue {
       flat: this.flat,
       disabled: this.disabled,
       confirming: !!this.confirmText,
+    }
+  }
+
+  public mounted() {
+    if (this.confirm) {
+      this.minWidth = this.$refs.button.getBoundingClientRect().width
     }
   }
 
