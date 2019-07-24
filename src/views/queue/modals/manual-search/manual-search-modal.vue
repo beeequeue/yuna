@@ -1,5 +1,5 @@
 <template>
-  <modal-base name="manualSearch">
+  <modal-base name="manualSearch" :toggleVisible="toggleModal">
     <animated-height class="manual-search-modal">
       <search-step
         v-if="selectedId == null"
@@ -12,7 +12,7 @@
         :id="selectedId"
         :selectedEpisodes="selectedEpisodes"
         :setSelectedId="setSelectedId"
-        :toggleVisible="closeModal"
+        :toggleVisible="toggleModal"
       />
     </animated-height>
   </modal-base>
@@ -27,7 +27,7 @@ import CrunchyrollEditor from './crunchyroll-editor.vue'
 import SearchStep from './search-step.vue'
 
 import {
-  getManualSearchOptions,
+  getManualSearchOptions, getModalStates,
   getSelectedEpisodes,
   ModalName,
   toggleModal,
@@ -39,6 +39,10 @@ import {
 export default class ManualSearchModal extends Vue {
   public readonly modalName: ModalName = 'manualSearch'
   public selectedId: number | null = null
+
+  public get modalVisible() {
+    return getModalStates(this.$store).manualSearch
+  }
 
   public get searchOptions() {
     return getManualSearchOptions(this.$store)
@@ -52,10 +56,23 @@ export default class ManualSearchModal extends Vue {
     this.selectedId = id
   }
 
-  public closeModal() {
-    toggleModal(this.$store, this.modalName)
+  public toggleModal(force?: boolean) {
+    if (
+      this.modalVisible &&
+      !force &&
+      this.selectedEpisodes.length > 0 &&
+      !confirm(
+        'Are you sure you want to cancel your selections?\nYou have to click the green checkmark in the top right to confirm your selection!',
+      )
+    ) {
+      return
+    }
 
-    setTimeout(() => this.setSelectedId(null), 500)
+    if (this.modalVisible) {
+      setTimeout(() => this.setSelectedId(null), 500)
+    }
+
+    toggleModal(this.$store, this.modalName)
   }
 }
 </script>

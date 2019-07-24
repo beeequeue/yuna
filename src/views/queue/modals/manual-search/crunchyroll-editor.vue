@@ -108,7 +108,7 @@ export default class CrunchyrollEditor extends Vue {
   @Required(Number) id!: number
   @Required(Array) public selectedEpisodes!: EpisodeListEpisodes[]
   @Required(Function) setSelectedId!: (id: number | null) => void
-  @Required(Function) public toggleVisible!: () => any
+  @Required(Function) public toggleVisible!: (force?: boolean) => any
 
   public loading = false
   public anime: _SeriesWithCollections | null = null
@@ -168,7 +168,7 @@ export default class CrunchyrollEditor extends Vue {
       this.selectedEpisodes,
     )
 
-    this.toggleVisible()
+    this.toggleVisible(true)
     this.setSelectedId(null)
     this.clearSelectedEpisodes()
   }

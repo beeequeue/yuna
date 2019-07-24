@@ -1,7 +1,7 @@
 <template>
   <portal to="modal">
     <div v-if="visible" :key="name" class="modal">
-      <div class="cover" @click="toggleVisible" />
+      <div class="cover" @click="_toggleVisible" />
 
       <slot />
     </div>
@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import { Required } from '@/decorators'
 import { RootState } from '@/state/store'
@@ -18,12 +18,18 @@ import { getModalStates, toggleModal } from '@/state/app'
 @Component
 export default class ModalBase extends Vue {
   @Required(String) public name!: keyof RootState['app']['modals']
+  @Prop(Function) public toggleVisible!: () => any
 
   public get visible(): boolean {
     return getModalStates(this.$store)[this.name!]
   }
 
-  public toggleVisible() {
+  public _toggleVisible() {
+    if (this.toggleVisible) {
+      this.toggleVisible()
+      return
+    }
+
     toggleModal(this.$store, this.name!)
   }
 }
