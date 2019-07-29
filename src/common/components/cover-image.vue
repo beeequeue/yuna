@@ -1,6 +1,8 @@
 <template>
-  <div class="cover-image" :style="{ background: color }">
-    <img :src="src" class="image" />
+  <div class="cover-image">
+    <img :src="src" class="image" :style="{ background: color }" />
+
+    <img :src="src" class="shadow" />
 
     <span
       v-if="mediaListStatus"
@@ -76,14 +78,25 @@ export default class CoverImage extends Vue {
   position: relative;
   width: 100%;
   height: 290px;
-  border-radius: 5px;
-  box-shadow: $shadow;
-  overflow: hidden;
 
   & > .image {
+    position: relative;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    overflow: hidden;
+    border-radius: 5px;
+    z-index: 2;
+  }
+
+  & > .shadow {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: calc(100% + 10px);
+    height: calc(100% + 10px);
+    z-index: 1;
+    filter: blur(10px) opacity(0.45) brightness(0.75);
   }
 
   & > .status {
@@ -98,6 +111,7 @@ export default class CoverImage extends Vue {
     font-weight: 300;
     background-color: $dark;
     padding: 6px 0;
+    z-index: 3;
 
     & > .icon {
       height: 1em;
