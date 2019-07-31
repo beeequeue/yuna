@@ -39,6 +39,7 @@
 
     <controls
       v-if="anime && episode"
+      ref="controls"
       :episode="episode"
       :nextEpisode="nextEpisode"
       :anime="anime"
@@ -211,6 +212,7 @@ export default class Player extends Vue {
 
   public $refs!: {
     player: HTMLVideoElement
+    controls: Controls
   }
 
   public get isPlayerMaximized() {
@@ -286,7 +288,6 @@ export default class Player extends Vue {
     if (this.$route.path === '/player-big') {
       this.$router.back()
     }
-
   }
 
   private async fetchStream(
@@ -554,6 +555,7 @@ export default class Player extends Vue {
   public pause() {
     if (this.paused) return
 
+    (this.$refs.controls as any).goVisible()
     this.$refs.player.pause()
   }
 
