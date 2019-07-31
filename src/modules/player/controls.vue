@@ -284,7 +284,7 @@ export default class Controls extends Vue {
   public settingSvg = mdiSettingsOutline
 
   public get visible() {
-    return this.settingsOpen || this.paused || this.hovering
+    return this.settingsOpen || this.hovering
   }
 
   public get listEntry(): PlayerAnimeMediaListEntry | null {
