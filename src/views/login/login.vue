@@ -19,7 +19,6 @@
               v-if="!isConnectedTo.hidive || !selectedHidiveProfile"
               :onFinished="confirmHidiveProfile"
               fullWidth
-              disabled
             />
 
             <icon v-else :icon="checkSvg" />

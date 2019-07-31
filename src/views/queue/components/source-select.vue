@@ -30,9 +30,8 @@
 
         <div
           v-if="getIsSupported(Provider.Hidive)"
-          class="menu-item hidive disabled"
+          class="menu-item hidive"
           @click="handleClick(Provider.Hidive)"
-          v-tooltip.right="'HIDIVE support is currently broken until further notice. 😞'"
         >
           <span class="svg" v-html="hidiveIcon" />
           Automatic
@@ -178,7 +177,6 @@ export default class SourceSelect extends Vue {
 
 <style scoped lang="scss">
 @import '../../../colors';
-@import '../../../utils';
 
 .source-select {
   position: relative;
@@ -207,8 +205,6 @@ export default class SourceSelect extends Vue {
       margin-right: 6px;
       order: 10;
       filter: drop-shadow(0 1px 1px black);
-
-      @include disabled(1);
 
       &.fade {
         filter: brightness(0.5) drop-shadow(0 1px 1px black);

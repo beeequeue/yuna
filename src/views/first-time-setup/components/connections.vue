@@ -22,9 +22,7 @@
       <div class="connection">
         <span class="logo" v-html="hidiveIcon" />
 
-        <div>HIDIVE integration is broken until we get access to their API again. 😞</div>
-
-        <!--<c-button
+        <c-button
           v-if="!connectedTo.hidive"
           content="Connect"
           :click="() => setCurrentWindow(Window.Hidive)"
@@ -34,7 +32,7 @@
           type="danger"
           content="Disconnect"
           :click="logoutHidive"
-        />-->
+        />
       </div>
     </div>
 
@@ -124,7 +122,6 @@ export default class Connections extends Vue {
 
 <style scoped lang="scss">
 @import '../../../colors';
-@import '../../../utils';
 
 .connections {
   display: flex;
@@ -143,8 +140,6 @@ export default class Connections extends Vue {
       flex-direction: column;
       justify-content: center;
       align-items: center;
-
-      @include disabled();
 
       & > .logo {
         height: 75px;
