@@ -1,7 +1,8 @@
 const config = {
   all: {
     CRUNCHYROLL_TOKEN: 'LNDJgOit5yaRIWN',
-    HIDIVE_TOKEN: '6621bb6563064f548c0f70d10beea178317af1f',
+    HIDIVE_CLIENT: '24i-FireTV',
+    HIDIVE_TOKEN: '1f3e6b944a1a260e8cd1a71e058acff75ec7f427',
     ANIDB_CLIENT: 'application',
     ANIDB_CLIENTVER: '2',
     ANILIST_ID: '913',
