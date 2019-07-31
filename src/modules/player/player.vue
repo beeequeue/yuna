@@ -494,7 +494,9 @@ export default class Player extends Vue {
   public onSetTime(value: number) {
     this.lastHeartbeat = this.progressInSeconds - 30
 
-    this.setDiscordState('watching')
+    if (!this.paused) {
+      this.setDiscordState('watching')
+    }
 
     this.$refs.player.currentTime = value
   }
