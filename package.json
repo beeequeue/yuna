@@ -13,7 +13,7 @@
     "date-fns": "2.0.0-beta.3",
     "discord-rpc": "3.0.2",
     "electron-debug": "3.0.1",
-    "electron-log": "3.0.6",
+    "electron-log": "3.0.7",
     "electron-store": "4.0.0",
     "electron-updater": "4.1.2",
     "electron-util": "0.12.1",
