@@ -68,7 +68,7 @@
     "@types/xml2js": "0.4.4",
     "@vue/cli-plugin-babel": "3.9.2",
     "@vue/cli-plugin-eslint": "3.9.2",
-    "@vue/cli-plugin-typescript": "3.9.0",
+    "@vue/cli-plugin-typescript": "3.10.0",
     "@vue/cli-service": "3.9.3",
     "@vue/eslint-config-prettier": "5.0.0",
     "@vue/eslint-config-typescript": "4.0.0",
