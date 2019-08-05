@@ -66,7 +66,7 @@
     "@types/webpack-chain": "5.2.0",
     "@types/webpack-env": "1.14.0",
     "@types/xml2js": "0.4.4",
-    "@vue/cli-plugin-babel": "3.9.2",
+    "@vue/cli-plugin-babel": "3.10.0",
     "@vue/cli-plugin-eslint": "3.9.2",
     "@vue/cli-plugin-typescript": "3.9.0",
     "@vue/cli-service": "3.9.3",
