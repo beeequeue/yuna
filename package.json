@@ -23,7 +23,7 @@
     "fuse.js": "3.4.5",
     "graphql": "14.4.2",
     "hls.js": "0.12.4",
-    "husky": "3.0.1",
+    "husky": "3.0.3",
     "lodash.keyby": "4.6.0",
     "lodash.set": "4.3.2",
     "marked": "0.7.0",
