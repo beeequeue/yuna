@@ -729,11 +729,8 @@ const episodeNumberIsHalf = ({ episode_number }: _Media) =>
 const isSpecialEpisode = ({ episode_number }: _Media) =>
   episode_number === 'SP' || episode_number === ''
 
-const isShorterThanFiveMinutes = ({ duration }: _Media) => duration < 300
-
 const isRealEpisode = (ep: _Media) =>
   !anyPass(ep, [
     episodeNumberIsHalf,
     isSpecialEpisode,
-    isShorterThanFiveMinutes,
   ])
