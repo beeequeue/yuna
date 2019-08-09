@@ -2,6 +2,7 @@
 import { activeWindow } from 'electron-util'
 import superagent from 'superagent/dist/superagent'
 import { ActionContext, Store } from 'vuex'
+import { oc } from 'ts-optchain'
 
 import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 
@@ -694,13 +695,25 @@ const mediaToEpisode = (id: number) => (
 const notNumberRegex = /[^\d.]/g
 const onlyNumbers = (str: string) => str.replace(notNumberRegex, '')
 
-const getEpisodeNumber = (num: string) => Number(onlyNumbers(num))
+const getEpisodeNumber = (num: string | number) => {
+  if (typeof num !== 'string') {
+    num = num.toString()
+  }
+
+  return Number(onlyNumbers(num))
+}
 
 const fixEpisodeNumbers = (episodes: EpisodeListEpisodes[]) => {
-  const firstIndex = getEpisodeNumber(episodes[0].episodeNumber as any) - 1
+  const episodeNumber = oc(episodes)[0].episodeNumber()
+
+  if (isNil(episodeNumber)) {
+    return []
+  }
+
+  const firstIndex = getEpisodeNumber(episodeNumber) - 1
 
   return episodes.map(ep => {
-    const num = getEpisodeNumber(ep.episodeNumber as any)
+    const num = getEpisodeNumber(ep.episodeNumber)
 
     return {
       ...ep,
