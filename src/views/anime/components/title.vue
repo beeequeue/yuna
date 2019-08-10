@@ -17,11 +17,11 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { AnimeViewTitle } from '@/graphql/types'
+import { MediaTitle } from '@/graphql/types'
 
 @Component
 export default class AnimeTitle extends Vue {
-  @Prop(Object) public title?: AnimeViewTitle
+  @Prop(Object) public title?: MediaTitle
 
   public get preferredStyle() {
     if (!this.title) return { english: false, native: false, romaji: false }

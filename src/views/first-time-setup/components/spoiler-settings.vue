@@ -61,7 +61,7 @@ import Checkbox from '@/common/components/form/checkbox.vue'
 import CButton from '@/common/components/button.vue'
 import Episode from '@/common/components/episode.vue'
 
-import { Episode } from '@/graphql/types'
+import { Episode as IEpisode, Provider } from '@/graphql/types'
 import thumbnailWebp from '@/assets/setup/episode_thumb.webp'
 import { getSettings, setSpoiler } from '@/state/settings'
 
@@ -69,16 +69,22 @@ import { getSettings, setSpoiler } from '@/state/settings'
 export default class SpoilerSettings extends Vue {
   @Prop() public goToNextStep!: () => any
 
-  public episodes: Episode = [
+  public episodes: IEpisode[] = [
     {
+      id: 'id',
+      provider: Provider.Crunchyroll,
+      animeId: 1337,
       title: 'A Really Good Episode',
       thumbnail: thumbnailWebp,
       duration: 60 * 25,
       index: 2,
       episodeNumber: 3,
       progress: 2,
+      url: '',
+      subtitles: [],
+      isWatched: false
     },
-  ] as any
+  ]
 
   public infoSvg = mdiInformationOutline
   public thumbnailWebp = thumbnailWebp

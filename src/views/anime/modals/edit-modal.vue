@@ -54,10 +54,7 @@
             />
 
             <transition name="fade">
-              <div
-                v-if="anime && anime.mediaListEntry == null"
-                class="not-in-list"
-              >
+              <div v-if="anime && anime.mediaListEntry == null" class="not-in-list">
                 Not in List
                 <c-button :disabled="loading" content="Add to List" />
               </div>
@@ -101,9 +98,9 @@ import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import { deleteListEntry } from '@/common/mutations/list-entry'
 import {
   AnimeViewQuery,
-  AnimeViewVariables,
   EditListEntryMutation,
   MediaListStatus,
+  AnimeViewQueryVariables,
 } from '@/graphql/types'
 
 import {
@@ -174,7 +171,7 @@ export default class EditModal extends Vue {
     payload: { data: EditListEntryMutation },
   ) {
     let data =
-      cache.readQuery<AnimeViewQuery, AnimeViewVariables>({
+      cache.readQuery<AnimeViewQuery, AnimeViewQueryVariables>({
         query: ANIME_PAGE_QUERY,
         variables: { id: this.anime!.id },
       }) || ({} as any)

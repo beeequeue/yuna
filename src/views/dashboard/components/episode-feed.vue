@@ -39,7 +39,7 @@ import AnimatedList from './animated-list.vue'
 import LIST_IDS_QUERY from './episode-feed-list-ids.graphql'
 import {
   EpisodeFeedListIdsQuery,
-  EpisodeFeedListIdsVariables,
+  EpisodeFeedListIdsQueryVariables,
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
@@ -54,7 +54,11 @@ import { prop } from '@/utils'
 
 @Component({ components: { AnimatedList, Icon } })
 export default class EpisodeFeed extends Vue {
-  @Query<EpisodeFeed, EpisodeFeedListIdsQuery, EpisodeFeedListIdsVariables>({
+  @Query<
+    EpisodeFeed,
+    EpisodeFeedListIdsQuery,
+    EpisodeFeedListIdsQueryVariables
+  >({
     query: LIST_IDS_QUERY,
     variables() {
       return {

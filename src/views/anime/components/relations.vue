@@ -1,4 +1,3 @@
-import { MediaRelation } from '../../graphql/types'
 <template>
   <div class="relations">
     <div
@@ -7,11 +6,7 @@ import { MediaRelation } from '../../graphql/types'
       @click="$router.push(`/anime/${prequel.id}`)"
       :key="prequel.id"
     >
-      <img
-        v-if="prequel.bannerImage"
-        :src="prequel.bannerImage"
-        class="banner"
-      />
+      <img v-if="prequel.bannerImage" :src="prequel.bannerImage" class="banner" />
 
       <div class="title">
         <icon :icon="getRelationIcon('PREQUEL')" />
@@ -39,17 +34,15 @@ import { MediaRelation } from '../../graphql/types'
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiArrowLeftBold, mdiArrowRightBold } from '@mdi/js'
 
-import { AnimeViewRelations } from '@/graphql/types'
+import { MediaRelation } from '@/graphql/types'
 
 import Icon from '@/common/components/icon.vue'
 import { Required } from '@/decorators'
 
-@Component({
-  components: { Icon },
-})
+@Component({ components: { Icon } })
 export default class Relations extends Vue {
-  @Required(Array) public prequels!: AnimeViewRelations[]
-  @Required(Array) public sequels!: AnimeViewRelations[]
+  @Required(Array) public prequels!: MediaRelation[]
+  @Required(Array) public sequels!: MediaRelation[]
 
   public getRelationIcon(relation: 'PREQUEL' | 'SEQUEL') {
     switch (relation) {

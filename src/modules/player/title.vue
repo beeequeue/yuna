@@ -3,9 +3,7 @@
     <h1 class="episode-number">{{ episode.episodeNumber }}</h1>
 
     <div class="titles">
-      <h1 class="episode-title" :class="{ blur: shouldHideTitle }">
-        {{ episode.title }}
-      </h1>
+      <h1 class="episode-title" :class="{ blur: shouldHideTitle }">{{ episode.title }}</h1>
 
       <router-link :to="`/anime/${anime.id}`">
         <h3 class="anime-title">{{ anime.title.userPreferred }}</h3>
@@ -17,7 +15,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { Episode, PlayerAnimeAnime } from '@/graphql/types'
+import { Episode, MediaTitle } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import { ListEntry } from '@/state/app'
@@ -25,7 +23,7 @@ import { getSpoilerSettings } from '@/state/settings'
 
 @Component
 export default class PlayerTitle extends Vue {
-  @Required(Object) public anime!: PlayerAnimeAnime
+  @Required(Object) public anime!: MediaTitle
   @Required(Object) public episode!: Episode
   @Prop(Object) public listEntry!: ListEntry
 

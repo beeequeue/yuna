@@ -37,9 +37,9 @@ import { oc } from 'ts-optchain'
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import EPISODE_FEED_QUERY from './episode-feed.graphql'
 import {
-  EpisodeFeedAiringSchedules,
   EpisodeFeedQuery,
-  EpisodeFeedVariables,
+  EpisodeFeedQueryVariables,
+  AiringSchedule,
 } from '@/graphql/types'
 
 import { Query, Required } from '@/decorators'
@@ -53,7 +53,7 @@ const addDays = (days: number) =>
 export default class AnimatedList extends Vue {
   @Required(Array) ids!: number[]
 
-  @Query<AnimatedList, EpisodeFeedQuery, EpisodeFeedVariables>({
+  @Query<AnimatedList, EpisodeFeedQuery, EpisodeFeedQueryVariables>({
     fetchPolicy: 'cache-first',
     query: EPISODE_FEED_QUERY,
     variables() {
@@ -70,7 +70,7 @@ export default class AnimatedList extends Vue {
       return oc(data).Page.airingSchedules(null)
     },
   })
-  public airingSchedules!: EpisodeFeedAiringSchedules[]
+  public airingSchedules!: Pick<AiringSchedule, 'airingAt'>[]
   public hasNextPage = false
   public page = 1
 
