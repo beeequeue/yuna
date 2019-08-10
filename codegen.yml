@@ -10,14 +10,33 @@ generates:
   src/graphql.d.ts:
     plugins:
       - add: '/* THIS IS A GENERATED FILE */'
+      - add: '/* prettier-ignore-start */'
+      - add: '/* eslint-disable */'
       - typescript-graphql-files-modules
   src/graphql/types.ts:
     plugins:
       - add: '/* THIS IS A GENERATED FILE */'
+      - add: '/* prettier-ignore-start */'
+      - add: '/* eslint-disable */'
       - add: '/* /Maybe<\(Maybe<(.*)>\)\[\]>/ */'
       - add: '/* Maybe<$1[]> */'
-      - typescript-common
-      - typescript-client
-  graphql.schema.json:
+      - typescript
+  src/:
+    preset: near-operation-file
+    presetConfig:
+      extension: .ts
+      baseTypesPath: '@/graphql/types'
     plugins:
-      - introspection
+      - add: '/* THIS IS A GENERATED FILE */'
+      - add: '/* prettier-ignore-start */'
+      - add: '/* eslint-disable */'
+      - typescript-operations
+  src/graphql/introspection-result.ts:
+    plugins:
+      - add: '/* THIS IS A GENERATED FILE */'
+      - add: '/* prettier-ignore-start */'
+      - add: '/* eslint-disable */'
+      - fragment-matcher
+  src/schema.graphql:
+    plugins:
+      - schema-ast
