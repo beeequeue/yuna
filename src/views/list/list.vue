@@ -36,8 +36,8 @@ import TextInput from '@/common/components/form/text-input.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
 import ListEntry from './components/list-entry.vue'
 
+import { ListViewQuery, ListViewQueryVariables } from '@/graphql/types'
 import LIST_QUERY from './list.graphql'
-import { ListViewQuery, ListViewQueryVariables } from './list.types'
 
 import { Query } from '@/decorators'
 import { getAnilistUserId } from '@/state/auth'
@@ -73,7 +73,7 @@ export default class List extends Vue {
     if (this.filterString.length < 1) {
       return lists.map(list => ({
         ...list,
-        entries: (list!.entries!).slice(0, this.limit),
+        entries: list!.entries!.slice(0, this.limit),
       }))
     }
 
