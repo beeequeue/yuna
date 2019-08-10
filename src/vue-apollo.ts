@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import VueApollo from 'vue-apollo'
+import { IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
 import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
 
+import introspectionQueryResultData from '@/graphql/introspection-result'
 import { resolvers } from '@/graphql/resolvers'
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { Episode } from '@/graphql/types'
 import { userStore } from '@/lib/user'
 import { getEpisodeCacheKey, isOfTypename } from '@/utils'
 
@@ -23,7 +25,7 @@ Vue.prototype.$filesRoot = filesRoot
 
 const dataIdFromObject = (obj: any) => {
   // Episode
-  if (isOfTypename<EpisodeListEpisodes>(obj, 'Episode')) {
+  if (isOfTypename<Episode>(obj, 'Episode')) {
     return getEpisodeCacheKey(obj)
   }
 
@@ -38,6 +40,10 @@ const dataIdFromObject = (obj: any) => {
 
   return null
 }
+
+const fragmentMatcher = new IntrospectionFragmentMatcher({
+  introspectionQueryResultData,
+})
 
 // Config
 const options = {
@@ -67,6 +73,7 @@ const options = {
   // Cache Options
   inMemoryCacheOptions: {
     dataIdFromObject,
+    fragmentMatcher,
   },
 
   // Client local data
