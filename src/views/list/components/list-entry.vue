@@ -15,11 +15,8 @@ import { Component, Vue } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 
 import { Required, Query } from '@/decorators'
+import { MediaListQuery, MediaListQueryVariables } from '@/graphql/types'
 import MEDIA_LIST from '@/common/queries/media-list.graphql'
-import {
-  MediaListQuery,
-  MediaListQueryVariables,
-} from '@/common/queries/media-list.types'
 
 import CoverImage from '@/common/components/cover-image.vue'
 import Actions from '@/common/components/actions.vue'
