@@ -20,29 +20,20 @@
 
       <transition name="fade">
         <div v-if="queue.length < 1" class="empty-message">
-          Seems your queue is empty! <br />You can import shows from your list
-          or add some by searching! <br />
+          Seems your queue is empty!
+          <br />You can import shows from your list
+          or add some by searching!
+          <br />
 
-          <c-button
-            content="Import Watching from List"
-            :icon="currentSvg"
-            :click="importWatching"
-          />
+          <c-button content="Import Watching from List" :icon="currentSvg" :click="importWatching" />
         </div>
       </transition>
     </div>
 
-    <div
-      class="sidebar"
-      :class="{ small: isPlayerOpen, external: isExternalPlayer }"
-    >
+    <div class="sidebar" :class="{ small: isPlayerOpen, external: isExternalPlayer }">
       <span class="fill" />
 
-      <c-button
-        content="Import Watching from List"
-        :icon="currentSvg"
-        :click="importWatching"
-      />
+      <c-button content="Import Watching from List" :icon="currentSvg" :click="importWatching" />
 
       <c-button
         content="Import Random from Planning"
@@ -56,10 +47,7 @@
         :click="importRandomFromPaused"
       />
 
-      <c-button
-        content="Import Exported Queue"
-        :click="importQueueFromBackup"
-      />
+      <c-button content="Import Exported Queue" :click="importQueueFromBackup" />
 
       <c-button content="Export Queue" :click="exportQueue" />
 
@@ -83,7 +71,6 @@ import { remote, shell } from 'electron'
 import { activeWindow, api } from 'electron-util'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
-import indexBy from 'lodash.keyby'
 import { oc } from 'ts-optchain'
 import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 
@@ -93,13 +80,8 @@ import ManualSearchModal from './modals/manual-search/manual-search-modal.vue'
 
 import { pausedQuery, planningQuery, watchingQuery } from './queries'
 import QUEUE_QUERY from './queue.graphql'
-import {
-  Provider,
-  QueueAnime,
-  QueueQuery,
-  QueueVariables,
-  WatchingQueryLists,
-} from '@/graphql/types'
+import { QueueQuery, QueueQueryVariables } from './queue.types'
+import { Provider } from '@/graphql/types'
 
 import { Query } from '@/decorators'
 import { getPlayerData, sendErrorToast, sendToast } from '@/state/app'
@@ -112,7 +94,7 @@ import {
   toggleQueueItemOpen,
 } from '@/state/user'
 import { QueueItem as IQueueItem } from '@/lib/user'
-import { complement, isNotNil, pick, prop, propEq, sortNumber } from '@/utils'
+import { complement, isNotNil, pick, prop, propEq, sortNumber, isNil } from '@/utils'
 
 @Component({
   components: {
@@ -127,7 +109,7 @@ export default class Queue extends Vue {
   private defaultBackupPath = resolve(api.app.getPath('userData'), 'backups')
   private jsonFilter = { extensions: ['json'], name: '*' }
 
-  @Query<Queue, QueueQuery, QueueVariables>({
+  @Query<Queue, QueueQuery, QueueQueryVariables>({
     query: QUEUE_QUERY,
     variables() {
       return {
@@ -135,14 +117,10 @@ export default class Queue extends Vue {
       }
     },
     update(data) {
-      const items = indexBy(oc(data).queue.anime([] as QueueAnime[]), anime =>
-        anime.id.toString(),
-      )
-
-      return this.queue.map(item => items[item.id])
+      return oc(data).queue.anime([]).filter(isNotNil)
     },
   })
-  public animes!: QueueAnime[]
+  public animes!: NonNullable<NonNullable<QueueQuery['queue']>['anime']>
 
   public gridOptions = {
     animation: 150,
@@ -216,9 +194,9 @@ export default class Queue extends Vue {
 
     const { data, errors } = await query(this.$apollo, this.anilistUserId)
 
-    const lists = oc(data).listCollection.lists([] as WatchingQueryLists[])
+    const lists = oc(data).listCollection.lists([])
 
-    if (!lists || lists.length < 1) {
+    if (isNil(lists) || lists.length < 1) {
       return sendErrorToast(
         this.$store,
         "Couldn't find any shows in that state!",
@@ -308,7 +286,7 @@ export default class Queue extends Vue {
     )
 
     const data = this.animes.map(anime =>
-      pick(anime, ['id', 'externalLinks', 'mediaListEntry']),
+      pick(anime!, ['id', 'externalLinks', 'mediaListEntry']),
     )
 
     if (!existsSync(this.defaultBackupPath)) {

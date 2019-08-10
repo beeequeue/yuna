@@ -50,14 +50,6 @@ declare module '*/queue.graphql' {
   export default defaultDocument
 }
 
-declare module '*/local-source-anime.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  export const LocalSourceAnime: DocumentNode
-
-  export default defaultDocument
-}
-
 declare module '*/cache-episodes.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
@@ -110,6 +102,14 @@ declare module '*/set-status.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
   export const SetStatus: DocumentNode
+
+  export default defaultDocument
+}
+
+declare module '*/local-source-anime.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  export const LocalSourceAnime: DocumentNode
 
   export default defaultDocument
 }
