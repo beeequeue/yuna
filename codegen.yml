@@ -7,12 +7,6 @@ config:
   avoidOptionals: true
   noNamespaces: true
 generates:
-  src/graphql.d.ts:
-    plugins:
-      - add: '/* THIS IS A GENERATED FILE */'
-      - add: '/* prettier-ignore-start */'
-      - add: '/* eslint-disable */'
-      - typescript-graphql-files-modules
   src/graphql/types.ts:
     plugins:
       - add: '/* THIS IS A GENERATED FILE */'
@@ -21,6 +15,11 @@ generates:
       - add: '/* /Maybe<\(Maybe<(.*)>\)\[\]>/ */'
       - add: '/* Maybe<$1[]> */'
       - typescript
+    config:
+      scalars:
+        Json: '{ [key: string]: any }'
+        CountryCode: string
+        FuzzyDateInt: number
   src/:
     preset: near-operation-file
     presetConfig:
@@ -31,6 +30,12 @@ generates:
       - add: '/* prettier-ignore-start */'
       - add: '/* eslint-disable */'
       - typescript-operations
+  src/graphql.d.ts:
+    plugins:
+      - add: '/* THIS IS A GENERATED FILE */'
+      - add: '/* prettier-ignore-start */'
+      - add: '/* eslint-disable */'
+      - typescript-graphql-files-modules
   src/graphql/introspection-result.ts:
     plugins:
       - add: '/* THIS IS A GENERATED FILE */'
