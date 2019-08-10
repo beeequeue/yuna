@@ -23,8 +23,8 @@ generates:
   src/:
     preset: near-operation-file
     presetConfig:
-      extension: .ts
-      baseTypesPath: '@/graphql/types'
+      extension: .types.ts
+      baseTypesPath: 'graphql/types'
     plugins:
       - add: '/* THIS IS A GENERATED FILE */'
       - add: '/* prettier-ignore-start */'
