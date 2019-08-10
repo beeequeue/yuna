@@ -17,19 +17,10 @@
     </div>
 
     <transition-group tag="div" class="list-container">
-      <transition-group
-        tag="div"
-        v-for="list in getLists(data)"
-        :key="list.name"
-        class="list"
-      >
+      <transition-group tag="div" v-for="list in getLists(data)" :key="list.name" class="list">
         <h1 :key="list.name">{{ list.name }}</h1>
 
-        <list-entry
-          v-for="entry in list.entries"
-          :key="entry.id"
-          :entry="entry"
-        />
+        <list-entry v-for="entry in list.entries" :key="entry.id" :id="entry.id" />
       </transition-group>
     </transition-group>
   </div>
@@ -45,13 +36,8 @@ import TextInput from '@/common/components/form/text-input.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
 import ListEntry from './components/list-entry.vue'
 
-import LIST_QUERY from '@/views/list/list.graphql'
-import {
-  ListViewQuery,
-  ListViewLists,
-  ListViewEntries,
-  ListViewVariables,
-} from '@/graphql/types'
+import LIST_QUERY from './list.graphql'
+import { ListViewQuery, ListViewQueryVariables } from './list.types'
 
 import { Query } from '@/decorators'
 import { getAnilistUserId } from '@/state/auth'
@@ -59,7 +45,7 @@ import { debounce } from '@/utils'
 
 @Component({ components: { ListEntry, TextInput, NumberInput } })
 export default class List extends Vue {
-  @Query<List, ListViewQuery, ListViewVariables>({
+  @Query<List, ListViewQuery, ListViewQueryVariables>({
     fetchPolicy: 'cache-and-network',
     query: LIST_QUERY,
     variables() {
@@ -80,21 +66,21 @@ export default class List extends Vue {
   }
 
   public getLists(data: ListViewQuery) {
-    const lists = oc(data).listCollection.lists([] as ListViewLists[])
+    const lists = oc(data).listCollection.lists([])
 
     if (!lists) return []
 
     if (this.filterString.length < 1) {
       return lists.map(list => ({
         ...list,
-        entries: (list.entries as ListViewEntries[]).slice(0, this.limit),
+        entries: (list!.entries!).slice(0, this.limit),
       }))
     }
 
     const filteredLists = lists.map(list => {
-      if (!list.entries) return
+      if (!list!.entries) return
 
-      const fuse = new Fuse<ListViewEntries>(list.entries as any, {
+      const fuse = new Fuse(list!.entries, {
         caseSensitive: false,
         shouldSort: true,
         keys: [

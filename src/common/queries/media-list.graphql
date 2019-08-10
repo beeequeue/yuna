@@ -1,0 +1,24 @@
+query MediaList($id: Int!) {
+  mediaListEntry: MediaList(id: $id) {
+    id
+    status
+    progress
+    score(format: POINT_100)
+    repeat
+    anime: media {
+      id
+      title {
+        userPreferred
+        english
+        romaji
+        native
+      }
+      coverImage {
+        medium
+        color
+      }
+      isFavourite
+      episodes
+    }
+  }
+}

@@ -1,28 +1,25 @@
 <template>
-  <div class="entry" v-tooltip="entry.anime.title.userPreferred">
-    <router-link :to="`/anime/${entry.anime.id}`">
-      <cover-image
-        :src="entry.anime.coverImage.medium"
-        :color="entry.anime.coverImage.color"
-      />
+  <div class="entry" v-tooltip="title">
+    <router-link :to="`/anime/${animeId}`">
+      <cover-image :src="coverImage.medium" :color="coverImage.color" />
     </router-link>
 
     <div class="info">
-      <actions
-        :mediaListEntry="entry"
-        :anime="entry.anime"
-        :exclude="['editEntry']"
-        small
-      />
+      <actions :mediaListEntry="mediaListEntry" :anime="mediaListEntry.anime" :exclude="['editEntry']" small />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { oc } from 'ts-optchain'
 
-import { ListViewEntries } from '@/graphql/types'
-import { Required } from '@/decorators'
+import { Required, Query } from '@/decorators'
+import MEDIA_LIST from '@/common/queries/media-list.graphql'
+import {
+  MediaListQuery,
+  MediaListQueryVariables,
+} from '@/common/queries/media-list.types'
 
 import CoverImage from '@/common/components/cover-image.vue'
 import Actions from '@/common/components/actions.vue'
@@ -30,7 +27,28 @@ import CButton from '@/common/components/button.vue'
 
 @Component({ components: { CoverImage, CButton, Actions } })
 export default class ListEntry extends Vue {
-  @Required(Object) public entry!: ListViewEntries
+  @Required(Number)
+  public id!: number
+
+  @Query<ListEntry, MediaListQuery, MediaListQueryVariables>({
+    query: MEDIA_LIST,
+    variables() {
+      return { id: this.id }
+    },
+  })
+  public mediaListEntry!: MediaListQuery['mediaListEntry']
+
+  public get title() {
+    return oc(this.mediaListEntry).anime.title.userPreferred("")
+  }
+
+  public get animeId() {
+    return oc(this.mediaListEntry).anime.id()!
+  }
+
+  public get coverImage() {
+    return oc(this.mediaListEntry).anime.coverImage() || {}
+  }
 }
 </script>
 

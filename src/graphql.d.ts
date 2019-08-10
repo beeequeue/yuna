@@ -10,6 +10,14 @@ declare module '*/episode-list.graphql' {
   export default defaultDocument
 }
 
+declare module '*/media-list.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  export const MediaList: DocumentNode
+
+  export default defaultDocument
+}
+
 declare module '*/player-anime.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
@@ -46,6 +54,14 @@ declare module '*/queue.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
   export const Queue: DocumentNode
+
+  export default defaultDocument
+}
+
+declare module '*/local-source-anime.graphql' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  export const LocalSourceAnime: DocumentNode
 
   export default defaultDocument
 }
@@ -102,14 +118,6 @@ declare module '*/set-status.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
   export const SetStatus: DocumentNode
-
-  export default defaultDocument
-}
-
-declare module '*/local-source-anime.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  export const LocalSourceAnime: DocumentNode
 
   export default defaultDocument
 }
