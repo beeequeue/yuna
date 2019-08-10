@@ -21,10 +21,6 @@ generates:
         CountryCode: string
         FuzzyDateInt: number
   src/:
-    preset: near-operation-file
-    presetConfig:
-      extension: .types.ts
-      baseTypesPath: 'graphql/types'
     plugins:
       - add: '/* THIS IS A GENERATED FILE */'
       - add: '/* prettier-ignore-start */'
@@ -42,6 +38,6 @@ generates:
       - add: '/* prettier-ignore-start */'
       - add: '/* eslint-disable */'
       - fragment-matcher
-  src/schema.graphql:
+  schema.graphql:
     plugins:
       - schema-ast
