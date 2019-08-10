@@ -21,7 +21,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { Episode } from '@/graphql/types'
 import Checkbox from '@/common/components/form/checkbox.vue'
 
 import { Required } from '@/decorators'
@@ -29,9 +29,9 @@ import { isNil, isNotNil } from '@/utils'
 
 @Component({ components: { Checkbox } })
 export default class CrunchyrollEpisode extends Vue {
-  @Required(Object) episode!: EpisodeListEpisodes
-  @Prop(Object) public selectedEpisode!: EpisodeListEpisodes | null
-  @Required(Function) selectEpisodes!: (ids: EpisodeListEpisodes[]) => void
+  @Required(Object) episode!: Episode
+  @Prop(Object) public selectedEpisode!: Episode | null
+  @Required(Function) selectEpisodes!: (ids: Episode[]) => void
   @Required(Function) unselectEpisodes!: (ids: string[]) => void
 
   public get episodeNumber() {

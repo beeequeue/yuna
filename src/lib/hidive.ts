@@ -5,7 +5,7 @@ import superagent from 'superagent/dist/superagent'
 import { oc } from 'ts-optchain'
 import { ActionContext, Store } from 'vuex'
 
-import { EpisodeListEpisodes, Provider } from '@/graphql/types'
+import { Episode, Provider } from '@/graphql/types'
 import { getConfig } from '@/config'
 import { userStore } from '@/lib/user'
 import { getHidiveLogin, getIsConnectedTo, setHidive } from '@/state/auth'
@@ -314,7 +314,7 @@ export class Hidive {
 
     const title = response.body.Data.Title
 
-    return title.Episodes.map<Omit<EpisodeListEpisodes, 'isWatched'>>(
+    return title.Episodes.map<Omit<Episode, 'isWatched'>>(
       (ep, index) => ({
         __typename: 'Episode',
         provider: Provider.Hidive,

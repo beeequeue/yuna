@@ -19,7 +19,7 @@ import {
 
 import {
   AnimeViewQuery,
-  EpisodeListEpisodes,
+  Episode,
   MediaListStatus,
   MediaRelation,
   PlayerAnimeQuery,
@@ -182,7 +182,7 @@ export const arrayIsOfType = <T>(
 ): arr is T[] =>
   Array.isArray(arr) && arr.every(item => isOfType<any>(item, ...properties))
 
-export const getEpisodeCacheKey = (ep: EpisodeListEpisodes) =>
+export const getEpisodeCacheKey = (ep: Episode) =>
   `Episode:${ep.provider}:${ep.id}`
 
 // eslint-disable-next-line no-shadowed-variable

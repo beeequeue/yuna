@@ -61,7 +61,7 @@ import Checkbox from '@/common/components/form/checkbox.vue'
 import CButton from '@/common/components/button.vue'
 import Episode from '@/common/components/episode.vue'
 
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { Episode } from '@/graphql/types'
 import thumbnailWebp from '@/assets/setup/episode_thumb.webp'
 import { getSettings, setSpoiler } from '@/state/settings'
 
@@ -69,7 +69,7 @@ import { getSettings, setSpoiler } from '@/state/settings'
 export default class SpoilerSettings extends Vue {
   @Prop() public goToNextStep!: () => any
 
-  public episodes: EpisodeListEpisodes = [
+  public episodes: Episode = [
     {
       title: 'A Really Good Episode',
       thumbnail: thumbnailWebp,

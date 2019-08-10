@@ -9,7 +9,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { basename } from 'path'
 
 import { setProgress } from '@/common/mutations/episodes'
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { Episode } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import {
@@ -21,7 +21,7 @@ import { VLC } from '@/lib/players/vlc'
 @Component
 export default class ExternalPlayer extends Vue {
   @Required(Number) index!: number
-  @Required(Array) episodes!: EpisodeListEpisodes[]
+  @Required(Array) episodes!: Episode[]
   @Prop(Object) title!: { userPreferred: string }
 
   public progress = 0

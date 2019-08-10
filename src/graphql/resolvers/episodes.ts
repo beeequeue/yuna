@@ -1,6 +1,6 @@
 import { oc } from 'ts-optchain'
 
-import { EpisodeListEpisodes, Provider } from '@/graphql/types'
+import { Episode, Provider } from '@/graphql/types'
 
 import { fetchEpisodesOfSeries } from '@/lib/myanimelist'
 import { getEpisodeRelations } from '@/lib/relations'
@@ -17,15 +17,15 @@ import {
 } from '@/utils/cache'
 
 const episodesExist = (
-  episodes: EpisodeListEpisodes[] | null | undefined,
-): episodes is EpisodeListEpisodes[] => !isNil(episodes) && episodes.length >= 1
+  episodes: Episode[] | null | undefined,
+): episodes is Episode[] => !isNil(episodes) && episodes.length >= 1
 
 const getEpisodesFromCache = (
   cache: RealProxy,
   id: number,
   provider: Provider,
 ) => {
-  let episodes: EpisodeListEpisodes[] | null
+  let episodes: Episode[] | null
 
   episodes = getSoftCachedEpisodes(cache, id, provider)
 
@@ -99,7 +99,7 @@ const fetchEpisodesFromHidive = async (cache: RealProxy, id: number) => {
     throw new Error('Could not find link to Hidive.')
   }
 
-  let unconfirmedEpisodes: EpisodeListEpisodes[] | null = null
+  let unconfirmedEpisodes: Episode[] | null = null
   try {
     unconfirmedEpisodes = (await Hidive.fetchEpisodesByUrl(
       id,
@@ -129,12 +129,12 @@ export const EpisodesResolver = async (
   _: any,
   { id, provider }: EpisodeVariables,
   { cache }: { cache: RealProxy },
-): Promise<EpisodeListEpisodes[] | null> => {
+): Promise<Episode[] | null> => {
   const nextEpisodeAiringAt = EpisodeCache.getNextEpisodeAiringAt(id, provider)
   const isStale =
     !isNil(nextEpisodeAiringAt) && Date.now() >= nextEpisodeAiringAt
 
-  let episodes: EpisodeListEpisodes[] | null = null
+  let episodes: Episode[] | null = null
 
   if (!isStale) {
     episodes = getEpisodesFromCache(cache, id, provider)

@@ -32,7 +32,7 @@
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 
-import { EpisodeListEpisodes, Provider, QueueAnime } from '@/graphql/types'
+import { Episode, Provider, QueueAnime } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import { Hidive, HidiveResponseCode } from '@/lib/hidive'
@@ -45,7 +45,7 @@ import SourceList from './source-list.vue'
 @Component({ components: { SourceList, Loading, Episode } })
 export default class EpisodeList extends Vue {
   @Required(Object) public anime!: QueueAnime
-  @Prop(Array) public episodes!: EpisodeListEpisodes[] | null
+  @Prop(Array) public episodes!: Episode[] | null
   @Prop(String) public error!: string | null
   @Prop(Boolean) public loading!: boolean
   @Prop(Boolean) public scrollToNextEpisode!: boolean

@@ -32,7 +32,7 @@ import { setProgress } from '@/common/mutations/episodes'
 import ANIME_QUERY from './player-anime.graphql'
 import EPISODE_LIST from '@/common/queries/episode-list.graphql'
 import {
-  EpisodeListEpisodes,
+  Episode,
   EpisodeListQuery,
   EpisodeListVariables,
   PlayerAnimeAnime,
@@ -76,9 +76,9 @@ export default class PlayerContainer extends Vue {
       return !this.id
     },
   })
-  public episodes: EpisodeListEpisodes[] | null = null
+  public episodes: Episode[] | null = null
 
-  public delayedNextEpisode: EpisodeListEpisodes | null = null
+  public delayedNextEpisode: Episode | null = null
 
   get playerData() {
     return getPlayerData(this.$store)
@@ -101,7 +101,7 @@ export default class PlayerContainer extends Vue {
     const index = oc(this.playerData).index()
     if (isNil(this.episodes) || isNil(index)) return null
 
-    return this.episodes[index + 1] as EpisodeListEpisodes
+    return this.episodes[index + 1] as Episode
   }
 
   get listEntry() {
@@ -141,7 +141,7 @@ export default class PlayerContainer extends Vue {
   }
 
   public mounted() {
-    this.delayedNextEpisode = this.nextEpisode as EpisodeListEpisodes
+    this.delayedNextEpisode = this.nextEpisode as Episode
   }
 
   @Watch('id')

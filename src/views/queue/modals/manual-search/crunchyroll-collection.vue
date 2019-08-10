@@ -33,7 +33,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiChevronDown } from '@mdi/js'
 
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { Episode } from '@/graphql/types'
 import Icon from '@/common/components/icon.vue'
 import Checkbox from '@/common/components/form/checkbox.vue'
 import AnimatedHeight from '@/common/components/animated-height.vue'
@@ -50,8 +50,8 @@ const pluckId = (obj: Array<{ id: string }>) => pluck('id', obj)
 })
 export default class CrunchyrollCollection extends Vue {
   @Required(Object) collection!: _CollectionWithEpisodes
-  @Required(Array) public selectedEpisodes!: EpisodeListEpisodes[]
-  @Required(Function) selectEpisodes!: (ids: EpisodeListEpisodes[]) => void
+  @Required(Array) public selectedEpisodes!: Episode[]
+  @Required(Function) selectEpisodes!: (ids: Episode[]) => void
   @Required(Function) unselectEpisodes!: (ids: string[]) => void
 
   public open = false

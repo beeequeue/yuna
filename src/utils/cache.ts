@@ -6,7 +6,7 @@ import { Store } from 'vuex'
 import EPISODE_LIST_QUERY from '@/common/queries/episode-list.graphql'
 import LIST_QUERY from '@/views/list/list.graphql'
 import {
-  EpisodeListEpisodes,
+  Episode,
   EpisodeListQuery,
   EpisodeListVariables,
   Provider,
@@ -123,7 +123,7 @@ export const getSoftCachedEpisodes = (
   cache: DataProxy,
   animeId: number,
   provider: Provider,
-): EpisodeListEpisodes[] | null => {
+): Episode[] | null => {
   try {
     const data = cache.readQuery<EpisodeListQuery, EpisodeListVariables>({
       query: EPISODE_LIST_QUERY,
@@ -141,7 +141,7 @@ export const getSoftCachedEpisodes = (
 
 export const cacheEpisodes = (
   cache: DataProxy,
-  episodes: EpisodeListEpisodes[],
+  episodes: Episode[],
 ) => {
   episodes = episodes.map(ep => ({
     ...ep,
@@ -169,7 +169,7 @@ export const cacheRelations = (
   cache: RealProxy,
   relations: EpisodeRelations,
 ) => {
-  Object.values(relations).forEach((episodes: EpisodeListEpisodes[]) => {
+  Object.values(relations).forEach((episodes: Episode[]) => {
     cacheEpisodes(cache, episodes)
   })
 }

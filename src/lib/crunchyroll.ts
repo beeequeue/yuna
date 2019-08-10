@@ -4,7 +4,7 @@ import superagent from 'superagent/dist/superagent'
 import { ActionContext, Store } from 'vuex'
 import { oc } from 'ts-optchain'
 
-import { EpisodeListEpisodes, Provider } from '@/graphql/types'
+import { Episode, Provider } from '@/graphql/types'
 
 import { getConfig } from '@/config'
 import { getSettings, SettingsStore } from '@/state/settings'
@@ -144,7 +144,7 @@ interface _Locale {
 }
 
 export interface _CollectionWithEpisodes extends _Collection {
-  episodes: EpisodeListEpisodes[]
+  episodes: Episode[]
 }
 
 export interface _SeriesWithCollections {
@@ -453,7 +453,7 @@ export class Crunchyroll {
   public static fetchEpisodesOfCollection = async (
     id: number,
     collectionId: string,
-  ): Promise<EpisodeListEpisodes[]> => {
+  ): Promise<Episode[]> => {
     const response = await Crunchyroll.request<_Media[]>('list_media', {
       collection_id: collectionId,
       limit: 1000,
@@ -478,7 +478,7 @@ export class Crunchyroll {
   public static fetchSeasonFromEpisode = async (
     id: number,
     mediaId: string,
-  ): Promise<EpisodeListEpisodes[]> => {
+  ): Promise<Episode[]> => {
     const episode = await Crunchyroll.fetchEpisode(mediaId)
 
     if (isNil(episode)) {
@@ -677,7 +677,7 @@ const mediaToEpisode = (id: number) => (
     episode_number,
   }: _Media,
   index: number,
-): Omit<EpisodeListEpisodes, 'isWatched'> => ({
+): Omit<Episode, 'isWatched'> => ({
   __typename: 'Episode',
   provider: Provider.Crunchyroll,
   id: media_id,
@@ -703,7 +703,7 @@ const getEpisodeNumber = (num: string | number) => {
   return Number(onlyNumbers(num))
 }
 
-const fixEpisodeNumbers = (episodes: EpisodeListEpisodes[]) => {
+const fixEpisodeNumbers = (episodes: Episode[]) => {
   const episodeNumber = oc(episodes)[0].episodeNumber()
 
   if (isNil(episodeNumber)) {

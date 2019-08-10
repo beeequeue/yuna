@@ -1,6 +1,6 @@
 import Store from 'electron-store'
 
-import { EpisodeListEpisodes, Provider } from '@/graphql/types'
+import { Episode, Provider } from '@/graphql/types'
 
 // interface VersionSchema {
 //   __version: number
@@ -8,7 +8,7 @@ import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 interface EpisodeCacheSchema {
   [id: string]: {
     nextEpisodeAiringAt: number
-    episodes: EpisodeListEpisodes[]
+    episodes: Episode[]
   }
 }
 const episodeCache = new Store<any>({
@@ -46,7 +46,7 @@ export class EpisodeCache {
   public static set(
     animeId: number,
     provider: Provider,
-    episodes: EpisodeListEpisodes[],
+    episodes: Episode[],
     nextEpisodeAiringAt: number | null,
   ) {
     episodeCache.set(`${provider}:${animeId}`, {

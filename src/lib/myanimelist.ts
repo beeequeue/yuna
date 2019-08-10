@@ -1,7 +1,7 @@
 import Bottleneck from 'bottleneck'
 import request from 'superagent/dist/superagent'
 
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { Episode } from '@/graphql/types'
 
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { RequestResponse, responseIsError, T } from '@/utils'
@@ -49,7 +49,7 @@ const handleError = (
 export const fetchEpisodesOfSeries = async (
   id: number,
   idMal: number,
-): Promise<EpisodeListEpisodes[]> => {
+): Promise<Episode[]> => {
   const episodeResponse = await requestLimited(`${baseUrl}/${idMal}`)
 
   if (responseIsError(episodeResponse)) {

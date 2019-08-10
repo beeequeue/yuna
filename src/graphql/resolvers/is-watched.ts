@@ -1,8 +1,8 @@
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { Episode } from '@/graphql/types'
 import { getIsWatched } from '@/utils/cache'
 
 export const isWatchedResolver = (
-  episode: EpisodeListEpisodes,
+  episode: Episode,
   _: never,
   { cache }: { cache: RealProxy },
 ) => getIsWatched(cache, episode.animeId, episode.episodeNumber)

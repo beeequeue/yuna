@@ -100,7 +100,7 @@ import { oc } from 'ts-optchain'
 import { mdiLoading, mdiPlayCircle } from '@mdi/js'
 
 import {
-  EpisodeListEpisodes,
+  Episode,
   MediaRelation,
   PlayerAnimeAnime,
   PlayerAnimeTitle,
@@ -140,8 +140,8 @@ enum LocalStorageKey {
   components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
 })
 export default class Player extends Vue {
-  @Prop(Object) public episode!: EpisodeListEpisodes | null
-  @Prop(Object) public nextEpisode!: EpisodeListEpisodes | null
+  @Prop(Object) public episode!: Episode | null
+  @Prop(Object) public nextEpisode!: Episode | null
   @Prop(Object) public anime!: PlayerAnimeAnime | null
   @Required(Object) public playerData!: PlayerData
   @Prop(Boolean) public loading!: boolean | null
@@ -403,7 +403,7 @@ export default class Player extends Vue {
 
     this.hls.on('hlsMediaAttached', () => {
       this.$refs.player.currentTime =
-        this.playhead < (this.episode as EpisodeListEpisodes).duration * 0.8
+        this.playhead < (this.episode as Episode).duration * 0.8
           ? this.playhead
           : 0
     })

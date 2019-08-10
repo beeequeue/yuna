@@ -127,7 +127,7 @@ import EPISODE_LIST from '@/common/queries/episode-list.graphql'
 import { setProgress } from '@/common/mutations/episodes'
 import { startRewatching, setStatus } from '@/common/mutations/list-entry'
 import {
-  EpisodeListEpisodes,
+  Episode,
   EpisodeListQuery,
   EpisodeListVariables,
   MediaListStatus,
@@ -211,7 +211,7 @@ export default class QueueItem extends Vue {
       this.highlightSourceSelector = false
     },
   })
-  public episodes!: EpisodeListEpisodes[] | null
+  public episodes!: Episode[] | null
   public episodesLoading = 0
   public episodesFetchingError: string | null = null
 

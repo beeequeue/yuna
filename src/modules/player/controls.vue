@@ -217,7 +217,7 @@ import {
 import { oc } from 'ts-optchain'
 
 import {
-  EpisodeListEpisodes,
+  Episode,
   PlayerAnimeAnime,
   PlayerAnimeMediaListEntry,
 } from '@/graphql/types'
@@ -248,8 +248,8 @@ import VolumeSlider from './volume-slider.vue'
   },
 })
 export default class Controls extends Vue {
-  @Required(Object) public episode!: EpisodeListEpisodes
-  @Prop(Object) public nextEpisode!: EpisodeListEpisodes | null
+  @Required(Object) public episode!: Episode
+  @Prop(Object) public nextEpisode!: Episode | null
   @Prop(Object) public anime!: PlayerAnimeAnime | null
   @Required(Boolean) public paused!: boolean
   @Required(Boolean) public muted!: boolean

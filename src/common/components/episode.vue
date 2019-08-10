@@ -38,7 +38,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiBookmark, mdiBookmarkRemove, mdiCheckCircleOutline } from '@mdi/js'
 
 import { setProgress } from '@/common/mutations/episodes'
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { Episode } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import { ListEntry, setCurrentEpisode } from '@/state/app'
@@ -49,7 +49,7 @@ import Icon from './icon.vue'
 
 @Component({ components: { CButton, Icon } })
 export default class Episode extends Vue {
-  @Required(Object) public episode!: EpisodeListEpisodes
+  @Required(Object) public episode!: Episode
   @Prop(Object) public listEntry!: ListEntry | null
   @Prop(String) public scrollerValue!: string | null
   @Prop(Boolean) public small!: boolean | null

@@ -7,7 +7,7 @@ import {
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
 
-import { EpisodeListEpisodes, MediaListStatus, Provider } from '@/graphql/types'
+import { Episode, MediaListStatus, Provider } from '@/graphql/types'
 import { router } from '@/router'
 import { RootState } from '@/state/store'
 import { generateId, isNil, pluck, propEq } from '@/utils'
@@ -69,7 +69,7 @@ export interface EditModalAnime {
 export interface ManualSearchOptions {
   provider: Provider
   anilistId: number | null
-  selectedEpisodes: EpisodeListEpisodes[]
+  selectedEpisodes: Episode[]
 }
 
 export interface LocalSourceOptions {
@@ -268,7 +268,7 @@ export const app = {
 
     selectCrunchyrollEpisodes(
       state: AppState,
-      episodes: EpisodeListEpisodes[],
+      episodes: Episode[],
     ) {
       const { selectedEpisodes } = state.modals.manualSearch
       const selectedIds = pluck('id', selectedEpisodes)
@@ -291,7 +291,7 @@ export const app = {
 
           const newEpisodeNumber = newNumber - duplicates
 
-          const selectedEpisode: EpisodeListEpisodes = {
+          const selectedEpisode: Episode = {
             ...rest,
             index: newEpisodeNumber - 1,
             episodeNumber: newEpisodeNumber,

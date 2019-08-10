@@ -47,7 +47,7 @@ import gql from 'graphql-tag'
 import { mdiArrowLeft, mdiCheck } from '@mdi/js'
 
 import { cacheEpisodes } from '@/common/mutations/episodes'
-import { EpisodeListEpisodes, Provider, Maybe } from '@/graphql/types'
+import { Episode, Provider, Maybe } from '@/graphql/types'
 import Loading from '@/common/components/loading.vue'
 import Icon from '@/common/components/icon.vue'
 import CButton from '@/common/components/button.vue'
@@ -106,7 +106,7 @@ export default class CrunchyrollEditor extends Vue {
   @Required(Object)
   searchOptions!: ManualSearchOptions
   @Required(Number) id!: number
-  @Required(Array) public selectedEpisodes!: EpisodeListEpisodes[]
+  @Required(Array) public selectedEpisodes!: Episode[]
   @Required(Function) setSelectedId!: (id: number | null) => void
   @Required(Function) public toggleVisible!: (force?: boolean) => any
 
@@ -173,7 +173,7 @@ export default class CrunchyrollEditor extends Vue {
     this.clearSelectedEpisodes()
   }
 
-  public selectEpisodes(episodes: EpisodeListEpisodes[]) {
+  public selectEpisodes(episodes: Episode[]) {
     selectCrunchyrollEpisodes(this.$store, episodes)
   }
 

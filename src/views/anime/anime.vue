@@ -87,7 +87,7 @@ import {
   AnimeViewMediaListEntry,
   AnimeViewQuery,
   AnimeViewVariables,
-  EpisodeListEpisodes,
+  Episode,
   EpisodeListQuery,
   EpisodeListVariables,
 } from '@/graphql/types'
@@ -151,7 +151,7 @@ export default class Anime extends Vue {
         'Something went wrong fetching the episodes. :('
     },
   })
-  public episodes!: EpisodeListEpisodes[] | null
+  public episodes!: Episode[] | null
   public episodesLoading = 0
   public episodesFetchingError: string | null = null
 

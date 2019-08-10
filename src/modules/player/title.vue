@@ -17,7 +17,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { EpisodeListEpisodes, PlayerAnimeAnime } from '@/graphql/types'
+import { Episode, PlayerAnimeAnime } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import { ListEntry } from '@/state/app'
@@ -26,7 +26,7 @@ import { getSpoilerSettings } from '@/state/settings'
 @Component
 export default class PlayerTitle extends Vue {
   @Required(Object) public anime!: PlayerAnimeAnime
-  @Required(Object) public episode!: EpisodeListEpisodes
+  @Required(Object) public episode!: Episode
   @Prop(Object) public listEntry!: ListEntry
 
   public get shouldHideTitle() {

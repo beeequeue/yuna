@@ -1,6 +1,6 @@
 import Store from 'electron-store'
 import superagent from 'superagent/dist/superagent'
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { Episode } from '@/graphql/types'
 
 // Branches
 
@@ -309,12 +309,12 @@ export const updateRelations = async () => {
 }
 
 export interface EpisodeRelations {
-  [id: number]: EpisodeListEpisodes[]
+  [id: number]: Episode[]
 }
 
 export const getEpisodeRelations = (
   id: number,
-  episodes: EpisodeListEpisodes[],
+  episodes: Episode[],
 ): EpisodeRelations => {
   const relation = relations[id]
   const toReturn: any = {}

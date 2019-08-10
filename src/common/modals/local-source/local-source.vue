@@ -39,7 +39,7 @@ import Loading from '@/common/components/loading.vue'
 import { cacheEpisodes } from '@/common/mutations/episodes'
 import LOCAL_SOURCE_ANIME from './local-source-anime.graphql'
 import {
-  EpisodeListEpisodes,
+  Episode,
   LocalSourceAnimeQuery,
   LocalSourceAnimeVariables,
   Provider,
@@ -161,7 +161,7 @@ export default class LocalSourceModal extends Vue {
 
     const progress = oc(this.anime).mediaListEntry.progress(0)
 
-    const episodes = files.map<EpisodeListEpisodes>((file, index) => ({
+    const episodes = files.map<Episode>((file, index) => ({
       __typename: 'Episode',
       provider: Provider.Local,
       id: file.id,
