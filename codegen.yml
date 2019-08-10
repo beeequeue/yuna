@@ -15,17 +15,12 @@ generates:
       - add: '/* /Maybe<\(Maybe<(.*)>\)\[\]>/ */'
       - add: '/* Maybe<$1[]> */'
       - typescript
+      - typescript-operations
     config:
       scalars:
         Json: '{ [key: string]: any }'
         CountryCode: string
         FuzzyDateInt: number
-  src/:
-    plugins:
-      - add: '/* THIS IS A GENERATED FILE */'
-      - add: '/* prettier-ignore-start */'
-      - add: '/* eslint-disable */'
-      - typescript-operations
   src/graphql.d.ts:
     plugins:
       - add: '/* THIS IS A GENERATED FILE */'

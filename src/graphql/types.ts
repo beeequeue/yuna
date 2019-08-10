@@ -4048,3 +4048,162 @@ export type YearStats = {
   amount: Maybe<Scalars['Int']>,
   meanScore: Maybe<Scalars['Int']>,
 };
+export type EpisodeListQueryVariables = {
+  id: Scalars['Int'],
+  provider: Provider
+};
+
+
+export type EpisodeListQuery = ({ __typename?: 'Query' } & { episodes: Maybe<Array<({ __typename?: 'Episode' } & Pick<Episode, 'provider' | 'id' | 'animeId' | 'title' | 'duration' | 'progress' | 'index' | 'episodeNumber' | 'url' | 'subtitles' | 'thumbnail' | 'isWatched'>)>> });
+
+export type MediaListQueryVariables = {
+  id: Scalars['Int']
+};
+
+
+export type MediaListQuery = ({ __typename?: 'Query' } & { mediaListEntry: Maybe<({ __typename?: 'MediaList' } & Pick<MediaList, 'id' | 'status' | 'progress' | 'score' | 'repeat'> & { anime: Maybe<({ __typename?: 'Media' } & Pick<Media, 'id' | 'isFavourite' | 'episodes'> & { title: Maybe<({ __typename?: 'MediaTitle' } & Pick<MediaTitle, 'userPreferred' | 'english' | 'romaji' | 'native'>)>, coverImage: Maybe<({ __typename?: 'MediaCoverImage' } & Pick<MediaCoverImage, 'medium' | 'color'>)> })> })> });
+
+export type PlayerAnimeQueryVariables = {
+  id: Scalars['Int']
+};
+
+
+export type PlayerAnimeQuery = ({ __typename?: 'Query' } & { anime: Maybe<({ __typename?: 'Media' } & Pick<Media, 'id' | 'idMal' | 'episodes'> & { title: Maybe<({ __typename?: 'MediaTitle' } & Pick<MediaTitle, 'userPreferred'>)>, nextAiringEpisode: Maybe<({ __typename?: 'AiringSchedule' } & Pick<AiringSchedule, 'airingAt' | 'timeUntilAiring'>)>, relations: Maybe<({ __typename?: 'MediaConnection' } & { edges: Maybe<({ __typename?: 'MediaEdge' } & Pick<MediaEdge, 'relationType'> & { node: Maybe<({ __typename?: 'Media' } & Pick<Media, 'id' | 'bannerImage'> & { title: Maybe<({ __typename?: 'MediaTitle' } & Pick<MediaTitle, 'userPreferred'>)> })> })[]> })>, mediaListEntry: Maybe<({ __typename?: 'MediaList' } & Pick<MediaList, 'id' | 'status' | 'progress' | 'score'>)> })> });
+
+export type SearchQueryVariables = {
+  search: Maybe<Scalars['String']>
+};
+
+
+export type SearchQuery = ({ __typename?: 'Query' } & { anime: Maybe<({ __typename?: 'Page' } & { pageInfo: Maybe<({ __typename?: 'PageInfo' } & Pick<PageInfo, 'total'>)>, results: Maybe<({ __typename?: 'Media' } & Pick<Media, 'id' | 'type'> & { title: Maybe<({ __typename?: 'MediaTitle' } & Pick<MediaTitle, 'userPreferred'>)>, coverImage: Maybe<({ __typename?: 'MediaCoverImage' } & Pick<MediaCoverImage, 'medium'>)>, streamingEpisodes: Maybe<Array<Maybe<({ __typename?: 'MediaStreamingEpisode' } & Pick<MediaStreamingEpisode, 'site'>)>>>, externalLinks: Maybe<Array<Maybe<({ __typename?: 'MediaExternalLink' } & Pick<MediaExternalLink, 'site'>)>>> })[]> })> });
+
+export type AnimeViewQueryVariables = {
+  id: Maybe<Scalars['Int']>
+};
+
+
+export type AnimeViewQuery = ({ __typename?: 'Query' } & { anime: Maybe<({ __typename?: 'Media' } & Pick<Media, 'id' | 'idMal' | 'description' | 'duration' | 'episodes' | 'isFavourite' | 'averageScore' | 'bannerImage'> & { title: Maybe<({ __typename?: 'MediaTitle' } & Pick<MediaTitle, 'english' | 'native' | 'romaji' | 'userPreferred'>)>, coverImage: Maybe<({ __typename?: 'MediaCoverImage' } & Pick<MediaCoverImage, 'extraLarge' | 'color'>)>, nextAiringEpisode: Maybe<({ __typename?: 'AiringSchedule' } & Pick<AiringSchedule, 'airingAt' | 'timeUntilAiring' | 'episode'>)>, externalLinks: Maybe<({ __typename?: 'MediaExternalLink' } & Pick<MediaExternalLink, 'site' | 'url'>)>>>, relations: Maybe<({ __typename?: 'MediaConnection' } & { edges: Maybe<Array<Maybe<({ __typename?: 'MediaEdge' } & Pick<MediaEdge, 'relationType'> & { node: Maybe<({ __typename?: 'Media' } & Pick<Media, 'id' | 'bannerImage'> & { title: Maybe<({ __typename?: 'MediaTitle' } & Pick<MediaTitle, 'userPreferred'>)> })> })[]> })>, mediaListEntry: Maybe<({ __typename?: 'MediaList' } & Pick<MediaList, 'id' | 'progress' | 'status' | 'score' | 'repeat'>)> })> });
+
+export type ListViewQueryVariables = {
+  userId: Scalars['Int'],
+  statuses?: Maybe<Array<MediaListStatus>>
+};
+
+
+export type ListViewQuery = ({ __typename?: 'Query' } & { listCollection: Maybe<({ __typename?: 'MediaListCollection' } & { lists: Maybe<({ __typename?: 'MediaListGroup' } & Pick<MediaListGroup, 'isCustomList' | 'name'> & { entries: Maybe<Array<Maybe<({ __typename?: 'MediaList' } & Pick<MediaList, 'id' | 'status' | 'progress' | 'score' | 'repeat'> & { anime: Maybe<({ __typename?: 'Media' } & Pick<Media, 'id' | 'isFavourite' | 'episodes'> & { title: Maybe<({ __typename?: 'MediaTitle' } & Pick<MediaTitle, 'userPreferred' | 'english' | 'romaji' | 'native'>)>, coverImage: Maybe<({ __typename?: 'MediaCoverImage' } & Pick<MediaCoverImage, 'medium' | 'color'>)> })> })>>> })[]> })> });
+
+export type QueueQueryVariables = {
+  ids: Array<Scalars['Int']>
+};
+
+
+export type QueueQuery = ({ __typename?: 'Query' } & { queue: Maybe<({ __typename?: 'Page' } & { anime: Maybe<({ __typename?: 'Media' } & Pick<Media, 'id' | 'idMal' | 'episodes' | 'status' | 'siteUrl' | 'bannerImage'> & { title: Maybe<({ __typename?: 'MediaTitle' } & Pick<MediaTitle, 'userPreferred'>)>, nextAiringEpisode: Maybe<({ __typename?: 'AiringSchedule' } & Pick<AiringSchedule, 'airingAt' | 'timeUntilAiring' | 'episode'>)>, externalLinks: Maybe<Array<Maybe<({ __typename?: 'MediaExternalLink' } & Pick<MediaExternalLink, 'site' | 'url'>)>>>, mediaListEntry: Maybe<({ __typename?: 'MediaList' } & Pick<MediaList, 'id' | 'progress' | 'status' | 'repeat' | 'score'>)> })[]> })> });
+
+export type CacheEpisodesMutationVariables = {
+  episodes: Array<EpisodeInput>
+};
+
+
+export type CacheEpisodesMutation = ({ __typename?: 'Mutation' } & Pick<Mutation, 'CacheEpisodes'>);
+
+export type UpdateProgressMutationVariables = {
+  mediaId: Maybe<Scalars['Int']>,
+  progress: Maybe<Scalars['Int']>
+};
+
+
+export type UpdateProgressMutation = ({ __typename?: 'Mutation' } & { SaveMediaListEntry: Maybe<({ __typename?: 'MediaList' } & Pick<MediaList, 'id' | 'progress' | 'status' | 'repeat'>)> });
+
+export type CreateEntryMutationVariables = {
+  mediaId: Maybe<Scalars['Int']>,
+  status: Maybe<MediaListStatus>
+};
+
+
+export type CreateEntryMutation = ({ __typename?: 'Mutation' } & { SaveMediaListEntry: Maybe<({ __typename?: 'MediaList' } & Pick<MediaList, 'id' | 'progress' | 'status' | 'score' | 'repeat'>)> });
+
+export type DeleteEntryMutationVariables = {
+  id: Scalars['Int']
+};
+
+
+export type DeleteEntryMutation = ({ __typename?: 'Mutation' } & { DeleteMediaListEntry: Maybe<({ __typename?: 'Deleted' } & Pick<Deleted, 'deleted'>)> });
+
+export type RewatchMutationVariables = {
+  id: Maybe<Scalars['Int']>
+};
+
+
+export type RewatchMutation = ({ __typename?: 'Mutation' } & { SaveMediaListEntry: Maybe<({ __typename?: 'MediaList' } & Pick<MediaList, 'id' | 'mediaId' | 'status' | 'progress'>)> });
+
+export type SetScoreMutationVariables = {
+  id: Maybe<Scalars['Int']>,
+  score: Maybe<Scalars['Int']>
+};
+
+
+export type SetScoreMutation = ({ __typename?: 'Mutation' } & { SaveMediaListEntry: Maybe<({ __typename?: 'MediaList' } & Pick<MediaList, 'id' | 'score' | 'progress' | 'status' | 'repeat'>)> });
+
+export type SetStatusMutationVariables = {
+  id: Maybe<Scalars['Int']>,
+  status: Maybe<MediaListStatus>
+};
+
+
+export type SetStatusMutation = ({ __typename?: 'Mutation' } & { SaveMediaListEntry: Maybe<({ __typename?: 'MediaList' } & Pick<MediaList, 'id' | 'status'>)> });
+
+export type LocalSourceAnimeQueryVariables = {
+  id: Scalars['Int']
+};
+
+
+export type LocalSourceAnimeQuery = ({ __typename?: 'Query' } & { anime: Maybe<({ __typename?: 'Media' } & Pick<Media, 'episodes'> & { title: Maybe<({ __typename?: 'MediaTitle' } & Pick<MediaTitle, 'english' | 'romaji' | 'userPreferred'>)>, mediaListEntry: Maybe<({ __typename?: 'MediaList' } & Pick<MediaList, 'progress'>)> })> });
+
+export type EditListEntryMutationVariables = {
+  id: Scalars['Int'],
+  progress: Scalars['Int'],
+  status: MediaListStatus,
+  repeat: Scalars['Int'],
+  score: Scalars['Int']
+};
+
+
+export type EditListEntryMutation = ({ __typename?: 'Mutation' } & { SaveMediaListEntry: Maybe<({ __typename?: 'MediaList' } & Pick<MediaList, 'id' | 'score' | 'progress' | 'status' | 'repeat'>)> });
+
+export type EpisodeFeedListIdsQueryVariables = {
+  userId: Scalars['Int']
+};
+
+
+export type EpisodeFeedListIdsQuery = ({ __typename?: 'Query' } & { listCollection: Maybe<({ __typename?: 'MediaListCollection' } & { lists: Maybe<({ __typename?: 'MediaListGroup' } & Pick<MediaListGroup, 'name'> & { entries: Maybe<Array<Maybe<({ __typename?: 'MediaList' } & Pick<MediaList, 'mediaId'>)>>> })[]> })> });
+
+export type EpisodeFeedQueryVariables = {
+  page: Scalars['Int'],
+  startDate: Scalars['Int'],
+  endDate: Scalars['Int'],
+  ids: Array<Scalars['Int']>
+};
+
+
+export type EpisodeFeedQuery = ({ __typename?: 'Query' } & { Page: Maybe<({ __typename?: 'Page' } & { airingSchedules: Maybe<({ __typename?: 'AiringSchedule' } & Pick<AiringSchedule, 'id' | 'episode' | 'airingAt'> & { media: Maybe<({ __typename?: 'Media' } & Pick<Media, 'id'> & { title: Maybe<({ __typename?: 'MediaTitle' } & Pick<MediaTitle, 'userPreferred'>)>, coverImage: Maybe<({ __typename?: 'MediaCoverImage' } & Pick<MediaCoverImage, 'color' | 'medium'>)> })> })[]>, pageInfo: Maybe<({ __typename?: 'PageInfo' } & Pick<PageInfo, 'hasNextPage'>)> })> });
+
+export type PausedQueryQueryVariables = {
+  userId: Scalars['Int']
+};
+
+
+export type PausedQueryQuery = ({ __typename?: 'Query' } & { listCollection: Maybe<({ __typename?: 'MediaListCollection' } & { lists: Maybe<({ __typename?: 'MediaListGroup' } & Pick<MediaListGroup, 'isCustomList'> & { entries: Maybe<Array<Maybe<({ __typename?: 'MediaList' } & { info: Maybe<({ __typename?: 'Media' } & Pick<Media, 'id'> & { externalLinks: Maybe<Array<Maybe<({ __typename?: 'MediaExternalLink' } & Pick<MediaExternalLink, 'id' | 'site' | 'url'>)>>>, mediaListEntry: Maybe<({ __typename?: 'MediaList' } & Pick<MediaList, 'id' | 'status'>)> })> })>>> })[]> })> });
+
+export type PlanningQueryQueryVariables = {
+  userId: Scalars['Int']
+};
+
+
+export type PlanningQueryQuery = ({ __typename?: 'Query' } & { listCollection: Maybe<({ __typename?: 'MediaListCollection' } & { lists: Maybe<({ __typename?: 'MediaListGroup' } & Pick<MediaListGroup, 'isCustomList'> & { entries: Maybe<Array<Maybe<({ __typename?: 'MediaList' } & { info: Maybe<({ __typename?: 'Media' } & Pick<Media, 'id'> & { externalLinks: Maybe<Array<Maybe<({ __typename?: 'MediaExternalLink' } & Pick<MediaExternalLink, 'id' | 'site' | 'url'>)>>>, mediaListEntry: Maybe<({ __typename?: 'MediaList' } & Pick<MediaList, 'id' | 'status'>)> })> })>>> })[]> })> });
+
+export type WatchingQueryQueryVariables = {
+  userId: Scalars['Int']
+};
+
+
+export type WatchingQueryQuery = ({ __typename?: 'Query' } & { listCollection: Maybe<({ __typename?: 'MediaListCollection' } & { lists: Maybe<({ __typename?: 'MediaListGroup' } & Pick<MediaListGroup, 'isCustomList'> & { entries: Maybe<Array<Maybe<({ __typename?: 'MediaList' } & { info: Maybe<({ __typename?: 'Media' } & Pick<Media, 'id'> & { externalLinks: Maybe<Array<Maybe<({ __typename?: 'MediaExternalLink' } & Pick<MediaExternalLink, 'id' | 'site' | 'url'>)>>>, mediaListEntry: Maybe<({ __typename?: 'MediaList' } & Pick<MediaList, 'id' | 'status'>)> })> })>>> })[]> })> });
