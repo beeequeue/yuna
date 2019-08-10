@@ -129,10 +129,10 @@ import { startRewatching, setStatus } from '@/common/mutations/list-entry'
 import {
   Episode,
   EpisodeListQuery,
-  EpisodeListVariables,
+  EpisodeListQueryVariables,
   MediaListStatus,
   Provider,
-  QueueAnime,
+  Media,
 } from '@/graphql/types'
 
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
@@ -158,13 +158,13 @@ import { CrunchyrollProviders } from '@/types'
     CButton,
     SourceList,
     AnimatedHeight,
-    EpisodeList,
+    EpisodeList: EpisodeList as any,
     AnimeBanner,
     Icon,
   },
 })
 export default class QueueItem extends Vue {
-  @Query<EpisodeList, EpisodeListQuery, EpisodeListVariables>({
+  @Query<QueueItem, EpisodeListQuery, EpisodeListQueryVariables>({
     fetchPolicy: 'network-only',
     query: EPISODE_LIST,
     loadingKey: 'episodesLoading',
@@ -215,7 +215,7 @@ export default class QueueItem extends Vue {
   public episodesLoading = 0
   public episodesFetchingError: string | null = null
 
-  @Required(Object) public anime!: QueueAnime
+  @Required(Object) public anime!: Pick<Media, 'id' | 'mediaListEntry'>
   @Required(Object) public item!: IQueueItem
   @Required(Function) public setProvider!: (provider: Provider) => void
 
