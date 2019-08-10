@@ -72,7 +72,7 @@ import crIcon from '@/assets/crunchyroll.svg'
 import hidiveIcon from '@/assets/hidive.svg'
 import Icon from '@/common/components/icon.vue'
 
-import { Provider, QueueAnime, QueueExternalLinks } from '@/graphql/types'
+import { Provider, Media, MediaExternalLink } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import { initManualSearch, setLocalSourceAnime } from '@/state/app'
@@ -85,7 +85,7 @@ const siteImages = streamingSiteCtx.keys()
 
 @Component({ components: { Icon } })
 export default class SourceSelect extends Vue {
-  @Required(Object) public anime!: QueueAnime
+  @Required(Object) public anime!: Pick<Media, 'id' | 'externalLinks'>
   @Required(String) public currentProvider!: Provider
   @Required(Function) public setProvider!: (provider: Provider) => void
   @Prop(Boolean) public highlight!: boolean
@@ -121,7 +121,7 @@ export default class SourceSelect extends Vue {
     return getLocalFilesFolder(this.$store)
   }
 
-  public getLogo(source: QueueExternalLinks) {
+  public getLogo(source: MediaExternalLink) {
     const image = `./${StreamingSource[source.site as any]}.svg`
 
     if (!siteImages.includes(image)) {
@@ -139,7 +139,7 @@ export default class SourceSelect extends Vue {
     )
   }
 
-  public getDropdownClasses(source: QueueExternalLinks) {
+  public getDropdownClasses(source: MediaExternalLink) {
     return {
       fade:
         source.site.toUpperCase() !==
