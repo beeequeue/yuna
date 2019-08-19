@@ -6,35 +6,35 @@ import { isNil } from '@/utils/index'
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 
-export const getFilePath = async ({
+export const getFilePath = ({
   title,
   filters = [],
 }: {
   title: string
   filters?: FileFilter[]
 }) => {
-  const result = await remote.dialog.showOpenDialog({
+  const paths = remote.dialog.showOpenDialog({
     title,
     buttonLabel: 'Select file',
     properties: ['openFile'],
     filters,
   })
 
-  if (isNil(result.filePaths)) return null
+  if (isNil(paths)) return null
 
-  return result.filePaths[0] || null
+  return paths[0] || null
 }
 
-export const getFolderPath = async ({ title }: { title: string }) => {
-  const result = await remote.dialog.showOpenDialog({
+export const getFolderPath = ({ title }: { title: string }) => {
+  const paths = remote.dialog.showOpenDialog({
     title,
     buttonLabel: 'Select',
     properties: ['openDirectory'],
   })
 
-  if (isNil(result.filePaths)) return null
+  if (isNil(paths)) return null
 
-  return result.filePaths[0] || null
+  return paths[0] || null
 }
 
 const getDevPath = (name: string, path: string) =>

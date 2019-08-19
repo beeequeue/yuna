@@ -443,8 +443,8 @@ export default class Settings extends Vue {
     await Crunchyroll.createSession(this.$store)
   }
 
-  public async setLocalFilesFolder() {
-    const path = await getFolderPath({
+  public setLocalFilesFolder() {
+    const path = getFolderPath({
       title: 'Set directory for Local Files',
     })
 
@@ -457,8 +457,8 @@ export default class Settings extends Vue {
     setLocalFilesFolder(this.$store, null)
   }
 
-  public async setVLCPath() {
-    const path = await getFilePath({
+  public setVLCPath() {
+    const path = getFilePath({
       title: 'Set directory for Local Files',
       filters: [{ name: 'vlc', extensions: ['exe'] }],
     })
