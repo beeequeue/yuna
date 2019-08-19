@@ -7,6 +7,12 @@ module.exports = {
   },
   configureWebpack: {
     target: 'electron-renderer',
+    resolve: {
+      alias: {
+        ByteBuffer: 'bytebuffer',
+        Long: 'long',
+      }
+    }
   },
   lintOnSave: false,
   chainWebpack: config => {

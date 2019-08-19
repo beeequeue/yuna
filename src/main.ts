@@ -1,4 +1,5 @@
 import { shell } from 'electron'
+import cast from 'electron-chromecast'
 import Vue from 'vue'
 import Tooltip from 'v-tooltip'
 import Portal from 'portal-vue'
@@ -22,6 +23,15 @@ Vue.use(Tooltip)
 Vue.use(Portal)
 
 // Register services
+
+// Casting
+cast(receivers => {
+  return new Promise((resolve, reject) => {
+
+    console.log('!!', receivers)
+    resolve(receivers[0])
+  })
+})
 
 // Sentry
 if (process.env.NODE_ENV === 'production') {

@@ -4,14 +4,23 @@
     "buildResources": "public"
   },
   "win": {
-    "extraResources": ["node_modules/*/bin/win32/**/*"]
+    "extraResources": [
+      "node_modules/*/bin/win32/**/*",
+      "node_modules/castv2/**/*"
+    ]
   },
   "linux": {
     "category": "Video",
-    "extraResources": ["node_modules/*/bin/linux/**/*"]
+    "extraResources": [
+      "node_modules/*/bin/linux/**/*",
+      "node_modules/castv2/**/*"
+    ]
   },
   "mac": {
     "category": "public.app-category.entertainment",
-    "extraResources": ["node_modules/*/bin/darwin/**/*"]
+    "extraResources": [
+      "node_modules/*/bin/darwin/**/*",
+      "node_modules/castv2/**/*"
+    ]
   }
 }
