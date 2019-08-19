@@ -7,9 +7,9 @@ jobs:
     name: Setup project with Node ${{ matrix.node }}
     runs-on: ${{ matrix.os }}
 
-#    container:
-#      volumes:
-#        - $GITHUB_WORKSPACE:/data/${{ matrix.os }}
+    container:
+      volumes:
+        - ${GITHUB_WORKSPACE}:/data/${{ matrix.os }}
 
     strategy:
       matrix:
@@ -17,9 +17,6 @@ jobs:
         node: [12.4]
 
     steps:
-#      - run: echo $CWD
-#      - run: echo $GITHUB_WORKSPACE
-      - run: echo ${{ github.workspace }}
       - uses: actions/checkout@v1
       - name: Setup Node.js ${{ matrix.node }}
         uses: actions/setup-node@v1
