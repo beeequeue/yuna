@@ -1,0 +1,30 @@
+name: Build project
+on: [push]
+
+jobs:
+  setup:
+#    name: Build project on ${{ matrix.os }} with Node 12.4
+    name: Setup project with Node 12.4
+    runs-on: ${{ matrix.os }}
+
+    container:
+      volumes:
+        - /:/data/${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    steps:
+      - run: echo $CWD
+      - run: echo $GITHUB_WORKSPACE
+      - run: echo ${{ github.workspace }}
+      - uses: actions/checkout@v1
+      - name: Setup Node.js 12.4
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.4
+      - name: Install Yarn
+        run: npm i -g yarn
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
