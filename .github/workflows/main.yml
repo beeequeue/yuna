@@ -9,7 +9,7 @@ jobs:
 
     container:
       volumes:
-        - /home/runner/work/yuna/yuna:/data/${{ matrix.os }}
+        - /home/runner/work/yuna/yuna:/data/ubuntu-latest
 
     strategy:
       matrix:
