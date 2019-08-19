@@ -9,7 +9,7 @@ jobs:
 
     container:
       volumes:
-        - ${GITHUB_WORKSPACE}:/data/${{ matrix.os }}
+        - /home/runner/work/yuna/yuna:/data/${{ matrix.os }}
 
     strategy:
       matrix:
