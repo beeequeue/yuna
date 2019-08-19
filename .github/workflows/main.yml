@@ -27,5 +27,5 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Build on ${{ matrix.os }}
-        run: yarn build -l
+        run: yarn electron-builder -c.directories.output dist_electron --dir
         if: matrix.os == 'ubuntu-latest'
