@@ -15,6 +15,11 @@ jobs:
       matrix:
         os: [ubuntu-latest, macOS-latest]
         node: [12.6]
+        include:
+          - os: ubuntu-latest
+            flags: -lw --x64 --ia32
+          - os: macOS-latest
+            flags: -m
 
     steps:
       - uses: actions/checkout@v1
@@ -27,5 +32,5 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Build on ${{ matrix.os }}
-        run: yarn electron-builder -c.directories.output dist_electron --dir
+        run: yarn build ${{ matrix.flags }}
         if: matrix.os == 'ubuntu-latest'
