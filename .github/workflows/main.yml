@@ -3,7 +3,7 @@ on: [push]
 
 jobs:
   setup:
-    name: Build project on ${{ matrix.os }} with Node ${{ matrix.node }}
+    name: ${{ matrix.os }}, Node ${{ matrix.node }}
 #    name: Setup project with Node ${{ matrix.node }}
     runs-on: ${{ matrix.os }}
 
@@ -13,8 +13,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-        node: [12.4]
+        os: [ubuntu-latest, macOS-latest]
+        node: [12.6]
 
     steps:
       - uses: actions/checkout@v1
@@ -28,4 +28,4 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Build on ${{ matrix.os }}
         run: yarn build -l
-        if: matrix.os == 'ubuntu-latest'
+        if: ${matrix.os} == 'ubuntu-latest'
