@@ -4,7 +4,7 @@ on: [push]
 jobs:
   setup:
 #    name: Build project on ${{ matrix.os }} with Node 12.4
-    name: Setup project
+    name: Setup project with Node 12.4
     runs-on: ${{ matrix.os }}
 
     container:
