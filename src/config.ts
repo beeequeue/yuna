@@ -20,9 +20,9 @@ type Key = keyof typeof config.all | keyof typeof config.production
 const isInProdConfig = (key: string): key is keyof typeof config.production =>
   Object.keys(config.production).includes(key)
 
-export const getConfig = <K extends Key>(key: K): string => {
+export const getConfig = <K extends Key>(key: K): number => {
   if (process.env.NODE_ENV === 'production' && isInProdConfig(key)) {
-    return config.production[key]
+    return config.production[key] as boolean
   }
 
   return config.all[key]
