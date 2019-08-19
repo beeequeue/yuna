@@ -3,17 +3,17 @@ on: [push]
 
 jobs:
   setup:
-#    name: Build project on ${{ matrix.os }} with Node ${{ matrix.node }}
-    name: Setup project with Node ${{ matrix.node }}
+    name: Build project on ${{ matrix.os }} with Node ${{ matrix.node }}
+#    name: Setup project with Node ${{ matrix.node }}
     runs-on: ${{ matrix.os }}
 
-    container:
-      volumes:
-        - ${GITHUB_WORKSPACE}:/data/ubuntu-latest
+    #container:
+    #  volumes:
+    #    - ${GITHUB_WORKSPACE}:/data/ubuntu-latest
 
     strategy:
       matrix:
-        os: [ubuntu-latest] #, windows-latest, macOS-latest
+        os: [ubuntu-latest, windows-latest, macOS-latest]
         node: [12.4]
 
     steps:
@@ -26,3 +26,6 @@ jobs:
         run: npm i -g yarn
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+      - name: Build on ${{ matrix.os }}
+        run: yarn build -l
+        if: ${{ matrix.os == 'ubuntu-latest' }}
