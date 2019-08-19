@@ -58,8 +58,8 @@ export default class Discord extends Vue {
   public vlcPath =
     getSettings(this.$store).externalPlayers.vlc || VLC.getVLCPath()
 
-  public async setTemporaryLocalFilesFolder() {
-    const path = await getFolderPath({
+  public setTemporaryLocalFilesFolder() {
+    const path = getFolderPath({
       title: 'Set directory for Local Files',
     })
 
@@ -68,8 +68,8 @@ export default class Discord extends Vue {
     this.localFilesFolder = path
   }
 
-  public async setTemporaryVLCPath() {
-    const path = await getFilePath({
+  public setTemporaryVLCPath() {
+    const path = getFilePath({
       title: 'Set directory for Local Files',
       filters: [{ name: 'vlc', extensions: ['exe'] }],
     })
