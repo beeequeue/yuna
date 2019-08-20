@@ -7,7 +7,7 @@
     "@mdi/js": "3.9.97",
     "@sentry/browser": "5.6.1",
     "@sentry/integrations": "5.6.1",
-    "@sentry/node": "5.6.1",
+    "@sentry/node": "5.6.2",
     "anitomyscript": "1.0.2",
     "bottleneck": "2.19.5",
     "date-fns": "2.0.0-beta.3",
