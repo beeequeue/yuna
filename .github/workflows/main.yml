@@ -8,7 +8,6 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     container:
-      image: electronuserland/builder:wine
       env:
         NODE_ENV: production
     #  volumes:
@@ -20,9 +19,13 @@ jobs:
         node: [12.6]
         include:
           - os: ubuntu-latest
-            flags: -lw --x64 --ia32
+            command: |
+              docker run --rm \
+              --env-file <(env | grep -v '\r' | grep -iE 'DEBUG|NODE_|ELECTRON_|YARN_|NPM_|CI|CIRCLE|TRAVIS|APPVEYOR_|CSC_|_TOKEN|_KEY|AWS_|STRIP|BUILD_') \
+              -v ${PWD}:/project \
+              electronuserland/builder:wine /bin/bash -c "yarn build -wl --x64"
           - os: macOS-latest
-            flags: -m
+            command: yarn build -m
 
     steps:
       - uses: actions/checkout@v1
@@ -35,4 +38,4 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Build on ${{ matrix.os }}
-        run: yarn build ${{ matrix.flags }}
+        run: ${{ matrix.command }}
