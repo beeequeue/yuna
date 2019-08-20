@@ -7,7 +7,10 @@ jobs:
 #    name: Setup project with Node ${{ matrix.node }}
     runs-on: ${{ matrix.os }}
 
-    #container:
+    container:
+      image: electronuserland/builder:wine
+      env:
+        NODE_ENV: production
     #  volumes:
     #    - ${GITHUB_WORKSPACE}:/data/ubuntu-latest
 
@@ -33,4 +36,3 @@ jobs:
         run: yarn install --frozen-lockfile
       - name: Build on ${{ matrix.os }}
         run: yarn build ${{ matrix.flags }}
-        if: matrix.os == 'ubuntu-latest'
