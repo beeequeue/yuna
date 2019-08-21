@@ -9,8 +9,10 @@
     "@sentry/integrations": "5.6.1",
     "@sentry/node": "5.6.1",
     "anitomyscript": "1.0.2",
+    "bonjour": "3.5.0",
     "bottleneck": "2.19.5",
     "castv2": "https://github.com/BeeeQueue/node-castv2",
+    "castv2-client": "1.2.0",
     "date-fns": "2.0.0-beta.3",
     "discord-rpc": "3.0.2",
     "electron-chromecast": "1.1.0",
@@ -51,6 +53,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "7.5.5",
+    "@types/bonjour": "3.5.5",
     "@types/date-fns": "2.6.0",
     "@types/discord-rpc": "3.0.1",
     "@types/ffmpeg-static": "2.0.0",
@@ -131,7 +134,7 @@
   },
   "resolutions": {
     "@types/graphql": "14.2.3",
-    "castv2": "https://github.com/BeeeQueue/node-castv2",
+    "castv2": "https://github.com/BeeeQueue/node-castv2#d3412a3ce8532735885343f42c33c9e6437780a0",
     "graphql": "14.4.2"
   },
   "scripts": {

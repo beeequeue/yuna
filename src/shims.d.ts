@@ -195,3 +195,78 @@ declare module 'anitomyscript' {
 
   export = content
 }
+
+// declare module 'castv2' {
+//   import { EventEmitter } from 'events'
+//
+//   class Channel extends EventEmitter {
+//     send(data: { type: string; [key: string]: any } | string): void
+//
+//     close(): void
+//   }
+//
+//   export class Client {
+//     connect(ip: string, callback: () => void): void
+//
+//     createChannel(
+//       sourceId: string,
+//       destinationId: string,
+//       namespace: string,
+//       encoding: string,
+//     ): Channel
+//
+//     send(
+//       sourceId: string,
+//       destinationId: string,
+//       namespace: string,
+//       data: { type: string; [key: string]: any } | string,
+//     ): void
+//
+//     close(): void
+//   }
+// }
+
+declare module 'castv2-client' {
+  import { EventEmitter } from 'events'
+
+  interface MediaReceiver {}
+
+  export const DefaultMediaReceiver: MediaReceiver
+
+  interface Media {
+    contentId: string
+    contentType: string
+    streamType: 'BUFFERED' | 'LIVE'
+    metadata: {
+      type: number
+      metadataType: number
+      title: string
+      images: Array<{ url: string }>
+    }
+  }
+
+  class Player extends EventEmitter {
+    load(media: Media, callback: () => void): void
+    load(
+      media: Media,
+      options: { autoplay: boolean },
+      callback: (err: any, b: any) => void,
+    ): void
+
+    seek(number, cb: (a: any, b: any) => void): void
+    stop(cb: () => void): void
+
+    session: any
+  }
+
+  export class Client extends EventEmitter {
+    connect(ip: string, successCallback: () => void): void
+
+    launch(
+      receiver: MediaReceiver,
+      callback: (err?: Error, player?: Player) => void,
+    ): void
+
+    close(): void
+  }
+}

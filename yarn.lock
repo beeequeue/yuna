@@ -1212,6 +1212,13 @@
     "@types/connect" "*"
     "@types/node" "*"
 
+"@types/bonjour@3.5.5":
+  version "3.5.5"
+  resolved "https://registry.yarnpkg.com/@types/bonjour/-/bonjour-3.5.5.tgz#98e11e61c4ddf444fb9d97cb84944457c910b6f0"
+  integrity sha512-4fHAqgL0SYHgDmdBrm201hUl7gIavk8KAtwBuDX9TjVdEZbUENdKmnago4GsmDO8QALMUE651F+nNpaCF+B4+A==
+  dependencies:
+    "@types/node" "*"
+
 "@types/connect@*":
   version "3.4.32"
   resolved "https://registry.yarnpkg.com/@types/connect/-/connect-3.4.32.tgz#aa0e9616b9435ccad02bc52b5b454ffc2c70ba28"
@@ -3235,7 +3242,7 @@ body-parser@1.19.0, body-parser@^1.18.3:
     raw-body "2.4.0"
     type-is "~1.6.17"
 
-bonjour@^3.5.0:
+bonjour@3.5.0, bonjour@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/bonjour/-/bonjour-3.5.0.tgz#8e890a183d8ee9a2393b3844c691a42bcf7bc9f5"
   integrity sha1-jokKGD2O6aI5OzhExpGkK897yfU=
@@ -3751,9 +3758,17 @@ caseless@~0.12.0:
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
   integrity sha1-G2gcIf+EAzyCZUMJBolCDRhxUdw=
 
-castv2@^0.1.6, "castv2@https://github.com/BeeeQueue/node-castv2":
+castv2-client@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/castv2-client/-/castv2-client-1.2.0.tgz#a9193b1a5448b8cb9a0415bd021c8811ed7b0544"
+  integrity sha1-qRk7GlRIuMuaBBW9AhyIEe17BUQ=
+  dependencies:
+    castv2 "~0.1.4"
+    debug "^2.2.0"
+
+castv2@^0.1.6, "castv2@https://github.com/BeeeQueue/node-castv2", "castv2@https://github.com/BeeeQueue/node-castv2#d3412a3ce8532735885343f42c33c9e6437780a0", castv2@~0.1.4:
   version "0.1.10"
-  resolved "https://github.com/BeeeQueue/node-castv2#51c54e2d250608e806aaf5eca5fcf4c87aef8839"
+  resolved "https://github.com/BeeeQueue/node-castv2#d3412a3ce8532735885343f42c33c9e6437780a0"
   dependencies:
     debug "^4.1.1"
     protobufjs "^5.0.3"

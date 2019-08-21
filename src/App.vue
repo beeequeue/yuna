@@ -59,6 +59,7 @@ import {
   toggleModal,
 } from '@/state/app'
 import { CHECK_FOR_UPDATES } from '@/messages'
+import { Cast } from '@/lib/cast'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
@@ -114,6 +115,8 @@ export default class App extends Vue {
   )
 
   public async created() {
+    Cast.refreshCastDevices()
+
     if (!this.hasFinishedSetup) {
       this.$router.push('/first-time-setup')
     }
