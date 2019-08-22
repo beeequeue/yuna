@@ -21,3 +21,13 @@ export const SET_STATUS = gql`
 
   ${LIST_ENTRY_FRAGMENT}
 `
+
+export const START_REWATCHING = gql`
+  mutation Rewatch($id: Int) {
+    SaveMediaListEntry(id: $id, status: REPEATING, progress: 0) {
+      ...ListEntry
+    }
+  }
+
+  ${LIST_ENTRY_FRAGMENT}
+`
