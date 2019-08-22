@@ -19,6 +19,16 @@ declare module '*/cache-episodes.graphql' {
   export default defaultDocument
 }
 
+declare module '*/index.ts' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const CacheEpisodesAiring: DocumentNode
+
+  export { CacheEpisodesAiring }
+
+  export default defaultDocument
+}
+
 declare module '*/update-progress.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
@@ -59,16 +69,6 @@ declare module '*/rewatch.graphql' {
   export default defaultDocument
 }
 
-declare module '*/set-score.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const SetScore: DocumentNode
-
-  export { SetScore }
-
-  export default defaultDocument
-}
-
 declare module '*/set-status.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
@@ -85,6 +85,16 @@ declare module '*/episode-list.graphql' {
   const EpisodeList: DocumentNode
 
   export { EpisodeList }
+
+  export default defaultDocument
+}
+
+declare module '*/mutations.ts' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const SetScore: DocumentNode
+
+  export { SetScore }
 
   export default defaultDocument
 }
@@ -195,6 +205,24 @@ declare module '*/queue.graphql' {
   const Queue: DocumentNode
 
   export { Queue }
+
+  export default defaultDocument
+}
+
+declare module '*/fragments.ts' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+
+  export {}
+
+  export default defaultDocument
+}
+
+declare module '*/cache.ts' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+
+  export {}
 
   export default defaultDocument
 }

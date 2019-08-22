@@ -364,6 +364,17 @@ export interface StaffNameInput {
     Compilation = "COMPILATION",
     Contains = "CONTAINS",
   }
+/** User statistics sort enum */
+  export enum UserStatisticsSort {
+    Id = "ID",
+    IdDesc = "ID_DESC",
+    Count = "COUNT",
+    CountDesc = "COUNT_DESC",
+    Progress = "PROGRESS",
+    ProgressDesc = "PROGRESS_DESC",
+    MeanScore = "MEAN_SCORE",
+    MeanScoreDesc = "MEAN_SCORE_DESC",
+  }
 /** Media list sort enums */
   export enum MediaListSort {
     MediaId = "MEDIA_ID",
@@ -444,6 +455,15 @@ export interface StaffNameInput {
   export enum ThreadCommentSort {
     Id = "ID",
     IdDesc = "ID_DESC",
+  }
+/** Site trend sort enums */
+  export enum SiteTrendSort {
+    Date = "DATE",
+    DateDesc = "DATE_DESC",
+    Count = "COUNT",
+    CountDesc = "COUNT_DESC",
+    Change = "CHANGE",
+    ChangeDesc = "CHANGE_DESC",
   }
 
   export enum Provider {
@@ -534,6 +554,26 @@ export type FuzzyDateInt = any;
     CacheEpisodes: boolean;
   }
 
+  export type CacheEpisodesAiringVariables = {
+    id: number;
+  }
+
+  export type CacheEpisodesAiringQuery = {
+    __typename?: "Query";
+    
+    AiringSchedule: Maybe<CacheEpisodesAiringAiringSchedule>;
+  }
+
+  export type CacheEpisodesAiringAiringSchedule = {
+    __typename?: "AiringSchedule";
+    
+    id: number;
+    
+    episode: number;
+    
+    airingAt: number;
+  } 
+
   export type UpdateProgressVariables = {
     mediaId: Maybe<number>;
     progress: Maybe<number>;
@@ -620,31 +660,6 @@ export type FuzzyDateInt = any;
     progress: Maybe<number>;
   } 
 
-  export type SetScoreVariables = {
-    id: Maybe<number>;
-    score: Maybe<number>;
-  }
-
-  export type SetScoreMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<SetScoreSaveMediaListEntry>;
-  }
-
-  export type SetScoreSaveMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    score: Maybe<number>;
-    
-    progress: Maybe<number>;
-    
-    status: Maybe<MediaListStatus>;
-    
-    repeat: Maybe<number>;
-  } 
-
   export type SetStatusVariables = {
     id: Maybe<number>;
     status: Maybe<MediaListStatus>;
@@ -661,7 +676,15 @@ export type FuzzyDateInt = any;
     
     id: number;
     
+    mediaId: number;
+    
     status: Maybe<MediaListStatus>;
+    
+    score: Maybe<number>;
+    
+    progress: Maybe<number>;
+    
+    repeat: Maybe<number>;
   } 
 
   export type EpisodeListVariables = {
@@ -702,6 +725,19 @@ export type FuzzyDateInt = any;
     
     isWatched: boolean;
   } 
+
+  export type SetScoreVariables = {
+    id: Maybe<number>;
+    score: Maybe<number>;
+  }
+
+  export type SetScoreMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<SetScoreSaveMediaListEntry>;
+  }
+
+  export type SetScoreSaveMediaListEntry = ListEntryFragment
 
   export type PlayerAnimeVariables = {
     id: number;
@@ -1424,4 +1460,80 @@ export type FuzzyDateInt = any;
     
     score: Maybe<number>;
   } 
+
+  export type ProgressListEntryFragment = {
+    __typename?: "Media";
+    
+    mediaListEntry: Maybe<ProgressListEntryMediaListEntry>;
+  }
+
+  export type ProgressListEntryMediaListEntry = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    repeat: Maybe<number>;
+    
+    status: Maybe<MediaListStatus>;
+  }
+
+  export type ListEntryFragment = {
+    __typename?: "MediaList";
+    
+    id: number;
+    
+    mediaId: number;
+    
+    score: Maybe<number>;
+    
+    progress: Maybe<number>;
+    
+    status: Maybe<MediaListStatus>;
+    
+    repeat: Maybe<number>;
+  }
+
+  export type CachedAnimeListEntryFragment = {
+    __typename?: "Media";
+    
+    mediaListEntry: Maybe<CachedAnimeListEntryMediaListEntry>;
+  }
+
+  export type CachedAnimeListEntryMediaListEntry = {
+    __typename?: "MediaList";
+    
+    progress: Maybe<number>;
+  }
+
+  export type CachedMalIdFragment = {
+    __typename?: "Media";
+    
+    idMal: Maybe<number>;
+  }
+
+  export type CachedExternalLinksFragment = {
+    __typename?: "Media";
+    
+    externalLinks: Maybe<CachedExternalLinksExternalLinks[]>;
+  }
+
+  export type CachedExternalLinksExternalLinks = {
+    __typename?: "MediaExternalLink";
+    
+    site: string;
+    
+    url: string;
+  }
+
+  export type CacheAiringDataFragment = {
+    __typename?: "Media";
+    
+    nextAiringEpisode: Maybe<CacheAiringDataNextAiringEpisode>;
+  }
+
+  export type CacheAiringDataNextAiringEpisode = {
+    __typename?: "AiringSchedule";
+    
+    airingAt: number;
+  }
 
