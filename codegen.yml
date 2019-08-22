@@ -2,7 +2,7 @@ overwrite: true
 schema:
   - https://graphql.anilist.co
   - src/graphql/client-schema.graphqls
-documents: src/**/*.graphql
+documents: src/**/*.{graphql,ts}
 config:
   avoidOptionals: true
   noNamespaces: true
