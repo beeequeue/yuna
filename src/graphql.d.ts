@@ -39,46 +39,6 @@ declare module '*/update-progress.graphql' {
   export default defaultDocument
 }
 
-declare module '*/create-entry.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const CreateEntry: DocumentNode
-
-  export { CreateEntry }
-
-  export default defaultDocument
-}
-
-declare module '*/delete-entry.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const DeleteEntry: DocumentNode
-
-  export { DeleteEntry }
-
-  export default defaultDocument
-}
-
-declare module '*/rewatch.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const Rewatch: DocumentNode
-
-  export { Rewatch }
-
-  export default defaultDocument
-}
-
-declare module '*/set-status.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const SetStatus: DocumentNode
-
-  export { SetStatus }
-
-  export default defaultDocument
-}
-
 declare module '*/episode-list.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
@@ -93,8 +53,12 @@ declare module '*/mutations.ts' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
   const SetScore: DocumentNode
+  const SetStatus: DocumentNode
+  const CreateEntry: DocumentNode
+  const Rewatch: DocumentNode
+  const DeleteEntry: DocumentNode
 
-  export { SetScore }
+  export { SetScore, SetStatus, CreateEntry, Rewatch, DeleteEntry }
 
   export default defaultDocument
 }
