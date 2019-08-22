@@ -22,6 +22,17 @@ export const SET_STATUS = gql`
   ${LIST_ENTRY_FRAGMENT}
 `
 
+export const CREATE_ENTRY = gql`
+  mutation CreateEntry($mediaId: Int, $status: MediaListStatus) {
+    SaveMediaListEntry(mediaId: $mediaId, status: $status) {
+      ...ListEntry
+    }
+  }
+
+
+  ${LIST_ENTRY_FRAGMENT}
+`
+
 export const START_REWATCHING = gql`
   mutation Rewatch($id: Int) {
     SaveMediaListEntry(id: $id, status: REPEATING, progress: 0) {
@@ -30,4 +41,12 @@ export const START_REWATCHING = gql`
   }
 
   ${LIST_ENTRY_FRAGMENT}
+`
+
+export const DELETE_ENTRY = gql`
+  mutation DeleteEntry($id: Int!) {
+    DeleteMediaListEntry(id: $id) {
+      deleted
+    }
+  }
 `

@@ -1,7 +1,11 @@
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
-import CREATE_ENTRY from './create-entry.graphql'
-import DELETE_ENTRY from './delete-entry.graphql'
-import { SET_SCORE, SET_STATUS, START_REWATCHING } from '@/graphql/mutations'
+import {
+  CREATE_ENTRY,
+  DELETE_ENTRY,
+  SET_SCORE,
+  SET_STATUS,
+  START_REWATCHING,
+} from '@/graphql/mutations'
 import {
   CreateEntryMutation,
   DeleteEntryMutation,
@@ -9,8 +13,8 @@ import {
   Provider,
   RewatchMutation,
   SetScoreMutation,
+  SetScoreSaveMediaListEntry,
   SetStatusMutation,
-  UpdateProgressSaveMediaListEntry,
 } from '@/graphql/types'
 
 import {
@@ -99,15 +103,15 @@ export const setScore = async (
   { $apollo }: Instance,
   id: number,
   score: number,
-  oldValues: Partial<UpdateProgressSaveMediaListEntry> = {},
-) =>
-  $apollo.mutate<SetScoreMutation>({
+  oldValues: Partial<SetScoreSaveMediaListEntry> = {},
+) => {
+  return $apollo.mutate<SetScoreMutation>({
     mutation: SET_SCORE,
     variables: { id, score },
     optimisticResponse: {
       SaveMediaListEntry: {
-        __typename: 'MediaList',
         id,
+        mediaId: oldValues.mediaId || 0,
         score,
         progress: oldValues.progress || 0,
         repeat: oldValues.repeat || 0,
@@ -115,3 +119,4 @@ export const setScore = async (
       },
     },
   })
+}
