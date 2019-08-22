@@ -8,6 +8,16 @@ export const SET_SCORE = gql`
       ...ListEntry
     }
   }
-  
+
+  ${LIST_ENTRY_FRAGMENT}
+`
+
+export const SET_STATUS = gql`
+  mutation SetStatus($id: Int, $status: MediaListStatus) {
+    SaveMediaListEntry(id: $id, status: $status) {
+      ...ListEntry
+    }
+  }
+
   ${LIST_ENTRY_FRAGMENT}
 `

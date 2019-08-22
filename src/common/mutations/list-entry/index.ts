@@ -1,9 +1,8 @@
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import CREATE_ENTRY from './create-entry.graphql'
 import DELETE_ENTRY from './delete-entry.graphql'
-import SET_STATUS from './set-status.graphql'
 import REWATCH from './rewatch.graphql'
-import SET_SCORE from './set-score.graphql'
+import { SET_SCORE, SET_STATUS } from '@/graphql/mutations'
 import {
   CreateEntryMutation,
   DeleteEntryMutation,
