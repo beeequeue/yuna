@@ -574,29 +574,6 @@ export type FuzzyDateInt = any;
     airingAt: number;
   } 
 
-  export type UpdateProgressVariables = {
-    mediaId: Maybe<number>;
-    progress: Maybe<number>;
-  }
-
-  export type UpdateProgressMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<UpdateProgressSaveMediaListEntry>;
-  }
-
-  export type UpdateProgressSaveMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    progress: Maybe<number>;
-    
-    status: Maybe<MediaListStatus>;
-    
-    repeat: Maybe<number>;
-  } 
-
   export type EpisodeListVariables = {
     id: number;
     provider: Provider;
@@ -661,6 +638,19 @@ export type FuzzyDateInt = any;
   }
 
   export type SetStatusSaveMediaListEntry = ListEntryFragment
+
+  export type UpdateProgressVariables = {
+    mediaId: Maybe<number>;
+    progress: Maybe<number>;
+  }
+
+  export type UpdateProgressMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<UpdateProgressSaveMediaListEntry>;
+  }
+
+  export type UpdateProgressSaveMediaListEntry = ListEntryFragment
 
   export type CreateEntryVariables = {
     mediaId: Maybe<number>;

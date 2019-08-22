@@ -2,8 +2,8 @@ import gql from 'graphql-tag'
 import { oc } from 'ts-optchain'
 
 import EPISODE_LIST_QUERY from '@/common/queries/episode-list.graphql'
-import UPDATE_PROGRESS from './update-progress.graphql'
 import CACHE_EPISODES from './cache-episodes.graphql'
+import { SET_PROGRESS } from '@/graphql/mutations'
 import {
   CacheEpisodesMutation,
   CacheEpisodesVariables,
@@ -63,7 +63,7 @@ export const setProgress = async (
   }
 
   return $apollo.mutate<UpdateProgressMutation>({
-    mutation: UPDATE_PROGRESS,
+    mutation: SET_PROGRESS,
     variables: {
       mediaId: options.animeId,
       progress,

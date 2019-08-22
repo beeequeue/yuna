@@ -22,13 +22,22 @@ export const SET_STATUS = gql`
   ${LIST_ENTRY_FRAGMENT}
 `
 
+export const SET_PROGRESS = gql`
+  mutation UpdateProgress($mediaId: Int, $progress: Int) {
+    SaveMediaListEntry(mediaId: $mediaId, progress: $progress) {
+      ...ListEntry
+    }
+  }
+  
+  ${LIST_ENTRY_FRAGMENT}
+`
+
 export const CREATE_ENTRY = gql`
   mutation CreateEntry($mediaId: Int, $status: MediaListStatus) {
     SaveMediaListEntry(mediaId: $mediaId, status: $status) {
       ...ListEntry
     }
   }
-
 
   ${LIST_ENTRY_FRAGMENT}
 `

@@ -29,16 +29,6 @@ declare module '*/index.ts' {
   export default defaultDocument
 }
 
-declare module '*/update-progress.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const UpdateProgress: DocumentNode
-
-  export { UpdateProgress }
-
-  export default defaultDocument
-}
-
 declare module '*/episode-list.graphql' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
@@ -54,11 +44,19 @@ declare module '*/mutations.ts' {
   const defaultDocument: DocumentNode
   const SetScore: DocumentNode
   const SetStatus: DocumentNode
+  const UpdateProgress: DocumentNode
   const CreateEntry: DocumentNode
   const Rewatch: DocumentNode
   const DeleteEntry: DocumentNode
 
-  export { SetScore, SetStatus, CreateEntry, Rewatch, DeleteEntry }
+  export {
+    SetScore,
+    SetStatus,
+    UpdateProgress,
+    CreateEntry,
+    Rewatch,
+    DeleteEntry,
+  }
 
   export default defaultDocument
 }
