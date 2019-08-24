@@ -623,21 +623,7 @@ export type FuzzyDateInt = any;
     AddToList: AddToListAddToList;
   }
 
-  export type AddToListAddToList = {
-    __typename?: "ListEntry";
-    
-    id: number;
-    
-    mediaId: number;
-    
-    progress: number;
-    
-    score: Maybe<number>;
-    
-    status: MediaListStatus;
-    
-    rewatched: number;
-  } 
+  export type AddToListAddToList = ListEntryFragment
 
   export type PlayerAnimeVariables = {
     id: number;
@@ -1455,6 +1441,22 @@ export type FuzzyDateInt = any;
     repeat: Maybe<number>;
     
     status: Maybe<MediaListStatus>;
+  }
+
+  export type ListEntryFragment = {
+    __typename?: "ListEntry";
+    
+    id: number;
+    
+    mediaId: number;
+    
+    score: Maybe<number>;
+    
+    progress: number;
+    
+    status: MediaListStatus;
+    
+    rewatched: number;
   }
 
   export type AniListEntryFragment = {

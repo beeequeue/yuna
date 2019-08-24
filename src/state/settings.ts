@@ -16,6 +16,7 @@ import {
 import { RootState } from '@/state/store'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { hasKey, isNil } from '@/utils'
+import { ListPlugin } from '@/plugins/list/plugin'
 
 export enum KeybindingAction {
   PAUSE = 'PAUSE',
@@ -88,6 +89,7 @@ export interface SettingsState {
   spoilers: SpoilerSettings
   externalPlayers: ExternalPlayerPaths
   localFilesFolder: string | null
+  listPlugins: ListPlugin[]
   setup: SetupSettings
   window: Electron.Rectangle
 }
