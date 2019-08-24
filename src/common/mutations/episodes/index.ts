@@ -3,7 +3,6 @@ import { oc } from 'ts-optchain'
 
 import EPISODE_LIST_QUERY from '@/common/queries/episode-list.graphql'
 import CACHE_EPISODES from './cache-episodes.graphql'
-import { SET_PROGRESS } from '@/graphql/mutations'
 import {
   CacheEpisodesMutation,
   CacheEpisodesVariables,
@@ -21,6 +20,7 @@ import {
   refetchListQuery,
   writeEpisodeProgressToCache,
 } from '@/utils/cache'
+import { SET_PROGRESS } from '@/plugins/list/anilist/mutations'
 
 interface ListEntry {
   id: number

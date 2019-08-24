@@ -1,12 +1,5 @@
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import {
-  CREATE_ENTRY,
-  DELETE_ENTRY,
-  SET_SCORE,
-  SET_STATUS,
-  START_REWATCHING,
-} from '@/graphql/mutations'
-import {
   CreateEntryMutation,
   DeleteEntryMutation,
   MediaListStatus,
@@ -23,6 +16,7 @@ import {
   writeEpisodeProgressToCache,
 } from '@/utils/cache'
 import { Instance } from '@/types'
+import { CREATE_ENTRY, DELETE_ENTRY, SET_SCORE, SET_STATUS, START_REWATCHING } from '@/plugins/list/anilist/mutations'
 
 export const createListEntry = async (
   { $apollo, $store }: Instance,

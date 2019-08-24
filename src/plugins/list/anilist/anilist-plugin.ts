@@ -3,12 +3,6 @@ import { Store } from 'vuex'
 import { oc } from 'ts-optchain'
 
 import {
-  CREATE_ENTRY,
-  SET_PROGRESS,
-  SET_SCORE,
-  SET_STATUS,
-} from '@/graphql/mutations'
-import {
   AddToListMutation,
   AnimeViewQuery,
   CreateEntryMutation,
@@ -29,6 +23,7 @@ import { isNil } from '@/utils'
 import { refetchListQuery, writeEpisodeProgressToCache } from '@/utils/cache'
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import { LIST_ENTRY_FRAGMENT } from '@/graphql/fragments'
+import { CREATE_ENTRY, SET_PROGRESS, SET_SCORE, SET_STATUS } from '@/plugins/list/anilist/mutations'
 
 type ListEntry = AddToListMutation['AddToList']
 
