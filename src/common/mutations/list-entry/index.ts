@@ -1,6 +1,7 @@
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import {
-  CreateEntryMutation,
+  AddToListMutation,
+  AddToListVariables, AnimeViewMediaListEntry,
   DeleteEntryMutation,
   MediaListStatus,
   Provider,
@@ -9,33 +10,43 @@ import {
   SetScoreSaveMediaListEntry,
   SetStatusMutation,
 } from '@/graphql/types'
-
+import { ADD_TO_LIST } from '@/graphql/mutations'
+import {
+  DELETE_ENTRY,
+  SET_SCORE,
+  SET_STATUS,
+  START_REWATCHING,
+} from '@/plugins/list/anilist/mutations'
 import {
   EpisodeMutationObject,
   refetchListQuery,
   writeEpisodeProgressToCache,
 } from '@/utils/cache'
 import { Instance } from '@/types'
-import { CREATE_ENTRY, DELETE_ENTRY, SET_SCORE, SET_STATUS, START_REWATCHING } from '@/plugins/list/anilist/mutations'
 
-export const createListEntry = async (
+export const addToList = async (
   { $apollo, $store }: Instance,
-  mediaId: number,
-  status: MediaListStatus,
+  anilistId: number,
 ) =>
-  $apollo.mutate<CreateEntryMutation>({
-    mutation: CREATE_ENTRY,
-    variables: { mediaId, status },
+  $apollo.mutate<AddToListMutation>({
+    mutation: ADD_TO_LIST,
+    variables: { anilistId } as AddToListVariables,
     refetchQueries: refetchListQuery($store),
     update: (cache, { data }) => {
       if (!data) return
 
       const cachedData: any = cache.readQuery({
         query: ANIME_PAGE_QUERY,
-        variables: { id: mediaId },
+        variables: { id: anilistId },
       })
 
-      cachedData.anime.mediaListEntry = data.SaveMediaListEntry
+      const returnedEntry: AnimeViewMediaListEntry = {
+        ...data.AddToList,
+        // Needed since we get ListEntry back
+        __typename: 'MediaList',
+        repeat: data.AddToList.rewatched,
+      }
+      cachedData.anime.mediaListEntry = returnedEntry
 
       cache.writeQuery({ query: ANIME_PAGE_QUERY, data: cachedData })
     },
