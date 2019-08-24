@@ -33,6 +33,8 @@ import {
 type ListEntry = AddToListMutation['AddToList']
 
 export class AnilistListPlugin implements ListPlugin {
+  public name = "anilist"
+
   private readonly apollo: DollarApollo<any>
   private readonly store: Store<any>
 
