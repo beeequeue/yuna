@@ -613,85 +613,17 @@ export type FuzzyDateInt = any;
     isWatched: boolean;
   } 
 
-  export type SetScoreVariables = {
-    mediaId: Maybe<number>;
-    score: Maybe<number>;
+  export type AddToListVariables = {
+    anilistId: number;
   }
 
-  export type SetScoreMutation = {
+  export type AddToListMutation = {
     __typename?: "Mutation";
     
-    SaveMediaListEntry: Maybe<SetScoreSaveMediaListEntry>;
+    AddToList: AddToListAddToList;
   }
 
-  export type SetScoreSaveMediaListEntry = ListEntryFragment
-
-  export type SetStatusVariables = {
-    mediaId: Maybe<number>;
-    status: Maybe<MediaListStatus>;
-  }
-
-  export type SetStatusMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<SetStatusSaveMediaListEntry>;
-  }
-
-  export type SetStatusSaveMediaListEntry = ListEntryFragment
-
-  export type UpdateProgressVariables = {
-    mediaId: Maybe<number>;
-    progress: Maybe<number>;
-  }
-
-  export type UpdateProgressMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<UpdateProgressSaveMediaListEntry>;
-  }
-
-  export type UpdateProgressSaveMediaListEntry = ListEntryFragment
-
-  export type CreateEntryVariables = {
-    mediaId: Maybe<number>;
-    status: Maybe<MediaListStatus>;
-  }
-
-  export type CreateEntryMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<CreateEntrySaveMediaListEntry>;
-  }
-
-  export type CreateEntrySaveMediaListEntry = ListEntryFragment
-
-  export type RewatchVariables = {
-    mediaId: Maybe<number>;
-  }
-
-  export type RewatchMutation = {
-    __typename?: "Mutation";
-    
-    SaveMediaListEntry: Maybe<RewatchSaveMediaListEntry>;
-  }
-
-  export type RewatchSaveMediaListEntry = ListEntryFragment
-
-  export type DeleteEntryVariables = {
-    id: number;
-  }
-
-  export type DeleteEntryMutation = {
-    __typename?: "Mutation";
-    
-    DeleteMediaListEntry: Maybe<DeleteEntryDeleteMediaListEntry>;
-  }
-
-  export type DeleteEntryDeleteMediaListEntry = {
-    __typename?: "Deleted";
-    
-    deleted: Maybe<boolean>;
-  } 
+  export type AddToListAddToList = ListEntryFragment
 
   export type PlayerAnimeVariables = {
     id: number;
@@ -839,6 +771,86 @@ export type FuzzyDateInt = any;
     __typename?: "MediaExternalLink";
     
     site: string;
+  } 
+
+  export type SetScoreVariables = {
+    mediaId: Maybe<number>;
+    score: Maybe<number>;
+  }
+
+  export type SetScoreMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<SetScoreSaveMediaListEntry>;
+  }
+
+  export type SetScoreSaveMediaListEntry = ListEntryFragment
+
+  export type SetStatusVariables = {
+    mediaId: Maybe<number>;
+    status: Maybe<MediaListStatus>;
+  }
+
+  export type SetStatusMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<SetStatusSaveMediaListEntry>;
+  }
+
+  export type SetStatusSaveMediaListEntry = ListEntryFragment
+
+  export type UpdateProgressVariables = {
+    mediaId: Maybe<number>;
+    progress: Maybe<number>;
+  }
+
+  export type UpdateProgressMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<UpdateProgressSaveMediaListEntry>;
+  }
+
+  export type UpdateProgressSaveMediaListEntry = ListEntryFragment
+
+  export type CreateEntryVariables = {
+    mediaId: Maybe<number>;
+    status: Maybe<MediaListStatus>;
+  }
+
+  export type CreateEntryMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<CreateEntrySaveMediaListEntry>;
+  }
+
+  export type CreateEntrySaveMediaListEntry = ListEntryFragment
+
+  export type RewatchVariables = {
+    mediaId: Maybe<number>;
+  }
+
+  export type RewatchMutation = {
+    __typename?: "Mutation";
+    
+    SaveMediaListEntry: Maybe<RewatchSaveMediaListEntry>;
+  }
+
+  export type RewatchSaveMediaListEntry = ListEntryFragment
+
+  export type DeleteEntryVariables = {
+    id: number;
+  }
+
+  export type DeleteEntryMutation = {
+    __typename?: "Mutation";
+    
+    DeleteMediaListEntry: Maybe<DeleteEntryDeleteMediaListEntry>;
+  }
+
+  export type DeleteEntryDeleteMediaListEntry = {
+    __typename?: "Deleted";
+    
+    deleted: Maybe<boolean>;
   } 
 
   export type AnimeViewVariables = {

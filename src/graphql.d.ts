@@ -42,21 +42,9 @@ declare module '*/episode-list.graphql' {
 declare module '*/mutations.ts' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const SetScore: DocumentNode
-  const SetStatus: DocumentNode
-  const UpdateProgress: DocumentNode
-  const CreateEntry: DocumentNode
-  const Rewatch: DocumentNode
-  const DeleteEntry: DocumentNode
+  const AddToList: DocumentNode
 
-  export {
-    SetScore,
-    SetStatus,
-    UpdateProgress,
-    CreateEntry,
-    Rewatch,
-    DeleteEntry,
-  }
+  export { AddToList }
 
   export default defaultDocument
 }
@@ -77,6 +65,28 @@ declare module '*/search.graphql' {
   const Search: DocumentNode
 
   export { Search }
+
+  export default defaultDocument
+}
+
+declare module '*/mutations.ts' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const SetScore: DocumentNode
+  const SetStatus: DocumentNode
+  const UpdateProgress: DocumentNode
+  const CreateEntry: DocumentNode
+  const Rewatch: DocumentNode
+  const DeleteEntry: DocumentNode
+
+  export {
+    SetScore,
+    SetStatus,
+    UpdateProgress,
+    CreateEntry,
+    Rewatch,
+    DeleteEntry,
+  }
 
   export default defaultDocument
 }
