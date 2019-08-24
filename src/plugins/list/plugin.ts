@@ -1,6 +1,6 @@
 import {
   AddToListMutation,
-  ListEntryFragment,
+  AniListEntryFragment,
   MediaListStatus,
   Provider,
 } from '@/graphql/types'
@@ -13,7 +13,7 @@ export abstract class ListPlugin {
   public abstract async UpdateStatus(
     anilistId: number,
     status: MediaListStatus,
-    oldValues: Pick<ListEntryFragment, 'id' | 'progress' | 'repeat' | 'score'>,
+    oldValues: Pick<AniListEntryFragment, 'id' | 'progress' | 'repeat' | 'score'>,
   ): Promise<AddToListMutation['AddToList']>
 
   public abstract async UpdateProgress(
@@ -25,6 +25,6 @@ export abstract class ListPlugin {
   public abstract async UpdateScore(
     anilistId: number,
     score: number,
-    oldValues: Pick<ListEntryFragment, 'id' | 'progress' | 'repeat' | 'status'>,
+    oldValues: Pick<AniListEntryFragment, 'id' | 'progress' | 'repeat' | 'status'>,
   ): Promise<AddToListMutation['AddToList']>
 }

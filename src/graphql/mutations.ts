@@ -1,12 +1,17 @@
 import gql from 'graphql-tag'
-import { LIST_ENTRY_FRAGMENT } from '@/graphql/fragments'
+import { ANILIST_LIST_ENTRY_FRAGMENT } from '@/graphql/fragments'
 
 export const ADD_TO_LIST = gql`
   mutation AddToList($anilistId: Int!) {
     AddToList(anilistId: $anilistId) {
-      ...ListEntry
+      id
+      mediaId
+      progress
+      score
+      status
+      rewatched
     }
   }
 
-  ${LIST_ENTRY_FRAGMENT}
+  ${ANILIST_LIST_ENTRY_FRAGMENT}
 `

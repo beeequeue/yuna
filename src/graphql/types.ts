@@ -623,7 +623,21 @@ export type FuzzyDateInt = any;
     AddToList: AddToListAddToList;
   }
 
-  export type AddToListAddToList = ListEntryFragment
+  export type AddToListAddToList = {
+    __typename?: "ListEntry";
+    
+    id: number;
+    
+    mediaId: number;
+    
+    progress: number;
+    
+    score: Maybe<number>;
+    
+    status: MediaListStatus;
+    
+    rewatched: number;
+  } 
 
   export type PlayerAnimeVariables = {
     id: number;
@@ -784,7 +798,7 @@ export type FuzzyDateInt = any;
     SaveMediaListEntry: Maybe<SetScoreSaveMediaListEntry>;
   }
 
-  export type SetScoreSaveMediaListEntry = ListEntryFragment
+  export type SetScoreSaveMediaListEntry = AniListEntryFragment
 
   export type SetStatusVariables = {
     mediaId: Maybe<number>;
@@ -797,7 +811,7 @@ export type FuzzyDateInt = any;
     SaveMediaListEntry: Maybe<SetStatusSaveMediaListEntry>;
   }
 
-  export type SetStatusSaveMediaListEntry = ListEntryFragment
+  export type SetStatusSaveMediaListEntry = AniListEntryFragment
 
   export type UpdateProgressVariables = {
     mediaId: Maybe<number>;
@@ -810,7 +824,7 @@ export type FuzzyDateInt = any;
     SaveMediaListEntry: Maybe<UpdateProgressSaveMediaListEntry>;
   }
 
-  export type UpdateProgressSaveMediaListEntry = ListEntryFragment
+  export type UpdateProgressSaveMediaListEntry = AniListEntryFragment
 
   export type CreateEntryVariables = {
     mediaId: Maybe<number>;
@@ -823,7 +837,7 @@ export type FuzzyDateInt = any;
     SaveMediaListEntry: Maybe<CreateEntrySaveMediaListEntry>;
   }
 
-  export type CreateEntrySaveMediaListEntry = ListEntryFragment
+  export type CreateEntrySaveMediaListEntry = AniListEntryFragment
 
   export type RewatchVariables = {
     mediaId: Maybe<number>;
@@ -835,7 +849,7 @@ export type FuzzyDateInt = any;
     SaveMediaListEntry: Maybe<RewatchSaveMediaListEntry>;
   }
 
-  export type RewatchSaveMediaListEntry = ListEntryFragment
+  export type RewatchSaveMediaListEntry = AniListEntryFragment
 
   export type DeleteEntryVariables = {
     id: number;
@@ -1443,7 +1457,7 @@ export type FuzzyDateInt = any;
     status: Maybe<MediaListStatus>;
   }
 
-  export type ListEntryFragment = {
+  export type AniListEntryFragment = {
     __typename?: "MediaList";
     
     id: number;

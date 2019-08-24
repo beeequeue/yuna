@@ -7,7 +7,7 @@ import {
   AnimeViewQuery,
   CreateEntryMutation,
   CreateEntryVariables,
-  ListEntryFragment,
+  AniListEntryFragment,
   MediaListStatus,
   Provider,
   SetScoreMutation,
@@ -22,8 +22,13 @@ import { ListPlugin } from '@/plugins/list/plugin'
 import { isNil } from '@/utils'
 import { refetchListQuery, writeEpisodeProgressToCache } from '@/utils/cache'
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
-import { LIST_ENTRY_FRAGMENT } from '@/graphql/fragments'
-import { CREATE_ENTRY, SET_PROGRESS, SET_SCORE, SET_STATUS } from '@/plugins/list/anilist/mutations'
+import { ANILIST_LIST_ENTRY_FRAGMENT } from '@/graphql/fragments'
+import {
+  CREATE_ENTRY,
+  SET_PROGRESS,
+  SET_SCORE,
+  SET_STATUS,
+} from '@/plugins/list/anilist/mutations'
 
 type ListEntry = AddToListMutation['AddToList']
 
@@ -52,8 +57,8 @@ export class AnilistListPlugin implements ListPlugin {
 
   private optimisticResponseFromValues(
     anilistId: number,
-    values: Pick<ListEntryFragment, 'id' | 'repeat'> &
-      Partial<Pick<ListEntryFragment, 'status' | 'progress' | 'score'>>,
+    values: Pick<AniListEntryFragment, 'id' | 'repeat'> &
+      Partial<Pick<AniListEntryFragment, 'status' | 'progress' | 'score'>>,
   ): SetScoreMutation {
     return {
       SaveMediaListEntry: {
@@ -103,7 +108,7 @@ export class AnilistListPlugin implements ListPlugin {
 
     try {
       listEntry = this.apollo.provider.defaultClient.cache.readFragment({
-        fragment: LIST_ENTRY_FRAGMENT,
+        fragment: ANILIST_LIST_ENTRY_FRAGMENT,
         id: `Media:${anilistId}`,
       })
     } catch (e) {
@@ -117,7 +122,7 @@ export class AnilistListPlugin implements ListPlugin {
         mediaId: anilistId,
         progress,
         score: oc(listEntry).score(0),
-        repeat: oc(listEntry).repeat(0),
+        repeat: oc(listEntry).rewatched(0),
         status: oc(listEntry).status(MediaListStatus.Current),
       },
     }
@@ -143,7 +148,7 @@ export class AnilistListPlugin implements ListPlugin {
   public async UpdateScore(
     anilistId: number,
     score: number,
-    oldValues: Pick<ListEntryFragment, 'id' | 'progress' | 'repeat' | 'status'>,
+    oldValues: Pick<AniListEntryFragment, 'id' | 'progress' | 'repeat' | 'status'>,
   ): Promise<ListEntry> {
     const result = await this.apollo.mutate<SetScoreMutation>({
       mutation: SET_SCORE,
@@ -165,7 +170,7 @@ export class AnilistListPlugin implements ListPlugin {
   public async UpdateStatus(
     anilistId: number,
     status: MediaListStatus,
-    oldValues: Pick<ListEntryFragment, 'id' | 'progress' | 'repeat' | 'score'>,
+    oldValues: Pick<AniListEntryFragment, 'id' | 'progress' | 'repeat' | 'score'>,
   ): Promise<ListEntry> {
     const result = await this.apollo.mutate<SetStatusMutation>({
       mutation: SET_STATUS,
