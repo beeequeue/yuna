@@ -1,11 +1,11 @@
+import { DollarApollo } from 'vue-apollo/types/vue-apollo'
+import { Store } from 'vuex'
 import {
   AddToListMutation,
   AniListEntryFragment,
   MediaListStatus,
   Provider,
 } from '@/graphql/types'
-import { DollarApollo } from 'vue-apollo/types/vue-apollo'
-import { Store } from 'vuex'
 
 export abstract class ListPlugin {
   public abstract name: string
@@ -13,7 +13,7 @@ export abstract class ListPlugin {
   protected readonly apollo: DollarApollo<any>
   protected readonly store: Store<any>
 
-  constructor(apollo: DollarApollo<any>, store: Store<any>) {
+  protected constructor(apollo: DollarApollo<any>, store: Store<any>) {
     this.apollo = apollo
     this.store = store
   }

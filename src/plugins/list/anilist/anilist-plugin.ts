@@ -32,15 +32,11 @@ import {
 
 type ListEntry = AddToListMutation['AddToList']
 
-export class AnilistListPlugin implements ListPlugin {
-  public name = "anilist"
-
-  private readonly apollo: DollarApollo<any>
-  private readonly store: Store<any>
+export class AnilistListPlugin extends ListPlugin implements ListPlugin {
+  public name = 'anilist'
 
   constructor(apollo: DollarApollo<any>, store: Store<any>) {
-    this.apollo = apollo
-    this.store = store
+    super(apollo, store)
   }
 
   private fromMediaListEntry(
@@ -77,7 +73,7 @@ export class AnilistListPlugin implements ListPlugin {
   async AddToList(anilistId: number): Promise<ListEntry> {
     const result = await this.apollo.mutate<CreateEntryMutation>({
       mutation: CREATE_ENTRY,
-      variables: { mediaId: anilistId, status } as CreateEntryVariables,
+      variables: { mediaId: anilistId } as CreateEntryVariables,
       refetchQueries: refetchListQuery(this.store),
       update: (cache, { data }) => {
         if (!data) return
@@ -129,7 +125,7 @@ export class AnilistListPlugin implements ListPlugin {
       },
     }
 
-    return this.apollo.mutate<UpdateProgressMutation>({
+    const result = await this.apollo.mutate<UpdateProgressMutation>({
       mutation: SET_PROGRESS,
       variables: {
         mediaId: anilistId,
@@ -145,12 +141,22 @@ export class AnilistListPlugin implements ListPlugin {
         )
       },
     })
+
+    const errors = oc(result).errors([])
+    if (errors.length > 0) throw new Error(errors[0].message)
+
+    if (isNil(result.data)) throw new Error("Didn't get response from AniList")
+
+    return this.fromMediaListEntry(result.data.SaveMediaListEntry!)
   }
 
   public async UpdateScore(
     anilistId: number,
     score: number,
-    oldValues: Pick<AniListEntryFragment, 'id' | 'progress' | 'repeat' | 'status'>,
+    oldValues: Pick<
+      AniListEntryFragment,
+      'id' | 'progress' | 'repeat' | 'status'
+    >,
   ): Promise<ListEntry> {
     const result = await this.apollo.mutate<SetScoreMutation>({
       mutation: SET_SCORE,
@@ -172,7 +178,10 @@ export class AnilistListPlugin implements ListPlugin {
   public async UpdateStatus(
     anilistId: number,
     status: MediaListStatus,
-    oldValues: Pick<AniListEntryFragment, 'id' | 'progress' | 'repeat' | 'score'>,
+    oldValues: Pick<
+      AniListEntryFragment,
+      'id' | 'progress' | 'repeat' | 'score'
+    >,
   ): Promise<ListEntry> {
     const result = await this.apollo.mutate<SetStatusMutation>({
       mutation: SET_STATUS,
