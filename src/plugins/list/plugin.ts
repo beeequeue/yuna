@@ -45,4 +45,6 @@ export abstract class ListPlugin {
       'id' | 'progress' | 'repeat' | 'status'
     >,
   ): Promise<AddToListMutation['AddToList']>
+
+  public abstract async DeleteFromList(entryId: number): Promise<boolean>
 }

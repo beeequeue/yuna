@@ -17,6 +17,9 @@ import {
   SetStatusVariables,
   UpdateProgressMutation,
   UpdateProgressVariables,
+  DeleteEntryMutation,
+  DeleteFromListIdQuery,
+  DeleteFromListIdVariables,
 } from '@/graphql/types'
 import { ListPlugin } from '@/plugins/list/plugin'
 import { isNil } from '@/utils'
@@ -25,10 +28,12 @@ import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import { ANILIST_LIST_ENTRY_FRAGMENT } from '@/graphql/fragments'
 import {
   CREATE_ENTRY,
+  DELETE_ENTRY,
   SET_PROGRESS,
   SET_SCORE,
   SET_STATUS,
-} from '@/plugins/list/anilist/mutations'
+} from '@/plugins/list/anilist/anilist-mutations'
+import { DELETE_FROM_LIST_ID } from '@/graphql/queries'
 
 type ListEntry = AddToListMutation['AddToList']
 
@@ -199,5 +204,47 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     if (isNil(result.data)) throw new Error("Didn't get response from AniList")
 
     return this.fromMediaListEntry(result.data.SaveMediaListEntry!)
+  }
+
+  public async DeleteFromList(anilistId: number): Promise<boolean> {
+    const idResult = await this.apollo.query<DeleteFromListIdQuery>({
+      query: DELETE_FROM_LIST_ID,
+      variables: { mediaId: anilistId } as DeleteFromListIdVariables,
+      fetchPolicy: 'cache-first',
+    })
+
+    if (!isNil(idResult.errors)) throw new Error(idResult.errors[0].message)
+
+    if (isNil(idResult.data.MediaList)) {
+      return true
+    }
+
+    const { id } = idResult.data.MediaList
+
+    const result = await this.apollo.mutate<DeleteEntryMutation>({
+      mutation: DELETE_ENTRY,
+      variables: { id },
+      refetchQueries: refetchListQuery(this.store),
+      update: cache => {
+        // const data = cache.readQuery<any>({
+        //   query: ANIME_PAGE_QUERY,
+        //   variables: { id: animeId },
+        // })
+        // if (!data || !data.anime) return
+
+        // data.anime.mediaListEntry = null
+        cache.writeData({
+          data: null,
+          id: `MediaList:${id}`,
+        })
+      },
+    })
+
+    const errors = oc(result).errors([])
+    if (errors.length > 0) throw new Error(errors[0].message)
+
+    if (isNil(result.data)) throw new Error("Didn't get response from AniList")
+
+    return oc(result.data).DeleteMediaListEntry.deleted(false)
   }
 }

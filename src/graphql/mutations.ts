@@ -10,3 +10,9 @@ export const ADD_TO_LIST = gql`
 
   ${LIST_ENTRY_FRAGMENT}
 `
+
+export const DELETE_FROM_LIST = gql`
+  mutation DeleteFromList($anilistId: Int!) {
+    DeleteFromList(anilistId: $anilistId) @client
+  }
+`

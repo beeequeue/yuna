@@ -1,8 +1,8 @@
-import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import {
   AddToListMutation,
-  AddToListVariables, AnimeViewMediaListEntry,
-  DeleteEntryMutation,
+  AddToListVariables,
+  DeleteFromListMutation,
+  DeleteFromListVariables,
   MediaListStatus,
   Provider,
   RewatchMutation,
@@ -10,13 +10,12 @@ import {
   SetScoreSaveMediaListEntry,
   SetStatusMutation,
 } from '@/graphql/types'
-import { ADD_TO_LIST } from '@/graphql/mutations'
+import { ADD_TO_LIST, DELETE_FROM_LIST } from '@/graphql/mutations'
 import {
-  DELETE_ENTRY,
   SET_SCORE,
   SET_STATUS,
   START_REWATCHING,
-} from '@/plugins/list/anilist/mutations'
+} from '@/plugins/list/anilist/anilist-mutations'
 import {
   EpisodeMutationObject,
   refetchListQuery,
@@ -52,24 +51,13 @@ export const addToList = async (
     },
   })
 
-export const deleteListEntry = async (
-  { $apollo, $store }: Instance,
-  animeId: number,
-  entryId: number,
+export const deleteFromList = async (
+  { $apollo }: Instance,
+  anilistId: number,
 ) =>
-  $apollo.mutate<DeleteEntryMutation>({
-    mutation: DELETE_ENTRY,
-    variables: { id: entryId },
-    refetchQueries: refetchListQuery($store),
-    update: cache => {
-      const data = cache.readQuery<any>({
-        query: ANIME_PAGE_QUERY,
-        variables: { id: animeId },
-      })
-      if (!data || !data.anime) return
-
-      data.anime.mediaListEntry = null
-    },
+  $apollo.mutate<DeleteFromListMutation>({
+    mutation: DELETE_FROM_LIST,
+    variables: { anilistId } as DeleteFromListVariables,
   })
 
 export const setStatus = async (

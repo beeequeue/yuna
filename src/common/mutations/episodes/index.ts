@@ -20,7 +20,7 @@ import {
   refetchListQuery,
   writeEpisodeProgressToCache,
 } from '@/utils/cache'
-import { SET_PROGRESS } from '@/plugins/list/anilist/mutations'
+import { SET_PROGRESS } from '@/plugins/list/anilist/anilist-mutations'
 
 interface ListEntry {
   id: number

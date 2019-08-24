@@ -43,8 +43,19 @@ declare module '*/mutations.ts' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
   const AddToList: DocumentNode
+  const DeleteFromList: DocumentNode
 
-  export { AddToList }
+  export { AddToList, DeleteFromList }
+
+  export default defaultDocument
+}
+
+declare module '*/queries.ts' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const DeleteFromListId: DocumentNode
+
+  export { DeleteFromListId }
 
   export default defaultDocument
 }
@@ -69,7 +80,7 @@ declare module '*/search.graphql' {
   export default defaultDocument
 }
 
-declare module '*/mutations.ts' {
+declare module '*/anilist-mutations.ts' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
   const SetScore: DocumentNode
