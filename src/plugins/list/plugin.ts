@@ -4,10 +4,19 @@ import {
   MediaListStatus,
   Provider,
 } from '@/graphql/types'
-import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
+import { DollarApollo } from 'vue-apollo/types/vue-apollo'
+import { Store } from 'vuex'
 
 export abstract class ListPlugin {
   public abstract name: string
+
+  protected readonly apollo: DollarApollo<any>
+  protected readonly store: Store<any>
+
+  constructor(apollo: DollarApollo<any>, store: Store<any>) {
+    this.apollo = apollo
+    this.store = store
+  }
 
   public abstract async AddToList(
     anilistId: number,
@@ -36,8 +45,4 @@ export abstract class ListPlugin {
       'id' | 'progress' | 'repeat' | 'status'
     >,
   ): Promise<AddToListMutation['AddToList']>
-
-  public static getInstalledPlugins(): ListPlugin['constructor'][] {
-    return [AnilistListPlugin]
-  }
 }
