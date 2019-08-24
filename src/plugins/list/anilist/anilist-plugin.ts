@@ -2,17 +2,25 @@ import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 import { Store } from 'vuex'
 import { oc } from 'ts-optchain'
 
-import { CREATE_ENTRY, SET_PROGRESS, SET_SCORE, SET_STATUS } from '@/graphql/mutations'
+import {
+  CREATE_ENTRY,
+  SET_PROGRESS,
+  SET_SCORE,
+  SET_STATUS,
+} from '@/graphql/mutations'
 import {
   AddToListMutation,
   AnimeViewQuery,
   CreateEntryMutation,
+  CreateEntryVariables,
   ListEntryFragment,
   MediaListStatus,
   Provider,
   SetScoreMutation,
+  SetScoreVariables,
   SetStatusMutation,
   SetStatusSaveMediaListEntry,
+  SetStatusVariables,
   UpdateProgressMutation,
   UpdateProgressVariables,
 } from '@/graphql/types'
@@ -67,7 +75,7 @@ export class AnilistListPlugin implements ListPlugin {
   async AddToList(anilistId: number): Promise<ListEntry> {
     const result = await this.apollo.mutate<CreateEntryMutation>({
       mutation: CREATE_ENTRY,
-      variables: { mediaId: anilistId, status },
+      variables: { mediaId: anilistId, status } as CreateEntryVariables,
       refetchQueries: refetchListQuery(this.store),
       update: (cache, { data }) => {
         if (!data) return
@@ -111,7 +119,9 @@ export class AnilistListPlugin implements ListPlugin {
       SaveMediaListEntry: {
         __typename: 'MediaList',
         id: oc(listEntry).id(-1),
+        mediaId: anilistId,
         progress,
+        score: oc(listEntry).score(0),
         repeat: oc(listEntry).repeat(0),
         status: oc(listEntry).status(MediaListStatus.Current),
       },
@@ -142,7 +152,7 @@ export class AnilistListPlugin implements ListPlugin {
   ): Promise<ListEntry> {
     const result = await this.apollo.mutate<SetScoreMutation>({
       mutation: SET_SCORE,
-      variables: { id: anilistId, score },
+      variables: { mediaId: anilistId, score } as SetScoreVariables,
       optimisticResponse: this.optimisticResponseFromValues(anilistId, {
         ...oldValues,
         score,
@@ -164,7 +174,7 @@ export class AnilistListPlugin implements ListPlugin {
   ): Promise<ListEntry> {
     const result = await this.apollo.mutate<SetStatusMutation>({
       mutation: SET_STATUS,
-      variables: { id: anilistId, status },
+      variables: { mediaId: anilistId, status } as SetStatusVariables,
       refetchQueries: refetchListQuery(this.store),
       optimisticResponse: this.optimisticResponseFromValues(anilistId, {
         ...oldValues,

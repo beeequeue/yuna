@@ -614,7 +614,7 @@ export type FuzzyDateInt = any;
   } 
 
   export type SetScoreVariables = {
-    id: Maybe<number>;
+    mediaId: Maybe<number>;
     score: Maybe<number>;
   }
 
@@ -627,7 +627,7 @@ export type FuzzyDateInt = any;
   export type SetScoreSaveMediaListEntry = ListEntryFragment
 
   export type SetStatusVariables = {
-    id: Maybe<number>;
+    mediaId: Maybe<number>;
     status: Maybe<MediaListStatus>;
   }
 
@@ -666,7 +666,7 @@ export type FuzzyDateInt = any;
   export type CreateEntrySaveMediaListEntry = ListEntryFragment
 
   export type RewatchVariables = {
-    id: Maybe<number>;
+    mediaId: Maybe<number>;
   }
 
   export type RewatchMutation = {

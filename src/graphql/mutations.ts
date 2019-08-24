@@ -3,8 +3,8 @@ import gql from 'graphql-tag'
 import { LIST_ENTRY_FRAGMENT } from './fragments'
 
 export const SET_SCORE = gql`
-  mutation SetScore($id: Int, $score: Int) {
-    SaveMediaListEntry(id: $id, scoreRaw: $score) {
+  mutation SetScore($mediaId: Int, $score: Int) {
+    SaveMediaListEntry(mediaId: $mediaId, scoreRaw: $score) {
       ...ListEntry
     }
   }
@@ -13,8 +13,8 @@ export const SET_SCORE = gql`
 `
 
 export const SET_STATUS = gql`
-  mutation SetStatus($id: Int, $status: MediaListStatus) {
-    SaveMediaListEntry(id: $id, status: $status) {
+  mutation SetStatus($mediaId: Int, $status: MediaListStatus) {
+    SaveMediaListEntry(mediaId: $mediaId, status: $status) {
       ...ListEntry
     }
   }
@@ -43,8 +43,8 @@ export const CREATE_ENTRY = gql`
 `
 
 export const START_REWATCHING = gql`
-  mutation Rewatch($id: Int) {
-    SaveMediaListEntry(id: $id, status: REPEATING, progress: 0) {
+  mutation Rewatch($mediaId: Int) {
+    SaveMediaListEntry(mediaId: $mediaId, status: REPEATING, progress: 0) {
       ...ListEntry
     }
   }
