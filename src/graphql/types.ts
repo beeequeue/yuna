@@ -814,7 +814,6 @@ export type FuzzyDateInt = any;
 
   export type CreateEntryVariables = {
     mediaId: Maybe<number>;
-    status: Maybe<MediaListStatus>;
   }
 
   export type CreateEntryMutation = {
