@@ -23,32 +23,10 @@ import {
 } from '@/utils/cache'
 import { Instance } from '@/types'
 
-export const addToList = async (
-  { $apollo, $store }: Instance,
-  anilistId: number,
-) =>
+export const addToList = async ({ $apollo }: Instance, anilistId: number) =>
   $apollo.mutate<AddToListMutation>({
     mutation: ADD_TO_LIST,
     variables: { anilistId } as AddToListVariables,
-    refetchQueries: refetchListQuery($store),
-    update: (cache, { data }) => {
-      if (!data) return
-
-      const cachedData: any = cache.readQuery({
-        query: ANIME_PAGE_QUERY,
-        variables: { id: anilistId },
-      })
-
-      const returnedEntry: AnimeViewMediaListEntry = {
-        ...data.AddToList,
-        // Needed since we get ListEntry back
-        __typename: 'MediaList',
-        repeat: data.AddToList.rewatched,
-      }
-      cachedData.anime.mediaListEntry = returnedEntry
-
-      cache.writeQuery({ query: ANIME_PAGE_QUERY, data: cachedData })
-    },
   })
 
 export const deleteFromList = async (
