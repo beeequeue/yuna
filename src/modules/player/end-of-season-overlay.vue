@@ -91,7 +91,7 @@ export default class EndOfSeasonOverlay extends Vue {
   public async updateScore(score: number) {
     if (!this.listEntry) return
 
-    await updateScore(this, this.listEntry.id, score, this.listEntry)
+    await updateScore(this, this.listEntry.id, score)
   }
 }
 </script>
