@@ -135,8 +135,11 @@ export default class Queue extends Vue {
       }
     },
     update(data) {
-      const items = indexBy(oc(data).queue.anime([] as QueueAnime[]), anime =>
-        anime.id.toString(),
+      const items = indexBy(
+        oc(data)
+          .queue.anime([] as QueueAnime[])
+          .filter(isNotNil),
+        anime => anime.id.toString(),
       )
 
       return this.queue.map(item => items[item.id])

@@ -78,7 +78,7 @@ import { Required } from '@/decorators'
 import { initManualSearch, setLocalSourceAnime } from '@/state/app'
 import { getLocalFilesFolder } from '@/state/settings'
 import { StreamingSource, SupportedSources } from '@/types'
-import { getStreamingSources, isNil, isNotNil } from '@/utils'
+import { getStreamingSources, isNil, isNotNil, itemsAreNotNil } from '@/utils'
 
 const streamingSiteCtx = require.context('@/assets', false)
 const siteImages = streamingSiteCtx.keys()
@@ -99,7 +99,12 @@ export default class SourceSelect extends Vue {
   public fileSvg = mdiFile
 
   public get streamingSources() {
-    if (isNil(this.anime.externalLinks)) return []
+    if (
+      isNil(this.anime.externalLinks) ||
+      !itemsAreNotNil(this.anime.externalLinks)
+    ) {
+      return []
+    }
 
     return getStreamingSources(this.anime.externalLinks)
   }
