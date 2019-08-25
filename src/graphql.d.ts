@@ -45,9 +45,16 @@ declare module '*/mutations.ts' {
   const AddToList: DocumentNode
   const UpdateStatus: DocumentNode
   const UpdateProgress: DocumentNode
+  const UpdateScore: DocumentNode
   const DeleteFromList: DocumentNode
 
-  export { AddToList, UpdateStatus, UpdateProgress, DeleteFromList }
+  export {
+    AddToList,
+    UpdateStatus,
+    UpdateProgress,
+    UpdateScore,
+    DeleteFromList,
+  }
 
   export default defaultDocument
 }

@@ -286,7 +286,7 @@ export default class QueueItem extends Vue {
 
     try {
       if (status === MediaListStatus.Repeating) {
-        return startRewatching(this, listEntryId)
+        return startRewatching(this, this.anime.id)
       }
 
       await updateStatus(this, oc(this.anime).id()!, status)

@@ -31,6 +31,16 @@ export const UPDATE_PROGRESS = gql`
   ${LIST_ENTRY_FRAGMENT}
 `
 
+export const UPDATE_SCORE = gql`
+  mutation UpdateScore($anilistId: Int!, $score: Int!) {
+    UpdateScore(anilistId: $anilistId, score: $score) @client {
+      ...ListEntry
+    }
+  }
+
+  ${LIST_ENTRY_FRAGMENT}
+`
+
 export const DELETE_FROM_LIST = gql`
   mutation DeleteFromList($anilistId: Int!) {
     DeleteFromList(anilistId: $anilistId) @client

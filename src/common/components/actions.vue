@@ -275,12 +275,12 @@ export default class Actions extends Vue {
   }
 
   public async statusMutation(status: MediaListStatus) {
-    if (!this.anime || !this.mediaListEntry) {
-      return sendErrorToast(this.$store, 'No entry found..?')
+    if (!this.anime) {
+      return sendErrorToast(this.$store, 'No anime found..?')
     }
 
     if (status === MediaListStatus.Repeating) {
-      return startRewatching(this, this.mediaListEntry.id)
+      return startRewatching(this, this.anime.id)
     }
 
     await updateStatus(this, this.anime.id, status)

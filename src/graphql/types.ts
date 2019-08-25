@@ -652,6 +652,19 @@ export type FuzzyDateInt = any;
 
   export type UpdateProgressUpdateProgress = ListEntryFragment
 
+  export type UpdateScoreVariables = {
+    anilistId: number;
+    score: number;
+  }
+
+  export type UpdateScoreMutation = {
+    __typename?: "Mutation";
+    
+    UpdateScore: UpdateScoreUpdateScore;
+  }
+
+  export type UpdateScoreUpdateScore = ListEntryFragment
+
   export type DeleteFromListVariables = {
     anilistId: number;
   }
