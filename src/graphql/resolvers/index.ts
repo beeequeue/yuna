@@ -7,6 +7,7 @@ import {
   DeleteFromList,
   UpdateProgress,
   UpdateStatus,
+  StartRewatching,
 } from './list-entry'
 
 export const resolvers = {
@@ -25,5 +26,6 @@ export const resolvers = {
     DeleteFromList,
     UpdateStatus,
     UpdateProgress,
+    StartRewatching,
   },
 }

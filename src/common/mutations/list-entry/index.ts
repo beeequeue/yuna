@@ -5,8 +5,8 @@ import {
   DeleteFromListVariables,
   MediaListStatus,
   Provider,
-  RewatchMutation,
-  RewatchVariables,
+  StartRewatchingMutation,
+  StartRewatchingVariables,
   UpdateScoreMutation,
   UpdateScoreVariables,
   UpdateStatusMutation,
@@ -15,10 +15,10 @@ import {
 import {
   ADD_TO_LIST,
   DELETE_FROM_LIST,
+  START_REWATCHING,
   UPDATE_SCORE,
   UPDATE_STATUS,
 } from '@/graphql/mutations'
-import { START_REWATCHING } from '@/plugins/list/anilist/anilist-mutations'
 import {
   EpisodeMutationObject,
   refetchListQuery,
@@ -56,16 +56,16 @@ export const startRewatching = async (
   { $apollo, $store }: Instance,
   anilistId: number,
 ) => {
-  await $apollo.mutate<RewatchMutation>({
+  await $apollo.mutate<StartRewatchingMutation>({
     mutation: START_REWATCHING,
-    variables: { mediaId: anilistId } as RewatchVariables,
+    variables: { anilistId } as StartRewatchingVariables,
     refetchQueries: refetchListQuery($store),
     update: (cache, { data }) => {
       if (!data) return
 
       const fakeEpisode: EpisodeMutationObject = {
         provider: Provider.Crunchyroll,
-        animeId: data.SaveMediaListEntry!.mediaId,
+        animeId: data.StartRewatching!.mediaId,
         episodeNumber: 0,
       }
       writeEpisodeProgressToCache(cache, fakeEpisode, 0)

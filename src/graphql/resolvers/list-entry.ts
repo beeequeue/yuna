@@ -3,6 +3,8 @@ import {
   AddToListVariables,
   DeleteFromListMutation,
   DeleteFromListVariables,
+  StartRewatchingMutation,
+  StartRewatchingVariables,
   UpdateProgressMutation,
   UpdateProgressVariables,
   UpdateStatusMutation,
@@ -40,6 +42,19 @@ export const UpdateStatus = async (
 ): Promise<UpdateStatusMutation['UpdateStatus']> => {
   const promises = window.listPlugins.map(plugin =>
     plugin.UpdateStatus(anilistId, status),
+  )
+  const results = await Promise.all(promises)
+
+  return results[0]
+}
+
+export const StartRewatching = async (
+  _root: undefined,
+  { anilistId }: StartRewatchingVariables,
+  _cache: { cache: RealProxy },
+): Promise<StartRewatchingMutation['StartRewatching']> => {
+  const promises = window.listPlugins.map(plugin =>
+    plugin.StartRewatching(anilistId),
   )
   const results = await Promise.all(promises)
 

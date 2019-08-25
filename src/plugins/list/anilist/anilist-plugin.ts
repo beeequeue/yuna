@@ -5,6 +5,8 @@ import { oc } from 'ts-optchain'
 import {
   AddToListMutation,
   AniListEntryFragment,
+  AnilistStartRewatchingMutation,
+  AnilistStartRewatchingVariables,
   AnimeViewQuery,
   CreateEntryMutation,
   CreateEntryVariables,
@@ -31,6 +33,7 @@ import { isNil } from '@/utils'
 import { refetchListQuery, writeEpisodeProgressToCache } from '@/utils/cache'
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import {
+  ANILIST_START_REWATCHING,
   CREATE_ENTRY,
   DELETE_ENTRY,
   SET_PROGRESS,
@@ -205,7 +208,32 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
 
   public async StartRewatching(
     anilistId: number,
-  ): Promise<StartRewatchingMutation['StartRewatching']> {}
+  ): Promise<StartRewatchingMutation['StartRewatching']> {
+    const listEntry = await this.getMediaListEntry(anilistId)
+    const oldValues: Pick<AniListEntryFragment, 'id' | 'repeat' | 'score'> = {
+      id: oc(listEntry).id(0),
+      repeat: oc(listEntry).repeat(0),
+      score: oc(listEntry).score(0),
+    }
+
+    const result = await this.apollo.mutate<AnilistStartRewatchingMutation>({
+      mutation: ANILIST_START_REWATCHING,
+      variables: { mediaId: anilistId } as AnilistStartRewatchingVariables,
+      refetchQueries: refetchListQuery(this.store),
+      optimisticResponse: this.optimisticResponseFromValues(anilistId, {
+        ...oldValues,
+        progress: 0,
+        status: MediaListStatus.Repeating,
+      }),
+    })
+
+    const errors = oc(result).errors([])
+    if (errors.length > 0) throw new Error(errors[0].message)
+
+    if (isNil(result.data)) throw new Error("Didn't get response from AniList")
+
+    return this.fromMediaListEntry(result.data.SaveMediaListEntry!)
+  }
 
   public async UpdateProgress(
     anilistId: number,
