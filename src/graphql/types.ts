@@ -638,6 +638,20 @@ export type FuzzyDateInt = any;
 
   export type UpdateStatusUpdateStatus = ListEntryFragment
 
+  export type UpdateProgressVariables = {
+    anilistId: number;
+    progress: number;
+    provider: Provider;
+  }
+
+  export type UpdateProgressMutation = {
+    __typename?: "Mutation";
+    
+    UpdateProgress: UpdateProgressUpdateProgress;
+  }
+
+  export type UpdateProgressUpdateProgress = ListEntryFragment
+
   export type DeleteFromListVariables = {
     anilistId: number;
   }
@@ -835,18 +849,18 @@ export type FuzzyDateInt = any;
 
   export type SetStatusSaveMediaListEntry = AniListEntryFragment
 
-  export type UpdateProgressVariables = {
+  export type SetProgressVariables = {
     mediaId: Maybe<number>;
     progress: Maybe<number>;
   }
 
-  export type UpdateProgressMutation = {
+  export type SetProgressMutation = {
     __typename?: "Mutation";
     
-    SaveMediaListEntry: Maybe<UpdateProgressSaveMediaListEntry>;
+    SaveMediaListEntry: Maybe<SetProgressSaveMediaListEntry>;
   }
 
-  export type UpdateProgressSaveMediaListEntry = AniListEntryFragment
+  export type SetProgressSaveMediaListEntry = AniListEntryFragment
 
   export type CreateEntryVariables = {
     mediaId: Maybe<number>;
@@ -1461,22 +1475,6 @@ export type FuzzyDateInt = any;
     
     score: Maybe<number>;
   } 
-
-  export type ProgressListEntryFragment = {
-    __typename?: "Media";
-    
-    mediaListEntry: Maybe<ProgressListEntryMediaListEntry>;
-  }
-
-  export type ProgressListEntryMediaListEntry = {
-    __typename?: "MediaList";
-    
-    id: number;
-    
-    repeat: Maybe<number>;
-    
-    status: Maybe<MediaListStatus>;
-  }
 
   export type ListEntryFragment = {
     __typename?: "ListEntry";

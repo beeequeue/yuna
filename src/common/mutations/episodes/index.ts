@@ -15,6 +15,7 @@ import {
   UpdateProgressVariables,
 } from '@/graphql/types'
 import { ANILIST_LIST_ENTRY_FRAGMENT } from '@/graphql/fragments'
+import { UPDATE_PROGRESS } from '@/graphql/mutations'
 
 import { Instance } from '@/types'
 import {
@@ -22,7 +23,6 @@ import {
   refetchListQuery,
   writeEpisodeProgressToCache,
 } from '@/utils/cache'
-import { SET_PROGRESS } from '@/plugins/list/anilist/anilist-mutations'
 
 export const setProgress = async (
   { $apollo, $store }: Instance,
@@ -41,21 +41,21 @@ export const setProgress = async (
   }
 
   const optimisticResponse: UpdateProgressMutation = {
-    SaveMediaListEntry: {
-      __typename: 'MediaList',
+    UpdateProgress: {
+      __typename: 'ListEntry',
       id: oc(listEntry).id(-1),
       mediaId: options.animeId,
       progress,
-      repeat: oc(listEntry).repeat(0),
+      rewatched: oc(listEntry).repeat(0),
       status: oc(listEntry).status(MediaListStatus.Current),
       score: oc(listEntry).score(0),
     },
   }
 
   return $apollo.mutate<UpdateProgressMutation>({
-    mutation: SET_PROGRESS,
+    mutation: UPDATE_PROGRESS,
     variables: {
-      mediaId: options.animeId,
+      anilistId: options.animeId,
       progress,
     } as UpdateProgressVariables,
     optimisticResponse,

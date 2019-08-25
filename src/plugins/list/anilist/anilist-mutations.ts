@@ -20,7 +20,7 @@ export const SET_STATUS = gql`
   ${ANILIST_LIST_ENTRY_FRAGMENT}
 `
 export const SET_PROGRESS = gql`
-  mutation UpdateProgress($mediaId: Int, $progress: Int) {
+  mutation SetProgress($mediaId: Int, $progress: Int) {
     SaveMediaListEntry(mediaId: $mediaId, progress: $progress) {
       ...AniListEntry
     }

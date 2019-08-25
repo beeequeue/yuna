@@ -21,6 +21,16 @@ export const UPDATE_STATUS = gql`
   ${LIST_ENTRY_FRAGMENT}
 `
 
+export const UPDATE_PROGRESS = gql`
+  mutation UpdateProgress($anilistId: Int!, $progress: Int!, $provider: Provider!) {
+    UpdateProgress(anilistId: $anilistId, progress: $progress, provider: $provider) @client {
+      ...ListEntry
+    }
+  }
+
+  ${LIST_ENTRY_FRAGMENT}
+`
+
 export const DELETE_FROM_LIST = gql`
   mutation DeleteFromList($anilistId: Int!) {
     DeleteFromList(anilistId: $anilistId) @client

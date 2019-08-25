@@ -72,7 +72,7 @@ extend type Mutation {
 
   UpdateStatus(anilistId: Int!, status: MediaListStatus!): ListEntry!
 
-  UpdateProgress(anilistId: Int!, progress: Int!): ListEntry!
+  UpdateProgress(anilistId: Int!, progress: Int!, provider: Provider!): ListEntry!
 
   UpdateScore(anilistId: Int!, score: Int!): ListEntry!
 }

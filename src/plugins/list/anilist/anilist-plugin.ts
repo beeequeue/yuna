@@ -13,19 +13,18 @@ import {
   MediaListEntryFromMediaIdVariables,
   MediaListStatus,
   Provider,
+  SetProgressMutation,
+  SetProgressVariables,
   SetScoreMutation,
   SetScoreVariables,
   SetStatusMutation,
   SetStatusSaveMediaListEntry,
   SetStatusVariables,
-  UpdateProgressMutation,
-  UpdateProgressVariables,
 } from '@/graphql/types'
 import { ListPlugin } from '@/plugins/list/plugin'
 import { isNil } from '@/utils'
 import { refetchListQuery, writeEpisodeProgressToCache } from '@/utils/cache'
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
-import { ANILIST_LIST_ENTRY_FRAGMENT } from '@/graphql/fragments'
 import {
   CREATE_ENTRY,
   DELETE_ENTRY,
@@ -77,6 +76,23 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     }
   }
 
+  private async getMediaListEntry(mediaId: number) {
+    // TODO: replace with ListEntryFragment
+    const listEntryResult = await this.apollo.provider.defaultClient.query<
+      MediaListEntryFromMediaIdQuery
+    >({
+      query: MEDIA_LIST_ENTRY_FROM_MEDIA_ID,
+      fetchPolicy: 'cache-first',
+      errorPolicy: 'ignore',
+      variables: {
+        mediaId,
+        userId: getAnilistUserId(this.store),
+      } as MediaListEntryFromMediaIdVariables,
+    })
+
+    return listEntryResult.data.MediaList
+  }
+
   async AddToList(anilistId: number): Promise<ListEntry> {
     const result = await this.apollo.mutate<CreateEntryMutation>({
       mutation: CREATE_ENTRY,
@@ -109,36 +125,31 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     progress: number,
     provider: Provider,
   ): Promise<ListEntry> {
-    let listEntry: ListEntry | null = null
-
-    try {
-      listEntry = this.apollo.provider.defaultClient.cache.readFragment({
-        fragment: ANILIST_LIST_ENTRY_FRAGMENT,
-        id: `Media:${anilistId}`,
-      })
-    } catch (e) {
-      /* no-op */
+    const listEntry = await this.getMediaListEntry(anilistId)
+    const oldValues: Pick<
+      AniListEntryFragment,
+      'id' | 'score' | 'repeat' | 'status'
+    > = {
+      id: oc(listEntry).id(0),
+      score: oc(listEntry).score(0),
+      repeat: oc(listEntry).repeat(0),
+      status: oc(listEntry).status(MediaListStatus.Current),
     }
 
-    const optimisticResponse: UpdateProgressMutation = {
-      SaveMediaListEntry: {
-        __typename: 'MediaList',
-        id: oc(listEntry).id(-1),
-        mediaId: anilistId,
-        progress,
-        score: oc(listEntry).score(0),
-        repeat: oc(listEntry).rewatched(0),
-        status: oc(listEntry).status(MediaListStatus.Current),
-      },
-    }
-
-    const result = await this.apollo.mutate<UpdateProgressMutation>({
+    const result = await this.apollo.mutate<SetProgressMutation>({
       mutation: SET_PROGRESS,
       variables: {
         mediaId: anilistId,
         progress,
-      } as UpdateProgressVariables,
-      optimisticResponse,
+      } as SetProgressVariables,
+      optimisticResponse: {
+        SaveMediaListEntry: {
+          ...oldValues,
+          __typename: 'MediaList',
+          mediaId: anilistId,
+          progress,
+        },
+      },
       refetchQueries: refetchListQuery(this.store),
       update: cache => {
         writeEpisodeProgressToCache(
@@ -160,11 +171,18 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public async UpdateScore(
     anilistId: number,
     score: number,
-    oldValues: Pick<
+  ): Promise<ListEntry> {
+    const listEntry = await this.getMediaListEntry(anilistId)
+    const oldValues: Pick<
       AniListEntryFragment,
       'id' | 'progress' | 'repeat' | 'status'
-    >,
-  ): Promise<ListEntry> {
+    > = {
+      id: oc(listEntry).id(0),
+      progress: oc(listEntry).progress(0),
+      repeat: oc(listEntry).repeat(0),
+      status: oc(listEntry).status(MediaListStatus.Completed),
+    }
+
     const result = await this.apollo.mutate<SetScoreMutation>({
       mutation: SET_SCORE,
       variables: { mediaId: anilistId, score } as SetScoreVariables,
@@ -186,27 +204,15 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     anilistId: number,
     status: MediaListStatus,
   ): Promise<ListEntry> {
-    // TODO: replace with ListEntryFragment
-    const listEntryResult = await this.apollo.provider.defaultClient.query<
-      MediaListEntryFromMediaIdQuery
-    >({
-      query: MEDIA_LIST_ENTRY_FROM_MEDIA_ID,
-      fetchPolicy: 'cache-first',
-      errorPolicy: 'ignore',
-      variables: {
-        mediaId: anilistId,
-        userId: getAnilistUserId(this.store),
-      } as MediaListEntryFromMediaIdVariables,
-    })
-
+    const listEntry = await this.getMediaListEntry(anilistId)
     const oldValues: Pick<
       AniListEntryFragment,
-      'id' | 'progress' | 'repeat' | 'score'
+      'id' | 'repeat' | 'score' | 'progress'
     > = {
-      id: oc(listEntryResult.data).MediaList.id(0),
-      progress: oc(listEntryResult.data).MediaList.progress(0),
-      repeat: oc(listEntryResult.data).MediaList.repeat(0),
-      score: oc(listEntryResult.data).MediaList.score(0),
+      id: oc(listEntry).id(0),
+      repeat: oc(listEntry).repeat(0),
+      score: oc(listEntry).score(0),
+      progress: oc(listEntry).progress(0),
     }
 
     const result = await this.apollo.mutate<SetStatusMutation>({

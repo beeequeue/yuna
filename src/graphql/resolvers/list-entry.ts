@@ -1,4 +1,13 @@
-import { AddToListVariables, DeleteFromListVariables, ListEntryFragment, UpdateStatusVariables } from '@/graphql/types'
+import {
+  AddToListMutation,
+  AddToListVariables,
+  DeleteFromListMutation,
+  DeleteFromListVariables,
+  UpdateProgressMutation,
+  UpdateProgressVariables,
+  UpdateStatusMutation,
+  UpdateStatusVariables,
+} from '@/graphql/types'
 
 export const AddToList = async (
   _root: undefined,
@@ -28,6 +37,15 @@ export const UpdateStatus = async (
   _cache: { cache: RealProxy },
 ): Promise<ListEntryFragment> => {
   const promises = window.listPlugins.map(plugin => plugin.UpdateStatus(anilistId, status))
+
+export const UpdateProgress = async (
+  _root: undefined,
+  { anilistId, progress, provider }: UpdateProgressVariables,
+  _cache: { cache: RealProxy },
+): Promise<UpdateProgressMutation['UpdateProgress']> => {
+  const promises = window.listPlugins.map(plugin =>
+    plugin.UpdateProgress(anilistId, progress, provider),
+  )
   const results = await Promise.all(promises)
 
   return results[0]

@@ -1,11 +1,6 @@
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 import { Store } from 'vuex'
-import {
-  AddToListMutation,
-  AniListEntryFragment,
-  MediaListStatus,
-  Provider,
-} from '@/graphql/types'
+import { AddToListMutation, MediaListStatus, Provider } from '@/graphql/types'
 
 export abstract class ListPlugin {
   public abstract name: string
@@ -36,10 +31,6 @@ export abstract class ListPlugin {
   public abstract async UpdateScore(
     anilistId: number,
     score: number,
-    oldValues: Pick<
-      AniListEntryFragment,
-      'id' | 'progress' | 'repeat' | 'status'
-    >,
   ): Promise<AddToListMutation['AddToList']>
 
   public abstract async DeleteFromList(entryId: number): Promise<boolean>
