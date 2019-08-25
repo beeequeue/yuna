@@ -78,7 +78,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
 
   private async getMediaListEntry(mediaId: number) {
     // TODO: replace with ListEntryFragment
-    const listEntryResult = await this.apollo.provider.defaultClient.query<
+    const listEntryResult = await this.apollo.query<
       MediaListEntryFromMediaIdQuery
     >({
       query: MEDIA_LIST_ENTRY_FROM_MEDIA_ID,
