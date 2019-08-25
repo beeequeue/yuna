@@ -43,9 +43,10 @@ declare module '*/mutations.ts' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
   const AddToList: DocumentNode
+  const UpdateStatus: DocumentNode
   const DeleteFromList: DocumentNode
 
-  export { AddToList, DeleteFromList }
+  export { AddToList, UpdateStatus, DeleteFromList }
 
   export default defaultDocument
 }
@@ -53,9 +54,9 @@ declare module '*/mutations.ts' {
 declare module '*/queries.ts' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const DeleteFromListId: DocumentNode
+  const MediaListEntryFromMediaId: DocumentNode
 
-  export { DeleteFromListId }
+  export { MediaListEntryFromMediaId }
 
   export default defaultDocument
 }

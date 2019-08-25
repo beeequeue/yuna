@@ -635,22 +635,18 @@ export type FuzzyDateInt = any;
     DeleteFromList: boolean;
   }
 
-  export type DeleteFromListIdVariables = {
+  export type MediaListEntryFromMediaIdVariables = {
     mediaId: number;
     userId: number;
   }
 
-  export type DeleteFromListIdQuery = {
+  export type MediaListEntryFromMediaIdQuery = {
     __typename?: "Query";
     
-    MediaList: Maybe<DeleteFromListIdMediaList>;
+    MediaList: Maybe<MediaListEntryFromMediaIdMediaList>;
   }
 
-  export type DeleteFromListIdMediaList = {
-    __typename?: "MediaList";
-    
-    id: number;
-  } 
+  export type MediaListEntryFromMediaIdMediaList = AniListEntryFragment
 
   export type PlayerAnimeVariables = {
     id: number;

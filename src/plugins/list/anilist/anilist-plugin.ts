@@ -4,10 +4,13 @@ import { oc } from 'ts-optchain'
 
 import {
   AddToListMutation,
+  AniListEntryFragment,
   AnimeViewQuery,
   CreateEntryMutation,
   CreateEntryVariables,
-  AniListEntryFragment,
+  DeleteEntryMutation,
+  MediaListEntryFromMediaIdQuery,
+  MediaListEntryFromMediaIdVariables,
   MediaListStatus,
   Provider,
   SetScoreMutation,
@@ -17,9 +20,6 @@ import {
   SetStatusVariables,
   UpdateProgressMutation,
   UpdateProgressVariables,
-  DeleteEntryMutation,
-  DeleteFromListIdQuery,
-  DeleteFromListIdVariables,
 } from '@/graphql/types'
 import { ListPlugin } from '@/plugins/list/plugin'
 import { isNil } from '@/utils'
@@ -33,7 +33,7 @@ import {
   SET_SCORE,
   SET_STATUS,
 } from '@/plugins/list/anilist/anilist-mutations'
-import { DELETE_FROM_LIST_ID } from '@/graphql/queries'
+import { MEDIA_LIST_ENTRY_FROM_MEDIA_ID } from '@/graphql/queries'
 import { getAnilistUserId } from '@/state/auth'
 
 type ListEntry = AddToListMutation['AddToList']
@@ -208,12 +208,12 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   }
 
   public async DeleteFromList(anilistId: number): Promise<boolean> {
-    const idResult = await this.apollo.query<DeleteFromListIdQuery>({
-      query: DELETE_FROM_LIST_ID,
+    const idResult = await this.apollo.query<MediaListEntryFromMediaIdQuery>({
+      query: MEDIA_LIST_ENTRY_FROM_MEDIA_ID,
       variables: {
         mediaId: anilistId,
         userId: getAnilistUserId(this.store),
-      } as DeleteFromListIdVariables,
+      } as MediaListEntryFromMediaIdVariables,
       fetchPolicy: 'cache-first',
     })
 
