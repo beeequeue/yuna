@@ -50,7 +50,7 @@ import {
 } from '@/state/settings'
 import { getAnilistUserId } from '@/state/auth'
 import { getQueue } from '@/state/user'
-import { prop } from '@/utils'
+import { isNotNil, prop } from '@/utils'
 
 @Component({ components: { AnimatedList, Icon } })
 export default class EpisodeFeed extends Vue {
@@ -64,7 +64,10 @@ export default class EpisodeFeed extends Vue {
     update(data) {
       const lists = oc(data).listCollection.lists([])
 
-      const entries = lists.map(prop('entries')).flat()
+      const entries = lists
+        .filter(isNotNil)
+        .map(prop('entries'))
+        .flat()
 
       return entries.map(prop('mediaId'))
     },

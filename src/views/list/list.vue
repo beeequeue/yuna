@@ -55,7 +55,7 @@ import {
 
 import { Query } from '@/decorators'
 import { getAnilistUserId } from '@/state/auth'
-import { debounce } from '@/utils'
+import { debounce, isNil, itemsAreNotNil } from '@/utils'
 
 @Component({ components: { ListEntry, TextInput, NumberInput } })
 export default class List extends Vue {
@@ -82,7 +82,7 @@ export default class List extends Vue {
   public getLists(data: ListViewQuery) {
     const lists = oc(data).listCollection.lists([] as ListViewLists[])
 
-    if (!lists) return []
+    if (isNil(lists) || !itemsAreNotNil(lists)) return []
 
     if (this.filterString.length < 1) {
       return lists.map(list => ({
@@ -92,7 +92,7 @@ export default class List extends Vue {
     }
 
     const filteredLists = lists.map(list => {
-      if (!list.entries) return
+      if (isNil(list.entries)) return
 
       const fuse = new Fuse<ListViewEntries>(list.entries as any, {
         caseSensitive: false,
