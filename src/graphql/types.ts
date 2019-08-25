@@ -637,6 +637,7 @@ export type FuzzyDateInt = any;
 
   export type DeleteFromListIdVariables = {
     mediaId: number;
+    userId: number;
   }
 
   export type DeleteFromListIdQuery = {

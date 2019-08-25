@@ -34,6 +34,7 @@ import {
   SET_STATUS,
 } from '@/plugins/list/anilist/anilist-mutations'
 import { DELETE_FROM_LIST_ID } from '@/graphql/queries'
+import { getAnilistUserId } from '@/state/auth'
 
 type ListEntry = AddToListMutation['AddToList']
 
@@ -209,7 +210,10 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public async DeleteFromList(anilistId: number): Promise<boolean> {
     const idResult = await this.apollo.query<DeleteFromListIdQuery>({
       query: DELETE_FROM_LIST_ID,
-      variables: { mediaId: anilistId } as DeleteFromListIdVariables,
+      variables: {
+        mediaId: anilistId,
+        userId: getAnilistUserId(this.store),
+      } as DeleteFromListIdVariables,
       fetchPolicy: 'cache-first',
     })
 
@@ -226,17 +230,13 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
       variables: { id },
       refetchQueries: refetchListQuery(this.store),
       update: cache => {
-        // const data = cache.readQuery<any>({
-        //   query: ANIME_PAGE_QUERY,
-        //   variables: { id: animeId },
-        // })
-        // if (!data || !data.anime) return
-
-        // data.anime.mediaListEntry = null
-        cache.writeData({
-          data: null,
-          id: `MediaList:${id}`,
+        const data = cache.readQuery<any>({
+          query: ANIME_PAGE_QUERY,
+          variables: { id: anilistId },
         })
+        if (!data || !data.anime) return
+
+        data.anime.mediaListEntry = null
       },
     })
 

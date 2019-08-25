@@ -2,7 +2,7 @@ import { isWatchedResolver } from './is-watched'
 import { scoreMalResolver } from './score-mal'
 import { CacheEpisodesResolver } from './cache-episodes'
 import { EpisodesResolver } from './episodes'
-import { AddToList } from './list-entry'
+import { AddToList, DeleteFromList } from './list-entry'
 
 export const resolvers = {
   Query: {
@@ -16,6 +16,7 @@ export const resolvers = {
   },
   Mutation: {
     CacheEpisodes: CacheEpisodesResolver,
-    AddToList: AddToList
+    AddToList,
+    DeleteFromList,
   },
 }
