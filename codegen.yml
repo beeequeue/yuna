@@ -7,17 +7,15 @@ config:
   avoidOptionals: true
   noNamespaces: true
 generates:
-  src/graphql.d.ts:
-    plugins:
-      - add: '/* THIS IS A GENERATED FILE */'
-      - typescript-graphql-files-modules
   src/graphql/types.ts:
     plugins:
       - add: '/* THIS IS A GENERATED FILE */'
       - add: '/* /Maybe<\(Maybe<(.*)>\)\[\]>/ */'
       - add: '/* Maybe<$1[]> */'
-      - typescript-common
-      - typescript-client
-  graphql.schema.json:
+      - typescript
+      - typescript-operations
+#      - typescript-compatibility
+  src/graphql/introspection-result.ts:
     plugins:
-      - introspection
+      - add: '/* THIS IS A GENERATED FILE */'
+      - fragment-matcher

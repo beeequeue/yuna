@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import VueApollo from 'vue-apollo'
 import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
+import { IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
 
+import introspectionResult from '@/graphql/introspection-result'
 import { resolvers } from '@/graphql/resolvers'
 import { EpisodeListEpisodes } from '@/graphql/types'
 import { userStore } from '@/lib/user'
@@ -39,6 +41,9 @@ const dataIdFromObject = (obj: any) => {
   return null
 }
 
+const fragmentMatcher = new IntrospectionFragmentMatcher({
+  introspectionQueryResultData: introspectionResult,
+})
 // Config
 const options = {
   // You can use `https` for secure connection (recommended in production)
@@ -67,6 +72,7 @@ const options = {
   // Cache Options
   inMemoryCacheOptions: {
     dataIdFromObject,
+    fragmentMatcher,
   },
 
   // Client local data
