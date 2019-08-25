@@ -8,21 +8,21 @@ import {
   AnilistStartRewatchingMutation,
   AnilistStartRewatchingVariables,
   AnimeViewQuery,
-  CreateEntryMutation,
-  CreateEntryVariables,
-  DeleteEntryMutation,
+  AnilistCreateEntryMutation,
+  AnilistCreateEntryVariables,
+  AnilistDeleteEntryMutation,
   DeleteFromListMutation,
   MediaListEntryFromMediaIdQuery,
   MediaListEntryFromMediaIdVariables,
   MediaListStatus,
   Provider,
-  SetProgressMutation,
-  SetProgressVariables,
-  SetScoreMutation,
-  SetScoreVariables,
-  SetStatusMutation,
-  SetStatusSaveMediaListEntry,
-  SetStatusVariables,
+  AnilistSetProgressMutation,
+  AnilistSetProgressVariables,
+  AnilistSetScoreMutation,
+  AnilistSetScoreVariables,
+  AnilistSetStatusMutation,
+  AnilistSetStatusSaveMediaListEntry,
+  AnilistSetStatusVariables,
   StartRewatchingMutation,
   UpdateProgressMutation,
   UpdateScoreMutation,
@@ -34,12 +34,12 @@ import { refetchListQuery, writeEpisodeProgressToCache } from '@/utils/cache'
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import {
   ANILIST_START_REWATCHING,
-  CREATE_ENTRY,
-  DELETE_ENTRY,
-  SET_PROGRESS,
-  SET_SCORE,
-  SET_STATUS,
-} from '@/plugins/list/anilist/anilist-mutations'
+  ANILIST_CREATE_ENTRY,
+  ANILIST_DELETE_ENTRY,
+  ANILIST_SET_PROGRESS,
+  ANILIST_SET_SCORE,
+  ANILIST_SET_STATUS,
+} from '@/plugins/list/anilist/anilist-documents'
 import { MEDIA_LIST_ENTRY_FROM_MEDIA_ID } from '@/graphql/documents/queries'
 import { getAnilistUserId } from '@/state/auth'
 
@@ -53,7 +53,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   }
 
   private fromMediaListEntry(
-    mediaListEntry: SetStatusSaveMediaListEntry,
+    mediaListEntry: AnilistSetStatusSaveMediaListEntry,
   ): ListEntry {
     return {
       __typename: 'ListEntry' as const,
@@ -70,7 +70,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     anilistId: number,
     values: Pick<AniListEntryFragment, 'id' | 'repeat'> &
       Partial<Pick<AniListEntryFragment, 'status' | 'progress' | 'score'>>,
-  ): SetScoreMutation {
+  ): AnilistSetScoreMutation {
     return {
       SaveMediaListEntry: {
         __typename: 'MediaList',
@@ -104,9 +104,9 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public async AddToList(
     anilistId: number,
   ): Promise<AddToListMutation['AddToList']> {
-    const result = await this.apollo.mutate<CreateEntryMutation>({
-      mutation: CREATE_ENTRY,
-      variables: { mediaId: anilistId } as CreateEntryVariables,
+    const result = await this.apollo.mutate<AnilistCreateEntryMutation>({
+      mutation: ANILIST_CREATE_ENTRY,
+      variables: { mediaId: anilistId } as AnilistCreateEntryVariables,
       refetchQueries: refetchListQuery(this.store),
       update: (cache, { data }) => {
         if (!data) return
@@ -150,8 +150,8 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
 
     const { id } = idResult.data.MediaList
 
-    const result = await this.apollo.mutate<DeleteEntryMutation>({
-      mutation: DELETE_ENTRY,
+    const result = await this.apollo.mutate<AnilistDeleteEntryMutation>({
+      mutation: ANILIST_DELETE_ENTRY,
       variables: { id },
       refetchQueries: refetchListQuery(this.store),
       update: cache => {
@@ -188,9 +188,9 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
       progress: oc(listEntry).progress(0),
     }
 
-    const result = await this.apollo.mutate<SetStatusMutation>({
-      mutation: SET_STATUS,
-      variables: { mediaId: anilistId, status } as SetStatusVariables,
+    const result = await this.apollo.mutate<AnilistSetStatusMutation>({
+      mutation: ANILIST_SET_STATUS,
+      variables: { mediaId: anilistId, status } as AnilistSetStatusVariables,
       refetchQueries: refetchListQuery(this.store),
       optimisticResponse: this.optimisticResponseFromValues(anilistId, {
         ...oldValues,
@@ -251,12 +251,12 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
       status: oc(listEntry).status(MediaListStatus.Current),
     }
 
-    const result = await this.apollo.mutate<SetProgressMutation>({
-      mutation: SET_PROGRESS,
+    const result = await this.apollo.mutate<AnilistSetProgressMutation>({
+      mutation: ANILIST_SET_PROGRESS,
       variables: {
         mediaId: anilistId,
         progress,
-      } as SetProgressVariables,
+      } as AnilistSetProgressVariables,
       optimisticResponse: {
         SaveMediaListEntry: {
           ...oldValues,
@@ -298,9 +298,9 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
       status: oc(listEntry).status(MediaListStatus.Completed),
     }
 
-    const result = await this.apollo.mutate<SetScoreMutation>({
-      mutation: SET_SCORE,
-      variables: { mediaId: anilistId, score } as SetScoreVariables,
+    const result = await this.apollo.mutate<AnilistSetScoreMutation>({
+      mutation: ANILIST_SET_SCORE,
+      variables: { mediaId: anilistId, score } as AnilistSetScoreVariables,
       optimisticResponse: this.optimisticResponseFromValues(anilistId, {
         ...oldValues,
         score,

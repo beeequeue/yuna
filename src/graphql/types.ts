@@ -848,56 +848,56 @@ export type FuzzyDateInt = any;
     site: string;
   } 
 
-  export type SetScoreVariables = {
+  export type AnilistSetScoreVariables = {
     mediaId: Maybe<number>;
     score: Maybe<number>;
   }
 
-  export type SetScoreMutation = {
+  export type AnilistSetScoreMutation = {
     __typename?: "Mutation";
     
-    SaveMediaListEntry: Maybe<SetScoreSaveMediaListEntry>;
+    SaveMediaListEntry: Maybe<AnilistSetScoreSaveMediaListEntry>;
   }
 
-  export type SetScoreSaveMediaListEntry = AniListEntryFragment
+  export type AnilistSetScoreSaveMediaListEntry = AniListEntryFragment
 
-  export type SetStatusVariables = {
+  export type AnilistSetStatusVariables = {
     mediaId: Maybe<number>;
     status: Maybe<MediaListStatus>;
   }
 
-  export type SetStatusMutation = {
+  export type AnilistSetStatusMutation = {
     __typename?: "Mutation";
     
-    SaveMediaListEntry: Maybe<SetStatusSaveMediaListEntry>;
+    SaveMediaListEntry: Maybe<AnilistSetStatusSaveMediaListEntry>;
   }
 
-  export type SetStatusSaveMediaListEntry = AniListEntryFragment
+  export type AnilistSetStatusSaveMediaListEntry = AniListEntryFragment
 
-  export type SetProgressVariables = {
+  export type AnilistSetProgressVariables = {
     mediaId: Maybe<number>;
     progress: Maybe<number>;
   }
 
-  export type SetProgressMutation = {
+  export type AnilistSetProgressMutation = {
     __typename?: "Mutation";
     
-    SaveMediaListEntry: Maybe<SetProgressSaveMediaListEntry>;
+    SaveMediaListEntry: Maybe<AnilistSetProgressSaveMediaListEntry>;
   }
 
-  export type SetProgressSaveMediaListEntry = AniListEntryFragment
+  export type AnilistSetProgressSaveMediaListEntry = AniListEntryFragment
 
-  export type CreateEntryVariables = {
+  export type AnilistCreateEntryVariables = {
     mediaId: Maybe<number>;
   }
 
-  export type CreateEntryMutation = {
+  export type AnilistCreateEntryMutation = {
     __typename?: "Mutation";
     
-    SaveMediaListEntry: Maybe<CreateEntrySaveMediaListEntry>;
+    SaveMediaListEntry: Maybe<AnilistCreateEntrySaveMediaListEntry>;
   }
 
-  export type CreateEntrySaveMediaListEntry = AniListEntryFragment
+  export type AnilistCreateEntrySaveMediaListEntry = AniListEntryFragment
 
   export type AnilistStartRewatchingVariables = {
     mediaId: Maybe<number>;
@@ -911,17 +911,17 @@ export type FuzzyDateInt = any;
 
   export type AnilistStartRewatchingSaveMediaListEntry = AniListEntryFragment
 
-  export type DeleteEntryVariables = {
+  export type AnilistDeleteEntryVariables = {
     id: number;
   }
 
-  export type DeleteEntryMutation = {
+  export type AnilistDeleteEntryMutation = {
     __typename?: "Mutation";
     
-    DeleteMediaListEntry: Maybe<DeleteEntryDeleteMediaListEntry>;
+    DeleteMediaListEntry: Maybe<AnilistDeleteEntryDeleteMediaListEntry>;
   }
 
-  export type DeleteEntryDeleteMediaListEntry = {
+  export type AnilistDeleteEntryDeleteMediaListEntry = {
     __typename?: "Deleted";
     
     deleted: Maybe<boolean>;

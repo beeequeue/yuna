@@ -91,23 +91,23 @@ declare module '*/search.graphql' {
   export default defaultDocument
 }
 
-declare module '*/anilist-mutations.ts' {
+declare module '*/anilist-documents.ts' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const SetScore: DocumentNode
-  const SetStatus: DocumentNode
-  const SetProgress: DocumentNode
-  const CreateEntry: DocumentNode
+  const AnilistSetScore: DocumentNode
+  const AnilistSetStatus: DocumentNode
+  const AnilistSetProgress: DocumentNode
+  const AnilistCreateEntry: DocumentNode
   const AnilistStartRewatching: DocumentNode
-  const DeleteEntry: DocumentNode
+  const AnilistDeleteEntry: DocumentNode
 
   export {
-    SetScore,
-    SetStatus,
-    SetProgress,
-    CreateEntry,
+    AnilistSetScore,
+    AnilistSetStatus,
+    AnilistSetProgress,
+    AnilistCreateEntry,
     AnilistStartRewatching,
-    DeleteEntry,
+    AnilistDeleteEntry,
   }
 
   export default defaultDocument
