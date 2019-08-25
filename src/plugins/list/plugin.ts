@@ -7,6 +7,7 @@ import {
   StartRewatchingMutation,
   UpdateProgressMutation,
   UpdateScoreMutation,
+  UpdateStatusMutation,
 } from '@/graphql/types'
 
 export abstract class ListPlugin {
@@ -27,7 +28,7 @@ export abstract class ListPlugin {
   public abstract async UpdateStatus(
     anilistId: number,
     status: MediaListStatus,
-  ): Promise<UpdateScoreMutation['UpdateScore']>
+  ): Promise<UpdateStatusMutation['UpdateStatus']>
 
   public abstract async StartRewatching(
     anilistId: number,
