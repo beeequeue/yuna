@@ -38,7 +38,7 @@ export const getIsWatched = (
   }>(cache, {
     id: `Media:${animeId}`,
     fragment: gql`
-      fragment listEntry on Media {
+      fragment CachedAnimeListEntry on Media {
         mediaListEntry {
           progress
         }
@@ -61,7 +61,7 @@ export const getCachedAnimeIdMal = (
   const data = getFragment<{ idMal: number | null }>(cache, {
     id: `Media:${animeId}`,
     fragment: gql`
-      fragment cachedAnime on Media {
+      fragment CachedMALId on Media {
         idMal
       }
     `,
@@ -81,7 +81,7 @@ export const getCachedExternalLinks = (
   const data = getFragment<CachedExternalLinks>(cache, {
     id: `Media:${animeId}`,
     fragment: gql`
-      fragment cachedAnime on Media {
+      fragment CachedExternalLinks on Media {
         externalLinks {
           site
           url

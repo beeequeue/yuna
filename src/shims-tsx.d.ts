@@ -1,5 +1,6 @@
 import Vue, { VNode } from 'vue'
 import { DataProxy } from 'apollo-cache'
+import { ListPlugin } from '@/plugins/list/plugin'
 
 declare global {
   namespace JSX {
@@ -23,5 +24,9 @@ declare global {
             }
       }
     }
+  }
+
+  interface Window {
+    listPlugins: ListPlugin[]
   }
 }

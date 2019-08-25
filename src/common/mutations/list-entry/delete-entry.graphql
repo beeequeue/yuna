@@ -1,7 +1,0 @@
-mutation DeleteEntry($id: Int!) {
-  DeleteMediaListEntry(
-    id: $id
-  ) {
-    deleted
-  }
-}

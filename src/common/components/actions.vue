@@ -14,7 +14,7 @@
         :icon="addToListSvg"
         :content="ifBig('Set as Planning')"
         v-tooltip.right="ifSmall('Set as Planning')"
-        :click="() => createListEntry(MediaListStatus.Planning)"
+        :click="() => createListEntry()"
       />
 
       <c-button
@@ -135,9 +135,9 @@ import {
 } from '@mdi/js'
 
 import {
-  createListEntry,
+  addToList,
   startRewatching,
-  setStatus,
+  updateStatus,
 } from '@/common/mutations/list-entry'
 import {
   AnimeViewAnime,
@@ -258,7 +258,7 @@ export default class Actions extends Vue {
     }
 
     if (!this.mediaListEntry && this.shouldAddToListAsWell) {
-      await this.createListEntry(MediaListStatus.Planning)
+      await this.createListEntry()
     }
 
     addToQueue(this.$store, this.anime as any)
@@ -275,23 +275,23 @@ export default class Actions extends Vue {
   }
 
   public async statusMutation(status: MediaListStatus) {
-    if (!this.mediaListEntry) {
-      return sendErrorToast(this.$store, 'No entry found..?')
-    }
-
-    if (status === MediaListStatus.Repeating) {
-      return startRewatching(this, this.mediaListEntry.id)
-    }
-
-    await setStatus(this, this.mediaListEntry.id, status)
-  }
-
-  public async createListEntry(status: MediaListStatus) {
     if (!this.anime) {
       return sendErrorToast(this.$store, 'No anime found..?')
     }
 
-    await createListEntry(this, this.anime.id, status)
+    if (status === MediaListStatus.Repeating) {
+      return startRewatching(this, this.anime.id)
+    }
+
+    await updateStatus(this, this.anime.id, status)
+  }
+
+  public async createListEntry() {
+    if (!this.anime) {
+      return sendErrorToast(this.$store, 'No anime found..?')
+    }
+
+    await addToList(this, this.anime.id)
   }
 }
 </script>

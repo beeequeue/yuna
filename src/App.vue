@@ -59,6 +59,7 @@ import {
   toggleModal,
 } from '@/state/app'
 import { CHECK_FOR_UPDATES } from '@/messages'
+import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
@@ -113,7 +114,15 @@ export default class App extends Vue {
     backgrounds[Math.floor(Math.random() * backgrounds.length)],
   )
 
+  public setupListPlugins() {
+    const plugins = [AnilistListPlugin]
+
+    return plugins.map(plugin => new plugin(this.$apollo, this.$store))
+  }
+
   public async created() {
+    window.listPlugins = this.setupListPlugins()
+
     if (!this.hasFinishedSetup) {
       this.$router.push('/first-time-setup')
     }

@@ -1,8 +1,0 @@
-mutation Rewatch($id: Int) {
-  SaveMediaListEntry(id: $id, status: REPEATING, progress: 0) {
-    id
-    mediaId
-    status
-    progress
-  }
-}

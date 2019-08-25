@@ -2,9 +2,9 @@ import gql from 'graphql-tag'
 import { oc } from 'ts-optchain'
 
 import EPISODE_LIST_QUERY from '@/common/queries/episode-list.graphql'
-import UPDATE_PROGRESS from './update-progress.graphql'
 import CACHE_EPISODES from './cache-episodes.graphql'
 import {
+  AniListEntryFragment,
   CacheEpisodesMutation,
   CacheEpisodesVariables,
   EpisodeInput,
@@ -14,6 +14,8 @@ import {
   UpdateProgressMutation,
   UpdateProgressVariables,
 } from '@/graphql/types'
+import { ANILIST_LIST_ENTRY_FRAGMENT } from '@/graphql/documents/fragments'
+import { UPDATE_PROGRESS } from '@/graphql/documents/mutations'
 
 import { Instance } from '@/types'
 import {
@@ -22,30 +24,16 @@ import {
   writeEpisodeProgressToCache,
 } from '@/utils/cache'
 
-interface ListEntry {
-  id: number
-  status: MediaListStatus
-  repeat: number
-}
-
 export const setProgress = async (
   { $apollo, $store }: Instance,
   options: EpisodeMutationObject,
 ) => {
   const progress = options.episodeNumber
-  let listEntry: ListEntry | null = null
+  let listEntry: AniListEntryFragment | null = null
 
   try {
     listEntry = $apollo.provider.defaultClient.cache.readFragment({
-      fragment: gql`
-        fragment ProgressListEntry on Media {
-          mediaListEntry {
-            id
-            repeat
-            status
-          }
-        }
-      `,
+      fragment: ANILIST_LIST_ENTRY_FRAGMENT,
       id: `Media:${options.animeId}`,
     })
   } catch (e) {
@@ -53,19 +41,21 @@ export const setProgress = async (
   }
 
   const optimisticResponse: UpdateProgressMutation = {
-    SaveMediaListEntry: {
-      __typename: 'MediaList',
+    UpdateProgress: {
+      __typename: 'ListEntry',
       id: oc(listEntry).id(-1),
+      mediaId: options.animeId,
       progress,
-      repeat: oc(listEntry).repeat(0),
+      rewatched: oc(listEntry).repeat(0),
       status: oc(listEntry).status(MediaListStatus.Current),
+      score: oc(listEntry).score(0),
     },
   }
 
   return $apollo.mutate<UpdateProgressMutation>({
     mutation: UPDATE_PROGRESS,
     variables: {
-      mediaId: options.animeId,
+      anilistId: options.animeId,
       progress,
     } as UpdateProgressVariables,
     optimisticResponse,

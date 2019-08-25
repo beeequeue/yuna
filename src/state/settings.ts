@@ -105,7 +105,7 @@ const {
   SKIP_BACK,
   TOGGLE_FULLSCREEN,
   FRAME_FORWARD,
-  FRAME_BACK
+  FRAME_BACK,
 } = KeybindingAction
 
 const defaultBindings: KeybindingSettings = {

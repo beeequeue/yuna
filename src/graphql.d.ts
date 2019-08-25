@@ -19,62 +19,12 @@ declare module '*/cache-episodes.graphql' {
   export default defaultDocument
 }
 
-declare module '*/update-progress.graphql' {
+declare module '*/index.ts' {
   import { DocumentNode } from 'graphql'
   const defaultDocument: DocumentNode
-  const UpdateProgress: DocumentNode
+  const CacheEpisodesAiring: DocumentNode
 
-  export { UpdateProgress }
-
-  export default defaultDocument
-}
-
-declare module '*/create-entry.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const CreateEntry: DocumentNode
-
-  export { CreateEntry }
-
-  export default defaultDocument
-}
-
-declare module '*/delete-entry.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const DeleteEntry: DocumentNode
-
-  export { DeleteEntry }
-
-  export default defaultDocument
-}
-
-declare module '*/rewatch.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const Rewatch: DocumentNode
-
-  export { Rewatch }
-
-  export default defaultDocument
-}
-
-declare module '*/set-score.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const SetScore: DocumentNode
-
-  export { SetScore }
-
-  export default defaultDocument
-}
-
-declare module '*/set-status.graphql' {
-  import { DocumentNode } from 'graphql'
-  const defaultDocument: DocumentNode
-  const SetStatus: DocumentNode
-
-  export { SetStatus }
+  export { CacheEpisodesAiring }
 
   export default defaultDocument
 }
@@ -85,6 +35,38 @@ declare module '*/episode-list.graphql' {
   const EpisodeList: DocumentNode
 
   export { EpisodeList }
+
+  export default defaultDocument
+}
+
+declare module '*/mutations.ts' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const AddToList: DocumentNode
+  const UpdateStatus: DocumentNode
+  const StartRewatching: DocumentNode
+  const UpdateProgress: DocumentNode
+  const UpdateScore: DocumentNode
+  const DeleteFromList: DocumentNode
+
+  export {
+    AddToList,
+    UpdateStatus,
+    StartRewatching,
+    UpdateProgress,
+    UpdateScore,
+    DeleteFromList,
+  }
+
+  export default defaultDocument
+}
+
+declare module '*/queries.ts' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const MediaListEntryFromMediaId: DocumentNode
+
+  export { MediaListEntryFromMediaId }
 
   export default defaultDocument
 }
@@ -105,6 +87,28 @@ declare module '*/search.graphql' {
   const Search: DocumentNode
 
   export { Search }
+
+  export default defaultDocument
+}
+
+declare module '*/anilist-documents.ts' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+  const AnilistSetScore: DocumentNode
+  const AnilistSetStatus: DocumentNode
+  const AnilistSetProgress: DocumentNode
+  const AnilistCreateEntry: DocumentNode
+  const AnilistStartRewatching: DocumentNode
+  const AnilistDeleteEntry: DocumentNode
+
+  export {
+    AnilistSetScore,
+    AnilistSetStatus,
+    AnilistSetProgress,
+    AnilistCreateEntry,
+    AnilistStartRewatching,
+    AnilistDeleteEntry,
+  }
 
   export default defaultDocument
 }
@@ -195,6 +199,24 @@ declare module '*/queue.graphql' {
   const Queue: DocumentNode
 
   export { Queue }
+
+  export default defaultDocument
+}
+
+declare module '*/fragments.ts' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+
+  export {}
+
+  export default defaultDocument
+}
+
+declare module '*/cache.ts' {
+  import { DocumentNode } from 'graphql'
+  const defaultDocument: DocumentNode
+
+  export {}
 
   export default defaultDocument
 }

@@ -125,7 +125,7 @@ import { mdiChevronDown, mdiMenu } from '@mdi/js'
 
 import EPISODE_LIST from '@/common/queries/episode-list.graphql'
 import { setProgress } from '@/common/mutations/episodes'
-import { startRewatching, setStatus } from '@/common/mutations/list-entry'
+import { startRewatching, updateStatus } from '@/common/mutations/list-entry'
 import {
   EpisodeListEpisodes,
   EpisodeListQuery,
@@ -286,10 +286,10 @@ export default class QueueItem extends Vue {
 
     try {
       if (status === MediaListStatus.Repeating) {
-        return startRewatching(this, listEntryId)
+        return startRewatching(this, this.anime.id)
       }
 
-      await setStatus(this, listEntryId, status)
+      await updateStatus(this, oc(this.anime).id()!, status)
     } catch (err) {
       this.setOpenState(!this.item.open)
     }

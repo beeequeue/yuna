@@ -36,7 +36,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { format, formatDistance } from 'date-fns'
 import { mdiStar, mdiStarOutline } from '@mdi/js'
 
-import { setScore } from '@/common/mutations/list-entry'
+import { updateScore } from '@/common/mutations/list-entry'
 import {
   AnimeViewNextAiringEpisode,
   PlayerAnimeMediaListEntry,
@@ -91,7 +91,7 @@ export default class EndOfSeasonOverlay extends Vue {
   public async updateScore(score: number) {
     if (!this.listEntry) return
 
-    await setScore(this, this.listEntry.id, score, this.listEntry)
+    await updateScore(this, this.listEntry.id, score)
   }
 }
 </script>

@@ -37,6 +37,24 @@ input EpisodeInput {
   isWatched: Boolean!
 }
 
+type ListEntry {
+  """Entry ID in service"""
+  id: Int!
+  """Anime AniList ID"""
+  mediaId: Int!
+  """Status converted to AniList status"""
+  status: MediaListStatus!
+  """Score formatted as 0-100"""
+  score: Int
+  """
+  Progress in episodes
+  Not started = 0
+  """
+  progress: Int!
+  """Times rewatched"""
+  rewatched: Int!
+}
+
 extend type Media {
   scoreMal: Int
 }
@@ -47,4 +65,16 @@ extend type Query {
 
 extend type Mutation {
   CacheEpisodes(episodes: [EpisodeInput!]!): Boolean!
+
+  AddToList(anilistId: Int!): ListEntry!
+
+  DeleteFromList(anilistId: Int!): Boolean!
+
+  UpdateStatus(anilistId: Int!, status: MediaListStatus!): ListEntry!
+
+  StartRewatching(anilistId: Int!): ListEntry!
+
+  UpdateProgress(anilistId: Int!, progress: Int!, provider: Provider!): ListEntry!
+
+  UpdateScore(anilistId: Int!, score: Int!): ListEntry!
 }

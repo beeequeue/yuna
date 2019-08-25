@@ -98,7 +98,7 @@ import { mdiCloseCircle } from '@mdi/js'
 
 import EDIT_LIST_ENTRY from './edit-list-entry.graphql'
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
-import { deleteListEntry } from '@/common/mutations/list-entry'
+import { deleteFromList } from '@/common/mutations/list-entry'
 import {
   AnimeViewQuery,
   AnimeViewVariables,
@@ -207,7 +207,7 @@ export default class EditModal extends Vue {
   public async deleteEntry() {
     if (!this.anime || !this.anime.mediaListEntry) return
 
-    await deleteListEntry(this, this.anime.id, this.anime.mediaListEntry.id)
+    await deleteFromList(this, this.anime.id)
 
     this.toggleVisible()
   }
