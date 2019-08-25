@@ -14,8 +14,8 @@ import {
   UpdateProgressMutation,
   UpdateProgressVariables,
 } from '@/graphql/types'
-import { ANILIST_LIST_ENTRY_FRAGMENT } from '@/graphql/fragments'
-import { UPDATE_PROGRESS } from '@/graphql/mutations'
+import { ANILIST_LIST_ENTRY_FRAGMENT } from '@/graphql/documents/fragments'
+import { UPDATE_PROGRESS } from '@/graphql/documents/mutations'
 
 import { Instance } from '@/types'
 import {

@@ -40,7 +40,7 @@ import {
   SET_SCORE,
   SET_STATUS,
 } from '@/plugins/list/anilist/anilist-mutations'
-import { MEDIA_LIST_ENTRY_FROM_MEDIA_ID } from '@/graphql/queries'
+import { MEDIA_LIST_ENTRY_FROM_MEDIA_ID } from '@/graphql/documents/queries'
 import { getAnilistUserId } from '@/state/auth'
 
 type ListEntry = AddToListMutation['AddToList']

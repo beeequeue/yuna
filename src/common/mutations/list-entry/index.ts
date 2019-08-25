@@ -18,7 +18,7 @@ import {
   START_REWATCHING,
   UPDATE_SCORE,
   UPDATE_STATUS,
-} from '@/graphql/mutations'
+} from '@/graphql/documents/mutations'
 import {
   EpisodeMutationObject,
   refetchListQuery,
