@@ -44,6 +44,7 @@ declare module '*/mutations.ts' {
   const defaultDocument: DocumentNode
   const AddToList: DocumentNode
   const UpdateStatus: DocumentNode
+  const StartRewatching: DocumentNode
   const UpdateProgress: DocumentNode
   const UpdateScore: DocumentNode
   const DeleteFromList: DocumentNode
@@ -51,6 +52,7 @@ declare module '*/mutations.ts' {
   export {
     AddToList,
     UpdateStatus,
+    StartRewatching,
     UpdateProgress,
     UpdateScore,
     DeleteFromList,
@@ -96,10 +98,17 @@ declare module '*/anilist-mutations.ts' {
   const SetStatus: DocumentNode
   const SetProgress: DocumentNode
   const CreateEntry: DocumentNode
-  const Rewatch: DocumentNode
+  const AnilistStartRewatching: DocumentNode
   const DeleteEntry: DocumentNode
 
-  export { SetScore, SetStatus, SetProgress, CreateEntry, Rewatch, DeleteEntry }
+  export {
+    SetScore,
+    SetStatus,
+    SetProgress,
+    CreateEntry,
+    AnilistStartRewatching,
+    DeleteEntry,
+  }
 
   export default defaultDocument
 }

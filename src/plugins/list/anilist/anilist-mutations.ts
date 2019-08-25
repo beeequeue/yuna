@@ -37,8 +37,9 @@ export const CREATE_ENTRY = gql`
 
   ${ANILIST_LIST_ENTRY_FRAGMENT}
 `
-export const START_REWATCHING = gql`
-  mutation Rewatch($mediaId: Int) {
+
+export const ANILIST_START_REWATCHING = gql`
+  mutation AnilistStartRewatching($mediaId: Int) {
     SaveMediaListEntry(mediaId: $mediaId, status: REPEATING, progress: 0) {
       ...AniListEntry
     }
@@ -46,6 +47,7 @@ export const START_REWATCHING = gql`
 
   ${ANILIST_LIST_ENTRY_FRAGMENT}
 `
+
 export const DELETE_ENTRY = gql`
   mutation DeleteEntry($id: Int!) {
     DeleteMediaListEntry(id: $id) {

@@ -72,6 +72,8 @@ extend type Mutation {
 
   UpdateStatus(anilistId: Int!, status: MediaListStatus!): ListEntry!
 
+  StartRewatching(anilistId: Int!): ListEntry!
+
   UpdateProgress(anilistId: Int!, progress: Int!, provider: Provider!): ListEntry!
 
   UpdateScore(anilistId: Int!, score: Int!): ListEntry!

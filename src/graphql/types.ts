@@ -638,6 +638,18 @@ export type FuzzyDateInt = any;
 
   export type UpdateStatusUpdateStatus = ListEntryFragment
 
+  export type StartRewatchingVariables = {
+    anilistId: number;
+  }
+
+  export type StartRewatchingMutation = {
+    __typename?: "Mutation";
+    
+    StartRewatching: StartRewatchingStartRewatching;
+  }
+
+  export type StartRewatchingStartRewatching = ListEntryFragment
+
   export type UpdateProgressVariables = {
     anilistId: number;
     progress: number;
@@ -887,17 +899,17 @@ export type FuzzyDateInt = any;
 
   export type CreateEntrySaveMediaListEntry = AniListEntryFragment
 
-  export type RewatchVariables = {
+  export type AnilistStartRewatchingVariables = {
     mediaId: Maybe<number>;
   }
 
-  export type RewatchMutation = {
+  export type AnilistStartRewatchingMutation = {
     __typename?: "Mutation";
     
-    SaveMediaListEntry: Maybe<RewatchSaveMediaListEntry>;
+    SaveMediaListEntry: Maybe<AnilistStartRewatchingSaveMediaListEntry>;
   }
 
-  export type RewatchSaveMediaListEntry = AniListEntryFragment
+  export type AnilistStartRewatchingSaveMediaListEntry = AniListEntryFragment
 
   export type DeleteEntryVariables = {
     id: number;

@@ -21,6 +21,16 @@ export const UPDATE_STATUS = gql`
   ${LIST_ENTRY_FRAGMENT}
 `
 
+export const START_REWATCHING = gql`
+  mutation StartRewatching($anilistId: Int!) {
+    StartRewatching(anilistId: $anilistId) @client {
+      ...ListEntry
+    }
+  }
+
+  ${LIST_ENTRY_FRAGMENT}
+`
+
 export const UPDATE_PROGRESS = gql`
   mutation UpdateProgress($anilistId: Int!, $progress: Int!, $provider: Provider!) {
     UpdateProgress(anilistId: $anilistId, progress: $progress, provider: $provider) @client {
