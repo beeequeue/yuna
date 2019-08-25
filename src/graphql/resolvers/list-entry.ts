@@ -1,4 +1,4 @@
-import { AddToListVariables, DeleteFromListVariables, ListEntryFragment } from '@/graphql/types'
+import { AddToListVariables, DeleteFromListVariables, ListEntryFragment, UpdateStatusVariables } from '@/graphql/types'
 
 export const AddToList = async (
   _root: undefined,
@@ -17,6 +17,17 @@ export const DeleteFromList = async (
   _cache: { cache: RealProxy },
 ): Promise<Boolean> => {
   const promises = window.listPlugins.map(plugin => plugin.DeleteFromList(anilistId))
+  const results = await Promise.all(promises)
+
+  return results[0]
+}
+
+export const UpdateStatus = async (
+  _root: undefined,
+  { anilistId, status }: UpdateStatusVariables,
+  _cache: { cache: RealProxy },
+): Promise<ListEntryFragment> => {
+  const promises = window.listPlugins.map(plugin => plugin.UpdateStatus(anilistId, status))
   const results = await Promise.all(promises)
 
   return results[0]

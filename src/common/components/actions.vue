@@ -137,7 +137,7 @@ import {
 import {
   addToList,
   startRewatching,
-  setStatus,
+  updateStatus,
 } from '@/common/mutations/list-entry'
 import {
   AnimeViewAnime,
@@ -275,7 +275,7 @@ export default class Actions extends Vue {
   }
 
   public async statusMutation(status: MediaListStatus) {
-    if (!this.mediaListEntry) {
+    if (!this.anime || !this.mediaListEntry) {
       return sendErrorToast(this.$store, 'No entry found..?')
     }
 
@@ -283,7 +283,7 @@ export default class Actions extends Vue {
       return startRewatching(this, this.mediaListEntry.id)
     }
 
-    await setStatus(this, this.mediaListEntry.id, status)
+    await updateStatus(this, this.anime.id, status)
   }
 
   public async createListEntry() {

@@ -8,19 +8,12 @@ import {
   RewatchMutation,
   SetScoreMutation,
   SetScoreSaveMediaListEntry,
-  SetStatusMutation,
+  UpdateStatusMutation,
+  UpdateStatusVariables,
 } from '@/graphql/types'
-import { ADD_TO_LIST, DELETE_FROM_LIST } from '@/graphql/mutations'
-import {
-  SET_SCORE,
-  SET_STATUS,
-  START_REWATCHING,
-} from '@/plugins/list/anilist/anilist-mutations'
-import {
-  EpisodeMutationObject,
-  refetchListQuery,
-  writeEpisodeProgressToCache,
-} from '@/utils/cache'
+import { ADD_TO_LIST, DELETE_FROM_LIST, UPDATE_STATUS } from '@/graphql/mutations'
+import { SET_SCORE, START_REWATCHING } from '@/plugins/list/anilist/anilist-mutations'
+import { EpisodeMutationObject, refetchListQuery, writeEpisodeProgressToCache } from '@/utils/cache'
 import { Instance } from '@/types'
 
 export const addToList = async ({ $apollo }: Instance, anilistId: number) =>
@@ -38,14 +31,14 @@ export const deleteFromList = async (
     variables: { anilistId } as DeleteFromListVariables,
   })
 
-export const setStatus = async (
+export const updateStatus = async (
   { $apollo, $store }: Instance,
-  id: number,
+  anilistId: number,
   status: MediaListStatus,
 ) =>
-  $apollo.mutate<SetStatusMutation>({
-    mutation: SET_STATUS,
-    variables: { id, status },
+  $apollo.mutate<UpdateStatusMutation>({
+    mutation: UPDATE_STATUS,
+    variables: { anilistId, status } as UpdateStatusVariables,
     refetchQueries: refetchListQuery($store),
   })
 

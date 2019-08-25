@@ -625,6 +625,19 @@ export type FuzzyDateInt = any;
 
   export type AddToListAddToList = ListEntryFragment
 
+  export type UpdateStatusVariables = {
+    anilistId: number;
+    status: MediaListStatus;
+  }
+
+  export type UpdateStatusMutation = {
+    __typename?: "Mutation";
+    
+    UpdateStatus: UpdateStatusUpdateStatus;
+  }
+
+  export type UpdateStatusUpdateStatus = ListEntryFragment
+
   export type DeleteFromListVariables = {
     anilistId: number;
   }

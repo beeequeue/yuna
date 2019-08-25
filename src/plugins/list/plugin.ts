@@ -25,10 +25,6 @@ export abstract class ListPlugin {
   public abstract async UpdateStatus(
     anilistId: number,
     status: MediaListStatus,
-    oldValues: Pick<
-      AniListEntryFragment,
-      'id' | 'progress' | 'repeat' | 'score'
-    >,
   ): Promise<AddToListMutation['AddToList']>
 
   public abstract async UpdateProgress(
