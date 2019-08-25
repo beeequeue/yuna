@@ -4,6 +4,7 @@ import { oc } from 'ts-optchain'
 import EPISODE_LIST_QUERY from '@/common/queries/episode-list.graphql'
 import CACHE_EPISODES from './cache-episodes.graphql'
 import {
+  AniListEntryFragment,
   CacheEpisodesMutation,
   CacheEpisodesVariables,
   EpisodeInput,
@@ -13,6 +14,7 @@ import {
   UpdateProgressMutation,
   UpdateProgressVariables,
 } from '@/graphql/types'
+import { ANILIST_LIST_ENTRY_FRAGMENT } from '@/graphql/fragments'
 
 import { Instance } from '@/types'
 import {
@@ -22,30 +24,16 @@ import {
 } from '@/utils/cache'
 import { SET_PROGRESS } from '@/plugins/list/anilist/anilist-mutations'
 
-interface ListEntry {
-  id: number
-  status: MediaListStatus
-  repeat: number
-}
-
 export const setProgress = async (
   { $apollo, $store }: Instance,
   options: EpisodeMutationObject,
 ) => {
   const progress = options.episodeNumber
-  let listEntry: ListEntry | null = null
+  let listEntry: AniListEntryFragment | null = null
 
   try {
     listEntry = $apollo.provider.defaultClient.cache.readFragment({
-      fragment: gql`
-        fragment ProgressListEntry on Media {
-          mediaListEntry {
-            id
-            repeat
-            status
-          }
-        }
-      `,
+      fragment: ANILIST_LIST_ENTRY_FRAGMENT,
       id: `Media:${options.animeId}`,
     })
   } catch (e) {
@@ -56,9 +44,11 @@ export const setProgress = async (
     SaveMediaListEntry: {
       __typename: 'MediaList',
       id: oc(listEntry).id(-1),
+      mediaId: options.animeId,
       progress,
       repeat: oc(listEntry).repeat(0),
       status: oc(listEntry).status(MediaListStatus.Current),
+      score: oc(listEntry).score(0),
     },
   }
 

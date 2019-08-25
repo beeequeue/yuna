@@ -49,7 +49,7 @@ import Navbar from '@/modules/navbar/navbar.vue'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { Hidive } from '@/lib/hidive'
 import { getFinishedConnecting, getIsConnectedTo } from '@/state/auth'
-import { getHasFinishedSetup, setListPlugins } from '@/state/settings'
+import { getHasFinishedSetup } from '@/state/settings'
 import {
   AppState,
   getEditingAnime,
@@ -59,7 +59,6 @@ import {
   toggleModal,
 } from '@/state/app'
 import { CHECK_FOR_UPDATES } from '@/messages'
-import { ListPlugin } from '@/plugins/list/plugin'
 import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
 
 const requireBg = require.context('@/assets/bg')

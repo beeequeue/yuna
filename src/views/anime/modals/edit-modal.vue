@@ -207,7 +207,7 @@ export default class EditModal extends Vue {
   public async deleteEntry() {
     if (!this.anime || !this.anime.mediaListEntry) return
 
-    await deleteFromList(this, this.anime.id, this.anime.mediaListEntry.id)
+    await deleteFromList(this, this.anime.id)
 
     this.toggleVisible()
   }
