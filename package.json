@@ -81,7 +81,7 @@
     "babel-eslint": "10.0.2",
     "babel-plugin-ts-optchain": "1.1.5",
     "cross-env": "5.2.0",
-    "electron": "5.0.8",
+    "electron": "6.0.4",
     "electron-builder": "21.1.5",
     "eslint": "5.16.0",
     "eslint-plugin-prettier": "3.1.0",
