@@ -22,7 +22,7 @@ query PlayerAnime($id: Int!) {
         }
       }
     }
-    listEntry {
+    listEntry @client {
       id
       status
       progress

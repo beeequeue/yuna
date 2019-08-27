@@ -39,7 +39,7 @@ query AnimeView($id: Int) {
         }
       }
     }
-    listEntry {
+    listEntry @client {
       id
       progress
       status

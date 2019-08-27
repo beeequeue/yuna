@@ -19,7 +19,7 @@ query Queue($ids: [Int!]!) {
         site
         url
       }
-      listEntry {
+      listEntry @client {
         id
         progress
         status
