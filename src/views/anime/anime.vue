@@ -81,7 +81,7 @@ import CenterContainer from './components/center-container.vue'
 import Relations from './components/relations.vue'
 import EditModal from './modals/edit-modal.vue'
 
-import EPISODE_LIST from '@/common/queries/episode-list.graphql'
+import { EPISODE_LIST } from "@/graphql/documents/queries"
 import ANIME_QUERY from './anime.graphql'
 import {
   AnimeViewMediaListEntry,

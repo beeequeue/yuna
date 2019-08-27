@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 import { oc } from 'ts-optchain'
 import { Store } from 'vuex'
 
-import EPISODE_LIST_QUERY from '@/common/queries/episode-list.graphql'
+import { EPISODE_LIST } from "@/graphql/documents/queries"
 import LIST_QUERY from '@/views/list/list.graphql'
 import {
   EpisodeListEpisodes,
@@ -126,7 +126,7 @@ export const getSoftCachedEpisodes = (
 ): EpisodeListEpisodes[] | null => {
   try {
     const data = cache.readQuery<EpisodeListQuery, EpisodeListVariables>({
-      query: EPISODE_LIST_QUERY,
+      query: EPISODE_LIST,
       variables: {
         id: animeId,
         provider,
@@ -157,7 +157,7 @@ export const cacheEpisodes = (
   let nextEpisodeAiringAt = getNextEpisodeAiringAt(cache, animeId)
 
   cache.writeQuery<EpisodeListQuery, EpisodeListVariables>({
-    query: EPISODE_LIST_QUERY,
+    query: EPISODE_LIST,
     variables: { id: animeId, provider },
     data: { episodes },
   })

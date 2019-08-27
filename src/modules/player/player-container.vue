@@ -30,7 +30,7 @@ import { oc } from 'ts-optchain'
 import ExternalPlayer from '@/modules/player/external-player.vue'
 import { setProgress } from '@/common/mutations/episodes'
 import ANIME_QUERY from './player-anime.graphql'
-import EPISODE_LIST from '@/common/queries/episode-list.graphql'
+import { EPISODE_LIST } from "@/graphql/documents/queries"
 import {
   EpisodeListEpisodes,
   EpisodeListQuery,
