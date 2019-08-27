@@ -21,6 +21,7 @@ export const GetListEntry = async (
   _variables: null,
   _cache: { cache: RealProxy },
 ): Promise<ListEntry | null> => {
+  console.log(media)
   const mainListPlugin = getMainListPlugin(store)
   const plugin = window.listPlugins.find(
     plugin => plugin.service === mainListPlugin,

@@ -218,8 +218,7 @@ import { oc } from 'ts-optchain'
 
 import {
   EpisodeListEpisodes,
-  PlayerAnimeAnime,
-  PlayerAnimeMediaListEntry,
+  PlayerAnimeAnime, PlayerAnimeListEntry,
 } from '@/graphql/types'
 
 import { Required } from '@/decorators'
@@ -287,8 +286,8 @@ export default class Controls extends Vue {
     return this.settingsOpen || this.hovering
   }
 
-  public get listEntry(): PlayerAnimeMediaListEntry | null {
-    return oc(this).anime.mediaListEntry(null)
+  public get listEntry(): PlayerAnimeListEntry | null {
+    return oc(this).anime.listEntry(null)
   }
 
   public get timeString() {
@@ -354,12 +353,6 @@ export default class Controls extends Vue {
   public handleChangeSubtitles(e: Event) {
     const element = e.target as HTMLSelectElement
     this.onChangeSubtitles(Number(element.value))
-  }
-
-  public formatSubtitlePath(path: string) {
-    const match = path.match(/.*[\\/]\d+-\d+-(.*)\.vtt/)
-
-    return match ? match[1].replace(/_/g, ' ').replace(/-/g, '/') : path
   }
 
   public goVisible() {

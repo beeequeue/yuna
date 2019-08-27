@@ -2,7 +2,7 @@ import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
 import { oc } from 'ts-optchain'
 
-import { MediaListStatus, Provider } from '@/graphql/types'
+import { ListEntry, Media, MediaListStatus, Provider } from '@/graphql/types'
 import { RootState } from '@/state/store'
 import { QueueItem, userStore } from '@/lib/user'
 import { getDefaultProvider, isNotNil, propEq } from '@/utils'
@@ -12,7 +12,7 @@ const isInQueue = (state: UserState, id: number) =>
 
 const isCurrentlyWatching = (anime: AddToQueueOptions) =>
   [MediaListStatus.Current, MediaListStatus.Repeating].includes(
-    oc(anime).mediaListEntry.status(null as any)!,
+    oc(anime).listEntry.status(null as any)!,
   )
 
 interface SetProviderOptions {
@@ -20,12 +20,8 @@ interface SetProviderOptions {
   provider: Provider
 }
 
-interface AddToQueueOptions {
-  id: number
-  externalLinks: null | Array<null | { site: string; url: string }>
-  mediaListEntry: null | {
-    status: null | MediaListStatus
-  }
+type AddToQueueOptions = Pick<Media, 'id' | 'externalLinks'> & {
+  listEntry: Pick<ListEntry, 'status'> | null
 }
 
 export interface UserState {

@@ -3984,8 +3984,8 @@ export type LocalSourceAnimeQuery = { __typename?: 'Query' } & {
             'english' | 'romaji' | 'userPreferred'
           >
         >
-        mediaListEntry: Maybe<
-          { __typename?: 'MediaList' } & Pick<MediaList, 'progress'>
+        listEntry: Maybe<
+          { __typename?: 'ListEntry' } & Pick<ListEntry, 'progress'>
         >
       }
   >
@@ -4156,9 +4156,9 @@ export type PlayerAnimeQuery = { __typename?: 'Query' } & {
             >
           }
         >
-        mediaListEntry: Maybe<
-          { __typename?: 'MediaList' } & Pick<
-            MediaList,
+        listEntry: Maybe<
+          { __typename?: 'ListEntry' } & Pick<
+            ListEntry,
             'id' | 'status' | 'progress' | 'score'
           >
         >
@@ -4374,10 +4374,10 @@ export type AnimeViewQuery = { __typename?: 'Query' } & {
             >
           }
         >
-        mediaListEntry: Maybe<
-          { __typename?: 'MediaList' } & Pick<
-            MediaList,
-            'id' | 'progress' | 'status' | 'score' | 'repeat'
+        listEntry: Maybe<
+          { __typename?: 'ListEntry' } & Pick<
+            ListEntry,
+            'id' | 'progress' | 'status' | 'score' | 'rewatched'
           >
         >
       }
@@ -4557,9 +4557,9 @@ export type PausedQueryQuery = { __typename?: 'Query' } & {
                                   >
                                 >
                               >
-                              mediaListEntry: Maybe<
-                                { __typename?: 'MediaList' } & Pick<
-                                  MediaList,
+                              listEntry: Maybe<
+                                { __typename?: 'ListEntry' } & Pick<
+                                  ListEntry,
                                   'id' | 'status'
                                 >
                               >
@@ -4607,9 +4607,9 @@ export type PlanningQueryQuery = { __typename?: 'Query' } & {
                                   >
                                 >
                               >
-                              mediaListEntry: Maybe<
-                                { __typename?: 'MediaList' } & Pick<
-                                  MediaList,
+                              listEntry: Maybe<
+                                { __typename?: 'ListEntry' } & Pick<
+                                  ListEntry,
                                   'id' | 'status'
                                 >
                               >
@@ -4657,9 +4657,9 @@ export type WatchingQueryQuery = { __typename?: 'Query' } & {
                                   >
                                 >
                               >
-                              mediaListEntry: Maybe<
-                                { __typename?: 'MediaList' } & Pick<
-                                  MediaList,
+                              listEntry: Maybe<
+                                { __typename?: 'ListEntry' } & Pick<
+                                  ListEntry,
                                   'id' | 'status'
                                 >
                               >
@@ -4713,10 +4713,10 @@ export type QueueQuery = { __typename?: 'Query' } & {
                     >
                   >
                 >
-                mediaListEntry: Maybe<
-                  { __typename?: 'MediaList' } & Pick<
-                    MediaList,
-                    'id' | 'progress' | 'status' | 'repeat' | 'score'
+                listEntry: Maybe<
+                  { __typename?: 'ListEntry' } & Pick<
+                    ListEntry,
+                    'id' | 'progress' | 'status' | 'rewatched' | 'score'
                   >
                 >
               }
@@ -4731,8 +4731,8 @@ export type LocalSourceAnimeAnime = NonNullable<LocalSourceAnimeQuery['anime']>
 export type LocalSourceAnimeTitle = NonNullable<
   (NonNullable<LocalSourceAnimeQuery['anime']>)['title']
 >
-export type LocalSourceAnimeMediaListEntry = NonNullable<
-  (NonNullable<LocalSourceAnimeQuery['anime']>)['mediaListEntry']
+export type LocalSourceAnimeListEntry = NonNullable<
+  (NonNullable<LocalSourceAnimeQuery['anime']>)['listEntry']
 >
 export type CacheEpisodesVariables = CacheEpisodesMutationVariables
 export type CacheEpisodesAiringVariables = CacheEpisodesAiringQueryVariables
@@ -4794,8 +4794,8 @@ export type PlayerAnime_Title = NonNullable<
     >)['node']
   >)['title']
 >
-export type PlayerAnimeMediaListEntry = NonNullable<
-  (NonNullable<PlayerAnimeQuery['anime']>)['mediaListEntry']
+export type PlayerAnimeListEntry = NonNullable<
+  (NonNullable<PlayerAnimeQuery['anime']>)['listEntry']
 >
 export type SearchVariables = SearchQueryVariables
 export type SearchAnime = NonNullable<SearchQuery['anime']>
@@ -4894,8 +4894,8 @@ export type AnimeView_Title = NonNullable<
     >)['node']
   >)['title']
 >
-export type AnimeViewMediaListEntry = NonNullable<
-  (NonNullable<AnimeViewQuery['anime']>)['mediaListEntry']
+export type AnimeViewListEntry = NonNullable<
+  (NonNullable<AnimeViewQuery['anime']>)['listEntry']
 >
 export type EditListEntryVariables = EditListEntryMutationVariables
 export type EditListEntrySaveMediaListEntry = NonNullable<
@@ -5043,7 +5043,7 @@ export type PausedQueryExternalLinks = NonNullable<
     >)['externalLinks']
   >)[0]
 >
-export type PausedQueryMediaListEntry = NonNullable<
+export type PausedQueryListEntry = NonNullable<
   (NonNullable<
     (NonNullable<
       (NonNullable<
@@ -5054,7 +5054,7 @@ export type PausedQueryMediaListEntry = NonNullable<
         >)['entries']
       >)[0]
     >)['info']
-  >)['mediaListEntry']
+  >)['listEntry']
 >
 export type PlanningQueryVariables = PlanningQueryQueryVariables
 export type PlanningQueryListCollection = NonNullable<
@@ -5098,7 +5098,7 @@ export type PlanningQueryExternalLinks = NonNullable<
     >)['externalLinks']
   >)[0]
 >
-export type PlanningQueryMediaListEntry = NonNullable<
+export type PlanningQueryListEntry = NonNullable<
   (NonNullable<
     (NonNullable<
       (NonNullable<
@@ -5109,7 +5109,7 @@ export type PlanningQueryMediaListEntry = NonNullable<
         >)['entries']
       >)[0]
     >)['info']
-  >)['mediaListEntry']
+  >)['listEntry']
 >
 export type WatchingQueryVariables = WatchingQueryQueryVariables
 export type WatchingQueryListCollection = NonNullable<
@@ -5153,7 +5153,7 @@ export type WatchingQueryExternalLinks = NonNullable<
     >)['externalLinks']
   >)[0]
 >
-export type WatchingQueryMediaListEntry = NonNullable<
+export type WatchingQueryListEntry = NonNullable<
   (NonNullable<
     (NonNullable<
       (NonNullable<
@@ -5164,7 +5164,7 @@ export type WatchingQueryMediaListEntry = NonNullable<
         >)['entries']
       >)[0]
     >)['info']
-  >)['mediaListEntry']
+  >)['listEntry']
 >
 export type QueueVariables = QueueQueryVariables
 export type QueueQueue = NonNullable<QueueQuery['queue']>
@@ -5188,8 +5188,8 @@ export type QueueExternalLinks = NonNullable<
     >)['externalLinks']
   >)[0]
 >
-export type QueueMediaListEntry = NonNullable<
+export type QueueListEntry = NonNullable<
   (NonNullable<
     (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
-  >)['mediaListEntry']
+  >)['listEntry']
 >

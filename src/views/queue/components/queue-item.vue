@@ -228,7 +228,7 @@ export default class QueueItem extends Vue {
   public capitalize = capitalize
 
   public get listEntry() {
-    return oc(this.anime).mediaListEntry(null)
+    return oc(this.anime).listEntry(null)
   }
 
   public get status() {
@@ -266,7 +266,7 @@ export default class QueueItem extends Vue {
   }
 
   public async statusMutation(status: MediaListStatus) {
-    const listEntryId = oc(this.anime).mediaListEntry.id()
+    const listEntryId = oc(this.anime).listEntry.id()
 
     if (isNil(listEntryId)) {
       return sendErrorToast(this.$store, 'No entry found..?')

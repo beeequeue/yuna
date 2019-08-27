@@ -61,7 +61,7 @@ export default class EpisodeList extends Vue {
   }
 
   public get listEntry() {
-    return oc(this.anime).mediaListEntry(null)
+    return oc(this.anime).listEntry(null)
   }
 
   public mounted() {

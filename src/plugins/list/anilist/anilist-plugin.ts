@@ -118,7 +118,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
           variables: { id: anilistId },
         })
 
-        cachedData!.anime!.mediaListEntry = data.SaveMediaListEntry
+        cachedData!.anime!.listEntry = this.fromMediaListEntry(data.SaveMediaListEntry!)
 
         cache.writeQuery({ query: ANIME_PAGE_QUERY, data: cachedData })
       },

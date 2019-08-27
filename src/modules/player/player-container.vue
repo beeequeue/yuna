@@ -105,7 +105,7 @@ export default class PlayerContainer extends Vue {
   }
 
   get listEntry() {
-    return oc(this.anime).mediaListEntry(null)
+    return oc(this.anime).listEntry(null)
   }
 
   get shouldAutoPlay() {
