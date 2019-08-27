@@ -3,6 +3,8 @@ import {
   AddToListVariables,
   DeleteFromListMutation,
   DeleteFromListVariables,
+  ListEntry,
+  Media,
   StartRewatchingMutation,
   StartRewatchingVariables,
   UpdateProgressMutation,
@@ -10,6 +12,24 @@ import {
   UpdateStatusMutation,
   UpdateStatusVariables,
 } from '@/graphql/types'
+import { getMainListPlugin } from '@/state/settings'
+import { store } from '@/state/store'
+import { isNil } from '@/utils'
+
+export const GetListEntry = async (
+  media: Media,
+  _variables: null,
+  _cache: { cache: RealProxy },
+): Promise<ListEntry | null> => {
+  const mainListPlugin = getMainListPlugin(store)
+  const plugin = window.listPlugins.find(
+    plugin => plugin.service === mainListPlugin,
+  )
+
+  if (isNil(plugin)) throw new Error('Selected List Plugin could not be found.')
+
+  return plugin.GetListEntry(media.id)
+}
 
 export const AddToList = async (
   _root: undefined,

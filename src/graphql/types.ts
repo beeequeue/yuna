@@ -1078,6 +1078,7 @@ export type Media = {
   /** Notes for site moderators */
   modNotes: Maybe<Scalars['String']>
   scoreMal: Maybe<Scalars['Int']>
+  listEntry: Maybe<ListEntry>
 }
 
 /** Anime or Manga */
@@ -4012,33 +4013,6 @@ export type CacheEpisodesAiringQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type EpisodeListQueryVariables = {
-  id: Scalars['Int']
-  provider: Provider
-}
-
-export type EpisodeListQuery = { __typename?: 'Query' } & {
-  episodes: Maybe<
-    Array<
-      { __typename?: 'Episode' } & Pick<
-        Episode,
-        | 'provider'
-        | 'id'
-        | 'animeId'
-        | 'title'
-        | 'duration'
-        | 'progress'
-        | 'index'
-        | 'episodeNumber'
-        | 'url'
-        | 'subtitles'
-        | 'thumbnail'
-        | 'isWatched'
-      >
-    >
-  >
-}
-
 export type ListEntryFragment = { __typename?: 'ListEntry' } & Pick<
   ListEntry,
   'id' | 'mediaId' | 'score' | 'progress' | 'status' | 'rewatched'
@@ -4109,6 +4083,33 @@ export type MediaListEntryFromMediaIdQueryVariables = {
 
 export type MediaListEntryFromMediaIdQuery = { __typename?: 'Query' } & {
   MediaList: Maybe<{ __typename?: 'MediaList' } & AniListEntryFragment>
+}
+
+export type EpisodeListQueryVariables = {
+  id: Scalars['Int']
+  provider: Provider
+}
+
+export type EpisodeListQuery = { __typename?: 'Query' } & {
+  episodes: Maybe<
+    Array<
+      { __typename?: 'Episode' } & Pick<
+        Episode,
+        | 'provider'
+        | 'id'
+        | 'animeId'
+        | 'title'
+        | 'duration'
+        | 'progress'
+        | 'index'
+        | 'episodeNumber'
+        | 'url'
+        | 'subtitles'
+        | 'thumbnail'
+        | 'isWatched'
+      >
+    >
+  >
 }
 
 export type PlayerAnimeQueryVariables = {
@@ -4738,10 +4739,6 @@ export type CacheEpisodesAiringVariables = CacheEpisodesAiringQueryVariables
 export type CacheEpisodesAiringAiringSchedule = NonNullable<
   CacheEpisodesAiringQuery['AiringSchedule']
 >
-export type EpisodeListVariables = EpisodeListQueryVariables
-export type EpisodeListEpisodes = NonNullable<
-  (NonNullable<EpisodeListQuery['episodes']>)[0]
->
 export type AddToListVariables = AddToListMutationVariables
 export type AddToListAddToList = ListEntryFragment
 export type UpdateStatusVariables = UpdateStatusMutationVariables
@@ -4755,6 +4752,10 @@ export type UpdateScoreUpdateScore = ListEntryFragment
 export type DeleteFromListVariables = DeleteFromListMutationVariables
 export type MediaListEntryFromMediaIdVariables = MediaListEntryFromMediaIdQueryVariables
 export type MediaListEntryFromMediaIdMediaList = AniListEntryFragment
+export type EpisodeListVariables = EpisodeListQueryVariables
+export type EpisodeListEpisodes = NonNullable<
+  (NonNullable<EpisodeListQuery['episodes']>)[0]
+>
 export type PlayerAnimeVariables = PlayerAnimeQueryVariables
 export type PlayerAnimeAnime = NonNullable<PlayerAnimeQuery['anime']>
 export type PlayerAnimeTitle = NonNullable<
