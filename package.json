@@ -105,19 +105,13 @@
   },
   "license": "AGPL-3.0-only",
   "lint-staged": {
-    "*.ts": [
+    "*.{ts,vue,js}": [
       "prettier --write",
       "vue-cli-service lint",
       "git add"
     ],
-    "*.vue": [
+    "*.{json,graphql,yml,scss,svg}": [
       "prettier --write",
-      "vue-cli-service lint",
-      "git add"
-    ],
-    "*.js": [
-      "prettier --write",
-      "vue-cli-service lint",
       "git add"
     ]
   },
