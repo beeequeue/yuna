@@ -46,7 +46,8 @@ import { getAnilistUserId } from '@/state/auth'
 type ListEntry = AddToListMutation['AddToList']
 
 export class AnilistListPlugin extends ListPlugin implements ListPlugin {
-  public name = 'anilist'
+  public static service = 'anilist'
+  public service = 'anilist'
 
   constructor(apollo: DollarApollo<any>, store: Store<any>) {
     super(apollo, store)
@@ -84,8 +85,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     }
   }
 
-  private async getMediaListEntry(mediaId: number) {
-    // TODO: replace with ListEntryFragment
+  public async GetListEntry(mediaId: number): Promise<ListEntry | null> {
     const listEntryResult = await this.apollo.query<
       MediaListEntryFromMediaIdQuery
     >({
@@ -98,7 +98,9 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
       } as MediaListEntryFromMediaIdVariables,
     })
 
-    return listEntryResult.data.MediaList
+    if (isNil(listEntryResult.data.MediaList)) return null
+
+    return this.fromMediaListEntry(listEntryResult.data.MediaList)
   }
 
   public async AddToList(
@@ -116,7 +118,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
           variables: { id: anilistId },
         })
 
-        cachedData!.anime!.mediaListEntry = data.SaveMediaListEntry
+        cachedData!.anime!.listEntry = this.fromMediaListEntry(data.SaveMediaListEntry!)
 
         cache.writeQuery({ query: ANIME_PAGE_QUERY, data: cachedData })
       },
@@ -177,13 +179,13 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     anilistId: number,
     status: MediaListStatus,
   ): Promise<UpdateStatusMutation['UpdateStatus']> {
-    const listEntry = await this.getMediaListEntry(anilistId)
+    const listEntry = await this.GetListEntry(anilistId)
     const oldValues: Pick<
       AniListEntryFragment,
       'id' | 'repeat' | 'score' | 'progress'
     > = {
       id: oc(listEntry).id(0),
-      repeat: oc(listEntry).repeat(0),
+      repeat: oc(listEntry).rewatched(0),
       score: oc(listEntry).score(0),
       progress: oc(listEntry).progress(0),
     }
@@ -209,10 +211,10 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public async StartRewatching(
     anilistId: number,
   ): Promise<StartRewatchingMutation['StartRewatching']> {
-    const listEntry = await this.getMediaListEntry(anilistId)
+    const listEntry = await this.GetListEntry(anilistId)
     const oldValues: Pick<AniListEntryFragment, 'id' | 'repeat' | 'score'> = {
       id: oc(listEntry).id(0),
-      repeat: oc(listEntry).repeat(0),
+      repeat: oc(listEntry).rewatched(0),
       score: oc(listEntry).score(0),
     }
 
@@ -240,14 +242,14 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     progress: number,
     provider: Provider,
   ): Promise<UpdateProgressMutation['UpdateProgress']> {
-    const listEntry = await this.getMediaListEntry(anilistId)
+    const listEntry = await this.GetListEntry(anilistId)
     const oldValues: Pick<
       AniListEntryFragment,
       'id' | 'score' | 'repeat' | 'status'
     > = {
       id: oc(listEntry).id(0),
       score: oc(listEntry).score(0),
-      repeat: oc(listEntry).repeat(0),
+      repeat: oc(listEntry).rewatched(0),
       status: oc(listEntry).status(MediaListStatus.Current),
     }
 
@@ -287,14 +289,14 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     anilistId: number,
     score: number,
   ): Promise<UpdateScoreMutation['UpdateScore']> {
-    const listEntry = await this.getMediaListEntry(anilistId)
+    const listEntry = await this.GetListEntry(anilistId)
     const oldValues: Pick<
       AniListEntryFragment,
       'id' | 'progress' | 'repeat' | 'status'
     > = {
       id: oc(listEntry).id(0),
       progress: oc(listEntry).progress(0),
-      repeat: oc(listEntry).repeat(0),
+      repeat: oc(listEntry).rewatched(0),
       status: oc(listEntry).status(MediaListStatus.Completed),
     }
 

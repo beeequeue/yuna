@@ -14,7 +14,7 @@ query WatchingQuery($userId: Int!) {
             site
             url
           }
-          mediaListEntry {
+          listEntry @client {
             id
             status
           }

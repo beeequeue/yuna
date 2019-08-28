@@ -147,11 +147,6 @@ export default class Queue extends Vue {
   })
   public animes!: QueueAnime[]
 
-  public gridOptions = {
-    animation: 150,
-    handle: '.handle-wrapper',
-  }
-
   public $refs!: {
     container: HTMLDivElement
   }
@@ -311,7 +306,7 @@ export default class Queue extends Vue {
     )
 
     const data = this.animes.map(anime =>
-      pick(anime, ['id', 'externalLinks', 'mediaListEntry']),
+      pick(anime, ['id', 'externalLinks', 'listEntry']),
     )
 
     if (!existsSync(this.defaultBackupPath)) {

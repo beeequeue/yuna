@@ -14,7 +14,7 @@ query PausedQuery($userId: Int!) {
             site
             url
           }
-          mediaListEntry {
+          listEntry @client {
             id
             status
           }

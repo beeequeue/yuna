@@ -5,9 +5,10 @@ import { EpisodesResolver } from './episodes'
 import {
   AddToList,
   DeleteFromList,
+  GetListEntry,
+  StartRewatching,
   UpdateProgress,
   UpdateStatus,
-  StartRewatching,
 } from './list-entry'
 
 export const resolvers = {
@@ -16,6 +17,7 @@ export const resolvers = {
   },
   Media: {
     scoreMal: scoreMalResolver,
+    listEntry: GetListEntry,
   },
   Episode: {
     isWatched: isWatchedResolver,

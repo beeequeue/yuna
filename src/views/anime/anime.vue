@@ -81,10 +81,10 @@ import CenterContainer from './components/center-container.vue'
 import Relations from './components/relations.vue'
 import EditModal from './modals/edit-modal.vue'
 
-import EPISODE_LIST from '@/common/queries/episode-list.graphql'
+import { EPISODE_LIST } from '@/graphql/documents/queries'
 import ANIME_QUERY from './anime.graphql'
 import {
-  AnimeViewMediaListEntry,
+  AnimeViewListEntry,
   AnimeViewQuery,
   AnimeViewVariables,
   EpisodeListEpisodes,
@@ -172,10 +172,8 @@ export default class Anime extends Vue {
     return shouldBlur && setting
   }
 
-  public getMediaListEntry(
-    data: AnimeViewQuery,
-  ): AnimeViewMediaListEntry | null {
-    return oc(data).anime.mediaListEntry(null)
+  public getMediaListEntry(data: AnimeViewQuery): AnimeViewListEntry | null {
+    return oc(data).anime.listEntry(null)
   }
 
   public getRelations = getRelations

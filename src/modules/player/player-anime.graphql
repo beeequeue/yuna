@@ -22,11 +22,11 @@ query PlayerAnime($id: Int!) {
         }
       }
     }
-    mediaListEntry {
+    listEntry @client {
       id
       status
       progress
-      score(format: POINT_100)
+      score
     }
   }
 }

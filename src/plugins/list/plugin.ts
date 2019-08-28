@@ -2,6 +2,7 @@ import { Store } from 'vuex'
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 import {
   AddToListMutation,
+  ListEntry,
   MediaListStatus,
   Provider,
   StartRewatchingMutation,
@@ -11,7 +12,7 @@ import {
 } from '@/graphql/types'
 
 export abstract class ListPlugin {
-  public abstract name: string
+  public abstract service: string
 
   protected readonly apollo: DollarApollo<any>
   protected readonly store: Store<any>
@@ -20,6 +21,8 @@ export abstract class ListPlugin {
     this.apollo = apollo
     this.store = store
   }
+
+  public abstract async GetListEntry(anilistId: number): Promise<ListEntry | null>
 
   public abstract async AddToList(
     anilistId: number,

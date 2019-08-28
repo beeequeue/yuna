@@ -123,7 +123,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 import { mdiChevronDown, mdiMenu } from '@mdi/js'
 
-import EPISODE_LIST from '@/common/queries/episode-list.graphql'
+import { EPISODE_LIST } from "@/graphql/documents/queries"
 import { setProgress } from '@/common/mutations/episodes'
 import { startRewatching, updateStatus } from '@/common/mutations/list-entry'
 import {
@@ -228,7 +228,7 @@ export default class QueueItem extends Vue {
   public capitalize = capitalize
 
   public get listEntry() {
-    return oc(this.anime).mediaListEntry(null)
+    return oc(this.anime).listEntry(null)
   }
 
   public get status() {
@@ -266,7 +266,7 @@ export default class QueueItem extends Vue {
   }
 
   public async statusMutation(status: MediaListStatus) {
-    const listEntryId = oc(this.anime).mediaListEntry.id()
+    const listEntryId = oc(this.anime).listEntry.id()
 
     if (isNil(listEntryId)) {
       return sendErrorToast(this.$store, 'No entry found..?')

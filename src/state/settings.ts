@@ -8,6 +8,7 @@ import Vue from 'vue'
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
 
+import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
 import { userStore } from '@/lib/user'
 import {
   DISCORD_DISABLE_RICH_PRESENCE,
@@ -88,6 +89,7 @@ export interface SettingsState {
   spoilers: SpoilerSettings
   externalPlayers: ExternalPlayerPaths
   localFilesFolder: string | null
+  mainListPlugin: string
   setup: SetupSettings
   window: Electron.Rectangle
 }
@@ -158,8 +160,12 @@ const initialState: SettingsState = {
   spoilers: SettingsStore.get('spoilers', { ...defaultSpoilers }),
   externalPlayers: SettingsStore.get('externalPlayers', { vlc: null }),
   localFilesFolder: SettingsStore.get('localFilesFolder', null),
-  window: SettingsStore.get('window', {}),
+  mainListPlugin: SettingsStore.get(
+    'mainListPlugin',
+    AnilistListPlugin.service,
+  ),
   setup: SettingsStore.get('setup', { finishedSteps: [...defaultSteps] }),
+  window: SettingsStore.get('window', {}),
 }
 
 SettingsStore.set(initialState)
@@ -245,6 +251,10 @@ export const settings = {
       if (!remainingSteps) return null
 
       return remainingSteps[0]
+    },
+
+    getMainListPlugin(state: SettingsState) {
+      return state.mainListPlugin
     },
   },
 
@@ -395,6 +405,10 @@ export const settings = {
       state.setup.finishedSteps.splice(index, 1)
       SettingsStore.set('setup.finishedSteps', state.setup.finishedSteps)
     },
+
+    setMainListPlugin(state: SettingsState, service: string) {
+      state.mainListPlugin = service
+    },
   },
 
   actions: {
@@ -426,6 +440,7 @@ export const getHasFinishedSetup = read(settings.getters.getHasFinishedSetup)
 export const getNextUnfinishedStep = read(
   settings.getters.getNextUnfinishedStep,
 )
+export const getMainListPlugin = read(settings.getters.getMainListPlugin)
 
 export const setEpisodeFeedMode = commit(settings.mutations.setEpisodeFeedMode)
 const _setCrunchyrollLocale = commit(settings.mutations._setCrunchyrollLocale)
@@ -443,6 +458,7 @@ export const setDiscordRichPresence = commit(
 )
 export const addFinishedStep = commit(settings.mutations.addFinishedStep)
 export const removeFinishedStep = commit(settings.mutations.removeFinishedStep)
+export const setMainListPlugin = commit(settings.mutations.setMainListPlugin)
 
 export const setCrunchyrollLocale = dispatch(
   settings.actions.setCrunchyrollLocale,

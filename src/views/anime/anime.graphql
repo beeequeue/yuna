@@ -39,12 +39,12 @@ query AnimeView($id: Int) {
         }
       }
     }
-    mediaListEntry {
+    listEntry @client {
       id
       progress
       status
-      score(format: POINT_100)
-      repeat
+      score
+      rewatched
     }
   }
 }

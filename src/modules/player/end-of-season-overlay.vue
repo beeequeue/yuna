@@ -38,8 +38,7 @@ import { mdiStar, mdiStarOutline } from '@mdi/js'
 
 import { updateScore } from '@/common/mutations/list-entry'
 import {
-  AnimeViewNextAiringEpisode,
-  PlayerAnimeMediaListEntry,
+  AnimeViewNextAiringEpisode, PlayerAnimeListEntry,
 } from '@/graphql/types'
 
 import { Required } from '@/decorators'
@@ -53,7 +52,7 @@ import Icon from '@/common/components/icon.vue'
   components: { AnimeBanner, CButton, Icon },
 })
 export default class EndOfSeasonOverlay extends Vue {
-  @Prop(Object) public listEntry!: PlayerAnimeMediaListEntry | null
+  @Prop(Object) public listEntry!: PlayerAnimeListEntry | null
   @Required(Array) public sequels!: Sequel[]
   @Required(Number) public episodeNumber!: number
   @Prop(Number) public episodesInAnime!: number | null

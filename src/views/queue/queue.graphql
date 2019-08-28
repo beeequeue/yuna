@@ -19,12 +19,12 @@ query Queue($ids: [Int!]!) {
         site
         url
       }
-      mediaListEntry {
+      listEntry @client {
         id
         progress
         status
-        repeat
-        score(format: POINT_100)
+        rewatched
+        score
       }
     }
   }

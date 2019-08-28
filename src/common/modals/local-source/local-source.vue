@@ -159,7 +159,7 @@ export default class LocalSourceModal extends Vue {
       })
     }
 
-    const progress = oc(this.anime).mediaListEntry.progress(0)
+    const progress = oc(this.anime).listEntry.progress(0)
 
     const episodes = files.map<EpisodeListEpisodes>((file, index) => ({
       __typename: 'Episode',

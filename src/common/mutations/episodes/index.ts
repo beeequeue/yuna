@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import { oc } from 'ts-optchain'
 
-import EPISODE_LIST_QUERY from '@/common/queries/episode-list.graphql'
+import { EPISODE_LIST } from "@/graphql/documents/queries"
 import CACHE_EPISODES from './cache-episodes.graphql'
 import {
   AniListEntryFragment,
@@ -106,7 +106,7 @@ export const cacheEpisodes = async (
     } as CacheEpisodesVariables,
     refetchQueries: [
       {
-        query: EPISODE_LIST_QUERY,
+        query: EPISODE_LIST,
         variables: {
           id: animeId,
           provider,

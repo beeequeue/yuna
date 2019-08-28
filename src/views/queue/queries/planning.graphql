@@ -14,7 +14,7 @@ query PlanningQuery($userId: Int!) {
             site
             url
           }
-          mediaListEntry {
+          listEntry @client {
             id
             status
           }
