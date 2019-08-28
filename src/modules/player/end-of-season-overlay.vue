@@ -36,7 +36,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { format, formatDistance } from 'date-fns'
 import { mdiStar, mdiStarOutline } from '@mdi/js'
 
-import { updateScore } from '@/common/mutations/list-entry'
+import { updateScore } from '@/graphql/mutations/list-entry'
 import {
   AnimeViewNextAiringEpisode,
   PlayerAnimeListEntry,

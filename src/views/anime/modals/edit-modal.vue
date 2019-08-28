@@ -79,7 +79,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiCloseCircle } from '@mdi/js'
-import { deleteFromList } from '@/common/mutations/list-entry'
+
+import { deleteFromList } from '@/graphql/mutations/list-entry'
 import { EDIT_LIST_ENTRY } from '@/graphql/documents/mutations'
 import {
   EditListEntryMutation,
