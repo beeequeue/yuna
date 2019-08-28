@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import { oc } from 'ts-optchain'
 
 import { EPISODE_LIST } from '@/graphql/documents/queries'
-import CACHE_EPISODES from './cache-episodes.graphql'
+import { CACHE_EPISODES } from '@/graphql/documents/mutations'
 import {
   CacheEpisodesMutation,
   CacheEpisodesVariables,

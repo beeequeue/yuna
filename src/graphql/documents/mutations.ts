@@ -66,3 +66,9 @@ export const EDIT_LIST_ENTRY = gql`
 
   ${LIST_ENTRY_FRAGMENT}
 `
+
+export const CACHE_EPISODES = gql`
+  mutation CacheEpisodes($episodes: [EpisodeInput!]!) {
+    CacheEpisodes(episodes: $episodes) @client
+  }
+`

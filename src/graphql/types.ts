@@ -4041,28 +4041,6 @@ export type LocalSourceAnimeQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type CacheEpisodesMutationVariables = {
-  episodes: Array<EpisodeInput>
-}
-
-export type CacheEpisodesMutation = { __typename?: 'Mutation' } & Pick<
-  Mutation,
-  'CacheEpisodes'
->
-
-export type CacheEpisodesAiringQueryVariables = {
-  id: Scalars['Int']
-}
-
-export type CacheEpisodesAiringQuery = { __typename?: 'Query' } & {
-  AiringSchedule: Maybe<
-    { __typename?: 'AiringSchedule' } & Pick<
-      AiringSchedule,
-      'id' | 'episode' | 'airingAt'
-    >
-  >
-}
-
 export type ListEntryFragment = { __typename?: 'ListEntry' } & Pick<
   ListEntry,
   'id' | 'mediaId' | 'score' | 'progress' | 'status' | 'rewatched'
@@ -4138,6 +4116,15 @@ export type EditListEntryMutation = { __typename?: 'Mutation' } & {
   EditListEntry: { __typename?: 'ListEntry' } & ListEntryFragment
 }
 
+export type CacheEpisodesMutationVariables = {
+  episodes: Array<EpisodeInput>
+}
+
+export type CacheEpisodesMutation = { __typename?: 'Mutation' } & Pick<
+  Mutation,
+  'CacheEpisodes'
+>
+
 export type MediaListEntryFromMediaIdQueryVariables = {
   mediaId: Scalars['Int']
   userId: Scalars['Int']
@@ -4170,6 +4157,19 @@ export type EpisodeListQuery = { __typename?: 'Query' } & {
         | 'thumbnail'
         | 'isWatched'
       >
+    >
+  >
+}
+
+export type CacheEpisodesAiringQueryVariables = {
+  id: Scalars['Int']
+}
+
+export type CacheEpisodesAiringQuery = { __typename?: 'Query' } & {
+  AiringSchedule: Maybe<
+    { __typename?: 'AiringSchedule' } & Pick<
+      AiringSchedule,
+      'id' | 'episode' | 'airingAt'
     >
   >
 }
@@ -4794,11 +4794,6 @@ export type LocalSourceAnimeTitle = NonNullable<
 export type LocalSourceAnimeListEntry = NonNullable<
   (NonNullable<LocalSourceAnimeQuery['anime']>)['listEntry']
 >
-export type CacheEpisodesVariables = CacheEpisodesMutationVariables
-export type CacheEpisodesAiringVariables = CacheEpisodesAiringQueryVariables
-export type CacheEpisodesAiringAiringSchedule = NonNullable<
-  CacheEpisodesAiringQuery['AiringSchedule']
->
 export type MediaListEntryListEntry = ListEntryFragment
 export type AddToListVariables = AddToListMutationVariables
 export type AddToListAddToList = ListEntryFragment
@@ -4813,11 +4808,16 @@ export type UpdateScoreUpdateScore = ListEntryFragment
 export type DeleteFromListVariables = DeleteFromListMutationVariables
 export type EditListEntryVariables = EditListEntryMutationVariables
 export type EditListEntryEditListEntry = ListEntryFragment
+export type CacheEpisodesVariables = CacheEpisodesMutationVariables
 export type MediaListEntryFromMediaIdVariables = MediaListEntryFromMediaIdQueryVariables
 export type MediaListEntryFromMediaIdMediaList = AniListEntryFragment
 export type EpisodeListVariables = EpisodeListQueryVariables
 export type EpisodeListEpisodes = NonNullable<
   (NonNullable<EpisodeListQuery['episodes']>)[0]
+>
+export type CacheEpisodesAiringVariables = CacheEpisodesAiringQueryVariables
+export type CacheEpisodesAiringAiringSchedule = NonNullable<
+  CacheEpisodesAiringQuery['AiringSchedule']
 >
 export type PlayerAnimeVariables = PlayerAnimeQueryVariables
 export type PlayerAnimeAnime = NonNullable<PlayerAnimeQuery['anime']>

@@ -28,7 +28,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 
 import ExternalPlayer from '@/modules/player/external-player.vue'
-import { setProgress } from '@/common/mutations/list-entry'
+import { setProgress } from '@/graphql/mutations/list-entry'
 import ANIME_QUERY from './player-anime.graphql'
 import { EPISODE_LIST } from '@/graphql/documents/queries'
 import {
