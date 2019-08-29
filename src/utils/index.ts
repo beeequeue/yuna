@@ -58,13 +58,13 @@ export const responseIsError = (
   return !!(oc(res) as any).body.error() || !!oc(res).error()
 }
 
+const add0ToNumber = (num: number) => num.toString().replace(/^(\d)$/, '0$1')
+
 export const secondsToTimeString = (input: number) => {
   const minutes = Math.floor(input / 60)
-  const seconds = input - minutes * 60
+  const seconds = input % 60
 
-  return `${minutes < 10 ? '0' : ''}${minutes}:${
-    seconds < 10 ? '0' : ''
-  }${seconds}`
+  return `${add0ToNumber(minutes)}:${add0ToNumber(seconds)}`
 }
 
 interface MediaListEntry {
