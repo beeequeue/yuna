@@ -20,10 +20,6 @@ export default class LoginAl extends Vue {
 
   public alLogo = anilistLogoSvg
 
-  public handleChange(key: keyof this, value: any) {
-    this[key] = value
-  }
-
   public login() {
     this.loginAnilist()
   }
