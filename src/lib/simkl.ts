@@ -235,6 +235,22 @@ export class Simkl {
     }
   }
 
+  public static simklStatusFromMediaStatus(status: MediaListStatus) {
+    switch (status) {
+      case MediaListStatus.Planning:
+        return 'plantowatch'
+      case MediaListStatus.Completed:
+        return 'watched'
+      case MediaListStatus.Repeating:
+      case MediaListStatus.Current:
+        return 'watching'
+      case MediaListStatus.Dropped:
+        return 'notinteresting'
+      case MediaListStatus.Paused:
+        return 'hold'
+    }
+  }
+
   public static async getAnidbID(malId: number) {
     const response = await this.request<_ShowFull[]>('search/id', {
       query: {

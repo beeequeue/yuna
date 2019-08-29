@@ -32,7 +32,10 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
     return oc(response).data.Media.idMal() || null
   }
 
-  private fromWatchedInfo(anilistId: number, data: SimklListEntry | null): ListEntry {
+  private fromWatchedInfo(
+    anilistId: number,
+    data: SimklListEntry | null,
+  ): ListEntry {
     if (isNil(data)) return null
 
     return {
@@ -58,17 +61,7 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
   public async AddToList(
     anilistId: number,
   ): Promise<AddToListMutation['AddToList']> {
-    const malId = await this.getMALId(anilistId)
-
-    if (isNil(malId)) {
-      throw new Error('Could not find necessary data to add item to list.')
-    }
-
-    await Simkl.addItemToList(malId, 'plantowatch')
-
-    const item = await Simkl.watchedInfo(malId)
-
-    return this.fromWatchedInfo(anilistId, item)
+    return this.UpdateStatus(anilistId, MediaListStatus.Planning)
   }
 
   public async DeleteFromList(anilistId: number): Promise<boolean> {
@@ -103,6 +96,16 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
     anilistId: number,
     status: MediaListStatus,
   ): Promise<UpdateStatusMutation['UpdateStatus']> {
-    return undefined
+    const malId = await this.getMALId(anilistId)
+
+    if (isNil(malId)) {
+      throw new Error('Could not find necessary data to add item to list.')
+    }
+
+    await Simkl.addItemToList(malId, Simkl.simklStatusFromMediaStatus(status))
+
+    const item = await Simkl.watchedInfo(malId)
+
+    return this.fromWatchedInfo(anilistId, item)
   }
 }
