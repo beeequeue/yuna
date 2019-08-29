@@ -433,7 +433,7 @@ export class Simkl {
     })
 
     if (responseIsError(response)) {
-      throw new Error('Could not delete item from List.')
+      throw new Error('Could not delete item from Simkl List.')
     }
 
     const index = this.watchlist.findIndex(
@@ -444,6 +444,26 @@ export class Simkl {
     }
 
     return true
+  }
+
+  /***
+   * @param rating Rating in 0-10 format
+   * @param malId
+   */
+  public static async addRating(malId: number, rating: number) {
+    const response = await this.request('sync/ratings', {
+      type: 'post',
+      body: {
+        shows: [{
+          ids: { mal: malId },
+          rating,
+        }],
+      },
+    })
+
+    if (responseIsError(response)) {
+      throw new Error('Could not update Simkl rating.')
+    }
   }
 
   private static async request<B extends {} = any, Q extends {} = any>(

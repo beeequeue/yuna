@@ -107,7 +107,25 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
     anilistId: number,
     score: number,
   ): Promise<UpdateScoreMutation['UpdateScore']> {
-    return undefined
+    const malId = await this.getMALId(anilistId)
+    const rating = Math.round(score / 10)
+
+    if (isNil(malId)) {
+      throw new Error('Could not find necessary data to add item to list.')
+    }
+
+    await Simkl.addRating(malId, rating)
+
+    const item = await Simkl.watchedInfo(malId)
+
+    if (isNil(item)) {
+      throw new Error('Failed to update item.')
+    }
+
+    return this.fromWatchedInfo(anilistId, {
+      ...item,
+      user_rating: rating
+    })
   }
 
   public async UpdateStatus(
