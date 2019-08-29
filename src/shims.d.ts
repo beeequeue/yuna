@@ -1,3 +1,7 @@
+declare type UnPromisify<T> = T extends Promise<infer R> ? R : T
+
+declare type PromiseReturnType<T> = T extends () => Promise<infer R> ? R : T
+
 declare interface Level {
   attrs: {
     BANDWIDTH: number

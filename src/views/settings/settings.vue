@@ -236,6 +236,8 @@
         <connection type="crunchyroll" :setCurrentWindow="setCurrentWindow" />
 
         <connection type="hidive" :setCurrentWindow="setCurrentWindow" />
+
+        <connection type="simkl" :setCurrentWindow="setCurrentWindow" />
       </section>
     </div>
 
@@ -249,6 +251,11 @@
 
           <login-h-d
             v-if="currentWindow === Window.Hidive"
+            :onFinished="() => setCurrentWindow(null)"
+          />
+
+          <login-simkl
+            v-if="currentWindow === Window.Simkl"
             :onFinished="() => setCurrentWindow(null)"
           />
         </div>
@@ -289,9 +296,11 @@ import {
 
 import LoginHD from '@/common/components/login/hidive.vue'
 import LoginCR from '@/common/components/login/crunchyroll.vue'
+import LoginSimkl from '@/common/components/login/simkl.vue'
 import Checkbox from '@/common/components/form/checkbox.vue'
 import CButton from '@/common/components/button.vue'
 import Icon from '@/common/components/icon.vue'
+// @ts-ignore
 import Dropdown, { DropdownItem } from '@/common/components/form/dropdown.vue'
 import Connection from './components/connection.vue'
 import Keybinding from './components/keybinding.vue'
@@ -322,12 +331,14 @@ import { getFilePath, getFolderPath } from '@/utils/paths'
 enum Window {
   Crunchyroll = 'Crunchyroll',
   Hidive = 'Hidive',
+  Simkl = 'Simkl',
 }
 
 @Component({
   components: {
     LoginCR,
     LoginHD,
+    LoginSimkl,
     Dropdown,
     Connection,
     CButton,

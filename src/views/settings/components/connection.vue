@@ -23,6 +23,7 @@ import { mdiLinkVariant, mdiLinkVariantOff } from '@mdi/js'
 import crIcon from '@/assets/crunchyroll.svg'
 import alIcon from '@/assets/anilist.svg'
 import hidiveIcon from '@/assets/hidive.svg'
+import simklIcon from '@/assets/simkl.svg'
 import CButton from '@/common/components/button.vue'
 
 import { Required } from '@/decorators'
@@ -31,6 +32,7 @@ import { getIsConnectedTo, getFinishedConnecting } from '@/state/auth'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { Anilist } from '@/lib/anilist'
 import { Hidive } from '@/lib/hidive'
+import { Simkl } from '@/lib/simkl'
 import { capitalize } from '@/utils'
 
 @Component({ components: { CButton } })
@@ -66,6 +68,10 @@ export default class Connection extends Vue {
       case 'hidive':
         await Hidive.disconnect(this.$store)
         break
+
+      case 'simkl':
+        await Simkl.disconnect(this.$store)
+        break
     }
 
     if (!getFinishedConnecting(this.$store)) {
@@ -82,6 +88,8 @@ export default class Connection extends Vue {
         return alIcon
       case 'hidive':
         return hidiveIcon
+      case 'simkl':
+        return simklIcon
     }
   }
 

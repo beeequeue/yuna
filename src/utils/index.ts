@@ -416,3 +416,23 @@ export const debounce = <P extends Array<any>>(
     }
   }
 }
+
+export const countdown = (
+  seconds: number,
+  fn: (secondsLeft: number) => void,
+) => {
+  let _seconds = seconds
+
+  fn(_seconds)
+
+  const interval = window.setInterval(() => {
+    _seconds--
+
+    if (_seconds < 0) {
+      window.clearInterval(interval)
+      return
+    }
+
+    fn(_seconds)
+  }, 1000)
+}
