@@ -120,7 +120,14 @@ import { getAnilistUsername } from '@/state/auth'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
 import { DISCORD_PAUSE_WATCHING, DISCORD_SET_WATCHING } from '@/messages'
 import { Levels, Stream } from '@/types'
-import { capitalize, clamp, getRelations, isNil, lastItem } from '@/utils'
+import {
+  capitalize,
+  clamp,
+  getRelations,
+  isCrunchyroll,
+  isNil,
+  lastItem,
+} from '@/utils'
 
 import Icon from '@/common/components/icon.vue'
 import Controls from './controls.vue'
@@ -458,11 +465,15 @@ export default class Player extends Vue {
     ) {
       this.lastScrobble = this.progressInSeconds
 
-      if (this.playerData.provider === Provider.Crunchyroll) {
+      if (isCrunchyroll(this.playerData.provider)) {
         Crunchyroll.setProgressOfEpisode(
           Number(this.episode.id),
           this.progressInSeconds,
-        )
+        ).catch(() => {
+          // If it fails to set progress, set lastScrobble to duration
+          // to stop it trying again for this episode.
+          this.lastScrobble = this.duration
+        })
       }
     }
 
@@ -477,7 +488,7 @@ export default class Player extends Vue {
       this.softEnded = true
       this.lastScrobble = this.duration
 
-      if (this.playerData.provider === Provider.Crunchyroll) {
+      if (isCrunchyroll(this.playerData.provider) && this.lastScrobble !== this.duration) {
         Crunchyroll.setProgressOfEpisode(Number(this.episode.id), this.duration)
       }
 
@@ -554,8 +565,7 @@ export default class Player extends Vue {
 
   public pause() {
     if (this.paused) return
-
-    (this.$refs.controls as any).goVisible()
+    ;(this.$refs.controls as any).goVisible()
     this.$refs.player.pause()
   }
 

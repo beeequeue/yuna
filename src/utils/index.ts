@@ -26,9 +26,9 @@ import {
   Provider,
 } from '@/graphql/types'
 import { StreamingSource } from '@/types'
-import Filter = Electron.Filter
 import { ActionContext, Store } from 'vuex'
 import { getIsConnectedTo } from '@/state/auth'
+import Filter = Electron.Filter
 
 export const NO_OP = () => {
   /* no-op */
@@ -315,6 +315,9 @@ export const getDefaultProvider = (
 
   return stripFalsy(supportedProviders)[0] || Provider.Crunchyroll
 }
+
+export const isCrunchyroll = (provider: Provider) =>
+  [Provider.CrunchyrollManual, Provider.Crunchyroll].includes(provider)
 
 // Ramda replacements
 export const T = () => true
