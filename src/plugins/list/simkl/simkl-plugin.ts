@@ -18,8 +18,8 @@ import { Simkl } from '@/lib/simkl'
 export class SimklListPlugin extends ListPlugin implements ListPlugin {
   public static service = 'simkl'
   public service = 'simkl'
-  public static type = ListPluginType.Simple
-  public type = ListPluginType.Simple
+  public static type = ListPluginType.Full
+  public type = ListPluginType.Full
 
   private async getMALId(anilistId: number) {
     const response = await this.apollo.query<MalIdFromAnilistIdQuery>({
@@ -50,7 +50,7 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
     return undefined
   }
 
-  public async DeleteFromList(entryId: number): Promise<boolean> {
+  public async DeleteFromList(anilistId: number): Promise<boolean> {
     return undefined
   }
 

@@ -37,7 +37,7 @@ export abstract class ListPlugin {
     anilistId: number,
   ): Promise<AddToListMutation['AddToList']>
 
-  public abstract async DeleteFromList(entryId: number): Promise<boolean>
+  public abstract async DeleteFromList(anilistId: number): Promise<boolean>
 
   public abstract async UpdateStatus(
     anilistId: number,
