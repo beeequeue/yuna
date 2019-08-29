@@ -29,7 +29,7 @@ import {
   UpdateScoreMutation,
   UpdateStatusMutation,
 } from '@/graphql/types'
-import { ListPlugin } from '@/plugins/list/plugin'
+import { ListPlugin, ListPluginType } from '@/plugins/list/plugin'
 import { isNil } from '@/utils'
 import {
   ANILIST_CREATE_ENTRY,
@@ -48,6 +48,8 @@ type ListEntry = AddToListMutation['AddToList']
 export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public static service = 'anilist'
   public service = 'anilist'
+  public static type = ListPluginType.Full
+  public type = ListPluginType.Full
 
   constructor(apollo: DollarApollo<any>, store: Store<any>) {
     super(apollo, store)
