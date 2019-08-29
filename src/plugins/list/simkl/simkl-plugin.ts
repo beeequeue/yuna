@@ -31,7 +31,17 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
   }
 
   public async GetListEntry(anilistId: number): Promise<ListEntry | null> {
-    return undefined
+    const malId = await this.getMALId(anilistId)
+    const watchedInfo = await Simkl.watchedInfo(malId!)
+
+    return {
+      id: watchedInfo.show.ids.simkl,
+      mediaId: anilistId,
+      progress: watchedInfo.watched_episodes_count,
+      rewatched: 0,
+      score: watchedInfo.user_rating * 10,
+      status: Simkl.statusFromSimklStatus(watchedInfo.status),
+    }
   }
 
   public async AddToList(

@@ -6,6 +6,7 @@ import { getConfig } from '@/config'
 import { isNil, RequestError, RequestSuccess } from '@/utils'
 import { Store } from 'vuex'
 import { setSimkl } from '@/state/auth'
+import { MediaListStatus } from '@/graphql/types'
 
 interface _Show {
   title: string
@@ -125,6 +126,48 @@ interface _SyncHistory {
   }
 }
 
+interface _SyncAllItems {
+  shows: unknown[]
+  movies: unknown[]
+  anime: SimklListEntry[]
+}
+
+type SimklStatus =
+  | 'plantowatch'
+  | 'watched'
+  | 'watching'
+  | 'notinteresting'
+  | 'hold'
+
+interface _SyncWatched {
+  mal: number
+  result: boolean
+  list: SimklStatus
+  last_watched: '2019-08-29T17:18:26.000Z'
+}
+
+interface SimklListEntry {
+  last_watched_at: string
+  user_rating: number
+  status: SimklStatus
+  last_watched: string | null
+  next_to_watch: string | null
+  watched_episodes_count: number
+  total_episodes_count: number
+  not_aired_episodes_count: number
+  show: {
+    title: string
+    poster: string
+    year: number
+    ids: {
+      simkl: number
+      imdb: string
+      mal: string
+      anidb: string
+    }
+  }
+}
+
 interface SimklQuery {
   extended?: 'full'
 }
@@ -140,7 +183,53 @@ const responseIsError = (
 }
 
 export class Simkl {
+  private static watchlist: SimklListEntry[] = []
+  private static lastUpdate = 0
+
+  private static async updateWatchlist() {
+    const response = await Simkl.request<
+      _SyncAllItems,
+      SimklQuery & { date_from: string }
+    >('sync/all-items', {
+      type: 'post',
+      body: { date_from: new Date(this.lastUpdate).toISOString() },
+    })
+
+    if (responseIsError(response)) {
+      throw new Error('Could not update Simkl watchlist')
+    }
+
+    const updatedItems = response.body.anime
+
+    updatedItems.forEach(item => {
+      const index = this.watchlist.findIndex(
+        listItem => listItem.show.ids.simkl === item.show.ids.simkl,
+      )
+
+      if (index === -1) {
+        return this.watchlist.push(item)
+      }
+
+      this.watchlist[index] = item
+    })
+  }
+
   public static readonly clientId = getConfig('SIMKL_ID')
+
+  public static statusFromSimklStatus(status: SimklStatus) {
+    switch (status) {
+      case 'plantowatch':
+        return MediaListStatus.Planning
+      case 'watched':
+        return MediaListStatus.Completed
+      case 'watching':
+        return MediaListStatus.Current
+      case 'notinteresting':
+        return MediaListStatus.Dropped
+      case 'hold':
+        return MediaListStatus.Paused
+    }
+  }
 
   public static async getAnidbID(malId: number) {
     const response = await this.request<_ShowFull[]>('search/id', {
@@ -249,10 +338,7 @@ export class Simkl {
     }
   }
 
-  public static async addToWatchHistory(
-    malId: number,
-    episodeNumber: number,
-  ) {
+  public static async addToWatchHistory(malId: number, episodeNumber: number) {
     const response = await this.request<_SyncHistory>('', {
       type: 'post',
       body: {
@@ -275,6 +361,18 @@ export class Simkl {
 
   public static async disconnect(store: Store<any>) {
     setSimkl(store, null)
+  }
+
+  public static async watchedInfo(malId: number) {
+    await this.updateWatchlist()
+
+    const item = this.watchlist.find(item => item.show.ids.mal === malId)
+
+    if (isNil(item)) {
+      throw new Error('Could not find show on Simkl.')
+    }
+
+    return item
   }
 
   private static async request<B extends {} = any, Q extends SimklQuery = {}>(
