@@ -107,12 +107,13 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     anilistId: number,
   ): Promise<DeleteFromListMutation['DeleteFromList']> {
     const idResult = await this.apollo.query<MediaListEntryFromMediaIdQuery>({
+      fetchPolicy: 'cache-first',
+      errorPolicy: 'ignore',
       query: MEDIA_LIST_ENTRY_FROM_MEDIA_ID,
       variables: {
         mediaId: anilistId,
         userId: getAnilistUserId(this.store),
       } as MediaListEntryFromMediaIdVariables,
-      fetchPolicy: 'cache-first',
     })
 
     if (!isNil(idResult.errors)) throw new Error(idResult.errors[0].message)
