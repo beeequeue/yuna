@@ -56,3 +56,28 @@ export const DELETE_FROM_LIST = gql`
     DeleteFromList(anilistId: $anilistId) @client
   }
 `
+
+export const EDIT_LIST_ENTRY = gql`
+  mutation EditListEntry(
+    $id: Int!
+    $progress: Int!
+    $status: MediaListStatus!
+    $repeat: Int!
+    $score: Int!
+  ) {
+    SaveMediaListEntry(
+      id: $id
+      progress: $progress
+      status: $status
+      scoreRaw: $score
+      repeat: $repeat
+    ) {
+      id
+      score(format: POINT_100)
+      progress
+      status
+      repeat
+    }
+  }
+
+`

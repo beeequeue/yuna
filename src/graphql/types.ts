@@ -4076,6 +4076,23 @@ export type DeleteFromListMutation = { __typename?: 'Mutation' } & Pick<
   'DeleteFromList'
 >
 
+export type EditListEntryMutationVariables = {
+  id: Scalars['Int']
+  progress: Scalars['Int']
+  status: MediaListStatus
+  repeat: Scalars['Int']
+  score: Scalars['Int']
+}
+
+export type EditListEntryMutation = { __typename?: 'Mutation' } & {
+  SaveMediaListEntry: Maybe<
+    { __typename?: 'MediaList' } & Pick<
+      MediaList,
+      'id' | 'score' | 'progress' | 'status' | 'repeat'
+    >
+  >
+}
+
 export type MediaListEntryFromMediaIdQueryVariables = {
   mediaId: Scalars['Int']
   userId: Scalars['Int']
@@ -4379,23 +4396,6 @@ export type AnimeViewQuery = { __typename?: 'Query' } & {
           >
         >
       }
-  >
-}
-
-export type EditListEntryMutationVariables = {
-  id: Scalars['Int']
-  progress: Scalars['Int']
-  status: MediaListStatus
-  repeat: Scalars['Int']
-  score: Scalars['Int']
-}
-
-export type EditListEntryMutation = { __typename?: 'Mutation' } & {
-  SaveMediaListEntry: Maybe<
-    { __typename?: 'MediaList' } & Pick<
-      MediaList,
-      'id' | 'score' | 'progress' | 'status' | 'repeat'
-    >
   >
 }
 
@@ -4748,6 +4748,10 @@ export type UpdateProgressUpdateProgress = ListEntryFragment
 export type UpdateScoreVariables = UpdateScoreMutationVariables
 export type UpdateScoreUpdateScore = ListEntryFragment
 export type DeleteFromListVariables = DeleteFromListMutationVariables
+export type EditListEntryVariables = EditListEntryMutationVariables
+export type EditListEntrySaveMediaListEntry = NonNullable<
+  EditListEntryMutation['SaveMediaListEntry']
+>
 export type MediaListEntryFromMediaIdVariables = MediaListEntryFromMediaIdQueryVariables
 export type MediaListEntryFromMediaIdMediaList = AniListEntryFragment
 export type EpisodeListVariables = EpisodeListQueryVariables
@@ -4894,10 +4898,6 @@ export type AnimeView_Title = NonNullable<
 >
 export type AnimeViewListEntry = NonNullable<
   (NonNullable<AnimeViewQuery['anime']>)['listEntry']
->
-export type EditListEntryVariables = EditListEntryMutationVariables
-export type EditListEntrySaveMediaListEntry = NonNullable<
-  EditListEntryMutation['SaveMediaListEntry']
 >
 export type EpisodeFeedListIdsVariables = EpisodeFeedListIdsQueryVariables
 export type EpisodeFeedListIdsListCollection = NonNullable<
