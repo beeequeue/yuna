@@ -1,5 +1,3 @@
-import { DollarApollo } from 'vue-apollo/types/vue-apollo'
-import { Store } from 'vuex'
 import { oc } from 'ts-optchain'
 
 import {
@@ -50,10 +48,6 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public service = 'anilist'
   public static type = ListPluginType.Full
   public type = ListPluginType.Full
-
-  constructor(apollo: DollarApollo<any>, store: Store<any>) {
-    super(apollo, store)
-  }
 
   private fromMediaListEntry(
     mediaListEntry: AnilistSetStatusSaveMediaListEntry,

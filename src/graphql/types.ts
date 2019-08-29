@@ -4161,6 +4161,14 @@ export type EpisodeListQuery = { __typename?: 'Query' } & {
   >
 }
 
+export type MalIdFromAnilistIdQueryVariables = {
+  mediaId: Scalars['Int']
+}
+
+export type MalIdFromAnilistIdQuery = { __typename?: 'Query' } & {
+  Media: Maybe<{ __typename?: 'Media' } & Pick<Media, 'idMal'>>
+}
+
 export type CacheEpisodesAiringQueryVariables = {
   id: Scalars['Int']
 }
@@ -4814,6 +4822,10 @@ export type MediaListEntryFromMediaIdMediaList = AniListEntryFragment
 export type EpisodeListVariables = EpisodeListQueryVariables
 export type EpisodeListEpisodes = NonNullable<
   (NonNullable<EpisodeListQuery['episodes']>)[0]
+>
+export type MalIdFromAnilistIdVariables = MalIdFromAnilistIdQueryVariables
+export type MalIdFromAnilistIdMedia = NonNullable<
+  MalIdFromAnilistIdQuery['Media']
 >
 export type CacheEpisodesAiringVariables = CacheEpisodesAiringQueryVariables
 export type CacheEpisodesAiringAiringSchedule = NonNullable<

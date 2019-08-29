@@ -250,7 +250,7 @@ export class Simkl {
   }
 
   public static async addToWatchHistory(
-    anilistId: number,
+    malId: number,
     episodeNumber: number,
   ) {
     const response = await this.request<_SyncHistory>('', {
@@ -258,7 +258,7 @@ export class Simkl {
       body: {
         shows: [
           {
-            ids: { anilist: anilistId },
+            ids: { mal: malId },
             episodes: [{ number: episodeNumber }],
           },
         ],
