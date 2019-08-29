@@ -35,14 +35,14 @@ import { capitalize } from '@/utils'
 
 @Component({ components: { CButton } })
 export default class Connection extends Vue {
-  @Required(String) public type!: 'crunchyroll' | 'anilist' | 'hidive'
+  @Required(String) public type!: 'crunchyroll' | 'anilist' | 'hidive' | 'simkl'
   @Required(Function) public setCurrentWindow!: (window: string) => any
 
   public connectSvg = mdiLinkVariant
   public disconnectSvg = mdiLinkVariantOff
 
   public get isConnected() {
-    return getIsConnectedTo(this.$store)[this.type] === true
+    return getIsConnectedTo(this.$store)[this.type]
   }
 
   public get user() {
