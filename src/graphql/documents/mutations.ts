@@ -33,7 +33,8 @@ export const START_REWATCHING = gql`
 
 export const UPDATE_PROGRESS = gql`
   mutation UpdateProgress($anilistId: Int!, $progress: Int!) {
-    UpdateProgress(anilistId: $anilistId, progress: $progress) @client {
+    UpdateProgress(anilistId: $anilistId, progress: $progress
+    ) @client {
       ...ListEntry
     }
   }
