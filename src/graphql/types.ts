@@ -4272,9 +4272,7 @@ export type AnilistDeleteEntryMutation = { __typename?: 'Mutation' } & {
 }
 
 export type CachedAnimeListEntryFragment = { __typename?: 'Media' } & {
-  mediaListEntry: Maybe<
-    { __typename?: 'MediaList' } & Pick<MediaList, 'progress'>
-  >
+  listEntry: Maybe<{ __typename?: 'ListEntry' } & Pick<ListEntry, 'progress'>>
 }
 
 export type CachedMalIdFragment = { __typename?: 'Media' } & Pick<
@@ -4843,8 +4841,8 @@ export type AnilistDeleteEntryVariables = AnilistDeleteEntryMutationVariables
 export type AnilistDeleteEntryDeleteMediaListEntry = NonNullable<
   AnilistDeleteEntryMutation['DeleteMediaListEntry']
 >
-export type CachedAnimeListEntryMediaListEntry = NonNullable<
-  CachedAnimeListEntryFragment['mediaListEntry']
+export type CachedAnimeListEntryListEntry = NonNullable<
+  CachedAnimeListEntryFragment['listEntry']
 >
 export type CachedExternalLinksExternalLinks = NonNullable<
   (NonNullable<CachedExternalLinksFragment['externalLinks']>)[0]
