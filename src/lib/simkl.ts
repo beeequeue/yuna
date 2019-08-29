@@ -1,5 +1,6 @@
 import superagent from 'superagent/dist/superagent'
 import { oc } from 'ts-optchain'
+import { captureException } from '@sentry/browser'
 
 import { getConfig } from '@/config'
 import { isNil, RequestError, RequestSuccess } from '@/utils'
@@ -111,6 +112,19 @@ interface _UserSettings {
   }
 }
 
+interface _SyncHistory {
+  added: {
+    movies: number
+    shows: number
+    episodes: number
+  }
+  not_found: {
+    movies: unknown[]
+    shows: unknown[]
+    episodes: unknown[]
+  }
+}
+
 interface SimklQuery {
   extended?: 'full'
 }
@@ -129,8 +143,10 @@ export class Simkl {
   public static readonly clientId = getConfig('SIMKL_ID')
 
   public static async getAnidbID(malId: number) {
-    const response = await this.getRequest<_ShowFull[]>('search/id', false, {
-      mal: malId,
+    const response = await this.request<_ShowFull[]>('search/id', {
+      query: {
+        mal: malId,
+      },
     })
 
     if (responseIsError(response)) {
@@ -143,10 +159,9 @@ export class Simkl {
 
     if (isNil(simklId)) return null
 
-    const fullResponse = await this.getRequest<_ShowFull>(
-      `anime/${simklId}`,
-      true,
-    )
+    const fullResponse = await this.request<_ShowFull>(`anime/${simklId}`, {
+      full: true,
+    })
 
     if (responseIsError(fullResponse)) {
       throw new Error(
@@ -162,7 +177,7 @@ export class Simkl {
   }
 
   public static async getDeviceCode() {
-    const response = await this.getRequest<_OauthCode>('oauth/pin')
+    const response = await this.request<_OauthCode>('oauth/pin')
 
     if (responseIsError(response)) {
       throw new Error('Could not get code from Simkl!')
@@ -189,9 +204,7 @@ export class Simkl {
   }) {
     return new Promise(resolve => {
       const makeRequest = async () =>
-        this.getRequest<_OauthPinPending | _OauthPinFinished>(
-          `oauth/pin/${code}`,
-        )
+        this.request<_OauthPinPending | _OauthPinFinished>(`oauth/pin/${code}`)
 
       const intervalId = window.setInterval(async () => {
         const response = await makeRequest()
@@ -221,12 +234,9 @@ export class Simkl {
   }
 
   public static async getUserInfo(token: string) {
-    const response = await this.getRequest<_UserSettings>(
-      '/users/settings',
-      false,
-      {},
+    const response = await this.request<_UserSettings>('/users/settings', {
       token,
-    )
+    })
 
     if (responseIsError(response)) {
       throw new Error('Could not get User from Simkl!')
@@ -239,22 +249,58 @@ export class Simkl {
     }
   }
 
+  public static async addToWatchHistory(
+    anilistId: number,
+    episodeNumber: number,
+  ) {
+    const response = await this.request<_SyncHistory>('', {
+      type: 'post',
+      body: {
+        shows: [
+          {
+            ids: { anilist: anilistId },
+            episodes: [{ number: episodeNumber }],
+          },
+        ],
+      },
+    })
+
+    if (responseIsError(response) || response.body.not_found.shows.length > 0) {
+      if (oc(response).body.not_found.shows.length(0) < 1) {
+        captureException(response.error)
+      }
+      throw new Error('Could not scrobble progress to Simkl.')
+    }
+  }
+
   public static async disconnect(store: Store<any>) {
     setSimkl(store, null)
   }
 
-  private static async getRequest<
-    B extends {} = any,
-    Q extends SimklQuery = {}
-  >(path: string, full: boolean = false, query: Q = {} as Q, token?: string) {
+  private static async request<B extends {} = any, Q extends SimklQuery = {}>(
+    path: string,
+    {
+      type = 'get',
+      full = false,
+      query = {} as any,
+      body,
+      token,
+    }: {
+      type?: 'get' | 'post'
+      full?: boolean
+      query?: Q
+      body?: Q
+      token?: string
+    } = {},
+  ) {
     if (full) {
       query.extended = 'full'
     }
 
-    return (await superagent
-      .get(`${BASE_URL}/${path}`)
+    return (await superagent[type](`${BASE_URL}/${path}`)
       .set('simkl-api-key', this.clientId)
       .auth(token!, { type: 'bearer' })
-      .query(query)) as SimklResponse<B>
+      .query(query)
+      .send(body)) as SimklResponse<B>
   }
 }

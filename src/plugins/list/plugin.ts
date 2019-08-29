@@ -13,8 +13,8 @@ import {
 } from '@/graphql/types'
 
 export enum ListPluginType {
-  Full = "FULL", // Support all or almost all the states of AniList
-  Simple = "SIMPLE", // Only support watching, not watching
+  Full = 'FULL', // Support all or almost all the states of AniList
+  Simple = 'SIMPLE', // Only support watching, not watching
 }
 
 export abstract class ListPlugin {
