@@ -8,6 +8,13 @@ import { Store } from 'vuex'
 import { setSimkl } from '@/state/auth'
 import { MediaListStatus } from '@/graphql/types'
 
+type SimklListStatus =
+  | 'plantowatch'
+  | 'watched'
+  | 'watching'
+  | 'notinteresting'
+  | 'hold'
+
 interface _Show {
   title: string
   year: number
@@ -132,24 +139,21 @@ interface _SyncAllItems {
   anime: SimklListEntry[]
 }
 
-type SimklStatus =
-  | 'plantowatch'
-  | 'watched'
-  | 'watching'
-  | 'notinteresting'
-  | 'hold'
-
-interface _SyncWatched {
-  mal: number
-  result: boolean
-  list: SimklStatus
-  last_watched: '2019-08-29T17:18:26.000Z'
+interface _SyncAddToList {
+  movies?: unknown[]
+  shows: Array<{
+    to: SimklListStatus
+    ids: {
+      simkl?: number
+      mal?: number
+    }
+  }>
 }
 
-interface SimklListEntry {
+export interface SimklListEntry {
   last_watched_at: string
   user_rating: number
-  status: SimklStatus
+  status: SimklListStatus
   last_watched: string | null
   next_to_watch: string | null
   watched_episodes_count: number
@@ -216,7 +220,7 @@ export class Simkl {
 
   public static readonly clientId = getConfig('SIMKL_ID')
 
-  public static statusFromSimklStatus(status: SimklStatus) {
+  public static statusFromSimklStatus(status: SimklListStatus) {
     switch (status) {
       case 'plantowatch':
         return MediaListStatus.Planning
@@ -363,19 +367,48 @@ export class Simkl {
     setSimkl(store, null)
   }
 
-  public static async watchedInfo(malId: number) {
-    await this.updateWatchlist()
+  public static async watchedInfo(malId: number, skipUpdate?: true) {
+    if (!skipUpdate) {
+      await this.updateWatchlist()
+    }
 
-    const item = this.watchlist.find(item => item.show.ids.mal === malId)
+    const item = this.watchlist.find(
+      item => Number(item.show.ids.mal) === malId,
+    )
 
     if (isNil(item)) {
-      throw new Error('Could not find show on Simkl.')
+      return null
     }
 
     return item
   }
 
-  private static async request<B extends {} = any, Q extends SimklQuery = {}>(
+  public static async addItemToList(malId: number, list: SimklListStatus) {
+    const response = await this.request<
+      { added: _SyncAddToList },
+      _SyncAddToList
+    >('sync/add-to-list', {
+      type: 'post',
+      body: {
+        shows: [
+          {
+            to: list,
+            ids: {
+              mal: malId,
+            },
+          },
+        ],
+      },
+    })
+
+    if (responseIsError(response)) {
+      throw new Error('Could not add show to list.')
+    }
+
+    return response.body.added.shows[0]
+  }
+
+  private static async request<B extends {} = any, Q extends {} = any>(
     path: string,
     {
       type = 'get',
@@ -386,8 +419,8 @@ export class Simkl {
     }: {
       type?: 'get' | 'post'
       full?: boolean
-      query?: Q
-      body?: Q
+      query?: Q & SimklQuery
+      body?: Q & SimklQuery
       token?: string
     } = {},
   ) {

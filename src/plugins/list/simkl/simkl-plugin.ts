@@ -13,7 +13,8 @@ import {
   UpdateScoreMutation,
   UpdateStatusMutation,
 } from '@/graphql/types'
-import { Simkl } from '@/lib/simkl'
+import { Simkl, SimklListEntry } from '@/lib/simkl'
+import { isNil } from '@/utils'
 
 export class SimklListPlugin extends ListPlugin implements ListPlugin {
   public static service = 'simkl'
@@ -23,6 +24,7 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
 
   private async getMALId(anilistId: number) {
     const response = await this.apollo.query<MalIdFromAnilistIdQuery>({
+      fetchPolicy: 'cache-first',
       query: MAL_ID_FROM_ANILIST_ID,
       variables: { mediaId: anilistId } as MalIdFromAnilistIdQueryVariables,
     })
@@ -30,24 +32,43 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
     return oc(response).data.Media.idMal() || null
   }
 
-  public async GetListEntry(anilistId: number): Promise<ListEntry | null> {
-    const malId = await this.getMALId(anilistId)
-    const watchedInfo = await Simkl.watchedInfo(malId!)
+  private fromWatchedInfo(anilistId: number, data: SimklListEntry | null): ListEntry {
+    if (isNil(data)) return null
 
     return {
-      id: watchedInfo.show.ids.simkl,
+      id: data.show.ids.simkl,
       mediaId: anilistId,
-      progress: watchedInfo.watched_episodes_count,
+      progress: data.watched_episodes_count,
       rewatched: 0,
-      score: watchedInfo.user_rating * 10,
-      status: Simkl.statusFromSimklStatus(watchedInfo.status),
+      score: data.user_rating * 10,
+      status: Simkl.statusFromSimklStatus(data.status),
     }
+  }
+
+  public async GetListEntry(anilistId: number): Promise<ListEntry | null> {
+    const malId = await this.getMALId(anilistId)
+
+    if (isNil(malId)) return null
+
+    const item = await Simkl.watchedInfo(malId)
+
+    return this.fromWatchedInfo(anilistId, item)
   }
 
   public async AddToList(
     anilistId: number,
   ): Promise<AddToListMutation['AddToList']> {
-    return undefined
+    const malId = await this.getMALId(anilistId)
+
+    if (isNil(malId)) {
+      throw new Error('Could not find necessary data to add item to list.')
+    }
+
+    await Simkl.addItemToList(malId, 'plantowatch')
+
+    const item = await Simkl.watchedInfo(malId)
+
+    return this.fromWatchedInfo(anilistId, item)
   }
 
   public async DeleteFromList(anilistId: number): Promise<boolean> {
