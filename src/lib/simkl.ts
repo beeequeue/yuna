@@ -424,6 +424,28 @@ export class Simkl {
     return response.body.added.shows[0]
   }
 
+  public static async removeFromList(malId: number): Promise<boolean> {
+    const response = await this.request('sync/history/remove', {
+      type: 'post',
+      body: {
+        shows: [{ ids: { mal: malId } }],
+      },
+    })
+
+    if (responseIsError(response)) {
+      throw new Error('Could not delete item from List.')
+    }
+
+    const index = this.watchlist.findIndex(
+      item => Number(item.show.ids.mal) === malId,
+    )
+    if (index !== -1) {
+      this.watchlist.splice(index, 1)
+    }
+
+    return true
+  }
+
   private static async request<B extends {} = any, Q extends {} = any>(
     path: string,
     {

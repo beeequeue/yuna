@@ -68,7 +68,11 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
   }
 
   public async DeleteFromList(anilistId: number): Promise<boolean> {
-    return undefined
+    const malId = await this.getMALId(anilistId)
+
+    if (isNil(malId)) return true
+
+    return Simkl.removeFromList(malId)
   }
 
   public async StartRewatching(
