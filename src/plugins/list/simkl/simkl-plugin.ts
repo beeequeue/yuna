@@ -34,9 +34,8 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
 
   private fromWatchedInfo(
     anilistId: number,
-    data: SimklListEntry | null,
+    data: SimklListEntry,
   ): ListEntry {
-    if (isNil(data)) return null
 
     return {
       id: data.show.ids.simkl,
@@ -55,6 +54,10 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
 
     const item = await Simkl.watchedInfo(malId)
 
+    if (isNil(item)) {
+      throw new Error('Failed to update item.')
+    }
+
     return this.fromWatchedInfo(anilistId, item)
   }
 
@@ -71,7 +74,8 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
   public async StartRewatching(
     anilistId: number,
   ): Promise<StartRewatchingMutation['StartRewatching']> {
-    return undefined
+    await this.UpdateStatus(anilistId, MediaListStatus.Repeating)
+    return this.UpdateProgress(anilistId, 0)
   }
 
   public async UpdateProgress(
@@ -80,9 +84,19 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
   ): Promise<UpdateProgressMutation['UpdateProgress']> {
     const malId = await this.getMALId(anilistId)
 
-    await Simkl.addToWatchHistory(malId!, progress)
+    if (isNil(malId)) {
+      throw new Error('Could not find necessary data to add item to list.')
+    }
 
-    return undefined
+    await Simkl.addToWatchHistory(malId, progress)
+
+    const item = await Simkl.watchedInfo(malId)
+
+    if (isNil(item)) {
+      throw new Error('Failed to update item.')
+    }
+
+    return this.fromWatchedInfo(anilistId, item)
   }
 
   public async UpdateScore(
@@ -105,6 +119,10 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
     await Simkl.addItemToList(malId, Simkl.simklStatusFromMediaStatus(status))
 
     const item = await Simkl.watchedInfo(malId)
+
+    if (isNil(item)) {
+      throw new Error('Failed to update item.')
+    }
 
     return this.fromWatchedInfo(anilistId, item)
   }
