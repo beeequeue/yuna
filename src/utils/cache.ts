@@ -6,6 +6,7 @@ import { Store } from 'vuex'
 import { EPISODE_LIST } from "@/graphql/documents/queries"
 import LIST_QUERY from '@/views/list/list.graphql'
 import {
+  CachedAnimeListEntryFragment,
   EpisodeListEpisodes,
   EpisodeListQuery,
   EpisodeListVariables,
@@ -33,20 +34,18 @@ export const getIsWatched = (
   animeId: number,
   episode: number,
 ) => {
-  const data = getFragment<{
-    mediaListEntry: { progress: number } | null
-  }>(cache, {
+  const data = getFragment<CachedAnimeListEntryFragment>(cache, {
     id: `Media:${animeId}`,
     fragment: gql`
       fragment CachedAnimeListEntry on Media {
-        mediaListEntry {
+        listEntry {
           progress
         }
       }
     `,
   })
 
-  const progress = oc(data).mediaListEntry.progress()
+  const progress = oc(data).listEntry.progress()
   if (isNil(progress)) {
     return false
   }

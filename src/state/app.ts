@@ -1,5 +1,4 @@
 import { activeWindow } from 'electron-util'
-import change from 'lodash.set'
 import {
   NotificationFunctionOptions,
   NotificationTypes,
@@ -7,7 +6,12 @@ import {
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
 
-import { EpisodeListEpisodes, MediaListStatus, Provider } from '@/graphql/types'
+import {
+  EpisodeListEpisodes,
+  ListEntry as IListEntry,
+  MediaListStatus,
+  Provider,
+} from '@/graphql/types'
 import { router } from '@/router'
 import { RootState } from '@/state/store'
 import { generateId, isNil, pluck, propEq } from '@/utils'
@@ -57,13 +61,7 @@ export interface EditModalAnime {
   }
   bannerImage: string
   isFavourite: boolean
-  mediaListEntry: {
-    id: number
-    progress: number
-    status: MediaListStatus
-    score: number
-    repeat: number
-  }
+  listEntry: Omit<IListEntry, '__typename'>
 }
 
 export interface ManualSearchOptions {
@@ -229,20 +227,16 @@ export const app = {
       state.modals.edit.anime = anime
     },
 
-    setEditingAnimeValue(
+    setEditingAnimeValue<K extends keyof EditModalAnime['listEntry']>(
       state: AppState,
       payload: {
-        key: keyof EditModalAnime
-        value: any
+        key: K
+        value: EditModalAnime['listEntry'][K]
       },
     ) {
       if (!state.modals.edit.anime) return
 
-      state.modals.edit.anime = change(
-        state.modals.edit.anime,
-        payload.key,
-        payload.value,
-      ) as any
+      state.modals.edit.anime.listEntry[payload.key] = payload.value
     },
 
     setManualSearchOptions(state: AppState, options: ManualSearchOptions) {

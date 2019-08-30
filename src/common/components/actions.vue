@@ -173,14 +173,14 @@ export enum ActionKeys {
   components: { CButton },
 })
 export default class Actions extends Vue {
-  @Prop(Object) public mediaListEntry!: AnimeViewListEntry | null
+  @Prop(Object) public listEntry!: AnimeViewListEntry | null
   @Prop(Object) public anime!: AnimeViewAnime | null
   @Prop(Boolean) public small!: boolean | null
   @Prop({ type: Array, default: () => [] })
   public exclude!: string[]
 
   public get mediaListStatus(): MediaListStatus | null {
-    return oc(this.mediaListEntry).status() || null
+    return oc(this.listEntry).status() || null
   }
 
   public ActionKeys = ActionKeys
@@ -256,7 +256,7 @@ export default class Actions extends Vue {
       return sendErrorToast(this.$store, 'No anime found..?')
     }
 
-    if (!this.mediaListEntry && this.shouldAddToListAsWell) {
+    if (!this.listEntry && this.shouldAddToListAsWell) {
       await this.createListEntry()
     }
 

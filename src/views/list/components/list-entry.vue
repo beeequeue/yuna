@@ -9,7 +9,7 @@
 
     <div class="info">
       <actions
-        :mediaListEntry="entry"
+        :listEntry="entry"
         :anime="entry.anime"
         :exclude="['editEntry']"
         small

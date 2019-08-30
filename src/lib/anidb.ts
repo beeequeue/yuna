@@ -155,7 +155,9 @@ export class AniDB {
       valueProcessors: [parseNumbers, parseBooleans],
     })
 
-    const episode = data.episodes.episode as XmlEpisode[] | XmlEpisode
+    const episode = oc(data).episodes.episode() || null as XmlEpisode[] | XmlEpisode | null
+
+    if (isNil(episode)) return null
 
     let firstEpisode: XmlEpisode | null = null
 

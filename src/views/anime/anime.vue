@@ -13,7 +13,7 @@
         class="slide-down"
         :src="data.anime.coverImage.extraLarge"
         :color="data.anime.coverImage.color"
-        :mediaListEntry="getMediaListEntry(data)"
+        :listEntry="getlistEntry(data)"
         :length="data.anime.episodes"
       />
 
@@ -22,7 +22,7 @@
         key="actions"
         class="slide-up"
         :anime="data.anime"
-        :mediaListEntry="data.anime.mediaListEntry"
+        :listEntry="data.anime.listEntry"
       />
 
       <anime-title
@@ -164,7 +164,7 @@ export default class Anime extends Vue {
       return false
     }
 
-    const progress = oc(this.getMediaListEntry(data)).progress(0)
+    const progress = oc(this.getlistEntry(data)).progress(0)
     const setting = getSpoilerSettings(this.$store).anime.description
     const shouldBlur =
       progress < Math.ceil((data.anime.episodes as number) * 0.33)
@@ -172,7 +172,7 @@ export default class Anime extends Vue {
     return shouldBlur && setting
   }
 
-  public getMediaListEntry(data: AnimeViewQuery): AnimeViewListEntry | null {
+  public getlistEntry(data: AnimeViewQuery): AnimeViewListEntry | null {
     return oc(data).anime.listEntry(null)
   }
 

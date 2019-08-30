@@ -1,4 +1,5 @@
 import { oc } from 'ts-optchain'
+import { captureException } from '@sentry/browser'
 
 import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 
@@ -71,7 +72,7 @@ const fetchEpisodesFromCrunchyroll = async (
         unconfirmedEpisodes = await AniDB.getEpisodesFromId(id, Number(anidbId))
       }
     } catch (err) {
-      throw new Error(err)
+      captureException(err)
     }
   }
 

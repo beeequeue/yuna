@@ -36,17 +36,17 @@ import Icon from './icon.vue'
 export default class CoverImage extends Vue {
   @Required(String) public src!: string
   @Prop(String) public color!: string | null
-  @Prop(Object) public mediaListEntry!: AnimeViewListEntry | null
+  @Prop(Object) public listEntry!: AnimeViewListEntry | null
   @Prop(Number) public length!: number | null
 
   public repeatSvg = mdiRepeat
 
   public get mediaListStatus(): MediaListStatus | null {
-    return oc(this.mediaListEntry).status() || null
+    return oc(this.listEntry).status() || null
   }
 
   public get repeatedTimes(): number {
-    return oc(this.mediaListEntry).rewatched(0)
+    return oc(this.listEntry).rewatched(0)
   }
 
   public get lowercaseStatus() {
@@ -56,10 +56,10 @@ export default class CoverImage extends Vue {
   }
 
   public get statusString(): string | null {
-    if (!this.mediaListEntry) return 'Not in List'
+    if (!this.listEntry) return 'Not in List'
 
     return humanizeMediaListStatus(
-      this.mediaListEntry as AnimeViewListEntry,
+      this.listEntry as AnimeViewListEntry,
       this.length,
     )
   }

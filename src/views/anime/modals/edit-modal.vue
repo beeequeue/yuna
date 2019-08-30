@@ -2,7 +2,7 @@
   <modal-base :name="modalName">
     <ApolloMutation
       :mutation="EDIT_LIST_ENTRY"
-      :variables="anime && anime.mediaListEntry"
+      :variables="listEntryVariables"
       :update="handleUpdate"
       @done="toggleVisible"
     >
@@ -15,7 +15,7 @@
               :disabled="loading"
               label="Status"
               :items="statusItems"
-              :onChange="value => setValue('mediaListEntry.status', value)"
+              :onChange="value => setValue('status', value)"
               :value="status"
               :error="getValidationError(error, 'status')"
             />
@@ -27,7 +27,7 @@
               :min="0"
               :max="anime.episodes"
               :value="progress"
-              :onChange="value => setValue('mediaListEntry.progress', value)"
+              :onChange="value => setValue('progress', value)"
               :error="getValidationError(error, 'progress')"
             />
 
@@ -38,7 +38,7 @@
               :min="0"
               :max="100"
               :value="score"
-              :onChange="value => setValue('mediaListEntry.score', value)"
+              :onChange="value => setValue('score', value)"
               :error="getValidationError(error, 'scoreRaw')"
             />
 
@@ -49,15 +49,12 @@
               :min="0"
               :max="999"
               :value="repeated"
-              :onChange="value => setValue('mediaListEntry.repeat', value)"
+              :onChange="value => setValue('rewatched', value)"
               :error="getValidationError(error, 'repeat')"
             />
 
             <transition name="fade">
-              <div
-                v-if="anime && anime.mediaListEntry == null"
-                class="not-in-list"
-              >
+              <div v-if="anime && anime.listEntry == null" class="not-in-list">
                 Not in List
                 <c-button :disabled="loading" content="Add to List" />
               </div>
@@ -92,17 +89,17 @@
 import { ApolloError } from 'apollo-client'
 import { Component, Vue } from 'vue-property-decorator'
 import { ApolloCache } from 'apollo-cache'
-import change from 'lodash.set'
 import { oc } from 'ts-optchain'
 import { mdiCloseCircle } from '@mdi/js'
 
-import EDIT_LIST_ENTRY from './edit-list-entry.graphql'
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import { deleteFromList } from '@/common/mutations/list-entry'
+import { EDIT_LIST_ENTRY } from '@/graphql/documents/mutations'
 import {
   AnimeViewQuery,
   AnimeViewVariables,
   EditListEntryMutation,
+  EditListEntryMutationVariables,
   MediaListStatus,
 } from '@/graphql/types'
 
@@ -113,7 +110,7 @@ import {
   setEditingAnimeValue,
   toggleModal,
 } from '@/state/app'
-import { capitalize, enumToArray, propEq } from '@/utils'
+import { capitalize, enumToArray } from '@/utils'
 
 import CButton from '@/common/components/button.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
@@ -142,30 +139,37 @@ export default class EditModal extends Vue {
   }
 
   public get status() {
-    if (!this.anime || !this.anime.mediaListEntry) return null
+    if (!this.anime || !this.anime.listEntry) return null
 
-    return this.anime.mediaListEntry.status
+    return this.anime.listEntry.status
   }
 
   public get progress() {
-    if (!this.anime || !this.anime.mediaListEntry) return null
+    if (!this.anime || !this.anime.listEntry) return null
 
-    return this.anime.mediaListEntry.progress
+    return this.anime.listEntry.progress
   }
 
   public get score() {
-    if (!this.anime || !this.anime.mediaListEntry) return 0
+    if (!this.anime || !this.anime.listEntry) return 0
 
-    return this.anime.mediaListEntry.score
+    return this.anime.listEntry.score
   }
 
   public get repeated() {
-    if (!this.anime || !this.anime.mediaListEntry) return null
+    if (!this.anime || !this.anime.listEntry) return null
 
-    return this.anime.mediaListEntry.repeat
+    return this.anime.listEntry.rewatched
   }
 
-  public setValue(key: keyof EditModalAnime, value: any) {
+  public get listEntryVariables(): EditListEntryMutationVariables {
+    return {
+      ...oc(this.anime).listEntry(),
+      repeat: oc(this.anime).listEntry.rewatched(0),
+    } as any
+  }
+
+  public setValue(key: keyof EditModalAnime['listEntry'], value: any) {
     setEditingAnimeValue(this.$store, { key, value })
   }
 
@@ -173,31 +177,40 @@ export default class EditModal extends Vue {
     cache: ApolloCache<any>,
     payload: { data: EditListEntryMutation },
   ) {
-    let data =
-      cache.readQuery<AnimeViewQuery, AnimeViewVariables>({
-        query: ANIME_PAGE_QUERY,
-        variables: { id: this.anime!.id },
-      }) || ({} as any)
+    let data = cache.readQuery<AnimeViewQuery, AnimeViewVariables>({
+      query: ANIME_PAGE_QUERY,
+      variables: { id: this.anime!.id },
+    })!
 
-    data = change(data, 'anime.mediaListEntry', payload.data.SaveMediaListEntry)
+    const newData: AnimeViewQuery = {
+      anime: {
+        ...data.anime!,
+        listEntry: {
+          __typename: 'ListEntry',
+          id: oc(payload.data).SaveMediaListEntry.id()!,
+          progress: oc(payload.data).SaveMediaListEntry.progress(0),
+          rewatched: oc(payload.data).SaveMediaListEntry.repeat(0),
+          score: oc(payload.data).SaveMediaListEntry.score(0),
+          status: oc(payload.data).SaveMediaListEntry.status(
+            MediaListStatus.Planning,
+          ),
+        }
+      },
+    }
 
-    data = change(
-      data,
-      'anime.mediaListEntry.score',
-      oc(this.anime).mediaListEntry.score(),
-    )
-
-    cache.writeQuery({ query: ANIME_PAGE_QUERY, data })
+    cache.writeQuery({ query: ANIME_PAGE_QUERY, data: newData })
   }
 
   public getValidationError(error: ApolloError, key: string) {
     if (!error || !error.networkError) return null
 
-    const errors = (error.networkError as any).result.errors.find(
-      propEq<any, any>('validation', 'message'),
+    const errors = oc(error as any).networkError.result.errors([])
+
+    const validationError = errors.find(
+      (obj: any) => oc(obj).validation() === 'message',
     ).validation[key]
 
-    return errors && errors.length > 0 ? errors[0] : null
+    return oc(validationError)[0](null) as string | null
   }
 
   public toggleVisible() {
@@ -205,7 +218,7 @@ export default class EditModal extends Vue {
   }
 
   public async deleteEntry() {
-    if (!this.anime || !this.anime.mediaListEntry) return
+    if (!this.anime || !this.anime.listEntry) return
 
     await deleteFromList(this, this.anime.id)
 

@@ -99,7 +99,9 @@ export class Simkl {
       )
     }
 
-    const simklId = response.body[0].ids.simkl
+    const simklId = oc(response).body[0].ids.simkl() || null
+
+    if (isNil(simklId)) return null
 
     const fullResponse = await this.getRequest<_ShowFull>(
       `anime/${simklId}`,
