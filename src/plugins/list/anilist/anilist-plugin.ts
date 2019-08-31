@@ -19,7 +19,6 @@ import {
   AnilistSetStatusVariables,
   AnilistStartRewatchingMutation,
   AnilistStartRewatchingVariables,
-  AnimeViewQuery,
   DeleteFromListMutation,
   EditListEntryOptions,
   MediaListEntryFromMediaIdQuery,
@@ -35,7 +34,6 @@ import {
 import { ListPlugin } from '@/plugins/list/plugin'
 import { isNil } from '@/utils'
 import { refetchListQuery, writeEpisodeProgressToCache } from '@/utils/cache'
-import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import {
   ANILIST_CREATE_ENTRY,
   ANILIST_DELETE_ENTRY,
@@ -177,22 +175,9 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public async StartRewatching(
     anilistId: number,
   ): Promise<StartRewatchingMutation['StartRewatching']> {
-    const listEntry = await this.GetListEntry(anilistId)
-    const oldValues: Pick<AniListEntryFragment, 'id' | 'repeat' | 'score'> = {
-      id: oc(listEntry).id(0),
-      repeat: oc(listEntry).rewatched(0),
-      score: oc(listEntry).score(0),
-    }
-
     const result = await this.apollo.mutate<AnilistStartRewatchingMutation>({
       mutation: ANILIST_START_REWATCHING,
       variables: { mediaId: anilistId } as AnilistStartRewatchingVariables,
-      refetchQueries: refetchListQuery(this.store),
-      optimisticResponse: this.optimisticResponseFromValues(anilistId, {
-        ...oldValues,
-        progress: 0,
-        status: MediaListStatus.Repeating,
-      }),
     })
 
     const errors = oc(result).errors([])

@@ -30,7 +30,6 @@ import { MEDIA_LIST_ENTRY_FRAGMENT } from '@/graphql/documents/fragments'
 import {
   EpisodeMutationObject,
   getFragment,
-  refetchListQuery,
   writeEpisodeProgressToCache,
 } from '@/utils/cache'
 import { Instance } from '@/types'
@@ -110,13 +109,18 @@ export const updateStatus = async (
   })
 
 export const startRewatching = async (
-  { $apollo, $store }: Instance,
+  { $apollo }: Instance,
   anilistId: number,
 ) => {
   await $apollo.mutate<StartRewatchingMutation>({
     mutation: START_REWATCHING,
     variables: { anilistId } as StartRewatchingVariables,
-    refetchQueries: refetchListQuery($store),
+    optimisticResponse: {
+      StartRewatching: getOptimisticResponse($apollo, anilistId, {
+        status: MediaListStatus.Repeating,
+        progress: 0,
+      }),
+    },
     update: (cache, { data }) => {
       if (!data) return
 
