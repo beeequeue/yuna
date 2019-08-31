@@ -18,12 +18,12 @@ import { EpisodeRelations } from '@/lib/relations'
 import { getAnilistUserId } from '@/state/auth'
 import { isNil } from '.'
 
-const getFragment = <R extends {}, V = void>(
+export const getFragment = <R extends {}, V = void>(
   cache: DataProxy,
-  { id, fragment, variables }: DataProxy.Fragment<V>,
+  { id, fragment, fragmentName, variables }: DataProxy.Fragment<V>,
 ): R | null => {
   try {
-    return cache.readFragment<R, V>({ id, fragment, variables })
+    return cache.readFragment<R, V>({ id, fragment, fragmentName, variables })
   } catch (e) {
     return null
   }

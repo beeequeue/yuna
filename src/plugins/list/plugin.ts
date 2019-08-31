@@ -6,7 +6,6 @@ import {
   ListEntry,
   MediaListStatus,
   Mutation,
-  Provider,
   StartRewatchingMutation,
   UpdateProgressMutation,
   UpdateScoreMutation,
@@ -46,7 +45,6 @@ export abstract class ListPlugin {
   public abstract async UpdateProgress(
     anilistId: number,
     progress: number,
-    provider: Provider,
   ): Promise<UpdateProgressMutation['UpdateProgress']>
 
   public abstract async UpdateScore(

@@ -2087,7 +2087,6 @@ export type MutationStartRewatchingArgs = {
 export type MutationUpdateProgressArgs = {
   anilistId: Scalars['Int']
   progress: Scalars['Int']
-  provider: Provider
 }
 
 export type MutationUpdateScoreArgs = {
@@ -4031,6 +4030,10 @@ export type ListEntryFragment = { __typename?: 'ListEntry' } & Pick<
   'id' | 'mediaId' | 'score' | 'progress' | 'status' | 'rewatched'
 >
 
+export type MediaListEntryFragment = { __typename?: 'Media' } & {
+  listEntry: Maybe<{ __typename?: 'ListEntry' } & ListEntryFragment>
+}
+
 export type AniListEntryFragment = { __typename?: 'MediaList' } & Pick<
   MediaList,
   'id' | 'mediaId' | 'score' | 'progress' | 'status' | 'repeat'
@@ -4064,7 +4067,6 @@ export type StartRewatchingMutation = { __typename?: 'Mutation' } & {
 export type UpdateProgressMutationVariables = {
   anilistId: Scalars['Int']
   progress: Scalars['Int']
-  provider: Provider
 }
 
 export type UpdateProgressMutation = { __typename?: 'Mutation' } & {
@@ -4414,7 +4416,7 @@ export type AnimeViewQuery = { __typename?: 'Query' } & {
         listEntry: Maybe<
           { __typename?: 'ListEntry' } & Pick<
             ListEntry,
-            'id' | 'progress' | 'status' | 'score' | 'rewatched'
+            'id' | 'mediaId' | 'progress' | 'status' | 'score' | 'rewatched'
           >
         >
       }
@@ -4759,6 +4761,7 @@ export type CacheEpisodesAiringVariables = CacheEpisodesAiringQueryVariables
 export type CacheEpisodesAiringAiringSchedule = NonNullable<
   CacheEpisodesAiringQuery['AiringSchedule']
 >
+export type MediaListEntryListEntry = ListEntryFragment
 export type AddToListVariables = AddToListMutationVariables
 export type AddToListAddToList = ListEntryFragment
 export type UpdateStatusVariables = UpdateStatusMutationVariables

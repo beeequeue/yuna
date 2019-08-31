@@ -41,6 +41,7 @@ query AnimeView($id: Int) {
     }
     listEntry @client {
       id
+      mediaId
       progress
       status
       score

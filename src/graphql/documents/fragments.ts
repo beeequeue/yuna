@@ -11,6 +11,18 @@ export const LIST_ENTRY_FRAGMENT = gql`
   }
 `
 
+export const MEDIA_LIST_ENTRY_FRAGMENT = gql`
+  fragment MediaListEntry on Media {
+    listEntry {
+      ...ListEntry
+    }
+  }
+
+  ${LIST_ENTRY_FRAGMENT}
+`
+
+MEDIA_LIST_ENTRY_FRAGMENT.name = 'MediaListEntry'
+
 export const ANILIST_LIST_ENTRY_FRAGMENT = gql`
   fragment AniListEntry on MediaList {
     id

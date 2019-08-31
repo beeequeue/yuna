@@ -9,7 +9,6 @@ import {
   AnilistDeleteEntryMutation,
   AnilistEditListEntryMutation,
   AnilistEditListEntryMutationVariables,
-  AniListEntryFragment,
   AnilistSetProgressMutation,
   AnilistSetProgressVariables,
   AnilistSetScoreMutation,
@@ -19,14 +18,12 @@ import {
   AnilistSetStatusVariables,
   AnilistStartRewatchingMutation,
   AnilistStartRewatchingVariables,
-  AnimeViewQuery,
   DeleteFromListMutation,
   EditListEntryOptions,
   MediaListEntryFromMediaIdQuery,
   MediaListEntryFromMediaIdVariables,
   MediaListStatus,
   Mutation,
-  Provider,
   StartRewatchingMutation,
   UpdateProgressMutation,
   UpdateScoreMutation,
@@ -34,8 +31,6 @@ import {
 } from '@/graphql/types'
 import { ListPlugin } from '@/plugins/list/plugin'
 import { isNil } from '@/utils'
-import { refetchListQuery, writeEpisodeProgressToCache } from '@/utils/cache'
-import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import {
   ANILIST_CREATE_ENTRY,
   ANILIST_DELETE_ENTRY,
@@ -72,24 +67,6 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     }
   }
 
-  private optimisticResponseFromValues(
-    anilistId: number,
-    values: Pick<AniListEntryFragment, 'id' | 'repeat'> &
-      Partial<Pick<AniListEntryFragment, 'status' | 'progress' | 'score'>>,
-  ): AnilistSetScoreMutation {
-    return {
-      SaveMediaListEntry: {
-        __typename: 'MediaList',
-        id: values.id || 0,
-        mediaId: anilistId,
-        score: values.score || 0,
-        progress: values.progress || 0,
-        repeat: values.repeat || 0,
-        status: values.status || MediaListStatus.Current,
-      },
-    }
-  }
-
   public async GetListEntry(mediaId: number): Promise<ListEntry | null> {
     const listEntryResult = await this.apollo.query<
       MediaListEntryFromMediaIdQuery
@@ -114,21 +91,6 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     const result = await this.apollo.mutate<AnilistCreateEntryMutation>({
       mutation: ANILIST_CREATE_ENTRY,
       variables: { mediaId: anilistId } as AnilistCreateEntryVariables,
-      refetchQueries: refetchListQuery(this.store),
-      update: (cache, { data }) => {
-        if (!data) return
-
-        const cachedData = cache.readQuery<AnimeViewQuery>({
-          query: ANIME_PAGE_QUERY,
-          variables: { id: anilistId },
-        })
-
-        cachedData!.anime!.listEntry = this.fromMediaListEntry(
-          data.SaveMediaListEntry!,
-        )
-
-        cache.writeQuery({ query: ANIME_PAGE_QUERY, data: cachedData })
-      },
     })
 
     const errors = oc(result).errors([])
@@ -162,16 +124,6 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     const result = await this.apollo.mutate<AnilistDeleteEntryMutation>({
       mutation: ANILIST_DELETE_ENTRY,
       variables: { id },
-      refetchQueries: refetchListQuery(this.store),
-      update: cache => {
-        const data = cache.readQuery<any>({
-          query: ANIME_PAGE_QUERY,
-          variables: { id: anilistId },
-        })
-        if (!data || !data.anime) return
-
-        data.anime.mediaListEntry = null
-      },
     })
 
     const errors = oc(result).errors([])
@@ -186,25 +138,9 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     anilistId: number,
     status: MediaListStatus,
   ): Promise<UpdateStatusMutation['UpdateStatus']> {
-    const listEntry = await this.GetListEntry(anilistId)
-    const oldValues: Pick<
-      AniListEntryFragment,
-      'id' | 'repeat' | 'score' | 'progress'
-    > = {
-      id: oc(listEntry).id(0),
-      repeat: oc(listEntry).rewatched(0),
-      score: oc(listEntry).score(0),
-      progress: oc(listEntry).progress(0),
-    }
-
     const result = await this.apollo.mutate<AnilistSetStatusMutation>({
       mutation: ANILIST_SET_STATUS,
       variables: { mediaId: anilistId, status } as AnilistSetStatusVariables,
-      refetchQueries: refetchListQuery(this.store),
-      optimisticResponse: this.optimisticResponseFromValues(anilistId, {
-        ...oldValues,
-        status,
-      }),
     })
 
     const errors = oc(result).errors([])
@@ -218,22 +154,9 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public async StartRewatching(
     anilistId: number,
   ): Promise<StartRewatchingMutation['StartRewatching']> {
-    const listEntry = await this.GetListEntry(anilistId)
-    const oldValues: Pick<AniListEntryFragment, 'id' | 'repeat' | 'score'> = {
-      id: oc(listEntry).id(0),
-      repeat: oc(listEntry).rewatched(0),
-      score: oc(listEntry).score(0),
-    }
-
     const result = await this.apollo.mutate<AnilistStartRewatchingMutation>({
       mutation: ANILIST_START_REWATCHING,
       variables: { mediaId: anilistId } as AnilistStartRewatchingVariables,
-      refetchQueries: refetchListQuery(this.store),
-      optimisticResponse: this.optimisticResponseFromValues(anilistId, {
-        ...oldValues,
-        progress: 0,
-        status: MediaListStatus.Repeating,
-      }),
     })
 
     const errors = oc(result).errors([])
@@ -247,41 +170,13 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public async UpdateProgress(
     anilistId: number,
     progress: number,
-    provider: Provider,
   ): Promise<UpdateProgressMutation['UpdateProgress']> {
-    const listEntry = await this.GetListEntry(anilistId)
-    const oldValues: Pick<
-      AniListEntryFragment,
-      'id' | 'score' | 'repeat' | 'status'
-    > = {
-      id: oc(listEntry).id(0),
-      score: oc(listEntry).score(0),
-      repeat: oc(listEntry).rewatched(0),
-      status: oc(listEntry).status(MediaListStatus.Current),
-    }
-
     const result = await this.apollo.mutate<AnilistSetProgressMutation>({
       mutation: ANILIST_SET_PROGRESS,
       variables: {
         mediaId: anilistId,
         progress,
       } as AnilistSetProgressVariables,
-      optimisticResponse: {
-        SaveMediaListEntry: {
-          ...oldValues,
-          __typename: 'MediaList',
-          mediaId: anilistId,
-          progress,
-        },
-      },
-      refetchQueries: refetchListQuery(this.store),
-      update: cache => {
-        writeEpisodeProgressToCache(
-          cache,
-          { animeId: anilistId, episodeNumber: progress, provider },
-          progress,
-        )
-      },
     })
 
     const errors = oc(result).errors([])
@@ -296,24 +191,9 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     anilistId: number,
     score: number,
   ): Promise<UpdateScoreMutation['UpdateScore']> {
-    const listEntry = await this.GetListEntry(anilistId)
-    const oldValues: Pick<
-      AniListEntryFragment,
-      'id' | 'progress' | 'repeat' | 'status'
-    > = {
-      id: oc(listEntry).id(0),
-      progress: oc(listEntry).progress(0),
-      repeat: oc(listEntry).rewatched(0),
-      status: oc(listEntry).status(MediaListStatus.Completed),
-    }
-
     const result = await this.apollo.mutate<AnilistSetScoreMutation>({
       mutation: ANILIST_SET_SCORE,
       variables: { mediaId: anilistId, score } as AnilistSetScoreVariables,
-      optimisticResponse: this.optimisticResponseFromValues(anilistId, {
-        ...oldValues,
-        score,
-      }),
     })
 
     const errors = oc(result).errors([])
