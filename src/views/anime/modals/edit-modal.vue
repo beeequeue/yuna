@@ -61,10 +61,14 @@
           :click="deleteEntry"
         />
 
+        <transition name="fade">
+          <loading v-if="saving" :size="30" class="loader" />
+        </transition>
+
         <c-button
           :disabled="saving"
           type="success"
-          :content="saving ? 'Saving...' : 'Save changes'"
+          content="Save changes"
           :click="save"
         />
       </div>
@@ -99,9 +103,10 @@ import Dropdown, { DropdownItem } from '@/common/components/form/dropdown.vue'
 import ModalBase from '@/common/modals/base.vue'
 import AnimeBanner from '@/common/components/anime-banner.vue'
 import Icon from '@/common/components/icon.vue'
+import Loading from '@/common/components/loading.vue'
 
 @Component({
-  components: { ModalBase, AnimeBanner, Icon, NumberInput, Dropdown, CButton },
+  components: { Loading, ModalBase, AnimeBanner, Icon, NumberInput, Dropdown, CButton },
 })
 export default class EditModal extends Vue {
   public saving = false
@@ -286,6 +291,12 @@ $gutter: 25px;
     margin-bottom: 20px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+
+    & > .loader {
+      margin-left: auto;
+      margin-right: 15px;
+    }
   }
 }
 </style>
