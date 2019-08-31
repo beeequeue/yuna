@@ -4,16 +4,19 @@ import { ListPlugin, ListPluginType } from '@/plugins/list/plugin'
 import { MAL_ID_FROM_ANILIST_ID } from '@/graphql/documents/queries'
 import {
   AddToListMutation,
+  EditListEntryOptions,
   ListEntry,
   MalIdFromAnilistIdQuery,
   MalIdFromAnilistIdQueryVariables,
   MediaListStatus,
+  Mutation,
   StartRewatchingMutation,
   UpdateProgressMutation,
   UpdateScoreMutation,
   UpdateStatusMutation,
 } from '@/graphql/types'
 import { Simkl, SimklListEntry } from '@/lib/simkl'
+import { ArmServer } from '@/lib/arm-server'
 import { isNil } from '@/utils'
 
 export class SimklListPlugin extends ListPlugin implements ListPlugin {
@@ -29,14 +32,18 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
       variables: { mediaId: anilistId } as MalIdFromAnilistIdQueryVariables,
     })
 
-    return oc(response).data.Media.idMal() || null
+    let malId = oc(response).data.Media.idMal() || null
+
+    if (isNil(malId)) {
+      const ids = await ArmServer.getIdsFor('anilist', anilistId)
+
+      malId = oc(ids).myanimelist() || null
+    }
+
+    return malId
   }
 
-  private fromWatchedInfo(
-    anilistId: number,
-    data: SimklListEntry,
-  ): ListEntry {
-
+  private fromWatchedInfo(anilistId: number, data: SimklListEntry): ListEntry {
     return {
       id: data.show.ids.simkl,
       mediaId: anilistId,
@@ -124,7 +131,7 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
 
     return this.fromWatchedInfo(anilistId, {
       ...item,
-      user_rating: rating
+      user_rating: rating,
     })
   }
 
