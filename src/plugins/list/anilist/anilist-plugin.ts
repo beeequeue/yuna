@@ -70,24 +70,6 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     }
   }
 
-  private optimisticResponseFromValues(
-    anilistId: number,
-    values: Pick<AniListEntryFragment, 'id' | 'repeat'> &
-      Partial<Pick<AniListEntryFragment, 'status' | 'progress' | 'score'>>,
-  ): AnilistSetScoreMutation {
-    return {
-      SaveMediaListEntry: {
-        __typename: 'MediaList',
-        id: values.id || 0,
-        mediaId: anilistId,
-        score: values.score || 0,
-        progress: values.progress || 0,
-        repeat: values.repeat || 0,
-        status: values.status || MediaListStatus.Current,
-      },
-    }
-  }
-
   public async GetListEntry(mediaId: number): Promise<ListEntry | null> {
     const listEntryResult = await this.apollo.query<
       MediaListEntryFromMediaIdQuery
@@ -240,24 +222,9 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     anilistId: number,
     score: number,
   ): Promise<UpdateScoreMutation['UpdateScore']> {
-    const listEntry = await this.GetListEntry(anilistId)
-    const oldValues: Pick<
-      AniListEntryFragment,
-      'id' | 'progress' | 'repeat' | 'status'
-    > = {
-      id: oc(listEntry).id(0),
-      progress: oc(listEntry).progress(0),
-      repeat: oc(listEntry).rewatched(0),
-      status: oc(listEntry).status(MediaListStatus.Completed),
-    }
-
     const result = await this.apollo.mutate<AnilistSetScoreMutation>({
       mutation: ANILIST_SET_SCORE,
       variables: { mediaId: anilistId, score } as AnilistSetScoreVariables,
-      optimisticResponse: this.optimisticResponseFromValues(anilistId, {
-        ...oldValues,
-        score,
-      }),
     })
 
     const errors = oc(result).errors([])

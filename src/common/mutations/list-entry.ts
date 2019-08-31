@@ -142,4 +142,7 @@ export const updateScore = async (
   $apollo.mutate<UpdateScoreMutation>({
     mutation: UPDATE_SCORE,
     variables: { anilistId, score } as UpdateScoreVariables,
+    optimisticResponse: {
+      UpdateScore: getOptimisticResponse($apollo, anilistId, { score })
+    }
   })
