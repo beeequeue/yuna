@@ -32,8 +32,16 @@ export const START_REWATCHING = gql`
 `
 
 export const UPDATE_PROGRESS = gql`
-  mutation UpdateProgress($anilistId: Int!, $progress: Int!, $provider: Provider!) {
-    UpdateProgress(anilistId: $anilistId, progress: $progress, provider: $provider) @client {
+  mutation UpdateProgress(
+    $anilistId: Int!
+    $progress: Int!
+    $provider: Provider!
+  ) {
+    UpdateProgress(
+      anilistId: $anilistId
+      progress: $progress
+      provider: $provider
+    ) @client {
       ...ListEntry
     }
   }
@@ -58,26 +66,12 @@ export const DELETE_FROM_LIST = gql`
 `
 
 export const EDIT_LIST_ENTRY = gql`
-  mutation EditListEntry(
-    $id: Int!
-    $progress: Int!
-    $status: MediaListStatus!
-    $repeat: Int!
-    $score: Int!
-  ) {
-    SaveMediaListEntry(
-      id: $id
-      progress: $progress
-      status: $status
-      scoreRaw: $score
-      repeat: $repeat
-    ) {
-      id
-      score(format: POINT_100)
-      progress
-      status
-      repeat
+  mutation EditListEntry($anilistId: Int!, $options: EditListEntryOptions!)
+    @client {
+    EditListEntry(anilistId: $anilistId, options: $options) @client {
+      ...ListEntry
     }
   }
 
+  ${LIST_ENTRY_FRAGMENT}
 `

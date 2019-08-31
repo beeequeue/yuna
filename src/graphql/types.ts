@@ -447,6 +447,13 @@ export type Deleted = {
   deleted: Maybe<Scalars['Boolean']>
 }
 
+export type EditListEntryOptions = {
+  status: MediaListStatus
+  score: Maybe<Scalars['Int']>
+  progress: Scalars['Int']
+  rewatched: Scalars['Int']
+}
+
 export type Episode = {
   __typename?: 'Episode'
   provider: Provider
@@ -1880,6 +1887,7 @@ export type Mutation = {
   StartRewatching: ListEntry
   UpdateProgress: ListEntry
   UpdateScore: ListEntry
+  EditListEntry: ListEntry
 }
 
 export type MutationUpdateUserArgs = {
@@ -2085,6 +2093,11 @@ export type MutationUpdateProgressArgs = {
 export type MutationUpdateScoreArgs = {
   anilistId: Scalars['Int']
   score: Scalars['Int']
+}
+
+export type MutationEditListEntryArgs = {
+  anilistId: Scalars['Int']
+  options: EditListEntryOptions
 }
 
 /** Notification option */
@@ -4077,20 +4090,12 @@ export type DeleteFromListMutation = { __typename?: 'Mutation' } & Pick<
 >
 
 export type EditListEntryMutationVariables = {
-  id: Scalars['Int']
-  progress: Scalars['Int']
-  status: MediaListStatus
-  repeat: Scalars['Int']
-  score: Scalars['Int']
+  anilistId: Scalars['Int']
+  options: EditListEntryOptions
 }
 
 export type EditListEntryMutation = { __typename?: 'Mutation' } & {
-  SaveMediaListEntry: Maybe<
-    { __typename?: 'MediaList' } & Pick<
-      MediaList,
-      'id' | 'score' | 'progress' | 'status' | 'repeat'
-    >
-  >
+  EditListEntry: { __typename?: 'ListEntry' } & ListEntryFragment
 }
 
 export type MediaListEntryFromMediaIdQueryVariables = {
@@ -4285,6 +4290,23 @@ export type AnilistDeleteEntryMutationVariables = {
 export type AnilistDeleteEntryMutation = { __typename?: 'Mutation' } & {
   DeleteMediaListEntry: Maybe<
     { __typename?: 'Deleted' } & Pick<Deleted, 'deleted'>
+  >
+}
+
+export type AnilistEditListEntryMutationVariables = {
+  id: Scalars['Int']
+  progress: Scalars['Int']
+  status: MediaListStatus
+  repeat: Scalars['Int']
+  score: Maybe<Scalars['Int']>
+}
+
+export type AnilistEditListEntryMutation = { __typename?: 'Mutation' } & {
+  SaveMediaListEntry: Maybe<
+    { __typename?: 'MediaList' } & Pick<
+      MediaList,
+      'id' | 'score' | 'progress' | 'status' | 'repeat'
+    >
   >
 }
 
@@ -4749,9 +4771,7 @@ export type UpdateScoreVariables = UpdateScoreMutationVariables
 export type UpdateScoreUpdateScore = ListEntryFragment
 export type DeleteFromListVariables = DeleteFromListMutationVariables
 export type EditListEntryVariables = EditListEntryMutationVariables
-export type EditListEntrySaveMediaListEntry = NonNullable<
-  EditListEntryMutation['SaveMediaListEntry']
->
+export type EditListEntryEditListEntry = ListEntryFragment
 export type MediaListEntryFromMediaIdVariables = MediaListEntryFromMediaIdQueryVariables
 export type MediaListEntryFromMediaIdMediaList = AniListEntryFragment
 export type EpisodeListVariables = EpisodeListQueryVariables
@@ -4844,6 +4864,10 @@ export type AnilistStartRewatchingSaveMediaListEntry = AniListEntryFragment
 export type AnilistDeleteEntryVariables = AnilistDeleteEntryMutationVariables
 export type AnilistDeleteEntryDeleteMediaListEntry = NonNullable<
   AnilistDeleteEntryMutation['DeleteMediaListEntry']
+>
+export type AnilistEditListEntryVariables = AnilistEditListEntryMutationVariables
+export type AnilistEditListEntrySaveMediaListEntry = NonNullable<
+  AnilistEditListEntryMutation['SaveMediaListEntry']
 >
 export type CachedAnimeListEntryListEntry = NonNullable<
   CachedAnimeListEntryFragment['listEntry']

@@ -2,8 +2,10 @@ import { Store } from 'vuex'
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 import {
   AddToListMutation,
+  EditListEntryOptions,
   ListEntry,
   MediaListStatus,
+  Mutation,
   Provider,
   StartRewatchingMutation,
   UpdateProgressMutation,
@@ -22,11 +24,15 @@ export abstract class ListPlugin {
     this.store = store
   }
 
-  public abstract async GetListEntry(anilistId: number): Promise<ListEntry | null>
+  public abstract async GetListEntry(
+    anilistId: number,
+  ): Promise<ListEntry | null>
 
   public abstract async AddToList(
     anilistId: number,
   ): Promise<AddToListMutation['AddToList']>
+
+  public abstract async DeleteFromList(entryId: number): Promise<boolean>
 
   public abstract async UpdateStatus(
     anilistId: number,
@@ -48,5 +54,8 @@ export abstract class ListPlugin {
     score: number,
   ): Promise<UpdateScoreMutation['UpdateScore']>
 
-  public abstract async DeleteFromList(entryId: number): Promise<boolean>
+  public abstract async EditListEntry(
+    anilistId: number,
+    options: EditListEntryOptions,
+  ): Promise<Mutation['EditListEntry']>
 }
