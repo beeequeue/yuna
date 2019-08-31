@@ -66,8 +66,7 @@ export const DELETE_FROM_LIST = gql`
 `
 
 export const EDIT_LIST_ENTRY = gql`
-  mutation EditListEntry($anilistId: Int!, $options: EditListEntryOptions!)
-    @client {
+  mutation EditListEntry($anilistId: Int!, $options: EditListEntryOptions!) {
     EditListEntry(anilistId: $anilistId, options: $options) @client {
       ...ListEntry
     }
