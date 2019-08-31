@@ -98,14 +98,16 @@
     "vue-template-compiler": "2.6.10",
     "webpack": "4.39.2"
   },
-  "gitHooks": {
-    "pre-commit": "lint-staged"
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "license": "AGPL-3.0-only",
   "lint-staged": {
     "*.{ts,vue,js}": [
+      "vue-cli-service lint --fix",
       "prettier --write",
-      "vue-cli-service lint",
       "git add"
     ],
     "*.{json,graphql,yml,scss,svg}": [
