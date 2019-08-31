@@ -251,7 +251,7 @@ export class Simkl {
     }
   }
 
-  public static async getAnidbID(malId: number) {
+  public static async getAnimeInfo(malId: number) {
     const response = await this.request<_ShowFull[]>('search/id', {
       query: {
         mal: malId,
@@ -278,7 +278,13 @@ export class Simkl {
       )
     }
 
-    const id = oc(fullResponse).body.ids.anidb()
+    return fullResponse.body
+  }
+
+  public static async getAnidbID(malId: number) {
+    const anime = await this.getAnimeInfo(malId)
+
+    const id = oc(anime).ids.anidb()
 
     if (isNil(id)) return null
 
@@ -359,7 +365,7 @@ export class Simkl {
   }
 
   public static async addToWatchHistory(malId: number, episodeNumber: number) {
-    const response = await this.request<_SyncHistory>('', {
+    const response = await this.request<_SyncHistory>('sync/history', {
       type: 'post',
       body: {
         shows: [
@@ -376,6 +382,61 @@ export class Simkl {
         captureException(response.error)
       }
       throw new Error('Could not scrobble progress to Simkl.')
+    }
+  }
+
+  public static async setProgress(malId: number, progress: number) {
+    if (progress === 0) {
+      return this.unwatchAllEpisodes(malId)
+    }
+
+    const body = {
+      shows: [
+        {
+          ids: { mal: malId },
+          episodes: Array.from({ length: progress }).map((_, i) => ({
+            number: i + 1,
+          })),
+        },
+      ],
+    }
+
+    const response = await this.request<_SyncHistory>('sync/history', {
+      type: 'post',
+      body,
+    })
+
+    if (responseIsError(response) || response.body.not_found.shows.length > 0) {
+      if (oc(response).body.not_found.shows.length(0) < 1) {
+        captureException(response.error)
+      }
+      throw new Error('Could not scrobble progress to Simkl.')
+    }
+  }
+
+  public static async unwatchAllEpisodes(malId: number) {
+    const anime = await this.getAnimeInfo(malId)
+    const episodes = oc(anime).total_episodes() || null
+
+    if (isNil(episodes)) {
+      throw new Error('Could not find show to unwatch on Simkl.')
+    }
+
+    const response = await this.request<_SyncHistory>('sync/history/remove', {
+      body: {
+        shows: [
+          {
+            ids: { mal: malId },
+            episodes: Array.from({ length: episodes }).map((_, i) => ({
+              number: i + 1,
+            })),
+          },
+        ],
+      },
+    })
+
+    if (responseIsError(response) || response.body.not_found.shows.length > 0) {
+      throw new Error('Could not unwatch episodes on Simkl.')
     }
   }
 
@@ -454,10 +515,12 @@ export class Simkl {
     const response = await this.request('sync/ratings', {
       type: 'post',
       body: {
-        shows: [{
-          ids: { mal: malId },
-          rating,
-        }],
+        shows: [
+          {
+            ids: { mal: malId },
+            rating,
+          },
+        ],
       },
     })
 

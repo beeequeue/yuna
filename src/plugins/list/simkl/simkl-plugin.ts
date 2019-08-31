@@ -99,7 +99,7 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
       throw new Error('Could not find necessary data to add item to list.')
     }
 
-    await Simkl.addToWatchHistory(malId, progress)
+    await Simkl.setProgress(malId, progress)
 
     const item = await Simkl.watchedInfo(malId)
 
@@ -150,7 +150,37 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
     const item = await Simkl.watchedInfo(malId)
 
     if (isNil(item)) {
-      throw new Error('Failed to update item.')
+      throw new Error('Failed to update list entry on Simkl.')
+    }
+
+    return this.fromWatchedInfo(anilistId, item)
+  }
+
+  public async EditListEntry(
+    anilistId: number,
+    { score, progress, status }: EditListEntryOptions,
+  ): Promise<Mutation['EditListEntry']> {
+    const malId = await this.getMALId(anilistId)
+
+    if (isNil(malId)) {
+      throw new Error('Could not find necessary data to add item to list.')
+    }
+
+    const promises: Promise<any>[] = [
+      Simkl.addItemToList(malId, Simkl.simklStatusFromMediaStatus(status)),
+      Simkl.setProgress(malId, progress),
+    ]
+
+    if (!isNil(score)) {
+      promises.push(Simkl.addRating(malId, Math.round(score / 10)))
+    }
+
+    await Promise.all(promises)
+
+    const item = await Simkl.watchedInfo(malId)
+
+    if (isNil(item)) {
+      throw new Error('Failed to save list entry on Simkl.')
     }
 
     return this.fromWatchedInfo(anilistId, item)
