@@ -184,34 +184,6 @@ export default class EditModal extends Vue {
     toggleModal(this.$store, this.modalName)
   }
 
-  // public handleUpdate(
-  //   cache: ApolloCache<any>,
-  //   payload: { data: EditListEntryMutation },
-  // ) {
-  //   let data = cache.readQuery<AnimeViewQuery, AnimeViewVariables>({
-  //     query: ANIME_PAGE_QUERY,
-  //     variables: { id: this.anime!.id },
-  //   })!
-  //
-  //   const newData: AnimeViewQuery = {
-  //     anime: {
-  //       ...data.anime!,
-  //       listEntry: {
-  //         __typename: 'ListEntry',
-  //         id: oc(payload.data).SaveMediaListEntry.id()!,
-  //         progress: oc(payload.data).SaveMediaListEntry.progress(0),
-  //         rewatched: oc(payload.data).SaveMediaListEntry.repeat(0),
-  //         score: oc(payload.data).SaveMediaListEntry.score(0),
-  //         status: oc(payload.data).SaveMediaListEntry.status(
-  //           MediaListStatus.Planning,
-  //         ),
-  //       },
-  //     },
-  //   }
-  //
-  //   cache.writeQuery({ query: ANIME_PAGE_QUERY, data: newData })
-  // }
-
   public async deleteEntry() {
     if (!this.anime || !this.anime.listEntry) return
 
