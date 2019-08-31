@@ -35,7 +35,6 @@ export const addToList = async (
   $apollo.mutate<AddToListMutation>({
     mutation: ADD_TO_LIST,
     variables: { anilistId } as AddToListVariables,
-    refetchQueries: refetchListQuery($store),
     update: (cache, { data }) => {
       if (!data) return
 
@@ -45,8 +44,6 @@ export const addToList = async (
       })
 
       cachedData!.anime!.listEntry = data.AddToList
-
-      cache.writeQuery({ query: ANIME_PAGE_QUERY, data: cachedData })
     },
   })
 
@@ -57,6 +54,16 @@ export const deleteFromList = async (
   $apollo.mutate<DeleteFromListMutation>({
     mutation: DELETE_FROM_LIST,
     variables: { anilistId } as DeleteFromListVariables,
+    update: cache => {
+      const data = cache.readQuery<AnimeViewQuery>({
+        query: ANIME_PAGE_QUERY,
+        variables: { id: anilistId },
+      })
+
+      if (!data || !data.anime || !data.anime.listEntry) return
+
+      data.anime.listEntry = null
+    },
   })
 
 export const updateStatus = async (

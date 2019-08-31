@@ -147,16 +147,6 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     const result = await this.apollo.mutate<AnilistDeleteEntryMutation>({
       mutation: ANILIST_DELETE_ENTRY,
       variables: { id },
-      refetchQueries: refetchListQuery(this.store),
-      update: cache => {
-        const data = cache.readQuery<any>({
-          query: ANIME_PAGE_QUERY,
-          variables: { id: anilistId },
-        })
-        if (!data || !data.anime) return
-
-        data.anime.mediaListEntry = null
-      },
     })
 
     const errors = oc(result).errors([])
