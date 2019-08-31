@@ -24,7 +24,7 @@ export abstract class ListPlugin {
   protected readonly apollo: DollarApollo<any>
   protected readonly store: Store<any>
 
-  protected constructor(apollo: DollarApollo<any>, store: Store<any>) {
+  public constructor(apollo: DollarApollo<any>, store: Store<any>) {
     this.apollo = apollo
     this.store = store
   }
