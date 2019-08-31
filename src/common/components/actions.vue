@@ -140,7 +140,8 @@ import {
   updateStatus,
 } from '@/common/mutations/list-entry'
 import {
-  AnimeViewAnime, AnimeViewListEntry,
+  AnimeViewAnime,
+  AnimeViewListEntry,
   MediaListStatus,
 } from '@/graphql/types'
 
@@ -253,7 +254,7 @@ export default class Actions extends Vue {
       title: oc(this.anime).title.userPreferred('MISSING_TITLE'),
       episodes: this.anime.episodes,
       bannerImage: oc(this.anime).bannerImage(''),
-      listEntry: this.anime.listEntry
+      listEntry: this.anime.listEntry,
     })
   }
 

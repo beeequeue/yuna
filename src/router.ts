@@ -11,13 +11,17 @@ export const router = new Router({
       path: '/',
       name: 'dashboard',
       component: () =>
-        import(/* webpackChunkName: "dashboard" */ './views/dashboard/dashboard.vue'),
+        import(
+          /* webpackChunkName: "dashboard" */ './views/dashboard/dashboard.vue'
+        ),
     },
     {
       path: '/first-time-setup',
       name: 'first-time-setup',
       component: () =>
-        import(/* webpackChunkName: "first-time-setup" */ './views/first-time-setup/first-time-setup.vue'),
+        import(
+          /* webpackChunkName: "first-time-setup" */ './views/first-time-setup/first-time-setup.vue'
+        ),
     },
     {
       path: '/login',
@@ -47,7 +51,9 @@ export const router = new Router({
       path: '/settings',
       name: 'settings',
       component: () =>
-        import(/* webpackChunkName: "settings" */ './views/settings/settings.vue'),
+        import(
+          /* webpackChunkName: "settings" */ './views/settings/settings.vue'
+        ),
     },
   ],
 })

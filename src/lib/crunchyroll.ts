@@ -730,7 +730,4 @@ const isSpecialEpisode = ({ episode_number }: _Media) =>
   episode_number === 'SP' || episode_number === ''
 
 const isRealEpisode = (ep: _Media) =>
-  !anyPass(ep, [
-    episodeNumberIsHalf,
-    isSpecialEpisode,
-  ])
+  !anyPass(ep, [episodeNumberIsHalf, isSpecialEpisode])

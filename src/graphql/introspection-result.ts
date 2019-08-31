@@ -1,86 +1,85 @@
 /* THIS IS A GENERATED FILE */
 
-      export interface IntrospectionResultData {
-        __schema: {
-          types: {
-            kind: string;
-            name: string;
-            possibleTypes: {
-              name: string;
-            }[];
-          }[];
-        };
-      }
+export interface IntrospectionResultData {
+  __schema: {
+    types: {
+      kind: string
+      name: string
+      possibleTypes: {
+        name: string
+      }[]
+    }[]
+  }
+}
 
-      const result: IntrospectionResultData = {
-  "__schema": {
-    "types": [
+const result: IntrospectionResultData = {
+  __schema: {
+    types: [
       {
-        "kind": "UNION",
-        "name": "NotificationUnion",
-        "possibleTypes": [
+        kind: 'UNION',
+        name: 'NotificationUnion',
+        possibleTypes: [
           {
-            "name": "AiringNotification"
+            name: 'AiringNotification',
           },
           {
-            "name": "FollowingNotification"
+            name: 'FollowingNotification',
           },
           {
-            "name": "ActivityMessageNotification"
+            name: 'ActivityMessageNotification',
           },
           {
-            "name": "ActivityMentionNotification"
+            name: 'ActivityMentionNotification',
           },
           {
-            "name": "ActivityReplyNotification"
+            name: 'ActivityReplyNotification',
           },
           {
-            "name": "ActivityReplySubscribedNotification"
+            name: 'ActivityReplySubscribedNotification',
           },
           {
-            "name": "ActivityLikeNotification"
+            name: 'ActivityLikeNotification',
           },
           {
-            "name": "ActivityReplyLikeNotification"
+            name: 'ActivityReplyLikeNotification',
           },
           {
-            "name": "ThreadCommentMentionNotification"
+            name: 'ThreadCommentMentionNotification',
           },
           {
-            "name": "ThreadCommentReplyNotification"
+            name: 'ThreadCommentReplyNotification',
           },
           {
-            "name": "ThreadCommentSubscribedNotification"
+            name: 'ThreadCommentSubscribedNotification',
           },
           {
-            "name": "ThreadCommentLikeNotification"
+            name: 'ThreadCommentLikeNotification',
           },
           {
-            "name": "ThreadLikeNotification"
+            name: 'ThreadLikeNotification',
           },
           {
-            "name": "RelatedMediaAdditionNotification"
-          }
-        ]
+            name: 'RelatedMediaAdditionNotification',
+          },
+        ],
       },
       {
-        "kind": "UNION",
-        "name": "ActivityUnion",
-        "possibleTypes": [
+        kind: 'UNION',
+        name: 'ActivityUnion',
+        possibleTypes: [
           {
-            "name": "TextActivity"
+            name: 'TextActivity',
           },
           {
-            "name": "ListActivity"
+            name: 'ListActivity',
           },
           {
-            "name": "MessageActivity"
-          }
-        ]
-      }
-    ]
-  }
-};
+            name: 'MessageActivity',
+          },
+        ],
+      },
+    ],
+  },
+}
 
-      export default result;
-    
+export default result

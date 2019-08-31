@@ -38,7 +38,8 @@ import { mdiStar, mdiStarOutline } from '@mdi/js'
 
 import { updateScore } from '@/common/mutations/list-entry'
 import {
-  AnimeViewNextAiringEpisode, PlayerAnimeListEntry,
+  AnimeViewNextAiringEpisode,
+  PlayerAnimeListEntry,
 } from '@/graphql/types'
 
 import { Required } from '@/decorators'

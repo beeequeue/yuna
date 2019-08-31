@@ -106,7 +106,15 @@ import Icon from '@/common/components/icon.vue'
 import Loading from '@/common/components/loading.vue'
 
 @Component({
-  components: { Loading, ModalBase, AnimeBanner, Icon, NumberInput, Dropdown, CButton },
+  components: {
+    Loading,
+    ModalBase,
+    AnimeBanner,
+    Icon,
+    NumberInput,
+    Dropdown,
+    CButton,
+  },
 })
 export default class EditModal extends Vue {
   public saving = false

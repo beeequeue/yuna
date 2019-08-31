@@ -595,6 +595,7 @@ export type InternalPage = {
   staffSubmissions: Maybe<Array<Maybe<StaffSubmission>>>
   revisionHistory: Maybe<Array<Maybe<RevisionHistory>>>
   reports: Maybe<Array<Maybe<Report>>>
+  modActions: Maybe<Array<Maybe<ModAction>>>
   /** The pagination information */
   pageInfo: Maybe<PageInfo>
   users: Maybe<Array<Maybe<User>>>
@@ -645,6 +646,11 @@ export type InternalPageRevisionHistoryArgs = {
   characterId: Maybe<Scalars['Int']>
   staffId: Maybe<Scalars['Int']>
   studioId: Maybe<Scalars['Int']>
+}
+
+/** Page of data (Used for internal use only) */
+export type InternalPageModActionsArgs = {
+  userId: Maybe<Scalars['Int']>
 }
 
 /** Page of data (Used for internal use only) */
@@ -1828,6 +1834,29 @@ export type MessageActivity = {
 /** User message activity */
 export type MessageActivityMessageArgs = {
   asHtml: Maybe<Scalars['Boolean']>
+}
+
+export type ModAction = {
+  __typename?: 'ModAction'
+  /** The id of the action */
+  id: Scalars['Int']
+  user: Maybe<User>
+  mod: Maybe<User>
+  type: Maybe<ModActionType>
+  objectId: Maybe<Scalars['Int']>
+  objectType: Maybe<Scalars['String']>
+  data: Maybe<Scalars['String']>
+  createdAt: Scalars['Int']
+}
+
+export enum ModActionType {
+  Note = 'NOTE',
+  Ban = 'BAN',
+  Delete = 'DELETE',
+  Edit = 'EDIT',
+  Expire = 'EXPIRE',
+  Report = 'REPORT',
+  Reset = 'RESET',
 }
 
 export type Mutation = {
@@ -3724,6 +3753,15 @@ export type UserLengthStatistic = {
   chaptersRead: Scalars['Int']
   mediaIds: Array<Maybe<Scalars['Int']>>
   length: Maybe<Scalars['String']>
+}
+
+/** User data for moderators */
+export type UserModData = {
+  __typename?: 'UserModData'
+  alts: Maybe<Array<Maybe<User>>>
+  bans: Maybe<Scalars['Json']>
+  ip: Maybe<Scalars['Json']>
+  counts: Maybe<Scalars['Json']>
 }
 
 /** A user's general options */

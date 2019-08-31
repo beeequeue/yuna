@@ -27,7 +27,8 @@ import CrunchyrollEditor from './crunchyroll-editor.vue'
 import SearchStep from './search-step.vue'
 
 import {
-  getManualSearchOptions, getModalStates,
+  getManualSearchOptions,
+  getModalStates,
   getSelectedEpisodes,
   ModalName,
   toggleModal,
