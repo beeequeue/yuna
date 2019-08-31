@@ -2087,7 +2087,6 @@ export type MutationStartRewatchingArgs = {
 export type MutationUpdateProgressArgs = {
   anilistId: Scalars['Int']
   progress: Scalars['Int']
-  provider: Provider
 }
 
 export type MutationUpdateScoreArgs = {
@@ -4068,7 +4067,6 @@ export type StartRewatchingMutation = { __typename?: 'Mutation' } & {
 export type UpdateProgressMutationVariables = {
   anilistId: Scalars['Int']
   progress: Scalars['Int']
-  provider: Provider
 }
 
 export type UpdateProgressMutation = { __typename?: 'Mutation' } & {

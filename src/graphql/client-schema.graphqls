@@ -83,7 +83,7 @@ extend type Mutation {
 
   StartRewatching(anilistId: Int!): ListEntry!
 
-  UpdateProgress(anilistId: Int!, progress: Int!, provider: Provider!): ListEntry!
+  UpdateProgress(anilistId: Int!, progress: Int!): ListEntry!
 
   UpdateScore(anilistId: Int!, score: Int!): ListEntry!
 

@@ -9,7 +9,6 @@ import {
   AnilistDeleteEntryMutation,
   AnilistEditListEntryMutation,
   AnilistEditListEntryMutationVariables,
-  AniListEntryFragment,
   AnilistSetProgressMutation,
   AnilistSetProgressVariables,
   AnilistSetScoreMutation,
@@ -25,7 +24,6 @@ import {
   MediaListEntryFromMediaIdVariables,
   MediaListStatus,
   Mutation,
-  Provider,
   StartRewatchingMutation,
   UpdateProgressMutation,
   UpdateScoreMutation,
@@ -33,7 +31,6 @@ import {
 } from '@/graphql/types'
 import { ListPlugin } from '@/plugins/list/plugin'
 import { isNil } from '@/utils'
-import { refetchListQuery, writeEpisodeProgressToCache } from '@/utils/cache'
 import {
   ANILIST_CREATE_ENTRY,
   ANILIST_DELETE_ENTRY,
@@ -173,41 +170,13 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public async UpdateProgress(
     anilistId: number,
     progress: number,
-    provider: Provider,
   ): Promise<UpdateProgressMutation['UpdateProgress']> {
-    const listEntry = await this.GetListEntry(anilistId)
-    const oldValues: Pick<
-      AniListEntryFragment,
-      'id' | 'score' | 'repeat' | 'status'
-    > = {
-      id: oc(listEntry).id(0),
-      score: oc(listEntry).score(0),
-      repeat: oc(listEntry).rewatched(0),
-      status: oc(listEntry).status(MediaListStatus.Current),
-    }
-
     const result = await this.apollo.mutate<AnilistSetProgressMutation>({
       mutation: ANILIST_SET_PROGRESS,
       variables: {
         mediaId: anilistId,
         progress,
       } as AnilistSetProgressVariables,
-      optimisticResponse: {
-        SaveMediaListEntry: {
-          ...oldValues,
-          __typename: 'MediaList',
-          mediaId: anilistId,
-          progress,
-        },
-      },
-      refetchQueries: refetchListQuery(this.store),
-      update: cache => {
-        writeEpisodeProgressToCache(
-          cache,
-          { animeId: anilistId, episodeNumber: progress, provider },
-          progress,
-        )
-      },
     })
 
     const errors = oc(result).errors([])

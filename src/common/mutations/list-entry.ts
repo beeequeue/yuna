@@ -14,6 +14,8 @@ import {
   Provider,
   StartRewatchingMutation,
   StartRewatchingVariables,
+  UpdateProgressMutation,
+  UpdateProgressVariables,
   UpdateScoreMutation,
   UpdateScoreVariables,
   UpdateStatusMutation,
@@ -23,6 +25,7 @@ import {
   ADD_TO_LIST,
   DELETE_FROM_LIST,
   START_REWATCHING,
+  UPDATE_PROGRESS,
   UPDATE_SCORE,
   UPDATE_STATUS,
 } from '@/graphql/documents/mutations'
@@ -143,6 +146,30 @@ export const updateScore = async (
     mutation: UPDATE_SCORE,
     variables: { anilistId, score } as UpdateScoreVariables,
     optimisticResponse: {
-      UpdateScore: getOptimisticResponse($apollo, anilistId, { score })
-    }
+      UpdateScore: getOptimisticResponse($apollo, anilistId, { score }),
+    },
   })
+
+export const setProgress = async (
+  { $apollo }: Instance,
+  options: EpisodeMutationObject,
+) => {
+  const progress = options.episodeNumber
+  const variables: UpdateProgressVariables = {
+    anilistId: options.animeId,
+    progress,
+  }
+
+  return $apollo.mutate<UpdateProgressMutation>({
+    mutation: UPDATE_PROGRESS,
+    variables,
+    optimisticResponse: {
+      UpdateProgress: getOptimisticResponse($apollo, options.animeId, {
+        progress,
+      }),
+    },
+    update: cache => {
+      writeEpisodeProgressToCache(cache, options, progress)
+    },
+  })
+}

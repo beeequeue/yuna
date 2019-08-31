@@ -84,11 +84,11 @@ export const StartRewatching = async (
 
 export const UpdateProgress = async (
   _root: undefined,
-  { anilistId, progress, provider }: UpdateProgressVariables,
+  { anilistId, progress }: UpdateProgressVariables,
   _cache: { cache: RealProxy },
 ): Promise<UpdateProgressMutation['UpdateProgress']> => {
   const promises = window.listPlugins.map(plugin =>
-    plugin.UpdateProgress(anilistId, progress, provider),
+    plugin.UpdateProgress(anilistId, progress),
   )
   const results = await Promise.all(promises)
 
