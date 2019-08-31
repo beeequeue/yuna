@@ -109,6 +109,10 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
       throw new Error('Failed to update item.')
     }
 
+    if (item.watched_episodes_count === (item.total_episodes_count || -1)) {
+      return this.UpdateStatus(anilistId, MediaListStatus.Completed)
+    }
+
     return this.fromWatchedInfo(anilistId, item)
   }
 
