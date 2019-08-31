@@ -161,25 +161,9 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     anilistId: number,
     status: MediaListStatus,
   ): Promise<UpdateStatusMutation['UpdateStatus']> {
-    const listEntry = await this.GetListEntry(anilistId)
-    const oldValues: Pick<
-      AniListEntryFragment,
-      'id' | 'repeat' | 'score' | 'progress'
-    > = {
-      id: oc(listEntry).id(0),
-      repeat: oc(listEntry).rewatched(0),
-      score: oc(listEntry).score(0),
-      progress: oc(listEntry).progress(0),
-    }
-
     const result = await this.apollo.mutate<AnilistSetStatusMutation>({
       mutation: ANILIST_SET_STATUS,
       variables: { mediaId: anilistId, status } as AnilistSetStatusVariables,
-      refetchQueries: refetchListQuery(this.store),
-      optimisticResponse: this.optimisticResponseFromValues(anilistId, {
-        ...oldValues,
-        status,
-      }),
     })
 
     const errors = oc(result).errors([])

@@ -1,3 +1,6 @@
+import { DollarApollo } from 'vue-apollo/types/vue-apollo'
+import { oc } from 'ts-optchain'
+
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import {
   AddToListMutation,
@@ -5,6 +8,8 @@ import {
   AnimeViewQuery,
   DeleteFromListMutation,
   DeleteFromListVariables,
+  ListEntry,
+  MediaListEntryFragment,
   MediaListStatus,
   Provider,
   StartRewatchingMutation,
@@ -21,17 +26,42 @@ import {
   UPDATE_SCORE,
   UPDATE_STATUS,
 } from '@/graphql/documents/mutations'
+import { MEDIA_LIST_ENTRY_FRAGMENT } from '@/graphql/documents/fragments'
 import {
   EpisodeMutationObject,
+  getFragment,
   refetchListQuery,
   writeEpisodeProgressToCache,
 } from '@/utils/cache'
 import { Instance } from '@/types'
 
-export const addToList = async (
-  { $apollo, $store }: Instance,
+const getOptimisticResponse = (
+  apollo: DollarApollo<any>,
   anilistId: number,
-) =>
+  newValues: Partial<Omit<ListEntry, '__typename' | 'mediaId'>>,
+): ListEntry => {
+  const media = getFragment<MediaListEntryFragment>(
+    apollo.provider.defaultClient.cache,
+    {
+      id: `Media:${anilistId}`,
+      fragment: MEDIA_LIST_ENTRY_FRAGMENT,
+      fragmentName: MEDIA_LIST_ENTRY_FRAGMENT.name,
+    },
+  )
+
+  return {
+    __typename: 'ListEntry',
+    id: oc(media).listEntry.id(-1),
+    mediaId: anilistId,
+    score: oc(media).listEntry.score(-1),
+    progress: oc(media).listEntry.progress(-1),
+    rewatched: oc(media).listEntry.rewatched(-1),
+    status: oc(media).listEntry.status(MediaListStatus.Planning),
+    ...newValues,
+  }
+}
+
+export const addToList = async ({ $apollo }: Instance, anilistId: number) =>
   $apollo.mutate<AddToListMutation>({
     mutation: ADD_TO_LIST,
     variables: { anilistId } as AddToListVariables,
@@ -67,14 +97,16 @@ export const deleteFromList = async (
   })
 
 export const updateStatus = async (
-  { $apollo, $store }: Instance,
+  { $apollo }: Instance,
   anilistId: number,
   status: MediaListStatus,
 ) =>
   $apollo.mutate<UpdateStatusMutation>({
     mutation: UPDATE_STATUS,
     variables: { anilistId, status } as UpdateStatusVariables,
-    refetchQueries: refetchListQuery($store),
+    optimisticResponse: {
+      UpdateStatus: getOptimisticResponse($apollo, anilistId, { status }),
+    },
   })
 
 export const startRewatching = async (
