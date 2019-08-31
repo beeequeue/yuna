@@ -7,6 +7,7 @@ import { isNil, RequestError, RequestSuccess } from '@/utils'
 import { Store } from 'vuex'
 import { setSimkl } from '@/state/auth'
 import { MediaListStatus } from '@/graphql/types'
+import { userStore } from '@/lib/user'
 
 type SimklListStatus =
   | 'plantowatch'
@@ -150,6 +151,13 @@ interface _SyncAddToList {
   }>
 }
 
+interface _SetWatchedBody {
+  shows: Array<{
+    ids: { mal: number }
+    episodes: Array<{ number: number }>
+  }>
+}
+
 export interface SimklListEntry {
   last_watched_at: string
   user_rating: number
@@ -188,9 +196,46 @@ const responseIsError = (
   return res.status !== 200 && !isNil(res.body)
 }
 
+let _token = userStore.get('simkl.token', '')
+
 export class Simkl {
   private static watchlist: SimklListEntry[] = []
   private static lastUpdate = 0
+
+  private static async getWatchedBody(
+    malId: number,
+    progress: number,
+  ): Promise<{ watched: _SetWatchedBody; notWatched: _SetWatchedBody }> {
+    const anime = await this.getAnimeInfo(malId)
+
+    if (isNil(anime)) throw new Error('Could not find Anime on Simkl.')
+
+    const episodes = Array.from({ length: anime.total_episodes }).map(
+      (_, i) => ({ number: i + 1 }),
+    )
+
+    const watchedEpisodes = episodes.slice(0, progress - 1)
+    const notWatchedEpisodes = episodes.slice(progress)
+
+    return {
+      watched: {
+        shows: [
+          {
+            ids: { mal: malId },
+            episodes: watchedEpisodes,
+          },
+        ],
+      },
+      notWatched: {
+        shows: [
+          {
+            ids: { mal: malId },
+            episodes: notWatchedEpisodes,
+          },
+        ],
+      },
+    }
+  }
 
   private static async updateWatchlist() {
     const response = await Simkl.request<
@@ -337,8 +382,9 @@ export class Simkl {
 
         const token = response.body.access_token
 
-        const user = await this.getUserInfo(token)
+        const user = await this.getUserInfo()
 
+        _token = token
         setSimkl(store, {
           token,
           expires: null,
@@ -354,10 +400,8 @@ export class Simkl {
     })
   }
 
-  public static async getUserInfo(token: string) {
-    const response = await this.request<_UserSettings>('/users/settings', {
-      token,
-    })
+  public static async getUserInfo() {
+    const response = await this.request<_UserSettings>('/users/settings')
 
     if (responseIsError(response)) {
       throw new Error('Could not get User from Simkl!')
@@ -370,79 +414,25 @@ export class Simkl {
     }
   }
 
-  public static async addToWatchHistory(malId: number, episodeNumber: number) {
-    const response = await this.request<_SyncHistory>('sync/history', {
-      type: 'post',
-      body: {
-        shows: [
-          {
-            ids: { mal: malId },
-            episodes: [{ number: episodeNumber }],
-          },
-        ],
-      },
-    })
-
-    if (responseIsError(response) || response.body.not_found.shows.length > 0) {
-      if (oc(response).body.not_found.shows.length(0) < 1) {
-        captureException(response.error)
-      }
-      throw new Error('Could not scrobble progress to Simkl.')
-    }
-  }
-
   public static async setProgress(malId: number, progress: number) {
-    if (progress === 0) {
-      return this.unwatchAllEpisodes(malId)
-    }
+    const bodies = await this.getWatchedBody(malId, progress)
 
-    const body = {
-      shows: [
-        {
-          ids: { mal: malId },
-          episodes: Array.from({ length: progress }).map((_, i) => ({
-            number: i + 1,
-          })),
-        },
-      ],
-    }
+    const promises = [
+      this.request<_SyncHistory, _SetWatchedBody>('sync/history', {
+        type: 'post',
+        body: bodies.watched,
+      }),
+      this.request<_SyncHistory, _SetWatchedBody>('sync/history/remove', {
+        type: 'post',
+        body: bodies.notWatched,
+      }),
+    ]
 
-    const response = await this.request<_SyncHistory>('sync/history', {
-      type: 'post',
-      body,
-    })
+    const responses = await Promise.all(promises)
 
-    if (responseIsError(response) || response.body.not_found.shows.length > 0) {
-      if (oc(response).body.not_found.shows.length(0) < 1) {
-        captureException(response.error)
-      }
+    if (responses.some(responseIsError)) {
+      responses.filter(r => !r.ok).forEach(r => captureException(r.error))
       throw new Error('Could not scrobble progress to Simkl.')
-    }
-  }
-
-  public static async unwatchAllEpisodes(malId: number) {
-    const anime = await this.getAnimeInfo(malId)
-    const episodes = oc(anime).total_episodes() || null
-
-    if (isNil(episodes)) {
-      throw new Error('Could not find show to unwatch on Simkl.')
-    }
-
-    const response = await this.request<_SyncHistory>('sync/history/remove', {
-      body: {
-        shows: [
-          {
-            ids: { mal: malId },
-            episodes: Array.from({ length: episodes }).map((_, i) => ({
-              number: i + 1,
-            })),
-          },
-        ],
-      },
-    })
-
-    if (responseIsError(response) || response.body.not_found.shows.length > 0) {
-      throw new Error('Could not unwatch episodes on Simkl.')
     }
   }
 
