@@ -4,18 +4,12 @@ import { oc } from 'ts-optchain'
 
 import {
   AddToListMutation,
-  AniListEntryFragment,
-  AnilistStartRewatchingMutation,
-  AnilistStartRewatchingVariables,
-  AnimeViewQuery,
   AnilistCreateEntryMutation,
   AnilistCreateEntryVariables,
   AnilistDeleteEntryMutation,
-  DeleteFromListMutation,
-  MediaListEntryFromMediaIdQuery,
-  MediaListEntryFromMediaIdVariables,
-  MediaListStatus,
-  Provider,
+  AnilistEditListEntryMutation,
+  AnilistEditListEntryMutationVariables,
+  AniListEntryFragment,
   AnilistSetProgressMutation,
   AnilistSetProgressVariables,
   AnilistSetScoreMutation,
@@ -23,6 +17,16 @@ import {
   AnilistSetStatusMutation,
   AnilistSetStatusSaveMediaListEntry,
   AnilistSetStatusVariables,
+  AnilistStartRewatchingMutation,
+  AnilistStartRewatchingVariables,
+  AnimeViewQuery,
+  DeleteFromListMutation,
+  EditListEntryOptions,
+  MediaListEntryFromMediaIdQuery,
+  MediaListEntryFromMediaIdVariables,
+  MediaListStatus,
+  Mutation,
+  Provider,
   StartRewatchingMutation,
   UpdateProgressMutation,
   UpdateScoreMutation,
@@ -33,12 +37,13 @@ import { isNil } from '@/utils'
 import { refetchListQuery, writeEpisodeProgressToCache } from '@/utils/cache'
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import {
-  ANILIST_START_REWATCHING,
   ANILIST_CREATE_ENTRY,
   ANILIST_DELETE_ENTRY,
+  ANILIST_EDIT_LIST_ENTRY,
   ANILIST_SET_PROGRESS,
   ANILIST_SET_SCORE,
   ANILIST_SET_STATUS,
+  ANILIST_START_REWATCHING,
 } from '@/plugins/list/anilist/anilist-documents'
 import { MEDIA_LIST_ENTRY_FROM_MEDIA_ID } from '@/graphql/documents/queries'
 import { getAnilistUserId } from '@/state/auth'
@@ -118,7 +123,9 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
           variables: { id: anilistId },
         })
 
-        cachedData!.anime!.listEntry = this.fromMediaListEntry(data.SaveMediaListEntry!)
+        cachedData!.anime!.listEntry = this.fromMediaListEntry(
+          data.SaveMediaListEntry!,
+        )
 
         cache.writeQuery({ query: ANIME_PAGE_QUERY, data: cachedData })
       },
@@ -315,5 +322,38 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     if (isNil(result.data)) throw new Error("Didn't get response from AniList")
 
     return this.fromMediaListEntry(result.data.SaveMediaListEntry!)
+  }
+
+  public async EditListEntry(
+    anilistId: number,
+    { progress, rewatched, score, status }: EditListEntryOptions,
+  ): Promise<Mutation['EditListEntry']> {
+    const listEntry = await this.GetListEntry(anilistId)
+
+    if (isNil(listEntry)) throw new Error('Show is not in list!')
+
+    const variables: AnilistEditListEntryMutationVariables = {
+      id: listEntry.id,
+      progress,
+      score,
+      repeat: rewatched,
+      status,
+    }
+
+    const result = await this.apollo.mutate<AnilistEditListEntryMutation>({
+      mutation: ANILIST_EDIT_LIST_ENTRY,
+      variables,
+      errorPolicy: 'all',
+    })
+
+    const errors = oc(result).errors([])
+    if (errors.length > 0) throw new Error(errors[0].message)
+
+    if (isNil(result.data)) throw new Error("Didn't get response from AniList")
+
+    return this.fromMediaListEntry({
+      ...result.data.SaveMediaListEntry!,
+      mediaId: anilistId,
+    })
   }
 }

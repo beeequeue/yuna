@@ -1,103 +1,87 @@
 <template>
-  <modal-base :name="modalName">
-    <ApolloMutation
-      :mutation="EDIT_LIST_ENTRY"
-      :variables="listEntryVariables"
-      :update="handleUpdate"
-      @done="toggleVisible"
-    >
-      <template slot-scope="{ mutate, loading, error }">
-        <div class="modal-body edit-modal">
-          <anime-banner :anime="anime" />
+  <modal-base v-if="anime != null" :name="modalName">
+    <div class="modal-body edit-modal">
+      <anime-banner :anime="anime" />
 
-          <div class="list-entry-fields">
-            <dropdown
-              :disabled="loading"
-              label="Status"
-              :items="statusItems"
-              :onChange="value => setValue('status', value)"
-              :value="status"
-              :error="getValidationError(error, 'status')"
-            />
+      <div class="list-entry-fields">
+        <dropdown
+          :disabled="saving"
+          label="Status"
+          :items="statusItems"
+          :onChange="value => setValue('status', value)"
+          :value="status"
+        />
 
-            <number-input
-              :disabled="loading"
-              label="Progress"
-              :suffix="`/ ${anime ? anime.episodes : 0}`"
-              :min="0"
-              :max="anime.episodes"
-              :value="progress"
-              :onChange="value => setValue('progress', value)"
-              :error="getValidationError(error, 'progress')"
-            />
+        <number-input
+          :disabled="saving"
+          label="Progress"
+          :suffix="`/ ${anime.episodes ? anime.episodes : '?'}`"
+          :min="0"
+          :max="anime.episodes"
+          :value="progress"
+          :onChange="value => setValue('progress', value)"
+        />
 
-            <number-input
-              :disabled="loading"
-              label="Score"
-              suffix="/ 100"
-              :min="0"
-              :max="100"
-              :value="score"
-              :onChange="value => setValue('score', value)"
-              :error="getValidationError(error, 'scoreRaw')"
-            />
+        <number-input
+          :disabled="saving"
+          label="Score"
+          suffix="/ 100"
+          :min="0"
+          :max="100"
+          :value="score"
+          :onChange="value => setValue('score', value)"
+        />
 
-            <number-input
-              :disabled="loading"
-              label="Repeated"
-              suffix=" times"
-              :min="0"
-              :max="999"
-              :value="repeated"
-              :onChange="value => setValue('rewatched', value)"
-              :error="getValidationError(error, 'repeat')"
-            />
+        <number-input
+          :disabled="saving"
+          label="Repeated"
+          suffix=" times"
+          :min="0"
+          :max="999"
+          :value="repeated"
+          :onChange="value => setValue('rewatched', value)"
+        />
 
-            <transition name="fade">
-              <div v-if="anime && anime.listEntry == null" class="not-in-list">
-                Not in List
-                <c-button :disabled="loading" content="Add to List" />
-              </div>
-            </transition>
+        <transition name="fade">
+          <div v-if="anime && anime.listEntry == null" class="not-in-list">
+            Not in List
+            <c-button :disabled="saving" content="Add to List" />
           </div>
+        </transition>
+      </div>
 
-          <div class="buttons">
-            <c-button
-              :disabled="loading"
-              type="danger"
-              flat
-              confirm
-              content="Delete"
-              :icon="deleteSvg"
-              :click="deleteEntry"
-            />
+      <div class="buttons">
+        <c-button
+          :disabled="saving"
+          type="danger"
+          flat
+          confirm
+          content="Delete"
+          :icon="deleteSvg"
+          :click="deleteEntry"
+        />
 
-            <c-button
-              :disabled="loading"
-              type="success"
-              :content="loading ? 'Saving...' : 'Save changes'"
-              :click="mutate"
-            />
-          </div>
-        </div>
-      </template>
-    </ApolloMutation>
+        <transition name="fade">
+          <loading v-if="saving" :size="30" class="loader" />
+        </transition>
+
+        <c-button
+          :disabled="saving"
+          type="success"
+          content="Save changes"
+          :click="save"
+        />
+      </div>
+    </div>
   </modal-base>
 </template>
 
 <script lang="ts">
-import { ApolloError } from 'apollo-client'
 import { Component, Vue } from 'vue-property-decorator'
-import { ApolloCache } from 'apollo-cache'
-import { oc } from 'ts-optchain'
 import { mdiCloseCircle } from '@mdi/js'
-
-import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import { deleteFromList } from '@/common/mutations/list-entry'
 import { EDIT_LIST_ENTRY } from '@/graphql/documents/mutations'
 import {
-  AnimeViewQuery,
-  AnimeViewVariables,
   EditListEntryMutation,
   EditListEntryMutationVariables,
   MediaListStatus,
@@ -114,15 +98,37 @@ import { capitalize, enumToArray } from '@/utils'
 
 import CButton from '@/common/components/button.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
+// @ts-ignore
 import Dropdown, { DropdownItem } from '@/common/components/form/dropdown.vue'
 import ModalBase from '@/common/modals/base.vue'
 import AnimeBanner from '@/common/components/anime-banner.vue'
 import Icon from '@/common/components/icon.vue'
+import Loading from '@/common/components/loading.vue'
 
 @Component({
-  components: { ModalBase, AnimeBanner, Icon, NumberInput, Dropdown, CButton },
+  components: { Loading, ModalBase, AnimeBanner, Icon, NumberInput, Dropdown, CButton },
 })
 export default class EditModal extends Vue {
+  public saving = false
+  public error: string | null = null
+
+  public async save() {
+    const variables = {
+      anilistId: this.anime!.animeId,
+      options: this.anime!.listEntry,
+    } as EditListEntryMutationVariables
+
+    this.saving = true
+
+    await this.$apollo.mutate<EditListEntryMutation>({
+      mutation: EDIT_LIST_ENTRY,
+      variables,
+      errorPolicy: 'all',
+    })
+
+    this.saving = false
+  }
+
   public statusItems: DropdownItem[] = enumToArray(MediaListStatus).map(
     status => ({
       label: capitalize((status as unknown) as string),
@@ -131,7 +137,6 @@ export default class EditModal extends Vue {
   )
 
   public readonly modalName: ModalName = 'edit'
-  public readonly EDIT_LIST_ENTRY = EDIT_LIST_ENTRY
   public readonly deleteSvg = mdiCloseCircle
 
   public get anime() {
@@ -162,65 +167,46 @@ export default class EditModal extends Vue {
     return this.anime.listEntry.rewatched
   }
 
-  public get listEntryVariables(): EditListEntryMutationVariables {
-    return {
-      ...oc(this.anime).listEntry(),
-      repeat: oc(this.anime).listEntry.rewatched(0),
-    } as any
-  }
-
   public setValue(key: keyof EditModalAnime['listEntry'], value: any) {
     setEditingAnimeValue(this.$store, { key, value })
-  }
-
-  public handleUpdate(
-    cache: ApolloCache<any>,
-    payload: { data: EditListEntryMutation },
-  ) {
-    let data = cache.readQuery<AnimeViewQuery, AnimeViewVariables>({
-      query: ANIME_PAGE_QUERY,
-      variables: { id: this.anime!.id },
-    })!
-
-    const newData: AnimeViewQuery = {
-      anime: {
-        ...data.anime!,
-        listEntry: {
-          __typename: 'ListEntry',
-          id: oc(payload.data).SaveMediaListEntry.id()!,
-          progress: oc(payload.data).SaveMediaListEntry.progress(0),
-          rewatched: oc(payload.data).SaveMediaListEntry.repeat(0),
-          score: oc(payload.data).SaveMediaListEntry.score(0),
-          status: oc(payload.data).SaveMediaListEntry.status(
-            MediaListStatus.Planning,
-          ),
-        }
-      },
-    }
-
-    cache.writeQuery({ query: ANIME_PAGE_QUERY, data: newData })
-  }
-
-  public getValidationError(error: ApolloError, key: string) {
-    if (!error || !error.networkError) return null
-
-    const errors = oc(error as any).networkError.result.errors([])
-
-    const validationError = errors.find(
-      (obj: any) => oc(obj).validation() === 'message',
-    ).validation[key]
-
-    return oc(validationError)[0](null) as string | null
   }
 
   public toggleVisible() {
     toggleModal(this.$store, this.modalName)
   }
 
+  // public handleUpdate(
+  //   cache: ApolloCache<any>,
+  //   payload: { data: EditListEntryMutation },
+  // ) {
+  //   let data = cache.readQuery<AnimeViewQuery, AnimeViewVariables>({
+  //     query: ANIME_PAGE_QUERY,
+  //     variables: { id: this.anime!.id },
+  //   })!
+  //
+  //   const newData: AnimeViewQuery = {
+  //     anime: {
+  //       ...data.anime!,
+  //       listEntry: {
+  //         __typename: 'ListEntry',
+  //         id: oc(payload.data).SaveMediaListEntry.id()!,
+  //         progress: oc(payload.data).SaveMediaListEntry.progress(0),
+  //         rewatched: oc(payload.data).SaveMediaListEntry.repeat(0),
+  //         score: oc(payload.data).SaveMediaListEntry.score(0),
+  //         status: oc(payload.data).SaveMediaListEntry.status(
+  //           MediaListStatus.Planning,
+  //         ),
+  //       },
+  //     },
+  //   }
+  //
+  //   cache.writeQuery({ query: ANIME_PAGE_QUERY, data: newData })
+  // }
+
   public async deleteEntry() {
     if (!this.anime || !this.anime.listEntry) return
 
-    await deleteFromList(this, this.anime.id)
+    await deleteFromList(this, this.anime.animeId)
 
     this.toggleVisible()
   }
@@ -271,7 +257,7 @@ $gutter: 25px;
   & > .list-entry-fields {
     position: relative;
     width: 100%;
-    padding: 0px $gutter;
+    padding: 0 $gutter;
     margin-bottom: 10px;
     flex-wrap: wrap;
     display: flex;
@@ -305,6 +291,12 @@ $gutter: 25px;
     margin-bottom: 20px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+
+    & > .loader {
+      margin-left: auto;
+      margin-right: 15px;
+    }
   }
 }
 </style>

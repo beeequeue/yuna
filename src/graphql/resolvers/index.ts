@@ -5,6 +5,7 @@ import { EpisodesResolver } from './episodes'
 import {
   AddToList,
   DeleteFromList,
+  EditListEntry,
   GetListEntry,
   StartRewatching,
   UpdateProgress,
@@ -29,5 +30,6 @@ export const resolvers = {
     UpdateStatus,
     UpdateProgress,
     StartRewatching,
+    EditListEntry,
   },
 }

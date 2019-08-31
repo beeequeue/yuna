@@ -55,6 +55,13 @@ type ListEntry {
   rewatched: Int!
 }
 
+input EditListEntryOptions {
+  status: MediaListStatus!
+  score: Int
+  progress: Int!
+  rewatched: Int!
+}
+
 extend type Media {
   scoreMal: Int
   mediaListEntry: MediaList @deprecated(reason: "Use listEntry instead")
@@ -79,4 +86,6 @@ extend type Mutation {
   UpdateProgress(anilistId: Int!, progress: Int!, provider: Provider!): ListEntry!
 
   UpdateScore(anilistId: Int!, score: Int!): ListEntry!
+
+  EditListEntry(anilistId: Int!, options: EditListEntryOptions!): ListEntry!
 }

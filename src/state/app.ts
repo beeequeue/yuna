@@ -55,13 +55,11 @@ interface ModalBase {
 }
 
 export interface EditModalAnime {
-  id: number
-  title: {
-    userPreferred: string
-  }
+  animeId: number
+  title: string
   bannerImage: string
-  isFavourite: boolean
-  listEntry: Omit<IListEntry, '__typename'>
+  episodes: number | null
+  listEntry: Omit<IListEntry, '__typename' | 'mediaId'>
 }
 
 export interface ManualSearchOptions {
@@ -224,7 +222,8 @@ export const app = {
     },
 
     setEditingAnime(state: AppState, anime: EditModalAnime) {
-      state.modals.edit.anime = anime
+      // To stop anime being passed by reference
+      state.modals.edit.anime = JSON.parse(JSON.stringify(anime))
     },
 
     setEditingAnimeValue<K extends keyof EditModalAnime['listEntry']>(

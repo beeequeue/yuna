@@ -55,3 +55,27 @@ export const ANILIST_DELETE_ENTRY = gql`
     }
   }
 `
+
+export const ANILIST_EDIT_LIST_ENTRY = gql`
+  mutation AnilistEditListEntry(
+    $id: Int!
+    $progress: Int!
+    $status: MediaListStatus!
+    $repeat: Int!
+    $score: Int
+  ) {
+    SaveMediaListEntry(
+      id: $id
+      progress: $progress
+      status: $status
+      scoreRaw: $score
+      repeat: $repeat
+    ) {
+      id
+      score(format: POINT_100)
+      progress
+      status
+      repeat
+    }
+  }
+`

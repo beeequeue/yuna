@@ -129,7 +129,7 @@ export default class CButton extends Vue {
     cursor: default;
 
     & > .icon {
-      fill: $gray;
+      fill: mix($color, #333);
     }
   }
 
@@ -224,6 +224,7 @@ export default class CButton extends Vue {
     width: 20px;
     height: 20px;
     flex-shrink: 0;
+    transition: fill 0.1s;
 
     &.alert {
       animation: growBounce 0.75s, shake 0.75s;
