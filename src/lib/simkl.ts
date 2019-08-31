@@ -214,7 +214,7 @@ export class Simkl {
       (_, i) => ({ number: i + 1 }),
     )
 
-    const watchedEpisodes = episodes.slice(0, progress - 1)
+    const watchedEpisodes = episodes.slice(0, progress)
     const notWatchedEpisodes = episodes.slice(progress)
 
     return {
@@ -419,16 +419,25 @@ export class Simkl {
   public static async setProgress(malId: number, progress: number) {
     const bodies = await this.getWatchedBody(malId, progress)
 
-    const promises = [
-      this.request<_SyncHistory, _SetWatchedBody>('sync/history', {
-        type: 'post',
-        body: bodies.watched,
-      }),
-      this.request<_SyncHistory, _SetWatchedBody>('sync/history/remove', {
-        type: 'post',
-        body: bodies.notWatched,
-      }),
-    ]
+    const promises = []
+
+    if (bodies.watched.shows[0].episodes.length > 0) {
+      promises.push(
+        this.request<_SyncHistory, _SetWatchedBody>('sync/history', {
+          type: 'post',
+          body: bodies.watched,
+        }),
+      )
+    }
+
+    if (bodies.notWatched.shows[0].episodes.length > 0) {
+      promises.push(
+        this.request<_SyncHistory, _SetWatchedBody>('sync/history/remove', {
+          type: 'post',
+          body: bodies.notWatched,
+        }),
+      )
+    }
 
     const responses = await Promise.all(promises)
 
