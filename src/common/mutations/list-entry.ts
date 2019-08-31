@@ -1,6 +1,8 @@
+import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import {
   AddToListMutation,
   AddToListVariables,
+  AnimeViewQuery,
   DeleteFromListMutation,
   DeleteFromListVariables,
   MediaListStatus,
@@ -26,10 +28,26 @@ import {
 } from '@/utils/cache'
 import { Instance } from '@/types'
 
-export const addToList = async ({ $apollo }: Instance, anilistId: number) =>
+export const addToList = async (
+  { $apollo, $store }: Instance,
+  anilistId: number,
+) =>
   $apollo.mutate<AddToListMutation>({
     mutation: ADD_TO_LIST,
     variables: { anilistId } as AddToListVariables,
+    refetchQueries: refetchListQuery($store),
+    update: (cache, { data }) => {
+      if (!data) return
+
+      const cachedData = cache.readQuery<AnimeViewQuery>({
+        query: ANIME_PAGE_QUERY,
+        variables: { id: anilistId },
+      })
+
+      cachedData!.anime!.listEntry = data.AddToList
+
+      cache.writeQuery({ query: ANIME_PAGE_QUERY, data: cachedData })
+    },
   })
 
 export const deleteFromList = async (

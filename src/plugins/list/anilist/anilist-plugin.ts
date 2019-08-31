@@ -114,21 +114,6 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     const result = await this.apollo.mutate<AnilistCreateEntryMutation>({
       mutation: ANILIST_CREATE_ENTRY,
       variables: { mediaId: anilistId } as AnilistCreateEntryVariables,
-      refetchQueries: refetchListQuery(this.store),
-      update: (cache, { data }) => {
-        if (!data) return
-
-        const cachedData = cache.readQuery<AnimeViewQuery>({
-          query: ANIME_PAGE_QUERY,
-          variables: { id: anilistId },
-        })
-
-        cachedData!.anime!.listEntry = this.fromMediaListEntry(
-          data.SaveMediaListEntry!,
-        )
-
-        cache.writeQuery({ query: ANIME_PAGE_QUERY, data: cachedData })
-      },
     })
 
     const errors = oc(result).errors([])
