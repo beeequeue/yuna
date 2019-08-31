@@ -45,6 +45,7 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
 
   private fromWatchedInfo(anilistId: number, data: SimklListEntry): ListEntry {
     return {
+      __typename: 'ListEntry',
       id: data.show.ids.simkl,
       mediaId: anilistId,
       progress: data.watched_episodes_count,
@@ -62,10 +63,11 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
     const item = await Simkl.watchedInfo(malId)
 
     if (isNil(item)) {
-      throw new Error('Failed to update item.')
+      return null
     }
 
-    return this.fromWatchedInfo(anilistId, item)
+    const listEntry = this.fromWatchedInfo(anilistId, item)
+    return listEntry
   }
 
   public async AddToList(

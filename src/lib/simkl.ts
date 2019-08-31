@@ -10,10 +10,10 @@ import { MediaListStatus } from '@/graphql/types'
 
 type SimklListStatus =
   | 'plantowatch'
-  | 'watched'
   | 'watching'
   | 'notinteresting'
   | 'hold'
+  | 'completed'
 
 interface _Show {
   title: string
@@ -176,7 +176,9 @@ interface SimklQuery {
   extended?: 'full'
 }
 
-type SimklResponse<D extends {} | null = any> = RequestSuccess<D> | RequestError<null>
+type SimklResponse<D extends {} | null = any> =
+  | RequestSuccess<D>
+  | RequestError<null>
 
 const BASE_URL = 'https://api.simkl.com'
 
@@ -228,23 +230,23 @@ export class Simkl {
     switch (status) {
       case 'plantowatch':
         return MediaListStatus.Planning
-      case 'watched':
-        return MediaListStatus.Completed
       case 'watching':
         return MediaListStatus.Current
       case 'notinteresting':
         return MediaListStatus.Dropped
       case 'hold':
         return MediaListStatus.Paused
+      case 'completed':
+        return MediaListStatus.Completed
     }
   }
 
-  public static simklStatusFromMediaStatus(status: MediaListStatus) {
+  public static simklStatusFromMediaStatus(status: MediaListStatus): SimklListStatus {
     switch (status) {
       case MediaListStatus.Planning:
         return 'plantowatch'
       case MediaListStatus.Completed:
-        return 'watched'
+        return 'completed'
       case MediaListStatus.Repeating:
       case MediaListStatus.Current:
         return 'watching'
