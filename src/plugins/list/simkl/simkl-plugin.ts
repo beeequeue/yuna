@@ -26,18 +26,18 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
   public type = ListPluginType.Full
 
   private async getMALId(anilistId: number) {
-    const response = await this.apollo.query<MalIdFromAnilistIdQuery>({
-      fetchPolicy: 'cache-first',
-      query: MAL_ID_FROM_ANILIST_ID,
-      variables: { mediaId: anilistId } as MalIdFromAnilistIdQueryVariables,
-    })
+    const ids = await ArmServer.getIdsFor('anilist', anilistId)
 
-    let malId = oc(response).data.Media.idMal() || null
+    let malId = oc(ids).myanimelist() || null
 
     if (isNil(malId)) {
-      const ids = await ArmServer.getIdsFor('anilist', anilistId)
+      const response = await this.apollo.query<MalIdFromAnilistIdQuery>({
+        fetchPolicy: 'cache-first',
+        query: MAL_ID_FROM_ANILIST_ID,
+        variables: { mediaId: anilistId } as MalIdFromAnilistIdQueryVariables,
+      })
 
-      malId = oc(ids).myanimelist() || null
+      malId = oc(response).data.Media.idMal() || null
     }
 
     return malId
