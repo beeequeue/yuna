@@ -176,7 +176,7 @@ interface SimklQuery {
   extended?: 'full'
 }
 
-type SimklResponse<D extends {} = any> = RequestSuccess<D> | RequestError<null>
+type SimklResponse<D extends {} | null = any> = RequestSuccess<D> | RequestError<null>
 
 const BASE_URL = 'https://api.simkl.com'
 
@@ -192,16 +192,20 @@ export class Simkl {
 
   private static async updateWatchlist() {
     const response = await Simkl.request<
-      _SyncAllItems,
+      _SyncAllItems | null,
       SimklQuery & { date_from: string }
     >('sync/all-items', {
       type: 'post',
-      body: { date_from: new Date(this.lastUpdate).toISOString() },
+      query: { date_from: new Date(this.lastUpdate).toISOString() },
     })
 
     if (responseIsError(response)) {
       throw new Error('Could not update Simkl watchlist')
     }
+
+    this.lastUpdate = Date.now()
+
+    if (isNil(response.body)) return
 
     const updatedItems = response.body.anime
 
@@ -529,20 +533,18 @@ export class Simkl {
     }
   }
 
-  private static async request<B extends {} = any, Q extends {} = any>(
+  private static async request<B extends {} | null = any, Q extends {} = any>(
     path: string,
     {
       type = 'get',
       full = false,
       query = {} as any,
       body,
-      token,
     }: {
       type?: 'get' | 'post'
       full?: boolean
       query?: Q & SimklQuery
       body?: Q & SimklQuery
-      token?: string
     } = {},
   ) {
     if (full) {
@@ -551,7 +553,7 @@ export class Simkl {
 
     return (await superagent[type](`${BASE_URL}/${path}`)
       .set('simkl-api-key', this.clientId)
-      .auth(token!, { type: 'bearer' })
+      .auth(_token, { type: 'bearer' })
       .query(query)
       .send(body)) as SimklResponse<B>
   }

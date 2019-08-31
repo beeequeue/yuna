@@ -34,7 +34,7 @@ export const NO_OP = () => {
   /* no-op */
 }
 
-export interface RequestSuccess<B extends object> extends Response {
+export interface RequestSuccess<B extends {} | null> extends Response {
   status: 200
   ok: true
   body: B
