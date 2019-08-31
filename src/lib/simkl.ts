@@ -193,7 +193,7 @@ const BASE_URL = 'https://api.simkl.com'
 const responseIsError = (
   res: SimklResponse<any>,
 ): res is RequestError<null> => {
-  return res.status !== 200 && !isNil(res.body)
+  return res.status > 400 || !res.ok
 }
 
 let _token = userStore.get('simkl.token', '')
@@ -286,7 +286,9 @@ export class Simkl {
     }
   }
 
-  public static simklStatusFromMediaStatus(status: MediaListStatus): SimklListStatus {
+  public static simklStatusFromMediaStatus(
+    status: MediaListStatus,
+  ): SimklListStatus {
     switch (status) {
       case MediaListStatus.Planning:
         return 'plantowatch'
