@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 import { oc } from 'ts-optchain'
 import { Store } from 'vuex'
 
-import { EPISODE_LIST } from "@/graphql/documents/queries"
+import { EPISODE_LIST } from '@/graphql/documents/queries'
 import LIST_QUERY from '@/views/list/list.graphql'
 import {
   CachedAnimeListEntryFragment,

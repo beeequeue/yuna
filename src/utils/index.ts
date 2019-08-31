@@ -346,8 +346,9 @@ export const isNil = <T>(
 export const isNotNil = <T>(variable: T | null | undefined): variable is T =>
   !isNil(variable)
 
-export const itemsAreNotNil = <T>(arr: Array<T | null | undefined>): arr is T[] =>
-  !arr.some(isNil)
+export const itemsAreNotNil = <T>(
+  arr: Array<T | null | undefined>,
+): arr is T[] => !arr.some(isNil)
 
 export const complement = (fn: (...a: any[]) => any) => (input: any) =>
   !fn(input)

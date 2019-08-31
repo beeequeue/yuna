@@ -218,7 +218,8 @@ import { oc } from 'ts-optchain'
 
 import {
   EpisodeListEpisodes,
-  PlayerAnimeAnime, PlayerAnimeListEntry,
+  PlayerAnimeAnime,
+  PlayerAnimeListEntry,
 } from '@/graphql/types'
 
 import { Required } from '@/decorators'

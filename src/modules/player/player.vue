@@ -488,7 +488,10 @@ export default class Player extends Vue {
       this.softEnded = true
       this.lastScrobble = this.duration
 
-      if (isCrunchyroll(this.playerData.provider) && this.lastScrobble !== this.duration) {
+      if (
+        isCrunchyroll(this.playerData.provider) &&
+        this.lastScrobble !== this.duration
+      ) {
         Crunchyroll.setProgressOfEpisode(Number(this.episode.id), this.duration)
       }
 
