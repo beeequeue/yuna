@@ -6,7 +6,7 @@
           <transition name="fade">
             <login-a-l
               v-if="!isConnectedTo.anilist"
-              :loginAnilist="loginAnilist"
+              :onFinished="onSuccessfulLogin"
             />
 
             <icon v-else :icon="checkSvg" />
@@ -85,12 +85,6 @@ export default class Login extends Vue {
 
       this.$router.back()
     }
-  }
-
-  public async loginAnilist() {
-    await Anilist.login()
-
-    this.onSuccessfulLogin()
   }
 
   get isConnectedTo() {

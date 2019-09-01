@@ -7,21 +7,22 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import anilistLogoSvg from '@/assets/anilist.svg'
 import CButton from '@/common/components/button.vue'
-
-import { Required } from '@/decorators'
+import { Anilist } from '@/lib/anilist'
 
 @Component({ components: { CButton } })
 export default class LoginAl extends Vue {
-  @Required(Function) public loginAnilist!: () => any
+  @Prop(Function) public onFinished!: (() => any) | null
 
   public alLogo = anilistLogoSvg
 
-  public login() {
-    this.loginAnilist()
+  public async login() {
+    await Anilist.login()
+
+    this.onFinished && this.onFinished()
   }
 }
 </script>
