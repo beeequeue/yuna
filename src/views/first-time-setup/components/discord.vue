@@ -15,7 +15,7 @@
       :src="richPresenceWebp"
     />
 
-    <c-button content="Next" :click="goToNextStep" />
+    <c-button content="Next" :click="finishStep" />
   </div>
 </template>
 
@@ -31,7 +31,7 @@ import { getSettings, setDiscordRichPresence } from '@/state/settings'
 
 @Component({ components: { CButton, Checkbox } })
 export default class Discord extends Vue {
-  @Prop() public goToNextStep!: () => any
+  @Prop() public finishStep!: () => any
 
   public discordSvg = discordSvg
   public richPresenceWebp = richPresenceWebp

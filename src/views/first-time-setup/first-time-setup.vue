@@ -17,25 +17,25 @@
         <connections
           key="connections"
           v-if="currentStep === SetupStep.CONNECT"
-          :continue="finishStep"
+          :finishStep="finishStep"
         />
 
         <spoiler-settings
           key="s-s"
           v-if="currentStep === SetupStep.SPOILERS"
-          :goToNextStep="finishStep"
+          :finishStep="finishStep"
         />
 
         <discord
           key="discord"
           v-if="currentStep === SetupStep.DISCORD"
-          :goToNextStep="finishStep"
+          :finishStep="finishStep"
         />
 
         <local-files-setup
           key="local-files-setup"
           v-if="currentStep === SetupStep.LOCAL_FILES"
-          :goToNextStep="finishStep"
+          :finishStep="finishStep"
         />
       </transition-group>
     </div>

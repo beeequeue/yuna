@@ -30,7 +30,7 @@
       </div>
     </section>
 
-    <c-button content="Continue" :click="finishStep" />
+    <c-button content="Continue" :click="_finishStep" />
   </div>
 </template>
 
@@ -49,7 +49,7 @@ import { getFilePath, getFolderPath } from '@/utils/paths'
 
 @Component({ components: { Icon, CButton, Checkbox } })
 export default class Discord extends Vue {
-  @Prop() public goToNextStep!: () => any
+  @Prop() public finishStep!: () => any
 
   public vlcSvg = mdiVlc
   public folderSvg = mdiFolderSearch
@@ -79,11 +79,11 @@ export default class Discord extends Vue {
     this.vlcPath = path
   }
 
-  public finishStep() {
+  public _finishStep() {
     setLocalFilesFolder(this.$store, this.localFilesFolder)
     setVLCPath(this.$store, this.vlcPath)
 
-    this.goToNextStep()
+    this.finishStep()
   }
 }
 </script>

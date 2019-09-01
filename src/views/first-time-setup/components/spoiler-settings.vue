@@ -43,7 +43,7 @@
       :onChange="checked => setSpoiler('episode.thumbnail', checked)"
     />
 
-    <c-button content="Next" :click="goToNextStep" />
+    <c-button content="Next" :click="finishStep" />
 
     <div class="example">
       <episode :episode="episodes[0]" :setCurrentEpisode="() => {}" small />
@@ -67,7 +67,7 @@ import { getSettings, setSpoiler } from '@/state/settings'
 
 @Component({ components: { Episode, CButton, Icon, Checkbox } })
 export default class SpoilerSettings extends Vue {
-  @Prop() public goToNextStep!: () => any
+  @Prop() public finishStep!: () => any
 
   public episodes: EpisodeListEpisodes = [
     {
