@@ -36,7 +36,7 @@ import { oc } from 'ts-optchain'
 
 import ModalBase from '@/common/modals/base.vue'
 import Loading from '@/common/components/loading.vue'
-import { cacheEpisodes } from '@/common/mutations/episodes'
+import { cacheEpisodes } from '@/graphql/mutations/episodes'
 import LOCAL_SOURCE_ANIME from './local-source-anime.graphql'
 import {
   EpisodeListEpisodes,

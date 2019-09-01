@@ -1,5 +1,3 @@
-import { DollarApollo } from 'vue-apollo/types/vue-apollo'
-import { Store } from 'vuex'
 import { oc } from 'ts-optchain'
 
 import {
@@ -29,7 +27,7 @@ import {
   UpdateScoreMutation,
   UpdateStatusMutation,
 } from '@/graphql/types'
-import { ListPlugin } from '@/plugins/list/plugin'
+import { ListPlugin, ListPluginType } from '@/plugins/list/plugin'
 import { isNil } from '@/utils'
 import {
   ANILIST_CREATE_ENTRY,
@@ -48,10 +46,8 @@ type ListEntry = AddToListMutation['AddToList']
 export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public static service = 'anilist'
   public service = 'anilist'
-
-  constructor(apollo: DollarApollo<any>, store: Store<any>) {
-    super(apollo, store)
-  }
+  public static type = ListPluginType.Full
+  public type = ListPluginType.Full
 
   private fromMediaListEntry(
     mediaListEntry: AnilistSetStatusSaveMediaListEntry,
@@ -105,12 +101,13 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     anilistId: number,
   ): Promise<DeleteFromListMutation['DeleteFromList']> {
     const idResult = await this.apollo.query<MediaListEntryFromMediaIdQuery>({
+      fetchPolicy: 'cache-first',
+      errorPolicy: 'ignore',
       query: MEDIA_LIST_ENTRY_FROM_MEDIA_ID,
       variables: {
         mediaId: anilistId,
         userId: getAnilistUserId(this.store),
       } as MediaListEntryFromMediaIdVariables,
-      fetchPolicy: 'cache-first',
     })
 
     if (!isNil(idResult.errors)) throw new Error(idResult.errors[0].message)

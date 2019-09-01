@@ -35,7 +35,7 @@ export class Anilist {
         title: 'AniList Login',
         darkTheme: true,
         backgroundColor: '#111',
-      }) as BrowserWindow
+      })
 
       authWindow
         .loadURL(

@@ -138,7 +138,7 @@ import {
   addToList,
   startRewatching,
   updateStatus,
-} from '@/common/mutations/list-entry'
+} from '@/graphql/mutations/list-entry'
 import {
   AnimeViewAnime,
   AnimeViewListEntry,

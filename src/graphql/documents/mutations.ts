@@ -33,7 +33,8 @@ export const START_REWATCHING = gql`
 
 export const UPDATE_PROGRESS = gql`
   mutation UpdateProgress($anilistId: Int!, $progress: Int!) {
-    UpdateProgress(anilistId: $anilistId, progress: $progress) @client {
+    UpdateProgress(anilistId: $anilistId, progress: $progress
+    ) @client {
       ...ListEntry
     }
   }
@@ -65,4 +66,10 @@ export const EDIT_LIST_ENTRY = gql`
   }
 
   ${LIST_ENTRY_FRAGMENT}
+`
+
+export const CACHE_EPISODES = gql`
+  mutation CacheEpisodes($episodes: [EpisodeInput!]!) {
+    CacheEpisodes(episodes: $episodes) @client
+  }
 `

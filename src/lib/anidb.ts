@@ -6,6 +6,7 @@ import { oc } from 'ts-optchain'
 
 import { getConfig } from '@/config'
 import { Crunchyroll } from '@/lib/crunchyroll'
+import { ArmServer } from '@/lib/arm-server'
 import { delay, isNil, RequestResponse, responseIsError, T } from '@/utils'
 
 interface XmlTitle {
@@ -41,19 +42,6 @@ interface XmlEpisode {
   resources?: {
     resource: XmlResource | XmlResource[]
   }
-}
-
-interface Relation {
-  anilist: number | null
-  anidb: number | null
-  myanimelist: number | null
-  kitsu: number | null
-}
-
-interface RelationError {
-  code: 400 | 404 | 500
-  type: string
-  messages: string[]
 }
 
 const parseString = async (xml: string, options: OptionsV2): Promise<any> =>
@@ -109,16 +97,9 @@ export class AniDB {
   }
 
   public static async getIdFromAnilistId(id: number) {
-    const response = (await superagent
-      .get('https://relations.yuna.moe/api/ids')
-      .query({ source: 'anilist', id })
-      .ok(T)) as RequestResponse<Relation, RelationError>
+    const result = await ArmServer.getIdsFor('anilist', id)
 
-    if (responseIsError(response)) {
-      return null
-    }
-
-    return response.body.anidb
+    return oc(result).anidb() || null
   }
 
   private static async getFirstEpisodeCrunchyrollId(anidbId: number) {

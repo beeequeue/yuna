@@ -1,3 +1,0 @@
-mutation CacheEpisodes($episodes: [EpisodeInput!]!) {
-  CacheEpisodes(episodes: $episodes) @client
-}

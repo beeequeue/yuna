@@ -29,3 +29,11 @@ export const EPISODE_LIST = gql`
     }
   }
 `
+
+export const MAL_ID_FROM_ANILIST_ID = gql`
+  query MalIdFromAnilistId($mediaId: Int!) {
+    Media(id: $mediaId) {
+      idMal
+    }
+  }
+`

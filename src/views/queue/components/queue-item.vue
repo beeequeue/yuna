@@ -124,8 +124,7 @@ import { oc } from 'ts-optchain'
 import { mdiChevronDown, mdiMenu } from '@mdi/js'
 
 import { EPISODE_LIST } from '@/graphql/documents/queries'
-import { setProgress } from '@/common/mutations/list-entry'
-import { startRewatching, updateStatus } from '@/common/mutations/list-entry'
+import { startRewatching, updateStatus, setProgress } from '@/graphql/mutations/list-entry'
 import {
   EpisodeListEpisodes,
   EpisodeListQuery,

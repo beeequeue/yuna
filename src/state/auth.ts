@@ -9,7 +9,7 @@ import { isNil, omit, propEq } from '@/utils'
 
 interface ServiceData {
   user: null | {
-    id: number
+    id: number | string
     name: string
     url: string | null
   }
@@ -46,10 +46,13 @@ export interface HidiveData extends UserPassService {
   }
 }
 
+export interface SimklData extends TokenService {}
+
 export interface AuthState {
   crunchyroll: CrunchyrollData
   anilist: AnilistData
   hidive: HidiveData
+  simkl: SimklData
 }
 
 const initialState: AuthState = {
@@ -73,6 +76,11 @@ const initialState: AuthState = {
       password: userStore.get('hidive.login.password', null),
     },
   },
+  simkl: {
+    token: userStore.get('simkl.token', null),
+    expires: userStore.get('simkl.expires', null),
+    user: userStore.get('simkl.user', null),
+  },
 }
 
 export const auth = {
@@ -85,11 +93,13 @@ export const auth = {
       const anilist = !isNil(state.anilist.token)
       const crunchyroll = !isNil(state.crunchyroll.user)
       const hidive = !isNil(state.hidive.user)
+      const simkl = !isNil(state.simkl.user)
 
       return {
         anilist,
         crunchyroll,
         hidive,
+        simkl,
       }
     },
 
@@ -104,11 +114,11 @@ export const auth = {
       return state.crunchyroll.country
     },
 
-    getAnilistUserId(state: AuthState) {
-      return state.anilist.user && state.anilist.user.id
+    getAnilistUserId(state: AuthState): number | null {
+      return state.anilist.user && (state.anilist.user.id as number | null)
     },
 
-    getAnilistUsername(state: AuthState) {
+    getAnilistUsername(state: AuthState): string | null {
       return state.anilist.user && state.anilist.user.name
     },
 
@@ -211,6 +221,30 @@ export const auth = {
 
       userStore.set('hidive', state.hidive)
     },
+
+    setSimkl(state: AuthState, data: Required<SimklData> | null) {
+      if (data == null) {
+        state.simkl = {
+          user: null,
+          expires: null,
+          token: null,
+        }
+
+        userStore.set('simkl', state.simkl)
+        return
+      }
+
+      state.simkl = {
+        ...data,
+        user: {
+          id: data.user!.id,
+          name: data.user!.name,
+          url: 'https://hidive.com/profile/edit',
+        },
+      }
+
+      userStore.set('simkl', data)
+    },
   },
 }
 
@@ -232,3 +266,4 @@ export const setCrunchyrollCountry = commit(
 export const setAnilist = commit(auth.mutations.setAnilist)
 export const setHidive = commit(auth.mutations.setHidive)
 export const setHidiveProfile = commit(auth.mutations.setHidiveProfile)
+export const setSimkl = commit(auth.mutations.setSimkl)

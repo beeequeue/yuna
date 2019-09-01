@@ -37,7 +37,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiBookmark, mdiBookmarkRemove, mdiCheckCircleOutline } from '@mdi/js'
 
-import { setProgress } from '@/common/mutations/list-entry'
+import { setProgress } from '@/graphql/mutations/list-entry'
 import { EpisodeListEpisodes } from '@/graphql/types'
 
 import { Required } from '@/decorators'

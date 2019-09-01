@@ -6,6 +6,7 @@ import {
   AddToListMutation,
   AddToListVariables,
   AnimeViewQuery,
+  AnimeViewQueryVariables,
   DeleteFromListMutation,
   DeleteFromListVariables,
   ListEntry,
@@ -70,12 +71,19 @@ export const addToList = async ({ $apollo }: Instance, anilistId: number) =>
     update: (cache, { data }) => {
       if (!data) return
 
+      const variables: AnimeViewQueryVariables = { id: anilistId }
       const cachedData = cache.readQuery<AnimeViewQuery>({
         query: ANIME_PAGE_QUERY,
-        variables: { id: anilistId },
+        variables,
       })
 
       cachedData!.anime!.listEntry = data.AddToList
+
+      cache.writeQuery({
+        query: ANIME_PAGE_QUERY,
+        variables,
+        data: cachedData,
+      })
     },
   })
 
@@ -87,14 +95,21 @@ export const deleteFromList = async (
     mutation: DELETE_FROM_LIST,
     variables: { anilistId } as DeleteFromListVariables,
     update: cache => {
+      const variables: AnimeViewQueryVariables = { id: anilistId }
       const data = cache.readQuery<AnimeViewQuery>({
         query: ANIME_PAGE_QUERY,
-        variables: { id: anilistId },
+        variables,
       })
 
       if (!data || !data.anime || !data.anime.listEntry) return
 
       data.anime.listEntry = null
+
+      cache.writeQuery({
+        query: ANIME_PAGE_QUERY,
+        variables,
+        data,
+      })
     },
   })
 
