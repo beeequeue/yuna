@@ -1,8 +1,8 @@
 <template>
-  <div class="step login-cr" @keydown.enter="start">
+  <div class="step login-simkl" @keydown.enter="start">
     <span v-html="logo" class="logo" />
 
-    <animated-height>
+    <animated-height style="width: 100%;">
       <c-button v-if="!codeDetails" content="Connect" :click="start" />
 
       <div v-if="codeDetails" class="code-details">
@@ -88,10 +88,15 @@ export default class LoginSimkl extends Vue {
 </script>
 
 <style scoped lang="scss">
-.login-cr {
+.login-simkl {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  & .button {
+    width: 100%;
+    padding: 10px;
+  }
 
   & > .logo {
     margin: 15px;
@@ -104,6 +109,8 @@ export default class LoginSimkl extends Vue {
   }
 
   & .code-details {
+    padding-bottom: 15px;
+
     & > .code {
       margin: 5px 0;
       font-size: 1.5em;
