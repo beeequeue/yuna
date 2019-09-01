@@ -1,3 +1,5 @@
+import { Store } from 'vuex'
+
 import {
   AddToListMutation,
   AddToListVariables,
@@ -13,9 +15,20 @@ import {
   UpdateStatusMutation,
   UpdateStatusVariables,
 } from '@/graphql/types'
+import { getListPlugins } from '@/state/auth'
 import { getMainListPlugin } from '@/state/settings'
 import { store } from '@/state/store'
 import { isNil } from '@/utils'
+
+const getEnabledPlugins = (store: Store<any>) => {
+  const enabledPlugins = getListPlugins(store)
+    .filter(p => p.available)
+    .map(p => p.name)
+
+  return window.listPlugins.filter(plugin =>
+    enabledPlugins.includes(plugin.service),
+  )
+}
 
 export const GetListEntry = async (
   media: Media,
@@ -37,7 +50,9 @@ export const AddToList = async (
   { anilistId }: AddToListVariables,
   _cache: { cache: RealProxy },
 ): Promise<AddToListMutation['AddToList']> => {
-  const promises = window.listPlugins.map(plugin => plugin.AddToList(anilistId))
+  const promises = getEnabledPlugins(store).map(plugin =>
+    plugin.AddToList(anilistId),
+  )
   const results = await Promise.all(promises)
 
   return results[0]
@@ -48,7 +63,7 @@ export const DeleteFromList = async (
   { anilistId }: DeleteFromListVariables,
   _cache: { cache: RealProxy },
 ): Promise<DeleteFromListMutation['DeleteFromList']> => {
-  const promises = window.listPlugins.map(plugin =>
+  const promises = getEnabledPlugins(store).map(plugin =>
     plugin.DeleteFromList(anilistId),
   )
   const results = await Promise.all(promises)
@@ -61,7 +76,7 @@ export const UpdateStatus = async (
   { anilistId, status }: UpdateStatusVariables,
   _cache: { cache: RealProxy },
 ): Promise<UpdateStatusMutation['UpdateStatus']> => {
-  const promises = window.listPlugins.map(plugin =>
+  const promises = getEnabledPlugins(store).map(plugin =>
     plugin.UpdateStatus(anilistId, status),
   )
   const results = await Promise.all(promises)
@@ -74,7 +89,7 @@ export const StartRewatching = async (
   { anilistId }: StartRewatchingVariables,
   _cache: { cache: RealProxy },
 ): Promise<StartRewatchingMutation['StartRewatching']> => {
-  const promises = window.listPlugins.map(plugin =>
+  const promises = getEnabledPlugins(store).map(plugin =>
     plugin.StartRewatching(anilistId),
   )
   const results = await Promise.all(promises)
@@ -87,7 +102,7 @@ export const UpdateProgress = async (
   { anilistId, progress }: UpdateProgressVariables,
   _cache: { cache: RealProxy },
 ): Promise<UpdateProgressMutation['UpdateProgress']> => {
-  const promises = window.listPlugins.map(plugin =>
+  const promises = getEnabledPlugins(store).map(plugin =>
     plugin.UpdateProgress(anilistId, progress),
   )
   const results = await Promise.all(promises)
@@ -100,7 +115,7 @@ export const EditListEntry = async (
   { anilistId, options }: EditListEntryMutationVariables,
   _cache: { cache: RealProxy },
 ): Promise<UpdateProgressMutation['UpdateProgress']> => {
-  const promises = window.listPlugins.map(plugin =>
+  const promises = getEnabledPlugins(store).map(plugin =>
     plugin.EditListEntry(anilistId, options),
   )
   const results = await Promise.all(promises)

@@ -48,7 +48,11 @@ import PlayerContainer from '@/modules/player/player-container.vue'
 import Navbar from '@/modules/navbar/navbar.vue'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { Hidive } from '@/lib/hidive'
-import { getFinishedConnecting, getIsConnectedTo } from '@/state/auth'
+import {
+  getFinishedConnecting,
+  getIsConnectedTo,
+  getListPlugins,
+} from '@/state/auth'
 import { getHasFinishedSetup } from '@/state/settings'
 import {
   AppState,
@@ -60,6 +64,7 @@ import {
 } from '@/state/app'
 import { CHECK_FOR_UPDATES } from '@/messages'
 import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
+import { SimklListPlugin } from '@/plugins/list/simkl-plugin'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
@@ -115,7 +120,7 @@ export default class App extends Vue {
   )
 
   public setupListPlugins() {
-    const plugins = [AnilistListPlugin]
+    const plugins = [AnilistListPlugin, SimklListPlugin]
 
     return plugins.map(plugin => new plugin(this.$apollo, this.$store))
   }
