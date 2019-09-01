@@ -1,22 +1,18 @@
 import { ipcRenderer } from 'electron'
 import Store from 'electron-store'
-import { api } from 'electron-util'
-import { existsSync } from 'fs'
-import { resolve } from 'path'
 import { Key } from 'ts-key-enum'
 import Vue from 'vue'
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
 
 import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
-import { userStore } from '@/lib/user'
 import {
   DISCORD_DISABLE_RICH_PRESENCE,
   DISCORD_ENABLE_RICH_PRESENCE,
 } from '@/messages'
 import { RootState } from '@/state/store'
 import { Crunchyroll } from '@/lib/crunchyroll'
-import { enumKeysToArray, hasKey, isNil } from '@/utils'
+import { enumKeysToArray, hasKey, isNotNil } from '@/utils'
 
 export enum KeybindingAction {
   PAUSE = 'PAUSE',
@@ -134,15 +130,26 @@ const defaultDiscord: DiscordSettings = {
   richPresence: true,
 }
 
-const _steps: Array<SetupStep | null> = [
-  userStore.get('anilist.token') != null ? SetupStep.LIST_MANAGERS : null,
-  userStore.get('crunchyroll.token') != null ? SetupStep.CONNECT : null,
-  existsSync(resolve(api.app.getPath('userData'), '.has-setup'))
-    ? SetupStep.SPOILERS
-    : null,
-]
+const oldSteps = SettingsStore.get('setup.finishedSteps', []) as SetupStep[]
 
-const defaultSteps: SetupStep[] = _steps.filter(step => !isNil(step)) as any
+const migratedSteps = oldSteps
+  .map((step: SetupStep | number) => {
+    if (typeof step !== 'number') return step
+
+    switch (step) {
+      case 1:
+        return SetupStep.CONNECT
+      case 2:
+        return SetupStep.SPOILERS
+      case 3:
+        return SetupStep.DISCORD
+      case 4:
+        return SetupStep.LOCAL_FILES
+      default:
+        return null
+    }
+  })
+  .filter(isNotNil)
 
 const initialState: SettingsState = {
   episodeFeedMode: SettingsStore.get('episodeFeedMode', EpisodeFeedMode.QUEUE),
@@ -162,7 +169,7 @@ const initialState: SettingsState = {
     'mainListPlugin',
     AnilistListPlugin.service,
   ),
-  setup: SettingsStore.get('setup', { finishedSteps: [...defaultSteps] }),
+  setup: SettingsStore.get('setup', { finishedSteps: [...migratedSteps] }),
   window: SettingsStore.get('window', {}),
 }
 
