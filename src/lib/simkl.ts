@@ -384,9 +384,9 @@ export class Simkl {
 
         const token = response.body.access_token
 
+        _token = token
         const user = await this.getUserInfo()
 
-        _token = token
         setSimkl(store, {
           token,
           expires: null,
