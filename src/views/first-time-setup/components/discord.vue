@@ -1,5 +1,5 @@
 <template>
-  <div class="step login-discord" @keydown.enter="login">
+  <div class="step discord">
     <span v-html="discordSvg" class="icon" />
 
     <checkbox
@@ -49,7 +49,7 @@ export default class Discord extends Vue {
 <style scoped lang="scss">
 @import '../../../colors';
 
-.login-discord {
+.discord {
   display: flex;
   flex-direction: column;
   align-items: center;
