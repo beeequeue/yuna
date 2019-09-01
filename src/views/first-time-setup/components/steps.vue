@@ -1,10 +1,10 @@
 <template>
   <div class="steps-container">
     <div
-      v-for="(_, i) in steps"
-      :key="i"
+      v-for="(step, i) in steps"
+      :key="step"
       class="step"
-      :class="{ current: current === i, done: current == null || current > i }"
+      :class="getClasses(step, i)"
     >
       {{ i + 1 }}
     </div>
@@ -15,11 +15,19 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import { Required } from '@/decorators'
+import { SetupStep } from '@/state/settings'
 
 @Component
 export default class Steps extends Vue {
   @Required(Array) public steps!: string[]
-  @Prop(Number) public current!: number | null
+  @Prop(String) public current!: SetupStep | null
+
+  public getClasses(step: SetupStep, i: number) {
+    return {
+      current: this.current === step,
+      done: this.current == null || this.steps.indexOf(this.current) > i,
+    }
+  }
 }
 </script>
 

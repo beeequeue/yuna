@@ -16,7 +16,7 @@ import {
 } from '@/messages'
 import { RootState } from '@/state/store'
 import { Crunchyroll } from '@/lib/crunchyroll'
-import { hasKey, isNil } from '@/utils'
+import { enumKeysToArray, hasKey, isNil } from '@/utils'
 
 export enum KeybindingAction {
   PAUSE = 'PAUSE',
@@ -55,16 +55,14 @@ interface DiscordSettings {
 }
 
 export enum SetupStep {
-  LOGIN_AL,
-  CONNECT,
-  SPOILERS,
-  DISCORD,
-  LOCAL_FILES,
+  LOGIN_AL = 'LOGIN_AL',
+  CONNECT = 'CONNECT',
+  SPOILERS = 'SPOILERS',
+  DISCORD = 'DISCORD',
+  LOCAL_FILES = 'LOCAL_FILES',
 }
 
-export const _setupSteps = Object.keys(SetupStep)
-  .filter(a => a.match(/\d+/))
-  .map(Number) as SetupStep[]
+export const _setupSteps = enumKeysToArray(SetupStep) as SetupStep[]
 
 interface SetupSettings {
   finishedSteps: SetupStep[]
