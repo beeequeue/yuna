@@ -10,7 +10,7 @@
       >
         <login-al
           key="al"
-          v-if="currentStep === SetupStep.LOGIN_AL"
+          v-if="currentStep === SetupStep.LIST_MANAGERS"
           :loginAnilist="loginAnilist"
         />
 
@@ -73,7 +73,7 @@ import { getIsConnectedTo } from '@/state/auth'
   },
 })
 export default class FirstTimeSetup extends Vue {
-  public currentStep: SetupStep | null = SetupStep.LOGIN_AL
+  public currentStep: SetupStep | null = SetupStep.LIST_MANAGERS
   public steps = _setupSteps
   public SetupStep = SetupStep
 
@@ -104,7 +104,7 @@ export default class FirstTimeSetup extends Vue {
     const isConnectedTo = getIsConnectedTo(this.$store)
 
     if (!isConnectedTo.anilist) {
-      removeFinishedStep(this.$store, SetupStep.LOGIN_AL)
+      removeFinishedStep(this.$store, SetupStep.LIST_MANAGERS)
     }
 
     if (!isConnectedTo.crunchyroll && !isConnectedTo.hidive) {

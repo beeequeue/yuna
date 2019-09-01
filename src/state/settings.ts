@@ -55,7 +55,7 @@ interface DiscordSettings {
 }
 
 export enum SetupStep {
-  LOGIN_AL = 'LOGIN_AL',
+  LIST_MANAGERS = 'LIST_MANAGERS',
   CONNECT = 'CONNECT',
   SPOILERS = 'SPOILERS',
   DISCORD = 'DISCORD',
@@ -135,7 +135,7 @@ const defaultDiscord: DiscordSettings = {
 }
 
 const _steps: Array<SetupStep | null> = [
-  userStore.get('anilist.token') != null ? SetupStep.LOGIN_AL : null,
+  userStore.get('anilist.token') != null ? SetupStep.LIST_MANAGERS : null,
   userStore.get('crunchyroll.token') != null ? SetupStep.CONNECT : null,
   existsSync(resolve(api.app.getPath('userData'), '.has-setup'))
     ? SetupStep.SPOILERS

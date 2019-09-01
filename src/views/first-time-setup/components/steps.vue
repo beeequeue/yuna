@@ -25,7 +25,7 @@ export default class Steps extends Vue {
 
   public getStepName(step: SetupStep) {
     switch (step) {
-      case SetupStep.LOGIN_AL:
+      case SetupStep.LIST_MANAGERS:
         return 'List managers'
       case SetupStep.CONNECT:
         return 'Streaming services'
