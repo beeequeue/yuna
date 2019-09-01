@@ -1,8 +1,10 @@
 <template>
   <div class="step login-cr" @keydown.enter="login">
-    <span v-html="alLogo" class="logo" />
+    <a href="https://anilist.co" class="logo" v-tooltip.top="'AniList'">
+      <span v-html="alLogo" />
+    </a>
 
-    <c-button content="Login" :click="login" />
+    <c-button content="Connect" :click="login" />
   </div>
 </template>
 

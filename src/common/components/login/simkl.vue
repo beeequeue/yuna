@@ -1,6 +1,8 @@
 <template>
   <div class="step login-simkl" @keydown.enter="start">
-    <span v-html="logo" class="logo" />
+    <a href="https://simkl.com" class="logo" v-tooltip.top="'Simkl'">
+      <span v-html="logo" />
+    </a>
 
     <animated-height style="width: 100%;">
       <c-button v-if="!codeDetails" content="Connect" :click="start" />

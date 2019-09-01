@@ -1,6 +1,8 @@
 <template>
   <div class="step login-hidive" @keydown.enter="login">
-    <span v-html="hidiveIcon" class="logo" />
+    <a href="https://hidive.com" class="logo" v-tooltip.top="'HIDIVE'">
+      <span v-html="hidiveIcon" />
+    </a>
 
     <div class="container" v-if="hidiveProfiles.length < 1">
       <text-input
