@@ -93,6 +93,7 @@ export default class Steps extends Vue {
       right: calc(100% + 10px);
       font-size: 14px;
       width: 100px;
+      color: $white !important;
       text-align: right;
       text-shadow: $outline;
       font-family: 'Raleway', sans-serif;
