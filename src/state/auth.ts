@@ -6,6 +6,8 @@ import { userStore } from '@/lib/user'
 import { RootState } from '@/state/store'
 import { HidiveProfile } from '@/lib/hidive'
 import { isNil, omit, propEq } from '@/utils'
+import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
+import { SimklListPlugin } from '@/plugins/list/simkl-plugin'
 
 interface ServiceData {
   user: null | {
@@ -140,6 +142,23 @@ export const auth = {
         password,
       }
     },
+
+    getListPlugins(
+      state: AuthState,
+    ): Array<{ name: string; available: boolean }> {
+      const { anilist, simkl } = _getIsConnectedTo(state)
+
+      return [
+        {
+          name: AnilistListPlugin.service,
+          available: anilist,
+        },
+        {
+          name: SimklListPlugin.service,
+          available: simkl,
+        },
+      ]
+    },
   },
 
   mutations: {
@@ -235,7 +254,7 @@ export const auth = {
         user: {
           id: data.user!.id,
           name: data.user!.name,
-          url: 'https://hidive.com/profile/edit',
+          url: data.user!.url,
         },
       }
 
@@ -254,6 +273,7 @@ export const getAnilistUsername = read(auth.getters.getAnilistUsername)
 export const getHidiveProfiles = read(auth.getters.getHidiveProfiles)
 export const getHidiveProfileIndex = read(auth.getters.getHidiveProfileIndex)
 export const getHidiveLogin = read(auth.getters.getHidiveLogin)
+export const getListPlugins = read(auth.getters.getListPlugins)
 
 export const setCrunchyroll = commit(auth.mutations.setCrunchyroll)
 export const setCrunchyrollCountry = commit(

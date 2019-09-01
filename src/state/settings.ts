@@ -413,6 +413,7 @@ export const settings = {
 
     setMainListPlugin(state: SettingsState, service: string) {
       state.mainListPlugin = service
+      SettingsStore.set('mainListPlugin', service)
     },
   },
 

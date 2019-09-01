@@ -3,7 +3,12 @@
     <span v-if="label != null">{{ label }}</span>
 
     <select :value="value" @input="handleChange">
-      <option v-for="item in items" :key="item.value" :value="item.value">
+      <option
+        v-for="item in items"
+        :key="item.value"
+        :value="item.value"
+        :disabled="item.disabled"
+      >
         {{ item.label }}
       </option>
     </select>
@@ -18,6 +23,7 @@ import { Required } from '@/decorators'
 export interface DropdownItem {
   label: string
   value: string
+  disabled?: boolean
 }
 
 @Component
