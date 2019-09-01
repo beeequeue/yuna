@@ -6,6 +6,7 @@
       class="step"
       :class="getClasses(step, i)"
     >
+      <div class="name">{{ getStepName(step) }}</div>
       {{ i + 1 }}
     </div>
   </div>
@@ -21,6 +22,21 @@ import { SetupStep } from '@/state/settings'
 export default class Steps extends Vue {
   @Required(Array) public steps!: string[]
   @Prop(String) public current!: SetupStep | null
+
+  public getStepName(step: SetupStep) {
+    switch (step) {
+      case SetupStep.LOGIN_AL:
+        return 'List managers'
+      case SetupStep.CONNECT:
+        return 'Streaming services'
+      case SetupStep.SPOILERS:
+        return 'Spoiler settings'
+      case SetupStep.DISCORD:
+        return 'Discord Rich Presence'
+      case SetupStep.LOCAL_FILES:
+        return 'Local files'
+    }
+  }
 
   public getClasses(step: SetupStep, i: number) {
     return {
@@ -41,6 +57,7 @@ export default class Steps extends Vue {
   user-select: none;
 
   & > .step {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -59,12 +76,28 @@ export default class Steps extends Vue {
 
     &.current {
       border-color: $highlight;
+
+      & > .name {
+        opacity: 1;
+      }
     }
 
     &.done {
       background: $success;
       border-color: $success;
       color: black;
+    }
+
+    & > .name {
+      position: absolute;
+      right: calc(100% + 10px);
+      font-size: 14px;
+      width: 100px;
+      text-align: right;
+      text-shadow: $outline;
+      font-family: 'Raleway', sans-serif;
+      opacity: 0.6;
+      transition: opacity 0.5s;
     }
   }
 }
