@@ -83,6 +83,13 @@ const initialState: AuthState = {
   },
 }
 
+const _getIsConnectedTo = (state: AuthState) => ({
+  anilist: !isNil(state.anilist.token),
+  crunchyroll: !isNil(state.crunchyroll.user),
+  hidive: !isNil(state.hidive.user),
+  simkl: !isNil(state.simkl.user),
+})
+
 export const auth = {
   namespaced: true,
 
@@ -90,24 +97,13 @@ export const auth = {
 
   getters: {
     getIsConnectedTo(state: AuthState) {
-      const anilist = !isNil(state.anilist.token)
-      const crunchyroll = !isNil(state.crunchyroll.user)
-      const hidive = !isNil(state.hidive.user)
-      const simkl = !isNil(state.simkl.user)
-
-      return {
-        anilist,
-        crunchyroll,
-        hidive,
-        simkl,
-      }
+      return _getIsConnectedTo(state)
     },
 
     getFinishedConnecting(state: AuthState) {
-      return (
-        !isNil(state.anilist.token) &&
-        (!isNil(state.crunchyroll.user) || !isNil(state.hidive.user))
-      )
+      const { anilist, simkl, crunchyroll, hidive } = _getIsConnectedTo(state)
+
+      return (anilist || simkl) && (crunchyroll || hidive)
     },
 
     getCrunchyrollCountry(state: AuthState) {

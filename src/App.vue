@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { ipcRenderer } from 'electron'
-import { Vue } from 'vue-property-decorator'
+import { Vue, Watch } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 
 import CButton from '@/common/components/button.vue'
@@ -118,6 +118,13 @@ export default class App extends Vue {
     const plugins = [AnilistListPlugin]
 
     return plugins.map(plugin => new plugin(this.$apollo, this.$store))
+  }
+
+  @Watch('hasFinishedSetup')
+  public finishedConnectingChanged() {
+    if (!this.isFinishedConnecting && this.hasFinishedSetup) {
+      this.$router.push('login')
+    }
   }
 
   public async created() {
