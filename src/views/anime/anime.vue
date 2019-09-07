@@ -93,8 +93,9 @@ import {
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
+import { getDefaultProvider } from '@/state/auth'
 import { getSpoilerSettings } from '@/state/settings'
-import { getDefaultProvider, getRelations, isNil } from '@/utils'
+import { getRelations, isNil } from '@/utils'
 
 @Component({
   components: {
@@ -130,7 +131,7 @@ export default class Anime extends Vue {
     variables() {
       return {
         id: this.id,
-        provider: getDefaultProvider(this.$store, this.data.anime),
+        provider: getDefaultProvider(this.$store.state.auth, this.data.anime),
       }
     },
     skip() {
