@@ -4,8 +4,9 @@ import { oc } from 'ts-optchain'
 
 import { ListEntry, Media, MediaListStatus, Provider } from '@/graphql/types'
 import { RootState } from '@/state/store'
+import { getDefaultProvider } from '@/state/auth'
 import { QueueItem, userStore } from '@/lib/user'
-import { getDefaultProvider, isNotNil, propEq } from '@/utils'
+import { isNotNil, propEq } from '@/utils'
 
 const isInQueue = (state: UserState, id: number) =>
   isNotNil(state.queue.find(propEq('id', id)))
@@ -114,7 +115,7 @@ export const user = {
       _addToQueue(context, {
         id: anime.id,
         open: isCurrentlyWatching(anime),
-        provider: getDefaultProvider(context, anime),
+        provider: getDefaultProvider(context.rootState.auth, anime),
       })
     },
   },

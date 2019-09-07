@@ -5,9 +5,18 @@ import { oc } from 'ts-optchain'
 import { userStore } from '@/lib/user'
 import { RootState } from '@/state/store'
 import { HidiveProfile } from '@/lib/hidive'
-import { isNil, omit, propEq } from '@/utils'
+import {
+  getStreamingSources,
+  isNil,
+  isNotNil,
+  omit,
+  propEq,
+  stripFalsy,
+} from '@/utils'
 import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
 import { SimklListPlugin } from '@/plugins/list/simkl-plugin'
+import { Provider } from '@/graphql/types'
+import { StreamingSource } from '@/types'
 
 interface ServiceData {
   user: null | {
@@ -55,6 +64,50 @@ export interface AuthState {
   anilist: AnilistData
   hidive: HidiveData
   simkl: SimklData
+}
+
+const existsAndIsConnected = (
+  state: AuthState,
+  provider: Provider,
+  source: StreamingSource,
+  sources: string[],
+): Provider | false => {
+  // Since enums are lowercase
+  const lowercaseSources = sources.map(str => str.toLowerCase())
+  const connectedTo = _getIsConnectedTo(state)
+  const isConnectedToProvider =
+    connectedTo[provider.toLowerCase() as keyof typeof connectedTo]
+
+  return isConnectedToProvider && lowercaseSources.includes(source)
+    ? provider
+    : false
+}
+
+export const getDefaultProvider = (state: AuthState, anime: _Anime) => {
+  const links = oc(anime).externalLinks([])
+
+  if (isNil(links)) return Provider.Crunchyroll
+
+  const sources = getStreamingSources(links.filter(isNotNil)).map(
+    source => source.site,
+  )
+
+  const supportedProviders = [
+    existsAndIsConnected(
+      state,
+      Provider.Crunchyroll,
+      StreamingSource.Crunchyroll,
+      sources,
+    ),
+    existsAndIsConnected(
+      state,
+      Provider.Hidive,
+      StreamingSource.Hidive,
+      sources,
+    ),
+  ]
+
+  return stripFalsy(supportedProviders)[0] || Provider.Crunchyroll
 }
 
 const initialState: AuthState = {
@@ -264,6 +317,11 @@ export const auth = {
 }
 
 const { commit, read } = getStoreAccessors<AuthState, RootState>('auth')
+
+interface _Anime {
+  id: number
+  externalLinks: null | Array<null | { site: string; url: string }>
+}
 
 export const getIsConnectedTo = read(auth.getters.getIsConnectedTo)
 export const getFinishedConnecting = read(auth.getters.getFinishedConnecting)
