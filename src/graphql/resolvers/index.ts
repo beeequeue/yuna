@@ -9,6 +9,7 @@ import {
   GetListEntry,
   StartRewatching,
   UpdateProgress,
+  UpdateScore,
   UpdateStatus,
 } from './list-entry'
 
@@ -30,6 +31,7 @@ export const resolvers = {
     DeleteFromList,
     UpdateStatus,
     UpdateProgress,
+    UpdateScore,
     StartRewatching,
     EditListEntry,
   },

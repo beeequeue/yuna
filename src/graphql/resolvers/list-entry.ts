@@ -13,6 +13,8 @@ import {
   StartRewatchingVariables,
   UpdateProgressMutation,
   UpdateProgressVariables,
+  UpdateScoreMutation,
+  UpdateScoreMutationVariables,
   UpdateStatusMutation,
   UpdateStatusVariables,
 } from '@/graphql/types'
@@ -105,6 +107,19 @@ export const UpdateProgress = async (
 ): Promise<UpdateProgressMutation['UpdateProgress']> => {
   const promises = getEnabledPlugins(store).map(plugin =>
     plugin.UpdateProgress(anilistId, progress),
+  )
+  const results = await Promise.all(promises)
+
+  return results[0]
+}
+
+export const UpdateScore = async (
+  _root: undefined,
+  { anilistId, score }: UpdateScoreMutationVariables,
+  _cache: { cache: RealProxy },
+): Promise<UpdateScoreMutation['UpdateScore']> => {
+  const promises = getEnabledPlugins(store).map(plugin =>
+    plugin.UpdateScore(anilistId, score),
   )
   const results = await Promise.all(promises)
 
