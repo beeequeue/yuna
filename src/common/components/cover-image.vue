@@ -4,7 +4,11 @@
 
     <img :src="src" class="shadow" />
 
-    <score :mediaId="listEntry.mediaId" :size="38" />
+    <score
+      v-if="showRating && listEntry"
+      :mediaId="listEntry.mediaId"
+      :size="38"
+    />
 
     <div
       v-if="mediaListStatus"

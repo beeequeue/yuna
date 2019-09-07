@@ -15,6 +15,7 @@
         :color="data.anime.coverImage.color"
         :listEntry="getListEntry(data)"
         :length="data.anime.episodes"
+        showRating
       />
 
       <actions
