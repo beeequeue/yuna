@@ -5,7 +5,6 @@ import Vue from 'vue'
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
 
-import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
 import {
   DISCORD_DISABLE_RICH_PRESENCE,
   DISCORD_ENABLE_RICH_PRESENCE,
@@ -82,7 +81,7 @@ export interface SettingsState {
   spoilers: SpoilerSettings
   externalPlayers: ExternalPlayerPaths
   localFilesFolder: string | null
-  mainListPlugin: string
+  mainListPlugin: string | null
   setup: SetupSettings
   window: Electron.Rectangle
 }
@@ -164,10 +163,7 @@ const initialState: SettingsState = {
   spoilers: SettingsStore.get('spoilers', { ...defaultSpoilers }),
   externalPlayers: SettingsStore.get('externalPlayers', { vlc: null }),
   localFilesFolder: SettingsStore.get('localFilesFolder', null),
-  mainListPlugin: SettingsStore.get(
-    'mainListPlugin',
-    AnilistListPlugin.service,
-  ),
+  mainListPlugin: SettingsStore.get('mainListPlugin', null),
   setup: SettingsStore.get('setup', { finishedSteps: [...migratedSteps] }),
   window: SettingsStore.get('window', {}),
 }
