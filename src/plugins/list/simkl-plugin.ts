@@ -15,6 +15,7 @@ import {
   UpdateScoreMutation,
   UpdateStatusMutation,
 } from '@/graphql/types'
+import { getIsConnectedTo } from '@/state/auth'
 import { Simkl, SimklListEntry } from '@/lib/simkl'
 import { ArmServer } from '@/lib/arm-server'
 import { isNil } from '@/utils'
@@ -24,6 +25,10 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
   public service = 'simkl'
   public static type = ListPluginType.Full
   public type = ListPluginType.Full
+
+  isAvailable(): boolean {
+    return getIsConnectedTo(this.store).simkl
+  }
 
   private async getMALId(anilistId: number) {
     const ids = await ArmServer.getIdsFor('anilist', anilistId)

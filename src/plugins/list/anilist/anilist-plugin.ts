@@ -39,7 +39,7 @@ import {
   ANILIST_START_REWATCHING,
 } from '@/plugins/list/anilist/anilist-documents'
 import { MEDIA_LIST_ENTRY_FROM_MEDIA_ID } from '@/graphql/documents/queries'
-import { getAnilistUserId } from '@/state/auth'
+import { getAnilistUserId, getIsConnectedTo } from '@/state/auth'
 
 type ListEntry = AddToListMutation['AddToList']
 
@@ -48,6 +48,10 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public service = 'anilist'
   public static type = ListPluginType.Full
   public type = ListPluginType.Full
+
+  isAvailable(): boolean {
+    return getIsConnectedTo(this.store).anilist
+  }
 
   private fromMediaListEntry(
     mediaListEntry: AnilistSetStatusSaveMediaListEntry,
