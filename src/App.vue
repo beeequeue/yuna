@@ -48,11 +48,7 @@ import PlayerContainer from '@/modules/player/player-container.vue'
 import Navbar from '@/modules/navbar/navbar.vue'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { Hidive } from '@/lib/hidive'
-import {
-  getFinishedConnecting,
-  getIsConnectedTo,
-  getListPlugins,
-} from '@/state/auth'
+import { getFinishedConnecting, getIsConnectedTo } from '@/state/auth'
 import { getHasFinishedSetup } from '@/state/settings'
 import {
   AppState,

@@ -449,7 +449,7 @@ export default class Settings extends Vue {
     return getMainListPlugin(this.$store)
   }
 
-  public get mainListPluginSelectItems(): DropdownItem {
+  public get mainListPluginSelectItems(): DropdownItem[] {
     const plugins = getListPlugins(this.$store)
 
     return plugins.map(plugin => ({
