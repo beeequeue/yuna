@@ -1,11 +1,12 @@
+import { Store } from 'vuex'
 import superagent from 'superagent/dist/superagent'
 import { oc } from 'ts-optchain'
 import { captureException } from '@sentry/browser'
 
 import { getConfig } from '@/config'
 import { isNil, RequestError, RequestSuccess } from '@/utils'
-import { Store } from 'vuex'
 import { setSimkl } from '@/state/auth'
+import { updateMainListPlugin } from '@/state/settings'
 import { MediaListStatus } from '@/graphql/types'
 import { userStore } from '@/lib/user'
 
@@ -392,6 +393,7 @@ export class Simkl {
           expires: null,
           user,
         })
+        updateMainListPlugin(store)
 
         resolve()
       }, interval * 1000)
@@ -449,6 +451,8 @@ export class Simkl {
 
   public static async disconnect(store: Store<any>) {
     setSimkl(store, null)
+
+    updateMainListPlugin(store)
   }
 
   public static async watchedInfo(malId: number, skipUpdate?: true) {
