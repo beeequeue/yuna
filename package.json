@@ -110,7 +110,7 @@
       "prettier --write",
       "git add"
     ],
-    "*.{json,graphql,yml,scss,svg}": [
+    "*.{json,graphql,yml,scss}": [
       "prettier --write",
       "git add"
     ]

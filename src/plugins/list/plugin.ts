@@ -29,6 +29,8 @@ export abstract class ListPlugin {
     this.store = store
   }
 
+  public abstract isAvailable(): boolean
+
   public abstract async GetListEntry(
     anilistId: number,
   ): Promise<ListEntry | null>

@@ -231,13 +231,34 @@
       <section class="category" id="accounts">
         <h1>Accounts</h1>
 
+        <h3>List managers</h3>
+
         <connection type="anilist" :setCurrentWindow="setCurrentWindow" />
+
+        <connection type="simkl" :setCurrentWindow="setCurrentWindow" />
+
+        <p>
+          Main list manager
+
+          <icon
+            :icon="infoSvg"
+            v-tooltip.top="{
+              content:
+                'This is the service that will be used to show what status shows are in etc.',
+            }"
+          />
+        </p>
+        <dropdown
+          :items="mainListPluginSelectItems"
+          :value="mainListPlugin"
+          :onChange="setMainListPlugin"
+        />
+
+        <h3>Streaming services</h3>
 
         <connection type="crunchyroll" :setCurrentWindow="setCurrentWindow" />
 
         <connection type="hidive" :setCurrentWindow="setCurrentWindow" />
-
-        <connection type="simkl" :setCurrentWindow="setCurrentWindow" />
       </section>
     </div>
 
@@ -307,25 +328,30 @@ import Keybinding from './components/keybinding.vue'
 
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { getIsUpdateAvailable } from '@/state/app'
-import { getCrunchyrollCountry, getIsConnectedTo } from '@/state/auth'
+import {
+  getCrunchyrollCountry,
+  getIsConnectedTo,
+  getListPlugins,
+} from '@/state/auth'
 import {
   addKeybinding,
   getCrunchyrollLocale,
   getLocalFilesFolder,
+  getMainListPlugin,
   getSettings,
   KeybindingAction,
   removeKeybinding,
   resetKeybindings,
-  setCrunchyrollLocale,
   setDiscordRichPresence,
   setLocalFilesFolder,
+  setMainListPlugin,
   setSetting,
   setSpoiler,
   SettingsState,
   setVLCPath,
 } from '@/state/settings'
 import { DOWNLOAD_UPDATE, OPEN_DEVTOOLS } from '@/messages'
-import { isNil } from '@/utils'
+import { capitalize, isNil } from '@/utils'
 import { getFilePath, getFolderPath } from '@/utils/paths'
 
 enum Window {
@@ -418,6 +444,20 @@ export default class Settings extends Vue {
     return getIsConnectedTo(this.$store)
   }
 
+  public get mainListPlugin() {
+    return getMainListPlugin(this.$store)
+  }
+
+  public get mainListPluginSelectItems(): DropdownItem[] {
+    const plugins = getListPlugins(this.$store)
+
+    return plugins.map(plugin => ({
+      label: capitalize(plugin.name),
+      value: plugin.name,
+      disabled: !plugin.available,
+    }))
+  }
+
   public openDevTools() {
     ipcRenderer.send(OPEN_DEVTOOLS)
   }
@@ -437,7 +477,7 @@ export default class Settings extends Vue {
   }
 
   public setCrunchyrollLocale(value: string) {
-    setCrunchyrollLocale(this.$store, value)
+    Crunchyroll.setLocale(this.$store, value)
   }
 
   public setCurrentWindow(window: Window | null) {
@@ -483,6 +523,10 @@ export default class Settings extends Vue {
     if (isNil(this.localFilesFolder)) return
 
     shell.openItem(this.localFilesFolder)
+  }
+
+  public setMainListPlugin(plugin: string) {
+    setMainListPlugin(this.$store, plugin)
   }
 
   public handleDiscordPresenceChange(checked: boolean) {

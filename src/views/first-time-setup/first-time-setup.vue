@@ -8,34 +8,34 @@
         class="steps"
         :class="{ hide: currentStep == null }"
       >
-        <login-al
-          key="al"
-          v-if="currentStep === SetupStep.LOGIN_AL"
-          :loginAnilist="loginAnilist"
+        <list-plugins
+          key="list-plugins"
+          v-if="currentStep === SetupStep.LIST_MANAGERS"
+          :finishStep="finishStep"
         />
 
         <connections
           key="connections"
           v-if="currentStep === SetupStep.CONNECT"
-          :continue="finishStep"
+          :finishStep="finishStep"
         />
 
         <spoiler-settings
           key="s-s"
           v-if="currentStep === SetupStep.SPOILERS"
-          :goToNextStep="finishStep"
+          :finishStep="finishStep"
         />
 
         <discord
           key="discord"
           v-if="currentStep === SetupStep.DISCORD"
-          :goToNextStep="finishStep"
+          :finishStep="finishStep"
         />
 
         <local-files-setup
           key="local-files-setup"
           v-if="currentStep === SetupStep.LOCAL_FILES"
-          :goToNextStep="finishStep"
+          :finishStep="finishStep"
         />
       </transition-group>
     </div>
@@ -45,14 +45,13 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-import LoginAl from '@/common/components/login/anilist.vue'
+import ListPlugins from '@/views/first-time-setup/components/list-plugins.vue'
 import Connections from './components/connections.vue'
 import Steps from './components/steps.vue'
 import SpoilerSettings from './components/spoiler-settings.vue'
 import Discord from './components/discord.vue'
 import LocalFilesSetup from './components/local-files-setup.vue'
 
-import { Anilist } from '@/lib/anilist'
 import {
   _setupSteps,
   addFinishedStep,
@@ -64,16 +63,16 @@ import { getIsConnectedTo } from '@/state/auth'
 
 @Component({
   components: {
+    ListPlugins,
     LocalFilesSetup,
     Connections,
-    LoginAl,
     Steps,
     SpoilerSettings,
     Discord,
   },
 })
 export default class FirstTimeSetup extends Vue {
-  public currentStep: SetupStep | null = SetupStep.LOGIN_AL
+  public currentStep: SetupStep | null = SetupStep.LIST_MANAGERS
   public steps = _setupSteps
   public SetupStep = SetupStep
 
@@ -94,17 +93,11 @@ export default class FirstTimeSetup extends Vue {
     this.currentStep = getNextUnfinishedStep(this.$store)
   }
 
-  public async loginAnilist() {
-    await Anilist.login()
-
-    this.finishStep()
-  }
-
   private confirmStepsCompleted() {
     const isConnectedTo = getIsConnectedTo(this.$store)
 
     if (!isConnectedTo.anilist) {
-      removeFinishedStep(this.$store, SetupStep.LOGIN_AL)
+      removeFinishedStep(this.$store, SetupStep.LIST_MANAGERS)
     }
 
     if (!isConnectedTo.crunchyroll && !isConnectedTo.hidive) {

@@ -6,13 +6,26 @@
           <transition name="fade">
             <login-a-l
               v-if="!isConnectedTo.anilist"
-              :loginAnilist="loginAnilist"
+              :onFinished="onSuccessfulLogin"
             />
 
             <icon v-else :icon="checkSvg" />
           </transition>
         </div>
 
+        <div>
+          <transition name="fade">
+            <login-simkl
+              v-if="!isConnectedTo.simkl"
+              :onFinished="onSuccessfulLogin"
+            />
+
+            <icon v-else :icon="checkSvg" />
+          </transition>
+        </div>
+      </div>
+
+      <div class="steps">
         <div>
           <transition name="fade">
             <login-h-d
@@ -47,20 +60,21 @@ import { mdiCheck } from '@mdi/js'
 
 import Icon from '@/common/components/icon.vue'
 import CButton from '@/common/components/button.vue'
-import LoginCR from '@/common/components/login/crunchyroll.vue'
 import LoginAL from '@/common/components/login/anilist.vue'
+import LoginSimkl from '@/common/components/login/simkl.vue'
+import LoginCR from '@/common/components/login/crunchyroll.vue'
 import LoginHD from '@/common/components/login/hidive.vue'
 
-import { Anilist } from '@/lib/anilist'
 import { getFinishedConnecting, getIsConnectedTo } from '@/state/auth'
 
 @Component({
   components: {
-    LoginHD,
     CButton,
     Icon,
-    LoginCR,
     LoginAL,
+    LoginSimkl,
+    LoginCR,
+    LoginHD,
   },
 })
 export default class Login extends Vue {
@@ -85,12 +99,6 @@ export default class Login extends Vue {
 
       this.$router.back()
     }
-  }
-
-  public async loginAnilist() {
-    await Anilist.login()
-
-    this.onSuccessfulLogin()
   }
 
   get isConnectedTo() {

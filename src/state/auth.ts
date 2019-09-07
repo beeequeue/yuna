@@ -5,7 +5,18 @@ import { oc } from 'ts-optchain'
 import { userStore } from '@/lib/user'
 import { RootState } from '@/state/store'
 import { HidiveProfile } from '@/lib/hidive'
-import { isNil, omit, propEq } from '@/utils'
+import {
+  getStreamingSources,
+  isNil,
+  isNotNil,
+  omit,
+  propEq,
+  stripFalsy,
+} from '@/utils'
+import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
+import { SimklListPlugin } from '@/plugins/list/simkl-plugin'
+import { Provider } from '@/graphql/types'
+import { StreamingSource } from '@/types'
 
 interface ServiceData {
   user: null | {
@@ -55,6 +66,50 @@ export interface AuthState {
   simkl: SimklData
 }
 
+const existsAndIsConnected = (
+  state: AuthState,
+  provider: Provider,
+  source: StreamingSource,
+  sources: string[],
+): Provider | false => {
+  // Since enums are lowercase
+  const lowercaseSources = sources.map(str => str.toLowerCase())
+  const connectedTo = _getIsConnectedTo(state)
+  const isConnectedToProvider =
+    connectedTo[provider.toLowerCase() as keyof typeof connectedTo]
+
+  return isConnectedToProvider && lowercaseSources.includes(source)
+    ? provider
+    : false
+}
+
+export const getDefaultProvider = (state: AuthState, anime: _Anime) => {
+  const links = oc(anime).externalLinks([])
+
+  if (isNil(links)) return Provider.Crunchyroll
+
+  const sources = getStreamingSources(links.filter(isNotNil)).map(
+    source => source.site,
+  )
+
+  const supportedProviders = [
+    existsAndIsConnected(
+      state,
+      Provider.Crunchyroll,
+      StreamingSource.Crunchyroll,
+      sources,
+    ),
+    existsAndIsConnected(
+      state,
+      Provider.Hidive,
+      StreamingSource.Hidive,
+      sources,
+    ),
+  ]
+
+  return stripFalsy(supportedProviders)[0] || Provider.Crunchyroll
+}
+
 const initialState: AuthState = {
   crunchyroll: {
     user: userStore.get('crunchyroll.user', null),
@@ -83,6 +138,13 @@ const initialState: AuthState = {
   },
 }
 
+const _getIsConnectedTo = (state: AuthState) => ({
+  anilist: !isNil(state.anilist.token),
+  crunchyroll: !isNil(state.crunchyroll.user),
+  hidive: !isNil(state.hidive.user),
+  simkl: !isNil(state.simkl.user),
+})
+
 export const auth = {
   namespaced: true,
 
@@ -90,24 +152,13 @@ export const auth = {
 
   getters: {
     getIsConnectedTo(state: AuthState) {
-      const anilist = !isNil(state.anilist.token)
-      const crunchyroll = !isNil(state.crunchyroll.user)
-      const hidive = !isNil(state.hidive.user)
-      const simkl = !isNil(state.simkl.user)
-
-      return {
-        anilist,
-        crunchyroll,
-        hidive,
-        simkl,
-      }
+      return _getIsConnectedTo(state)
     },
 
     getFinishedConnecting(state: AuthState) {
-      return (
-        !isNil(state.anilist.token) &&
-        (!isNil(state.crunchyroll.user) || !isNil(state.hidive.user))
-      )
+      const { anilist, simkl, crunchyroll, hidive } = _getIsConnectedTo(state)
+
+      return (anilist || simkl) && (crunchyroll || hidive)
     },
 
     getCrunchyrollCountry(state: AuthState) {
@@ -143,6 +194,23 @@ export const auth = {
         user,
         password,
       }
+    },
+
+    getListPlugins(
+      state: AuthState,
+    ): Array<{ name: string; available: boolean }> {
+      const { anilist, simkl } = _getIsConnectedTo(state)
+
+      return [
+        {
+          name: AnilistListPlugin.service,
+          available: anilist,
+        },
+        {
+          name: SimklListPlugin.service,
+          available: simkl,
+        },
+      ]
     },
   },
 
@@ -239,7 +307,7 @@ export const auth = {
         user: {
           id: data.user!.id,
           name: data.user!.name,
-          url: 'https://hidive.com/profile/edit',
+          url: data.user!.url,
         },
       }
 
@@ -250,6 +318,11 @@ export const auth = {
 
 const { commit, read } = getStoreAccessors<AuthState, RootState>('auth')
 
+interface _Anime {
+  id: number
+  externalLinks: null | Array<null | { site: string; url: string }>
+}
+
 export const getIsConnectedTo = read(auth.getters.getIsConnectedTo)
 export const getFinishedConnecting = read(auth.getters.getFinishedConnecting)
 export const getCrunchyrollCountry = read(auth.getters.getCrunchyrollCountry)
@@ -258,6 +331,7 @@ export const getAnilistUsername = read(auth.getters.getAnilistUsername)
 export const getHidiveProfiles = read(auth.getters.getHidiveProfiles)
 export const getHidiveProfileIndex = read(auth.getters.getHidiveProfileIndex)
 export const getHidiveLogin = read(auth.getters.getHidiveLogin)
+export const getListPlugins = read(auth.getters.getListPlugins)
 
 export const setCrunchyroll = commit(auth.mutations.setCrunchyroll)
 export const setCrunchyrollCountry = commit(

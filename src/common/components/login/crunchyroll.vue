@@ -1,6 +1,12 @@
 <template>
   <div class="step login-cr" @keydown.enter="login">
-    <span v-html="crIcon" class="logo" />
+    <a
+      href="https://crunchyroll.com"
+      class="logo"
+      v-tooltip.top="'Crunchyroll'"
+    >
+      <span v-html="crIcon" />
+    </a>
 
     <text-input
       placeholder="Username"

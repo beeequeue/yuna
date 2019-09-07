@@ -1,7 +1,5 @@
 <template>
   <div v-if="currentWindow === Window.Main" class="step connections">
-    <h3>Connect to Streaming Services</h3>
-
     <div class="connection-container">
       <div class="connection">
         <span class="logo" v-html="crIcon" />
@@ -39,7 +37,7 @@
     <c-button
       :disabled="!isFinishedConnecting"
       content="Continue"
-      :click="this.continue"
+      :click="this.finishStep"
     />
   </div>
 
@@ -78,7 +76,7 @@ enum Window {
 
 @Component({ components: { LoginHd, LoginCr, CButton, TextInput } })
 export default class Connections extends Vue {
-  @Prop(Function) public continue!: () => void
+  @Prop(Function) public finishStep!: () => void
 
   public currentWindow = Window.Main
 
@@ -134,7 +132,7 @@ export default class Connections extends Vue {
 
     & > .connection {
       flex: 1;
-      margin-bottom: 15px;
+      padding: 20px 0;
       min-width: 200px;
       display: flex;
       flex-direction: column;
@@ -144,7 +142,7 @@ export default class Connections extends Vue {
       & > .logo {
         height: 75px;
         width: 75px;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
       }
     }
   }

@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { ipcRenderer } from 'electron'
-import { Vue } from 'vue-property-decorator'
+import { Vue, Watch } from 'vue-property-decorator'
 import Component from 'vue-class-component'
 
 import CButton from '@/common/components/button.vue'
@@ -60,6 +60,7 @@ import {
 } from '@/state/app'
 import { CHECK_FOR_UPDATES } from '@/messages'
 import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
+import { SimklListPlugin } from '@/plugins/list/simkl-plugin'
 
 const requireBg = require.context('@/assets/bg')
 const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
@@ -115,9 +116,16 @@ export default class App extends Vue {
   )
 
   public setupListPlugins() {
-    const plugins = [AnilistListPlugin]
+    const plugins = [AnilistListPlugin, SimklListPlugin]
 
     return plugins.map(plugin => new plugin(this.$apollo, this.$store))
+  }
+
+  @Watch('hasFinishedSetup')
+  public finishedConnectingChanged() {
+    if (!this.isFinishedConnecting && this.hasFinishedSetup) {
+      this.$router.push('login')
+    }
   }
 
   public async created() {

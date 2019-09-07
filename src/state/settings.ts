@@ -1,22 +1,16 @@
 import { ipcRenderer } from 'electron'
 import Store from 'electron-store'
-import { api } from 'electron-util'
-import { existsSync } from 'fs'
-import { resolve } from 'path'
 import { Key } from 'ts-key-enum'
 import Vue from 'vue'
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
 
-import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
-import { userStore } from '@/lib/user'
 import {
   DISCORD_DISABLE_RICH_PRESENCE,
   DISCORD_ENABLE_RICH_PRESENCE,
 } from '@/messages'
 import { RootState } from '@/state/store'
-import { Crunchyroll } from '@/lib/crunchyroll'
-import { hasKey, isNil } from '@/utils'
+import { enumKeysToArray, hasKey, isNotNil } from '@/utils'
 
 export enum KeybindingAction {
   PAUSE = 'PAUSE',
@@ -55,16 +49,14 @@ interface DiscordSettings {
 }
 
 export enum SetupStep {
-  LOGIN_AL,
-  CONNECT,
-  SPOILERS,
-  DISCORD,
-  LOCAL_FILES,
+  LIST_MANAGERS = 'LIST_MANAGERS',
+  CONNECT = 'CONNECT',
+  SPOILERS = 'SPOILERS',
+  DISCORD = 'DISCORD',
+  LOCAL_FILES = 'LOCAL_FILES',
 }
 
-export const _setupSteps = Object.keys(SetupStep)
-  .filter(a => a.match(/\d+/))
-  .map(Number) as SetupStep[]
+export const _setupSteps = enumKeysToArray(SetupStep) as SetupStep[]
 
 interface SetupSettings {
   finishedSteps: SetupStep[]
@@ -89,7 +81,7 @@ export interface SettingsState {
   spoilers: SpoilerSettings
   externalPlayers: ExternalPlayerPaths
   localFilesFolder: string | null
-  mainListPlugin: string
+  mainListPlugin: string | null
   setup: SetupSettings
   window: Electron.Rectangle
 }
@@ -136,15 +128,26 @@ const defaultDiscord: DiscordSettings = {
   richPresence: true,
 }
 
-const _steps: Array<SetupStep | null> = [
-  userStore.get('anilist.token') != null ? SetupStep.LOGIN_AL : null,
-  userStore.get('crunchyroll.token') != null ? SetupStep.CONNECT : null,
-  existsSync(resolve(api.app.getPath('userData'), '.has-setup'))
-    ? SetupStep.SPOILERS
-    : null,
-]
+const oldSteps = SettingsStore.get('setup.finishedSteps', []) as SetupStep[]
 
-const defaultSteps: SetupStep[] = _steps.filter(step => !isNil(step)) as any
+const migratedSteps = oldSteps
+  .map((step: SetupStep | number) => {
+    if (typeof step !== 'number') return step
+
+    switch (step) {
+      case 1:
+        return SetupStep.CONNECT
+      case 2:
+        return SetupStep.SPOILERS
+      case 3:
+        return SetupStep.DISCORD
+      case 4:
+        return SetupStep.LOCAL_FILES
+      default:
+        return null
+    }
+  })
+  .filter(isNotNil)
 
 const initialState: SettingsState = {
   episodeFeedMode: SettingsStore.get('episodeFeedMode', EpisodeFeedMode.QUEUE),
@@ -160,11 +163,8 @@ const initialState: SettingsState = {
   spoilers: SettingsStore.get('spoilers', { ...defaultSpoilers }),
   externalPlayers: SettingsStore.get('externalPlayers', { vlc: null }),
   localFilesFolder: SettingsStore.get('localFilesFolder', null),
-  mainListPlugin: SettingsStore.get(
-    'mainListPlugin',
-    AnilistListPlugin.service,
-  ),
-  setup: SettingsStore.get('setup', { finishedSteps: [...defaultSteps] }),
+  mainListPlugin: SettingsStore.get('mainListPlugin', null),
+  setup: SettingsStore.get('setup', { finishedSteps: [...migratedSteps] }),
   window: SettingsStore.get('window', {}),
 }
 
@@ -265,7 +265,7 @@ export const settings = {
       SettingsStore.set('episodeFeedMode', mode)
     },
 
-    _setCrunchyrollLocale(state: SettingsState, locale: string) {
+    setCrunchyrollLocale(state: SettingsState, locale: string) {
       state.crLocale = locale
 
       SettingsStore.set('crLocale', locale)
@@ -406,16 +406,24 @@ export const settings = {
       SettingsStore.set('setup.finishedSteps', state.setup.finishedSteps)
     },
 
-    setMainListPlugin(state: SettingsState, service: string) {
+    setMainListPlugin(
+      state: SettingsState,
+      service: SettingsState['mainListPlugin'],
+    ) {
       state.mainListPlugin = service
+      SettingsStore.set('mainListPlugin', service)
     },
   },
 
   actions: {
-    async setCrunchyrollLocale(context: SettingsContext, locale: string) {
-      _setCrunchyrollLocale(context, locale)
+    updateMainListPlugin(context: SettingsContext) {
+      for (const plugin of window.listPlugins) {
+        if (!plugin.isAvailable()) continue
 
-      await Crunchyroll.createSession(context)
+        return setMainListPlugin(context, plugin.service)
+      }
+
+      setMainListPlugin(context, null)
     },
   },
 }
@@ -443,7 +451,9 @@ export const getNextUnfinishedStep = read(
 export const getMainListPlugin = read(settings.getters.getMainListPlugin)
 
 export const setEpisodeFeedMode = commit(settings.mutations.setEpisodeFeedMode)
-const _setCrunchyrollLocale = commit(settings.mutations._setCrunchyrollLocale)
+export const setCrunchyrollLocale = commit(
+  settings.mutations.setCrunchyrollLocale,
+)
 export const addKeybinding = commit(settings.mutations.addKeybinding)
 export const removeKeybinding = commit(settings.mutations.removeKeybinding)
 export const resetKeybindings = commit(settings.mutations.resetKeybindings)
@@ -460,6 +470,6 @@ export const addFinishedStep = commit(settings.mutations.addFinishedStep)
 export const removeFinishedStep = commit(settings.mutations.removeFinishedStep)
 export const setMainListPlugin = commit(settings.mutations.setMainListPlugin)
 
-export const setCrunchyrollLocale = dispatch(
-  settings.actions.setCrunchyrollLocale,
+export const updateMainListPlugin = dispatch(
+  settings.actions.updateMainListPlugin,
 )

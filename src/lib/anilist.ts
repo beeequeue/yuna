@@ -4,10 +4,9 @@ import request from 'superagent/dist/superagent'
 
 import { getConfig } from '@/config'
 import { setAnilist } from '@/state/auth'
-
-import { userStore } from './user'
 import { NO_OP, removeCookies } from '@/utils'
 import { LOGGED_INTO_ANILIST } from '@/messages'
+import { updateMainListPlugin } from '@/state/settings'
 
 type BrowserWindow = electron.BrowserWindow
 type StoreType = Store<any> | ActionContext<any, any>
@@ -73,6 +72,8 @@ export class Anilist {
       token: null,
       expires: null,
     })
+
+    updateMainListPlugin(store)
   }
 
   public static async updateUserData(
@@ -88,8 +89,8 @@ export class Anilist {
 
         if (!user) throw new Error('Could not get logged in user')
 
-        userStore.set('anilist', { user, token, expires })
         setAnilist(store, { user, token, expires })
+        updateMainListPlugin(store)
       })
   }
 }
