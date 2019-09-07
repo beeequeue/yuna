@@ -8,17 +8,7 @@
         {{ nextEpisodeDateString }}
       </h2>
 
-      <div v-if="isFinalEpisode" class="scores-container">
-        <div
-          v-for="(s, index) in scores"
-          :key="index"
-          class="score"
-          @click="updateScore(s)"
-        >
-          <icon v-if="listEntry.score >= s" :icon="starSvg" />
-          <icon v-else :icon="hollowStarSvg" />
-        </div>
-      </div>
+      <score :mediaId="listEntry.mediaId" />
 
       <div v-if="isFinalEpisode && sequels.length > 0" class="sequel-container">
         <h1 class="text">Sequel{{ sequels.length > 1 ? 's' : '' }}:</h1>
@@ -34,9 +24,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { format, formatDistance } from 'date-fns'
-import { mdiStar, mdiStarOutline } from '@mdi/js'
 
-import { updateScore } from '@/graphql/mutations/list-entry'
 import {
   AnimeViewNextAiringEpisode,
   PlayerAnimeListEntry,
@@ -48,9 +36,10 @@ import { Sequel } from '@/state/app'
 import CButton from '@/common/components/button.vue'
 import AnimeBanner from '@/common/components/anime-banner.vue'
 import Icon from '@/common/components/icon.vue'
+import Score from '@/common/components/score.vue'
 
 @Component({
-  components: { AnimeBanner, CButton, Icon },
+  components: { Score, AnimeBanner, CButton, Icon },
 })
 export default class EndOfSeasonOverlay extends Vue {
   @Prop(Object) public listEntry!: PlayerAnimeListEntry | null
@@ -60,11 +49,6 @@ export default class EndOfSeasonOverlay extends Vue {
   @Prop(Object)
   public nextAiringEpisode!: AnimeViewNextAiringEpisode | null
   @Required(Boolean) public isPlayerMaximized!: boolean
-
-  public scores = [1, 25, 50, 75, 100]
-
-  public starSvg = mdiStar
-  public hollowStarSvg = mdiStarOutline
 
   public get isFinalEpisode() {
     if (this.episodesInAnime == null) return false
@@ -86,12 +70,6 @@ export default class EndOfSeasonOverlay extends Vue {
 
   public get endMessage() {
     return `The end${this.isFinalEpisode ? '!' : ' for now!'}`
-  }
-
-  public async updateScore(score: number) {
-    if (!this.listEntry) return
-
-    await updateScore(this, this.listEntry.id, score)
   }
 }
 </script>
@@ -211,6 +189,9 @@ export default class EndOfSeasonOverlay extends Vue {
 
   & > .sequel-container {
     & > .sequel {
+      display: flex;
+      justify-content: center;
+      align-items: center;
       margin-bottom: 15px;
       overflow: hidden;
       text-shadow: $outline !important;

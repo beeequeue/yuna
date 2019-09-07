@@ -4242,7 +4242,7 @@ export type PlayerAnimeQuery = { __typename?: 'Query' } & {
         listEntry: Maybe<
           { __typename?: 'ListEntry' } & Pick<
             ListEntry,
-            'id' | 'status' | 'progress' | 'score'
+            'id' | 'mediaId' | 'status' | 'progress' | 'score'
           >
         >
       }
