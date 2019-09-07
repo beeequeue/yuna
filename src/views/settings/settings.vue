@@ -265,6 +265,11 @@
     <div class="info-container">
       <transition name="fade">
         <div v-if="currentWindow" class="login-window">
+          <login-a-l
+            v-if="currentWindow === Window.Anilist"
+            :onFinished="() => setCurrentWindow(null)"
+          />
+
           <login-c-r
             v-if="currentWindow === Window.Crunchyroll"
             :onFinished="() => setCurrentWindow(null)"
@@ -315,9 +320,10 @@ import {
   mdiVlc,
 } from '@mdi/js'
 
-import LoginHD from '@/common/components/login/hidive.vue'
-import LoginCR from '@/common/components/login/crunchyroll.vue'
+import LoginAL from '@/common/components/login/anilist.vue'
 import LoginSimkl from '@/common/components/login/simkl.vue'
+import LoginCR from '@/common/components/login/crunchyroll.vue'
+import LoginHD from '@/common/components/login/hidive.vue'
 import Checkbox from '@/common/components/form/checkbox.vue'
 import CButton from '@/common/components/button.vue'
 import Icon from '@/common/components/icon.vue'
@@ -355,13 +361,15 @@ import { capitalize, isNil } from '@/utils'
 import { getFilePath, getFolderPath } from '@/utils/paths'
 
 enum Window {
+  Anilist = 'Anilist',
+  Simkl = 'Simkl',
   Crunchyroll = 'Crunchyroll',
   Hidive = 'Hidive',
-  Simkl = 'Simkl',
 }
 
 @Component({
   components: {
+    LoginAL,
     LoginCR,
     LoginHD,
     LoginSimkl,
