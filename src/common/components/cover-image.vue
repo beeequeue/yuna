@@ -4,7 +4,9 @@
 
     <img :src="src" class="shadow" />
 
-    <span
+    <score :mediaId="listEntry.mediaId" :size="38" />
+
+    <div
       v-if="mediaListStatus"
       class="status"
       :class="{ [lowercaseStatus]: !!mediaListStatus }"
@@ -14,7 +16,7 @@
       {{ statusString }}
       <icon v-if="repeatedTimes > 0" class="repeat" :icon="repeatSvg" />
       {{ repeatedTimes > 0 ? repeatedTimes : null }}
-    </span>
+    </div>
   </div>
 </template>
 
@@ -23,18 +25,18 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiRepeat } from '@mdi/js'
 import { oc } from 'ts-optchain'
 
+import Score from '@/common/components/score.vue'
+import Icon from './icon.vue'
+
 import { AnimeViewListEntry, MediaListStatus } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import { getIconForStatus, humanizeMediaListStatus } from '@/utils'
 
-import Icon from './icon.vue'
-
-@Component({
-  components: { Icon },
-})
+@Component({ components: { Score, Icon } })
 export default class CoverImage extends Vue {
   @Required(String) public src!: string
+  @Prop(Boolean) public showRating!: boolean
   @Prop(String) public color!: string | null
   @Prop(Object) public listEntry!: AnimeViewListEntry | null
   @Prop(Number) public length!: number | null
@@ -99,9 +101,17 @@ export default class CoverImage extends Vue {
     filter: blur(10px) opacity(0.45) brightness(0.75);
   }
 
+  & > .scores-container {
+    position: absolute;
+    bottom: 40px;
+    width: 100%;
+    padding: 0 5px;
+    z-index: 3;
+  }
+
   & > .status {
     position: absolute;
-    bottom: 25px;
+    bottom: 10px;
     left: 0;
     right: 0;
     display: flex;
