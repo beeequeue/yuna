@@ -15,6 +15,7 @@ import {
 export const resolvers = {
   Query: {
     Episodes: EpisodesResolver,
+    ListEntry: GetListEntry,
   },
   Media: {
     scoreMal: scoreMalResolver,

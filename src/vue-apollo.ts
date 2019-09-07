@@ -5,7 +5,7 @@ import { IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
 
 import introspectionResult from '@/graphql/introspection-result'
 import { resolvers } from '@/graphql/resolvers'
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { EpisodeListEpisodes, ListEntry } from '@/graphql/types'
 import { userStore } from '@/lib/user'
 import { getEpisodeCacheKey, isOfTypename } from '@/utils'
 
@@ -27,6 +27,11 @@ const dataIdFromObject = (obj: any) => {
   // Episode
   if (isOfTypename<EpisodeListEpisodes>(obj, 'Episode')) {
     return getEpisodeCacheKey(obj)
+  }
+
+  // ListEntry
+  if (isOfTypename<ListEntry>(obj, 'ListEntry')) {
+    return `ListEntry:${obj.mediaId}`
   }
 
   if (obj.__typename) {
