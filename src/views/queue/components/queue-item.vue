@@ -113,6 +113,13 @@
           content="Remove from Queue"
           :click="removeFromQueue"
         />
+
+        <c-button
+          v-if="anime.listEntry"
+          :icon="editSvg"
+          class="small"
+          :click="openEditModal"
+        />
       </div>
     </div>
   </div>
@@ -121,10 +128,14 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
-import { mdiChevronDown, mdiMenu } from '@mdi/js'
+import { mdiChevronDown, mdiMenu, mdiPencil } from '@mdi/js'
 
 import { EPISODE_LIST } from '@/graphql/documents/queries'
-import { startRewatching, updateStatus, setProgress } from '@/graphql/mutations/list-entry'
+import {
+  setProgress,
+  startRewatching,
+  updateStatus,
+} from '@/graphql/mutations/list-entry'
 import {
   EpisodeListEpisodes,
   EpisodeListQuery,
@@ -145,7 +156,7 @@ import SourceSelect from './source-select.vue'
 
 import { Query, Required } from '@/decorators'
 import { removeFromQueueById, toggleQueueItemOpen } from '@/state/user'
-import { sendErrorToast } from '@/state/app'
+import { initEditModal, sendErrorToast } from '@/state/app'
 import { QueueItem as IQueueItem } from '@/lib/user'
 import { capitalize, delay, getIconForStatus, isNil } from '@/utils'
 import { CrunchyrollProviders } from '@/types'
@@ -223,6 +234,7 @@ export default class QueueItem extends Vue {
   public MediaListStatus = MediaListStatus
   public expandSvg = mdiChevronDown
   public hamburgerSvg = mdiMenu
+  public editSvg = mdiPencil
 
   public capitalize = capitalize
 
@@ -317,6 +329,13 @@ export default class QueueItem extends Vue {
       provider: Provider.Crunchyroll,
       episodeNumber: this.listEntry.progress - 1,
       ...this.listEntry,
+    })
+  }
+
+  public openEditModal() {
+    initEditModal(this.$store, {
+      animeId: this.anime.id,
+      ...(this.anime as any),
     })
   }
 }
