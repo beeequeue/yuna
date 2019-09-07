@@ -7,7 +7,11 @@ import { oc } from 'ts-optchain'
 import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 
 import { getConfig } from '@/config'
-import { getSettings, SettingsStore } from '@/state/settings'
+import {
+  getSettings,
+  setCrunchyrollLocale,
+  SettingsStore,
+} from '@/state/settings'
 import { userStore } from '@/lib/user'
 import {
   getIsConnectedTo,
@@ -552,6 +556,12 @@ export class Crunchyroll {
         result.landscape_image.large_url ||
         result.landscape_image.medium_url,
     }))
+  }
+
+  public static async setLocale(store: Store<any>, locale: string) {
+    setCrunchyrollLocale(store, locale)
+
+    await Crunchyroll.createSession(store)
   }
 
   private static request = async <B extends {}>(

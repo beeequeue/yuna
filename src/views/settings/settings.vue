@@ -342,7 +342,6 @@ import {
   KeybindingAction,
   removeKeybinding,
   resetKeybindings,
-  setCrunchyrollLocale,
   setDiscordRichPresence,
   setLocalFilesFolder,
   setMainListPlugin,
@@ -478,7 +477,7 @@ export default class Settings extends Vue {
   }
 
   public setCrunchyrollLocale(value: string) {
-    setCrunchyrollLocale(this.$store, value)
+    Crunchyroll.setLocale(this.$store, value)
   }
 
   public setCurrentWindow(window: Window | null) {

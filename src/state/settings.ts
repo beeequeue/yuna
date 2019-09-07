@@ -11,7 +11,6 @@ import {
   DISCORD_ENABLE_RICH_PRESENCE,
 } from '@/messages'
 import { RootState } from '@/state/store'
-import { Crunchyroll } from '@/lib/crunchyroll'
 import { enumKeysToArray, hasKey, isNotNil } from '@/utils'
 
 export enum KeybindingAction {
@@ -270,7 +269,7 @@ export const settings = {
       SettingsStore.set('episodeFeedMode', mode)
     },
 
-    _setCrunchyrollLocale(state: SettingsState, locale: string) {
+    setCrunchyrollLocale(state: SettingsState, locale: string) {
       state.crLocale = locale
 
       SettingsStore.set('crLocale', locale)
@@ -411,17 +410,24 @@ export const settings = {
       SettingsStore.set('setup.finishedSteps', state.setup.finishedSteps)
     },
 
-    setMainListPlugin(state: SettingsState, service: string) {
+    setMainListPlugin(
+      state: SettingsState,
+      service: SettingsState['mainListPlugin'],
+    ) {
       state.mainListPlugin = service
       SettingsStore.set('mainListPlugin', service)
     },
   },
 
   actions: {
-    async setCrunchyrollLocale(context: SettingsContext, locale: string) {
-      _setCrunchyrollLocale(context, locale)
+    updateMainListPlugin(context: SettingsContext) {
+      for (const plugin of window.listPlugins) {
+        if (!plugin.isAvailable()) continue
 
-      await Crunchyroll.createSession(context)
+        return setMainListPlugin(context, plugin.service)
+      }
+
+      setMainListPlugin(context, null)
     },
   },
 }
@@ -449,7 +455,9 @@ export const getNextUnfinishedStep = read(
 export const getMainListPlugin = read(settings.getters.getMainListPlugin)
 
 export const setEpisodeFeedMode = commit(settings.mutations.setEpisodeFeedMode)
-const _setCrunchyrollLocale = commit(settings.mutations._setCrunchyrollLocale)
+export const setCrunchyrollLocale = commit(
+  settings.mutations.setCrunchyrollLocale,
+)
 export const addKeybinding = commit(settings.mutations.addKeybinding)
 export const removeKeybinding = commit(settings.mutations.removeKeybinding)
 export const resetKeybindings = commit(settings.mutations.resetKeybindings)
@@ -466,6 +474,6 @@ export const addFinishedStep = commit(settings.mutations.addFinishedStep)
 export const removeFinishedStep = commit(settings.mutations.removeFinishedStep)
 export const setMainListPlugin = commit(settings.mutations.setMainListPlugin)
 
-export const setCrunchyrollLocale = dispatch(
-  settings.actions.setCrunchyrollLocale,
+export const updateMainListPlugin = dispatch(
+  settings.actions.updateMainListPlugin,
 )
