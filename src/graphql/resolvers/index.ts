@@ -9,12 +9,14 @@ import {
   GetListEntry,
   StartRewatching,
   UpdateProgress,
+  UpdateScore,
   UpdateStatus,
 } from './list-entry'
 
 export const resolvers = {
   Query: {
     Episodes: EpisodesResolver,
+    ListEntry: GetListEntry,
   },
   Media: {
     scoreMal: scoreMalResolver,
@@ -29,6 +31,7 @@ export const resolvers = {
     DeleteFromList,
     UpdateStatus,
     UpdateProgress,
+    UpdateScore,
     StartRewatching,
     EditListEntry,
   },

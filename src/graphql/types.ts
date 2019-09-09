@@ -2569,6 +2569,7 @@ export type Query = {
   /** Site statistics query */
   SiteStatistics: Maybe<SiteStatistics>
   Episodes: Maybe<Array<Episode>>
+  ListEntry: ListEntry
 }
 
 export type QueryPageArgs = {
@@ -2867,6 +2868,10 @@ export type QueryMarkdownArgs = {
 export type QueryEpisodesArgs = {
   id: Scalars['Int']
   provider: Provider
+}
+
+export type QueryListEntryArgs = {
+  mediaId: Scalars['Int']
 }
 
 /** Notification for when new media is added to the site */
@@ -4125,6 +4130,14 @@ export type CacheEpisodesMutation = { __typename?: 'Mutation' } & Pick<
   'CacheEpisodes'
 >
 
+export type ListEntryQueryVariables = {
+  mediaId: Scalars['Int']
+}
+
+export type ListEntryQuery = { __typename?: 'Query' } & {
+  ListEntry: { __typename?: 'ListEntry' } & Pick<ListEntry, 'id' | 'score'>
+}
+
 export type MediaListEntryFromMediaIdQueryVariables = {
   mediaId: Scalars['Int']
   userId: Scalars['Int']
@@ -4229,7 +4242,7 @@ export type PlayerAnimeQuery = { __typename?: 'Query' } & {
         listEntry: Maybe<
           { __typename?: 'ListEntry' } & Pick<
             ListEntry,
-            'id' | 'status' | 'progress' | 'score'
+            'id' | 'mediaId' | 'status' | 'progress' | 'score'
           >
         >
       }
@@ -4817,6 +4830,8 @@ export type DeleteFromListVariables = DeleteFromListMutationVariables
 export type EditListEntryVariables = EditListEntryMutationVariables
 export type EditListEntryEditListEntry = ListEntryFragment
 export type CacheEpisodesVariables = CacheEpisodesMutationVariables
+export type ListEntryVariables = ListEntryQueryVariables
+export type ListEntryListEntry = ListEntryQuery['ListEntry']
 export type MediaListEntryFromMediaIdVariables = MediaListEntryFromMediaIdQueryVariables
 export type MediaListEntryFromMediaIdMediaList = AniListEntryFragment
 export type EpisodeListVariables = EpisodeListQueryVariables

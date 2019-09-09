@@ -24,6 +24,7 @@ query PlayerAnime($id: Int!) {
     }
     listEntry @client {
       id
+      mediaId
       status
       progress
       score

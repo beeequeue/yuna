@@ -29,6 +29,8 @@
       <about-modal />
 
       <local-source-modal />
+
+      <edit-modal />
     </div>
   </transition>
 </template>
@@ -43,6 +45,7 @@ import TitleBar from '@/common/components/title-bar.vue'
 import ToastOverlay from '@/common/components/toast-overlay.vue'
 import Loading from '@/common/components/loading.vue'
 import AboutModal from '@/common/modals/about-modal.vue'
+import EditModal from '@/common/modals/edit-modal.vue'
 import LocalSourceModal from '@/common/modals/local-source/local-source.vue'
 import PlayerContainer from '@/modules/player/player-container.vue'
 import Navbar from '@/modules/navbar/navbar.vue'
@@ -67,7 +70,6 @@ const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
 
 @Component({
   components: {
-    LocalSourceModal,
     CButton,
     Loading,
     TitleBar,
@@ -75,6 +77,8 @@ const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
     Navbar,
     ToastOverlay,
     AboutModal,
+    LocalSourceModal,
+    EditModal,
   },
 })
 export default class App extends Vue {

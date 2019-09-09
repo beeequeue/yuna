@@ -195,7 +195,7 @@ export default class EditModal extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import '../../colors';
 
 $gutter: 25px;
 

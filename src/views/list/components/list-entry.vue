@@ -8,12 +8,7 @@
     </router-link>
 
     <div class="info">
-      <actions
-        :listEntry="entry"
-        :anime="entry.anime"
-        :exclude="['editEntry']"
-        small
-      />
+      <actions :listEntry="entry" :anime="entry.anime" small />
     </div>
   </div>
 </template>

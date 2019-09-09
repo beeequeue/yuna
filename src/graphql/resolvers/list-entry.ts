@@ -1,4 +1,5 @@
 import { Store } from 'vuex'
+import { oc } from 'ts-optchain'
 
 import {
   AddToListMutation,
@@ -12,6 +13,8 @@ import {
   StartRewatchingVariables,
   UpdateProgressMutation,
   UpdateProgressVariables,
+  UpdateScoreMutation,
+  UpdateScoreMutationVariables,
   UpdateStatusMutation,
   UpdateStatusVariables,
 } from '@/graphql/types'
@@ -31,8 +34,8 @@ const getEnabledPlugins = (store: Store<any>) => {
 }
 
 export const GetListEntry = async (
-  media: Media,
-  _variables: null,
+  media: Media | null,
+  variables: { mediaId: number } | null,
   _cache: { cache: RealProxy },
 ): Promise<ListEntry | null> => {
   const mainListPlugin = getMainListPlugin(store)
@@ -42,7 +45,7 @@ export const GetListEntry = async (
 
   if (isNil(plugin)) throw new Error('Selected List Plugin could not be found.')
 
-  return plugin.GetListEntry(media.id)
+  return plugin.GetListEntry((oc(media).id() || oc(variables).mediaId())!)
 }
 
 export const AddToList = async (
@@ -104,6 +107,19 @@ export const UpdateProgress = async (
 ): Promise<UpdateProgressMutation['UpdateProgress']> => {
   const promises = getEnabledPlugins(store).map(plugin =>
     plugin.UpdateProgress(anilistId, progress),
+  )
+  const results = await Promise.all(promises)
+
+  return results[0]
+}
+
+export const UpdateScore = async (
+  _root: undefined,
+  { anilistId, score }: UpdateScoreMutationVariables,
+  _cache: { cache: RealProxy },
+): Promise<UpdateScoreMutation['UpdateScore']> => {
+  const promises = getEnabledPlugins(store).map(plugin =>
+    plugin.UpdateScore(anilistId, score),
   )
   const results = await Promise.all(promises)
 
