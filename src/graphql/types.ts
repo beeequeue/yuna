@@ -4211,6 +4211,14 @@ export type MalIdFromAnilistIdQuery = { __typename?: 'Query' } & {
   Media: Maybe<{ __typename?: 'Media' } & Pick<Media, 'idMal'>>
 }
 
+export type EpisodeFeedListIdsQueryVariables = {}
+
+export type EpisodeFeedListIdsQuery = { __typename?: 'Query' } & {
+  ListEntries: Array<
+    { __typename?: 'ListEntry' } & Pick<ListEntry, 'id' | 'mediaId'>
+  >
+}
+
 export type CacheEpisodesAiringQueryVariables = {
   id: Scalars['Int']
 }
@@ -4508,14 +4516,6 @@ export type AnimeViewQuery = { __typename?: 'Query' } & {
           >
         >
       }
-  >
-}
-
-export type EpisodeFeedListIdsQueryVariables = {}
-
-export type EpisodeFeedListIdsQuery = { __typename?: 'Query' } & {
-  ListEntries: Array<
-    { __typename?: 'ListEntry' } & Pick<ListEntry, 'id' | 'mediaId'>
   >
 }
 
@@ -4853,6 +4853,10 @@ export type MalIdFromAnilistIdVariables = MalIdFromAnilistIdQueryVariables
 export type MalIdFromAnilistIdMedia = NonNullable<
   MalIdFromAnilistIdQuery['Media']
 >
+export type EpisodeFeedListIdsVariables = EpisodeFeedListIdsQueryVariables
+export type EpisodeFeedListIdsListEntries = NonNullable<
+  EpisodeFeedListIdsQuery['ListEntries'][0]
+>
 export type CacheEpisodesAiringVariables = CacheEpisodesAiringQueryVariables
 export type CacheEpisodesAiringAiringSchedule = NonNullable<
   CacheEpisodesAiringQuery['AiringSchedule']
@@ -5001,10 +5005,6 @@ export type AnimeView_Title = NonNullable<
 >
 export type AnimeViewListEntry = NonNullable<
   (NonNullable<AnimeViewQuery['anime']>)['listEntry']
->
-export type EpisodeFeedListIdsVariables = EpisodeFeedListIdsQueryVariables
-export type EpisodeFeedListIdsListEntries = NonNullable<
-  EpisodeFeedListIdsQuery['ListEntries'][0]
 >
 export type EpisodeFeedVariables = EpisodeFeedQueryVariables
 export type EpisodeFeedPage = NonNullable<EpisodeFeedQuery['Page']>

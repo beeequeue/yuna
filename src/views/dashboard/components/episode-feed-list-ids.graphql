@@ -1,6 +1,0 @@
-query EpisodeFeedListIds {
-  ListEntries(page: 0, perPage: 10) @client {
-    id
-    mediaId
-  }
-}
