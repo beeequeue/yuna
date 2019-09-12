@@ -1,4 +1,5 @@
 import { Store } from 'vuex'
+import ApolloClient from 'apollo-client'
 import { oc } from 'ts-optchain'
 
 import {
@@ -10,6 +11,9 @@ import {
   ListEntry,
   Media,
   QueryListEntriesArgs,
+  SingleMediaQuery,
+  SingleMediaQueryVariables,
+  SingleMediaSingleMedia,
   StartRewatchingMutation,
   StartRewatchingVariables,
   UpdateProgressMutation,
@@ -23,6 +27,8 @@ import { getListPlugins } from '@/state/auth'
 import { getMainListPlugin } from '@/state/settings'
 import { store } from '@/state/store'
 import { isNil } from '@/utils'
+import { SINGLE_MEDIA_QUERY } from '@/graphql/documents/queries'
+import { ListEntryWithoutMedia } from '@/plugins/list/plugin'
 
 const getEnabledPlugins = (store: Store<any>) => {
   const enabledPlugins = getListPlugins(store)
@@ -38,7 +44,7 @@ export const GetListEntry = async (
   media: Media | null,
   variables: { mediaId: number } | null,
   _cache: { cache: RealProxy },
-): Promise<ListEntry | null> => {
+): Promise<ListEntryWithoutMedia | null> => {
   const mainListPlugin = getMainListPlugin(store)
   const plugin = window.listPlugins.find(
     plugin => plugin.service === mainListPlugin,
@@ -53,7 +59,7 @@ export const GetListEntries = async (
   _: undefined,
   variables: QueryListEntriesArgs,
   _cache: { cache: RealProxy },
-): Promise<ListEntry[] | null> => {
+): Promise<ListEntryWithoutMedia[] | null> => {
   const mainListPlugin = getMainListPlugin(store)
   const plugin = window.listPlugins.find(
     plugin => plugin.service === mainListPlugin,
@@ -62,6 +68,19 @@ export const GetListEntries = async (
   if (isNil(plugin)) throw new Error('Selected List Plugin could not be found.')
 
   return plugin.GetListEntries(variables)
+}
+
+export const GetMedia = async (
+  { mediaId }: ListEntry,
+  _: undefined,
+  { client }: { cache: RealProxy; client: ApolloClient<any> },
+): Promise<SingleMediaSingleMedia> => {
+  const result = await client.query<SingleMediaQuery>({
+    query: SINGLE_MEDIA_QUERY,
+    variables: { mediaId } as SingleMediaQueryVariables,
+  })
+
+  return result.data.SingleMedia!
 }
 
 export const AddToList = async (

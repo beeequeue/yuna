@@ -19,18 +19,22 @@ import {
   AnilistStartRewatchingMutation,
   AnilistStartRewatchingVariables,
   DeleteFromListMutation,
+  EditListEntryMutation,
   EditListEntryOptions,
   MediaListEntryFromMediaIdQuery,
   MediaListEntryFromMediaIdVariables,
   MediaListStatus,
-  Mutation,
   QueryListEntriesArgs,
   StartRewatchingMutation,
   UpdateProgressMutation,
   UpdateScoreMutation,
   UpdateStatusMutation,
 } from '@/graphql/types'
-import { ListPlugin, ListPluginType } from '@/plugins/list/plugin'
+import {
+  ListEntryWithoutMedia,
+  ListPlugin,
+  ListPluginType,
+} from '@/plugins/list/plugin'
 import { isNil, isNotNil } from '@/utils'
 import {
   ANILIST_ALL_LIST_ENTRIES,
@@ -45,8 +49,6 @@ import {
 import { MEDIA_LIST_ENTRY_FROM_MEDIA_ID } from '@/graphql/documents/queries'
 import { getAnilistUserId, getIsConnectedTo } from '@/state/auth'
 
-type ListEntry = AddToListMutation['AddToList']
-
 export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public static service = 'anilist'
   public service = 'anilist'
@@ -59,7 +61,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
 
   private fromMediaListEntry(
     mediaListEntry: AnilistSetStatusSaveMediaListEntry,
-  ): ListEntry {
+  ): ListEntryWithoutMedia {
     return {
       __typename: 'ListEntry' as const,
       id: mediaListEntry.id,
@@ -71,7 +73,9 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     }
   }
 
-  public async GetListEntry(mediaId: number): Promise<ListEntry | null> {
+  public async GetListEntry(
+    mediaId: number,
+  ): Promise<ListEntryWithoutMedia | null> {
     const listEntryResult = await this.apollo.query<
       MediaListEntryFromMediaIdQuery
     >({
@@ -91,7 +95,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
 
   public async GetListEntries(
     options: QueryListEntriesArgs,
-  ): Promise<ListEntry[]> {
+  ): Promise<ListEntryWithoutMedia[]> {
     // defaulting the values in the parameters didn't work for some reason
     options = options || {}
     const variables: AnilistAllListEntriesQueryVariables = {
@@ -242,7 +246,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public async EditListEntry(
     anilistId: number,
     { progress, rewatched, score, status }: EditListEntryOptions,
-  ): Promise<Mutation['EditListEntry']> {
+  ): Promise<EditListEntryMutation['EditListEntry']> {
     const listEntry = await this.GetListEntry(anilistId)
 
     if (isNil(listEntry)) throw new Error('Show is not in list!')

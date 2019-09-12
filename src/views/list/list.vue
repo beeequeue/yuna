@@ -29,17 +29,13 @@
     <transition-group tag="div" class="list-container">
       <transition-group
         tag="div"
-        v-for="list in getLists(data)"
-        :key="list.name"
+        v-for="(list, name) in lists"
+        :key="name"
         class="list"
       >
-        <h1 :key="list.name">{{ list.name }}</h1>
+        <h1 :key="name">{{ name.toLowerCase() }}</h1>
 
-        <list-entry
-          v-for="entry in list.entries"
-          :key="entry.id"
-          :entry="entry"
-        />
+        <list-entry v-for="entry in list" :key="entry.id" :entry="entry" />
       </transition-group>
     </transition-group>
   </div>
@@ -47,8 +43,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import Fuse from 'fuse.js'
-import { oc } from 'ts-optchain'
 
 import anichartSvg from '@/assets/anichart.svg'
 import anilistSvg from '@/assets/anilist.svg'
@@ -59,15 +53,17 @@ import ListEntry from './components/list-entry.vue'
 
 import LIST_QUERY from '@/views/list/list.graphql'
 import {
+  ListViewListEntries,
   ListViewQuery,
-  ListViewLists,
-  ListViewEntries,
   ListViewVariables,
+  MediaListStatus,
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
 import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
-import { debounce, isNil, itemsAreNotNil } from '@/utils'
+import { debounce, isNil } from '@/utils'
+
+type Lists = { [key in MediaListStatus]: ListViewListEntries[] }
 
 @Component({ components: { ListEntry, TextInput, NumberInput } })
 export default class List extends Vue {
@@ -76,12 +72,27 @@ export default class List extends Vue {
     query: LIST_QUERY,
     variables() {
       return {
-        userId: this.userId,
-        statuses: undefined as any,
+        page: 1,
       }
     },
+    update(data): Lists {
+      const lists = data.ListEntries.reduce(
+        (lists, entry) => {
+          if (isNil(lists[entry.status])) {
+            lists[entry.status] = []
+          }
+
+          lists[entry.status].push(entry)
+
+          return lists
+        },
+        {} as Lists,
+      )
+
+      return lists
+    },
   })
-  public data!: ListViewQuery
+  public lists!: Lists
   public filterString = ''
   public limit = Number(localStorage.getItem('list-limit') || 25)
 
@@ -99,41 +110,6 @@ export default class List extends Vue {
 
   public get simklUser() {
     return getSimklUser(this.$store)
-  }
-
-  public getLists(data: ListViewQuery) {
-    const lists = oc(data).listCollection.lists([] as ListViewLists[])
-
-    if (isNil(lists) || !itemsAreNotNil(lists)) return []
-
-    if (this.filterString.length < 1) {
-      return lists.map(list => ({
-        ...list,
-        entries: (list.entries as ListViewEntries[]).slice(0, this.limit),
-      }))
-    }
-
-    const filteredLists = lists.map(list => {
-      if (isNil(list.entries)) return
-
-      const fuse = new Fuse<ListViewEntries>(list.entries as any, {
-        caseSensitive: false,
-        shouldSort: true,
-        keys: [
-          'anime.title.userPreferred',
-          'anime.title.english',
-          'anime.title.romaji',
-        ] as any,
-        threshold: 0.35,
-      })
-
-      return {
-        ...list,
-        entries: fuse.search(this.filterString).splice(0, this.limit),
-      }
-    })
-
-    return filteredLists
   }
 
   // beautiful!
@@ -223,6 +199,7 @@ export default class List extends Vue {
         font-weight: 500 !important;
         text-shadow: $outline;
         margin: 5px 0 15px;
+        text-transform: capitalize;
       }
 
       &.v-move {

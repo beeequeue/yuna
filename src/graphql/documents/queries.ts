@@ -1,6 +1,26 @@
 import gql from 'graphql-tag'
 import { ANILIST_LIST_ENTRY_FRAGMENT } from '@/graphql/documents/fragments'
 
+export const SINGLE_MEDIA_QUERY = gql`
+  query SingleMedia($mediaId: Int!) {
+    SingleMedia: Media(id: $mediaId) {
+      id
+      title {
+        userPreferred
+        english
+        romaji
+        native
+      }
+      coverImage {
+        medium
+        color
+      }
+      isFavourite
+      episodes
+    }
+  }
+`
+
 export const LIST_ENTRY_SCORE_QUERY = gql`
   query ListEntry($mediaId: Int!) {
     ListEntry(mediaId: $mediaId) @client {

@@ -42,6 +42,8 @@ type ListEntry {
   id: Int!
   """Anime AniList ID"""
   mediaId: Int!
+  """AniList Anime"""
+  media: Media!
   """Status converted to AniList status"""
   status: MediaListStatus!
   """Score formatted as 0-100"""
