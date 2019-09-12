@@ -49,7 +49,7 @@ export const MAL_ID_FROM_ANILIST_ID = gql`
 
 export const EPISODE_FEED_LIST_IDS = gql`
   query EpisodeFeedListIds {
-    ListEntries(page: 0, perPage: 10) @client {
+    ListEntries(status_not: COMPLETED) @client {
       id
       mediaId
     }

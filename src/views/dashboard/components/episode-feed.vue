@@ -31,16 +31,12 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { oc } from 'ts-optchain'
 import { mdiClipboardTextOutline, mdiPlaylistCheck } from '@mdi/js'
 
 import Icon from '@/common/components/icon.vue'
 import AnimatedList from './animated-list.vue'
-import LIST_IDS_QUERY from './episode-feed-list-ids.graphql'
-import {
-  EpisodeFeedListIdsQuery,
-  EpisodeFeedListIdsVariables,
-} from '@/graphql/types'
+import { EPISODE_FEED_LIST_IDS } from '@/graphql/documents/queries'
+import { EpisodeFeedListIdsQuery } from '@/graphql/types'
 
 import { Query } from '@/decorators'
 import {
@@ -50,27 +46,14 @@ import {
 } from '@/state/settings'
 import { getAnilistUserId } from '@/state/auth'
 import { getQueue } from '@/state/user'
-import { isNotNil, prop } from '@/utils'
+import { prop } from '@/utils'
 
 @Component({ components: { AnimatedList, Icon } })
 export default class EpisodeFeed extends Vue {
-  @Query<EpisodeFeed, EpisodeFeedListIdsQuery, EpisodeFeedListIdsVariables>({
-    query: LIST_IDS_QUERY,
-    variables() {
-      return {
-        userId: this.userId,
-      }
-    },
-    update(data) {
-      const lists = oc(data).listCollection.lists([])
-
-      const entries = lists
-        .filter(isNotNil)
-        .map(prop('entries'))
-        .flat()
-
-      return entries.map(prop('mediaId'))
-    },
+  @Query<EpisodeFeed, EpisodeFeedListIdsQuery>({
+    query: EPISODE_FEED_LIST_IDS,
+    variables: null,
+    update: data => data.ListEntries.map(prop('mediaId')),
   })
   public listIds!: number[]
 
