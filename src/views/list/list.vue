@@ -1,13 +1,23 @@
 <template>
   <div class="list-page">
     <div class="menu">
-      <a
-        class="anilist"
-        :href="`https://anilist.co/user/${userId}/animelist`"
-        v-tooltip.right="'Open in AniList'"
-      >
-        <span v-html="alLogo" />
-      </a>
+      <div class="links">
+        <a class="anichart" href="https://anichart.net" v-html="anichartLogo" />
+
+        <a
+          v-if="isConnectedTo.anilist"
+          class="anilist"
+          :href="`https://anilist.co/user/${userId}/animelist`"
+          v-html="alLogo"
+        />
+
+        <a
+          v-if="isConnectedTo.simkl"
+          class="simkl"
+          :href="`${simklUser.url}/dashboard`"
+          v-html="simklLogo"
+        />
+      </div>
 
       <div class="number-input-filler" />
 
@@ -40,7 +50,9 @@ import { Component, Vue } from 'vue-property-decorator'
 import Fuse from 'fuse.js'
 import { oc } from 'ts-optchain'
 
-import anilistLogoSvg from '@/assets/anilist.svg'
+import anichartSvg from '@/assets/anichart.svg'
+import anilistSvg from '@/assets/anilist.svg'
+import simklSvg from '@/assets/simkl.svg'
 import TextInput from '@/common/components/form/text-input.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
 import ListEntry from './components/list-entry.vue'
@@ -54,7 +66,7 @@ import {
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
-import { getAnilistUserId } from '@/state/auth'
+import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
 import { debounce, isNil, itemsAreNotNil } from '@/utils'
 
 @Component({ components: { ListEntry, TextInput, NumberInput } })
@@ -73,10 +85,20 @@ export default class List extends Vue {
   public filterString = ''
   public limit = Number(localStorage.getItem('list-limit') || 25)
 
-  public alLogo = anilistLogoSvg
+  public anichartLogo = anichartSvg
+  public alLogo = anilistSvg
+  public simklLogo = simklSvg
 
   public get userId() {
     return getAnilistUserId(this.$store)
+  }
+
+  public get isConnectedTo() {
+    return getIsConnectedTo(this.$store)
+  }
+
+  public get simklUser() {
+    return getSimklUser(this.$store)
   }
 
   public getLists(data: ListViewQuery) {
@@ -153,15 +175,19 @@ export default class List extends Vue {
     background: color($dark, 300);
     flex-shrink: 0;
 
-    & > .anilist {
+    & > .links {
       position: absolute;
       top: calc(50% + 2px);
       left: 12px;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
       transform: translateY(-50%);
 
       & /deep/ svg {
         height: 26px;
         width: 26px;
+        margin-right: 15px;
       }
     }
 
