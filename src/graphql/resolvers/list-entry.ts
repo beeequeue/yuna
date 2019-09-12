@@ -9,6 +9,7 @@ import {
   EditListEntryMutationVariables,
   ListEntry,
   Media,
+  QueryListEntriesArgs,
   StartRewatchingMutation,
   StartRewatchingVariables,
   UpdateProgressMutation,
@@ -46,6 +47,21 @@ export const GetListEntry = async (
   if (isNil(plugin)) throw new Error('Selected List Plugin could not be found.')
 
   return plugin.GetListEntry((oc(media).id() || oc(variables).mediaId())!)
+}
+
+export const GetListEntries = async (
+  _: undefined,
+  variables: QueryListEntriesArgs,
+  _cache: { cache: RealProxy },
+): Promise<ListEntry[] | null> => {
+  const mainListPlugin = getMainListPlugin(store)
+  const plugin = window.listPlugins.find(
+    plugin => plugin.service === mainListPlugin,
+  )
+
+  if (isNil(plugin)) throw new Error('Selected List Plugin could not be found.')
+
+  return plugin.GetListEntries(variables)
 }
 
 export const AddToList = async (

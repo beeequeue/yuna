@@ -3,9 +3,12 @@ import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 import {
   AddToListMutation,
   EditListEntryOptions,
+  FavouritesAnimeArgs,
   ListEntry,
   MediaListStatus,
   Mutation,
+  PageListEntryArgs,
+  QueryListEntriesArgs,
   StartRewatchingMutation,
   UpdateProgressMutation,
   UpdateScoreMutation,
@@ -34,6 +37,10 @@ export abstract class ListPlugin {
   public abstract async GetListEntry(
     anilistId: number,
   ): Promise<ListEntry | null>
+
+  public abstract async GetListEntries(
+    options: QueryListEntriesArgs,
+  ): Promise<ListEntry[] | null>
 
   public abstract async AddToList(
     anilistId: number,

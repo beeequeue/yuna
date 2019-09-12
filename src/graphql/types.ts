@@ -2897,6 +2897,7 @@ export type QueryListEntryArgs = {
 export type QueryListEntriesArgs = {
   id_in: Maybe<Array<Scalars['Int']>>
   status: Maybe<MediaListStatus>
+  status_not: Maybe<MediaListStatus>
   page: Maybe<Scalars['Int']>
   perPage: Maybe<Scalars['Int']>
 }
@@ -4408,6 +4409,37 @@ export type AnilistEditListEntryMutation = { __typename?: 'Mutation' } & {
   >
 }
 
+export type AnilistAllListEntriesQueryVariables = {
+  userId: Scalars['Int']
+  page: Maybe<Scalars['Int']>
+  perPage: Maybe<Scalars['Int']>
+  status: Maybe<MediaListStatus>
+  status_not: Maybe<MediaListStatus>
+}
+
+export type AnilistAllListEntriesQuery = { __typename?: 'Query' } & {
+  listCollection: Maybe<
+    { __typename?: 'MediaListCollection' } & {
+      lists: Maybe<
+        Array<
+          Maybe<
+            { __typename?: 'MediaListGroup' } & Pick<
+              MediaListGroup,
+              'name' | 'isCustomList'
+            > & {
+                entries: Maybe<
+                  Array<
+                    Maybe<{ __typename?: 'MediaList' } & AniListEntryFragment>
+                  >
+                >
+              }
+          >
+        >
+      >
+    }
+  >
+}
+
 export type CachedAnimeListEntryFragment = { __typename?: 'Media' } & {
   listEntry: Maybe<{ __typename?: 'ListEntry' } & Pick<ListEntry, 'progress'>>
 }
@@ -4952,6 +4984,16 @@ export type AnilistEditListEntryVariables = AnilistEditListEntryMutationVariable
 export type AnilistEditListEntrySaveMediaListEntry = NonNullable<
   AnilistEditListEntryMutation['SaveMediaListEntry']
 >
+export type AnilistAllListEntriesVariables = AnilistAllListEntriesQueryVariables
+export type AnilistAllListEntriesListCollection = NonNullable<
+  AnilistAllListEntriesQuery['listCollection']
+>
+export type AnilistAllListEntriesLists = NonNullable<
+  (NonNullable<
+    (NonNullable<AnilistAllListEntriesQuery['listCollection']>)['lists']
+  >)[0]
+>
+export type AnilistAllListEntriesEntries = AniListEntryFragment
 export type CachedAnimeListEntryListEntry = NonNullable<
   CachedAnimeListEntryFragment['listEntry']
 >

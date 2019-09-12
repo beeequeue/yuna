@@ -76,6 +76,7 @@ extend type Query {
   ListEntries(
     id_in: [Int!],
     status: MediaListStatus,
+    status_not: MediaListStatus,
     page: Int,
     perPage: Int,
   ): [ListEntry!]!
