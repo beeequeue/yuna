@@ -1,10 +1,6 @@
-query EpisodeFeedListIds($userId: Int!) {
-  listCollection: MediaListCollection(userId: $userId, type: ANIME) {
-    lists {
-      name
-      entries {
-        mediaId
-      }
-    }
+query EpisodeFeedListIds {
+  ListEntries(page: 0, perPage: 10) @client {
+    id
+    mediaId
   }
 }

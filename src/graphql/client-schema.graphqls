@@ -72,6 +72,13 @@ extend type Query {
   Episodes(id: Int!, provider: Provider!): [Episode!]
 
   ListEntry(mediaId: Int!): ListEntry!
+
+  ListEntries(
+    id_in: [Int!],
+    status: MediaListStatus,
+    page: Int,
+    perPage: Int,
+  ): [ListEntry!]!
 }
 
 extend type Mutation {

@@ -2587,6 +2587,7 @@ export type Query = {
   SiteStatistics: Maybe<SiteStatistics>
   Episodes: Maybe<Array<Episode>>
   ListEntry: ListEntry
+  ListEntries: Array<ListEntry>
 }
 
 export type QueryPageArgs = {
@@ -2891,6 +2892,13 @@ export type QueryEpisodesArgs = {
 
 export type QueryListEntryArgs = {
   mediaId: Scalars['Int']
+}
+
+export type QueryListEntriesArgs = {
+  id_in: Maybe<Array<Scalars['Int']>>
+  status: Maybe<MediaListStatus>
+  page: Maybe<Scalars['Int']>
+  perPage: Maybe<Scalars['Int']>
 }
 
 /** Notification for when new media is added to the site */
@@ -4503,29 +4511,11 @@ export type AnimeViewQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type EpisodeFeedListIdsQueryVariables = {
-  userId: Scalars['Int']
-}
+export type EpisodeFeedListIdsQueryVariables = {}
 
 export type EpisodeFeedListIdsQuery = { __typename?: 'Query' } & {
-  listCollection: Maybe<
-    { __typename?: 'MediaListCollection' } & {
-      lists: Maybe<
-        Array<
-          Maybe<
-            { __typename?: 'MediaListGroup' } & Pick<MediaListGroup, 'name'> & {
-                entries: Maybe<
-                  Array<
-                    Maybe<
-                      { __typename?: 'MediaList' } & Pick<MediaList, 'mediaId'>
-                    >
-                  >
-                >
-              }
-          >
-        >
-      >
-    }
+  ListEntries: Array<
+    { __typename?: 'ListEntry' } & Pick<ListEntry, 'id' | 'mediaId'>
   >
 }
 
@@ -5013,22 +5003,8 @@ export type AnimeViewListEntry = NonNullable<
   (NonNullable<AnimeViewQuery['anime']>)['listEntry']
 >
 export type EpisodeFeedListIdsVariables = EpisodeFeedListIdsQueryVariables
-export type EpisodeFeedListIdsListCollection = NonNullable<
-  EpisodeFeedListIdsQuery['listCollection']
->
-export type EpisodeFeedListIdsLists = NonNullable<
-  (NonNullable<
-    (NonNullable<EpisodeFeedListIdsQuery['listCollection']>)['lists']
-  >)[0]
->
-export type EpisodeFeedListIdsEntries = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<EpisodeFeedListIdsQuery['listCollection']>)['lists']
-      >)[0]
-    >)['entries']
-  >)[0]
+export type EpisodeFeedListIdsListEntries = NonNullable<
+  EpisodeFeedListIdsQuery['ListEntries'][0]
 >
 export type EpisodeFeedVariables = EpisodeFeedQueryVariables
 export type EpisodeFeedPage = NonNullable<EpisodeFeedQuery['Page']>
