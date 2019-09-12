@@ -1,0 +1,88 @@
+version: 2.1
+
+envVars: &envVars
+  environment:
+    ELECTRON_CACHE: $HOME/.cache/electron
+    ELECTRON_BUILDER_CACHE: $HOME/.cache/electron-builder
+
+executors:
+  linux:
+    <<: *envVars
+    docker:
+      - image: circleci/node:12.6.0
+    working_directory: ~/app
+  macos:
+    <<: *envVars
+    macos:
+      xcode: '9.4'
+    working_directory: ~/app
+
+jobs:
+  checkout_code:
+    executor: linux
+    steps:
+      - checkout
+      - persist_to_workspace:
+          root: ~/app
+          paths:
+            - ./*
+
+  dependencies:
+    executor: linux
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install NPM dependencies
+          command: yarn install --frozen-lockfile
+      - persist_to_workspace:
+          root: ~/app
+          paths:
+            - node_modules
+
+  build_linux:
+    executor: linux
+    docker:
+      - image: electronuserland/builder:wine
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Run tests
+          command: yarn run build -wl --x64
+
+  build_macos:
+    executor: macos
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Run tests
+          command: yarn run build -m
+
+  lint:
+    executor: linux
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Run linting
+          command: yarn run lint
+
+workflows:
+  version: 2
+  build_test_lint:
+    jobs:
+      - checkout_code
+      - dependencies:
+          requires:
+            - checkout_code
+      - build_linux:
+          requires:
+            - dependencies
+      - build_macos:
+          requires:
+            - dependencies
+      - lint:
+          requires:
+            - dependencies
