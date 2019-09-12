@@ -777,6 +777,8 @@ export type InternalPageMediaListArgs = {
   status_in: Maybe<Array<Maybe<MediaListStatus>>>
   status_not_in: Maybe<Array<Maybe<MediaListStatus>>>
   status_not: Maybe<MediaListStatus>
+  mediaId_in: Maybe<Array<Maybe<Scalars['Int']>>>
+  mediaId_not_in: Maybe<Array<Maybe<Scalars['Int']>>>
   notes_like: Maybe<Scalars['String']>
   startedAt_greater: Maybe<Scalars['FuzzyDateInt']>
   startedAt_lesser: Maybe<Scalars['FuzzyDateInt']>
@@ -948,6 +950,8 @@ export type ListActivity = {
   status: Maybe<Scalars['String']>
   /** The list progress made */
   progress: Maybe<Scalars['String']>
+  /** If the activity is locked and can receive replies */
+  isLocked: Maybe<Scalars['Boolean']>
   /** The url for the activity page on the AniList website */
   siteUrl: Maybe<Scalars['String']>
   /** The time the activity was created at */
@@ -1817,6 +1821,8 @@ export type MessageActivity = {
   replyCount: Scalars['Int']
   /** The message text (Markdown) */
   message: Maybe<Scalars['String']>
+  /** If the activity is locked and can receive replies */
+  isLocked: Maybe<Scalars['Boolean']>
   /** The url for the activity page on the AniList website */
   siteUrl: Maybe<Scalars['String']>
   /** The time the activity was created at */
@@ -1874,6 +1880,8 @@ export type Mutation = {
   SaveTextActivity: Maybe<TextActivity>
   /** Create or update message activity for the currently authenticated user */
   SaveMessageActivity: Maybe<MessageActivity>
+  /** Update list activity (Mod Only) */
+  SaveListActivity: Maybe<ListActivity>
   /** Delete an activity item of the authenticated users */
   DeleteActivity: Maybe<Deleted>
   /** Create or update an activity reply */
@@ -1981,12 +1989,19 @@ export type MutationDeleteCustomListArgs = {
 export type MutationSaveTextActivityArgs = {
   id: Maybe<Scalars['Int']>
   text: Maybe<Scalars['String']>
+  locked: Maybe<Scalars['Boolean']>
 }
 
 export type MutationSaveMessageActivityArgs = {
   id: Maybe<Scalars['Int']>
   message: Maybe<Scalars['String']>
   recipientId: Maybe<Scalars['Int']>
+  locked: Maybe<Scalars['Boolean']>
+}
+
+export type MutationSaveListActivityArgs = {
+  id: Maybe<Scalars['Int']>
+  locked: Maybe<Scalars['Boolean']>
 }
 
 export type MutationDeleteActivityArgs = {
@@ -2341,6 +2356,8 @@ export type PageMediaListArgs = {
   status_in: Maybe<Array<Maybe<MediaListStatus>>>
   status_not_in: Maybe<Array<Maybe<MediaListStatus>>>
   status_not: Maybe<MediaListStatus>
+  mediaId_in: Maybe<Array<Maybe<Scalars['Int']>>>
+  mediaId_not_in: Maybe<Array<Maybe<Scalars['Int']>>>
   notes_like: Maybe<Scalars['String']>
   startedAt_greater: Maybe<Scalars['FuzzyDateInt']>
   startedAt_lesser: Maybe<Scalars['FuzzyDateInt']>
@@ -2729,6 +2746,8 @@ export type QueryMediaListArgs = {
   status_in: Maybe<Array<Maybe<MediaListStatus>>>
   status_not_in: Maybe<Array<Maybe<MediaListStatus>>>
   status_not: Maybe<MediaListStatus>
+  mediaId_in: Maybe<Array<Maybe<Scalars['Int']>>>
+  mediaId_not_in: Maybe<Array<Maybe<Scalars['Int']>>>
   notes_like: Maybe<Scalars['String']>
   startedAt_greater: Maybe<Scalars['FuzzyDateInt']>
   startedAt_lesser: Maybe<Scalars['FuzzyDateInt']>
@@ -3401,6 +3420,8 @@ export type TextActivity = {
   text: Maybe<Scalars['String']>
   /** The url for the activity page on the AniList website */
   siteUrl: Maybe<Scalars['String']>
+  /** If the activity is locked and can receive replies */
+  isLocked: Maybe<Scalars['Boolean']>
   /** The time the activity was created at */
   createdAt: Scalars['Int']
   /** The user who created the activity */
