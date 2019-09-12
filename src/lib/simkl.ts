@@ -471,6 +471,14 @@ export class Simkl {
     return item
   }
 
+  public static async getAllListEntries(skipUpdate?: true) {
+    if (!skipUpdate) {
+      await this.updateWatchlist()
+    }
+
+    return this.watchlist
+  }
+
   public static async addItemToList(malId: number, list: SimklListStatus) {
     const response = await this.request<
       { added: _SyncAddToList },

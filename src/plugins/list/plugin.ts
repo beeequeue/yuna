@@ -3,11 +3,9 @@ import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 import {
   AddToListMutation,
   EditListEntryOptions,
-  FavouritesAnimeArgs,
   ListEntry,
   MediaListStatus,
   Mutation,
-  PageListEntryArgs,
   QueryListEntriesArgs,
   StartRewatchingMutation,
   UpdateProgressMutation,

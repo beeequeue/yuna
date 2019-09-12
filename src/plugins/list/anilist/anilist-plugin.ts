@@ -93,12 +93,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     options: QueryListEntriesArgs,
   ): Promise<ListEntry[]> {
     // defaulting the values in the parameters didn't work for some reason
-    options = options || {
-      id_in: null,
-      status: null,
-      page: null,
-      perPage: null,
-    }
+    options = options || {}
     const variables: AnilistAllListEntriesQueryVariables = {
       userId: getAnilistUserId(this.store)!,
       ...options,

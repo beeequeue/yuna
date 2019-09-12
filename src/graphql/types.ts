@@ -4212,6 +4212,20 @@ export type MalIdFromAnilistIdQuery = { __typename?: 'Query' } & {
   Media: Maybe<{ __typename?: 'Media' } & Pick<Media, 'idMal'>>
 }
 
+export type AnilistIdsFromMalIdsQueryVariables = {
+  malIds: Array<Scalars['Int']>
+}
+
+export type AnilistIdsFromMalIdsQuery = { __typename?: 'Query' } & {
+  Page: Maybe<
+    { __typename?: 'Page' } & {
+      media: Maybe<
+        Array<Maybe<{ __typename?: 'Media' } & Pick<Media, 'id' | 'idMal'>>>
+      >
+    }
+  >
+}
+
 export type EpisodeFeedListIdsQueryVariables = {}
 
 export type EpisodeFeedListIdsQuery = { __typename?: 'Query' } & {
@@ -4884,6 +4898,13 @@ export type EpisodeListEpisodes = NonNullable<
 export type MalIdFromAnilistIdVariables = MalIdFromAnilistIdQueryVariables
 export type MalIdFromAnilistIdMedia = NonNullable<
   MalIdFromAnilistIdQuery['Media']
+>
+export type AnilistIdsFromMalIdsVariables = AnilistIdsFromMalIdsQueryVariables
+export type AnilistIdsFromMalIdsPage = NonNullable<
+  AnilistIdsFromMalIdsQuery['Page']
+>
+export type AnilistIdsFromMalIdsMedia = NonNullable<
+  (NonNullable<(NonNullable<AnilistIdsFromMalIdsQuery['Page']>)['media']>)[0]
 >
 export type EpisodeFeedListIdsVariables = EpisodeFeedListIdsQueryVariables
 export type EpisodeFeedListIdsListEntries = NonNullable<
