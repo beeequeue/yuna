@@ -46,3 +46,23 @@ export const MAL_ID_FROM_ANILIST_ID = gql`
     }
   }
 `
+
+export const ANILIST_IDS_FROM_MAL_IDS = gql`
+  query AnilistIdsFromMalIds($malIds: [Int!]!) {
+    Page(perPage: 50) {
+      media(idMal_in: $malIds) {
+        id
+        idMal
+      }
+    }
+  }
+`
+
+export const EPISODE_FEED_LIST_IDS = gql`
+  query EpisodeFeedListIds {
+    ListEntries(status_not: COMPLETED) @client {
+      id
+      mediaId
+    }
+  }
+`

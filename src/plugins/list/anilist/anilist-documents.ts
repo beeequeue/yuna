@@ -79,3 +79,33 @@ export const ANILIST_EDIT_LIST_ENTRY = gql`
     }
   }
 `
+
+export const ANILIST_ALL_LIST_ENTRIES = gql`
+  query AnilistAllListEntries(
+    $userId: Int!
+    $page: Int
+    $perPage: Int
+    $status: MediaListStatus
+    $status_not: MediaListStatus
+  ) {
+    listCollection: MediaListCollection(
+      type: ANIME
+      userId: $userId
+      status: $status
+      status_not: $status_not
+      chunk: $page
+      perChunk: $perPage
+      forceSingleCompletedList: true
+    ) {
+      lists {
+        name
+        isCustomList
+        entries {
+          ...AniListEntry
+        }
+      }
+    }
+  }
+
+  ${ANILIST_LIST_ENTRY_FRAGMENT}
+`

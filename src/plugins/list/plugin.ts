@@ -6,6 +6,7 @@ import {
   ListEntry,
   MediaListStatus,
   Mutation,
+  QueryListEntriesArgs,
   StartRewatchingMutation,
   UpdateProgressMutation,
   UpdateScoreMutation,
@@ -34,6 +35,10 @@ export abstract class ListPlugin {
   public abstract async GetListEntry(
     anilistId: number,
   ): Promise<ListEntry | null>
+
+  public abstract async GetListEntries(
+    options: QueryListEntriesArgs,
+  ): Promise<ListEntry[] | null>
 
   public abstract async AddToList(
     anilistId: number,

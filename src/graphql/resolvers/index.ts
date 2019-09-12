@@ -6,6 +6,7 @@ import {
   AddToList,
   DeleteFromList,
   EditListEntry,
+  GetListEntries,
   GetListEntry,
   StartRewatching,
   UpdateProgress,
@@ -14,16 +15,17 @@ import {
 } from './list-entry'
 
 export const resolvers = {
-  Query: {
-    Episodes: EpisodesResolver,
-    ListEntry: GetListEntry,
-  },
   Media: {
     scoreMal: scoreMalResolver,
     listEntry: GetListEntry,
   },
   Episode: {
     isWatched: isWatchedResolver,
+  },
+  Query: {
+    Episodes: EpisodesResolver,
+    ListEntry: GetListEntry,
+    ListEntries: GetListEntries,
   },
   Mutation: {
     CacheEpisodes: CacheEpisodesResolver,

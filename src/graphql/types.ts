@@ -777,6 +777,8 @@ export type InternalPageMediaListArgs = {
   status_in: Maybe<Array<Maybe<MediaListStatus>>>
   status_not_in: Maybe<Array<Maybe<MediaListStatus>>>
   status_not: Maybe<MediaListStatus>
+  mediaId_in: Maybe<Array<Maybe<Scalars['Int']>>>
+  mediaId_not_in: Maybe<Array<Maybe<Scalars['Int']>>>
   notes_like: Maybe<Scalars['String']>
   startedAt_greater: Maybe<Scalars['FuzzyDateInt']>
   startedAt_lesser: Maybe<Scalars['FuzzyDateInt']>
@@ -948,6 +950,8 @@ export type ListActivity = {
   status: Maybe<Scalars['String']>
   /** The list progress made */
   progress: Maybe<Scalars['String']>
+  /** If the activity is locked and can receive replies */
+  isLocked: Maybe<Scalars['Boolean']>
   /** The url for the activity page on the AniList website */
   siteUrl: Maybe<Scalars['String']>
   /** The time the activity was created at */
@@ -1817,6 +1821,8 @@ export type MessageActivity = {
   replyCount: Scalars['Int']
   /** The message text (Markdown) */
   message: Maybe<Scalars['String']>
+  /** If the activity is locked and can receive replies */
+  isLocked: Maybe<Scalars['Boolean']>
   /** The url for the activity page on the AniList website */
   siteUrl: Maybe<Scalars['String']>
   /** The time the activity was created at */
@@ -1874,6 +1880,8 @@ export type Mutation = {
   SaveTextActivity: Maybe<TextActivity>
   /** Create or update message activity for the currently authenticated user */
   SaveMessageActivity: Maybe<MessageActivity>
+  /** Update list activity (Mod Only) */
+  SaveListActivity: Maybe<ListActivity>
   /** Delete an activity item of the authenticated users */
   DeleteActivity: Maybe<Deleted>
   /** Create or update an activity reply */
@@ -1981,12 +1989,19 @@ export type MutationDeleteCustomListArgs = {
 export type MutationSaveTextActivityArgs = {
   id: Maybe<Scalars['Int']>
   text: Maybe<Scalars['String']>
+  locked: Maybe<Scalars['Boolean']>
 }
 
 export type MutationSaveMessageActivityArgs = {
   id: Maybe<Scalars['Int']>
   message: Maybe<Scalars['String']>
   recipientId: Maybe<Scalars['Int']>
+  locked: Maybe<Scalars['Boolean']>
+}
+
+export type MutationSaveListActivityArgs = {
+  id: Maybe<Scalars['Int']>
+  locked: Maybe<Scalars['Boolean']>
 }
 
 export type MutationDeleteActivityArgs = {
@@ -2341,6 +2356,8 @@ export type PageMediaListArgs = {
   status_in: Maybe<Array<Maybe<MediaListStatus>>>
   status_not_in: Maybe<Array<Maybe<MediaListStatus>>>
   status_not: Maybe<MediaListStatus>
+  mediaId_in: Maybe<Array<Maybe<Scalars['Int']>>>
+  mediaId_not_in: Maybe<Array<Maybe<Scalars['Int']>>>
   notes_like: Maybe<Scalars['String']>
   startedAt_greater: Maybe<Scalars['FuzzyDateInt']>
   startedAt_lesser: Maybe<Scalars['FuzzyDateInt']>
@@ -2570,6 +2587,7 @@ export type Query = {
   SiteStatistics: Maybe<SiteStatistics>
   Episodes: Maybe<Array<Episode>>
   ListEntry: ListEntry
+  ListEntries: Array<ListEntry>
 }
 
 export type QueryPageArgs = {
@@ -2729,6 +2747,8 @@ export type QueryMediaListArgs = {
   status_in: Maybe<Array<Maybe<MediaListStatus>>>
   status_not_in: Maybe<Array<Maybe<MediaListStatus>>>
   status_not: Maybe<MediaListStatus>
+  mediaId_in: Maybe<Array<Maybe<Scalars['Int']>>>
+  mediaId_not_in: Maybe<Array<Maybe<Scalars['Int']>>>
   notes_like: Maybe<Scalars['String']>
   startedAt_greater: Maybe<Scalars['FuzzyDateInt']>
   startedAt_lesser: Maybe<Scalars['FuzzyDateInt']>
@@ -2872,6 +2892,14 @@ export type QueryEpisodesArgs = {
 
 export type QueryListEntryArgs = {
   mediaId: Scalars['Int']
+}
+
+export type QueryListEntriesArgs = {
+  id_in: Maybe<Array<Scalars['Int']>>
+  status: Maybe<MediaListStatus>
+  status_not: Maybe<MediaListStatus>
+  page: Maybe<Scalars['Int']>
+  perPage: Maybe<Scalars['Int']>
 }
 
 /** Notification for when new media is added to the site */
@@ -3401,6 +3429,8 @@ export type TextActivity = {
   text: Maybe<Scalars['String']>
   /** The url for the activity page on the AniList website */
   siteUrl: Maybe<Scalars['String']>
+  /** If the activity is locked and can receive replies */
+  isLocked: Maybe<Scalars['Boolean']>
   /** The time the activity was created at */
   createdAt: Scalars['Int']
   /** The user who created the activity */
@@ -4182,6 +4212,28 @@ export type MalIdFromAnilistIdQuery = { __typename?: 'Query' } & {
   Media: Maybe<{ __typename?: 'Media' } & Pick<Media, 'idMal'>>
 }
 
+export type AnilistIdsFromMalIdsQueryVariables = {
+  malIds: Array<Scalars['Int']>
+}
+
+export type AnilistIdsFromMalIdsQuery = { __typename?: 'Query' } & {
+  Page: Maybe<
+    { __typename?: 'Page' } & {
+      media: Maybe<
+        Array<Maybe<{ __typename?: 'Media' } & Pick<Media, 'id' | 'idMal'>>>
+      >
+    }
+  >
+}
+
+export type EpisodeFeedListIdsQueryVariables = {}
+
+export type EpisodeFeedListIdsQuery = { __typename?: 'Query' } & {
+  ListEntries: Array<
+    { __typename?: 'ListEntry' } & Pick<ListEntry, 'id' | 'mediaId'>
+  >
+}
+
 export type CacheEpisodesAiringQueryVariables = {
   id: Scalars['Int']
 }
@@ -4371,6 +4423,37 @@ export type AnilistEditListEntryMutation = { __typename?: 'Mutation' } & {
   >
 }
 
+export type AnilistAllListEntriesQueryVariables = {
+  userId: Scalars['Int']
+  page: Maybe<Scalars['Int']>
+  perPage: Maybe<Scalars['Int']>
+  status: Maybe<MediaListStatus>
+  status_not: Maybe<MediaListStatus>
+}
+
+export type AnilistAllListEntriesQuery = { __typename?: 'Query' } & {
+  listCollection: Maybe<
+    { __typename?: 'MediaListCollection' } & {
+      lists: Maybe<
+        Array<
+          Maybe<
+            { __typename?: 'MediaListGroup' } & Pick<
+              MediaListGroup,
+              'name' | 'isCustomList'
+            > & {
+                entries: Maybe<
+                  Array<
+                    Maybe<{ __typename?: 'MediaList' } & AniListEntryFragment>
+                  >
+                >
+              }
+          >
+        >
+      >
+    }
+  >
+}
+
 export type CachedAnimeListEntryFragment = { __typename?: 'Media' } & {
   listEntry: Maybe<{ __typename?: 'ListEntry' } & Pick<ListEntry, 'progress'>>
 }
@@ -4479,32 +4562,6 @@ export type AnimeViewQuery = { __typename?: 'Query' } & {
           >
         >
       }
-  >
-}
-
-export type EpisodeFeedListIdsQueryVariables = {
-  userId: Scalars['Int']
-}
-
-export type EpisodeFeedListIdsQuery = { __typename?: 'Query' } & {
-  listCollection: Maybe<
-    { __typename?: 'MediaListCollection' } & {
-      lists: Maybe<
-        Array<
-          Maybe<
-            { __typename?: 'MediaListGroup' } & Pick<MediaListGroup, 'name'> & {
-                entries: Maybe<
-                  Array<
-                    Maybe<
-                      { __typename?: 'MediaList' } & Pick<MediaList, 'mediaId'>
-                    >
-                  >
-                >
-              }
-          >
-        >
-      >
-    }
   >
 }
 
@@ -4842,6 +4899,17 @@ export type MalIdFromAnilistIdVariables = MalIdFromAnilistIdQueryVariables
 export type MalIdFromAnilistIdMedia = NonNullable<
   MalIdFromAnilistIdQuery['Media']
 >
+export type AnilistIdsFromMalIdsVariables = AnilistIdsFromMalIdsQueryVariables
+export type AnilistIdsFromMalIdsPage = NonNullable<
+  AnilistIdsFromMalIdsQuery['Page']
+>
+export type AnilistIdsFromMalIdsMedia = NonNullable<
+  (NonNullable<(NonNullable<AnilistIdsFromMalIdsQuery['Page']>)['media']>)[0]
+>
+export type EpisodeFeedListIdsVariables = EpisodeFeedListIdsQueryVariables
+export type EpisodeFeedListIdsListEntries = NonNullable<
+  EpisodeFeedListIdsQuery['ListEntries'][0]
+>
 export type CacheEpisodesAiringVariables = CacheEpisodesAiringQueryVariables
 export type CacheEpisodesAiringAiringSchedule = NonNullable<
   CacheEpisodesAiringQuery['AiringSchedule']
@@ -4937,6 +5005,16 @@ export type AnilistEditListEntryVariables = AnilistEditListEntryMutationVariable
 export type AnilistEditListEntrySaveMediaListEntry = NonNullable<
   AnilistEditListEntryMutation['SaveMediaListEntry']
 >
+export type AnilistAllListEntriesVariables = AnilistAllListEntriesQueryVariables
+export type AnilistAllListEntriesListCollection = NonNullable<
+  AnilistAllListEntriesQuery['listCollection']
+>
+export type AnilistAllListEntriesLists = NonNullable<
+  (NonNullable<
+    (NonNullable<AnilistAllListEntriesQuery['listCollection']>)['lists']
+  >)[0]
+>
+export type AnilistAllListEntriesEntries = AniListEntryFragment
 export type CachedAnimeListEntryListEntry = NonNullable<
   CachedAnimeListEntryFragment['listEntry']
 >
@@ -4990,24 +5068,6 @@ export type AnimeView_Title = NonNullable<
 >
 export type AnimeViewListEntry = NonNullable<
   (NonNullable<AnimeViewQuery['anime']>)['listEntry']
->
-export type EpisodeFeedListIdsVariables = EpisodeFeedListIdsQueryVariables
-export type EpisodeFeedListIdsListCollection = NonNullable<
-  EpisodeFeedListIdsQuery['listCollection']
->
-export type EpisodeFeedListIdsLists = NonNullable<
-  (NonNullable<
-    (NonNullable<EpisodeFeedListIdsQuery['listCollection']>)['lists']
-  >)[0]
->
-export type EpisodeFeedListIdsEntries = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<EpisodeFeedListIdsQuery['listCollection']>)['lists']
-      >)[0]
-    >)['entries']
-  >)[0]
 >
 export type EpisodeFeedVariables = EpisodeFeedQueryVariables
 export type EpisodeFeedPage = NonNullable<EpisodeFeedQuery['Page']>

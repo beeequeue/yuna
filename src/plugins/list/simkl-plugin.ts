@@ -2,6 +2,7 @@ import { oc } from 'ts-optchain'
 
 import { ListPlugin, ListPluginType } from '@/plugins/list/plugin'
 import { MAL_ID_FROM_ANILIST_ID } from '@/graphql/documents/queries'
+import { getAnilistIdsFromMalIds } from '@/graphql/queries'
 import {
   AddToListMutation,
   EditListEntryOptions,
@@ -10,6 +11,7 @@ import {
   MalIdFromAnilistIdQueryVariables,
   MediaListStatus,
   Mutation,
+  QueryListEntriesArgs,
   StartRewatchingMutation,
   UpdateProgressMutation,
   UpdateScoreMutation,
@@ -73,6 +75,29 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
 
     const listEntry = this.fromWatchedInfo(anilistId, item)
     return listEntry
+  }
+
+  public async GetListEntries(
+    options: QueryListEntriesArgs,
+  ): Promise<ListEntry[]> {
+    // defaulting the values in the parameters didn't work for some reason
+    options = options || {}
+
+    const result = await Simkl.getAllListEntries()
+    const malIds = result.map(info => Number(info.show.ids.mal))
+    const relations = await getAnilistIdsFromMalIds(this.apollo, malIds)
+
+    const idInfoMap = result.map(info => {
+      const relation = relations.find(
+        ids => ids.idMal === Number(info.show.ids.mal),
+      )
+
+      return [oc(relation).id(), info] as const
+    })
+
+    return idInfoMap
+      .filter((item): item is [number, SimklListEntry] => !isNil(item[0]))
+      .map(item => this.fromWatchedInfo(...item))
   }
 
   public async AddToList(

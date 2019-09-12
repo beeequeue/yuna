@@ -33,7 +33,7 @@ export const NO_OP = () => {
 }
 
 export interface RequestSuccess<B extends {} | null> extends Response {
-  status: 200
+  status: 200 | 204
   ok: true
   body: B
 }
