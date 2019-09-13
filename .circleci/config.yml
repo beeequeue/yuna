@@ -41,8 +41,8 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Run tests
-          command: yarn run build -wl --x64
+          name: Build
+          command: yarn run build -wl --x64 -p onTagOrDraft
 
   # build_macos:
   #   executor: macos
