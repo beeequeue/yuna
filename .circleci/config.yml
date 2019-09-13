@@ -9,7 +9,7 @@ executors:
   linux:
     <<: *envVars
     docker:
-      - image: circleci/node:12.6.0
+      - image: circleci/node:11.15.0
     working_directory: ~/app
   macos:
     <<: *envVars
@@ -51,14 +51,14 @@ jobs:
           name: Run tests
           command: yarn run build -wl --x64
 
-  build_macos:
-    executor: macos
-    steps:
-      - attach_workspace:
-          at: .
-      - run:
-          name: Run tests
-          command: yarn run build -m
+  # build_macos:
+  #   executor: macos
+  #   steps:
+  #     - attach_workspace:
+  #         at: .
+  #     - run:
+  #         name: Run tests
+  #         command: yarn run build -m
 
   lint:
     executor: linux
@@ -80,9 +80,9 @@ workflows:
       - build_linux:
           requires:
             - dependencies
-      - build_macos:
-          requires:
-            - dependencies
+      # - build_macos:
+      #     requires:
+      #       - dependencies
       - lint:
           requires:
             - dependencies
