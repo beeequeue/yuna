@@ -35,14 +35,16 @@
       >
         <h1 v-if="list.length > 0" :key="name">{{ name.toLowerCase() }}</h1>
 
-        <list-entry v-for="entry in list" :key="entry.id" :entry="entry" />
+        <list-entry v-for="entry in list" :key="entry.mediaId" :entry="entry" />
       </transition-group>
     </transition-group>
   </div>
 </template>
 
 <script lang="ts">
+import { DollarApollo, SmartQuery } from 'vue-apollo/types/vue-apollo'
 import { Component, Vue } from 'vue-property-decorator'
+import { oc } from 'ts-optchain'
 
 import anichartSvg from '@/assets/anichart.svg'
 import anilistSvg from '@/assets/anilist.svg'
@@ -84,8 +86,27 @@ export default class List extends Vue {
         page: 1,
       }
     },
-    update(data): Lists {
-      const lists = data.ListEntries.reduce(
+  })
+  public rawList!: ListViewQuery
+
+  public page = 1
+  public filterString = ''
+  public limit = Number(localStorage.getItem('list-limit') || 25)
+
+  public anichartLogo = anichartSvg
+  public alLogo = anilistSvg
+  public simklLogo = simklSvg
+
+  public $apollo!: DollarApollo<any> & {
+    queries: {
+      lists: SmartQuery<List>
+    }
+  }
+
+  public get lists() {
+    return oc(this.rawList)
+      .ListEntries([])
+      .reduce(
         (lists, entry) => {
           if (isNil(lists[entry.status])) {
             lists[entry.status] = []
@@ -97,17 +118,7 @@ export default class List extends Vue {
         },
         { ...baseLists },
       )
-
-      return lists
-    },
-  })
-  public lists!: Lists
-  public filterString = ''
-  public limit = Number(localStorage.getItem('list-limit') || 25)
-
-  public anichartLogo = anichartSvg
-  public alLogo = anilistSvg
-  public simklLogo = simklSvg
+  }
 
   public get userId() {
     return getAnilistUserId(this.$store)
@@ -119,6 +130,20 @@ export default class List extends Vue {
 
   public get simklUser() {
     return getSimklUser(this.$store)
+  }
+
+  public fetchMore() {
+    this.page++
+
+    this.$apollo.queries.rawList.fetchMore({
+      variables: {
+        page: this.page,
+      },
+      updateQuery: (_: null, { fetchMoreResult: result }): ListViewQuery => ({
+        __typename: 'Query',
+        ListEntries: result.ListEntries,
+      }),
+    })
   }
 
   // beautiful!
