@@ -7,7 +7,6 @@ module.exports = {
   },
   configureWebpack: {
     target: 'electron-renderer',
-    stats: 'errors-warnings',
   },
   lintOnSave: false,
   chainWebpack: config => {
