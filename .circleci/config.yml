@@ -1,21 +1,14 @@
 version: 2.1
 
-envVars: &envVars
-  environment:
-    ELECTRON_CACHE: $HOME/.cache/electron
-    ELECTRON_BUILDER_CACHE: $HOME/.cache/electron-builder
-
 executors:
   linux:
-    <<: *envVars
     docker:
       - image: circleci/node:11.15.0
     working_directory: ~/app
-  macos:
-    <<: *envVars
-    macos:
-      xcode: '9.4'
-    working_directory: ~/app
+  # macos:
+  #   macos:
+  #     xcode: '9.4'
+  #   working_directory: ~/app
 
 jobs:
   checkout_code:
