@@ -44,6 +44,15 @@ jobs:
           name: Build
           command: yarn run build -wl --x64 -p onTagOrDraft
 
+  compile:
+    executor: linux
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Compile
+          command: yarn vue-cli-service build
+
   # build_macos:
   #   executor: macos
   #   steps:
