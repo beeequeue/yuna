@@ -85,6 +85,9 @@ workflows:
       - build_linux:
           requires:
             - dependencies
+      - compile:
+          requires:
+            - dependencies
       # - build_macos:
       #     requires:
       #       - dependencies
