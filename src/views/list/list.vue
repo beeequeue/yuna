@@ -33,7 +33,7 @@
         :key="name"
         class="list"
       >
-        <h1 :key="name">{{ name.toLowerCase() }}</h1>
+        <h1 v-if="list.length > 0" :key="name">{{ name.toLowerCase() }}</h1>
 
         <list-entry v-for="entry in list" :key="entry.id" :entry="entry" />
       </transition-group>
@@ -65,6 +65,15 @@ import { debounce, isNil } from '@/utils'
 
 type Lists = { [key in MediaListStatus]: ListViewListEntries[] }
 
+const baseLists: Lists = {
+  [MediaListStatus.Current]: [],
+  [MediaListStatus.Repeating]: [],
+  [MediaListStatus.Paused]: [],
+  [MediaListStatus.Planning]: [],
+  [MediaListStatus.Dropped]: [],
+  [MediaListStatus.Completed]: [],
+}
+
 @Component({ components: { ListEntry, TextInput, NumberInput } })
 export default class List extends Vue {
   @Query<List, ListViewQuery, ListViewVariables>({
@@ -86,7 +95,7 @@ export default class List extends Vue {
 
           return lists
         },
-        {} as Lists,
+        { ...baseLists },
       )
 
       return lists
@@ -192,7 +201,6 @@ export default class List extends Vue {
       justify-content: center;
       flex-wrap: wrap;
       padding: 10px 15px;
-      overflow: hidden;
 
       & > h1 {
         width: 100%;
@@ -208,6 +216,7 @@ export default class List extends Vue {
 
       &.v-leave-active,
       &.v-enter-active {
+        overflow: hidden;
         transition: opacity 0.35s, height 0.5s, padding 0.5s;
       }
 
