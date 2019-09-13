@@ -67,7 +67,10 @@ jobs:
           at: .
       - run:
           name: Run linting
-          command: yarn run lint
+          command: yarn run lint:ci
+      - store_test_results:
+          when: always
+          path: test-results
 
 workflows:
   version: 2
