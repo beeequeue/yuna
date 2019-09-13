@@ -129,7 +129,8 @@
     "build": "cross-env NODE_ENV=production vue-cli-service electron:build",
     "codegen": "gql-gen",
     "get-schema": "yarn graphql get-schema",
-    "lint": "vue-cli-service lint",
+    "lint": "yarn eslint \"src/**/*.{js,ts,vue}\"",
+    "lint:ci": "yarn lint -f junit -o test-results/eslint/results.xml",
     "postinstall": "yarn electron-builder install-app-deps",
     "postuninstall": "yarn electron-builder install-app-deps",
     "serve": "vue-cli-service electron:serve"

@@ -1,21 +1,14 @@
 version: 2.1
 
-envVars: &envVars
-  environment:
-    ELECTRON_CACHE: $HOME/.cache/electron
-    ELECTRON_BUILDER_CACHE: $HOME/.cache/electron-builder
-
 executors:
   linux:
-    <<: *envVars
     docker:
-      - image: circleci/node:12.6.0
+      - image: circleci/node:11.15.0
     working_directory: ~/app
-  macos:
-    <<: *envVars
-    macos:
-      xcode: '9.4'
-    working_directory: ~/app
+  # macos:
+  #   macos:
+  #     xcode: '9.4'
+  #   working_directory: ~/app
 
 jobs:
   checkout_code:
@@ -48,17 +41,26 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Run tests
-          command: yarn run build -wl --x64
+          name: Build
+          command: yarn run build -wl --x64 -p onTagOrDraft
 
-  build_macos:
-    executor: macos
+  compile:
+    executor: linux
     steps:
       - attach_workspace:
           at: .
       - run:
-          name: Run tests
-          command: yarn run build -m
+          name: Compile
+          command: yarn vue-cli-service build
+
+  # build_macos:
+  #   executor: macos
+  #   steps:
+  #     - attach_workspace:
+  #         at: .
+  #     - run:
+  #         name: Run tests
+  #         command: yarn run build -m
 
   lint:
     executor: linux
@@ -67,7 +69,10 @@ jobs:
           at: .
       - run:
           name: Run linting
-          command: yarn run lint
+          command: yarn run lint:ci
+      - store_test_results:
+          when: always
+          path: test-results
 
 workflows:
   version: 2
@@ -80,9 +85,12 @@ workflows:
       - build_linux:
           requires:
             - dependencies
-      - build_macos:
+      - compile:
           requires:
             - dependencies
+      # - build_macos:
+      #     requires:
+      #       - dependencies
       - lint:
           requires:
             - dependencies

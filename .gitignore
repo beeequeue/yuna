@@ -2,6 +2,7 @@
 .idea
 !.gitkeep
 dist/*
+test-results
 graphql.schema.json
 schema.graphql
 
