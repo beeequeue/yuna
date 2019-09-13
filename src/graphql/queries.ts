@@ -18,7 +18,7 @@ export const getAnilistIdsFromMalIds = async (
   const responses: ApolloQueryResult<
     AnilistIdsFromMalIdsQuery
   >[] = await Promise.all(
-    Array.from({ length: 'fifties' }).map((_, i) => {
+    Array.from({ length: fifties }).map((_, i) => {
       const variables: AnilistIdsFromMalIdsQueryVariables = {
         malIds: malIds.slice(i * 50, (i + 1) * 50),
       }
