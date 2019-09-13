@@ -7,7 +7,7 @@ module.exports = {
   },
   configureWebpack: {
     target: 'electron-renderer',
-    stats: process.env.CI ? 'errors-warnings' : 'minimal',
+    stats: 'errors-warnings',
   },
   lintOnSave: false,
   chainWebpack: config => {
