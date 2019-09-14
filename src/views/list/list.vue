@@ -60,7 +60,7 @@
             :media="media[entry.mediaId]"
           />
 
-          <div key="last" class="padding" />
+          <div key="last" class="padding" v-visibility="fetchMore(status)" />
         </transition-group>
       </div>
     </div>
@@ -79,8 +79,6 @@ import Loading from '@/common/components/loading.vue'
 import TextInput from '@/common/components/form/text-input.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
 import ListEntry from './components/list-entry.vue'
-
-import LIST_QUERY from '@/views/list/list.graphql'
 import { LIST_MEDIA_QUERY } from '@/graphql/documents/queries'
 import {
   ListMediaMedia,
@@ -88,11 +86,11 @@ import {
   ListMediaQueryVariables,
   ListViewListEntries,
   ListViewQuery,
-  ListViewVariables,
+  ListViewQueryVariables,
   MediaListStatus,
 } from '@/graphql/types'
 
-import { Query } from '@/decorators'
+import { ListQuery } from '@/decorators'
 import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
 import { debounce, humanizeMediaListStatus, isNil, isNotNil } from '@/utils'
 
@@ -100,85 +98,33 @@ export type ListMedia = {
   [key: number]: { media: ListMediaMedia | null; loading: boolean } | undefined
 }
 
-const queryOptions = (status: MediaListStatus) =>
-  ({
-    fetchPolicy: 'cache-and-network',
-    query: LIST_QUERY,
-    variables: {
-      page: 1,
-      status,
-    },
-  } as const)
-
 @Component({
   components: { Loading, ListEntry, TextInput, NumberInput },
 })
 export default class List extends Vue {
-  @Query<List, ListViewQuery, ListViewVariables>({
-    ...queryOptions(MediaListStatus.Current),
-    update(data) {
-      this.getMedia(data.ListEntries.map(e => e.mediaId))
-
-      return data
-    },
-  })
+  @ListQuery(MediaListStatus.Current)
   public current!: ListViewQuery
 
-  @Query<List, ListViewQuery, ListViewVariables>({
-    ...queryOptions(MediaListStatus.Repeating),
-    update(data) {
-      this.getMedia(data.ListEntries.map(e => e.mediaId))
-
-      return data
-    },
-  })
+  @ListQuery(MediaListStatus.Repeating)
   public repeating!: ListViewQuery
 
-  @Query<List, ListViewQuery, ListViewVariables>({
-    ...queryOptions(MediaListStatus.Paused),
-    update(data) {
-      this.getMedia(data.ListEntries.map(e => e.mediaId))
-
-      return data
-    },
-  })
+  @ListQuery(MediaListStatus.Paused)
   public paused!: ListViewQuery
 
-  @Query<List, ListViewQuery, ListViewVariables>({
-    ...queryOptions(MediaListStatus.Planning),
-    update(data) {
-      this.getMedia(data.ListEntries.map(e => e.mediaId))
-
-      return data
-    },
-  })
+  @ListQuery(MediaListStatus.Planning)
   public planning!: ListViewQuery
 
-  @Query<List, ListViewQuery, ListViewVariables>({
-    ...queryOptions(MediaListStatus.Dropped),
-    update(data) {
-      this.getMedia(data.ListEntries.map(e => e.mediaId))
-
-      return data
-    },
-  })
+  @ListQuery(MediaListStatus.Dropped)
   public dropped!: ListViewQuery
 
-  @Query<List, ListViewQuery, ListViewVariables>({
-    ...queryOptions(MediaListStatus.Completed),
-    update(data) {
-      this.getMedia(data.ListEntries.map(e => e.mediaId))
-
-      return data
-    },
-  })
+  @ListQuery(MediaListStatus.Completed)
   public completed!: ListViewQuery
 
   public media: ListMedia = {}
 
-  public page = 1
   public filterString = ''
   public limit = Number(localStorage.getItem('list-limit') || 25)
+
   public lists = [
     MediaListStatus.Current,
     MediaListStatus.Repeating,
@@ -187,6 +133,15 @@ export default class List extends Vue {
     MediaListStatus.Completed,
     MediaListStatus.Dropped,
   ] as const
+  // -1 means no more can be fetched
+  public pages = {
+    [MediaListStatus.Current]: 1,
+    [MediaListStatus.Repeating]: 1,
+    [MediaListStatus.Paused]: 1,
+    [MediaListStatus.Planning]: 1,
+    [MediaListStatus.Completed]: 1,
+    [MediaListStatus.Dropped]: 1,
+  }
 
   public anichartLogo = anichartSvg
   public alLogo = anilistSvg
@@ -234,7 +189,7 @@ export default class List extends Vue {
     })
   }
 
-  private async getMedia(mediaIds: number[]) {
+  public async getMedia(mediaIds: number[]) {
     this.setMediaLoading(mediaIds, true)
 
     const variables: ListMediaQueryVariables = { mediaIds }
@@ -272,18 +227,45 @@ export default class List extends Vue {
     return humanizeMediaListStatus({ progress: null, status }, false)
   }
 
-  public fetchMore() {
-    this.page++
+  public fetchMore(status: MediaListStatus) {
+    const query = this.$apollo.queries[status.toLowerCase()]
+    const entries = oc(this as any)[status.toLowerCase()].ListEntries([])
 
-    this.$apollo.queries.rawList.fetchMore({
-      variables: {
-        page: this.page,
-      },
-      updateQuery: (_: null, { fetchMoreResult: result }): ListViewQuery => ({
-        __typename: 'Query',
-        ListEntries: result.ListEntries,
-      }),
-    })
+    return (visible: boolean) => {
+      if (
+        !visible ||
+        query.loading ||
+        this.pages[status] === -1 ||
+        entries.length % 10 !== 0
+      ) {
+        return
+      }
+
+      this.pages[status]++
+
+      const variables: ListViewQueryVariables = {
+        page: this.pages[status],
+        status,
+      }
+      query.fetchMore({
+        variables,
+        updateQuery: (
+          previous: ListViewQuery,
+          { fetchMoreResult: result },
+        ): ListViewQuery => {
+          if (result.ListEntries.length < 1) {
+            this.pages[status] = -1
+            return {
+              ListEntries: previous.ListEntries,
+            }
+          }
+
+          return {
+            ListEntries: [...previous.ListEntries, ...result.ListEntries],
+          }
+        },
+      })
+    }
   }
 
   // beautiful!
@@ -394,7 +376,7 @@ export default class List extends Vue {
 
         & > .padding {
           height: 1px; // Required or it doesn't displace anything
-          width: 600px;
+          width: 300px;
           flex-shrink: 0;
         }
       }

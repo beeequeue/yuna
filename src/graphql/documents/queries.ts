@@ -21,6 +21,19 @@ export const SINGLE_MEDIA_QUERY = gql`
   }
 `
 
+export const LIST_LIST_ENTRIES = gql`
+  query ListView($page: Int!, $status: MediaListStatus) {
+    ListEntries(page: $page, perPage: 10, status: $status) @client {
+      id
+      mediaId
+      status
+      progress
+      score
+      rewatched
+    }
+  }
+`
+
 export const LIST_MEDIA_QUERY = gql`
   query ListMedia($mediaIds: [Int!]!) {
     Page(page: 1, perPage: 50) {

@@ -1,8 +1,12 @@
 import { ApolloError } from 'apollo-client'
 import { Vue } from 'vue/types/vue'
-import { Prop } from 'vue/types/options'
+import { ComponentOptions, Prop } from 'vue/types/options'
 import { VueApolloQueryDefinition } from 'vue-apollo/types/options'
 import { createDecorator, VueDecorator } from 'vue-class-component'
+
+import { LIST_LIST_ENTRIES } from '@/graphql/documents/queries'
+import { ListViewQuery, MediaListStatus } from '@/graphql/types'
+import List from '@/views/list/list.vue'
 
 interface QueryOptions<C extends Vue, R = any>
   extends VueApolloQueryDefinition<C, R> {
@@ -41,6 +45,30 @@ export function Query<C extends Vue, R = any, V extends {} | null = null>(
       ...options,
     }
   })
+}
+
+export function ListQuery(status: MediaListStatus): PropertyDecorator {
+  return createDecorator((componentOptions: ComponentOptions<List>) => {
+    if (!componentOptions.apollo) {
+      componentOptions.apollo = {}
+    }
+
+    ;(componentOptions.apollo as any)[status.toLowerCase()] = {
+      fetchPolicy: 'cache-and-network',
+      query: LIST_LIST_ENTRIES,
+      variables() {
+        return {
+          page: 1,
+          status,
+        }
+      },
+      update(data: ListViewQuery) {
+        this.getMedia(data.ListEntries.map(e => e.mediaId))
+
+        return data
+      },
+    }
+  }) as any
 }
 
 export function Required(type: Prop<any>): VueDecorator {

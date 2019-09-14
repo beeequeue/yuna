@@ -3,8 +3,7 @@ import gql from 'graphql-tag'
 import { oc } from 'ts-optchain'
 import { Store } from 'vuex'
 
-import { EPISODE_LIST } from '@/graphql/documents/queries'
-import LIST_QUERY from '@/views/list/list.graphql'
+import { EPISODE_LIST, LIST_LIST_ENTRIES } from '@/graphql/documents/queries'
 import {
   CachedAnimeListEntryFragment,
   EpisodeListEpisodes,
@@ -208,7 +207,7 @@ export const refetchListQuery = ($store: Store<any>) => {
 
   return () => [
     {
-      query: LIST_QUERY,
+      query: LIST_LIST_ENTRIES,
       variables: { userId },
     },
   ]
