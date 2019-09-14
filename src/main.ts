@@ -1,5 +1,6 @@
 import { shell } from 'electron'
 import Vue from 'vue'
+import { ObserveVisibility } from 'vue-observe-visibility'
 import Tooltip from 'v-tooltip'
 import Portal from 'portal-vue'
 import { init } from '@sentry/browser'
@@ -20,6 +21,7 @@ import 'normalize.css'
 Vue.config.productionTip = false
 Vue.use(Tooltip)
 Vue.use(Portal)
+Vue.directive('visibility', ObserveVisibility)
 
 // Register services
 
