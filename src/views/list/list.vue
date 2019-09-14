@@ -46,12 +46,13 @@
         >
           {{ getHumanStatus(status) }}
         </div>
+
         <transition-group
           v-if="getList(status).length > 0"
           tag="div"
           key="EntryContainer"
           class="entry-container"
-          @wheel.native.prevent="handleScroll"
+          @wheel.native="handleScroll"
         >
           <list-entry
             v-for="entry in getList(status)"
@@ -60,7 +61,12 @@
             :media="media[entry.mediaId]"
           />
 
-          <div key="last" class="padding" v-visibility="fetchMore(status)" />
+          <div
+            v-if="getList(status).length > 4"
+            key="last"
+            class="padding"
+            v-visibility="fetchMore(status)"
+          />
         </transition-group>
       </div>
     </div>
@@ -220,7 +226,11 @@ export default class List extends Vue {
 
   public handleScroll(e: WheelEvent) {
     const target = e.currentTarget as HTMLDivElement
-    target.scrollBy(e.deltaY + e.deltaX, 0)
+
+    if (target.childElementCount > 4) {
+      e.preventDefault()
+      target.scrollBy(e.deltaY + e.deltaX, 0)
+    }
   }
 
   public getHumanStatus(status: MediaListStatus) {
@@ -337,6 +347,7 @@ export default class List extends Vue {
     overflow: auto;
     height: 100%;
     width: 100%;
+    padding-bottom: 50px;
 
     & > .list {
       & > .title-bar {
@@ -356,7 +367,6 @@ export default class List extends Vue {
       }
 
       & > .entry-container {
-        box-sizing: border-box;
         max-width: 100%;
         padding-left: 25px;
         display: flex;
@@ -370,7 +380,7 @@ export default class List extends Vue {
 
         & > .padding {
           height: 1px; // Required or it doesn't displace anything
-          width: 300px;
+          width: 100px;
           flex-shrink: 0;
         }
       }
