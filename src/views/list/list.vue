@@ -51,7 +51,7 @@
           tag="div"
           key="EntryContainer"
           class="entry-container"
-          @wheel.native.prevent="handleScroll"
+          @wheel.native="handleScroll"
         >
           <list-entry
             v-for="entry in getList(status)"
@@ -259,7 +259,13 @@ export default class List extends Vue {
 
   public handleScroll(e: WheelEvent) {
     const target = e.currentTarget as HTMLDivElement
+    const prevScroll = target.scrollLeft
+
     target.scrollBy(e.deltaY + e.deltaX, 0)
+
+    if (prevScroll !== target.scrollLeft) {
+      e.preventDefault()
+    }
   }
 
   public getHumanStatus(status: MediaListStatus) {
@@ -388,7 +394,7 @@ export default class List extends Vue {
 
         & > .padding {
           height: 1px; // Required or it doesn't displace anything
-          width: 25px;
+          width: 600px;
           flex-shrink: 0;
         }
       }
