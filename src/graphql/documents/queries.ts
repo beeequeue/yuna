@@ -24,7 +24,7 @@ export const SINGLE_MEDIA_QUERY = gql`
 export const LIST_MEDIA_QUERY = gql`
   query ListMedia($mediaIds: [Int!]!) {
     Page(page: 1, perPage: 50) {
-      media(id_in: $mediaIds) {
+      media(id_in: $mediaIds, sort: [TITLE_ENGLISH, TITLE_ROMAJI]) {
         id
         title {
           userPreferred
@@ -32,8 +32,9 @@ export const LIST_MEDIA_QUERY = gql`
           romaji
           native
         }
+        bannerImage
         coverImage {
-          medium
+          extraLarge
           color
         }
         isFavourite

@@ -22,15 +22,29 @@
       <text-input placeholder="Search..." value :onChange="setFilterString" />
     </div>
 
-    <transition-group tag="div" class="list-container">
-      <transition-group
-        tag="div"
-        v-for="(list, name) in lists"
-        :key="name"
+    <transition-group tag="div" key="ListContainer" class="list-container">
+      <div
+        v-for="status in lists"
+        :key="status"
         class="list"
+        :class="{ [status.toLowerCase()]: true }"
       >
-        <h1 v-if="list.length > 0" :key="name">{{ name.toLowerCase() }}</h1>
-      </transition-group>
+        <div :key="status" class="title-bar">
+          {{ status }}
+        </div>
+        <transition-group
+          tag="div"
+          key="EntryContainer"
+          class="entry-container"
+        >
+          <list-entry
+            v-for="entry in _lists[status]"
+            :key="entry.id"
+            :entry="entry"
+            :media="media[entry.mediaId]"
+          />
+        </transition-group>
+      </div>
     </transition-group>
   </div>
 </template>
@@ -64,17 +78,8 @@ import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
 import { debounce, isNil, isNotNil } from '@/utils'
 
 type Lists = { [key in MediaListStatus]: ListViewListEntries[] }
-type Media = {
+export type ListMedia = {
   [key: number]: { media: ListMediaMedia | null; loading: boolean } | undefined
-}
-
-const baseLists: Lists = {
-  [MediaListStatus.Current]: [],
-  [MediaListStatus.Repeating]: [],
-  [MediaListStatus.Paused]: [],
-  [MediaListStatus.Planning]: [],
-  [MediaListStatus.Dropped]: [],
-  [MediaListStatus.Completed]: [],
 }
 
 @Component({ components: { ListEntry, TextInput, NumberInput } })
@@ -95,11 +100,19 @@ export default class List extends Vue {
   })
   public rawList!: ListViewQuery
 
-  public media: Media = {}
+  public media: ListMedia = {}
 
   public page = 1
   public filterString = ''
   public limit = Number(localStorage.getItem('list-limit') || 25)
+  public lists = [
+    MediaListStatus.Current,
+    MediaListStatus.Repeating,
+    MediaListStatus.Paused,
+    MediaListStatus.Planning,
+    MediaListStatus.Dropped,
+    MediaListStatus.Completed,
+  ] as const
 
   public anichartLogo = anichartSvg
   public alLogo = anilistSvg
@@ -111,7 +124,7 @@ export default class List extends Vue {
     }
   }
 
-  public get lists() {
+  public get _lists() {
     return oc(this.rawList)
       .ListEntries([])
       .reduce(
@@ -124,7 +137,7 @@ export default class List extends Vue {
 
           return lists
         },
-        { ...baseLists },
+        {} as Lists,
       )
   }
 
@@ -143,15 +156,15 @@ export default class List extends Vue {
   private setMediaLoading(mediaIds: number[], loading: boolean) {
     mediaIds.forEach(id => {
       if (isNil(this.media[id])) {
-        this.media[id] = {
+        Vue.set(this.media, id, {
           media: null,
           loading,
-        }
+        })
 
         return
       }
 
-      this.media[id]!.loading = loading
+      Vue.set(this.media[id]!, 'loading', loading)
     })
   }
 
@@ -169,10 +182,10 @@ export default class List extends Vue {
       .Page.media([])
       .filter(isNotNil)
       .forEach(media => {
-        this.media[media.id] = {
+        Vue.set(this.media, media.id, {
           ...this.media[media.id]!,
           media,
-        }
+        })
       })
 
     this.setMediaLoading(mediaIds, false)
@@ -256,63 +269,34 @@ export default class List extends Vue {
   }
 
   & > .list-container {
+    display: flex;
+    flex-direction: column;
     position: relative;
     overflow: auto;
+    height: 100%;
     width: 100%;
 
     & > .list {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      padding: 10px 15px;
-
-      & > h1 {
+      & > .title-bar {
         width: 100%;
-        font-weight: 500 !important;
-        text-shadow: $outline;
-        margin: 5px 0 15px;
-        text-transform: capitalize;
+        padding: 8px 25px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-family: 'Raleway', sans-serif;
+        font-weight: 200;
+        text-shadow: 0 1px 1px transparentize(white, 0.85);
+        font-size: 1.5em;
       }
 
-      &.v-move {
-        transition: 0.5s;
-      }
+      & > .entry-container {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        overflow-x: auto;
 
-      &.v-leave-active,
-      &.v-enter-active {
-        overflow: hidden;
-        transition: opacity 0.35s, height 0.5s, padding 0.5s;
-      }
-
-      &.v-leave {
-        height: 225px;
-      }
-
-      &.v-leave-to,
-      &.v-enter {
-        height: 0;
-        opacity: 0;
-        padding-top: 0;
-        padding-bottom: 0;
-      }
-
-      & > .entry {
-        &.v-move {
-          transition: 0.5s;
-        }
-
-        &.v-leave-active,
-        &.v-enter-active {
-          transition: opacity 0.35s, width 0.5s, margin 0.5s;
-        }
-
-        &.v-leave-to,
-        &.v-enter {
-          width: 0;
-          opacity: 0;
-          margin-left: 0;
-          margin-right: 0;
+        &::-webkit-scrollbar {
+          display: none;
         }
       }
     }

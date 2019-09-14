@@ -1,31 +1,33 @@
 <template>
-  <div class="entry" v-tooltip="entry.anime.title.userPreferred">
-    <router-link :to="`/anime/${entry.anime.id}`">
-      <cover-image
-        :src="entry.anime.coverImage.medium"
-        :color="entry.anime.coverImage.color"
-      />
+  <div v-if="!entry || !media || media.loading" class="loader entry">
+    <loading :size="35" />
+  </div>
+  <div v-else class="entry">
+    <router-link :to="`/anime/${media.media.id}`" class="image">
+      <img :src="media.media.bannerImage" />
     </router-link>
 
-    <div class="info">
-      <actions :listEntry="entry" :anime="entry.anime" small />
+    <div class="title">
+      {{ media.media.title.userPreferred }}
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import { ListViewListEntries } from '@/graphql/types'
 import { Required } from '@/decorators'
 
-import CoverImage from '@/common/components/cover-image.vue'
+// @ts-ignore
+import { ListMedia } from '@/views/list/list.vue'
 import Actions from '@/common/components/actions.vue'
-import CButton from '@/common/components/button.vue'
+import Loading from '@/common/components/loading.vue'
 
-@Component({ components: { CoverImage, CButton, Actions } })
+@Component({ components: { Loading, Actions } })
 export default class ListEntry extends Vue {
   @Required(Object) public entry!: ListViewListEntries
+  @Prop(Object) public media!: ListMedia
 }
 </script>
 
@@ -34,65 +36,48 @@ export default class ListEntry extends Vue {
 
 .entry {
   position: relative;
-  height: 150px;
-  width: 100px;
+  height: 125px;
+  width: 250px;
   flex-shrink: 0;
   display: flex;
-  margin: 10px 25px;
-  border-radius: 5px;
+  border-right: 1px solid transparentize(gray, 0.85);
 
-  & .cover-image,
-  & > .info {
-    transition: transform 0.15s;
+  &.loader {
+    align-items: center;
+    justify-content: center;
   }
 
-  & > a {
-    position: relative;
-    height: 100%;
-    width: 100%;
-
-    & > .cover-image {
+  & > .image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    & > img {
+      display: block;
       height: 100%;
       width: 100%;
-      flex-shrink: 0;
-      margin-right: 10px;
-      box-shadow: $shadow;
-      z-index: 2;
+      object-fit: cover;
     }
   }
 
-  & > .info {
-    position: absolute;
-    top: 5px;
-    bottom: 5px;
-    right: 0;
-    display: flex;
-    flex-direction: column;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-    z-index: 1;
+  & > .title {
+    width: 100%;
+    padding: 10px 10px;
+    position: relative;
+    overflow: hidden;
 
-    & /deep/ .button {
-      opacity: 0;
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      transition: opacity 0s;
-      transition-delay: 0.15s;
-    }
-  }
+    font-family: 'Raleway', sans-serif;
+    font-weight: 600;
+    font-size: 1.35em;
+    white-space: nowrap;
+    text-align: left;
+    text-overflow: ellipsis;
+    color: white;
+    text-shadow: outline(transparentize($dark, 0.1));
 
-  &:hover {
-    & .cover-image {
-      transform: translateX(-15px);
-    }
-    & > .info {
-      transform: translateX(15px);
-
-      & /deep/ .button {
-        opacity: 1;
-        transition-delay: 0s;
-      }
-    }
+    filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.15));
+    pointer-events: none;
   }
 }
 </style>

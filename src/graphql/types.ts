@@ -4202,7 +4202,7 @@ export type ListMediaQuery = { __typename?: 'Query' } & {
           Maybe<
             { __typename?: 'Media' } & Pick<
               Media,
-              'id' | 'isFavourite' | 'episodes'
+              'id' | 'bannerImage' | 'isFavourite' | 'episodes'
             > & {
                 title: Maybe<
                   { __typename?: 'MediaTitle' } & Pick<
@@ -4213,7 +4213,7 @@ export type ListMediaQuery = { __typename?: 'Query' } & {
                 coverImage: Maybe<
                   { __typename?: 'MediaCoverImage' } & Pick<
                     MediaCoverImage,
-                    'medium' | 'color'
+                    'extraLarge' | 'color'
                   >
                 >
               }

@@ -93,6 +93,7 @@ export const ANILIST_ALL_LIST_ENTRIES = gql`
       userId: $userId
       status: $status
       status_not: $status_not
+      sort: [MEDIA_TITLE_ENGLISH, MEDIA_TITLE_ROMAJI]
       chunk: $page
       perChunk: $perPage
       forceSingleCompletedList: true

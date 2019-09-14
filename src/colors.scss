@@ -44,3 +44,8 @@ $outline: -1px -1px 1px #000, 1px -1px 1px #000, -1px 1px 1px #000,
 
 $outline-light: -1px -1px 0 rgba(0, 0, 0, 0.5), 1px -1px 0 rgba(0, 0, 0, 0.5),
   -1px 1px 0 rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(0, 0, 0, 0.5);
+
+@function outline($color) {
+  @return -1px -1px 1px $color, 1px -1px 1px $color, -1px 1px 1px $color,
+    1px 1px 1px $color;
+}

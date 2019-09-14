@@ -1,5 +1,5 @@
 query ListView($page: Int!) {
-  ListEntries(page: $page, perPage: 28) @client {
+  ListEntries(page: $page, perPage: 10) @client {
     id
     mediaId
     status
