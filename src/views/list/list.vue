@@ -22,7 +22,7 @@
       <text-input placeholder="Search..." value :onChange="setFilterString" />
     </div>
 
-    <transition-group tag="div" key="ListContainer" class="list-container">
+    <div class="list-container">
       <div
         v-for="status in lists"
         :key="status"
@@ -37,6 +37,7 @@
           {{ getHumanStatus(status) }}
         </div>
         <transition-group
+          v-if="_lists[status].length > 0"
           tag="div"
           key="EntryContainer"
           class="entry-container"
@@ -52,7 +53,7 @@
           <div key="last" class="padding" />
         </transition-group>
       </div>
-    </transition-group>
+    </div>
   </div>
 </template>
 
@@ -323,6 +324,7 @@ export default class List extends Vue {
         padding-right: calc(325px / 4);
         display: flex;
         align-items: center;
+        background: transparentize(black, 0.75);
         overflow-x: scroll;
 
         &::-webkit-scrollbar {
