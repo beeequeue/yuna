@@ -4,7 +4,13 @@
   </div>
   <div v-else class="entry">
     <router-link :to="`/anime/${media.media.id}`" class="image">
-      <img :src="media.media.bannerImage" />
+      <img
+        :src="
+          media.media.bannerImage ||
+            media.media.coverImage.extraLarge ||
+            `http://lorempixel.com/325/115/abstract?${entry.id}`
+        "
+      />
     </router-link>
 
     <div class="title">
