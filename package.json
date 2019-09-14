@@ -105,7 +105,7 @@
   "license": "AGPL-3.0-only",
   "lint-staged": {
     "*.{ts,vue,js}": [
-      "vue-cli-service lint --fix",
+      "eslint --fix",
       "prettier --write",
       "git add"
     ],
