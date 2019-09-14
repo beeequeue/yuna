@@ -4190,6 +4190,40 @@ export type SingleMediaQuery = { __typename?: 'Query' } & {
   >
 }
 
+export type ListMediaQueryVariables = {
+  mediaIds: Array<Scalars['Int']>
+}
+
+export type ListMediaQuery = { __typename?: 'Query' } & {
+  Page: Maybe<
+    { __typename?: 'Page' } & {
+      media: Maybe<
+        Array<
+          Maybe<
+            { __typename?: 'Media' } & Pick<
+              Media,
+              'id' | 'isFavourite' | 'episodes'
+            > & {
+                title: Maybe<
+                  { __typename?: 'MediaTitle' } & Pick<
+                    MediaTitle,
+                    'userPreferred' | 'english' | 'romaji' | 'native'
+                  >
+                >
+                coverImage: Maybe<
+                  { __typename?: 'MediaCoverImage' } & Pick<
+                    MediaCoverImage,
+                    'medium' | 'color'
+                  >
+                >
+              }
+          >
+        >
+      >
+    }
+  >
+}
+
 export type ListEntryQueryVariables = {
   mediaId: Scalars['Int']
 }
@@ -4668,25 +4702,7 @@ export type ListViewQuery = { __typename?: 'Query' } & {
     { __typename?: 'ListEntry' } & Pick<
       ListEntry,
       'id' | 'mediaId' | 'status' | 'progress' | 'score' | 'rewatched'
-    > & {
-        anime: { __typename?: 'Media' } & Pick<
-          Media,
-          'id' | 'isFavourite' | 'episodes'
-        > & {
-            title: Maybe<
-              { __typename?: 'MediaTitle' } & Pick<
-                MediaTitle,
-                'userPreferred' | 'english' | 'romaji' | 'native'
-              >
-            >
-            coverImage: Maybe<
-              { __typename?: 'MediaCoverImage' } & Pick<
-                MediaCoverImage,
-                'medium' | 'color'
-              >
-            >
-          }
-      }
+    >
   >
 }
 
@@ -4807,6 +4823,21 @@ export type SingleMediaTitle = NonNullable<
 >
 export type SingleMediaCoverImage = NonNullable<
   (NonNullable<SingleMediaQuery['SingleMedia']>)['coverImage']
+>
+export type ListMediaVariables = ListMediaQueryVariables
+export type ListMediaPage = NonNullable<ListMediaQuery['Page']>
+export type ListMediaMedia = NonNullable<
+  (NonNullable<(NonNullable<ListMediaQuery['Page']>)['media']>)[0]
+>
+export type ListMediaTitle = NonNullable<
+  (NonNullable<
+    (NonNullable<(NonNullable<ListMediaQuery['Page']>)['media']>)[0]
+  >)['title']
+>
+export type ListMediaCoverImage = NonNullable<
+  (NonNullable<
+    (NonNullable<(NonNullable<ListMediaQuery['Page']>)['media']>)[0]
+  >)['coverImage']
 >
 export type ListEntryVariables = ListEntryQueryVariables
 export type ListEntryListEntry = ListEntryQuery['ListEntry']
@@ -5027,15 +5058,6 @@ export type EpisodeFeedPageInfo = NonNullable<
 >
 export type ListViewVariables = ListViewQueryVariables
 export type ListViewListEntries = NonNullable<ListViewQuery['ListEntries'][0]>
-export type ListViewAnime = (NonNullable<
-  ListViewQuery['ListEntries'][0]
->)['anime']
-export type ListViewTitle = NonNullable<
-  (NonNullable<ListViewQuery['ListEntries'][0]>)['anime']['title']
->
-export type ListViewCoverImage = NonNullable<
-  (NonNullable<ListViewQuery['ListEntries'][0]>)['anime']['coverImage']
->
 export type QueueVariables = QueueQueryVariables
 export type QueueQueue = NonNullable<QueueQuery['queue']>
 export type QueueAnime = NonNullable<

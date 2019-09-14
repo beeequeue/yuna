@@ -21,6 +21,28 @@ export const SINGLE_MEDIA_QUERY = gql`
   }
 `
 
+export const LIST_MEDIA_QUERY = gql`
+  query ListMedia($mediaIds: [Int!]!) {
+    Page(page: 1, perPage: 50) {
+      media(id_in: $mediaIds) {
+        id
+        title {
+          userPreferred
+          english
+          romaji
+          native
+        }
+        coverImage {
+          medium
+          color
+        }
+        isFavourite
+        episodes
+      }
+    }
+  }
+`
+
 export const LIST_ENTRY_SCORE_QUERY = gql`
   query ListEntry($mediaId: Int!) {
     ListEntry(mediaId: $mediaId) @client {

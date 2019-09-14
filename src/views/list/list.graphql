@@ -6,20 +6,5 @@ query ListView($page: Int!) {
     progress
     score
     rewatched
-    anime: media @client {
-      id
-      title {
-        userPreferred
-        english
-        romaji
-        native
-      }
-      coverImage {
-        medium
-        color
-      }
-      isFavourite
-      episodes
-    }
   }
 }

@@ -19,11 +19,7 @@
         />
       </div>
 
-      <div class="number-input-filler" />
-
-      <text-input placeholder="Filter..." value :onChange="setFilterString" />
-
-      <number-input :value="limit" :onChange="setLimit" />
+      <text-input placeholder="Search..." value :onChange="setFilterString" />
     </div>
 
     <transition-group tag="div" class="list-container">
@@ -34,8 +30,6 @@
         class="list"
       >
         <h1 v-if="list.length > 0" :key="name">{{ name.toLowerCase() }}</h1>
-
-        <list-entry v-for="entry in list" :key="entry.mediaId" :entry="entry" />
       </transition-group>
     </transition-group>
   </div>
@@ -54,7 +48,11 @@ import NumberInput from '@/common/components/form/number-input.vue'
 import ListEntry from './components/list-entry.vue'
 
 import LIST_QUERY from '@/views/list/list.graphql'
+import { LIST_MEDIA_QUERY } from '@/graphql/documents/queries'
 import {
+  ListMediaMedia,
+  ListMediaQuery,
+  ListMediaQueryVariables,
   ListViewListEntries,
   ListViewQuery,
   ListViewVariables,
@@ -63,9 +61,12 @@ import {
 
 import { Query } from '@/decorators'
 import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
-import { debounce, isNil } from '@/utils'
+import { debounce, isNil, isNotNil } from '@/utils'
 
 type Lists = { [key in MediaListStatus]: ListViewListEntries[] }
+type Media = {
+  [key: number]: { media: ListMediaMedia | null; loading: boolean } | undefined
+}
 
 const baseLists: Lists = {
   [MediaListStatus.Current]: [],
@@ -86,8 +87,15 @@ export default class List extends Vue {
         page: 1,
       }
     },
+    update(data) {
+      this.getMedia(data.ListEntries.map(e => e.mediaId))
+
+      return data
+    },
   })
   public rawList!: ListViewQuery
+
+  public media: Media = {}
 
   public page = 1
   public filterString = ''
@@ -130,6 +138,44 @@ export default class List extends Vue {
 
   public get simklUser() {
     return getSimklUser(this.$store)
+  }
+
+  private setMediaLoading(mediaIds: number[], loading: boolean) {
+    mediaIds.forEach(id => {
+      if (isNil(this.media[id])) {
+        this.media[id] = {
+          media: null,
+          loading,
+        }
+
+        return
+      }
+
+      this.media[id]!.loading = loading
+    })
+  }
+
+  private async getMedia(mediaIds: number[]) {
+    this.setMediaLoading(mediaIds, true)
+
+    const variables: ListMediaQueryVariables = { mediaIds }
+    const result = await this.$apollo.query<ListMediaQuery>({
+      fetchPolicy: 'cache-first',
+      query: LIST_MEDIA_QUERY,
+      variables,
+    })
+
+    oc(result.data)
+      .Page.media([])
+      .filter(isNotNil)
+      .forEach(media => {
+        this.media[media.id] = {
+          ...this.media[media.id]!,
+          media,
+        }
+      })
+
+    this.setMediaLoading(mediaIds, false)
   }
 
   public fetchMore() {
@@ -206,12 +252,6 @@ export default class List extends Vue {
       & /deep/ input {
         text-align: center;
       }
-    }
-
-    & > .number-input,
-    & > .number-input-filler {
-      width: 75px;
-      margin: 0 10px;
     }
   }
 
