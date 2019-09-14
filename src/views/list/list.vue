@@ -19,7 +19,11 @@
         />
       </div>
 
-      <text-input placeholder="Search..." value :onChange="setFilterString" />
+      <text-input
+        placeholder="Search in List..."
+        value
+        :onChange="setFilterString"
+      />
     </div>
 
     <div class="list-container">
