@@ -29,13 +29,18 @@
         class="list"
         :class="{ [status.toLowerCase()]: true }"
       >
-        <div :key="status" class="title-bar">
-          {{ status }}
+        <div
+          :key="status"
+          class="title-bar"
+          :class="{ empty: _lists[status].length < 1 }"
+        >
+          {{ getHumanStatus(status) }}
         </div>
         <transition-group
           tag="div"
           key="EntryContainer"
           class="entry-container"
+          @wheel.native.prevent="handleScroll"
         >
           <list-entry
             v-for="entry in _lists[status]"
@@ -43,6 +48,8 @@
             :entry="entry"
             :media="media[entry.mediaId]"
           />
+
+          <div key="last" class="padding" />
         </transition-group>
       </div>
     </transition-group>
@@ -75,7 +82,7 @@ import {
 
 import { Query } from '@/decorators'
 import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
-import { debounce, isNil, isNotNil } from '@/utils'
+import { debounce, humanizeMediaListStatus, isNil, isNotNil } from '@/utils'
 
 type Lists = { [key in MediaListStatus]: ListViewListEntries[] }
 export type ListMedia = {
@@ -118,6 +125,9 @@ export default class List extends Vue {
   public alLogo = anilistSvg
   public simklLogo = simklSvg
 
+  public $refs!: {
+    entries: HTMLDivElement
+  }
   public $apollo!: DollarApollo<any> & {
     queries: {
       lists: SmartQuery<List>
@@ -137,7 +147,11 @@ export default class List extends Vue {
 
           return lists
         },
-        {} as Lists,
+        Object.fromEntries(
+          this.lists.map(
+            s => [s, []] as [MediaListStatus, ListViewListEntries[]],
+          ),
+        ) as Lists,
       )
   }
 
@@ -189,6 +203,15 @@ export default class List extends Vue {
       })
 
     this.setMediaLoading(mediaIds, false)
+  }
+
+  public handleScroll(e: WheelEvent) {
+    const target = e.currentTarget as HTMLDivElement
+    target.scrollBy(e.deltaY + e.deltaX, 0)
+  }
+
+  public getHumanStatus(status: MediaListStatus) {
+    return humanizeMediaListStatus({ progress: null, status }, false)
   }
 
   public fetchMore() {
@@ -287,16 +310,30 @@ export default class List extends Vue {
         font-weight: 200;
         text-shadow: 0 1px 1px transparentize(white, 0.85);
         font-size: 1.5em;
+
+        &.empty {
+          padding-bottom: 0;
+        }
       }
 
       & > .entry-container {
+        box-sizing: border-box;
         width: 100%;
+        padding-left: calc(325px / 4);
+        padding-right: calc(325px / 4);
         display: flex;
         align-items: center;
-        overflow-x: auto;
+        overflow-x: scroll;
 
         &::-webkit-scrollbar {
           display: none;
+        }
+
+        & > .padding {
+          // Required or it doesn't displace anything
+          height: 1px;
+          width: 25px;
+          flex-shrink: 0;
         }
       }
     }

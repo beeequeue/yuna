@@ -36,11 +36,15 @@ export default class ListEntry extends Vue {
 
 .entry {
   position: relative;
-  height: 125px;
-  width: 250px;
+  height: 115px;
+  width: 325px;
   flex-shrink: 0;
   display: flex;
-  border-right: 1px solid transparentize(gray, 0.85);
+  flex-direction: column;
+  overflow: hidden;
+  margin-left: calc(-325px / 4);
+  margin-right: 5px;
+  clip-path: polygon(0 0, 75% 0, 100% 100%, 25% 100%);
 
   &.loader {
     align-items: center;
@@ -63,7 +67,9 @@ export default class ListEntry extends Vue {
 
   & > .title {
     width: 100%;
-    padding: 10px 10px;
+    padding: 8px;
+    padding-left: 30px;
+    padding-right: calc(25%);
     position: relative;
     overflow: hidden;
 
@@ -74,7 +80,7 @@ export default class ListEntry extends Vue {
     text-align: left;
     text-overflow: ellipsis;
     color: white;
-    text-shadow: outline(transparentize($dark, 0.1));
+    text-shadow: outline(black);
 
     filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.15));
     pointer-events: none;
