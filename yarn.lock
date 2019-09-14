@@ -973,10 +973,10 @@
     request-promise "^4.1.1"
     yargs "^8.0.2"
 
-"@mdi/js@4.1.95":
-  version "4.1.95"
-  resolved "https://registry.yarnpkg.com/@mdi/js/-/js-4.1.95.tgz#2339bc40766c7c030e8b1ee3738117bfa695bcc5"
-  integrity sha512-yWJrAa7rAzGEAQQ4gvb6dpzoOXF+bvQI53TQaV4YNWDoCVkfJD6tIGbou06UJH+ZFZ6Rlo7kA+xWn4E3kPJlvw==
+"@mdi/js@4.4.95":
+  version "4.4.95"
+  resolved "https://registry.yarnpkg.com/@mdi/js/-/js-4.4.95.tgz#615de98256273b1716dd1e32a6bc4dfdaba3c8a0"
+  integrity sha512-wCrur/ICoHP7/NcNboBCdqR64gQnoUKxSRla4uOsGC61jMUnUeDMNfU7PrA/I0IzvotWc0ws2cCNVL7JsOPh2Q==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
