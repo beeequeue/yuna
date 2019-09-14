@@ -1,3 +1,5 @@
+const { resolve } = require('path')
+
 /**
  * @type { ProjectOptions }
  */
@@ -28,5 +30,12 @@ module.exports = {
 
       return [options]
     })
+  },
+  pluginOptions: {
+    electronBuilder: {
+      chainWebpackMainProcess: config => {
+        config.resolve.alias.set('@', resolve(__dirname, 'src'))
+      },
+    },
   },
 }

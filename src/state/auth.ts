@@ -196,6 +196,10 @@ export const auth = {
       }
     },
 
+    getSimklUser(state: AuthState) {
+      return state.simkl.user
+    },
+
     getListPlugins(
       state: AuthState,
     ): Array<{ name: string; available: boolean }> {
@@ -331,6 +335,7 @@ export const getAnilistUsername = read(auth.getters.getAnilistUsername)
 export const getHidiveProfiles = read(auth.getters.getHidiveProfiles)
 export const getHidiveProfileIndex = read(auth.getters.getHidiveProfileIndex)
 export const getHidiveLogin = read(auth.getters.getHidiveLogin)
+export const getSimklUser = read(auth.getters.getSimklUser)
 export const getListPlugins = read(auth.getters.getListPlugins)
 
 export const setCrunchyroll = commit(auth.mutations.setCrunchyroll)

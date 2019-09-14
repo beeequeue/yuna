@@ -1,45 +1,25 @@
-query ListView(
-  $userId: Int!
-  $statuses: [MediaListStatus!] = [
-    PLANNING
-    CURRENT
-    COMPLETED
-    DROPPED
-    PAUSED
-    REPEATING
-  ]
-) {
-  listCollection: MediaListCollection(
-    userId: $userId
-    type: ANIME
-    forceSingleCompletedList: true
-    status_in: $statuses
-  ) {
-    lists {
-      isCustomList
-      name
-      entries {
-        id
-        status
-        progress
-        score(format: POINT_100)
-        repeat
-        anime: media {
-          id
-          title {
-            userPreferred
-            english
-            romaji
-            native
-          }
-          coverImage {
-            medium
-            color
-          }
-          isFavourite
-          episodes
-        }
+query ListView($page: Int!) {
+  ListEntries(page: $page, perPage: 28) @client {
+    id
+    mediaId
+    status
+    progress
+    score
+    rewatched
+    anime: media @client {
+      id
+      title {
+        userPreferred
+        english
+        romaji
+        native
       }
+      coverImage {
+        medium
+        color
+      }
+      isFavourite
+      episodes
     }
   }
 }

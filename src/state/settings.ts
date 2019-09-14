@@ -130,24 +130,27 @@ const defaultDiscord: DiscordSettings = {
 
 const oldSteps = SettingsStore.get('setup.finishedSteps', []) as SetupStep[]
 
-const migratedSteps = oldSteps
-  .map((step: SetupStep | number) => {
-    if (typeof step !== 'number') return step
+const migratedSteps =
+  typeof oldSteps[0] !== 'number'
+    ? oldSteps
+    : oldSteps
+        .map((step: SetupStep | number) => {
+          if (typeof step !== 'number') return step
 
-    switch (step) {
-      case 1:
-        return SetupStep.CONNECT
-      case 2:
-        return SetupStep.SPOILERS
-      case 3:
-        return SetupStep.DISCORD
-      case 4:
-        return SetupStep.LOCAL_FILES
-      default:
-        return null
-    }
-  })
-  .filter(isNotNil)
+          switch (step) {
+            case 1:
+              return SetupStep.CONNECT
+            case 2:
+              return SetupStep.SPOILERS
+            case 3:
+              return SetupStep.DISCORD
+            case 4:
+              return SetupStep.LOCAL_FILES
+            default:
+              return null
+          }
+        })
+        .filter(isNotNil)
 
 const initialState: SettingsState = {
   episodeFeedMode: SettingsStore.get('episodeFeedMode', EpisodeFeedMode.QUEUE),
@@ -164,7 +167,9 @@ const initialState: SettingsState = {
   externalPlayers: SettingsStore.get('externalPlayers', { vlc: null }),
   localFilesFolder: SettingsStore.get('localFilesFolder', null),
   mainListPlugin: SettingsStore.get('mainListPlugin', null),
-  setup: SettingsStore.get('setup', { finishedSteps: [...migratedSteps] }),
+  setup: {
+    finishedSteps: migratedSteps,
+  },
   window: SettingsStore.get('window', {}),
 }
 

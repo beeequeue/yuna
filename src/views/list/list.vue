@@ -1,13 +1,23 @@
 <template>
   <div class="list-page">
     <div class="menu">
-      <a
-        class="anilist"
-        :href="`https://anilist.co/user/${userId}/animelist`"
-        v-tooltip.right="'Open in AniList'"
-      >
-        <span v-html="alLogo" />
-      </a>
+      <div class="links">
+        <a class="anichart" href="https://anichart.net" v-html="anichartLogo" />
+
+        <a
+          v-if="isConnectedTo.anilist"
+          class="anilist"
+          :href="`https://anilist.co/user/${userId}/animelist`"
+          v-html="alLogo"
+        />
+
+        <a
+          v-if="isConnectedTo.simkl"
+          class="simkl"
+          :href="`${simklUser.url}/dashboard`"
+          v-html="simklLogo"
+        />
+      </div>
 
       <div class="number-input-filler" />
 
@@ -19,43 +29,52 @@
     <transition-group tag="div" class="list-container">
       <transition-group
         tag="div"
-        v-for="list in getLists(data)"
-        :key="list.name"
+        v-for="(list, name) in lists"
+        :key="name"
         class="list"
       >
-        <h1 :key="list.name">{{ list.name }}</h1>
+        <h1 v-if="list.length > 0" :key="name">{{ name.toLowerCase() }}</h1>
 
-        <list-entry
-          v-for="entry in list.entries"
-          :key="entry.id"
-          :entry="entry"
-        />
+        <list-entry v-for="entry in list" :key="entry.mediaId" :entry="entry" />
       </transition-group>
     </transition-group>
   </div>
 </template>
 
 <script lang="ts">
+import { DollarApollo, SmartQuery } from 'vue-apollo/types/vue-apollo'
 import { Component, Vue } from 'vue-property-decorator'
-import Fuse from 'fuse.js'
 import { oc } from 'ts-optchain'
 
-import anilistLogoSvg from '@/assets/anilist.svg'
+import anichartSvg from '@/assets/anichart.svg'
+import anilistSvg from '@/assets/anilist.svg'
+import simklSvg from '@/assets/simkl.svg'
 import TextInput from '@/common/components/form/text-input.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
 import ListEntry from './components/list-entry.vue'
 
 import LIST_QUERY from '@/views/list/list.graphql'
 import {
+  ListViewListEntries,
   ListViewQuery,
-  ListViewLists,
-  ListViewEntries,
   ListViewVariables,
+  MediaListStatus,
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
-import { getAnilistUserId } from '@/state/auth'
-import { debounce, isNil, itemsAreNotNil } from '@/utils'
+import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
+import { debounce, isNil } from '@/utils'
+
+type Lists = { [key in MediaListStatus]: ListViewListEntries[] }
+
+const baseLists: Lists = {
+  [MediaListStatus.Current]: [],
+  [MediaListStatus.Repeating]: [],
+  [MediaListStatus.Paused]: [],
+  [MediaListStatus.Planning]: [],
+  [MediaListStatus.Dropped]: [],
+  [MediaListStatus.Completed]: [],
+}
 
 @Component({ components: { ListEntry, TextInput, NumberInput } })
 export default class List extends Vue {
@@ -64,54 +83,67 @@ export default class List extends Vue {
     query: LIST_QUERY,
     variables() {
       return {
-        userId: this.userId,
-        statuses: undefined as any,
+        page: 1,
       }
     },
   })
-  public data!: ListViewQuery
+  public rawList!: ListViewQuery
+
+  public page = 1
   public filterString = ''
   public limit = Number(localStorage.getItem('list-limit') || 25)
 
-  public alLogo = anilistLogoSvg
+  public anichartLogo = anichartSvg
+  public alLogo = anilistSvg
+  public simklLogo = simklSvg
+
+  public $apollo!: DollarApollo<any> & {
+    queries: {
+      lists: SmartQuery<List>
+    }
+  }
+
+  public get lists() {
+    return oc(this.rawList)
+      .ListEntries([])
+      .reduce(
+        (lists, entry) => {
+          if (isNil(lists[entry.status])) {
+            lists[entry.status] = []
+          }
+
+          lists[entry.status].push(entry)
+
+          return lists
+        },
+        { ...baseLists },
+      )
+  }
 
   public get userId() {
     return getAnilistUserId(this.$store)
   }
 
-  public getLists(data: ListViewQuery) {
-    const lists = oc(data).listCollection.lists([] as ListViewLists[])
+  public get isConnectedTo() {
+    return getIsConnectedTo(this.$store)
+  }
 
-    if (isNil(lists) || !itemsAreNotNil(lists)) return []
+  public get simklUser() {
+    return getSimklUser(this.$store)
+  }
 
-    if (this.filterString.length < 1) {
-      return lists.map(list => ({
-        ...list,
-        entries: (list.entries as ListViewEntries[]).slice(0, this.limit),
-      }))
-    }
+  public fetchMore() {
+    this.page++
 
-    const filteredLists = lists.map(list => {
-      if (isNil(list.entries)) return
-
-      const fuse = new Fuse<ListViewEntries>(list.entries as any, {
-        caseSensitive: false,
-        shouldSort: true,
-        keys: [
-          'anime.title.userPreferred',
-          'anime.title.english',
-          'anime.title.romaji',
-        ] as any,
-        threshold: 0.35,
-      })
-
-      return {
-        ...list,
-        entries: fuse.search(this.filterString).splice(0, this.limit),
-      }
+    this.$apollo.queries.rawList.fetchMore({
+      variables: {
+        page: this.page,
+      },
+      updateQuery: (_: null, { fetchMoreResult: result }): ListViewQuery => ({
+        __typename: 'Query',
+        ListEntries: result.ListEntries,
+      }),
     })
-
-    return filteredLists
   }
 
   // beautiful!
@@ -153,15 +185,19 @@ export default class List extends Vue {
     background: color($dark, 300);
     flex-shrink: 0;
 
-    & > .anilist {
+    & > .links {
       position: absolute;
       top: calc(50% + 2px);
       left: 12px;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
       transform: translateY(-50%);
 
       & /deep/ svg {
         height: 26px;
         width: 26px;
+        margin-right: 15px;
       }
     }
 
@@ -190,13 +226,13 @@ export default class List extends Vue {
       justify-content: center;
       flex-wrap: wrap;
       padding: 10px 15px;
-      overflow: hidden;
 
       & > h1 {
         width: 100%;
         font-weight: 500 !important;
         text-shadow: $outline;
         margin: 5px 0 15px;
+        text-transform: capitalize;
       }
 
       &.v-move {
@@ -205,6 +241,7 @@ export default class List extends Vue {
 
       &.v-leave-active,
       &.v-enter-active {
+        overflow: hidden;
         transition: opacity 0.35s, height 0.5s, padding 0.5s;
       }
 

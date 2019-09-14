@@ -2,10 +2,10 @@ import { Store } from 'vuex'
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 import {
   AddToListMutation,
+  EditListEntryMutation,
   EditListEntryOptions,
   ListEntry,
   MediaListStatus,
-  Mutation,
   QueryListEntriesArgs,
   StartRewatchingMutation,
   UpdateProgressMutation,
@@ -17,6 +17,8 @@ export enum ListPluginType {
   Full = 'FULL', // Support all or almost all the states of AniList
   Simple = 'SIMPLE', // Only support watching, not watching
 }
+
+export type ListEntryWithoutMedia = Omit<ListEntry, 'media'>
 
 export abstract class ListPlugin {
   public abstract service: string
@@ -34,11 +36,11 @@ export abstract class ListPlugin {
 
   public abstract async GetListEntry(
     anilistId: number,
-  ): Promise<ListEntry | null>
+  ): Promise<ListEntryWithoutMedia | null>
 
   public abstract async GetListEntries(
     options: QueryListEntriesArgs,
-  ): Promise<ListEntry[] | null>
+  ): Promise<ListEntryWithoutMedia[] | null>
 
   public abstract async AddToList(
     anilistId: number,
@@ -68,5 +70,5 @@ export abstract class ListPlugin {
   public abstract async EditListEntry(
     anilistId: number,
     options: EditListEntryOptions,
-  ): Promise<Mutation['EditListEntry']>
+  ): Promise<EditListEntryMutation['EditListEntry']>
 }

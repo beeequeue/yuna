@@ -113,14 +113,6 @@ export default class Connection extends Vue {
     position: relative;
     height: 40px;
     width: 40px;
-
-    &.anilist /deep/ svg {
-      position: absolute;
-      height: calc(100% + 10px);
-      width: calc(100% + 10px);
-      top: -5px;
-      left: -5px;
-    }
   }
 
   & > .button {

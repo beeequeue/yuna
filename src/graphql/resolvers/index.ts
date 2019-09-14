@@ -8,6 +8,7 @@ import {
   EditListEntry,
   GetListEntries,
   GetListEntry,
+  GetMedia,
   StartRewatching,
   UpdateProgress,
   UpdateScore,
@@ -21,6 +22,9 @@ export const resolvers = {
   },
   Episode: {
     isWatched: isWatchedResolver,
+  },
+  ListEntry: {
+    media: GetMedia,
   },
   Query: {
     Episodes: EpisodesResolver,

@@ -2,6 +2,7 @@ import DiscordRPC, { Presence } from 'discord-rpc'
 import { ipcMain } from 'electron'
 import { debug } from 'electron-log'
 
+import { SettingsStore } from '@/state/settings'
 import { getConfig } from '../config'
 import {
   DISCORD_DISABLE_RICH_PRESENCE,
@@ -25,10 +26,11 @@ interface WatchingOptions {
   username?: string
 }
 
-export enum IMAGE_KEYS {
+export enum ImageKeys {
   LOGO = 'logo',
   LOGO_PADDED = 'logo-padded',
   ANILIST = 'anilist',
+  SIMKL = 'simkl',
 }
 
 const id = getConfig('DISCORD_ID')
@@ -39,7 +41,7 @@ const generateId = () => Math.round(Math.random() * 100 + 20)
 class Discord {
   public disabled = false
 
-  private discord!: DiscordRPC.Client
+  private discord: DiscordRPC.Client
 
   private errored = false
   private activityId: number = -1
@@ -78,6 +80,8 @@ class Discord {
     username,
   }: WatchingOptions) {
     const now = Math.round(Date.now() / 1000)
+    const mainListPlugin = SettingsStore.get('mainListPlugin')
+    const service = mainListPlugin === 'anilist' ? 'AniList' : 'Simkl'
 
     return this.setActivity({
       details: animeName,
@@ -85,9 +89,10 @@ class Discord {
       partySize: episode,
       partyMax: totalEpisodes,
       startTimestamp: now - progress,
-      largeImageKey: IMAGE_KEYS.LOGO,
-      smallImageKey: IMAGE_KEYS.ANILIST,
-      smallImageText: username ? `${username} on AniList` : undefined,
+      largeImageKey: ImageKeys.LOGO,
+      smallImageKey:
+        mainListPlugin === 'anilist' ? ImageKeys.ANILIST : ImageKeys.SIMKL,
+      smallImageText: username ? `${username} on ${service}` : undefined,
     })
   }
 

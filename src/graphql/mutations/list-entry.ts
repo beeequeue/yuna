@@ -37,12 +37,13 @@ import {
   writeEpisodeProgressToCache,
 } from '@/utils/cache'
 import { Instance } from '@/types'
+import { ListEntryWithoutMedia } from '@/plugins/list/plugin'
 
 const getOptimisticResponse = (
   apollo: DollarApollo<any>,
   anilistId: number,
   newValues: Partial<Omit<ListEntry, '__typename' | 'mediaId'>>,
-): ListEntry => {
+): ListEntryWithoutMedia => {
   const media = getFragment<MediaListEntryFragment>(
     apollo.provider.defaultClient.cache,
     {

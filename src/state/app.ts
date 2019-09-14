@@ -59,7 +59,7 @@ export interface EditModalAnime {
   title: string
   bannerImage: string
   episodes: number | null
-  listEntry: Omit<IListEntry, '__typename' | 'mediaId'>
+  listEntry: Omit<IListEntry, '__typename' | 'mediaId' | 'media'>
 }
 
 export interface ManualSearchOptions {

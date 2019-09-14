@@ -16,7 +16,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-import { ListViewEntries } from '@/graphql/types'
+import { ListViewListEntries } from '@/graphql/types'
 import { Required } from '@/decorators'
 
 import CoverImage from '@/common/components/cover-image.vue'
@@ -25,7 +25,7 @@ import CButton from '@/common/components/button.vue'
 
 @Component({ components: { CoverImage, CButton, Actions } })
 export default class ListEntry extends Vue {
-  @Required(Object) public entry!: ListViewEntries
+  @Required(Object) public entry!: ListViewListEntries
 }
 </script>
 
