@@ -123,7 +123,6 @@ export default class List extends Vue {
   public media: ListMedia = {}
 
   public filterString = ''
-  public limit = Number(localStorage.getItem('list-limit') || 25)
 
   public lists = [
     MediaListStatus.Current,
@@ -185,7 +184,11 @@ export default class List extends Vue {
         return
       }
 
-      Vue.set(this.media[id]!, 'loading', loading)
+      Vue.set(
+        this.media[id]!,
+        'loading',
+        isNil(this.media[id]!.media) ? loading : false,
+      )
     })
   }
 
@@ -273,12 +276,6 @@ export default class List extends Vue {
     debounce((str: string) => {
       this.filterString = str
     }, 350)(filter)
-  }
-
-  public setLimit(value: number) {
-    localStorage.setItem('list-limit', value.toString())
-    this.limit = value
-    this.$forceUpdate()
   }
 }
 </script>
