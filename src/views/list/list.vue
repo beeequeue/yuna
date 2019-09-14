@@ -1,7 +1,7 @@
 <template>
   <div class="list-page">
     <div class="menu">
-      <div class="links">
+      <div class="aside">
         <a class="anichart" href="https://anichart.net" v-html="anichartLogo" />
 
         <a
@@ -24,6 +24,12 @@
         value
         :onChange="setFilterString"
       />
+
+      <div class="aside right">
+        <transition name="fade">
+          <loading v-if="$apollo.loading" :size="26" />
+        </transition>
+      </div>
     </div>
 
     <div class="list-container">
@@ -69,6 +75,7 @@ import { oc } from 'ts-optchain'
 import anichartSvg from '@/assets/anichart.svg'
 import anilistSvg from '@/assets/anilist.svg'
 import simklSvg from '@/assets/simkl.svg'
+import Loading from '@/common/components/loading.vue'
 import TextInput from '@/common/components/form/text-input.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
 import ListEntry from './components/list-entry.vue'
@@ -89,7 +96,6 @@ import { Query } from '@/decorators'
 import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
 import { debounce, humanizeMediaListStatus, isNil, isNotNil } from '@/utils'
 
-type Lists = { [key in MediaListStatus]: ListViewListEntries[] }
 export type ListMedia = {
   [key: number]: { media: ListMediaMedia | null; loading: boolean } | undefined
 }
@@ -104,7 +110,9 @@ const queryOptions = (status: MediaListStatus) =>
     },
   } as const)
 
-@Component({ components: { ListEntry, TextInput, NumberInput } })
+@Component({
+  components: { Loading, ListEntry, TextInput, NumberInput },
+})
 export default class List extends Vue {
   @Query<List, ListViewQuery, ListViewVariables>({
     ...queryOptions(MediaListStatus.Current),
@@ -176,8 +184,8 @@ export default class List extends Vue {
     MediaListStatus.Repeating,
     MediaListStatus.Paused,
     MediaListStatus.Planning,
-    MediaListStatus.Dropped,
     MediaListStatus.Completed,
+    MediaListStatus.Dropped,
   ] as const
 
   public anichartLogo = anichartSvg
@@ -311,7 +319,7 @@ export default class List extends Vue {
     background: color($dark, 300);
     flex-shrink: 0;
 
-    & > .links {
+    & > .aside {
       position: absolute;
       top: calc(50% + 2px);
       left: 12px;
@@ -319,6 +327,11 @@ export default class List extends Vue {
       align-items: center;
       text-decoration: none;
       transform: translateY(-50%);
+
+      &.right {
+        left: auto;
+        right: 12px;
+      }
 
       & /deep/ svg {
         height: 26px;
@@ -362,7 +375,7 @@ export default class List extends Vue {
 
       & > .entry-container {
         box-sizing: border-box;
-        width: 100%;
+        max-width: 100%;
         padding-left: 25px;
         display: flex;
         align-items: center;
@@ -374,8 +387,7 @@ export default class List extends Vue {
         }
 
         & > .padding {
-          // Required or it doesn't displace anything
-          height: 1px;
+          height: 1px; // Required or it doesn't displace anything
           width: 25px;
           flex-shrink: 0;
         }
