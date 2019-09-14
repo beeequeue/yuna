@@ -193,9 +193,12 @@ export default class List extends Vue {
   }
 
   public async getMedia(mediaIds: number[]) {
-    this.setMediaLoading(mediaIds, true)
+    const idsToFetch = mediaIds.filter(
+      id => !Object.keys(this.media).includes(id.toString()),
+    )
+    this.setMediaLoading(idsToFetch, true)
 
-    const variables: ListMediaQueryVariables = { mediaIds }
+    const variables: ListMediaQueryVariables = { mediaIds: idsToFetch }
     const result = await this.$apollo.query<ListMediaQuery>({
       fetchPolicy: 'cache-first',
       query: LIST_MEDIA_QUERY,
@@ -212,7 +215,7 @@ export default class List extends Vue {
         })
       })
 
-    this.setMediaLoading(mediaIds, false)
+    this.setMediaLoading(idsToFetch, false)
   }
 
   public handleScroll(e: WheelEvent) {
