@@ -36,19 +36,19 @@
         <div
           :key="status"
           class="title-bar"
-          :class="{ empty: _lists[status].length < 1 }"
+          :class="{ empty: getList(status).length < 1 }"
         >
           {{ getHumanStatus(status) }}
         </div>
         <transition-group
-          v-if="_lists[status].length > 0"
+          v-if="getList(status).length > 0"
           tag="div"
           key="EntryContainer"
           class="entry-container"
           @wheel.native.prevent="handleScroll"
         >
           <list-entry
-            v-for="entry in _lists[status]"
+            v-for="entry in getList(status)"
             :key="entry.id"
             :entry="entry"
             :media="media[entry.mediaId]"
@@ -94,23 +94,77 @@ export type ListMedia = {
   [key: number]: { media: ListMediaMedia | null; loading: boolean } | undefined
 }
 
+const queryOptions = (status: MediaListStatus) =>
+  ({
+    fetchPolicy: 'cache-and-network',
+    query: LIST_QUERY,
+    variables: {
+      page: 1,
+      status,
+    },
+  } as const)
+
 @Component({ components: { ListEntry, TextInput, NumberInput } })
 export default class List extends Vue {
   @Query<List, ListViewQuery, ListViewVariables>({
-    fetchPolicy: 'cache-and-network',
-    query: LIST_QUERY,
-    variables() {
-      return {
-        page: 1,
-      }
-    },
+    ...queryOptions(MediaListStatus.Current),
     update(data) {
       this.getMedia(data.ListEntries.map(e => e.mediaId))
 
       return data
     },
   })
-  public rawList!: ListViewQuery
+  public current!: ListViewQuery
+
+  @Query<List, ListViewQuery, ListViewVariables>({
+    ...queryOptions(MediaListStatus.Repeating),
+    update(data) {
+      this.getMedia(data.ListEntries.map(e => e.mediaId))
+
+      return data
+    },
+  })
+  public repeating!: ListViewQuery
+
+  @Query<List, ListViewQuery, ListViewVariables>({
+    ...queryOptions(MediaListStatus.Paused),
+    update(data) {
+      this.getMedia(data.ListEntries.map(e => e.mediaId))
+
+      return data
+    },
+  })
+  public paused!: ListViewQuery
+
+  @Query<List, ListViewQuery, ListViewVariables>({
+    ...queryOptions(MediaListStatus.Planning),
+    update(data) {
+      this.getMedia(data.ListEntries.map(e => e.mediaId))
+
+      return data
+    },
+  })
+  public planning!: ListViewQuery
+
+  @Query<List, ListViewQuery, ListViewVariables>({
+    ...queryOptions(MediaListStatus.Dropped),
+    update(data) {
+      this.getMedia(data.ListEntries.map(e => e.mediaId))
+
+      return data
+    },
+  })
+  public dropped!: ListViewQuery
+
+  @Query<List, ListViewQuery, ListViewVariables>({
+    ...queryOptions(MediaListStatus.Completed),
+    update(data) {
+      this.getMedia(data.ListEntries.map(e => e.mediaId))
+
+      return data
+    },
+  })
+  public completed!: ListViewQuery
 
   public media: ListMedia = {}
 
@@ -139,25 +193,10 @@ export default class List extends Vue {
     }
   }
 
-  public get _lists() {
-    return oc(this.rawList)
-      .ListEntries([])
-      .reduce(
-        (lists, entry) => {
-          if (isNil(lists[entry.status])) {
-            lists[entry.status] = []
-          }
-
-          lists[entry.status].push(entry)
-
-          return lists
-        },
-        Object.fromEntries(
-          this.lists.map(
-            s => [s, []] as [MediaListStatus, ListViewListEntries[]],
-          ),
-        ) as Lists,
-      )
+  public getList(status: MediaListStatus) {
+    return oc(this as any)[status.toLowerCase()].ListEntries(
+      [],
+    ) as ListViewListEntries[]
   }
 
   public get userId() {
@@ -324,8 +363,7 @@ export default class List extends Vue {
       & > .entry-container {
         box-sizing: border-box;
         width: 100%;
-        padding-left: calc(325px / 4);
-        padding-right: calc(325px / 4);
+        padding-left: 25px;
         display: flex;
         align-items: center;
         background: transparentize(black, 0.75);

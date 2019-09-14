@@ -44,7 +44,7 @@ export default class ListEntry extends Vue {
   overflow: hidden;
   margin-left: calc(-325px / 4);
   margin-right: 5px;
-  clip-path: polygon(0 0, 75% 0, 100% 100%, 25% 100%);
+  clip-path: polygon(25% 0, 100% 0, 75% 100%, 0 100%);
 
   &.loader {
     align-items: center;
@@ -68,8 +68,8 @@ export default class ListEntry extends Vue {
   & > .title {
     width: 100%;
     padding: 8px;
-    padding-left: 30px;
-    padding-right: calc(25%);
+    padding-right: 30px;
+    padding-left: calc(25%);
     position: relative;
     overflow: hidden;
 

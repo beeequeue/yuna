@@ -4695,6 +4695,7 @@ export type EpisodeFeedQuery = { __typename?: 'Query' } & {
 
 export type ListViewQueryVariables = {
   page: Scalars['Int']
+  status: Maybe<MediaListStatus>
 }
 
 export type ListViewQuery = { __typename?: 'Query' } & {
