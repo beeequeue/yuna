@@ -356,6 +356,13 @@ export default class Actions extends Vue {
 
   &.horizontal {
     flex-direction: row;
+
+    & > .button,
+    & > .multi-button {
+      &.v-enter {
+        transform: translateY(100%);
+      }
+    }
   }
 
   & > .multi-button {

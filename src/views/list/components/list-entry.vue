@@ -90,8 +90,7 @@ export default class ListEntry extends Vue {
 
     &:hover {
       & > .actions {
-        filter: drop-shadow(-1px -2px 4px transparentize(black, 0.65));
-        transform: translateY(0);
+        transform: translateX(0);
       }
     }
 
@@ -135,8 +134,9 @@ export default class ListEntry extends Vue {
       position: absolute;
       bottom: 0;
       right: calc((325px / 4) - 21px);
-      transform: translateY(100%);
-      transition: transform 0.15s, filter 0.15s;
+      filter: drop-shadow(-1px -2px 4px transparentize(black, 0.65));
+      transform: translateX(105%);
+      transition: transform 0.15s;
 
       & /deep/ .button {
         border-radius: 0;
