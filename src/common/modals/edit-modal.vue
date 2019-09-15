@@ -81,12 +81,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { mdiCloseCircle } from '@mdi/js'
 
 import { deleteFromList, editListEntry } from '@/graphql/mutations/list-entry'
-import { EDIT_LIST_ENTRY } from '@/graphql/documents/mutations'
-import {
-  EditListEntryMutation,
-  EditListEntryMutationVariables,
-  MediaListStatus,
-} from '@/graphql/types'
+import { MediaListStatus } from '@/graphql/types'
 
 import {
   EditModalAnime,
