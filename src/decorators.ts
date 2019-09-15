@@ -54,7 +54,6 @@ export function ListQuery(status: MediaListStatus): PropertyDecorator {
     }
 
     ;(componentOptions.apollo as any)[status.toLowerCase()] = {
-      fetchPolicy: 'cache-first',
       query: LIST_LIST_ENTRIES,
       variables() {
         return {
