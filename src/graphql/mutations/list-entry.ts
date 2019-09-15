@@ -9,6 +9,8 @@ import {
   AnimeViewQueryVariables,
   DeleteFromListMutation,
   DeleteFromListVariables,
+  EditListEntryMutation,
+  EditListEntryMutationVariables,
   ListEntry,
   MediaListStatus,
   Provider,
@@ -24,6 +26,7 @@ import {
 import {
   ADD_TO_LIST,
   DELETE_FROM_LIST,
+  EDIT_LIST_ENTRY,
   START_REWATCHING,
   UPDATE_PROGRESS,
   UPDATE_SCORE,
@@ -117,6 +120,32 @@ export const deleteFromList = async (
         variables,
         data,
       })
+    },
+  })
+}
+
+export const editListEntry = async (
+  { $apollo }: Instance,
+  anilistId: number,
+  options: EditListEntryMutationVariables['options'],
+) => {
+  const oldStatus = getOptimisticResponse($apollo, anilistId, {}).status
+  const variables: EditListEntryMutationVariables = {
+    anilistId,
+    options,
+  }
+
+  return $apollo.mutate<EditListEntryMutation>({
+    mutation: EDIT_LIST_ENTRY,
+    variables,
+    errorPolicy: 'all',
+    update: (proxy, { data }) => {
+      if (!data || options.status === oldStatus) return data
+
+      removeFromCacheList(proxy, anilistId, oldStatus)
+      addToCacheList(proxy, data.EditListEntry)
+
+      return data
     },
   })
 }
