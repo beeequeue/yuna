@@ -107,9 +107,19 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
       variables,
     })
 
-    const entries = oc(result.data)
-      .Page.mediaList([])
+    const lists = oc(result.data).listCollection.lists([])
+    const entries = lists
+      // Remove nulls
       .filter(isNotNil)
+      // Remove custom list entries
+      .filter(list => !list.isCustomList)
+      // Get the entries
+      .map(list => list.entries!.filter(isNotNil))
+      // Flatten to one array
+      .flat()
+      // Remove entries not inside id_in if it exists
+      .filter(entry => isNil(options.id_in) || options.id_in.includes(entry.id))
+    // Remove null types
 
     return entries.map(this.fromMediaListEntry)
   }

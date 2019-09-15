@@ -88,15 +88,22 @@ export const ANILIST_LIST_ENTRIES = gql`
     $status: MediaListStatus
     $status_not: MediaListStatus
   ) {
-    Page(page: $page, perPage: $perPage) {
-      mediaList(
-        type: ANIME
-        userId: $userId
-        status: $status
-        status_not: $status_not
-        sort: [STATUS]
-      ) {
-        ...AniListEntry
+    listCollection: MediaListCollection(
+      type: ANIME
+      userId: $userId
+      status: $status
+      status_not: $status_not
+      sort: [STATUS]
+      chunk: $page
+      perChunk: $perPage
+      forceSingleCompletedList: true
+    ) {
+      lists {
+        name
+        isCustomList
+        entries {
+          ...AniListEntry
+        }
       }
     }
   }

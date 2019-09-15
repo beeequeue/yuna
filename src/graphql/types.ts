@@ -4530,10 +4530,23 @@ export type AnilistListEntriesQueryVariables = {
 }
 
 export type AnilistListEntriesQuery = { __typename?: 'Query' } & {
-  Page: Maybe<
-    { __typename?: 'Page' } & {
-      mediaList: Maybe<
-        Array<Maybe<{ __typename?: 'MediaList' } & AniListEntryFragment>>
+  listCollection: Maybe<
+    { __typename?: 'MediaListCollection' } & {
+      lists: Maybe<
+        Array<
+          Maybe<
+            { __typename?: 'MediaListGroup' } & Pick<
+              MediaListGroup,
+              'name' | 'isCustomList'
+            > & {
+                entries: Maybe<
+                  Array<
+                    Maybe<{ __typename?: 'MediaList' } & AniListEntryFragment>
+                  >
+                >
+              }
+          >
+        >
       >
     }
   >
@@ -4952,10 +4965,15 @@ export type AnilistEditListEntrySaveMediaListEntry = NonNullable<
   AnilistEditListEntryMutation['SaveMediaListEntry']
 >
 export type AnilistListEntriesVariables = AnilistListEntriesQueryVariables
-export type AnilistListEntriesPage = NonNullable<
-  AnilistListEntriesQuery['Page']
+export type AnilistListEntriesListCollection = NonNullable<
+  AnilistListEntriesQuery['listCollection']
 >
-export type AnilistListEntriesMediaList = AniListEntryFragment
+export type AnilistListEntriesLists = NonNullable<
+  (NonNullable<
+    (NonNullable<AnilistListEntriesQuery['listCollection']>)['lists']
+  >)[0]
+>
+export type AnilistListEntriesEntries = AniListEntryFragment
 export type CachedAnimeListEntryListEntry = NonNullable<
   CachedAnimeListEntryFragment['listEntry']
 >
