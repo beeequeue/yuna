@@ -22,7 +22,7 @@ export const SINGLE_MEDIA_QUERY = gql`
 `
 
 export const LIST_LIST_ENTRIES = gql`
-  query ListView($page: Int!, $status: MediaListStatus) {
+  query ListView($page: Int!, $status: MediaListStatus!) {
     ListEntries(page: $page, perPage: 10, status: $status) @client {
       id
       mediaId

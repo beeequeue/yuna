@@ -4190,6 +4190,20 @@ export type SingleMediaQuery = { __typename?: 'Query' } & {
   >
 }
 
+export type ListViewQueryVariables = {
+  page: Scalars['Int']
+  status: MediaListStatus
+}
+
+export type ListViewQuery = { __typename?: 'Query' } & {
+  ListEntries: Array<
+    { __typename?: 'ListEntry' } & Pick<
+      ListEntry,
+      'id' | 'mediaId' | 'status' | 'progress' | 'score' | 'rewatched'
+    >
+  >
+}
+
 export type ListMediaQueryVariables = {
   mediaIds: Array<Scalars['Int']>
 }
@@ -4507,7 +4521,7 @@ export type AnilistEditListEntryMutation = { __typename?: 'Mutation' } & {
   >
 }
 
-export type AnilistAllListEntriesQueryVariables = {
+export type AnilistListEntriesQueryVariables = {
   userId: Scalars['Int']
   page: Maybe<Scalars['Int']>
   perPage: Maybe<Scalars['Int']>
@@ -4515,24 +4529,11 @@ export type AnilistAllListEntriesQueryVariables = {
   status_not: Maybe<MediaListStatus>
 }
 
-export type AnilistAllListEntriesQuery = { __typename?: 'Query' } & {
-  listCollection: Maybe<
-    { __typename?: 'MediaListCollection' } & {
-      lists: Maybe<
-        Array<
-          Maybe<
-            { __typename?: 'MediaListGroup' } & Pick<
-              MediaListGroup,
-              'name' | 'isCustomList'
-            > & {
-                entries: Maybe<
-                  Array<
-                    Maybe<{ __typename?: 'MediaList' } & AniListEntryFragment>
-                  >
-                >
-              }
-          >
-        >
+export type AnilistListEntriesQuery = { __typename?: 'Query' } & {
+  Page: Maybe<
+    { __typename?: 'Page' } & {
+      mediaList: Maybe<
+        Array<Maybe<{ __typename?: 'MediaList' } & AniListEntryFragment>>
       >
     }
   >
@@ -4693,20 +4694,6 @@ export type EpisodeFeedQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type ListViewQueryVariables = {
-  page: Scalars['Int']
-  status: Maybe<MediaListStatus>
-}
-
-export type ListViewQuery = { __typename?: 'Query' } & {
-  ListEntries: Array<
-    { __typename?: 'ListEntry' } & Pick<
-      ListEntry,
-      'id' | 'mediaId' | 'status' | 'progress' | 'score' | 'rewatched'
-    >
-  >
-}
-
 export type QueueQueryVariables = {
   ids: Array<Scalars['Int']>
 }
@@ -4825,6 +4812,8 @@ export type SingleMediaTitle = NonNullable<
 export type SingleMediaCoverImage = NonNullable<
   (NonNullable<SingleMediaQuery['SingleMedia']>)['coverImage']
 >
+export type ListViewVariables = ListViewQueryVariables
+export type ListViewListEntries = NonNullable<ListViewQuery['ListEntries'][0]>
 export type ListMediaVariables = ListMediaQueryVariables
 export type ListMediaPage = NonNullable<ListMediaQuery['Page']>
 export type ListMediaMedia = NonNullable<
@@ -4962,16 +4951,11 @@ export type AnilistEditListEntryVariables = AnilistEditListEntryMutationVariable
 export type AnilistEditListEntrySaveMediaListEntry = NonNullable<
   AnilistEditListEntryMutation['SaveMediaListEntry']
 >
-export type AnilistAllListEntriesVariables = AnilistAllListEntriesQueryVariables
-export type AnilistAllListEntriesListCollection = NonNullable<
-  AnilistAllListEntriesQuery['listCollection']
+export type AnilistListEntriesVariables = AnilistListEntriesQueryVariables
+export type AnilistListEntriesPage = NonNullable<
+  AnilistListEntriesQuery['Page']
 >
-export type AnilistAllListEntriesLists = NonNullable<
-  (NonNullable<
-    (NonNullable<AnilistAllListEntriesQuery['listCollection']>)['lists']
-  >)[0]
->
-export type AnilistAllListEntriesEntries = AniListEntryFragment
+export type AnilistListEntriesMediaList = AniListEntryFragment
 export type CachedAnimeListEntryListEntry = NonNullable<
   CachedAnimeListEntryFragment['listEntry']
 >
@@ -5057,8 +5041,6 @@ export type EpisodeFeedCoverImage = NonNullable<
 export type EpisodeFeedPageInfo = NonNullable<
   (NonNullable<EpisodeFeedQuery['Page']>)['pageInfo']
 >
-export type ListViewVariables = ListViewQueryVariables
-export type ListViewListEntries = NonNullable<ListViewQuery['ListEntries'][0]>
 export type QueueVariables = QueueQueryVariables
 export type QueueQueue = NonNullable<QueueQuery['queue']>
 export type QueueAnime = NonNullable<

@@ -80,30 +80,23 @@ export const ANILIST_EDIT_LIST_ENTRY = gql`
   }
 `
 
-export const ANILIST_ALL_LIST_ENTRIES = gql`
-  query AnilistAllListEntries(
+export const ANILIST_LIST_ENTRIES = gql`
+  query AnilistListEntries(
     $userId: Int!
     $page: Int
     $perPage: Int
     $status: MediaListStatus
     $status_not: MediaListStatus
   ) {
-    listCollection: MediaListCollection(
-      type: ANIME
-      userId: $userId
-      status: $status
-      status_not: $status_not
-      sort: [MEDIA_TITLE_ENGLISH, MEDIA_TITLE_ROMAJI]
-      chunk: $page
-      perChunk: $perPage
-      forceSingleCompletedList: true
-    ) {
-      lists {
-        name
-        isCustomList
-        entries {
-          ...AniListEntry
-        }
+    Page(page: $page, perPage: $perPage) {
+      mediaList(
+        type: ANIME
+        userId: $userId
+        status: $status
+        status_not: $status_not
+        sort: [STATUS]
+      ) {
+        ...AniListEntry
       }
     }
   }

@@ -2,13 +2,13 @@ import { oc } from 'ts-optchain'
 
 import {
   AddToListMutation,
-  AnilistAllListEntriesQuery,
-  AnilistAllListEntriesQueryVariables,
   AnilistCreateEntryMutation,
   AnilistCreateEntryVariables,
   AnilistDeleteEntryMutation,
   AnilistEditListEntryMutation,
   AnilistEditListEntryMutationVariables,
+  AnilistListEntriesQuery,
+  AnilistListEntriesQueryVariables,
   AnilistSetProgressMutation,
   AnilistSetProgressVariables,
   AnilistSetScoreMutation,
@@ -37,7 +37,7 @@ import {
 } from '@/plugins/list/plugin'
 import { isNil, isNotNil } from '@/utils'
 import {
-  ANILIST_ALL_LIST_ENTRIES,
+  ANILIST_LIST_ENTRIES,
   ANILIST_CREATE_ENTRY,
   ANILIST_DELETE_ENTRY,
   ANILIST_EDIT_LIST_ENTRY,
@@ -98,27 +98,18 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   ): Promise<ListEntryWithoutMedia[]> {
     // defaulting the values in the parameters didn't work for some reason
     options = options || {}
-    const variables: AnilistAllListEntriesQueryVariables = {
+    const variables: AnilistListEntriesQueryVariables = {
       userId: getAnilistUserId(this.store)!,
       ...options,
     }
-    const result = await this.apollo.query<AnilistAllListEntriesQuery>({
-      query: ANILIST_ALL_LIST_ENTRIES,
+    const result = await this.apollo.query<AnilistListEntriesQuery>({
+      query: ANILIST_LIST_ENTRIES,
       variables,
     })
 
-    const lists = oc(result.data).listCollection.lists([])
-    const entries = lists
-      // Remove null types
+    const entries = oc(result.data)
+      .Page.mediaList([])
       .filter(isNotNil)
-      // Remove custom list entries
-      .filter(list => !list.isCustomList)
-      // Get the entries
-      .map(list => list.entries!.filter(isNotNil))
-      // Flatten to one array
-      .flat()
-      // Remove entries not inside id_in if it exists
-      .filter(entry => isNil(options.id_in) || options.id_in.includes(entry.id))
 
     return entries.map(this.fromMediaListEntry)
   }
