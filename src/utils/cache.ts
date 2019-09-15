@@ -243,12 +243,11 @@ export const removeFromCacheList = (
 export const addToCacheList = (
   cache: DataProxy,
   entry: ListViewListEntries,
-  status: MediaListStatus,
 ) => {
   let data: ListViewQuery
   const variables = {
     page: 1,
-    status,
+    status: entry.status,
   }
 
   try {

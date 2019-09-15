@@ -66,6 +66,8 @@ export const addToList = async ({ $apollo }: Instance, anilistId: number) =>
     update: (cache, { data }) => {
       if (!data) return
 
+      addToCacheList(cache, data.AddToList)
+
       const variables: AnimeViewQueryVariables = { id: anilistId }
       const cachedData = cache.readQuery<AnimeViewQuery>({
         query: ANIME_PAGE_QUERY,
@@ -85,16 +87,26 @@ export const addToList = async ({ $apollo }: Instance, anilistId: number) =>
 export const deleteFromList = async (
   { $apollo }: Instance,
   anilistId: number,
-) =>
-  $apollo.mutate<DeleteFromListMutation>({
+) => {
+  const oldStatus = getOptimisticResponse($apollo, anilistId, {}).status
+
+  return $apollo.mutate<DeleteFromListMutation>({
     mutation: DELETE_FROM_LIST,
     variables: { anilistId } as DeleteFromListVariables,
     update: cache => {
+      removeFromCacheList(cache, anilistId, oldStatus)
+
       const variables: AnimeViewQueryVariables = { id: anilistId }
-      const data = cache.readQuery<AnimeViewQuery>({
-        query: ANIME_PAGE_QUERY,
-        variables,
-      })
+      let data
+
+      try {
+        data = cache.readQuery<AnimeViewQuery>({
+          query: ANIME_PAGE_QUERY,
+          variables,
+        })
+      } catch (e) {
+        /* no op */
+      }
 
       if (!data || !data.anime || !data.anime.listEntry) return
 
@@ -107,6 +119,7 @@ export const deleteFromList = async (
       })
     },
   })
+}
 
 export const updateStatus = async (
   { $apollo }: Instance,
@@ -125,7 +138,7 @@ export const updateStatus = async (
     },
     update: (proxy, { data }) => {
       removeFromCacheList(proxy, anilistId, oldStatus)
-      addToCacheList(proxy, data!.UpdateStatus, status)
+      addToCacheList(proxy, data!.UpdateStatus)
     },
   })
 }
@@ -145,6 +158,8 @@ export const startRewatching = async (
     },
     update: (cache, { data }) => {
       if (!data) return
+
+      addToCacheList(cache, data.StartRewatching)
 
       const fakeEpisode: EpisodeMutationObject = {
         provider: Provider.Crunchyroll,
@@ -178,6 +193,7 @@ export const setProgress = async (
     anilistId: options.animeId,
     progress,
   }
+  const oldStatus = getOptimisticResponse($apollo, options.animeId, {}).status
 
   return $apollo.mutate<UpdateProgressMutation>({
     mutation: UPDATE_PROGRESS,
@@ -187,7 +203,14 @@ export const setProgress = async (
         progress,
       }),
     },
-    update: cache => {
+    update: (cache, { data }) => {
+      if (!data) return
+
+      if (oldStatus !== data.UpdateProgress.status) {
+        removeFromCacheList(cache, options.animeId, oldStatus)
+        addToCacheList(cache, data.UpdateProgress)
+      }
+
       writeEpisodeProgressToCache(cache, options, progress)
     },
   })
