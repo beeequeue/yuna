@@ -1,9 +1,8 @@
 import { DataProxy } from 'apollo-cache'
 import gql from 'graphql-tag'
 import { oc } from 'ts-optchain'
-import { Store } from 'vuex'
 
-import { EPISODE_LIST, LIST_LIST_ENTRIES } from '@/graphql/documents/queries'
+import { EPISODE_LIST } from '@/graphql/documents/queries'
 import {
   CachedAnimeListEntryFragment,
   EpisodeListEpisodes,
@@ -14,7 +13,6 @@ import {
 
 import { EpisodeCache } from '@/lib/episode-cache'
 import { EpisodeRelations } from '@/lib/relations'
-import { getAnilistUserId } from '@/state/auth'
 import { isNil } from '.'
 
 export const getFragment = <R extends {}, V = void>(
@@ -198,17 +196,4 @@ export const writeEpisodeProgressToCache = (
   }))
 
   cacheEpisodes(cache, episodes)
-}
-
-export const refetchListQuery = ($store: Store<any>) => {
-  const userId = getAnilistUserId($store)
-
-  if (!userId) return () => []
-
-  return () => [
-    {
-      query: LIST_LIST_ENTRIES,
-      variables: { userId },
-    },
-  ]
 }
