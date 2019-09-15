@@ -47,27 +47,29 @@
           {{ getHumanStatus(status) }}
         </div>
 
-        <transition-group
-          v-if="getList(status).length > 0"
-          tag="div"
-          key="EntryContainer"
-          class="entry-container"
-          @wheel.native="handleScroll"
-        >
-          <list-entry
-            v-for="entry in getList(status)"
-            :key="entry.id"
-            :entry="entry"
-            :media="media[entry.mediaId]"
-          />
+        <transition>
+          <transition-group
+            v-if="getList(status).length > 0"
+            tag="div"
+            key="EntryContainer"
+            class="entry-container"
+            @wheel.native="handleScroll"
+          >
+            <list-entry
+              v-for="entry in getList(status)"
+              :key="entry.id"
+              :entry="entry"
+              :media="media[entry.mediaId]"
+            />
 
-          <div
-            v-if="getList(status).length > 4"
-            key="last"
-            class="padding"
-            v-visibility="fetchMore(status)"
-          />
-        </transition-group>
+            <div
+              v-if="getList(status).length > 4"
+              key="last"
+              class="padding"
+              v-visibility="fetchMore(status)"
+            />
+          </transition-group>
+        </transition>
       </div>
     </div>
   </div>
@@ -370,12 +372,14 @@ export default class List extends Vue {
       }
 
       & > .entry-container {
+        height: 115px;
         max-width: 100%;
         padding-left: 25px;
         display: flex;
         align-items: center;
         background: transparentize(black, 0.75);
         overflow-x: scroll;
+        transition: height 0.25s;
 
         &::-webkit-scrollbar {
           display: none;
@@ -385,6 +389,11 @@ export default class List extends Vue {
           height: 1px; // Required or it doesn't displace anything
           width: 100px;
           flex-shrink: 0;
+        }
+
+        &.v-enter,
+        &.v-leave-to {
+          height: 0;
         }
       }
     }
