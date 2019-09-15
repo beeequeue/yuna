@@ -10,7 +10,6 @@ import {
   DeleteFromListMutation,
   DeleteFromListVariables,
   ListEntry,
-  MediaListEntryFragment,
   MediaListStatus,
   Provider,
   StartRewatchingMutation,
@@ -30,10 +29,10 @@ import {
   UPDATE_SCORE,
   UPDATE_STATUS,
 } from '@/graphql/documents/mutations'
-import { MEDIA_LIST_ENTRY_FRAGMENT } from '@/graphql/documents/fragments'
 import {
+  addToCacheList,
   EpisodeMutationObject,
-  getFragment,
+  removeFromCacheList,
   writeEpisodeProgressToCache,
 } from '@/utils/cache'
 import { Instance } from '@/types'
@@ -44,23 +43,18 @@ const getOptimisticResponse = (
   anilistId: number,
   newValues: Partial<Omit<ListEntry, '__typename' | 'mediaId'>>,
 ): ListEntryWithoutMedia => {
-  const media = getFragment<MediaListEntryFragment>(
-    apollo.provider.defaultClient.cache,
-    {
-      id: `Media:${anilistId}`,
-      fragment: MEDIA_LIST_ENTRY_FRAGMENT,
-      fragmentName: MEDIA_LIST_ENTRY_FRAGMENT.name,
-    },
-  )
+  const entry = oc(apollo.provider.defaultClient.cache as any).data.data[
+    `ListEntry:${anilistId}`
+  ]()
 
   return {
     __typename: 'ListEntry',
-    id: oc(media).listEntry.id(-1),
+    id: oc(entry).id(-1),
     mediaId: anilistId,
-    score: oc(media).listEntry.score(-1),
-    progress: oc(media).listEntry.progress(-1),
-    rewatched: oc(media).listEntry.rewatched(-1),
-    status: oc(media).listEntry.status(MediaListStatus.Planning),
+    score: oc(entry).score(-1),
+    progress: oc(entry).progress(-1),
+    rewatched: oc(entry).rewatched(-1),
+    status: oc(entry).status(MediaListStatus.Planning),
     ...newValues,
   }
 }
@@ -118,14 +112,23 @@ export const updateStatus = async (
   { $apollo }: Instance,
   anilistId: number,
   status: MediaListStatus,
-) =>
-  $apollo.mutate<UpdateStatusMutation>({
+) => {
+  const oldStatus = getOptimisticResponse($apollo, anilistId, {}).status
+
+  return $apollo.mutate<UpdateStatusMutation>({
     mutation: UPDATE_STATUS,
     variables: { anilistId, status } as UpdateStatusVariables,
     optimisticResponse: {
-      UpdateStatus: getOptimisticResponse($apollo, anilistId, { status }),
+      UpdateStatus: getOptimisticResponse($apollo, anilistId, {
+        status,
+      }),
+    },
+    update: (proxy, { data }) => {
+      removeFromCacheList(proxy, anilistId, oldStatus)
+      addToCacheList(proxy, data!.UpdateStatus, status)
     },
   })
+}
 
 export const startRewatching = async (
   { $apollo }: Instance,
