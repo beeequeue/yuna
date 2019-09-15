@@ -48,18 +48,22 @@ export default class ListEntry extends Vue {
 <style scoped lang="scss">
 @import '../../../colors';
 
+$height: 115px;
+$width: 325px;
+$triangleWidth: 80px;
+
 .entry {
   position: relative;
-  height: 115px;
-  width: 325px;
+  height: $height;
+  width: $width;
   flex-shrink: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  margin-left: calc(-325px / 4);
+  margin-left: -$triangleWidth;
   margin-right: 5px;
-  clip-path: polygon(25% 0, 100% 0, 75% 100%, 0 100%);
+  clip-path: polygon($triangleWidth 0, 100% 0, calc(100% - 80px) 100%, 0 100%);
   z-index: 2; // To go over entering ones
 
   & > .loader {
@@ -103,8 +107,8 @@ export default class ListEntry extends Vue {
 
       & > img {
         display: block;
-        height: 100%;
-        width: 100%;
+        height: $height;
+        width: $width;
         object-fit: cover;
       }
     }
@@ -113,7 +117,7 @@ export default class ListEntry extends Vue {
       width: 100%;
       padding: 8px;
       padding-right: 30px;
-      padding-left: calc(25%);
+      padding-left: $triangleWidth;
       position: relative;
       overflow: hidden;
 
@@ -133,7 +137,7 @@ export default class ListEntry extends Vue {
     & > .actions {
       position: absolute;
       bottom: 0;
-      right: calc((325px / 4) - 21px);
+      right: calc(80px - 21px);
       filter: drop-shadow(-1px -2px 4px transparentize(black, 0.65));
       transform: translateX(105%);
       transition: transform 0.15s;
@@ -161,18 +165,17 @@ export default class ListEntry extends Vue {
 
   &.v-enter,
   &.v-leave-to {
+    transform: none;
+    width: 0;
+    margin-left: 0;
+    margin-right: 0;
     opacity: 0;
-    transform: translateX(-100%);
   }
 
   &.v-enter-active,
   &.v-leave-active {
     z-index: 1; // To go under existing ones
-    transition: transform 0.75s, opacity 0.5s;
-  }
-
-  &.v-leave-active {
-    transition: transform 0.75s, opacity 0.75s;
+    transition: opacity 0.75s, width 0.75s, margin-right 0.75s, margin-left 0.5s;
   }
 }
 </style>
