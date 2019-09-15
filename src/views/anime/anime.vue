@@ -114,6 +114,9 @@ export default class Anime extends Vue {
         id: this.id,
       }
     },
+    skip() {
+      return isNil(this.id)
+    },
     error(err) {
       this.error = typeof err === 'string' ? err : err.message
     },
