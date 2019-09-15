@@ -14,6 +14,7 @@
       </transition>
 
       <transition name="route">
+        <!-- Needed for views to not be unloaded, but breaks hot reloading in development -->
         <keep-alive v-if="!isDev">
           <router-view
             :key="$route.params.id ? $route.params.id : $route.path"
