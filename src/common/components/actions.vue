@@ -259,14 +259,14 @@ export default class Actions extends Vue {
   }
 
   public editAnime() {
-    if (!this.anime || !this.anime.listEntry) return
+    if (!this.anime || !this.listEntry) return
 
     initEditModal(this.$store, {
       animeId: this.anime.id,
       title: oc(this.anime).title.userPreferred('MISSING_TITLE'),
       episodes: this.anime.episodes,
       bannerImage: oc(this.anime).bannerImage(''),
-      listEntry: this.anime.listEntry,
+      listEntry: this.listEntry,
     })
   }
 

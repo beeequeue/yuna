@@ -202,6 +202,9 @@ export default class List extends Vue {
     const idsToFetch = mediaIds.filter(
       id => !Object.keys(this.media).includes(id.toString()),
     )
+
+    if (idsToFetch.length < 1) return
+
     this.setMediaLoading(idsToFetch, true)
 
     const variables: ListMediaQueryVariables = { mediaIds: idsToFetch }
