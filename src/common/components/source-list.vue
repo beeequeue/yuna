@@ -27,7 +27,7 @@ const siteImages = streamingSiteCtx.keys()
 
 @Component({ components: { CButton, Icon } })
 export default class SourceList extends Vue {
-  @Default(Array, [])
+  @Default(Array, () => [])
   public links!: AnimeViewExternalLinks[]
 
   public get sources() {

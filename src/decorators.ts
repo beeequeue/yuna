@@ -91,7 +91,7 @@ type Constructor =
   | BooleanConstructor
 export function Default<T extends Constructor | ObjectConstructor>(
   type: T,
-  defaultValue: ReturnType<T> extends Array<any> | Object
+  defaultValue: ReturnType<T> extends Array<any>
     ? () => ReturnType<T>
     : ReturnType<T>,
 ): VueDecorator {
