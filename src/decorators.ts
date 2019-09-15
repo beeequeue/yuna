@@ -5,7 +5,11 @@ import { VueApolloQueryDefinition } from 'vue-apollo/types/options'
 import { createDecorator, VueDecorator } from 'vue-class-component'
 
 import { LIST_LIST_ENTRIES } from '@/graphql/documents/queries'
-import { ListViewQuery, MediaListStatus } from '@/graphql/types'
+import {
+  ListViewQuery,
+  ListViewQueryVariables,
+  MediaListStatus,
+} from '@/graphql/types'
 import List from '@/views/list/list.vue'
 
 interface QueryOptions<C extends Vue, R = any>
@@ -55,7 +59,7 @@ export function ListQuery(status: MediaListStatus): PropertyDecorator {
 
     ;(componentOptions.apollo as any)[status.toLowerCase()] = {
       query: LIST_LIST_ENTRIES,
-      variables() {
+      variables(): ListViewQueryVariables {
         return {
           page: 1,
           status,

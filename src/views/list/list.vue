@@ -19,11 +19,7 @@
         />
       </div>
 
-      <text-input
-        placeholder="Search in List..."
-        value
-        :onChange="setFilterString"
-      />
+      <text-input placeholder="Search in List..." :onChange="setSearchString" />
 
       <div class="aside right">
         <transition name="fade">
@@ -78,6 +74,7 @@
 <script lang="ts">
 import { DollarApollo, SmartQuery } from 'vue-apollo/types/vue-apollo'
 import { Component, Vue } from 'vue-property-decorator'
+import { debounce } from 'ts-debounce'
 import { oc } from 'ts-optchain'
 
 import anichartSvg from '@/assets/anichart.svg'
@@ -100,7 +97,7 @@ import {
 
 import { ListQuery } from '@/decorators'
 import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
-import { debounce, humanizeMediaListStatus, isNil, isNotNil } from '@/utils'
+import { humanizeMediaListStatus, isNil, isNotNil } from '@/utils'
 
 export type ListMedia = {
   [key: number]: { media: ListMediaMedia | null; loading: boolean } | undefined
@@ -130,7 +127,7 @@ export default class List extends Vue {
 
   public media: ListMedia = {}
 
-  public filterString = ''
+  public searchString = ''
 
   public lists = [
     MediaListStatus.Current,
@@ -284,11 +281,10 @@ export default class List extends Vue {
   }
 
   // beautiful!
-  public setFilterString(filter: string) {
-    debounce((str: string) => {
-      this.filterString = str
-    }, 350)(filter)
-  }
+  public setSearchString = debounce(
+    (str: string) => (this.searchString = str),
+    500,
+  )
 }
 </script>
 
