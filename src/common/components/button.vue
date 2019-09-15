@@ -56,7 +56,7 @@ export default class CButton extends Vue {
 
   public get classes() {
     return {
-      [this.type as string]: !!this.type,
+      [this.type || 'normal']: true,
       'with-icon': !!this.icon,
       raised: this.raised || (!this.flat && !this.raised),
       flat: this.flat,

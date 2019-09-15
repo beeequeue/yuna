@@ -89,9 +89,11 @@ type Constructor =
   | StringConstructor
   | ArrayConstructor
   | BooleanConstructor
-export function Default<T extends Constructor>(
+export function Default<T extends Constructor | ObjectConstructor>(
   type: T,
-  defaultValue: ReturnType<T>,
+  defaultValue: ReturnType<T> extends Array<any> | Object
+    ? () => ReturnType<T>
+    : ReturnType<T>,
 ): VueDecorator {
   return createDecorator((componentOptions, key) => {
     if (!componentOptions.props) {

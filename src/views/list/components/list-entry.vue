@@ -2,7 +2,7 @@
   <div class="entry">
     <transition mode="out-in">
       <loading
-        v-if="!entry || !media || media.loading"
+        v-if="!entry || !media.media || media.loading"
         key="loader"
         :size="35"
       />
@@ -20,6 +20,8 @@
         <div class="title">
           {{ media.media.title.userPreferred }}
         </div>
+
+        <actions :anime="media.media" :listEntry="entry" small horizontal />
       </div>
     </transition>
   </div>
@@ -86,6 +88,13 @@ export default class ListEntry extends Vue {
     display: flex;
     flex-direction: column;
 
+    &:hover {
+      & > .actions {
+        filter: drop-shadow(-1px -2px 4px transparentize(black, 0.65));
+        transform: translateY(0);
+      }
+    }
+
     & > .image {
       position: absolute;
       top: 0;
@@ -120,6 +129,33 @@ export default class ListEntry extends Vue {
 
       filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.15));
       pointer-events: none;
+    }
+
+    & > .actions {
+      position: absolute;
+      bottom: 0;
+      right: calc((325px / 4) - 21px);
+      transform: translateY(100%);
+      transition: transform 0.15s, filter 0.15s;
+
+      & /deep/ .button {
+        border-radius: 0;
+        /*box-shadow: -1px -1px 4px transparentize(black, 0.25);*/
+        box-shadow: none;
+
+        & + .button.normal:not(:last-of-type) {
+          border-right: 1px solid color($highlight, 600);
+        }
+
+        &:first-of-type {
+          border-top-left-radius: 5px;
+        }
+
+        &:last-of-type {
+          width: 40px;
+          padding-right: 15px;
+        }
+      }
     }
   }
 
