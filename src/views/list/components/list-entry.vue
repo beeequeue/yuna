@@ -6,7 +6,13 @@
         key="loader"
         :size="35"
       />
-      <div v-else class="content" key="entry">
+      <div
+        v-else
+        class="content"
+        key="entry"
+        @mouseenter="onMouseEnter"
+        @mouseleave="onMouseLeave"
+      >
         <router-link :to="`/anime/${media.media.id}`" class="image">
           <img
             :src="
@@ -17,9 +23,9 @@
           />
         </router-link>
 
-        <div class="title">
+        <scrolling-text class="title" :hovering="hovering">
           {{ media.media.title.userPreferred }}
-        </div>
+        </scrolling-text>
 
         <actions :anime="media.media" :listEntry="entry" small horizontal />
       </div>
@@ -37,11 +43,22 @@ import { Required } from '@/decorators'
 import { ListMedia } from '@/views/list/list.vue'
 import Actions from '@/common/components/actions.vue'
 import Loading from '@/common/components/loading.vue'
+import ScrollingText from '@/common/components/scrolling-text.vue'
 
-@Component({ components: { Loading, Actions } })
+@Component({ components: { ScrollingText, Loading, Actions } })
 export default class ListEntry extends Vue {
   @Required(Object) public entry!: ListViewListEntries
   @Prop(Object) public media!: ListMedia
+
+  public hovering = false
+
+  public onMouseEnter() {
+    this.hovering = true
+  }
+
+  public onMouseLeave() {
+    this.hovering = false
+  }
 }
 </script>
 
@@ -115,9 +132,7 @@ $triangleWidth: 80px;
 
     & > .title {
       width: 100%;
-      padding: 8px;
-      padding-right: 30px;
-      padding-left: $triangleWidth;
+      padding-top: 8px;
       position: relative;
       overflow: hidden;
 
@@ -132,6 +147,11 @@ $triangleWidth: 80px;
 
       filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.15));
       pointer-events: none;
+
+      & /deep/ .text {
+        padding-left: $triangleWidth;
+        padding-right: 30px;
+      }
     }
 
     & > .actions {
