@@ -1,10 +1,8 @@
-import { DocumentNode } from 'graphql'
 import { ApolloClient } from 'apollo-client'
 import { oc } from 'ts-optchain'
 
 import { MAL_ID_FROM_ANILIST_ID } from '@/graphql/documents/queries'
 import {
-  AnimeViewAnime,
   MalIdFromAnilistIdQuery,
   MalIdFromAnilistIdQueryVariables,
   Media,

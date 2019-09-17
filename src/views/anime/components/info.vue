@@ -81,6 +81,7 @@ export default class Info extends Vue {
     update: data => oc(data).Media(null),
   })
   public simklInfo: SimklInfoQuery['Media'] = {
+    id: -1,
     linkSimkl: null,
     scoreSimkl: null,
   }
