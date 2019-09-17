@@ -33,12 +33,14 @@
     v-else-if="currentWindow === Window.Anilist"
     :key="Window.Anilist"
     :onFinished="showMainWindow"
+    :cancel="showMainWindow"
   />
 
   <login-simkl
     v-else-if="currentWindow === Window.Simkl"
     :key="Window.Simkl"
     :onFinished="showMainWindow"
+    :cancel="showMainWindow"
   />
 </template>
 
