@@ -50,6 +50,12 @@
 - TypeScript, SCSS
 - Electron
 
+## Beta versions
+
+Beta builds are sometimes uploaded [here](https://drive.google.com/drive/folders/1mmSrDOmRctsVzmt8E_lNt4NF6iq9Y5oH?usp=sharing).
+
+These builds are not guaranteed to work in any way.
+
 ## Development
 
 ### Get Started
