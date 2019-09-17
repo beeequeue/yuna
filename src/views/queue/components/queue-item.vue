@@ -7,12 +7,12 @@
     >
       <icon v-if="iconForStatus" :icon="iconForStatus" />
 
-      <animated-height>
+      <animated-size>
         <div v-if="isWatching" class="progress">
           <div class="watched">{{ listEntry.progress }}</div>
           <div class="total">{{ anime.episodes }}</div>
         </div>
-      </animated-height>
+      </animated-size>
     </div>
 
     <anime-banner :anime="anime" :faded="!isWatching" link />
@@ -21,7 +21,7 @@
       <icon :icon="hamburgerSvg" class="handle" />
     </div>
 
-    <animated-height class="episodes-container">
+    <animated-size class="episodes-container">
       <transition>
         <episode-list
           v-if="item.open"
@@ -33,7 +33,7 @@
           scrollToNextEpisode
         />
       </transition>
-    </animated-height>
+    </animated-size>
 
     <div class="controls">
       <icon
@@ -150,7 +150,7 @@ import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import Icon from '@/common/components/icon.vue'
 import AnimeBanner from '@/common/components/anime-banner.vue'
 import EpisodeList from '@/common/components/episode-list.vue'
-import AnimatedHeight from '@/common/components/animated-height.vue'
+import AnimatedSize from '@/common/components/animated-size.vue'
 import SourceList from '@/common/components/source-list.vue'
 import CButton from '@/common/components/button.vue'
 import SourceSelect from './source-select.vue'
@@ -168,7 +168,7 @@ import { CrunchyrollProviders } from '@/types'
     NextEpisodeInfo,
     CButton,
     SourceList,
-    AnimatedHeight,
+    AnimatedSize,
     EpisodeList,
     AnimeBanner,
     Icon,

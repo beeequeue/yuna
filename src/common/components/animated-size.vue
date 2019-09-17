@@ -1,7 +1,7 @@
 <template>
   <div
     ref="container"
-    class="animated-height"
+    class="animated-size"
     :style="{ height: `${height}px`, width: `${width}px` }"
   >
     <transition name="h-w" mode="out-in">
@@ -15,7 +15,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { isNil } from '@/utils'
 
 @Component
-export default class AnimatedHeight extends Vue {
+export default class AnimatedSize extends Vue {
   $refs!: {
     container: HTMLDivElement
   }
@@ -78,7 +78,7 @@ export default class AnimatedHeight extends Vue {
 </script>
 
 <style scoped lang="scss">
-.animated-height {
+.animated-size {
   position: relative;
   display: flex;
   justify-content: center;

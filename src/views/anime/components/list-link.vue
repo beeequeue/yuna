@@ -3,21 +3,21 @@
     <span v-if="logo.trim().endsWith('</svg>')" class="logo" v-html="logo" />
     <img v-else class="logo" :src="logo" />
 
-    <animated-height>
+    <animated-size>
       <span v-if="loading" class="rating" key="loading">...</span>
       <span v-else-if="scoreString != null" class="rating" key="rating">{{
         scoreString
       }}</span>
-    </animated-height>
+    </animated-size>
   </a>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { Default, Required } from '@/decorators'
-import AnimatedHeight from '@/common/components/animated-height.vue'
+import AnimatedSize from '@/common/components/animated-size.vue'
 @Component({
-  components: { AnimatedHeight },
+  components: { AnimatedSize },
 })
 export default class ListLink extends Vue {
   @Required(String) public logo!: string

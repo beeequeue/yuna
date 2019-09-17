@@ -4,7 +4,7 @@
       <span v-html="logo" />
     </a>
 
-    <animated-height style="width: 100%;">
+    <animated-size style="width: 100%;">
       <c-button v-if="!codeDetails" content="Connect" :click="start" />
 
       <div v-if="codeDetails" class="code-details">
@@ -19,7 +19,7 @@
           {{ secondsToTimeString(enterTimeout) }}.
         </div>
       </div>
-    </animated-height>
+    </animated-size>
   </div>
 </template>
 
@@ -31,11 +31,11 @@ import { mdiArrowRight } from '@mdi/js'
 import simklLogo from '@/assets/simkl.svg'
 import CButton from '@/common/components/button.vue'
 import TextInput from '@/common/components/form/text-input.vue'
-import AnimatedHeight from '@/common/components/animated-height.vue'
+import AnimatedSize from '@/common/components/animated-size.vue'
 import { Simkl } from '@/lib/simkl'
 import { countdown, isNil, secondsToTimeString } from '@/utils'
 
-@Component({ components: { AnimatedHeight, TextInput, CButton } })
+@Component({ components: { AnimatedSize, TextInput, CButton } })
 export default class LoginSimkl extends Vue {
   @Prop(Function) public onFinished!: (() => any) | null
   public arrowSvg = mdiArrowRight
