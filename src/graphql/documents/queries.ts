@@ -62,6 +62,7 @@ export const EPISODE_LIST = gql`
 export const MAL_ID_FROM_ANILIST_ID = gql`
   query MalIdFromAnilistId($mediaId: Int!) {
     Media(id: $mediaId) {
+      id
       idMal
     }
   }
@@ -83,6 +84,26 @@ export const EPISODE_FEED_LIST_IDS = gql`
     ListEntries(status_not: COMPLETED) @client {
       id
       mediaId
+    }
+  }
+`
+
+export const MAL_SCORE_QUERY = gql`
+  query MalScore($id: Int!) {
+    anime: Media(id: $id) {
+      id
+      idMal
+      scoreMal @client
+    }
+  }
+`
+
+export const SIMKL_INFO_QUERY = gql`
+  query SimklInfo($id: Int!) {
+    Media(id: $id) {
+      id
+      scoreSimkl @client
+      linkSimkl @client
     }
   }
 `

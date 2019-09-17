@@ -9,8 +9,19 @@
     <a class="item" :href="malLink">
       <img class="logo mal" :src="malLogo" />
 
-      <span v-if="$apollo.loading || scoreMal != null" class="rating">
+      <span v-if="$apollo.loading || scoreMal" class="rating">
         {{ !$apollo.loading ? scoreMal.toFixed(2) : '...' }}
+      </span>
+    </a>
+
+    <a v-if="simklInfo" class="item" :href="simklInfo.linkSimkl" title="simkl">
+      <span v-html="simklLogo" class="logo simkl" />
+
+      <span
+        v-if="$apollo.loading || simklInfo.scoreSimkl != null"
+        class="rating"
+      >
+        {{ !$apollo.loading ? simklInfo.scoreSimkl.toFixed(2) : '...' }}
       </span>
     </a>
 
@@ -24,16 +35,23 @@
 </template>
 
 <script lang="ts">
-import gql from 'graphql-tag'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 import { mdiChevronDown } from '@mdi/js'
 
-import malLogo from '@/assets/myanimelist.webp'
 import alLogo from '@/assets/anilist.svg'
+import malLogo from '@/assets/myanimelist.webp'
+import simklLogo from '@/assets/simkl.svg'
 
 import { Query, Required } from '@/decorators'
-import { AnimeViewNextAiringEpisode } from '@/graphql/types'
+import { MAL_SCORE_QUERY, SIMKL_INFO_QUERY } from '@/graphql/documents/queries'
+import {
+  AnimeViewNextAiringEpisode,
+  MalScoreQuery,
+  MalScoreQueryVariables,
+  SimklInfoQuery,
+  SimklInfoQueryVariables,
+} from '@/graphql/types'
 
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import Icon from '@/common/components/icon.vue'
@@ -48,15 +66,8 @@ export default class Info extends Vue {
   @Prop(Object)
   public nextAiringEpisode!: AnimeViewNextAiringEpisode | null
 
-  @Query<Info, { anime: { scoreMal: number | null } }, { id: number }>({
-    query: gql`
-      query MalScore($id: Int!) {
-        anime: Media(id: $id) {
-          idMal
-          scoreMal @client
-        }
-      }
-    `,
+  @Query<Info, MalScoreQuery, MalScoreQueryVariables>({
+    query: MAL_SCORE_QUERY,
     variables() {
       return { id: this.id }
     },
@@ -64,12 +75,22 @@ export default class Info extends Vue {
   })
   public scoreMal!: number | null
 
+  @Query<Info, SimklInfoQuery, SimklInfoQueryVariables>({
+    query: SIMKL_INFO_QUERY,
+    variables() {
+      return { id: this.id }
+    },
+    update: data => oc(data).Media(null),
+  })
+  public simklInfo!: SimklInfoQuery['Media']
+
   $refs!: {
     content: HTMLElement
   }
 
-  public malLogo = malLogo
   public alLogo = alLogo
+  public malLogo = malLogo
+  public simklLogo = simklLogo
   public openSvg = mdiChevronDown
 
   public get alLink() {
