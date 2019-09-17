@@ -1,5 +1,6 @@
 import { isWatchedResolver } from './is-watched'
 import { scoreMalResolver } from './score-mal'
+import { simklResolvers } from './simkl-media'
 import { CacheEpisodesResolver } from './cache-episodes'
 import { EpisodesResolver } from './episodes'
 import {
@@ -18,6 +19,7 @@ import {
 export const resolvers = {
   Media: {
     scoreMal: scoreMalResolver,
+    ...simklResolvers.Media,
     listEntry: GetListEntry,
   },
   Episode: {

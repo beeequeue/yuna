@@ -28,7 +28,8 @@
       "dom",
       "dom.iterable",
       "scripthost"
-    ]
+    ],
+    "plugins": [{ "transform": "ts-optchain/transform" }]
   },
   "include": [
     "src/**/*.ts",

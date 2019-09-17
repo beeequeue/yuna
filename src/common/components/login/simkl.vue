@@ -1,10 +1,19 @@
 <template>
   <div class="step login-simkl" @keydown.enter="start">
+    <c-button
+      v-if="cancel"
+      flat
+      type="white"
+      :icon="arrowSvg"
+      :click="cancel"
+      class="back-button"
+    />
+
     <a href="https://simkl.com" class="logo" v-tooltip.top="'Simkl'">
       <span v-html="logo" />
     </a>
 
-    <animated-height style="width: 100%;">
+    <animated-size style="width: 100%;">
       <c-button v-if="!codeDetails" content="Connect" :click="start" />
 
       <div v-if="codeDetails" class="code-details">
@@ -19,27 +28,28 @@
           {{ secondsToTimeString(enterTimeout) }}.
         </div>
       </div>
-    </animated-height>
+    </animated-size>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { shell } from 'electron'
-import { mdiArrowRight } from '@mdi/js'
+import { mdiArrowLeft } from '@mdi/js'
 
 import simklLogo from '@/assets/simkl.svg'
 import CButton from '@/common/components/button.vue'
-import TextInput from '@/common/components/form/text-input.vue'
-import AnimatedHeight from '@/common/components/animated-height.vue'
+import AnimatedSize from '@/common/components/animated-size.vue'
 import { Simkl } from '@/lib/simkl'
 import { countdown, isNil, secondsToTimeString } from '@/utils'
 
-@Component({ components: { AnimatedHeight, TextInput, CButton } })
+@Component({ components: { AnimatedSize, CButton } })
 export default class LoginSimkl extends Vue {
   @Prop(Function) public onFinished!: (() => any) | null
-  public arrowSvg = mdiArrowRight
+  @Prop(Function) public cancel!: (() => any) | null
+
   public logo = simklLogo
+  public arrowSvg = mdiArrowLeft
 
   public openCountdown = 0
   public enterTimeout = 0
@@ -95,7 +105,13 @@ export default class LoginSimkl extends Vue {
   flex-direction: column;
   align-items: center;
 
-  & .button {
+  & > .back-button {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+  }
+
+  & .button:last-child {
     width: 100%;
     padding: 10px;
   }

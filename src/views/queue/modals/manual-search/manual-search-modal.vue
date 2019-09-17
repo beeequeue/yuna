@@ -1,6 +1,6 @@
 <template>
   <modal-base name="manualSearch" :toggleVisible="toggleModal">
-    <animated-height class="manual-search-modal">
+    <animated-size class="manual-search-modal">
       <search-step
         v-if="selectedId == null"
         :searchOptions="searchOptions"
@@ -14,14 +14,14 @@
         :setSelectedId="setSelectedId"
         :toggleVisible="toggleModal"
       />
-    </animated-height>
+    </animated-size>
   </modal-base>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-import AnimatedHeight from '@/common/components/animated-height.vue'
+import AnimatedSize from '@/common/components/animated-size.vue'
 import ModalBase from '@/common/modals/base.vue'
 import CrunchyrollEditor from './crunchyroll-editor.vue'
 import SearchStep from './search-step.vue'
@@ -35,7 +35,7 @@ import {
 } from '@/state/app'
 
 @Component({
-  components: { CrunchyrollEditor, SearchStep, AnimatedHeight, ModalBase },
+  components: { CrunchyrollEditor, SearchStep, AnimatedSize, ModalBase },
 })
 export default class ManualSearchModal extends Vue {
   public readonly modalName: ModalName = 'manualSearch'

@@ -66,6 +66,8 @@ input EditListEntryOptions {
 
 extend type Media {
   scoreMal: Int
+  scoreSimkl: Int
+  linkSimkl: String
   mediaListEntry: MediaList @deprecated(reason: "Use listEntry instead")
   listEntry: ListEntry
 }

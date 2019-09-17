@@ -2,7 +2,7 @@
   <div v-if="listEntry" class="scores-container" @mouseleave="onMouseLeave">
     <div
       v-for="(score, index) in scores"
-      :key="index"
+      :key="score"
       class="score"
       :style="{ height: `${size}px`, width: `${size}px` }"
       @click="updateScore(score)"

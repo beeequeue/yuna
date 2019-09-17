@@ -3077,11 +3077,6 @@ babel-plugin-module-resolver@3.2.0:
     reselect "^3.0.1"
     resolve "^1.4.0"
 
-babel-plugin-ts-optchain@1.1.5:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/babel-plugin-ts-optchain/-/babel-plugin-ts-optchain-1.1.5.tgz#7ac5f347a3f7b974a6107f51aced923fb16ec43f"
-  integrity sha512-A/NEBhmirmqAGDoLA7KFlUI0X6LsKm9/WlYqXfusOzT2Db4igIlsAm5RcKBIfffYX9jy+mfUMqiVYcQh4Jy7cQ==
-
 babel-polyfill@6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-polyfill/-/babel-polyfill-6.26.0.tgz#379937abc67d7895970adc621f284cd966cf2153"

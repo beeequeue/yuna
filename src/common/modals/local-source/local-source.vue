@@ -7,7 +7,7 @@
         <div>({{ anime.episodes }} episodes)</div>
       </div>
 
-      <animated-height>
+      <animated-size>
         <div v-if="creatingEpisodes">
           <loading :size="50" />
           <div class="creating-info">
@@ -24,7 +24,7 @@
             {{ local.title }} ({{ local.episodes }})
           </div>
         </div>
-      </animated-height>
+      </animated-size>
     </div>
   </modal-base>
 </template>
@@ -54,7 +54,7 @@ import {
 } from '@/state/app'
 import { LocalAnime, LocalFiles } from '@/lib/local-files'
 import { isNil } from '@/utils'
-import AnimatedHeight from '@/common/components/animated-height.vue'
+import AnimatedSize from '@/common/components/animated-size.vue'
 
 const combineDuplicatesBasedOnScore = (
   anime: Fuse.FuseResult<LocalAnime>[],
@@ -78,7 +78,7 @@ const combineDuplicatesBasedOnScore = (
   return newArray
 }
 
-@Component({ components: { AnimatedHeight, Loading, ModalBase } })
+@Component({ components: { AnimatedSize, Loading, ModalBase } })
 export default class LocalSourceModal extends Vue {
   public readonly modalName: ModalName = 'localSource'
 

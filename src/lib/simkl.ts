@@ -335,6 +335,18 @@ export class Simkl {
     return fullResponse.body
   }
 
+  public static async getRating(malId: number) {
+    const info = await this.getAnimeInfo(malId)
+
+    if (isNil(info)) return null
+
+    return info.ratings.simkl.rating
+  }
+
+  public static async getLink(malId: number) {
+    return `${BASE_URL}/redirect?mal=${malId}`
+  }
+
   public static async getAnidbID(malId: number) {
     const anime = await this.getAnimeInfo(malId)
 

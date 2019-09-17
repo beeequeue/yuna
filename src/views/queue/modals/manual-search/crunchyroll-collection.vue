@@ -36,7 +36,7 @@ import { mdiChevronDown } from '@mdi/js'
 import { EpisodeListEpisodes } from '@/graphql/types'
 import Icon from '@/common/components/icon.vue'
 import Checkbox from '@/common/components/form/checkbox.vue'
-import AnimatedHeight from '@/common/components/animated-height.vue'
+import AnimatedSize from '@/common/components/animated-size.vue'
 import CrunchyrollEpisode from './crunchyroll-episode.vue'
 
 import { Required } from '@/decorators'
@@ -46,7 +46,7 @@ import { humanizeNumberList, isNotNil, pluck, prop, propEq } from '@/utils'
 const pluckId = (obj: Array<{ id: string }>) => pluck('id', obj)
 
 @Component({
-  components: { AnimatedHeight, CrunchyrollEpisode, Checkbox, Icon },
+  components: { AnimatedSize, CrunchyrollEpisode, Checkbox, Icon },
 })
 export default class CrunchyrollCollection extends Vue {
   @Required(Object) collection!: _CollectionWithEpisodes

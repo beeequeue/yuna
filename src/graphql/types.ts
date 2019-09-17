@@ -1097,6 +1097,8 @@ export type Media = {
   /** Notes for site moderators */
   modNotes: Maybe<Scalars['String']>
   scoreMal: Maybe<Scalars['Int']>
+  scoreSimkl: Maybe<Scalars['Int']>
+  linkSimkl: Maybe<Scalars['String']>
   listEntry: Maybe<ListEntry>
 }
 
@@ -4237,7 +4239,7 @@ export type MalIdFromAnilistIdQueryVariables = {
 }
 
 export type MalIdFromAnilistIdQuery = { __typename?: 'Query' } & {
-  Media: Maybe<{ __typename?: 'Media' } & Pick<Media, 'idMal'>>
+  Media: Maybe<{ __typename?: 'Media' } & Pick<Media, 'id' | 'idMal'>>
 }
 
 export type AnilistIdsFromMalIdsQueryVariables = {
@@ -4259,6 +4261,26 @@ export type EpisodeFeedListIdsQueryVariables = {}
 export type EpisodeFeedListIdsQuery = { __typename?: 'Query' } & {
   ListEntries: Array<
     { __typename?: 'ListEntry' } & Pick<ListEntry, 'id' | 'mediaId'>
+  >
+}
+
+export type MalScoreQueryVariables = {
+  id: Scalars['Int']
+}
+
+export type MalScoreQuery = { __typename?: 'Query' } & {
+  anime: Maybe<
+    { __typename?: 'Media' } & Pick<Media, 'id' | 'idMal' | 'scoreMal'>
+  >
+}
+
+export type SimklInfoQueryVariables = {
+  id: Scalars['Int']
+}
+
+export type SimklInfoQuery = { __typename?: 'Query' } & {
+  Media: Maybe<
+    { __typename?: 'Media' } & Pick<Media, 'id' | 'scoreSimkl' | 'linkSimkl'>
   >
 }
 
@@ -4923,6 +4945,10 @@ export type EpisodeFeedListIdsVariables = EpisodeFeedListIdsQueryVariables
 export type EpisodeFeedListIdsListEntries = NonNullable<
   EpisodeFeedListIdsQuery['ListEntries'][0]
 >
+export type MalScoreVariables = MalScoreQueryVariables
+export type MalScoreAnime = NonNullable<MalScoreQuery['anime']>
+export type SimklInfoVariables = SimklInfoQueryVariables
+export type SimklInfoMedia = NonNullable<SimklInfoQuery['Media']>
 export type CacheEpisodesAiringVariables = CacheEpisodesAiringQueryVariables
 export type CacheEpisodesAiringAiringSchedule = NonNullable<
   CacheEpisodesAiringQuery['AiringSchedule']

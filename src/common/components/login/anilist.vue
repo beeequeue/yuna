@@ -1,5 +1,14 @@
 <template>
-  <div class="step login-cr" @keydown.enter="login">
+  <div class="step login-al" @keydown.enter="login">
+    <c-button
+      v-if="cancel"
+      flat
+      type="white"
+      :icon="arrowSvg"
+      :click="cancel"
+      class="back-button"
+    />
+
     <a href="https://anilist.co" class="logo" v-tooltip.top="'AniList'">
       <span v-html="alLogo" />
     </a>
@@ -10,6 +19,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { mdiArrowLeft } from '@mdi/js'
 
 import anilistLogoSvg from '@/assets/anilist.svg'
 import CButton from '@/common/components/button.vue'
@@ -18,8 +28,10 @@ import { Anilist } from '@/lib/anilist'
 @Component({ components: { CButton } })
 export default class LoginAl extends Vue {
   @Prop(Function) public onFinished!: (() => any) | null
+  @Prop(Function) public cancel!: (() => any) | null
 
   public alLogo = anilistLogoSvg
+  public arrowSvg = mdiArrowLeft
 
   public async login() {
     await Anilist.login()
@@ -30,10 +42,16 @@ export default class LoginAl extends Vue {
 </script>
 
 <style scoped lang="scss">
-.login-cr {
+.login-al {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  & > .back-button {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+  }
 
   & > .logo {
     margin: 15px;
@@ -53,7 +71,7 @@ export default class LoginAl extends Vue {
     }
   }
 
-  & > .button {
+  & > .button:last-child {
     width: 100%;
     padding: 10px;
   }

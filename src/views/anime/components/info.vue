@@ -1,18 +1,26 @@
 <template>
   <div class="info-container">
-    <a class="item" :href="alLink">
-      <span v-html="alLogo" class="logo" />
+    <list-link
+      :logo="alLogo"
+      :loading="$apollo.loading"
+      :link="alLink"
+      :score="score"
+      type="percent"
+    />
 
-      <span v-if="score" class="rating">{{ score }}%</span>
-    </a>
+    <list-link
+      :logo="malLogo"
+      :loading="$apollo.loading"
+      :link="malLink"
+      :score="scoreMal"
+    />
 
-    <a class="item" :href="malLink">
-      <img class="logo mal" :src="malLogo" />
-
-      <span v-if="$apollo.loading || scoreMal != null" class="rating">
-        {{ !$apollo.loading ? scoreMal.toFixed(2) : '...' }}
-      </span>
-    </a>
+    <list-link
+      :logo="simklLogo"
+      :loading="$apollo.loading"
+      :link="simklInfo.linkSimkl"
+      :score="simklInfo.scoreSimkl"
+    />
 
     <div class="item">
       <next-episode-info
@@ -24,22 +32,30 @@
 </template>
 
 <script lang="ts">
-import gql from 'graphql-tag'
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 import { mdiChevronDown } from '@mdi/js'
 
-import malLogo from '@/assets/myanimelist.webp'
 import alLogo from '@/assets/anilist.svg'
+import malLogo from '@/assets/myanimelist.webp'
+import simklLogo from '@/assets/simkl.svg'
 
 import { Query, Required } from '@/decorators'
-import { AnimeViewNextAiringEpisode } from '@/graphql/types'
+import { MAL_SCORE_QUERY, SIMKL_INFO_QUERY } from '@/graphql/documents/queries'
+import {
+  AnimeViewNextAiringEpisode,
+  MalScoreQuery,
+  MalScoreQueryVariables,
+  SimklInfoQuery,
+  SimklInfoQueryVariables,
+} from '@/graphql/types'
 
+import ListLink from '@/views/anime/components/list-link.vue'
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import Icon from '@/common/components/icon.vue'
 
 @Component({
-  components: { NextEpisodeInfo, Icon },
+  components: { ListLink, NextEpisodeInfo, Icon },
 })
 export default class Info extends Vue {
   @Required(Number) public id!: number
@@ -48,15 +64,8 @@ export default class Info extends Vue {
   @Prop(Object)
   public nextAiringEpisode!: AnimeViewNextAiringEpisode | null
 
-  @Query<Info, { anime: { scoreMal: number | null } }, { id: number }>({
-    query: gql`
-      query MalScore($id: Int!) {
-        anime: Media(id: $id) {
-          idMal
-          scoreMal @client
-        }
-      }
-    `,
+  @Query<Info, MalScoreQuery, MalScoreQueryVariables>({
+    query: MAL_SCORE_QUERY,
     variables() {
       return { id: this.id }
     },
@@ -64,12 +73,26 @@ export default class Info extends Vue {
   })
   public scoreMal!: number | null
 
+  @Query<Info, SimklInfoQuery, SimklInfoQueryVariables>({
+    query: SIMKL_INFO_QUERY,
+    variables() {
+      return { id: this.id }
+    },
+    update: data => oc(data).Media(null),
+  })
+  public simklInfo: SimklInfoQuery['Media'] = {
+    id: -1,
+    linkSimkl: null,
+    scoreSimkl: null,
+  }
+
   $refs!: {
     content: HTMLElement
   }
 
-  public malLogo = malLogo
   public alLogo = alLogo
+  public malLogo = malLogo
+  public simklLogo = simklLogo
   public openSvg = mdiChevronDown
 
   public get alLink() {
@@ -104,31 +127,6 @@ export default class Info extends Vue {
     & > .next-episode-info {
       font-weight: 600;
       padding: 0 10px;
-    }
-
-    & > .logo {
-      position: relative;
-      height: 20px;
-      padding: 5px 10px;
-      box-sizing: initial !important;
-      object-fit: contain;
-
-      &.mal {
-        padding: 5px 10px;
-        height: 15px;
-      }
-
-      & /deep/ svg {
-        height: 20px;
-        width: 20px;
-      }
-    }
-
-    & > .rating {
-      font-weight: 800;
-      font-size: 18px;
-      padding: 5px 10px;
-      padding-left: 0;
     }
   }
 }
