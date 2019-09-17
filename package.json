@@ -76,7 +76,7 @@
     "@vue/cli-service": "3.11.0",
     "@vue/eslint-config-prettier": "5.0.0",
     "@vue/eslint-config-typescript": "4.0.0",
-    "babel-eslint": "10.0.2",
+    "babel-eslint": "10.0.3",
     "cross-env": "5.2.0",
     "electron": "5.0.8",
     "electron-builder": "21.1.5",
