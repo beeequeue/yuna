@@ -432,6 +432,7 @@ export default class QueueItem extends Vue {
   & > .episodes-container {
     position: relative;
     background: $dark;
+    width: 100% !important;
   }
 
   & > .controls {
