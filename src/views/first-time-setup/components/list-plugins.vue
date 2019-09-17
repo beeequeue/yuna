@@ -22,7 +22,11 @@
       </div>
     </div>
 
-    <c-button content="Next" :disabled="!canContinue" :click="finishStep" />
+    <c-button
+      :content="canContinue ? 'Next' : 'Connect at least one manager!'"
+      :disabled="!canContinue"
+      :click="finishStep"
+    />
   </div>
 
   <login-a-l
@@ -109,8 +113,11 @@ export default class ListPlugins extends Vue {
       transition: background 0.15s;
 
       &.connected {
+        background: color($main, 300);
+        pointer-events: none;
+
         & > .logo {
-          filter: drop-shadow(0 0 8px color($highlight, 600));
+          filter: drop-shadow(0 0 8px transparentize(white, 0.5));
         }
       }
 
@@ -119,7 +126,7 @@ export default class ListPlugins extends Vue {
       }
 
       & > .logo {
-        filter: grayscale(0.75) brightness(0.75);
+        filter: grayscale(0.75) brightness(0.5);
 
         &,
         & /deep/ svg {
