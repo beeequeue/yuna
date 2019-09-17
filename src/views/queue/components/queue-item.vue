@@ -28,6 +28,7 @@
           :anime="anime"
           :episodes="episodes"
           :loading="episodesLoading !== 0"
+          :open="item.open"
           small
           scrollToNextEpisode
         />

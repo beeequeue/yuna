@@ -52,6 +52,7 @@ export default class EpisodeList extends Vue {
   @Prop(Boolean) public small!: boolean
   @Prop(Boolean) public padRight!: boolean
   @Prop(Boolean) public noVerticalPadding!: boolean
+  @Prop(Boolean) public open!: boolean
 
   public notAvailable = false
 
@@ -62,6 +63,10 @@ export default class EpisodeList extends Vue {
 
   public get listEntry() {
     return oc(this.anime).listEntry(null)
+  }
+
+  public get progress() {
+    return oc(this.listEntry).progress() || null
   }
 
   public mounted() {
@@ -106,36 +111,43 @@ export default class EpisodeList extends Vue {
     }
   }
 
-  @Watch('episodes')
-  public _scrollToNextEpisode() {
+  @Watch('open')
+  @Watch('progress')
+  public _scrollToNextEpisode(iteration: number = 0): void {
+    if (!oc(this.$refs).episodes[0]() && iteration < 50) {
+      setTimeout(() => this._scrollToNextEpisode(iteration + 1), 50)
+
+      return
+    }
+
     if (
       !this.scrollToNextEpisode ||
+      !this.open ||
       isNil(this.listEntry) ||
       isNil(this.episodes) ||
+      isNil(this.$refs.episodes) ||
+      isNil(this.$refs.episodes[0]) ||
       this.episodes.length < 1
     ) {
       return
     }
 
-    setTimeout(() => {
-      const containerWidth = this.$refs.container.offsetWidth
-      const episodeWidth = (this.$refs.episodes[0].$el as HTMLDivElement)
-        .offsetWidth
-      let offset = 0
+    const containerRect = this.$refs.container.getBoundingClientRect()
+    const episodeRect = this.$refs.episodes[0].$el.getBoundingClientRect()
+    let offset = 0
 
-      if (this.$refs.episodes.length > this.listEntry!.progress! || 0) {
-        const nextEpisode = this.$refs.episodes[this.listEntry!.progress || 0]
+    if (this.$refs.episodes.length > this.listEntry!.progress! || 0) {
+      const nextEpisode = this.$refs.episodes[this.listEntry!.progress || 0]
 
-        offset = (nextEpisode.$el as HTMLDivElement).offsetLeft
-      } else {
-        offset = this.$refs.container.clientWidth * 2
-      }
+      offset = (nextEpisode.$el as HTMLDivElement).offsetLeft
+    } else {
+      offset = this.$refs.container.clientWidth * 2
+    }
 
-      this.$refs.container.scrollTo({
-        left: offset - (containerWidth / 2 - episodeWidth / 2),
-        behavior: 'smooth',
-      })
-    }, 150)
+    this.$refs.container.scrollTo({
+      left: offset - (containerRect.width / 2 - episodeRect.width / 2),
+      behavior: 'smooth',
+    })
   }
 }
 </script>
