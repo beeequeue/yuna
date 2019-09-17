@@ -1,29 +1,26 @@
 <template>
   <div class="info-container">
-    <a class="item" :href="alLink">
-      <span v-html="alLogo" class="logo" />
+    <list-link
+      :logo="alLogo"
+      :loading="$apollo.loading"
+      :link="alLink"
+      :score="score"
+      type="percent"
+    />
 
-      <span v-if="score" class="rating">{{ score }}%</span>
-    </a>
+    <list-link
+      :logo="malLogo"
+      :loading="$apollo.loading"
+      :link="malLink"
+      :score="scoreMal"
+    />
 
-    <a class="item" :href="malLink">
-      <img class="logo mal" :src="malLogo" />
-
-      <span v-if="$apollo.loading || scoreMal" class="rating">
-        {{ !$apollo.loading ? scoreMal.toFixed(2) : '...' }}
-      </span>
-    </a>
-
-    <a v-if="simklInfo" class="item" :href="simklInfo.linkSimkl" title="simkl">
-      <span v-html="simklLogo" class="logo simkl" />
-
-      <span
-        v-if="$apollo.loading || simklInfo.scoreSimkl != null"
-        class="rating"
-      >
-        {{ !$apollo.loading ? simklInfo.scoreSimkl.toFixed(2) : '...' }}
-      </span>
-    </a>
+    <list-link
+      :logo="simklLogo"
+      :loading="$apollo.loading"
+      :link="simklInfo.linkSimkl"
+      :score="simklInfo.scoreSimkl"
+    />
 
     <div class="item">
       <next-episode-info
@@ -53,11 +50,12 @@ import {
   SimklInfoQueryVariables,
 } from '@/graphql/types'
 
+import ListLink from '@/views/anime/components/list-link.vue'
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import Icon from '@/common/components/icon.vue'
 
 @Component({
-  components: { NextEpisodeInfo, Icon },
+  components: { ListLink, NextEpisodeInfo, Icon },
 })
 export default class Info extends Vue {
   @Required(Number) public id!: number
@@ -82,7 +80,10 @@ export default class Info extends Vue {
     },
     update: data => oc(data).Media(null),
   })
-  public simklInfo!: SimklInfoQuery['Media']
+  public simklInfo: SimklInfoQuery['Media'] = {
+    linkSimkl: null,
+    scoreSimkl: null,
+  }
 
   $refs!: {
     content: HTMLElement
@@ -125,31 +126,6 @@ export default class Info extends Vue {
     & > .next-episode-info {
       font-weight: 600;
       padding: 0 10px;
-    }
-
-    & > .logo {
-      position: relative;
-      height: 20px;
-      padding: 5px 10px;
-      box-sizing: initial !important;
-      object-fit: contain;
-
-      &.mal {
-        padding: 5px 10px;
-        height: 15px;
-      }
-
-      & /deep/ svg {
-        height: 20px;
-        width: 20px;
-      }
-    }
-
-    & > .rating {
-      font-weight: 800;
-      font-size: 18px;
-      padding: 5px 10px;
-      padding-left: 0;
     }
   }
 }
