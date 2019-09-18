@@ -339,6 +339,10 @@ export default class Controls extends Vue {
   }
 
   public handleCoverClick() {
+    if (this.progressInSeconds >= this.duration) {
+      return
+    }
+
     if (this.paused) {
       this.play()
     } else {

@@ -96,7 +96,7 @@ export default class EndOfSeasonOverlay extends Vue {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  pointer-events: all;
+  pointer-events: none;
   user-select: none;
   overflow: hidden;
   transition: top 0.5s, height 0.5s, transform 0.5s;
