@@ -191,7 +191,13 @@ export default class ListEntry extends Vue {
   }
 
   &.v-move {
-    transition: all 0.5s;
+    transition: transform 0.5s;
+
+    @for $i from 1 through 250 {
+      &:nth-child(#{$i}) {
+        transition: transform 0.5s #{$i * 0.05}s;
+      }
+    }
   }
 
   &.v-enter-active,
