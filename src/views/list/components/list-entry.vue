@@ -64,24 +64,24 @@ export default class ListEntry extends Vue {
 
 <style scoped lang="scss">
 @import '../../../colors';
-
-$height: 115px;
-$width: 325px;
-$triangleWidth: 80px;
+@import '../list-variables';
 
 .entry {
   position: relative;
   height: 100%;
-  max-height: $height;
-  width: $width;
+  max-height: $entryHeight;
+  width: $entryWidth;
   flex-shrink: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  margin-left: -$triangleWidth;
-  margin-right: 5px;
-  clip-path: polygon($triangleWidth 0, 100% 0, calc(100% - 80px) 100%, 0 100%);
+  clip-path: polygon(
+    $triangleWidth 0,
+    100% 0,
+    calc(100% - #{$triangleWidth}) $entryHeight,
+    0 $entryHeight
+  );
   z-index: 2; // To go over entering ones
 
   & > .loader {
@@ -125,8 +125,8 @@ $triangleWidth: 80px;
 
       & > img {
         display: block;
-        height: $height;
-        width: $width;
+        height: $entryHeight;
+        width: $entryWidth;
         object-fit: cover;
       }
     }
@@ -158,10 +158,10 @@ $triangleWidth: 80px;
     & > .actions {
       position: absolute;
       bottom: 0;
-      right: calc(80px - 21px);
+      right: calc(#{$triangleWidth} - 21px);
       filter: drop-shadow(-1px -2px 4px transparentize(black, 0.65));
-      transform: translateX(105%);
-      transition: transform 0.15s;
+      transform: translateX(calc(100% + #{$triangleWidth} - 21px));
+      transition: transform 0.25s;
 
       & /deep/ .button {
         border-radius: 0;
@@ -186,17 +186,23 @@ $triangleWidth: 80px;
 
   &.v-enter,
   &.v-leave-to {
-    transform: none;
-    width: 0;
-    margin-left: 0;
-    margin-right: 0;
+    transform: translateX(25%);
     opacity: 0;
+  }
+
+  &.v-move {
+    transition: all 0.5s;
   }
 
   &.v-enter-active,
   &.v-leave-active {
     z-index: 1; // To go under existing ones
-    transition: opacity 0.75s, width 0.75s, margin-right 0.75s, margin-left 0.5s;
+    transition: opacity 0.35s, transform 0.5s;
+  }
+
+  &.v-leave-active {
+    position: absolute;
+    left: -15px;
   }
 }
 </style>
