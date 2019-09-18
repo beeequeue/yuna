@@ -71,7 +71,8 @@ $triangleWidth: 80px;
 
 .entry {
   position: relative;
-  height: $height;
+  height: 100%;
+  max-height: $height;
   width: $width;
   flex-shrink: 0;
   display: flex;

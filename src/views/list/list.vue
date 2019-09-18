@@ -29,44 +29,14 @@
     </div>
 
     <div class="list-container">
-      <div
+      <list-row
         v-for="status in lists"
         :key="status"
-        class="list"
-        :class="{ [status.toLowerCase()]: true }"
-      >
-        <div
-          :key="status"
-          class="title-bar"
-          :class="{ empty: getList(status).length < 1 }"
-        >
-          {{ getHumanStatus(status) }}
-        </div>
-
-        <transition>
-          <transition-group
-            v-if="getList(status).length > 0"
-            tag="div"
-            key="EntryContainer"
-            class="entry-container"
-            @wheel.native="handleScroll"
-          >
-            <list-entry
-              v-for="entry in getList(status)"
-              :key="entry.id"
-              :entry="entry"
-              :media="media[entry.mediaId]"
-            />
-
-            <div
-              v-if="getList(status).length > 4"
-              key="last"
-              class="padding"
-              v-visibility="fetchMore(status)"
-            />
-          </transition-group>
-        </transition>
-      </div>
+        :list="getList(status)"
+        :status="status"
+        :fetchMore="fetchMore"
+        :media="media"
+      />
     </div>
   </div>
 </template>
@@ -97,14 +67,15 @@ import {
 
 import { ListQuery } from '@/decorators'
 import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
-import { humanizeMediaListStatus, isNil, isNotNil } from '@/utils'
+import { isNil, isNotNil } from '@/utils'
+import ListRow from '@/views/list/components/list-row.vue'
 
 export type ListMedia = {
   [key: number]: { media: ListMediaMedia | null; loading: boolean } | undefined
 }
 
 @Component({
-  components: { Loading, ListEntry, TextInput, NumberInput },
+  components: { ListRow, Loading, ListEntry, TextInput, NumberInput },
 })
 export default class List extends Vue {
   @ListQuery(MediaListStatus.Current)
@@ -113,11 +84,11 @@ export default class List extends Vue {
   @ListQuery(MediaListStatus.Repeating)
   public repeating!: ListViewQuery
 
+  @ListQuery(MediaListStatus.Planning, 2)
+  public planning!: ListViewQuery
+
   @ListQuery(MediaListStatus.Paused)
   public paused!: ListViewQuery
-
-  @ListQuery(MediaListStatus.Planning)
-  public planning!: ListViewQuery
 
   @ListQuery(MediaListStatus.Dropped)
   public dropped!: ListViewQuery
@@ -132,8 +103,8 @@ export default class List extends Vue {
   public lists = [
     MediaListStatus.Current,
     MediaListStatus.Repeating,
-    MediaListStatus.Paused,
     MediaListStatus.Planning,
+    MediaListStatus.Paused,
     MediaListStatus.Completed,
     MediaListStatus.Dropped,
   ] as const
@@ -224,19 +195,6 @@ export default class List extends Vue {
       })
 
     this.setMediaLoading(idsToFetch, false)
-  }
-
-  public handleScroll(e: WheelEvent) {
-    const target = e.currentTarget as HTMLDivElement
-
-    if (target.childElementCount > 4) {
-      e.preventDefault()
-      target.scrollBy(e.deltaY + e.deltaX, 0)
-    }
-  }
-
-  public getHumanStatus(status: MediaListStatus) {
-    return humanizeMediaListStatus({ progress: null, status }, false)
   }
 
   public fetchMore(status: MediaListStatus) {
@@ -349,50 +307,6 @@ export default class List extends Vue {
     height: 100%;
     width: 100%;
     padding-bottom: 50px;
-
-    & > .list {
-      & > .title-bar {
-        width: 100%;
-        padding: 8px 25px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-family: 'Raleway', sans-serif;
-        font-weight: 200;
-        text-shadow: 0 1px 1px transparentize(white, 0.85);
-        font-size: 1.5em;
-
-        &.empty {
-          padding-bottom: 0;
-        }
-      }
-
-      & > .entry-container {
-        height: 115px;
-        max-width: 100%;
-        padding-left: 25px;
-        display: flex;
-        align-items: center;
-        background: transparentize(black, 0.75);
-        overflow-x: scroll;
-        transition: height 0.25s;
-
-        &::-webkit-scrollbar {
-          display: none;
-        }
-
-        & > .padding {
-          height: 1px; // Required or it doesn't displace anything
-          width: 100px;
-          flex-shrink: 0;
-        }
-
-        &.v-enter,
-        &.v-leave-to {
-          height: 0;
-        }
-      }
-    }
   }
 }
 

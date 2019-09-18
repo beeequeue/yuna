@@ -4192,6 +4192,7 @@ export type SingleMediaQuery = { __typename?: 'Query' } & {
 
 export type ListViewQueryVariables = {
   page: Scalars['Int']
+  perPage: Scalars['Int']
   status: MediaListStatus
 }
 

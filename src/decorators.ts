@@ -51,7 +51,10 @@ export function Query<C extends Vue, R = any, V extends {} | null = null>(
   })
 }
 
-export function ListQuery(status: MediaListStatus): PropertyDecorator {
+export function ListQuery(
+  status: MediaListStatus,
+  rows = 1,
+): PropertyDecorator {
   return createDecorator((componentOptions: ComponentOptions<List>) => {
     if (!componentOptions.apollo) {
       componentOptions.apollo = {}
@@ -62,6 +65,7 @@ export function ListQuery(status: MediaListStatus): PropertyDecorator {
       variables(): ListViewQueryVariables {
         return {
           page: 1,
+          perPage: 10 * rows,
           status,
         }
       },
