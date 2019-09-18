@@ -154,7 +154,9 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
     const malId = await this.getMALId(anilistId)
 
     if (isNil(malId)) {
-      throw new Error('Could not find necessary data to add item to list.')
+      throw new Error(
+        'Could not find necessary data to add item to Simkl list.',
+      )
     }
 
     await Simkl.setProgress(malId, progress)
