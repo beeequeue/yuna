@@ -202,6 +202,12 @@ export const writeEpisodeProgressToCache = (
   cacheEpisodes(cache, episodes)
 }
 
+export const getRows = (status: MediaListStatus) => {
+  if (status === MediaListStatus.Planning) return 2
+
+  return 1
+}
+
 export const removeFromCacheList = (
   cache: DataProxy,
   anilistId: number,
@@ -213,6 +219,7 @@ export const removeFromCacheList = (
     try {
       const variables = {
         page: i,
+        perPage: 10 * getRows(status),
         status,
       }
       data = cache.readQuery<ListViewQuery, ListViewQueryVariables>({
@@ -247,6 +254,7 @@ export const addToCacheList = (
   let data: ListViewQuery
   const variables = {
     page: 1,
+    perPage: 10 * getRows(entry.status),
     status: entry.status,
   }
 

@@ -11,6 +11,7 @@ import {
   MediaListStatus,
 } from '@/graphql/types'
 import List from '@/views/list/list.vue'
+import { getRows } from '@/utils/cache'
 
 interface QueryOptions<C extends Vue, R = any>
   extends VueApolloQueryDefinition<C, R> {
@@ -51,10 +52,7 @@ export function Query<C extends Vue, R = any, V extends {} | null = null>(
   })
 }
 
-export function ListQuery(
-  status: MediaListStatus,
-  rows = 1,
-): PropertyDecorator {
+export function ListQuery(status: MediaListStatus): PropertyDecorator {
   return createDecorator((componentOptions: ComponentOptions<List>) => {
     if (!componentOptions.apollo) {
       componentOptions.apollo = {}
@@ -65,9 +63,12 @@ export function ListQuery(
       variables(): ListViewQueryVariables {
         return {
           page: 1,
-          perPage: 10 * rows,
+          perPage: 10 * getRows(status),
           status,
         }
+      },
+      skip() {
+        return !this.meta[status].open
       },
       update(data: ListViewQuery) {
         this.getMedia(data.ListEntries.map(e => e.mediaId))

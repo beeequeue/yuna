@@ -36,6 +36,8 @@
         :status="status"
         :fetchMore="fetchMore"
         :media="media"
+        :open="meta[status].open"
+        :toggleOpen="toggleOpen"
       />
     </div>
   </div>
@@ -67,12 +69,14 @@ import {
 
 import { ListQuery } from '@/decorators'
 import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
-import { isNil, isNotNil } from '@/utils'
+import { isNil, isNotNil, LocalStorageKey } from '@/utils'
 import ListRow from '@/views/list/components/list-row.vue'
 
 export type ListMedia = {
   [key: number]: { media: ListMediaMedia | null; loading: boolean } | undefined
 }
+
+type MetaData = { [key in MediaListStatus]: { page: number; open: boolean } }
 
 @Component({
   components: { ListRow, Loading, ListEntry, TextInput, NumberInput },
@@ -84,7 +88,7 @@ export default class List extends Vue {
   @ListQuery(MediaListStatus.Repeating)
   public repeating!: ListViewQuery
 
-  @ListQuery(MediaListStatus.Planning, 2)
+  @ListQuery(MediaListStatus.Planning)
   public planning!: ListViewQuery
 
   @ListQuery(MediaListStatus.Paused)
@@ -108,15 +112,16 @@ export default class List extends Vue {
     MediaListStatus.Completed,
     MediaListStatus.Dropped,
   ] as const
-  // -1 means no more can be fetched
-  public pages = {
-    [MediaListStatus.Current]: 1,
-    [MediaListStatus.Repeating]: 1,
-    [MediaListStatus.Paused]: 1,
-    [MediaListStatus.Planning]: 1,
-    [MediaListStatus.Completed]: 1,
-    [MediaListStatus.Dropped]: 1,
-  }
+
+  // page: -1 means no more can be fetched
+  public meta: MetaData = this.lists.reduce(
+    (obj, status) => {
+      obj[status] = { page: 1, open: this.getOpenState(status) }
+
+      return obj
+    },
+    {} as MetaData,
+  )
 
   public anichartLogo = anichartSvg
   public alLogo = anilistSvg
@@ -168,6 +173,29 @@ export default class List extends Vue {
     })
   }
 
+  private getLocalStorageKey(status: MediaListStatus) {
+    return `${LocalStorageKey.LIST_OPEN}_${status}`
+  }
+
+  private saveOpenState(status: MediaListStatus) {
+    localStorage.setItem(
+      this.getLocalStorageKey(status),
+      this.meta[status].open.toString(),
+    )
+  }
+
+  private getOpenState(status: MediaListStatus): boolean {
+    return JSON.parse(
+      localStorage.getItem(this.getLocalStorageKey(status)) || 'true',
+    )
+  }
+
+  public toggleOpen(status: MediaListStatus) {
+    this.meta[status].open = !this.meta[status].open
+
+    this.saveOpenState(status)
+  }
+
   public async getMedia(mediaIds: number[]) {
     const idsToFetch = mediaIds.filter(
       id => !Object.keys(this.media).includes(id.toString()),
@@ -205,16 +233,17 @@ export default class List extends Vue {
       if (
         !visible ||
         query.loading ||
-        this.pages[status] === -1 ||
+        this.meta[status].page === -1 ||
         entries.length % 10 !== 0
       ) {
         return
       }
 
-      this.pages[status]++
+      this.meta[status].page++
 
       const variables: ListViewQueryVariables = {
-        page: this.pages[status],
+        page: this.meta[status].page,
+        perPage: 10,
         status,
       }
       query.fetchMore({
@@ -224,7 +253,7 @@ export default class List extends Vue {
           { fetchMoreResult: result },
         ): ListViewQuery => {
           if (result.ListEntries.length < 1) {
-            this.pages[status] = -1
+            this.meta[status].page = -1
             return {
               ListEntries: previous.ListEntries,
             }
