@@ -4740,153 +4740,39 @@ export type QueueQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type WatchingQueryQueryVariables = {
-  userId: Scalars['Int']
+export type ImportQueryVariables = {
+  status: MediaListStatus
+  useExtraStatus: Scalars['Boolean']
+  extraStatus: Maybe<MediaListStatus>
 }
 
-export type WatchingQueryQuery = { __typename?: 'Query' } & {
-  listCollection: Maybe<
-    { __typename?: 'MediaListCollection' } & {
-      lists: Maybe<
-        Array<
-          Maybe<
-            { __typename?: 'MediaListGroup' } & Pick<
-              MediaListGroup,
-              'isCustomList'
-            > & {
-                entries: Maybe<
-                  Array<
-                    Maybe<
-                      { __typename?: 'MediaList' } & {
-                        info: Maybe<
-                          { __typename?: 'Media' } & Pick<Media, 'id'> & {
-                              externalLinks: Maybe<
-                                Array<
-                                  Maybe<
-                                    { __typename?: 'MediaExternalLink' } & Pick<
-                                      MediaExternalLink,
-                                      'id' | 'site' | 'url'
-                                    >
-                                  >
-                                >
-                              >
-                              listEntry: Maybe<
-                                { __typename?: 'ListEntry' } & Pick<
-                                  ListEntry,
-                                  'id' | 'status'
-                                >
-                              >
-                            }
-                        >
-                      }
-                    >
-                  >
-                >
-              }
-          >
-        >
-      >
-    }
+export type ImportQuery = { __typename?: 'Query' } & {
+  ListEntries: Array<
+    { __typename?: 'ListEntry' } & Pick<ListEntry, 'id' | 'mediaId' | 'status'>
+  >
+  ExtraListEntries: Array<
+    { __typename?: 'ListEntry' } & Pick<ListEntry, 'id' | 'mediaId' | 'status'>
   >
 }
 
-export type PlanningQueryQueryVariables = {
-  userId: Scalars['Int']
+export type ImportExternalLinksQueryVariables = {
+  mediaId: Scalars['Int']
 }
 
-export type PlanningQueryQuery = { __typename?: 'Query' } & {
-  listCollection: Maybe<
-    { __typename?: 'MediaListCollection' } & {
-      lists: Maybe<
-        Array<
-          Maybe<
-            { __typename?: 'MediaListGroup' } & Pick<
-              MediaListGroup,
-              'isCustomList'
-            > & {
-                entries: Maybe<
-                  Array<
-                    Maybe<
-                      { __typename?: 'MediaList' } & {
-                        info: Maybe<
-                          { __typename?: 'Media' } & Pick<Media, 'id'> & {
-                              externalLinks: Maybe<
-                                Array<
-                                  Maybe<
-                                    { __typename?: 'MediaExternalLink' } & Pick<
-                                      MediaExternalLink,
-                                      'id' | 'site' | 'url'
-                                    >
-                                  >
-                                >
-                              >
-                              listEntry: Maybe<
-                                { __typename?: 'ListEntry' } & Pick<
-                                  ListEntry,
-                                  'id' | 'status'
-                                >
-                              >
-                            }
-                        >
-                      }
-                    >
-                  >
-                >
-              }
+export type ImportExternalLinksQuery = { __typename?: 'Query' } & {
+  Media: Maybe<
+    { __typename?: 'Media' } & Pick<Media, 'id'> & {
+        externalLinks: Maybe<
+          Array<
+            Maybe<
+              { __typename?: 'MediaExternalLink' } & Pick<
+                MediaExternalLink,
+                'id' | 'site' | 'url'
+              >
+            >
           >
         >
-      >
-    }
-  >
-}
-
-export type PausedQueryQueryVariables = {
-  userId: Scalars['Int']
-}
-
-export type PausedQueryQuery = { __typename?: 'Query' } & {
-  listCollection: Maybe<
-    { __typename?: 'MediaListCollection' } & {
-      lists: Maybe<
-        Array<
-          Maybe<
-            { __typename?: 'MediaListGroup' } & Pick<
-              MediaListGroup,
-              'isCustomList'
-            > & {
-                entries: Maybe<
-                  Array<
-                    Maybe<
-                      { __typename?: 'MediaList' } & {
-                        info: Maybe<
-                          { __typename?: 'Media' } & Pick<Media, 'id'> & {
-                              externalLinks: Maybe<
-                                Array<
-                                  Maybe<
-                                    { __typename?: 'MediaExternalLink' } & Pick<
-                                      MediaExternalLink,
-                                      'id' | 'site' | 'url'
-                                    >
-                                  >
-                                >
-                              >
-                              listEntry: Maybe<
-                                { __typename?: 'ListEntry' } & Pick<
-                                  ListEntry,
-                                  'id' | 'status'
-                                >
-                              >
-                            }
-                        >
-                      }
-                    >
-                  >
-                >
-              }
-          >
-        >
-      >
-    }
+      }
   >
 }
 export type LocalSourceAnimeVariables = LocalSourceAnimeQueryVariables
@@ -5177,168 +5063,17 @@ export type QueueListEntry = NonNullable<
     (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
   >)['listEntry']
 >
-export type WatchingQueryVariables = WatchingQueryQueryVariables
-export type WatchingQueryListCollection = NonNullable<
-  WatchingQueryQuery['listCollection']
+export type ImportVariables = ImportQueryVariables
+export type ImportListEntries = NonNullable<ImportQuery['ListEntries'][0]>
+export type ImportExtraListEntries = NonNullable<
+  ImportQuery['ExtraListEntries'][0]
 >
-export type WatchingQueryLists = NonNullable<
-  (NonNullable<(NonNullable<WatchingQueryQuery['listCollection']>)['lists']>)[0]
+export type ImportExternalLinksVariables = ImportExternalLinksQueryVariables
+export type ImportExternalLinksMedia = NonNullable<
+  ImportExternalLinksQuery['Media']
 >
-export type WatchingQueryEntries = NonNullable<
+export type ImportExternalLinksExternalLinks = NonNullable<
   (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<WatchingQueryQuery['listCollection']>)['lists']
-      >)[0]
-    >)['entries']
+    (NonNullable<ImportExternalLinksQuery['Media']>)['externalLinks']
   >)[0]
->
-export type WatchingQueryInfo = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<
-          (NonNullable<WatchingQueryQuery['listCollection']>)['lists']
-        >)[0]
-      >)['entries']
-    >)[0]
-  >)['info']
->
-export type WatchingQueryExternalLinks = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<
-          (NonNullable<
-            (NonNullable<
-              (NonNullable<WatchingQueryQuery['listCollection']>)['lists']
-            >)[0]
-          >)['entries']
-        >)[0]
-      >)['info']
-    >)['externalLinks']
-  >)[0]
->
-export type WatchingQueryListEntry = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<
-          (NonNullable<
-            (NonNullable<WatchingQueryQuery['listCollection']>)['lists']
-          >)[0]
-        >)['entries']
-      >)[0]
-    >)['info']
-  >)['listEntry']
->
-export type PlanningQueryVariables = PlanningQueryQueryVariables
-export type PlanningQueryListCollection = NonNullable<
-  PlanningQueryQuery['listCollection']
->
-export type PlanningQueryLists = NonNullable<
-  (NonNullable<(NonNullable<PlanningQueryQuery['listCollection']>)['lists']>)[0]
->
-export type PlanningQueryEntries = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<PlanningQueryQuery['listCollection']>)['lists']
-      >)[0]
-    >)['entries']
-  >)[0]
->
-export type PlanningQueryInfo = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<
-          (NonNullable<PlanningQueryQuery['listCollection']>)['lists']
-        >)[0]
-      >)['entries']
-    >)[0]
-  >)['info']
->
-export type PlanningQueryExternalLinks = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<
-          (NonNullable<
-            (NonNullable<
-              (NonNullable<PlanningQueryQuery['listCollection']>)['lists']
-            >)[0]
-          >)['entries']
-        >)[0]
-      >)['info']
-    >)['externalLinks']
-  >)[0]
->
-export type PlanningQueryListEntry = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<
-          (NonNullable<
-            (NonNullable<PlanningQueryQuery['listCollection']>)['lists']
-          >)[0]
-        >)['entries']
-      >)[0]
-    >)['info']
-  >)['listEntry']
->
-export type PausedQueryVariables = PausedQueryQueryVariables
-export type PausedQueryListCollection = NonNullable<
-  PausedQueryQuery['listCollection']
->
-export type PausedQueryLists = NonNullable<
-  (NonNullable<(NonNullable<PausedQueryQuery['listCollection']>)['lists']>)[0]
->
-export type PausedQueryEntries = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<PausedQueryQuery['listCollection']>)['lists']
-      >)[0]
-    >)['entries']
-  >)[0]
->
-export type PausedQueryInfo = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<
-          (NonNullable<PausedQueryQuery['listCollection']>)['lists']
-        >)[0]
-      >)['entries']
-    >)[0]
-  >)['info']
->
-export type PausedQueryExternalLinks = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<
-          (NonNullable<
-            (NonNullable<
-              (NonNullable<PausedQueryQuery['listCollection']>)['lists']
-            >)[0]
-          >)['entries']
-        >)[0]
-      >)['info']
-    >)['externalLinks']
-  >)[0]
->
-export type PausedQueryListEntry = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<
-          (NonNullable<
-            (NonNullable<PausedQueryQuery['listCollection']>)['lists']
-          >)[0]
-        >)['entries']
-      >)[0]
-    >)['info']
-  >)['listEntry']
 >

@@ -34,83 +34,35 @@ export const QUEUE_QUERY = gql`
   }
 `
 
-export const WATCHING_QUERY = gql`
-  query WatchingQuery($userId: Int!) {
-    listCollection: MediaListCollection(
-      userId: $userId
-      status_in: [CURRENT, REPEATING]
-      type: ANIME
-    ) {
-      lists {
-        isCustomList
-        entries {
-          info: media {
-            id
-            externalLinks {
-              id
-              site
-              url
-            }
-            listEntry @client {
-              id
-              status
-            }
-          }
-        }
-      }
+export const IMPORT_QUERY = gql`
+  query Import(
+    $status: MediaListStatus!
+    $useExtraStatus: Boolean!
+    $extraStatus: MediaListStatus
+  ) {
+    ListEntries(status: $status) @client {
+      id
+      mediaId
+      status
+    }
+    ExtraListEntries: ListEntries(status: $extraStatus)
+      @include(if: $useExtraStatus)
+      @client {
+      id
+      mediaId
+      status
     }
   }
 `
-export const PLANNING_QUERY = gql`
-  query PlanningQuery($userId: Int!) {
-    listCollection: MediaListCollection(
-      userId: $userId
-      status_in: [PLANNING]
-      type: ANIME
-    ) {
-      lists {
-        isCustomList
-        entries {
-          info: media {
-            id
-            externalLinks {
-              id
-              site
-              url
-            }
-            listEntry @client {
-              id
-              status
-            }
-          }
-        }
-      }
-    }
-  }
-`
-export const PAUSED_QUERY = gql`
-  query PausedQuery($userId: Int!) {
-    listCollection: MediaListCollection(
-      userId: $userId
-      status_in: [PAUSED]
-      type: ANIME
-    ) {
-      lists {
-        isCustomList
-        entries {
-          info: media {
-            id
-            externalLinks {
-              id
-              site
-              url
-            }
-            listEntry @client {
-              id
-              status
-            }
-          }
-        }
+
+export const IMPORT_EXTERNAL_LINKS_QUERY = gql`
+  query ImportExternalLinks($mediaId: Int!) {
+    Media(id: $mediaId) {
+      id
+      externalLinks {
+        id
+        site
+        url
       }
     }
   }
