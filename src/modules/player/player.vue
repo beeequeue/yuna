@@ -138,6 +138,7 @@ import {
   isCrunchyroll,
   isNil,
   lastItem,
+  LocalStorageKey,
 } from '@/utils'
 
 import Icon from '@/common/components/icon.vue'
@@ -145,14 +146,6 @@ import Controls from './controls.vue'
 import NextEpisodeOverlay from './next-episode-overlay.vue'
 import EndOfSeasonOverlay from './end-of-season-overlay.vue'
 import { Hidive, HidiveResponseCode } from '@/lib/hidive'
-
-enum LocalStorageKey {
-  QUALITY = 'quality_v2',
-  VOLUME = 'volume',
-  MUTED = 'muted',
-  SPEED = 'speed',
-  SUBTITLE = 'subtitle',
-}
 
 @Component({
   components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },

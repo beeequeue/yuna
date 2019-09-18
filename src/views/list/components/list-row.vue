@@ -1,4 +1,3 @@
-import { MediaListStatus } from '@/graphql/types'
 <template>
   <div class="list" :class="{ [status.toLowerCase()]: true }">
     <div :key="status" class="title-bar" :class="{ empty: list.length < 1 }">
