@@ -91,8 +91,8 @@ import CButton from '@/common/components/button.vue'
 import QueueItem from './components/queue-item.vue'
 import ManualSearchModal from './modals/manual-search/manual-search-modal.vue'
 
-import { pausedQuery, planningQuery, watchingQuery } from './queries'
-import QUEUE_QUERY from './queue.graphql'
+import { QUEUE_QUERY } from './graphql/documents'
+import { pausedQuery, planningQuery, watchingQuery } from './graphql/queries'
 import {
   Provider,
   QueueAnime,

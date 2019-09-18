@@ -4690,11 +4690,61 @@ export type ListViewQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type PausedQueryQueryVariables = {
+export type QueueQueryVariables = {
+  ids: Array<Scalars['Int']>
+}
+
+export type QueueQuery = { __typename?: 'Query' } & {
+  queue: Maybe<
+    { __typename?: 'Page' } & {
+      anime: Maybe<
+        Array<
+          Maybe<
+            { __typename?: 'Media' } & Pick<
+              Media,
+              'id' | 'idMal' | 'episodes' | 'status' | 'siteUrl' | 'bannerImage'
+            > & {
+                title: Maybe<
+                  { __typename?: 'MediaTitle' } & Pick<
+                    MediaTitle,
+                    'userPreferred'
+                  >
+                >
+                nextAiringEpisode: Maybe<
+                  { __typename?: 'AiringSchedule' } & Pick<
+                    AiringSchedule,
+                    'airingAt' | 'timeUntilAiring' | 'episode'
+                  >
+                >
+                externalLinks: Maybe<
+                  Array<
+                    Maybe<
+                      { __typename?: 'MediaExternalLink' } & Pick<
+                        MediaExternalLink,
+                        'site' | 'url'
+                      >
+                    >
+                  >
+                >
+                listEntry: Maybe<
+                  { __typename?: 'ListEntry' } & Pick<
+                    ListEntry,
+                    'id' | 'progress' | 'status' | 'rewatched' | 'score'
+                  >
+                >
+              }
+          >
+        >
+      >
+    }
+  >
+}
+
+export type WatchingQueryQueryVariables = {
   userId: Scalars['Int']
 }
 
-export type PausedQueryQuery = { __typename?: 'Query' } & {
+export type WatchingQueryQuery = { __typename?: 'Query' } & {
   listCollection: Maybe<
     { __typename?: 'MediaListCollection' } & {
       lists: Maybe<
@@ -4790,11 +4840,11 @@ export type PlanningQueryQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type WatchingQueryQueryVariables = {
+export type PausedQueryQueryVariables = {
   userId: Scalars['Int']
 }
 
-export type WatchingQueryQuery = { __typename?: 'Query' } & {
+export type PausedQueryQuery = { __typename?: 'Query' } & {
   listCollection: Maybe<
     { __typename?: 'MediaListCollection' } & {
       lists: Maybe<
@@ -4830,56 +4880,6 @@ export type WatchingQueryQuery = { __typename?: 'Query' } & {
                         >
                       }
                     >
-                  >
-                >
-              }
-          >
-        >
-      >
-    }
-  >
-}
-
-export type QueueQueryVariables = {
-  ids: Array<Scalars['Int']>
-}
-
-export type QueueQuery = { __typename?: 'Query' } & {
-  queue: Maybe<
-    { __typename?: 'Page' } & {
-      anime: Maybe<
-        Array<
-          Maybe<
-            { __typename?: 'Media' } & Pick<
-              Media,
-              'id' | 'idMal' | 'episodes' | 'status' | 'siteUrl' | 'bannerImage'
-            > & {
-                title: Maybe<
-                  { __typename?: 'MediaTitle' } & Pick<
-                    MediaTitle,
-                    'userPreferred'
-                  >
-                >
-                nextAiringEpisode: Maybe<
-                  { __typename?: 'AiringSchedule' } & Pick<
-                    AiringSchedule,
-                    'airingAt' | 'timeUntilAiring' | 'episode'
-                  >
-                >
-                externalLinks: Maybe<
-                  Array<
-                    Maybe<
-                      { __typename?: 'MediaExternalLink' } & Pick<
-                        MediaExternalLink,
-                        'site' | 'url'
-                      >
-                    >
-                  >
-                >
-                listEntry: Maybe<
-                  { __typename?: 'ListEntry' } & Pick<
-                    ListEntry,
-                    'id' | 'progress' | 'status' | 'rewatched' | 'score'
                   >
                 >
               }
@@ -5150,41 +5150,68 @@ export type ListViewTitle = NonNullable<
 export type ListViewCoverImage = NonNullable<
   (NonNullable<ListViewQuery['ListEntries'][0]>)['anime']['coverImage']
 >
-export type PausedQueryVariables = PausedQueryQueryVariables
-export type PausedQueryListCollection = NonNullable<
-  PausedQueryQuery['listCollection']
+export type QueueVariables = QueueQueryVariables
+export type QueueQueue = NonNullable<QueueQuery['queue']>
+export type QueueAnime = NonNullable<
+  (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
 >
-export type PausedQueryLists = NonNullable<
-  (NonNullable<(NonNullable<PausedQueryQuery['listCollection']>)['lists']>)[0]
+export type QueueTitle = NonNullable<
+  (NonNullable<
+    (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
+  >)['title']
 >
-export type PausedQueryEntries = NonNullable<
+export type QueueNextAiringEpisode = NonNullable<
+  (NonNullable<
+    (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
+  >)['nextAiringEpisode']
+>
+export type QueueExternalLinks = NonNullable<
+  (NonNullable<
+    (NonNullable<
+      (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
+    >)['externalLinks']
+  >)[0]
+>
+export type QueueListEntry = NonNullable<
+  (NonNullable<
+    (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
+  >)['listEntry']
+>
+export type WatchingQueryVariables = WatchingQueryQueryVariables
+export type WatchingQueryListCollection = NonNullable<
+  WatchingQueryQuery['listCollection']
+>
+export type WatchingQueryLists = NonNullable<
+  (NonNullable<(NonNullable<WatchingQueryQuery['listCollection']>)['lists']>)[0]
+>
+export type WatchingQueryEntries = NonNullable<
   (NonNullable<
     (NonNullable<
       (NonNullable<
-        (NonNullable<PausedQueryQuery['listCollection']>)['lists']
+        (NonNullable<WatchingQueryQuery['listCollection']>)['lists']
       >)[0]
     >)['entries']
   >)[0]
 >
-export type PausedQueryInfo = NonNullable<
+export type WatchingQueryInfo = NonNullable<
   (NonNullable<
     (NonNullable<
       (NonNullable<
         (NonNullable<
-          (NonNullable<PausedQueryQuery['listCollection']>)['lists']
+          (NonNullable<WatchingQueryQuery['listCollection']>)['lists']
         >)[0]
       >)['entries']
     >)[0]
   >)['info']
 >
-export type PausedQueryExternalLinks = NonNullable<
+export type WatchingQueryExternalLinks = NonNullable<
   (NonNullable<
     (NonNullable<
       (NonNullable<
         (NonNullable<
           (NonNullable<
             (NonNullable<
-              (NonNullable<PausedQueryQuery['listCollection']>)['lists']
+              (NonNullable<WatchingQueryQuery['listCollection']>)['lists']
             >)[0]
           >)['entries']
         >)[0]
@@ -5192,13 +5219,13 @@ export type PausedQueryExternalLinks = NonNullable<
     >)['externalLinks']
   >)[0]
 >
-export type PausedQueryListEntry = NonNullable<
+export type WatchingQueryListEntry = NonNullable<
   (NonNullable<
     (NonNullable<
       (NonNullable<
         (NonNullable<
           (NonNullable<
-            (NonNullable<PausedQueryQuery['listCollection']>)['lists']
+            (NonNullable<WatchingQueryQuery['listCollection']>)['lists']
           >)[0]
         >)['entries']
       >)[0]
@@ -5260,41 +5287,41 @@ export type PlanningQueryListEntry = NonNullable<
     >)['info']
   >)['listEntry']
 >
-export type WatchingQueryVariables = WatchingQueryQueryVariables
-export type WatchingQueryListCollection = NonNullable<
-  WatchingQueryQuery['listCollection']
+export type PausedQueryVariables = PausedQueryQueryVariables
+export type PausedQueryListCollection = NonNullable<
+  PausedQueryQuery['listCollection']
 >
-export type WatchingQueryLists = NonNullable<
-  (NonNullable<(NonNullable<WatchingQueryQuery['listCollection']>)['lists']>)[0]
+export type PausedQueryLists = NonNullable<
+  (NonNullable<(NonNullable<PausedQueryQuery['listCollection']>)['lists']>)[0]
 >
-export type WatchingQueryEntries = NonNullable<
+export type PausedQueryEntries = NonNullable<
   (NonNullable<
     (NonNullable<
       (NonNullable<
-        (NonNullable<WatchingQueryQuery['listCollection']>)['lists']
+        (NonNullable<PausedQueryQuery['listCollection']>)['lists']
       >)[0]
     >)['entries']
   >)[0]
 >
-export type WatchingQueryInfo = NonNullable<
+export type PausedQueryInfo = NonNullable<
   (NonNullable<
     (NonNullable<
       (NonNullable<
         (NonNullable<
-          (NonNullable<WatchingQueryQuery['listCollection']>)['lists']
+          (NonNullable<PausedQueryQuery['listCollection']>)['lists']
         >)[0]
       >)['entries']
     >)[0]
   >)['info']
 >
-export type WatchingQueryExternalLinks = NonNullable<
+export type PausedQueryExternalLinks = NonNullable<
   (NonNullable<
     (NonNullable<
       (NonNullable<
         (NonNullable<
           (NonNullable<
             (NonNullable<
-              (NonNullable<WatchingQueryQuery['listCollection']>)['lists']
+              (NonNullable<PausedQueryQuery['listCollection']>)['lists']
             >)[0]
           >)['entries']
         >)[0]
@@ -5302,43 +5329,16 @@ export type WatchingQueryExternalLinks = NonNullable<
     >)['externalLinks']
   >)[0]
 >
-export type WatchingQueryListEntry = NonNullable<
+export type PausedQueryListEntry = NonNullable<
   (NonNullable<
     (NonNullable<
       (NonNullable<
         (NonNullable<
           (NonNullable<
-            (NonNullable<WatchingQueryQuery['listCollection']>)['lists']
+            (NonNullable<PausedQueryQuery['listCollection']>)['lists']
           >)[0]
         >)['entries']
       >)[0]
     >)['info']
-  >)['listEntry']
->
-export type QueueVariables = QueueQueryVariables
-export type QueueQueue = NonNullable<QueueQuery['queue']>
-export type QueueAnime = NonNullable<
-  (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
->
-export type QueueTitle = NonNullable<
-  (NonNullable<
-    (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
-  >)['title']
->
-export type QueueNextAiringEpisode = NonNullable<
-  (NonNullable<
-    (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
-  >)['nextAiringEpisode']
->
-export type QueueExternalLinks = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
-    >)['externalLinks']
-  >)[0]
->
-export type QueueListEntry = NonNullable<
-  (NonNullable<
-    (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
   >)['listEntry']
 >

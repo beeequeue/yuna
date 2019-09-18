@@ -1,14 +1,15 @@
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 
 import {
+  PAUSED_QUERY,
+  PLANNING_QUERY,
+  WATCHING_QUERY,
+} from '@/views/queue/graphql/documents'
+import {
   PausedQueryQuery,
   PlanningQueryQuery,
   WatchingQueryQuery,
 } from '@/graphql/types'
-
-import WATCHING_QUERY from './watching.graphql'
-import PLANNING_QUERY from './planning.graphql'
-import PAUSED_QUERY from './paused.graphql'
 
 export const watchingQuery = (apollo: DollarApollo<any>, userId: number) =>
   apollo.query<WatchingQueryQuery>({
