@@ -79,8 +79,7 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
       return null
     }
 
-    const listEntry = this.fromWatchedInfo(anilistId, item)
-    return listEntry
+    return this.fromWatchedInfo(anilistId, item)
   }
 
   public async GetListEntries(
@@ -101,12 +100,24 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
       return [oc(relation).id(), info] as const
     })
 
-    const entries = idInfoMap
+    let entries = idInfoMap
       .filter((item): item is [number, SimklListEntry] => !isNil(item[0]))
       .map(item => this.fromWatchedInfo(...item))
 
+    if (!isNil(options.id_in)) {
+      entries = entries.filter(item => options.id_in!.includes(item.id))
+    }
+
+    if (!isNil(options.status_not)) {
+      entries = entries.filter(item => item.status !== options.status_not)
+    }
+
+    if (!isNil(options.status)) {
+      entries = entries.filter(item => item.status === options.status)
+    }
+
     if (!isNil(options.perPage) && !isNil(options.page)) {
-      return entries.slice(
+      entries = entries.slice(
         options.perPage * (options.page - 1),
         options.perPage * options.page,
       )
