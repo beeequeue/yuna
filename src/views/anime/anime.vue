@@ -114,8 +114,8 @@ export default class Anime extends Vue {
         id: this.id,
       }
     },
-    error(err: Error) {
-      this.error = err.message
+    error(err) {
+      this.error = typeof err === 'string' ? err : err.message
     },
   })
   public data!: AnimeViewQuery | null
@@ -128,7 +128,7 @@ export default class Anime extends Vue {
     variables() {
       return {
         id: this.id,
-        provider: getDefaultProvider(this.$store.state.auth, this.data.anime),
+        provider: getDefaultProvider(this.$store.state.auth, this.data!.anime!),
       }
     },
     skip() {

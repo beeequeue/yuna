@@ -35,7 +35,9 @@ export default class SourceList extends Vue {
   }
 
   public getLogo(source: keyof StreamingSource) {
-    const image = `./${StreamingSource[source as any]}.svg`
+    const image = `./${
+      StreamingSource[source as keyof typeof StreamingSource]
+    }.svg`
 
     if (!siteImages.includes(image)) {
       return null

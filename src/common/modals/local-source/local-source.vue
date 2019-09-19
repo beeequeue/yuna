@@ -84,13 +84,13 @@ export default class LocalSourceModal extends Vue {
 
   @Query<LocalSourceModal, LocalSourceAnimeQuery, LocalSourceAnimeVariables>({
     query: LOCAL_SOURCE_ANIME,
-    variables() {
-      return {
-        id: this.animeId,
-      }
-    },
     skip() {
       return isNil(this.animeId)
+    },
+    variables() {
+      return {
+        id: this.animeId!,
+      }
     },
   })
   public anime!: LocalSourceAnimeQuery['anime']

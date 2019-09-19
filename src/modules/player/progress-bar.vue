@@ -65,7 +65,7 @@ export default class ProgressBar extends Vue {
 
   public handleMouseOver(e: MouseEvent) {
     this.hovering = true
-    this.mousePosition = e.layerX / this.$refs.progressBar.clientWidth
+    this.mousePosition = e.offsetX / this.$refs.progressBar.clientWidth
 
     if (this.mouseDown) {
       const newProgress = Math.round(this.mousePosition * this.duration)
