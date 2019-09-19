@@ -1,5 +1,5 @@
 <template>
-  <div class="checkbox-container">
+  <div class="checkbox-container" :class="{ impossible }">
     <input
       v-show="false"
       :id="setting"
@@ -10,7 +10,7 @@
 
     <label :for="setting">
       <div class="checkbox" :class="{ checked }">
-        <icon :icon="checkSvg" />
+        <icon :icon="!impossible ? checkSvg : crossSvg" />
       </div>
       {{ text }}
     </label>
@@ -19,7 +19,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mdiCheck } from '@mdi/js'
+import { mdiCheck, mdiClose } from '@mdi/js'
 
 import { Required } from '@/decorators'
 
@@ -33,9 +33,11 @@ export default class Checkbox extends Vue {
   @Prop(String) public text!: string | null
   @Required(String) public setting!: string
   @Required(Boolean) public checked!: boolean
+  @Prop(Boolean) public impossible!: boolean
   @Required(Function) public onChange!: (value: boolean) => any
 
   public checkSvg = mdiCheck
+  public crossSvg = mdiClose
 
   public handleChange(e: Event) {
     const target = e.target as HTMLInputElement
@@ -55,6 +57,14 @@ export default class Checkbox extends Vue {
   align-items: center;
   margin: 10px 0;
   user-select: none;
+
+  &.impossible {
+    pointer-events: none;
+
+    & > label > .checkbox {
+      background: $danger !important;
+    }
+  }
 
   & > label {
     width: 100%;

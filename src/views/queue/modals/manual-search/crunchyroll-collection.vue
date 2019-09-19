@@ -1,5 +1,5 @@
 <template>
-  <div class="collection">
+  <div class="collection" v-tooltip="tooltip">
     <div class="header" @click="toggleItemOpen">
       <icon class="collapser" :class="{ flip: !open }" :icon="expandSvg" />
 
@@ -12,6 +12,7 @@
       <checkbox
         :setting="`checked-${collection.collection_id}`"
         :checked="isFullySelected"
+        :impossible="isFucked"
         :onChange="handleCheckChange"
       />
     </div>
@@ -42,6 +43,7 @@ import CrunchyrollEpisode from './crunchyroll-episode.vue'
 import { Required } from '@/decorators'
 import { _CollectionWithEpisodes } from '@/lib/crunchyroll'
 import { humanizeNumberList, isNotNil, pluck, prop, propEq } from '@/utils'
+import { TooltipSettings } from 'v-tooltip'
 
 const pluckId = (obj: Array<{ id: string }>) => pluck('id', obj)
 
@@ -65,6 +67,10 @@ export default class CrunchyrollCollection extends Vue {
     return selectedIds.filter(id => ownedIds.includes(id))
   }
 
+  public get isFucked() {
+    return this.collection.episodes.length < 1
+  }
+
   public get isFullySelected() {
     return this.ownedSelectedEpisodes.length === this.collection.episodes.length
   }
@@ -78,6 +84,17 @@ export default class CrunchyrollCollection extends Vue {
       .map(prop('episodeNumber'))
 
     return humanizeNumberList(selectedNumbers)
+  }
+
+  public get tooltip(): TooltipSettings | null {
+    if (this.isFucked) {
+      return {
+        content: 'This is not available.',
+        placement: 'top',
+      }
+    }
+
+    return null
   }
 
   public toggleItemOpen() {
