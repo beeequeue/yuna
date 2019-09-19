@@ -442,9 +442,10 @@ export default class Player extends Vue {
   }
 
   public onLoadedProgress(e: Event) {
-    if (!this.episode) return
-
     const element = e.target as HTMLVideoElement
+
+    if (!this.episode || element.buffered.length < 1) return
+
     this.loadedSeconds = element.buffered.end(0)
     this.loadedPercentage = this.loadedSeconds / this.duration
   }
