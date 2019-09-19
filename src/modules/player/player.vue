@@ -413,6 +413,8 @@ export default class Player extends Vue {
         this.playhead < (this.episode as EpisodeListEpisodes).duration * 0.8
           ? this.playhead
           : 0
+
+      this.$refs.player.playbackRate = this.speed
     })
 
     this.$refs.player.onplay = () => {
