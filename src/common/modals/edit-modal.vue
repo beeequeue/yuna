@@ -95,7 +95,7 @@ import {
   setEditingAnimeValue,
   toggleModal,
 } from '@/state/app'
-import { capitalize, enumToArray, humanizeMediaListStatus } from '@/utils'
+import { enumToArray, humanizeMediaListStatus } from '@/utils'
 
 import CButton from '@/common/components/button.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
@@ -142,7 +142,7 @@ export default class EditModal extends Vue {
     status => ({
       label: humanizeMediaListStatus(
         { progress: null, status: status as any },
-        false,
+        null,
       ),
       value: status.toString(),
     }),
