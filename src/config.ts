@@ -13,7 +13,7 @@ const config = {
   production: {
     ANILIST_ID: '1410',
     FATHOM_URL: 'https://fathom.haglund.dev',
-    FATHOM_SITE_ID: 'EIVDE',
+    FATHOM_SITE_ID: 'YTKMF',
   },
 }
 
