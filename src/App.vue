@@ -39,11 +39,10 @@
 import { ipcRenderer } from 'electron'
 import { Vue, Watch } from 'vue-property-decorator'
 import Component from 'vue-class-component'
+import { captureException } from '@sentry/browser'
 
-import CButton from '@/common/components/button.vue'
 import TitleBar from '@/common/components/title-bar.vue'
 import ToastOverlay from '@/common/components/toast-overlay.vue'
-import Loading from '@/common/components/loading.vue'
 import AboutModal from '@/common/modals/about-modal.vue'
 import EditModal from '@/common/modals/edit-modal.vue'
 import LocalSourceModal from '@/common/modals/local-source/local-source.vue'
@@ -51,16 +50,9 @@ import PlayerContainer from '@/modules/player/player-container.vue'
 import Navbar from '@/modules/navbar/navbar.vue'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { Hidive } from '@/lib/hidive'
-import { getFinishedConnecting, getIsConnectedTo } from '@/state/auth'
+import { getFinishedConnecting } from '@/state/auth'
 import { getHasFinishedSetup } from '@/state/settings'
-import {
-  AppState,
-  getEditingAnime,
-  getIsFullscreen,
-  getModalStates,
-  sendErrorToast,
-  toggleModal,
-} from '@/state/app'
+import { getIsFullscreen, sendErrorToast } from '@/state/app'
 import { CHECK_FOR_UPDATES } from '@/messages'
 import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
 import { SimklListPlugin } from '@/plugins/list/simkl-plugin'
@@ -70,8 +62,6 @@ const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
 
 @Component({
   components: {
-    CButton,
-    Loading,
     TitleBar,
     PlayerContainer,
     Navbar,
@@ -82,10 +72,6 @@ const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
   },
 })
 export default class App extends Vue {
-  public get isConnectedTo() {
-    return getIsConnectedTo(this.$store)
-  }
-
   public get isFinishedConnecting() {
     return getFinishedConnecting(this.$store)
   }
@@ -94,24 +80,21 @@ export default class App extends Vue {
     return getIsFullscreen(this.$store)
   }
 
-  public get modalStates() {
-    return getModalStates(this.$store)
-  }
-
-  public get editingAnime() {
-    return getEditingAnime(this.$store)
-  }
-
   public get hasFinishedSetup() {
     return getHasFinishedSetup(this.$store)
   }
 
   public errorCaptured(err: any) {
-    //eslint-disable-next-line no-console
-    console.error(err)
+    sendErrorToast(this.$store, err)
 
-    if (process.env.NODE_ENV === 'development') {
-      sendErrorToast(this.$store, err)
+    switch (process.env.NODE_ENV) {
+      case 'development':
+        //eslint-disable-next-line no-console
+        console.error(err)
+        break
+      case 'production':
+        captureException(err)
+        break
     }
   }
 
@@ -150,10 +133,6 @@ export default class App extends Vue {
     if (process.env.NODE_ENV === 'production') {
       ipcRenderer.send(CHECK_FOR_UPDATES)
     }
-  }
-
-  public toggleModal(modal: keyof AppState['modals']) {
-    toggleModal(this.$store, modal)
   }
 }
 </script>
