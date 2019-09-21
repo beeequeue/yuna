@@ -270,7 +270,7 @@ export class Simkl {
     })
   }
 
-  public static readonly clientId = getConfig('SIMKL_ID')
+  public static readonly clientId = getConfig('SIMKL_ID')!
 
   public static statusFromSimklStatus(status: SimklListStatus) {
     switch (status) {

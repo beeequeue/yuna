@@ -33,7 +33,7 @@ export enum ImageKeys {
   SIMKL = 'simkl',
 }
 
-const id = getConfig('DISCORD_ID')
+const id = getConfig('DISCORD_ID')!
 let discord!: Discord
 
 const generateId = () => Math.round(Math.random() * 100 + 20)
