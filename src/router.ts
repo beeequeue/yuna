@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
+import { trackView } from '@/lib/tracking'
+import { enumToArray } from '@/utils'
+
 Vue.use(Router)
 
 export enum View {
@@ -67,4 +70,18 @@ export const router = new Router({
         ),
     },
   ],
+})
+
+router.afterEach(to => {
+  let view = to.fullPath === '/' ? View.Dashboard : undefined
+
+  if (!view) {
+    view = enumToArray(View).find(v =>
+      to.fullPath.includes(v.toString()),
+    ) as any
+  }
+
+  if (view) {
+    trackView(view)
+  }
 })

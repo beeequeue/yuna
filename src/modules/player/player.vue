@@ -107,8 +107,10 @@ import {
   Provider,
 } from '@/graphql/types'
 
+import { View } from '@/router'
 import { Required } from '@/decorators'
 import { Crunchyroll } from '@/lib/crunchyroll'
+import { trackView } from '@/lib/tracking'
 import {
   getIsFullscreen,
   PlayerData,
@@ -501,16 +503,7 @@ export default class Player extends Vue {
     ) {
       this.lastScrobble = this.progressInSeconds
 
-      if (isCrunchyroll(this.playerData.provider)) {
-        Crunchyroll.setProgressOfEpisode(
-          Number(this.episode.id),
-          this.progressInSeconds,
-        ).catch(() => {
-          // If it fails to set progress, set lastScrobble to duration
-          // to stop it trying again for this episode.
-          this.lastScrobble = this.duration
-        })
-      }
+      this.scrobbleTimeProgress()
     }
 
     if (
@@ -648,6 +641,21 @@ export default class Player extends Vue {
     }
 
     this.setProgress(this.episode.episodeNumber)
+  }
+
+  public scrobbleTimeProgress() {
+    trackView(View.Player)
+
+    if (isCrunchyroll(this.playerData.provider)) {
+      Crunchyroll.setProgressOfEpisode(
+        Number(this.episode!.id),
+        this.progressInSeconds,
+      ).catch(() => {
+        // If it fails to set progress, set lastScrobble to duration
+        // to stop it trying again for this episode.
+        this.lastScrobble = this.duration
+      })
+    }
   }
 
   private pauseAndTraverseFrames(frames: number) {
