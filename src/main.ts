@@ -31,6 +31,13 @@ if (process.env.NODE_ENV === 'production') {
     beforeSend: normalizeEvent,
     environment: process.env.NODE_ENV,
     release: `v${version}`,
+    ignoreErrors: [
+      /Request has been terminated/,
+      /operation not permitted/,
+      /temp-yuna-setup/,
+      /ERR_CONNECTION/,
+      /child "activity" fails/,
+    ],
   })
 }
 
