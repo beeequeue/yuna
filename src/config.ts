@@ -12,18 +12,31 @@ const config = {
   },
   production: {
     ANILIST_ID: '1410',
+    FATHOM_URL: 'https://fathom.haglund.dev',
+    FATHOM_SITE_ID: 'EIVDE',
   },
 }
 
-type Key = keyof typeof config.all | keyof typeof config.production
+type Config = typeof config
+type AllKey = keyof Config['all']
+type ProdKey = keyof Config['production']
 
-const isInProdConfig = (key: string): key is keyof typeof config.production =>
+const isInProd = (key: string): key is ProdKey =>
   Object.keys(config.production).includes(key)
 
-export const getConfig = <K extends Key>(key: K): string => {
-  if (process.env.NODE_ENV === 'production' && isInProdConfig(key)) {
+const isInAll = (key: string): key is AllKey =>
+  Object.keys(config.all).includes(key)
+
+export const getConfig = <K extends AllKey | ProdKey>(
+  key: K,
+): string | null => {
+  if (process.env.NODE_ENV === 'production' && isInProd(key)) {
     return config.production[key]
   }
 
-  return config.all[key]
+  if (isInAll(key)) {
+    return config.all[key]
+  }
+
+  return null
 }
