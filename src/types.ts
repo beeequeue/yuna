@@ -2,6 +2,13 @@ import { Store } from 'vuex'
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 import { Provider } from '@/graphql/types'
 
+export enum SupportedMediaKeys {
+  MediaPlayPause = 'PLAYER_PLAY_PAUSE',
+  MediaStop = 'PLAYER_STOP',
+  MediaNextTrack = 'PLAYER_NEXT',
+  MediaPreviousTrack = 'PLAYER_PREVIOUS',
+}
+
 export interface Levels {
   [key: string]: number
 }

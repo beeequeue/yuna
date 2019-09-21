@@ -1,11 +1,11 @@
 import {
   app,
   BrowserWindow,
+  globalShortcut,
   ipcMain,
   Menu,
   MenuItemConstructorOptions,
   protocol,
-  globalShortcut,
 } from 'electron'
 import electronDebug, { openDevTools } from 'electron-debug'
 import Store from 'electron-store'
@@ -23,13 +23,13 @@ import {
   ANILIST_LOGIN,
   LOGGED_INTO_ANILIST,
   OPEN_DEVTOOLS,
-  PLAYER_NEXT,
-  PLAYER_PLAY_PAUSE,
-  PLAYER_PREVIOUS,
-  PLAYER_STOP,
+  REGISTER_MEDIA_KEYS,
+  UNREGISTER_MEDIA_KEYS,
 } from './messages'
 import { initAutoUpdater } from './updater'
 import { version } from '../package.json'
+import { SupportedMediaKeys } from '@/types'
+import { enumKeysToArray } from '@/utils'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 if (isDevelopment) {
@@ -68,18 +68,17 @@ protocol.registerSchemesAsPrivileged([
 electronDebug({})
 
 const registerMediaKeys = (window: BrowserWindow) => {
-  globalShortcut.register('MediaPlayPause', () =>
-    window.webContents.send(PLAYER_PLAY_PAUSE),
+  enumKeysToArray(SupportedMediaKeys).forEach(key =>
+    globalShortcut.register(key, () =>
+      window.webContents.send(SupportedMediaKeys[key]),
+    ),
   )
-  globalShortcut.register('MediaStop', () =>
-    window.webContents.send(PLAYER_STOP),
-  )
-  globalShortcut.register('MediaNextTrack', () =>
-    window.webContents.send(PLAYER_NEXT),
-  )
-  globalShortcut.register('MediaPreviousTrack', () =>
-    window.webContents.send(PLAYER_PREVIOUS),
-  )
+}
+
+const unregisterMediaKeys = () => {
+  enumKeysToArray(SupportedMediaKeys).forEach(key => {
+    globalShortcut.unregister(key)
+  })
 }
 
 const createMainWindow = () => {
@@ -171,8 +170,6 @@ const createMainWindow = () => {
 
   registerDiscord()
 
-  registerMediaKeys(window)
-
   if (isDevelopment) {
     // Load the url of the dev server if in development mode
     window.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
@@ -192,6 +189,9 @@ const createMainWindow = () => {
   ipcMain.on(OPEN_DEVTOOLS, () => {
     openDevTools()
   })
+
+  ipcMain.on(REGISTER_MEDIA_KEYS, () => registerMediaKeys(window))
+  ipcMain.on(UNREGISTER_MEDIA_KEYS, () => unregisterMediaKeys())
 
   window.on('close', () => {
     settingsStore.set('window', mainWindow!.getBounds())

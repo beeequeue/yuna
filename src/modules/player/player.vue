@@ -125,6 +125,8 @@ import {
   PLAYER_PLAY_PAUSE,
   PLAYER_PREVIOUS,
   PLAYER_STOP,
+  REGISTER_MEDIA_KEYS,
+  UNREGISTER_MEDIA_KEYS,
 } from '@/messages'
 import { Levels, Stream } from '@/types'
 import {
@@ -294,6 +296,8 @@ export default class Player extends Vue {
   }
 
   public registerMediaKeys() {
+    ipcRenderer.send(REGISTER_MEDIA_KEYS)
+
     ipcRenderer.on(PLAYER_PLAY_PAUSE, () =>
       this.paused ? this.play() : this.pause(),
     )
@@ -304,6 +308,8 @@ export default class Player extends Vue {
   }
 
   public unregisterMediaKeys() {
+    ipcRenderer.send(UNREGISTER_MEDIA_KEYS)
+
     ipcRenderer.removeAllListeners(PLAYER_PLAY_PAUSE)
     ipcRenderer.removeAllListeners(PLAYER_STOP)
     ipcRenderer.removeAllListeners(PLAYER_NEXT)
