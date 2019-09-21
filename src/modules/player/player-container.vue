@@ -55,11 +55,11 @@ export default class PlayerContainer extends Vue {
     query: ANIME_QUERY,
     variables() {
       return {
-        id: this.id,
+        id: this.id!,
       }
     },
     skip() {
-      return !this.id
+      return isNil(this.id)
     },
   })
   public anime: PlayerAnimeAnime | null = null
@@ -68,8 +68,8 @@ export default class PlayerContainer extends Vue {
     query: EPISODE_LIST,
     variables() {
       return {
-        id: this.id,
-        provider: this.playerData.provider,
+        id: this.id!,
+        provider: this.playerData!.provider,
       }
     },
     skip() {

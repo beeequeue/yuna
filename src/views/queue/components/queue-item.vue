@@ -175,7 +175,7 @@ import { CrunchyrollProviders } from '@/types'
   },
 })
 export default class QueueItem extends Vue {
-  @Query<EpisodeList, EpisodeListQuery, EpisodeListVariables>({
+  @Query<QueueItem, EpisodeListQuery, EpisodeListVariables>({
     fetchPolicy: 'network-only',
     query: EPISODE_LIST,
     loadingKey: 'episodesLoading',

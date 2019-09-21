@@ -127,7 +127,9 @@ export default class SourceSelect extends Vue {
   }
 
   public getLogo(source: QueueExternalLinks) {
-    const image = `./${StreamingSource[source.site as any]}.svg`
+    const image = `./${
+      StreamingSource[source.site as keyof typeof StreamingSource]
+    }.svg`
 
     if (!siteImages.includes(image)) {
       return null

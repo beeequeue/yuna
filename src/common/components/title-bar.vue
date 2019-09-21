@@ -62,7 +62,7 @@ const flagContext = require.context('svg-country-flags/svg')
 
 @Component<TitleBar>({ components: { Icon } })
 export default class TitleBar extends Vue {
-  @Query({
+  @Query<TitleBar, { Viewer: null | { id: number } }>({
     fetchPolicy: 'no-cache',
     query: gql`
       {
@@ -71,7 +71,6 @@ export default class TitleBar extends Vue {
         }
       }
     `,
-    variables: null,
     skip() {
       return !this.isConnectedTo.anilist
     },

@@ -413,7 +413,7 @@ export default class Settings extends Vue {
 
   public get keybindingActions(): string[] {
     return Object.keys(KeybindingAction)
-      .map((key: any) => KeybindingAction[key])
+      .map(key => KeybindingAction[key as keyof typeof KeybindingAction])
       .filter(item => typeof item === 'string')
   }
 
