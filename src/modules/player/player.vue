@@ -118,7 +118,14 @@ import {
 } from '@/state/app'
 import { getAnilistUsername } from '@/state/auth'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
-import { DISCORD_PAUSE_WATCHING, DISCORD_SET_WATCHING } from '@/messages'
+import {
+  DISCORD_PAUSE_WATCHING,
+  DISCORD_SET_WATCHING,
+  PLAYER_NEXT,
+  PLAYER_PLAY_PAUSE,
+  PLAYER_PREVIOUS,
+  PLAYER_STOP,
+} from '@/messages'
 import { Levels, Stream } from '@/types'
 import {
   capitalize,
@@ -272,12 +279,35 @@ export default class Player extends Vue {
       .connect(this.gainNode)
 
     this.gainNode.connect(audioContext.destination)
+
+    this.registerMediaKeys()
   }
 
   public beforeDestroy() {
     this.fadeOutVolume()
 
     setTimeout(() => this.hls.destroy(), 500)
+  }
+
+  public destroyed() {
+    this.unregisterMediaKeys()
+  }
+
+  public registerMediaKeys() {
+    ipcRenderer.on(PLAYER_PLAY_PAUSE, () =>
+      this.paused ? this.play() : this.pause(),
+    )
+    ipcRenderer.on(PLAYER_STOP, this.pause)
+
+    ipcRenderer.on(PLAYER_NEXT, () => this.skipBySeconds(10))
+    ipcRenderer.on(PLAYER_PREVIOUS, () => this.skipBySeconds(-10))
+  }
+
+  public unregisterMediaKeys() {
+    ipcRenderer.removeAllListeners(PLAYER_PLAY_PAUSE)
+    ipcRenderer.removeAllListeners(PLAYER_STOP)
+    ipcRenderer.removeAllListeners(PLAYER_NEXT)
+    ipcRenderer.removeAllListeners(PLAYER_PREVIOUS)
   }
 
   public closePlayer() {

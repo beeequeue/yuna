@@ -5,6 +5,7 @@ import {
   Menu,
   MenuItemConstructorOptions,
   protocol,
+  globalShortcut,
 } from 'electron'
 import electronDebug, { openDevTools } from 'electron-debug'
 import Store from 'electron-store'
@@ -18,7 +19,15 @@ import {
 } from 'vue-cli-plugin-electron-builder/lib'
 
 import { destroyDiscord, registerDiscord } from './lib/discord'
-import { ANILIST_LOGIN, LOGGED_INTO_ANILIST, OPEN_DEVTOOLS } from './messages'
+import {
+  ANILIST_LOGIN,
+  LOGGED_INTO_ANILIST,
+  OPEN_DEVTOOLS,
+  PLAYER_NEXT,
+  PLAYER_PLAY_PAUSE,
+  PLAYER_PREVIOUS,
+  PLAYER_STOP,
+} from './messages'
 import { initAutoUpdater } from './updater'
 import { version } from '../package.json'
 
@@ -57,6 +66,21 @@ protocol.registerSchemesAsPrivileged([
 
 // Register extra stuff
 electronDebug({})
+
+const registerMediaKeys = (window: BrowserWindow) => {
+  globalShortcut.register('MediaPlayPause', () =>
+    window.webContents.send(PLAYER_PLAY_PAUSE),
+  )
+  globalShortcut.register('MediaStop', () =>
+    window.webContents.send(PLAYER_STOP),
+  )
+  globalShortcut.register('MediaNextTrack', () =>
+    window.webContents.send(PLAYER_NEXT),
+  )
+  globalShortcut.register('MediaPreviousTrack', () =>
+    window.webContents.send(PLAYER_PREVIOUS),
+  )
+}
 
 const createMainWindow = () => {
   const settingsStore = new Store<any>({ name: 'settings' })
@@ -146,6 +170,8 @@ const createMainWindow = () => {
   initAutoUpdater()
 
   registerDiscord()
+
+  registerMediaKeys(window)
 
   if (isDevelopment) {
     // Load the url of the dev server if in development mode
