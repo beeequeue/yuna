@@ -1,6 +1,7 @@
 import {
   app,
   BrowserWindow,
+  globalShortcut,
   ipcMain,
   Menu,
   MenuItemConstructorOptions,
@@ -18,9 +19,17 @@ import {
 } from 'vue-cli-plugin-electron-builder/lib'
 
 import { destroyDiscord, registerDiscord } from './lib/discord'
-import { ANILIST_LOGIN, LOGGED_INTO_ANILIST, OPEN_DEVTOOLS } from './messages'
+import {
+  ANILIST_LOGIN,
+  LOGGED_INTO_ANILIST,
+  OPEN_DEVTOOLS,
+  REGISTER_MEDIA_KEYS,
+  UNREGISTER_MEDIA_KEYS,
+} from './messages'
 import { initAutoUpdater } from './updater'
 import { version } from '../package.json'
+import { SupportedMediaKeys } from '@/types'
+import { enumKeysToArray } from '@/utils'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 if (isDevelopment) {
@@ -57,6 +66,20 @@ protocol.registerSchemesAsPrivileged([
 
 // Register extra stuff
 electronDebug({})
+
+const registerMediaKeys = (window: BrowserWindow) => {
+  enumKeysToArray(SupportedMediaKeys).forEach(key =>
+    globalShortcut.register(key, () =>
+      window.webContents.send(SupportedMediaKeys[key]),
+    ),
+  )
+}
+
+const unregisterMediaKeys = () => {
+  enumKeysToArray(SupportedMediaKeys).forEach(key => {
+    globalShortcut.unregister(key)
+  })
+}
 
 const createMainWindow = () => {
   const settingsStore = new Store<any>({ name: 'settings' })
@@ -166,6 +189,9 @@ const createMainWindow = () => {
   ipcMain.on(OPEN_DEVTOOLS, () => {
     openDevTools()
   })
+
+  ipcMain.on(REGISTER_MEDIA_KEYS, () => registerMediaKeys(window))
+  ipcMain.on(UNREGISTER_MEDIA_KEYS, () => unregisterMediaKeys())
 
   window.on('close', () => {
     settingsStore.set('window', mainWindow!.getBounds())

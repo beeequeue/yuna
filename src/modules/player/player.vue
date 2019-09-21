@@ -118,7 +118,16 @@ import {
 } from '@/state/app'
 import { getAnilistUsername } from '@/state/auth'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
-import { DISCORD_PAUSE_WATCHING, DISCORD_SET_WATCHING } from '@/messages'
+import {
+  DISCORD_PAUSE_WATCHING,
+  DISCORD_SET_WATCHING,
+  PLAYER_NEXT,
+  PLAYER_PLAY_PAUSE,
+  PLAYER_PREVIOUS,
+  PLAYER_STOP,
+  REGISTER_MEDIA_KEYS,
+  UNREGISTER_MEDIA_KEYS,
+} from '@/messages'
 import { Levels, Stream } from '@/types'
 import {
   capitalize,
@@ -171,10 +180,7 @@ export default class Player extends Vue {
     LocalStorageKey.VOLUME,
     70,
   )
-  public speed: number = this.getNumberFromLocalStorage(
-    LocalStorageKey.SPEED,
-    1,
-  )
+  public speed: number = 1
   public quality: string =
     localStorage.getItem(LocalStorageKey.QUALITY) || '1080'
   public duration = 0
@@ -275,12 +281,39 @@ export default class Player extends Vue {
       .connect(this.gainNode)
 
     this.gainNode.connect(audioContext.destination)
+
+    this.registerMediaKeys()
   }
 
   public beforeDestroy() {
     this.fadeOutVolume()
 
     setTimeout(() => this.hls.destroy(), 500)
+  }
+
+  public destroyed() {
+    this.unregisterMediaKeys()
+  }
+
+  public registerMediaKeys() {
+    ipcRenderer.send(REGISTER_MEDIA_KEYS)
+
+    ipcRenderer.on(PLAYER_PLAY_PAUSE, () =>
+      this.paused ? this.play() : this.pause(),
+    )
+    ipcRenderer.on(PLAYER_STOP, this.pause)
+
+    ipcRenderer.on(PLAYER_NEXT, () => this.skipBySeconds(10))
+    ipcRenderer.on(PLAYER_PREVIOUS, () => this.skipBySeconds(-10))
+  }
+
+  public unregisterMediaKeys() {
+    ipcRenderer.send(UNREGISTER_MEDIA_KEYS)
+
+    ipcRenderer.removeAllListeners(PLAYER_PLAY_PAUSE)
+    ipcRenderer.removeAllListeners(PLAYER_STOP)
+    ipcRenderer.removeAllListeners(PLAYER_NEXT)
+    ipcRenderer.removeAllListeners(PLAYER_PREVIOUS)
   }
 
   public closePlayer() {
@@ -413,6 +446,8 @@ export default class Player extends Vue {
         this.playhead < (this.episode as EpisodeListEpisodes).duration * 0.8
           ? this.playhead
           : 0
+
+      this.$refs.player.playbackRate = this.speed
     })
 
     this.$refs.player.onplay = () => {
@@ -440,9 +475,10 @@ export default class Player extends Vue {
   }
 
   public onLoadedProgress(e: Event) {
-    if (!this.episode) return
-
     const element = e.target as HTMLVideoElement
+
+    if (!this.episode || element.buffered.length < 1) return
+
     this.loadedSeconds = element.buffered.end(0)
     this.loadedPercentage = this.loadedSeconds / this.duration
   }

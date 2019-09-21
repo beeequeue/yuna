@@ -144,7 +144,7 @@ export default class NextEpisodeOverlay extends Vue {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  pointer-events: all;
+  pointer-events: none;
   user-select: none;
   white-space: nowrap;
   font-family: 'Raleway', sans-serif;

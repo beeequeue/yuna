@@ -95,7 +95,7 @@ import {
   setEditingAnimeValue,
   toggleModal,
 } from '@/state/app'
-import { capitalize, enumToArray } from '@/utils'
+import { enumToArray, humanizeMediaListStatus } from '@/utils'
 
 import CButton from '@/common/components/button.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
@@ -140,8 +140,11 @@ export default class EditModal extends Vue {
 
   public statusItems: DropdownItem[] = enumToArray(MediaListStatus).map(
     status => ({
-      label: capitalize((status as unknown) as string),
-      value: (status as unknown) as string,
+      label: humanizeMediaListStatus(
+        { progress: null, status: status as any },
+        null,
+      ),
+      value: status.toString(),
     }),
   )
 

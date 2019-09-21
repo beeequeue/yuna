@@ -47,13 +47,13 @@
       <c-button
         content="Import Random from Planning"
         :icon="planningSvg"
-        :click="importRandomFromPlanning"
+        :click="importPlanning"
       />
 
       <c-button
         content="Import Random from Paused"
         :icon="pausedSvg"
-        :click="importRandomFromPaused"
+        :click="importPaused"
       />
 
       <c-button
@@ -91,14 +91,22 @@ import CButton from '@/common/components/button.vue'
 import QueueItem from './components/queue-item.vue'
 import ManualSearchModal from './modals/manual-search/manual-search-modal.vue'
 
-import { pausedQuery, planningQuery, watchingQuery } from './queries'
-import QUEUE_QUERY from './queue.graphql'
 import {
+  IMPORT_EXTERNAL_LINKS_QUERY,
+  IMPORT_QUERY,
+  QUEUE_QUERY,
+} from './graphql/documents'
+import {
+  ImportExternalLinksExternalLinks,
+  ImportExternalLinksQuery,
+  ImportExternalLinksQueryVariables,
+  ImportQuery,
+  ImportQueryVariables,
+  MediaListStatus,
   Provider,
   QueueAnime,
   QueueQuery,
   QueueVariables,
-  WatchingQueryLists,
 } from '@/graphql/types'
 
 import { Query } from '@/decorators'
@@ -112,7 +120,7 @@ import {
   toggleQueueItemOpen,
 } from '@/state/user'
 import { QueueItem as IQueueItem } from '@/lib/user'
-import { complement, isNotNil, pick, prop, propEq, sortNumber } from '@/utils'
+import { isNil, isNotNil, pick, prop, propEq, sortNumber } from '@/utils'
 
 @Component({
   components: {
@@ -204,61 +212,85 @@ export default class Queue extends Vue {
     }
   }
 
-  public async importFromQuery(
-    query: typeof watchingQuery | typeof planningQuery | typeof pausedQuery,
+  private async getExternalLinks(
+    mediaId: number,
+  ): Promise<ImportExternalLinksExternalLinks[]> {
+    const variables: ImportExternalLinksQueryVariables = {
+      mediaId,
+    }
+
+    const result = await this.$apollo.query<ImportExternalLinksQuery>({
+      query: IMPORT_EXTERNAL_LINKS_QUERY,
+      variables,
+    })
+
+    return oc(result)
+      .data.Media.externalLinks([])
+      .filter(isNotNil)
+  }
+
+  public async importFrom(
+    statuses: MediaListStatus | MediaListStatus[],
     random: boolean = false,
   ) {
-    if (!this.anilistUserId) return
+    if (!Array.isArray(statuses)) {
+      statuses = [statuses]
+    }
 
     const queueBefore = [...this.queue]
 
-    const { data, errors } = await query(this.$apollo, this.anilistUserId)
+    const variables: ImportQueryVariables = {
+      status: statuses[0],
+      extraStatus: statuses[1],
+      useExtraStatus: !isNil(statuses[1]),
+    }
+    const { data, errors } = await this.$apollo.query<ImportQuery>({
+      query: IMPORT_QUERY,
+      variables,
+      fetchPolicy: 'network-only',
+    })
 
-    const lists = oc(data).listCollection.lists([] as WatchingQueryLists[])
+    const entries = [...data.ListEntries, ...(data.ExtraListEntries || [])]
 
-    if (!lists || lists.length < 1) {
+    if (entries.length < 1) {
       return sendErrorToast(
         this.$store,
         "Couldn't find any shows in that state!",
       )
     }
 
-    const list = lists.find(complement(prop('isCustomList')))
-
-    if (!list) {
+    if (errors || entries.length < 1) {
       return sendErrorToast(
         this.$store,
         "Couldn't find any shows in that state!",
       )
     }
-
-    const entries = prop<typeof list, 'entries'>('entries')(list)!.filter(
-      isNotNil,
-    )
-
-    if (errors || !entries || entries.length < 1) {
-      return sendErrorToast(
-        this.$store,
-        "Couldn't find any shows in that state!",
-      )
-    }
-
-    const animes = entries.map(prop('info')).filter(isNotNil)
 
     if (random) {
-      const entriesNotInQueue = entries.filter(entry => {
-        const { id } = entry.info!
-
+      const entriesNotInQueue = entries.filter(({ id }) => {
         return !this.queue.some(item => item.id === id)
       })
 
       if (entriesNotInQueue.length > 0) {
         const randomIdx = Math.floor(Math.random() * entriesNotInQueue.length)
+        const { mediaId, status } = entriesNotInQueue[randomIdx]
 
-        addToQueue(this.$store, entriesNotInQueue[randomIdx].info!)
+        addToQueue(this.$store, {
+          id: mediaId,
+          externalLinks: await this.getExternalLinks(mediaId),
+          listEntry: { status },
+        })
       }
     } else {
-      animes.forEach(anime => addToQueue(this.$store, anime))
+      await Promise.all(
+        entries.map(async ({ mediaId, status }) =>
+          addToQueue(this.$store, {
+            id: mediaId,
+            externalLinks: await this.getExternalLinks(mediaId),
+            listEntry: { status },
+          }),
+        ),
+      )
     }
 
     const diff = this.queue.length - queueBefore.length
@@ -288,15 +320,15 @@ export default class Queue extends Vue {
   }
 
   public async importWatching() {
-    this.importFromQuery(watchingQuery)
+    return this.importFrom([MediaListStatus.Current, MediaListStatus.Repeating])
   }
 
-  public async importRandomFromPlanning() {
-    this.importFromQuery(planningQuery, true)
+  public async importPlanning() {
+    return this.importFrom(MediaListStatus.Planning, true)
   }
 
-  public async importRandomFromPaused() {
-    this.importFromQuery(pausedQuery, true)
+  public async importPaused() {
+    return this.importFrom(MediaListStatus.Paused, true)
   }
 
   public exportQueue() {
