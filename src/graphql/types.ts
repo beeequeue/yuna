@@ -4085,6 +4085,11 @@ export type ListEntryFragment = { __typename?: 'ListEntry' } & Pick<
   'id' | 'mediaId' | 'score' | 'progress' | 'status' | 'rewatched'
 >
 
+export type MediaMalIdFragment = { __typename?: 'Media' } & Pick<
+  Media,
+  'id' | 'idMal'
+>
+
 export type MediaListEntryFragment = { __typename?: 'Media' } & {
   listEntry: Maybe<{ __typename?: 'ListEntry' } & ListEntryFragment>
 }

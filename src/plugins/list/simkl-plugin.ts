@@ -15,6 +15,7 @@ import {
   MalIdFromAnilistIdQuery,
   MalIdFromAnilistIdQueryVariables,
   MediaListStatus,
+  MediaMalIdFragment,
   QueryListEntriesArgs,
   StartRewatchingMutation,
   UpdateProgressMutation,
@@ -25,6 +26,8 @@ import { getIsConnectedTo } from '@/state/auth'
 import { Simkl, SimklListEntry } from '@/lib/simkl'
 import { ArmServer } from '@/lib/arm-server'
 import { isNil } from '@/utils'
+import { getFragment } from '@/utils/cache'
+import { MEDIA_MAL_ID_FRAGMENT } from '@/graphql/documents/fragments'
 
 export class SimklListPlugin extends ListPlugin implements ListPlugin {
   public static service = 'simkl'
@@ -42,13 +45,25 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
     let malId = oc(ids).myanimelist() || null
 
     if (isNil(malId)) {
-      const response = await this.apollo.query<MalIdFromAnilistIdQuery>({
-        fetchPolicy: 'cache-first',
+      const result = await this.apollo.query<MalIdFromAnilistIdQuery>({
         query: MAL_ID_FROM_ANILIST_ID,
         variables: { mediaId: anilistId } as MalIdFromAnilistIdQueryVariables,
       })
 
-      malId = oc(response).data.Media.idMal() || null
+      malId = oc(result).data.Media.idMal() || null
+
+      // For some reason the above query always returns null - so we have to manually get the result from the cache
+      if (isNil(malId)) {
+        const cached = getFragment<MediaMalIdFragment>(
+          this.apollo.provider.defaultClient.cache,
+          {
+            fragment: MEDIA_MAL_ID_FRAGMENT,
+            id: `Media:${anilistId}`,
+          },
+        )
+
+        malId = oc(cached).idMal(null)
+      }
     }
 
     return malId
