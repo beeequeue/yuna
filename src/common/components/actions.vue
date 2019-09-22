@@ -1,6 +1,6 @@
 <template>
   <transition name="fade">
-    <transition-group tag="div" class="actions" :class="{ small }">
+    <transition-group tag="div" class="actions" :class="{ small, horizontal }">
       <c-button
         v-if="
           (isNotExcluded(ActionKeys.ADD) && !isOnList) ||
@@ -13,7 +13,7 @@
         :key="ActionKeys.ADD"
         :icon="addToListSvg"
         :content="ifBig('Set as Planning')"
-        v-tooltip.right="ifSmall('Set as Planning')"
+        v-tooltip="getTooltip('Set as Planning')"
         :click="() => createListEntry()"
       />
 
@@ -23,7 +23,7 @@
         type="success"
         :icon="setCurrentSvg"
         :content="ifBig('Set as Watching')"
-        v-tooltip.right="ifSmall('Set as Watching')"
+        v-tooltip="getTooltip('Set as Watching')"
         :click="() => statusMutation(MediaListStatus.Current)"
       />
 
@@ -33,7 +33,7 @@
         :icon="setToRepeatSvg"
         type="success"
         :content="ifBig('Resume')"
-        v-tooltip.right="ifSmall('Resume')"
+        v-tooltip="getTooltip('Resume')"
         :click="() => statusMutation(MediaListStatus.Current)"
       />
 
@@ -47,7 +47,7 @@
           :icon="pauseSvg"
           type="warning"
           :content="ifBig('Pause')"
-          v-tooltip.right="ifSmall('Pause')"
+          v-tooltip="getTooltip('Pause')"
           :click="() => statusMutation(MediaListStatus.Paused)"
         />
 
@@ -56,7 +56,7 @@
           :icon="dropSvg"
           type="danger"
           :content="ifBig('Drop')"
-          v-tooltip.right="ifSmall('Drop')"
+          v-tooltip="getTooltip('Drop')"
           :click="() => statusMutation(MediaListStatus.Dropped)"
         />
       </div>
@@ -67,7 +67,7 @@
         :icon="pauseSvg"
         type="warning"
         :content="ifBig('Pause')"
-        v-tooltip.right="ifSmall('Pause')"
+        v-tooltip="getTooltip('Pause')"
         :click="() => statusMutation(MediaListStatus.Paused)"
       />
 
@@ -77,7 +77,7 @@
         :key="ActionKeys.DROP"
         type="danger"
         :content="ifBig('Drop')"
-        v-tooltip.right="ifSmall('Drop')"
+        v-tooltip="getTooltip('Drop')"
         :click="() => statusMutation(MediaListStatus.Dropped)"
       />
 
@@ -87,7 +87,7 @@
         type="success"
         :icon="setToRepeatSvg"
         :content="ifBig('Rewatch')"
-        v-tooltip.right="ifSmall('Rewatch')"
+        v-tooltip="getTooltip('Rewatch')"
         :click="() => statusMutation(MediaListStatus.Repeating)"
       />
 
@@ -96,7 +96,7 @@
         :key="ActionKeys.ADD_QUEUE"
         :icon="addToQueueSvg"
         :content="ifBig('Add to Queue')"
-        v-tooltip.right="ifSmall('Add to Queue')"
+        v-tooltip="getTooltip('Add to Queue')"
         :click="addToQueue"
       />
       <c-button
@@ -104,7 +104,7 @@
         :key="ActionKeys.REMOVE_QUEUE"
         :icon="removeFromQueueSvg"
         :content="ifBig('Remove from Queue')"
-        v-tooltip.right="ifSmall('Remove from Queue')"
+        v-tooltip="getTooltip('Remove from Queue')"
         :click="removeFromQueue"
       />
 
@@ -113,7 +113,7 @@
         :key="ActionKeys.EDIT"
         :icon="editSvg"
         :content="ifBig('Edit')"
-        v-tooltip.right="ifSmall('Edit')"
+        v-tooltip="getTooltip('Edit')"
         :click="editAnime"
       />
     </transition-group>
@@ -157,6 +157,8 @@ import { getSettings } from '@/state/settings'
 import { isNil, propEq } from '@/utils'
 
 import CButton from '@/common/components/button.vue'
+import { Default } from '@/decorators'
+import { TooltipSettings } from 'v-tooltip'
 
 export enum ActionKeys {
   ADD = 'addEntry',
@@ -177,7 +179,8 @@ export default class Actions extends Vue {
   @Prop(Object) public listEntry!: AnimeViewListEntry | null
   @Prop(Object) public anime!: AnimeViewAnime | null
   @Prop(Boolean) public small!: boolean | null
-  @Prop({ type: Array, default: () => [] })
+  @Prop(Boolean) public horizontal!: boolean | null
+  @Default(Array, () => [])
   public exclude!: string[]
 
   public get mediaListStatus(): MediaListStatus | null {
@@ -246,15 +249,24 @@ export default class Actions extends Vue {
     return this.small ? value : null
   }
 
+  public getTooltip(content: string): TooltipSettings | false {
+    if (!this.small) return false
+
+    return {
+      content,
+      placement: this.horizontal ? 'top' : 'right',
+    }
+  }
+
   public editAnime() {
-    if (!this.anime || !this.anime.listEntry) return
+    if (!this.anime || !this.listEntry) return
 
     initEditModal(this.$store, {
       animeId: this.anime.id,
       title: oc(this.anime).title.userPreferred('MISSING_TITLE'),
       episodes: this.anime.episodes,
       bannerImage: oc(this.anime).bannerImage(''),
-      listEntry: this.anime.listEntry,
+      listEntry: this.listEntry,
     })
   }
 
@@ -339,6 +351,17 @@ export default class Actions extends Vue {
     & > .button,
     & > .multi-button {
       margin-bottom: 0;
+    }
+  }
+
+  &.horizontal {
+    flex-direction: row;
+
+    & > .button,
+    & > .multi-button {
+      &.v-enter {
+        transform: translateY(100%);
+      }
     }
   }
 

@@ -1,21 +1,22 @@
 import { DataProxy } from 'apollo-cache'
 import gql from 'graphql-tag'
 import { oc } from 'ts-optchain'
-import { Store } from 'vuex'
 
-import { EPISODE_LIST } from '@/graphql/documents/queries'
-import LIST_QUERY from '@/views/list/list.graphql'
+import { EPISODE_LIST, LIST_LIST_ENTRIES } from '@/graphql/documents/queries'
 import {
   CachedAnimeListEntryFragment,
   EpisodeListEpisodes,
   EpisodeListQuery,
   EpisodeListVariables,
+  ListViewListEntries,
+  ListViewQuery,
+  ListViewQueryVariables,
+  MediaListStatus,
   Provider,
 } from '@/graphql/types'
 
 import { EpisodeCache } from '@/lib/episode-cache'
 import { EpisodeRelations } from '@/lib/relations'
-import { getAnilistUserId } from '@/state/auth'
 import { isNil } from '.'
 
 export const getFragment = <R extends {}, V = void>(
@@ -201,15 +202,75 @@ export const writeEpisodeProgressToCache = (
   cacheEpisodes(cache, episodes)
 }
 
-export const refetchListQuery = ($store: Store<any>) => {
-  const userId = getAnilistUserId($store)
+export const getRows = (status: MediaListStatus) => {
+  if (status === MediaListStatus.Planning) return 2
 
-  if (!userId) return () => []
+  return 1
+}
 
-  return () => [
-    {
-      query: LIST_QUERY,
-      variables: { userId },
-    },
-  ]
+export const removeFromCacheList = (
+  cache: DataProxy,
+  anilistId: number,
+  status: MediaListStatus,
+) => {
+  for (let i = 1; i < 100; i++) {
+    let data: ListViewQuery
+
+    try {
+      const variables = {
+        page: i,
+        perPage: 10 * getRows(status),
+        status,
+      }
+      data = cache.readQuery<ListViewQuery, ListViewQueryVariables>({
+        query: LIST_LIST_ENTRIES,
+        variables,
+      })!
+
+      const index = data.ListEntries.findIndex(
+        entry => entry.mediaId === anilistId,
+      )
+
+      if (index === -1) continue
+
+      const newData = { ListEntries: [...data.ListEntries] }
+      newData.ListEntries.splice(index, 1)
+
+      cache.writeQuery<ListViewQuery, ListViewQueryVariables>({
+        query: LIST_LIST_ENTRIES,
+        variables,
+        data: newData,
+      })
+    } catch (e) {
+      break
+    }
+  }
+}
+
+export const addToCacheList = (
+  cache: DataProxy,
+  entry: ListViewListEntries,
+) => {
+  let data: ListViewQuery
+  const variables = {
+    page: 1,
+    perPage: 10 * getRows(entry.status),
+    status: entry.status,
+  }
+
+  try {
+    data = cache.readQuery<ListViewQuery, ListViewQueryVariables>({
+      query: LIST_LIST_ENTRIES,
+      variables,
+    })!
+  } catch (e) {
+    return
+  }
+
+  const newData = { ListEntries: [entry, ...data.ListEntries] }
+  cache.writeQuery<ListViewQuery, ListViewQueryVariables>({
+    query: LIST_LIST_ENTRIES,
+    variables,
+    data: newData,
+  })
 }

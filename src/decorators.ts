@@ -1,8 +1,17 @@
 import { ApolloError } from 'apollo-client'
 import { Vue } from 'vue/types/vue'
-import { Prop } from 'vue/types/options'
+import { ComponentOptions, Prop } from 'vue/types/options'
 import { VueApolloQueryDefinition } from 'vue-apollo/types/options'
 import { createDecorator, VueDecorator } from 'vue-class-component'
+
+import { LIST_LIST_ENTRIES } from '@/graphql/documents/queries'
+import {
+  ListViewQuery,
+  ListViewQueryVariables,
+  MediaListStatus,
+} from '@/graphql/types'
+import List from '@/views/list/list.vue'
+import { getRows } from '@/utils/cache'
 
 interface QueryOptions<C extends Vue, R = any>
   extends VueApolloQueryDefinition<C, R> {
@@ -43,6 +52,33 @@ export function Query<C extends Vue, R = any, V extends {} | null = null>(
   })
 }
 
+export function ListQuery(status: MediaListStatus): PropertyDecorator {
+  return createDecorator((componentOptions: ComponentOptions<List>) => {
+    if (!componentOptions.apollo) {
+      componentOptions.apollo = {}
+    }
+
+    ;(componentOptions.apollo as any)[status.toLowerCase()] = {
+      query: LIST_LIST_ENTRIES,
+      variables(): ListViewQueryVariables {
+        return {
+          page: 1,
+          perPage: 10 * getRows(status),
+          status,
+        }
+      },
+      skip() {
+        return !this.meta[status].open
+      },
+      update(data: ListViewQuery) {
+        this.getMedia(data.ListEntries.map(e => e.mediaId))
+
+        return data
+      },
+    }
+  }) as any
+}
+
 export function Required(type: Prop<any>): VueDecorator {
   return createDecorator((componentOptions, key) => {
     if (!componentOptions.props) {
@@ -61,9 +97,11 @@ type Constructor =
   | StringConstructor
   | ArrayConstructor
   | BooleanConstructor
-export function Default<T extends Constructor>(
+export function Default<T extends Constructor | ObjectConstructor>(
   type: T,
-  defaultValue: ReturnType<T>,
+  defaultValue: ReturnType<T> extends Array<any>
+    ? () => ReturnType<T>
+    : ReturnType<T>,
 ): VueDecorator {
   return createDecorator((componentOptions, key) => {
     if (!componentOptions.props) {

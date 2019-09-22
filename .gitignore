@@ -5,6 +5,7 @@ dist/*
 test-results
 graphql.schema.json
 schema.graphql
+*tmp*
 
 # Cached builds
 .awcache

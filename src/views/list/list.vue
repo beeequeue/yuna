@@ -1,7 +1,7 @@
 <template>
   <div class="list-page">
     <div class="menu">
-      <div class="links">
+      <div class="aside">
         <a class="anichart" href="https://anichart.net" v-html="anichartLogo" />
 
         <a
@@ -19,105 +19,127 @@
         />
       </div>
 
-      <div class="number-input-filler" />
+      <text-input placeholder="Search in List..." :onChange="setSearchString" />
 
-      <text-input placeholder="Filter..." value :onChange="setFilterString" />
-
-      <number-input :value="limit" :onChange="setLimit" />
+      <div class="aside right">
+        <transition name="fade">
+          <loading v-if="$apollo.loading" :size="26" />
+        </transition>
+      </div>
     </div>
 
-    <transition-group tag="div" class="list-container">
-      <transition-group
-        tag="div"
-        v-for="(list, name) in lists"
-        :key="name"
-        class="list"
-      >
-        <h1 v-if="list.length > 0" :key="name">{{ name.toLowerCase() }}</h1>
-
-        <list-entry v-for="entry in list" :key="entry.mediaId" :entry="entry" />
-      </transition-group>
-    </transition-group>
+    <div class="list-container">
+      <list-row
+        v-for="status in lists"
+        :key="status"
+        :list="getList(status)"
+        :status="status"
+        :fetchMore="fetchMore"
+        :media="media"
+        :open="meta[status].open"
+        :toggleOpen="toggleOpen"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { DollarApollo, SmartQuery } from 'vue-apollo/types/vue-apollo'
 import { Component, Vue } from 'vue-property-decorator'
+import { debounce } from 'ts-debounce'
 import { oc } from 'ts-optchain'
 
 import anichartSvg from '@/assets/anichart.svg'
 import anilistSvg from '@/assets/anilist.svg'
 import simklSvg from '@/assets/simkl.svg'
+import Loading from '@/common/components/loading.vue'
 import TextInput from '@/common/components/form/text-input.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
 import ListEntry from './components/list-entry.vue'
-
-import LIST_QUERY from '@/views/list/list.graphql'
+import { LIST_MEDIA_QUERY } from '@/graphql/documents/queries'
 import {
+  ListMediaMedia,
+  ListMediaQuery,
+  ListMediaQueryVariables,
   ListViewListEntries,
   ListViewQuery,
-  ListViewVariables,
+  ListViewQueryVariables,
   MediaListStatus,
 } from '@/graphql/types'
 
-import { Query } from '@/decorators'
+import { ListQuery } from '@/decorators'
 import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
-import { debounce, isNil } from '@/utils'
+import { isNil, isNotNil, LocalStorageKey } from '@/utils'
+import ListRow from '@/views/list/components/list-row.vue'
 
-type Lists = { [key in MediaListStatus]: ListViewListEntries[] }
-
-const baseLists: Lists = {
-  [MediaListStatus.Current]: [],
-  [MediaListStatus.Repeating]: [],
-  [MediaListStatus.Paused]: [],
-  [MediaListStatus.Planning]: [],
-  [MediaListStatus.Dropped]: [],
-  [MediaListStatus.Completed]: [],
+export type ListMedia = {
+  [key: number]: { media: ListMediaMedia | null; loading: boolean } | undefined
 }
 
-@Component({ components: { ListEntry, TextInput, NumberInput } })
-export default class List extends Vue {
-  @Query<List, ListViewQuery, ListViewVariables>({
-    fetchPolicy: 'cache-and-network',
-    query: LIST_QUERY,
-    variables() {
-      return {
-        page: 1,
-      }
-    },
-  })
-  public rawList!: ListViewQuery
+type MetaData = { [key in MediaListStatus]: { page: number; open: boolean } }
 
-  public page = 1
-  public filterString = ''
-  public limit = Number(localStorage.getItem('list-limit') || 25)
+@Component({
+  components: { ListRow, Loading, ListEntry, TextInput, NumberInput },
+})
+export default class List extends Vue {
+  @ListQuery(MediaListStatus.Current)
+  public current!: ListViewQuery
+
+  @ListQuery(MediaListStatus.Repeating)
+  public repeating!: ListViewQuery
+
+  @ListQuery(MediaListStatus.Planning)
+  public planning!: ListViewQuery
+
+  @ListQuery(MediaListStatus.Paused)
+  public paused!: ListViewQuery
+
+  @ListQuery(MediaListStatus.Dropped)
+  public dropped!: ListViewQuery
+
+  @ListQuery(MediaListStatus.Completed)
+  public completed!: ListViewQuery
+
+  public media: ListMedia = {}
+
+  public searchString = ''
+
+  public lists = [
+    MediaListStatus.Current,
+    MediaListStatus.Repeating,
+    MediaListStatus.Planning,
+    MediaListStatus.Paused,
+    MediaListStatus.Completed,
+    MediaListStatus.Dropped,
+  ] as const
+
+  // page: -1 means no more can be fetched
+  public meta: MetaData = this.lists.reduce(
+    (obj, status) => {
+      obj[status] = { page: 1, open: this.getOpenState(status) }
+
+      return obj
+    },
+    {} as MetaData,
+  )
 
   public anichartLogo = anichartSvg
   public alLogo = anilistSvg
   public simklLogo = simklSvg
 
+  public $refs!: {
+    entries: HTMLDivElement
+  }
   public $apollo!: DollarApollo<any> & {
     queries: {
       lists: SmartQuery<List>
     }
   }
 
-  public get lists() {
-    return oc(this.rawList)
-      .ListEntries([])
-      .reduce(
-        (lists, entry) => {
-          if (isNil(lists[entry.status])) {
-            lists[entry.status] = []
-          }
-
-          lists[entry.status].push(entry)
-
-          return lists
-        },
-        { ...baseLists },
-      )
+  public getList(status: MediaListStatus) {
+    return oc(this as any)[status.toLowerCase()].ListEntries(
+      [],
+    ) as ListViewListEntries[]
   }
 
   public get userId() {
@@ -132,32 +154,124 @@ export default class List extends Vue {
     return getSimklUser(this.$store)
   }
 
-  public fetchMore() {
-    this.page++
+  private setMediaLoading(mediaIds: number[], loading: boolean) {
+    mediaIds.forEach(id => {
+      if (isNil(this.media[id])) {
+        Vue.set(this.media, id, {
+          media: null,
+          loading,
+        })
 
-    this.$apollo.queries.rawList.fetchMore({
-      variables: {
-        page: this.page,
-      },
-      updateQuery: (_: null, { fetchMoreResult: result }): ListViewQuery => ({
-        __typename: 'Query',
-        ListEntries: result.ListEntries,
-      }),
+        return
+      }
+
+      Vue.set(
+        this.media[id]!,
+        'loading',
+        isNil(this.media[id]!.media) ? loading : false,
+      )
     })
   }
 
-  // beautiful!
-  public setFilterString(filter: string) {
-    debounce((str: string) => {
-      this.filterString = str
-    }, 350)(filter)
+  private getLocalStorageKey(status: MediaListStatus) {
+    return `${LocalStorageKey.LIST_OPEN}_${status}`
   }
 
-  public setLimit(value: number) {
-    localStorage.setItem('list-limit', value.toString())
-    this.limit = value
-    this.$forceUpdate()
+  private saveOpenState(status: MediaListStatus) {
+    localStorage.setItem(
+      this.getLocalStorageKey(status),
+      this.meta[status].open.toString(),
+    )
   }
+
+  private getOpenState(status: MediaListStatus): boolean {
+    return JSON.parse(
+      localStorage.getItem(this.getLocalStorageKey(status)) || 'true',
+    )
+  }
+
+  public toggleOpen(status: MediaListStatus) {
+    this.meta[status].open = !this.meta[status].open
+
+    this.saveOpenState(status)
+  }
+
+  public async getMedia(mediaIds: number[]) {
+    const idsToFetch = mediaIds.filter(
+      id => !Object.keys(this.media).includes(id.toString()),
+    )
+
+    if (idsToFetch.length < 1) return
+
+    this.setMediaLoading(idsToFetch, true)
+
+    const variables: ListMediaQueryVariables = { mediaIds: idsToFetch }
+    const result = await this.$apollo.query<ListMediaQuery>({
+      fetchPolicy: 'cache-first',
+      query: LIST_MEDIA_QUERY,
+      variables,
+    })
+
+    oc(result.data)
+      .Page.media([])
+      .filter(isNotNil)
+      .forEach(media => {
+        Vue.set(this.media, media.id, {
+          ...this.media[media.id]!,
+          media,
+        })
+      })
+
+    this.setMediaLoading(idsToFetch, false)
+  }
+
+  public fetchMore(status: MediaListStatus) {
+    const query = this.$apollo.queries[status.toLowerCase()]
+    const entries = oc(this as any)[status.toLowerCase()].ListEntries([])
+
+    return (visible: boolean) => {
+      if (
+        !visible ||
+        query.loading ||
+        this.meta[status].page === -1 ||
+        entries.length % 10 !== 0
+      ) {
+        return
+      }
+
+      this.meta[status].page++
+
+      const variables: ListViewQueryVariables = {
+        page: this.meta[status].page,
+        perPage: 10,
+        status,
+      }
+      query.fetchMore({
+        variables,
+        updateQuery: (
+          previous: ListViewQuery,
+          { fetchMoreResult: result },
+        ): ListViewQuery => {
+          if (result.ListEntries.length < 1) {
+            this.meta[status].page = -1
+            return {
+              ListEntries: previous.ListEntries,
+            }
+          }
+
+          return {
+            ListEntries: [...previous.ListEntries, ...result.ListEntries],
+          }
+        },
+      })
+    }
+  }
+
+  // beautiful!
+  public setSearchString = debounce(
+    (str: string) => (this.searchString = str),
+    500,
+  )
 }
 </script>
 
@@ -172,7 +286,7 @@ export default class List extends Vue {
   bottom: 0;
   display: flex;
   flex-direction: column;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.925);
   user-select: none;
 
   & > .menu {
@@ -185,7 +299,7 @@ export default class List extends Vue {
     background: color($dark, 300);
     flex-shrink: 0;
 
-    & > .links {
+    & > .aside {
       position: absolute;
       top: calc(50% + 2px);
       left: 12px;
@@ -193,6 +307,11 @@ export default class List extends Vue {
       align-items: center;
       text-decoration: none;
       transform: translateY(-50%);
+
+      &.right {
+        left: auto;
+        right: 12px;
+      }
 
       & /deep/ svg {
         height: 26px;
@@ -207,75 +326,16 @@ export default class List extends Vue {
         text-align: center;
       }
     }
-
-    & > .number-input,
-    & > .number-input-filler {
-      width: 75px;
-      margin: 0 10px;
-    }
   }
 
   & > .list-container {
+    display: flex;
+    flex-direction: column;
     position: relative;
     overflow: auto;
+    height: 100%;
     width: 100%;
-
-    & > .list {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      padding: 10px 15px;
-
-      & > h1 {
-        width: 100%;
-        font-weight: 500 !important;
-        text-shadow: $outline;
-        margin: 5px 0 15px;
-        text-transform: capitalize;
-      }
-
-      &.v-move {
-        transition: 0.5s;
-      }
-
-      &.v-leave-active,
-      &.v-enter-active {
-        overflow: hidden;
-        transition: opacity 0.35s, height 0.5s, padding 0.5s;
-      }
-
-      &.v-leave {
-        height: 225px;
-      }
-
-      &.v-leave-to,
-      &.v-enter {
-        height: 0;
-        opacity: 0;
-        padding-top: 0;
-        padding-bottom: 0;
-      }
-
-      & > .entry {
-        &.v-move {
-          transition: 0.5s;
-        }
-
-        &.v-leave-active,
-        &.v-enter-active {
-          transition: opacity 0.35s, width 0.5s, margin 0.5s;
-        }
-
-        &.v-leave-to,
-        &.v-enter {
-          width: 0;
-          opacity: 0;
-          margin-left: 0;
-          margin-right: 0;
-        }
-      }
-    }
+    padding-bottom: 50px;
   }
 }
 

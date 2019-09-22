@@ -157,7 +157,7 @@ export default class TitleBar extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 @import '../../colors';
 
 .title-bar {

@@ -14,7 +14,15 @@
       </transition>
 
       <transition name="route">
+        <!-- Needed for views to not be unloaded, but breaks hot reloading in development -->
+        <keep-alive v-if="!isDev" :include="/List|Queue/">
+          <router-view
+            :key="$route.params.id ? $route.params.id : $route.path"
+            class="route"
+          />
+        </keep-alive>
         <router-view
+          v-else
           :key="$route.params.id ? $route.params.id : $route.path"
           class="route"
         />
@@ -72,6 +80,10 @@ const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
   },
 })
 export default class App extends Vue {
+  public get isDev() {
+    return process.env.NODE_ENV === 'development'
+  }
+
   public get isFinishedConnecting() {
     return getFinishedConnecting(this.$store)
   }

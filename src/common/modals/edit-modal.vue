@@ -80,13 +80,8 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiCloseCircle } from '@mdi/js'
 
-import { deleteFromList } from '@/graphql/mutations/list-entry'
-import { EDIT_LIST_ENTRY } from '@/graphql/documents/mutations'
-import {
-  EditListEntryMutation,
-  EditListEntryMutationVariables,
-  MediaListStatus,
-} from '@/graphql/types'
+import { deleteFromList, editListEntry } from '@/graphql/mutations/list-entry'
+import { MediaListStatus } from '@/graphql/types'
 
 import {
   EditModalAnime,
@@ -122,18 +117,9 @@ export default class EditModal extends Vue {
   public error: string | null = null
 
   public async save() {
-    const variables = {
-      anilistId: this.anime!.animeId,
-      options: this.anime!.listEntry,
-    } as EditListEntryMutationVariables
-
     this.saving = true
 
-    await this.$apollo.mutate<EditListEntryMutation>({
-      mutation: EDIT_LIST_ENTRY,
-      variables,
-      errorPolicy: 'all',
-    })
+    await editListEntry(this, this.anime!.animeId, this.anime!.listEntry)
 
     this.saving = false
   }

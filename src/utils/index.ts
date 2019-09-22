@@ -32,6 +32,15 @@ export const NO_OP = () => {
   /* no-op */
 }
 
+export enum LocalStorageKey {
+  QUALITY = 'quality_v2',
+  VOLUME = 'volume',
+  MUTED = 'muted',
+  SPEED = 'speed',
+  SUBTITLE = 'subtitle',
+  LIST_OPEN = 'list_open',
+}
+
 export interface RequestSuccess<B extends {} | null> extends Response {
   status: 200 | 204
   ok: true
@@ -71,23 +80,25 @@ interface MediaListEntry {
 }
 export const humanizeMediaListStatus = (
   entry: MediaListEntry,
-  episodes: number | null,
+  episodes: number | null | false,
 ) => {
   const lengthString = episodes || '?'
+  const progressString =
+    episodes !== false ? ` ${entry.progress || 0}/${lengthString}` : ''
 
   switch (entry.status) {
     case MediaListStatus.Completed:
       return 'Completed'
     case MediaListStatus.Current:
-      return `Watching ${entry.progress || 0}/${lengthString}`
+      return `Watching${progressString}`
     case MediaListStatus.Dropped:
-      return `Dropped ${entry.progress || 0}/${lengthString}`
+      return `Dropped${progressString}`
     case MediaListStatus.Paused:
-      return `Paused ${entry.progress || 0}/${lengthString}`
+      return `Paused${progressString}`
     case MediaListStatus.Planning:
       return 'Planning'
     case MediaListStatus.Repeating:
-      return `Repeating ${entry.progress || 0}/${lengthString}`
+      return `Repeating${progressString}`
     default:
       throw new Error(`Tried to humanize an unknown status: ${entry.status}`)
   }

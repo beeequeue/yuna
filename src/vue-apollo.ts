@@ -23,7 +23,7 @@ export const filesRoot =
 
 Vue.prototype.$filesRoot = filesRoot
 
-const dataIdFromObject = (obj: any) => {
+const dataIdFromObject = (obj: { __typename: string; [key: string]: any }) => {
   // Episode
   if (isOfTypename<EpisodeListEpisodes>(obj, 'Episode')) {
     return getEpisodeCacheKey(obj)

@@ -4085,6 +4085,11 @@ export type ListEntryFragment = { __typename?: 'ListEntry' } & Pick<
   'id' | 'mediaId' | 'score' | 'progress' | 'status' | 'rewatched'
 >
 
+export type MediaMalIdFragment = { __typename?: 'Media' } & Pick<
+  Media,
+  'id' | 'idMal'
+>
+
 export type MediaListEntryFragment = { __typename?: 'Media' } & {
   listEntry: Maybe<{ __typename?: 'ListEntry' } & ListEntryFragment>
 }
@@ -4187,6 +4192,55 @@ export type SingleMediaQuery = { __typename?: 'Query' } & {
           >
         >
       }
+  >
+}
+
+export type ListViewQueryVariables = {
+  page: Scalars['Int']
+  perPage: Scalars['Int']
+  status: MediaListStatus
+}
+
+export type ListViewQuery = { __typename?: 'Query' } & {
+  ListEntries: Array<
+    { __typename?: 'ListEntry' } & Pick<
+      ListEntry,
+      'id' | 'mediaId' | 'status' | 'progress' | 'score' | 'rewatched'
+    >
+  >
+}
+
+export type ListMediaQueryVariables = {
+  mediaIds: Array<Scalars['Int']>
+}
+
+export type ListMediaQuery = { __typename?: 'Query' } & {
+  Page: Maybe<
+    { __typename?: 'Page' } & {
+      media: Maybe<
+        Array<
+          Maybe<
+            { __typename?: 'Media' } & Pick<
+              Media,
+              'id' | 'bannerImage' | 'isFavourite' | 'episodes'
+            > & {
+                title: Maybe<
+                  { __typename?: 'MediaTitle' } & Pick<
+                    MediaTitle,
+                    'userPreferred' | 'english' | 'romaji' | 'native'
+                  >
+                >
+                coverImage: Maybe<
+                  { __typename?: 'MediaCoverImage' } & Pick<
+                    MediaCoverImage,
+                    'extraLarge' | 'color'
+                  >
+                >
+              }
+          >
+        >
+      >
+    }
   >
 }
 
@@ -4473,7 +4527,7 @@ export type AnilistEditListEntryMutation = { __typename?: 'Mutation' } & {
   >
 }
 
-export type AnilistAllListEntriesQueryVariables = {
+export type AnilistListEntriesQueryVariables = {
   userId: Scalars['Int']
   page: Maybe<Scalars['Int']>
   perPage: Maybe<Scalars['Int']>
@@ -4481,7 +4535,7 @@ export type AnilistAllListEntriesQueryVariables = {
   status_not: Maybe<MediaListStatus>
 }
 
-export type AnilistAllListEntriesQuery = { __typename?: 'Query' } & {
+export type AnilistListEntriesQuery = { __typename?: 'Query' } & {
   listCollection: Maybe<
     { __typename?: 'MediaListCollection' } & {
       lists: Maybe<
@@ -4659,37 +4713,6 @@ export type EpisodeFeedQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type ListViewQueryVariables = {
-  page: Scalars['Int']
-}
-
-export type ListViewQuery = { __typename?: 'Query' } & {
-  ListEntries: Array<
-    { __typename?: 'ListEntry' } & Pick<
-      ListEntry,
-      'id' | 'mediaId' | 'status' | 'progress' | 'score' | 'rewatched'
-    > & {
-        anime: { __typename?: 'Media' } & Pick<
-          Media,
-          'id' | 'isFavourite' | 'episodes'
-        > & {
-            title: Maybe<
-              { __typename?: 'MediaTitle' } & Pick<
-                MediaTitle,
-                'userPreferred' | 'english' | 'romaji' | 'native'
-              >
-            >
-            coverImage: Maybe<
-              { __typename?: 'MediaCoverImage' } & Pick<
-                MediaCoverImage,
-                'medium' | 'color'
-              >
-            >
-          }
-      }
-  >
-}
-
 export type QueueQueryVariables = {
   ids: Array<Scalars['Int']>
 }
@@ -4807,6 +4830,23 @@ export type SingleMediaTitle = NonNullable<
 >
 export type SingleMediaCoverImage = NonNullable<
   (NonNullable<SingleMediaQuery['SingleMedia']>)['coverImage']
+>
+export type ListViewVariables = ListViewQueryVariables
+export type ListViewListEntries = NonNullable<ListViewQuery['ListEntries'][0]>
+export type ListMediaVariables = ListMediaQueryVariables
+export type ListMediaPage = NonNullable<ListMediaQuery['Page']>
+export type ListMediaMedia = NonNullable<
+  (NonNullable<(NonNullable<ListMediaQuery['Page']>)['media']>)[0]
+>
+export type ListMediaTitle = NonNullable<
+  (NonNullable<
+    (NonNullable<(NonNullable<ListMediaQuery['Page']>)['media']>)[0]
+  >)['title']
+>
+export type ListMediaCoverImage = NonNullable<
+  (NonNullable<
+    (NonNullable<(NonNullable<ListMediaQuery['Page']>)['media']>)[0]
+  >)['coverImage']
 >
 export type ListEntryVariables = ListEntryQueryVariables
 export type ListEntryListEntry = ListEntryQuery['ListEntry']
@@ -4930,16 +4970,16 @@ export type AnilistEditListEntryVariables = AnilistEditListEntryMutationVariable
 export type AnilistEditListEntrySaveMediaListEntry = NonNullable<
   AnilistEditListEntryMutation['SaveMediaListEntry']
 >
-export type AnilistAllListEntriesVariables = AnilistAllListEntriesQueryVariables
-export type AnilistAllListEntriesListCollection = NonNullable<
-  AnilistAllListEntriesQuery['listCollection']
+export type AnilistListEntriesVariables = AnilistListEntriesQueryVariables
+export type AnilistListEntriesListCollection = NonNullable<
+  AnilistListEntriesQuery['listCollection']
 >
-export type AnilistAllListEntriesLists = NonNullable<
+export type AnilistListEntriesLists = NonNullable<
   (NonNullable<
-    (NonNullable<AnilistAllListEntriesQuery['listCollection']>)['lists']
+    (NonNullable<AnilistListEntriesQuery['listCollection']>)['lists']
   >)[0]
 >
-export type AnilistAllListEntriesEntries = AniListEntryFragment
+export type AnilistListEntriesEntries = AniListEntryFragment
 export type CachedAnimeListEntryListEntry = NonNullable<
   CachedAnimeListEntryFragment['listEntry']
 >
@@ -5024,17 +5064,6 @@ export type EpisodeFeedCoverImage = NonNullable<
 >
 export type EpisodeFeedPageInfo = NonNullable<
   (NonNullable<EpisodeFeedQuery['Page']>)['pageInfo']
->
-export type ListViewVariables = ListViewQueryVariables
-export type ListViewListEntries = NonNullable<ListViewQuery['ListEntries'][0]>
-export type ListViewAnime = (NonNullable<
-  ListViewQuery['ListEntries'][0]
->)['anime']
-export type ListViewTitle = NonNullable<
-  (NonNullable<ListViewQuery['ListEntries'][0]>)['anime']['title']
->
-export type ListViewCoverImage = NonNullable<
-  (NonNullable<ListViewQuery['ListEntries'][0]>)['anime']['coverImage']
 >
 export type QueueVariables = QueueQueryVariables
 export type QueueQueue = NonNullable<QueueQuery['queue']>

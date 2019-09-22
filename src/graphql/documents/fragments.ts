@@ -11,6 +11,13 @@ export const LIST_ENTRY_FRAGMENT = gql`
   }
 `
 
+export const MEDIA_MAL_ID_FRAGMENT = gql`
+  fragment MediaMalId on Media {
+    id
+    idMal
+  }
+`
+
 export const MEDIA_LIST_ENTRY_FRAGMENT = gql`
   fragment MediaListEntry on Media {
     listEntry {

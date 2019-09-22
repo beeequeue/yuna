@@ -80,8 +80,8 @@ export const ANILIST_EDIT_LIST_ENTRY = gql`
   }
 `
 
-export const ANILIST_ALL_LIST_ENTRIES = gql`
-  query AnilistAllListEntries(
+export const ANILIST_LIST_ENTRIES = gql`
+  query AnilistListEntries(
     $userId: Int!
     $page: Int
     $perPage: Int
@@ -93,6 +93,7 @@ export const ANILIST_ALL_LIST_ENTRIES = gql`
       userId: $userId
       status: $status
       status_not: $status_not
+      sort: [STATUS]
       chunk: $page
       perChunk: $perPage
       forceSingleCompletedList: true
