@@ -21,3 +21,5 @@ export const PLAYER_PLAY_PAUSE = 'PLAYER_PLAY_PAUSE'
 export const PLAYER_STOP = 'PLAYER_STOP'
 export const PLAYER_NEXT = 'PLAYER_NEXT'
 export const PLAYER_PREVIOUS = 'PLAYER_PREVIOUS'
+
+export const SHOW_ERROR = 'SHOW_ERROR'

@@ -5,12 +5,19 @@ import Vuex from 'vuex'
 import {
   ANILIST_LOGIN,
   DOWNLOAD_UPDATE,
+  SHOW_ERROR,
   UPDATE_AVAILABLE,
   UPDATE_DOWNLOADED,
   UPDATE_ERROR,
 } from '@/messages'
 
-import { app, AppState, sendToast, setIsUpdateAvailable } from './app'
+import {
+  app,
+  AppState,
+  sendErrorToast,
+  sendToast,
+  setIsUpdateAvailable,
+} from './app'
 import { auth, AuthState } from './auth'
 import { settings, SettingsState } from './settings'
 import { user, UserState } from './user'
@@ -72,6 +79,10 @@ ipcRenderer.on(UPDATE_ERROR, (_e: any, version?: string) => {
     },
     timeout: 30 * 1000,
   })
+})
+
+ipcRenderer.on(SHOW_ERROR, (_e: any, message: string) => {
+  sendErrorToast(store, message)
 })
 
 interface Parameters {

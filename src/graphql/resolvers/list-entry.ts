@@ -1,34 +1,25 @@
 import { Store } from 'vuex'
 import ApolloClient from 'apollo-client'
+import { activeWindow } from 'electron-util'
 import { oc } from 'ts-optchain'
 
+import { SINGLE_MEDIA_QUERY } from '@/graphql/documents/queries'
 import {
-  AddToListMutation,
-  AddToListVariables,
-  DeleteFromListMutation,
-  DeleteFromListVariables,
-  EditListEntryMutationVariables,
   ListEntry,
   Media,
   QueryListEntriesArgs,
   SingleMediaQuery,
   SingleMediaQueryVariables,
   SingleMediaSingleMedia,
-  StartRewatchingMutation,
-  StartRewatchingVariables,
-  UpdateProgressMutation,
-  UpdateProgressVariables,
-  UpdateScoreMutation,
-  UpdateScoreMutationVariables,
-  UpdateStatusMutation,
-  UpdateStatusVariables,
 } from '@/graphql/types'
+import { ListEntryWithoutMedia, ListPlugin } from '@/plugins/list/plugin'
 import { getListPlugins } from '@/state/auth'
 import { getMainListPlugin } from '@/state/settings'
 import { store } from '@/state/store'
+import { SHOW_ERROR } from '@/messages'
 import { isNil } from '@/utils'
-import { SINGLE_MEDIA_QUERY } from '@/graphql/documents/queries'
-import { ListEntryWithoutMedia } from '@/plugins/list/plugin'
+
+const browserWindow = activeWindow()
 
 const getEnabledPlugins = (store: Store<any>) => {
   const enabledPlugins = getListPlugins(store)
@@ -83,93 +74,66 @@ export const GetMedia = async (
   return result.data.SingleMedia!
 }
 
-export const AddToList = async (
+const DoAction = (
+  action: keyof Pick<
+    ListPlugin,
+    | 'AddToList'
+    | 'DeleteFromList'
+    | 'UpdateStatus'
+    | 'StartRewatching'
+    | 'UpdateProgress'
+    | 'UpdateScore'
+    | 'EditListEntry'
+  >,
+) => async (
   _root: undefined,
-  { anilistId }: AddToListVariables,
+  { anilistId, ...rest }: any,
   _cache: { cache: RealProxy },
-): Promise<AddToListMutation['AddToList']> => {
-  const promises = getEnabledPlugins(store).map(plugin =>
-    plugin.AddToList(anilistId),
-  )
-  const results = await Promise.all(promises)
+) => {
+  const mainPlugin = getMainListPlugin(store)!
+  const errors: { [key: string]: Error } = {}
+  const secondParameter = oc(Object.values(rest) as any[])[0]()
 
-  return results[0]
+  const promises = getEnabledPlugins(store).map(plugin =>
+    (plugin[action](anilistId, secondParameter as never) as Promise<any>).catch(
+      err => {
+        errors[plugin.service] = err
+      },
+    ),
+  )
+
+  const results = await Promise.all(promises as any)
+
+  const minorErrors = Object.entries(errors).filter(
+    ([plugin]) => plugin !== mainPlugin,
+  )
+  minorErrors.forEach(([plugin, error]) => {
+    browserWindow.webContents.send(
+      SHOW_ERROR,
+      `${plugin}-plugin: ${error.message}`,
+    )
+  })
+
+  const mainPluginError = errors[mainPlugin]
+  if (!isNil(mainPluginError)) {
+    throw new Error(
+      `${getMainListPlugin(store)}-plugin: ${mainPluginError.message}`,
+    )
+  }
+
+  return results[0] as ReturnType<ListPlugin[typeof action]>
 }
 
-export const DeleteFromList = async (
-  _root: undefined,
-  { anilistId }: DeleteFromListVariables,
-  _cache: { cache: RealProxy },
-): Promise<DeleteFromListMutation['DeleteFromList']> => {
-  const promises = getEnabledPlugins(store).map(plugin =>
-    plugin.DeleteFromList(anilistId),
-  )
-  const results = await Promise.all(promises)
+export const AddToList = DoAction('AddToList')
 
-  return results[0]
-}
+export const DeleteFromList = DoAction('DeleteFromList')
 
-export const UpdateStatus = async (
-  _root: undefined,
-  { anilistId, status }: UpdateStatusVariables,
-  _cache: { cache: RealProxy },
-): Promise<UpdateStatusMutation['UpdateStatus']> => {
-  const promises = getEnabledPlugins(store).map(plugin =>
-    plugin.UpdateStatus(anilistId, status),
-  )
-  const results = await Promise.all(promises)
+export const UpdateStatus = DoAction('UpdateStatus')
 
-  return results[0]
-}
+export const StartRewatching = DoAction('StartRewatching')
 
-export const StartRewatching = async (
-  _root: undefined,
-  { anilistId }: StartRewatchingVariables,
-  _cache: { cache: RealProxy },
-): Promise<StartRewatchingMutation['StartRewatching']> => {
-  const promises = getEnabledPlugins(store).map(plugin =>
-    plugin.StartRewatching(anilistId),
-  )
-  const results = await Promise.all(promises)
+export const UpdateProgress = DoAction('UpdateProgress')
 
-  return results[0]
-}
+export const UpdateScore = DoAction('UpdateScore')
 
-export const UpdateProgress = async (
-  _root: undefined,
-  { anilistId, progress }: UpdateProgressVariables,
-  _cache: { cache: RealProxy },
-): Promise<UpdateProgressMutation['UpdateProgress']> => {
-  const promises = getEnabledPlugins(store).map(plugin =>
-    plugin.UpdateProgress(anilistId, progress),
-  )
-  const results = await Promise.all(promises)
-
-  return results[0]
-}
-
-export const UpdateScore = async (
-  _root: undefined,
-  { anilistId, score }: UpdateScoreMutationVariables,
-  _cache: { cache: RealProxy },
-): Promise<UpdateScoreMutation['UpdateScore']> => {
-  const promises = getEnabledPlugins(store).map(plugin =>
-    plugin.UpdateScore(anilistId, score),
-  )
-  const results = await Promise.all(promises)
-
-  return results[0]
-}
-
-export const EditListEntry = async (
-  _root: undefined,
-  { anilistId, options }: EditListEntryMutationVariables,
-  _cache: { cache: RealProxy },
-): Promise<UpdateProgressMutation['UpdateProgress']> => {
-  const promises = getEnabledPlugins(store).map(plugin =>
-    plugin.EditListEntry(anilistId, options),
-  )
-  const results = await Promise.all(promises)
-
-  return results[0]
-}
+export const EditListEntry = DoAction('EditListEntry')
