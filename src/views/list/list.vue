@@ -1,6 +1,6 @@
 <template>
   <div class="list-page">
-    <!--    <filters @show-filtered="log" />-->
+    <!--    <filters @show-filtered="" />-->
 
     <div class="list-container">
       <list-row
@@ -52,8 +52,6 @@ export default class List extends Vue {
   public async mounted() {
     this.entries = await getAllEntries(this)
   }
-
-  log(filtered: { [key in MediaListStatus]: number[] }) {}
 
   public entries: Entries = []
 
@@ -163,17 +161,15 @@ export default class List extends Vue {
         .Page.media([])
         .filter(isNotNil)
 
-      gottenMedia.push(...newMedia)
-    } while (page <= lastPage)
-
-    gottenMedia.forEach(media => {
-      Vue.set(this.media, media.id, {
-        ...this.media[media.id]!,
-        media,
+      newMedia.forEach(media => {
+        Vue.set(this.media, media.id, {
+          ...this.media[media.id]!,
+          media,
+        })
       })
-    })
 
-    this.setMediaLoading(idsToFetch, false)
+      this.setMediaLoading(newMedia.map(prop('id')), false)
+    } while (page <= lastPage)
   }
 }
 </script>
