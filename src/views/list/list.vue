@@ -1,32 +1,6 @@
 <template>
   <div class="list-page">
-    <div class="menu">
-      <div class="aside">
-        <a class="anichart" href="https://anichart.net" v-html="anichartLogo" />
-
-        <a
-          v-if="isConnectedTo.anilist"
-          class="anilist"
-          :href="`https://anilist.co/user/${userId}/animelist`"
-          v-html="alLogo"
-        />
-
-        <a
-          v-if="isConnectedTo.simkl"
-          class="simkl"
-          :href="`${simklUser.url}/dashboard`"
-          v-html="simklLogo"
-        />
-      </div>
-
-      <text-input placeholder="Search in List..." :onChange="setSearchString" />
-
-      <div class="aside right">
-        <transition name="fade">
-          <loading v-if="$apollo.loading" :size="26" />
-        </transition>
-      </div>
-    </div>
+    <filters @show-filtered="log" />
 
     <div class="list-container">
       <list-row
@@ -46,16 +20,14 @@
 <script lang="ts">
 import { DollarApollo, SmartQuery } from 'vue-apollo/types/vue-apollo'
 import { Component, Vue } from 'vue-property-decorator'
-import { debounce } from 'ts-debounce'
 import { oc } from 'ts-optchain'
 
-import anichartSvg from '@/assets/anichart.svg'
-import anilistSvg from '@/assets/anilist.svg'
-import simklSvg from '@/assets/simkl.svg'
 import Loading from '@/common/components/loading.vue'
 import TextInput from '@/common/components/form/text-input.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
+import ListRow from './components/list-row.vue'
 import ListEntry from './components/list-entry.vue'
+import Filters from './components/filters.vue'
 import { LIST_MEDIA_QUERY } from '@/graphql/documents/queries'
 import {
   ListMediaMedia,
@@ -68,9 +40,7 @@ import {
 } from '@/graphql/types'
 
 import { ListQuery } from '@/decorators'
-import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
 import { isNil, isNotNil, LocalStorageKey } from '@/utils'
-import ListRow from '@/views/list/components/list-row.vue'
 
 export type ListMedia = {
   [key: number]: { media: ListMediaMedia | null; loading: boolean } | undefined
@@ -79,9 +49,13 @@ export type ListMedia = {
 type MetaData = { [key in MediaListStatus]: { page: number; open: boolean } }
 
 @Component({
-  components: { ListRow, Loading, ListEntry, TextInput, NumberInput },
+  components: { Filters, ListRow, Loading, ListEntry, TextInput, NumberInput },
 })
 export default class List extends Vue {
+  log(filtered: { [key in MediaListStatus]: number[] }) {
+    console.log(filtered)
+  }
+
   @ListQuery(MediaListStatus.Current)
   public current!: ListViewQuery
 
@@ -102,8 +76,6 @@ export default class List extends Vue {
 
   public media: ListMedia = {}
 
-  public searchString = ''
-
   public lists = [
     MediaListStatus.Current,
     MediaListStatus.Repeating,
@@ -123,10 +95,6 @@ export default class List extends Vue {
     {} as MetaData,
   )
 
-  public anichartLogo = anichartSvg
-  public alLogo = anilistSvg
-  public simklLogo = simklSvg
-
   public $refs!: {
     entries: HTMLDivElement
   }
@@ -140,18 +108,6 @@ export default class List extends Vue {
     return oc(this as any)[status.toLowerCase()].ListEntries(
       [],
     ) as ListViewListEntries[]
-  }
-
-  public get userId() {
-    return getAnilistUserId(this.$store)
-  }
-
-  public get isConnectedTo() {
-    return getIsConnectedTo(this.$store)
-  }
-
-  public get simklUser() {
-    return getSimklUser(this.$store)
   }
 
   private setMediaLoading(mediaIds: number[], loading: boolean) {
@@ -266,12 +222,6 @@ export default class List extends Vue {
       })
     }
   }
-
-  // beautiful!
-  public setSearchString = debounce(
-    (str: string) => (this.searchString = str),
-    500,
-  )
 }
 </script>
 
@@ -288,45 +238,6 @@ export default class List extends Vue {
   flex-direction: column;
   background: rgba(0, 0, 0, 0.925);
   user-select: none;
-
-  & > .menu {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    padding: 10px 0;
-    background: color($dark, 300);
-    flex-shrink: 0;
-
-    & > .aside {
-      position: absolute;
-      top: calc(50% + 2px);
-      left: 12px;
-      display: flex;
-      align-items: center;
-      text-decoration: none;
-      transform: translateY(-50%);
-
-      &.right {
-        left: auto;
-        right: 12px;
-      }
-
-      & /deep/ svg {
-        height: 26px;
-        width: 26px;
-        margin-right: 15px;
-      }
-    }
-
-    & > .text-input,
-    & > .number-input {
-      & /deep/ input {
-        text-align: center;
-      }
-    }
-  }
 
   & > .list-container {
     display: flex;
