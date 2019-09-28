@@ -41,6 +41,7 @@ import {
 
 import { ListQuery } from '@/decorators'
 import { isNil, isNotNil, LocalStorageKey } from '@/utils'
+import { getRows } from '@/utils/cache'
 
 export type ListMedia = {
   [key: number]: { media: ListMediaMedia | null; loading: boolean } | undefined
@@ -53,6 +54,7 @@ type MetaData = { [key in MediaListStatus]: { page: number; open: boolean } }
 })
 export default class List extends Vue {
   log(filtered: { [key in MediaListStatus]: number[] }) {
+    // eslint-disable-next-line no-console
     console.log(filtered)
   }
 
@@ -199,7 +201,7 @@ export default class List extends Vue {
 
       const variables: ListViewQueryVariables = {
         page: this.meta[status].page,
-        perPage: 10,
+        perPage: 10 * getRows(status),
         status,
       }
       query.fetchMore({
