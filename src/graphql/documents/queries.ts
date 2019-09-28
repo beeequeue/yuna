@@ -65,8 +65,11 @@ export const LIST_FILTER_MEDIA = gql`
 `
 
 export const LIST_MEDIA_QUERY = gql`
-  query ListMedia($mediaIds: [Int!]!) {
-    Page(page: 1, perPage: 50) {
+  query ListMedia($page: Int!, $mediaIds: [Int!]!) {
+    Page(page: $page, perPage: 50) {
+      pageInfo {
+        lastPage
+      }
       media(id_in: $mediaIds, sort: [TITLE_ENGLISH, TITLE_ROMAJI]) {
         id
         title {

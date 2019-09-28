@@ -52,7 +52,7 @@ export function Query<C extends Vue, R = any, V extends {} | null = null>(
   })
 }
 
-export function ListQuery(status: MediaListStatus): PropertyDecorator {
+export function ListQuery(status: MediaListStatus): VueDecorator {
   return createDecorator((componentOptions: ComponentOptions<List>) => {
     if (!componentOptions.apollo) {
       componentOptions.apollo = {}
@@ -76,7 +76,7 @@ export function ListQuery(status: MediaListStatus): PropertyDecorator {
         return data
       },
     }
-  }) as any
+  })
 }
 
 export function Required(type: Prop<any>): VueDecorator {

@@ -4259,12 +4259,14 @@ export type ListFilterMediaQuery = { __typename?: 'Query' } & {
 }
 
 export type ListMediaQueryVariables = {
+  page: Scalars['Int']
   mediaIds: Array<Scalars['Int']>
 }
 
 export type ListMediaQuery = { __typename?: 'Query' } & {
   Page: Maybe<
     { __typename?: 'Page' } & {
+      pageInfo: Maybe<{ __typename?: 'PageInfo' } & Pick<PageInfo, 'lastPage'>>
       media: Maybe<
         Array<
           Maybe<
@@ -4904,6 +4906,9 @@ export type ListFilterMediaExternalLinks = NonNullable<
 >
 export type ListMediaVariables = ListMediaQueryVariables
 export type ListMediaPage = NonNullable<ListMediaQuery['Page']>
+export type ListMediaPageInfo = NonNullable<
+  (NonNullable<ListMediaQuery['Page']>)['pageInfo']
+>
 export type ListMediaMedia = NonNullable<
   (NonNullable<(NonNullable<ListMediaQuery['Page']>)['media']>)[0]
 >

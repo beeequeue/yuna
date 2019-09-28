@@ -1,6 +1,6 @@
 <template>
   <div class="list-page">
-    <filters @show-filtered="log" />
+    <!--    <filters @show-filtered="log" />-->
 
     <div class="list-container">
       <list-row
@@ -8,7 +8,6 @@
         :key="status"
         :list="getList(status)"
         :status="status"
-        :fetchMore="fetchMore"
         :media="media"
         :open="meta[status].open"
         :toggleOpen="toggleOpen"
@@ -18,8 +17,7 @@
 </template>
 
 <script lang="ts">
-import { DollarApollo, SmartQuery } from 'vue-apollo/types/vue-apollo'
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 
 import Loading from '@/common/components/loading.vue'
@@ -33,48 +31,31 @@ import {
   ListMediaMedia,
   ListMediaQuery,
   ListMediaQueryVariables,
-  ListViewListEntries,
-  ListViewQuery,
-  ListViewQueryVariables,
   MediaListStatus,
 } from '@/graphql/types'
 
-import { ListQuery } from '@/decorators'
-import { isNil, isNotNil, LocalStorageKey } from '@/utils'
-import { getRows } from '@/utils/cache'
+import { isNil, isNotNil, LocalStorageKey, prop, propEq } from '@/utils'
+import { getAllEntries } from '@/graphql/queries'
 
 export type ListMedia = {
   [key: number]: { media: ListMediaMedia | null; loading: boolean } | undefined
 }
 
-type MetaData = { [key in MediaListStatus]: { page: number; open: boolean } }
+type MetaData = { [key in MediaListStatus]: { open: boolean } }
+
+type Entries = PromiseReturnType<typeof getAllEntries>
 
 @Component({
   components: { Filters, ListRow, Loading, ListEntry, TextInput, NumberInput },
 })
 export default class List extends Vue {
-  log(filtered: { [key in MediaListStatus]: number[] }) {
-    // eslint-disable-next-line no-console
-    console.log(filtered)
+  public async mounted() {
+    this.entries = await getAllEntries(this)
   }
 
-  @ListQuery(MediaListStatus.Current)
-  public current!: ListViewQuery
+  log(filtered: { [key in MediaListStatus]: number[] }) {}
 
-  @ListQuery(MediaListStatus.Repeating)
-  public repeating!: ListViewQuery
-
-  @ListQuery(MediaListStatus.Planning)
-  public planning!: ListViewQuery
-
-  @ListQuery(MediaListStatus.Paused)
-  public paused!: ListViewQuery
-
-  @ListQuery(MediaListStatus.Dropped)
-  public dropped!: ListViewQuery
-
-  @ListQuery(MediaListStatus.Completed)
-  public completed!: ListViewQuery
+  public entries: Entries = []
 
   public media: ListMedia = {}
 
@@ -90,7 +71,7 @@ export default class List extends Vue {
   // page: -1 means no more can be fetched
   public meta: MetaData = this.lists.reduce(
     (obj, status) => {
-      obj[status] = { page: 1, open: this.getOpenState(status) }
+      obj[status] = { open: this.getOpenState(status) }
 
       return obj
     },
@@ -100,16 +81,9 @@ export default class List extends Vue {
   public $refs!: {
     entries: HTMLDivElement
   }
-  public $apollo!: DollarApollo<any> & {
-    queries: {
-      lists: SmartQuery<List>
-    }
-  }
 
   public getList(status: MediaListStatus) {
-    return oc(this as any)[status.toLowerCase()].ListEntries(
-      [],
-    ) as ListViewListEntries[]
+    return this.entries.filter(propEq('status', status))
   }
 
   private setMediaLoading(mediaIds: number[], loading: boolean) {
@@ -154,7 +128,10 @@ export default class List extends Vue {
     this.saveOpenState(status)
   }
 
-  public async getMedia(mediaIds: number[]) {
+  @Watch('entries')
+  public async getMedia() {
+    const mediaIds = this.entries.map(prop('mediaId'))
+
     const idsToFetch = mediaIds.filter(
       id => !Object.keys(this.media).includes(id.toString()),
     )
@@ -163,66 +140,40 @@ export default class List extends Vue {
 
     this.setMediaLoading(idsToFetch, true)
 
-    const variables: ListMediaQueryVariables = { mediaIds: idsToFetch }
-    const result = await this.$apollo.query<ListMediaQuery>({
-      fetchPolicy: 'cache-first',
-      query: LIST_MEDIA_QUERY,
-      variables,
+    const gottenMedia: ListMediaMedia[] = []
+    let lastPage = Infinity
+    let page = 1
+
+    do {
+      if (page > lastPage) break
+
+      const variables: ListMediaQueryVariables = { page, mediaIds: idsToFetch }
+      const { data, errors } = await this.$apollo.query<ListMediaQuery>({
+        fetchPolicy: 'cache-first',
+        query: LIST_MEDIA_QUERY,
+        variables,
+      })
+
+      if (errors || isNil(data)) break
+
+      lastPage = oc(data).Page.pageInfo.lastPage(Infinity)
+      page++
+
+      const newMedia = oc(data)
+        .Page.media([])
+        .filter(isNotNil)
+
+      gottenMedia.push(...newMedia)
+    } while (page <= lastPage)
+
+    gottenMedia.forEach(media => {
+      Vue.set(this.media, media.id, {
+        ...this.media[media.id]!,
+        media,
+      })
     })
 
-    oc(result.data)
-      .Page.media([])
-      .filter(isNotNil)
-      .forEach(media => {
-        Vue.set(this.media, media.id, {
-          ...this.media[media.id]!,
-          media,
-        })
-      })
-
     this.setMediaLoading(idsToFetch, false)
-  }
-
-  public fetchMore(status: MediaListStatus) {
-    const query = this.$apollo.queries[status.toLowerCase()]
-    const entries = oc(this as any)[status.toLowerCase()].ListEntries([])
-
-    return (visible: boolean) => {
-      if (
-        !visible ||
-        query.loading ||
-        this.meta[status].page === -1 ||
-        entries.length % 10 !== 0
-      ) {
-        return
-      }
-
-      this.meta[status].page++
-
-      const variables: ListViewQueryVariables = {
-        page: this.meta[status].page,
-        perPage: 10 * getRows(status),
-        status,
-      }
-      query.fetchMore({
-        variables,
-        updateQuery: (
-          previous: ListViewQuery,
-          { fetchMoreResult: result },
-        ): ListViewQuery => {
-          if (result.ListEntries.length < 1) {
-            this.meta[status].page = -1
-            return {
-              ListEntries: previous.ListEntries,
-            }
-          }
-
-          return {
-            ListEntries: [...previous.ListEntries, ...result.ListEntries],
-          }
-        },
-      })
-    }
   }
 }
 </script>

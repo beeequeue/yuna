@@ -28,12 +28,7 @@
             :media="media[entry.mediaId]"
           />
 
-          <div
-            v-if="list.length > 4"
-            key="last"
-            class="padding"
-            v-visibility="fetchMore(status)"
-          />
+          <div v-if="list.length > 4" key="last" class="padding" />
         </transition-group>
       </keep-alive>
     </transition>
@@ -58,7 +53,6 @@ export default class ListRow extends Vue {
   @Required(Object) media!: ListMedia
   @Required(String) status!: MediaListStatus
   @Required(Function) toggleOpen!: (status: MediaListStatus) => any
-  @Required(Function) fetchMore!: (status: MediaListStatus) => any
   @Prop(Boolean) open!: boolean
   @Prop(Boolean) double!: boolean
 

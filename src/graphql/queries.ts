@@ -49,7 +49,7 @@ export const getAnilistIdsFromMalIds = async (
     .flat()
 }
 
-const getAllEntries = async ({ $apollo }: Instance) => {
+export const getAllEntries = async ({ $apollo }: Instance) => {
   const entries: ListFilterEntriesListEntries[] = []
 
   for (let i = 0; i < 100; i++) {
