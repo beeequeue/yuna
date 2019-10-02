@@ -80,7 +80,7 @@
     "@vue/eslint-config-prettier": "5.0.0",
     "@vue/eslint-config-typescript": "4.0.0",
     "babel-eslint": "10.0.3",
-    "cross-env": "6.0.0",
+    "cross-env": "6.0.2",
     "electron": "5.0.8",
     "electron-builder": "21.1.5",
     "eslint-plugin-prettier": "3.1.1",
