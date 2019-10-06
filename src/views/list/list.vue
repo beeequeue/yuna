@@ -10,6 +10,7 @@
         :status="status"
         :media="media"
         :open="meta[status].open"
+        :double="status === 'PLANNING'"
         :toggleOpen="toggleOpen"
       />
     </div>
@@ -196,6 +197,7 @@ export default class List extends Vue {
     height: 100%;
     width: 100%;
     padding-bottom: 50px;
+    overflow-x: hidden;
   }
 }
 

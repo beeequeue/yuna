@@ -22,13 +22,12 @@
           @wheel.native="handleScroll"
         >
           <list-entry
-            v-for="entry in list"
+            v-for="entry in visibleEntries"
             :key="entry.id"
             :entry="entry"
             :media="media[entry.mediaId]"
+            :class="{ double }"
           />
-
-          <div v-if="list.length > 4" key="last" class="padding" />
         </transition-group>
       </keep-alive>
     </transition>
@@ -44,7 +43,7 @@ import { ListMedia } from '@/views/list/list.vue'
 import Icon from '@/common/components/icon.vue'
 import { Required } from '@/decorators'
 import { ListViewListEntries, MediaListStatus } from '@/graphql/types'
-import { humanizeMediaListStatus } from '@/utils'
+import { clamp, humanizeMediaListStatus, prop } from '@/utils'
 import ListEntry from './list-entry.vue'
 
 @Component({ components: { Icon, ListEntry } })
@@ -56,21 +55,48 @@ export default class ListRow extends Vue {
   @Prop(Boolean) open!: boolean
   @Prop(Boolean) double!: boolean
 
+  public itemsScrolled = 0
+
   public expandSvg = mdiChevronDown
+
+  public $refs!: {
+    entryContainer: HTMLDivElement
+  }
 
   public get classes() {
     return {
-      double: this.status === MediaListStatus.Planning,
+      double: this.double,
     }
   }
 
-  public handleScroll(e: WheelEvent) {
-    const target = e.currentTarget as HTMLDivElement
+  public get visibleItems() {
+    return this.double ? 10 : 5
+  }
 
-    if (target.childElementCount > 4) {
-      e.preventDefault()
-      target.scrollBy(e.deltaY + e.deltaX, 0)
+  public get visibleEntries() {
+    return this.list.slice(
+      this.itemsScrolled,
+      this.itemsScrolled + this.visibleItems,
+    )
+  }
+
+  public handleScroll(e: WheelEvent) {
+    const scrollAmount = e.deltaY + e.deltaX
+    let scrollDelta = Math.sign(scrollAmount)
+
+    if (this.list.length < 4) return
+
+    if (this.double) {
+      scrollDelta *= 2
     }
+
+    this.itemsScrolled = clamp(
+      this.itemsScrolled + scrollDelta,
+      0,
+      this.list.length - this.visibleItems + 2,
+    )
+
+    e.preventDefault()
   }
 
   public getHumanStatus(status: MediaListStatus) {
@@ -116,6 +142,7 @@ export default class ListRow extends Vue {
   }
 
   & > .entry-container {
+    position: relative;
     display: grid;
     grid-auto-columns: calc(#{$entryWidth} - (#{$triangleWidth}));
     grid-template-rows: $entryHeight;

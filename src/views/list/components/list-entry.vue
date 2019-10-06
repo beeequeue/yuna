@@ -1,5 +1,5 @@
 <template>
-  <div class="entry">
+  <div class="entry" :class="{ [entry.mediaId]: true }">
     <transition mode="out-in">
       <loading
         v-if="!entry || !media.media || media.loading"
@@ -191,24 +191,31 @@ export default class ListEntry extends Vue {
   }
 
   &.v-move {
-    transition: transform 0.5s;
-
-    @for $i from 1 through 250 {
-      &:nth-child(#{$i}) {
-        transition: transform 0.5s #{$i * 0.05}s;
-      }
-    }
+    transition: transform 0.25s;
   }
 
   &.v-enter-active,
   &.v-leave-active {
     z-index: 1; // To go under existing ones
-    transition: opacity 0.35s, transform 0.5s;
+    transition: opacity 0.15s, transform 0.35s;
   }
 
   &.v-leave-active {
     position: absolute;
     left: -15px;
+
+    &:last-child,
+    &.double:nth-last-child(2) {
+      left: initial;
+      right: -150px;
+      top: 0;
+    }
+
+    &.double:last-child,
+    &.double:nth-child(2) {
+      top: initial;
+      bottom: 0;
+    }
   }
 }
 </style>
