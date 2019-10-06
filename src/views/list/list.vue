@@ -139,7 +139,6 @@ export default class List extends Vue {
 
     this.setMediaLoading(idsToFetch, true)
 
-    const gottenMedia: ListMediaMedia[] = []
     let lastPage = Infinity
     let page = 1
 

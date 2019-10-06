@@ -43,7 +43,7 @@ import { ListMedia } from '@/views/list/list.vue'
 import Icon from '@/common/components/icon.vue'
 import { Required } from '@/decorators'
 import { ListViewListEntries, MediaListStatus } from '@/graphql/types'
-import { clamp, humanizeMediaListStatus, prop } from '@/utils'
+import { clamp, humanizeMediaListStatus } from '@/utils'
 import ListEntry from './list-entry.vue'
 
 @Component({ components: { Icon, ListEntry } })
