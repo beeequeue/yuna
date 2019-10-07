@@ -197,7 +197,7 @@ export default class ListEntry extends Vue {
   &.v-enter-active,
   &.v-leave-active {
     z-index: 1; // To go under existing ones
-    transition: opacity 0.15s, transform 0.35s;
+    transition: opacity 0.15s, transform 0.25s;
   }
 
   &.v-leave-active {
