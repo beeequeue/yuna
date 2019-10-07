@@ -9,6 +9,8 @@
       <icon class="collapser" :class="{ flip: open }" :icon="expandSvg" />
 
       {{ getHumanStatus(status) }}
+
+      ( {{ list.length }} )
     </div>
 
     <transition>
@@ -128,6 +130,7 @@ export default class ListRow extends Vue {
     font-weight: 200;
     text-shadow: 0 1px 1px transparentize(white, 0.85);
     font-size: 1.5em;
+    font-variant-numeric: lining-nums;
     cursor: pointer;
     transition: padding-bottom 0.25s;
 
