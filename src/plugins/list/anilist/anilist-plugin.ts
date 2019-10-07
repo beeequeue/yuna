@@ -7,6 +7,7 @@ import {
   AnilistDeleteEntryMutation,
   AnilistEditListEntryMutation,
   AnilistEditListEntryMutationVariables,
+  AnilistListEntriesEntries,
   AnilistListEntriesQuery,
   AnilistListEntriesQueryVariables,
   AnilistSetProgressMutation,
@@ -37,10 +38,10 @@ import {
 } from '@/plugins/list/plugin'
 import { isNil, isNotNil } from '@/utils'
 import {
-  ANILIST_LIST_ENTRIES,
   ANILIST_CREATE_ENTRY,
   ANILIST_DELETE_ENTRY,
   ANILIST_EDIT_LIST_ENTRY,
+  ANILIST_LIST_ENTRIES,
   ANILIST_SET_PROGRESS,
   ANILIST_SET_SCORE,
   ANILIST_SET_STATUS,
@@ -93,35 +94,81 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     return this.fromMediaListEntry(listEntryResult.data.MediaList)
   }
 
+  private getEntriesFromQuery(
+    data: AnilistListEntriesQuery = { listCollection: { lists: [] } },
+  ) {
+    return (
+      oc(data)
+        .listCollection.lists([])
+        // Remove nulls
+        .filter(isNotNil)
+        // Remove custom list entries
+        .filter(list => !list.isCustomList)
+        // Get the entries
+        .map(list => list.entries!.filter(isNotNil))
+        // Flatten to one array
+        .flat()
+    )
+  }
+
+  private async fetchAllEntries(options: QueryListEntriesArgs) {
+    const entries: AnilistListEntriesEntries[] = []
+
+    for (let i = 0; i < 100; i++) {
+      const variables: AnilistListEntriesQueryVariables = {
+        userId: getAnilistUserId(this.store)!,
+        ...options,
+        page: i + 1,
+        perPage: 500,
+      }
+      const { data, errors } = await this.apollo.query<AnilistListEntriesQuery>(
+        {
+          query: ANILIST_LIST_ENTRIES,
+          variables,
+          errorPolicy: 'all',
+        },
+      )
+
+      const list = this.getEntriesFromQuery(data)
+
+      if (errors || list.length < 1) break
+
+      entries.push(...list)
+    }
+
+    return entries
+  }
+
+  private async fetchListEntries(options: QueryListEntriesArgs) {
+    const variables: AnilistListEntriesQueryVariables = {
+      userId: getAnilistUserId(this.store)!,
+      ...options,
+    }
+    const { data } = await this.apollo.query<AnilistListEntriesQuery>({
+      query: ANILIST_LIST_ENTRIES,
+      variables,
+    })
+
+    return this.getEntriesFromQuery(data)
+  }
+
+  // Can't handle perPage > 500
   public async GetListEntries(
     options: QueryListEntriesArgs,
   ): Promise<ListEntryWithoutMedia[]> {
     // defaulting the values in the parameters didn't work for some reason
     options = options || {}
-    const variables: AnilistListEntriesQueryVariables = {
-      userId: getAnilistUserId(this.store)!,
-      ...options,
+    let list: AnilistListEntriesEntries[] = []
+
+    if (isNil(options.perPage)) {
+      list = await this.fetchAllEntries(options)
+    } else {
+      list = await this.fetchListEntries(options)
     }
-    const result = await this.apollo.query<AnilistListEntriesQuery>({
-      query: ANILIST_LIST_ENTRIES,
-      variables,
-    })
 
-    const lists = oc(result.data).listCollection.lists([])
-    const entries = lists
-      // Remove nulls
-      .filter(isNotNil)
-      // Remove custom list entries
-      .filter(list => !list.isCustomList)
-      // Get the entries
-      .map(list => list.entries!.filter(isNotNil))
-      // Flatten to one array
-      .flat()
-      // Remove entries not inside id_in if it exists
+    return list
       .filter(entry => isNil(options.id_in) || options.id_in.includes(entry.id))
-    // Remove null types
-
-    return entries.map(this.fromMediaListEntry)
+      .map(this.fromMediaListEntry)
   }
 
   public async AddToList(

@@ -21,9 +21,9 @@ export const SINGLE_MEDIA_QUERY = gql`
   }
 `
 
-export const LIST_LIST_ENTRIES = gql`
-  query ListView($page: Int!, $perPage: Int!, $status: MediaListStatus!) {
-    ListEntries(page: $page, perPage: $perPage, status: $status) @client {
+export const LIST_VIEW_QUERY = gql`
+  query ListView {
+    ListEntries @client {
       id
       mediaId
       status
@@ -34,43 +34,13 @@ export const LIST_LIST_ENTRIES = gql`
   }
 `
 
-export const LIST_FILTER_ENTRIES = gql`
-  query ListFilterEntries($page: Int!) {
-    ListEntries(page: $page, perPage: 500) @client {
-      id
-      mediaId
-      status
-    }
-  }
-`
-
-export const LIST_FILTER_MEDIA = gql`
-  query ListFilterMedia($ids: [Int!]!) {
-    Page(perPage: 50) {
-      media(id_in: $ids) {
-        id
-        title {
-          english
-          romaji
-        }
-        genres
-        status
-        externalLinks {
-          id
-          site
-        }
-      }
-    }
-  }
-`
-
 export const LIST_MEDIA_QUERY = gql`
-  query ListMedia($page: Int!, $mediaIds: [Int!]!) {
+  query ListMedia($page: Int!, $ids: [Int!]!) {
     Page(page: $page, perPage: 50) {
       pageInfo {
         lastPage
       }
-      media(id_in: $mediaIds, sort: [TITLE_ENGLISH, TITLE_ROMAJI]) {
+      media(id_in: $ids, sort: [TITLE_ENGLISH, TITLE_ROMAJI]) {
         id
         title {
           userPreferred

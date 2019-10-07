@@ -4195,11 +4195,7 @@ export type SingleMediaQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type ListViewQueryVariables = {
-  page: Scalars['Int']
-  perPage: Scalars['Int']
-  status: MediaListStatus
-}
+export type ListViewQueryVariables = {}
 
 export type ListViewQuery = { __typename?: 'Query' } & {
   ListEntries: Array<
@@ -4210,57 +4206,9 @@ export type ListViewQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type ListFilterEntriesQueryVariables = {
-  page: Scalars['Int']
-}
-
-export type ListFilterEntriesQuery = { __typename?: 'Query' } & {
-  ListEntries: Array<
-    { __typename?: 'ListEntry' } & Pick<ListEntry, 'id' | 'mediaId' | 'status'>
-  >
-}
-
-export type ListFilterMediaQueryVariables = {
-  ids: Array<Scalars['Int']>
-}
-
-export type ListFilterMediaQuery = { __typename?: 'Query' } & {
-  Page: Maybe<
-    { __typename?: 'Page' } & {
-      media: Maybe<
-        Array<
-          Maybe<
-            { __typename?: 'Media' } & Pick<
-              Media,
-              'id' | 'genres' | 'status'
-            > & {
-                title: Maybe<
-                  { __typename?: 'MediaTitle' } & Pick<
-                    MediaTitle,
-                    'english' | 'romaji'
-                  >
-                >
-                externalLinks: Maybe<
-                  Array<
-                    Maybe<
-                      { __typename?: 'MediaExternalLink' } & Pick<
-                        MediaExternalLink,
-                        'id' | 'site'
-                      >
-                    >
-                  >
-                >
-              }
-          >
-        >
-      >
-    }
-  >
-}
-
 export type ListMediaQueryVariables = {
   page: Scalars['Int']
-  mediaIds: Array<Scalars['Int']>
+  ids: Array<Scalars['Int']>
 }
 
 export type ListMediaQuery = { __typename?: 'Query' } & {
@@ -4883,27 +4831,6 @@ export type SingleMediaCoverImage = NonNullable<
 >
 export type ListViewVariables = ListViewQueryVariables
 export type ListViewListEntries = NonNullable<ListViewQuery['ListEntries'][0]>
-export type ListFilterEntriesVariables = ListFilterEntriesQueryVariables
-export type ListFilterEntriesListEntries = NonNullable<
-  ListFilterEntriesQuery['ListEntries'][0]
->
-export type ListFilterMediaVariables = ListFilterMediaQueryVariables
-export type ListFilterMediaPage = NonNullable<ListFilterMediaQuery['Page']>
-export type ListFilterMediaMedia = NonNullable<
-  (NonNullable<(NonNullable<ListFilterMediaQuery['Page']>)['media']>)[0]
->
-export type ListFilterMediaTitle = NonNullable<
-  (NonNullable<
-    (NonNullable<(NonNullable<ListFilterMediaQuery['Page']>)['media']>)[0]
-  >)['title']
->
-export type ListFilterMediaExternalLinks = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<(NonNullable<ListFilterMediaQuery['Page']>)['media']>)[0]
-    >)['externalLinks']
-  >)[0]
->
 export type ListMediaVariables = ListMediaQueryVariables
 export type ListMediaPage = NonNullable<ListMediaQuery['Page']>
 export type ListMediaPageInfo = NonNullable<

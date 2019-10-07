@@ -4,18 +4,18 @@ import { oc } from 'ts-optchain'
 
 import {
   ANILIST_IDS_FROM_MAL_IDS,
-  LIST_FILTER_ENTRIES,
-  LIST_FILTER_MEDIA,
+  LIST_MEDIA_QUERY,
+  LIST_VIEW_QUERY,
 } from '@/graphql/documents/queries'
 import {
   AnilistIdsFromMalIdsQuery,
   AnilistIdsFromMalIdsQueryVariables,
-  ListFilterEntriesListEntries,
-  ListFilterEntriesQuery,
-  ListFilterEntriesQueryVariables,
-  ListFilterMediaMedia,
-  ListFilterMediaQuery,
-  ListFilterMediaQueryVariables,
+  ListMediaMedia,
+  ListMediaQuery,
+  ListMediaQueryVariables,
+  ListViewListEntries,
+  ListViewQuery,
+  ListViewQueryVariables,
 } from '@/graphql/types'
 import { Instance } from '@/types'
 import { isNil, isNotNil, prop } from '@/utils'
@@ -49,15 +49,40 @@ export const getAnilistIdsFromMalIds = async (
     .flat()
 }
 
-export const getAllEntries = async ({ $apollo }: Instance) => {
-  const entries: ListFilterEntriesListEntries[] = []
+export const getALofOfEntries = async (
+  { $apollo }: Instance,
+  amount: number,
+) => {
+  const entries: ListViewListEntries[] = []
+  const fiveHundreds = Math.floor(amount / 500)
 
-  for (let i = 0; i < 100; i++) {
-    const variables: ListFilterEntriesQueryVariables = {
+  for (let i = 0; i < fiveHundreds; i++) {
+    const variables: ListViewQueryVariables = {
       page: i + 1,
     }
-    const { data, errors } = await $apollo.query<ListFilterEntriesQuery>({
-      query: LIST_FILTER_ENTRIES,
+    const { data, errors } = await $apollo.query<ListViewQuery>({
+      query: LIST_VIEW_QUERY,
+      variables,
+      errorPolicy: 'all',
+    })
+
+    if (errors || oc(data).ListEntries([]).length < 1) break
+
+    entries.push(...data.ListEntries)
+  }
+
+  return entries
+}
+
+export const getAllEntries = async ({ $apollo }: Instance) => {
+  const entries: ListViewListEntries[] = []
+
+  for (let i = 0; i < 100; i++) {
+    const variables: ListViewQueryVariables = {
+      page: i + 1,
+    }
+    const { data, errors } = await $apollo.query<ListViewQuery>({
+      query: LIST_VIEW_QUERY,
       variables,
       errorPolicy: 'all',
     })
@@ -72,7 +97,7 @@ export const getAllEntries = async ({ $apollo }: Instance) => {
 
 type ListData = Array<
   PromiseReturnType<typeof getAllEntries>[number] & {
-    media?: ListFilterMediaMedia
+    media?: ListMediaMedia
   }
 >
 
@@ -84,11 +109,11 @@ export const getListData = async ({ $apollo, ...rest }: Instance) => {
   )
 
   const promises = idChunks.map(async chunk => {
-    const variables: ListFilterMediaQueryVariables = {
+    const variables: ListMediaQueryVariables = {
       ids: chunk,
     }
-    const { data } = await $apollo.query<ListFilterMediaQuery>({
-      query: LIST_FILTER_MEDIA,
+    const { data } = await $apollo.query<ListMediaQuery>({
+      query: LIST_MEDIA_QUERY,
       variables,
     })
 

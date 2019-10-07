@@ -1,17 +1,8 @@
 import { ApolloError } from 'apollo-client'
 import { Vue } from 'vue/types/vue'
-import { ComponentOptions, Prop } from 'vue/types/options'
+import { Prop } from 'vue/types/options'
 import { VueApolloQueryDefinition } from 'vue-apollo/types/options'
 import { createDecorator, VueDecorator } from 'vue-class-component'
-
-import { LIST_LIST_ENTRIES } from '@/graphql/documents/queries'
-import {
-  ListViewQuery,
-  ListViewQueryVariables,
-  MediaListStatus,
-} from '@/graphql/types'
-import List from '@/views/list/list.vue'
-import { getRows } from '@/utils/cache'
 
 interface QueryOptions<C extends Vue, R = any>
   extends VueApolloQueryDefinition<C, R> {
@@ -48,33 +39,6 @@ export function Query<C extends Vue, R = any, V extends {} | null = null>(
       update: (data: any) =>
         Object.keys(data).includes(key) ? data[key] : data,
       ...options,
-    }
-  })
-}
-
-export function ListQuery(status: MediaListStatus): VueDecorator {
-  return createDecorator((componentOptions: ComponentOptions<List>) => {
-    if (!componentOptions.apollo) {
-      componentOptions.apollo = {}
-    }
-
-    ;(componentOptions.apollo as any)[status.toLowerCase()] = {
-      query: LIST_LIST_ENTRIES,
-      variables(): ListViewQueryVariables {
-        return {
-          page: 1,
-          perPage: 10 * getRows(status),
-          status,
-        }
-      },
-      skip() {
-        return !this.meta[status].open
-      },
-      update(data: ListViewQuery) {
-        this.getMedia(data.ListEntries.map(e => e.mediaId))
-
-        return data
-      },
     }
   })
 }
