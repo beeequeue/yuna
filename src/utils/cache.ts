@@ -208,23 +208,14 @@ export const getRows = (status: MediaListStatus) => {
   return 1
 }
 
-export const removeFromCacheList = (
-  cache: DataProxy,
-  anilistId: number,
-  status: MediaListStatus,
-) => {
+export const removeFromCacheList = (cache: DataProxy, anilistId: number) => {
   for (let i = 1; i < 100; i++) {
     let data: ListViewQuery
 
     try {
-      const variables = {
-        page: i,
-        perPage: 10 * getRows(status),
-        status,
-      }
       data = cache.readQuery<ListViewQuery, ListViewQueryVariables>({
         query: LIST_VIEW_QUERY,
-        variables,
+        variables: {},
       })!
 
       const index = data.ListEntries.findIndex(
@@ -238,7 +229,7 @@ export const removeFromCacheList = (
 
       cache.writeQuery<ListViewQuery, ListViewQueryVariables>({
         query: LIST_VIEW_QUERY,
-        variables,
+        variables: {},
         data: newData,
       })
     } catch (e) {
@@ -252,16 +243,11 @@ export const addToCacheList = (
   entry: ListViewListEntries,
 ) => {
   let data: ListViewQuery
-  const variables = {
-    page: 1,
-    perPage: 10 * getRows(entry.status),
-    status: entry.status,
-  }
 
   try {
     data = cache.readQuery<ListViewQuery, ListViewQueryVariables>({
       query: LIST_VIEW_QUERY,
-      variables,
+      variables: {},
     })!
   } catch (e) {
     return
@@ -270,7 +256,7 @@ export const addToCacheList = (
   const newData = { ListEntries: [entry, ...data.ListEntries] }
   cache.writeQuery<ListViewQuery, ListViewQueryVariables>({
     query: LIST_VIEW_QUERY,
-    variables,
+    variables: {},
     data: newData,
   })
 }

@@ -91,13 +91,11 @@ export const deleteFromList = async (
   { $apollo }: Instance,
   anilistId: number,
 ) => {
-  const oldStatus = getOptimisticResponse($apollo, anilistId, {}).status
-
   return $apollo.mutate<DeleteFromListMutation>({
     mutation: DELETE_FROM_LIST,
     variables: { anilistId } as DeleteFromListVariables,
     update: cache => {
-      removeFromCacheList(cache, anilistId, oldStatus)
+      removeFromCacheList(cache, anilistId)
 
       const variables: AnimeViewQueryVariables = { id: anilistId }
       let data
@@ -142,7 +140,7 @@ export const editListEntry = async (
     update: (proxy, { data }) => {
       if (!data || options.status === oldStatus) return data
 
-      removeFromCacheList(proxy, anilistId, oldStatus)
+      removeFromCacheList(proxy, anilistId)
       addToCacheList(proxy, data.EditListEntry)
 
       return data
@@ -155,8 +153,6 @@ export const updateStatus = async (
   anilistId: number,
   status: MediaListStatus,
 ) => {
-  const oldStatus = getOptimisticResponse($apollo, anilistId, {}).status
-
   return $apollo.mutate<UpdateStatusMutation>({
     mutation: UPDATE_STATUS,
     variables: { anilistId, status } as UpdateStatusVariables,
@@ -166,7 +162,7 @@ export const updateStatus = async (
       }),
     },
     update: (proxy, { data }) => {
-      removeFromCacheList(proxy, anilistId, oldStatus)
+      removeFromCacheList(proxy, anilistId)
       addToCacheList(proxy, data!.UpdateStatus)
     },
   })
@@ -236,7 +232,7 @@ export const setProgress = async (
       if (!data) return
 
       if (oldStatus !== data.UpdateProgress.status) {
-        removeFromCacheList(cache, options.animeId, oldStatus)
+        removeFromCacheList(cache, options.animeId)
         addToCacheList(cache, data.UpdateProgress)
       }
 

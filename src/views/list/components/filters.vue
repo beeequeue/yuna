@@ -42,15 +42,12 @@ import TextInput from '@/common/components/form/text-input.vue'
 import Loading from '@/common/components/loading.vue'
 
 import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
-import { getListData } from '@/graphql/queries'
 import { MediaListStatus } from '@/graphql/types'
 import { debounce, prop } from '@/utils'
 
 type EmittedLists = {
   [key in MediaListStatus]: number[]
 }
-
-type Data = PromiseReturnType<typeof getListData>
 
 @Component({ components: { Loading, TextInput } })
 export default class Filters extends Vue {
@@ -67,7 +64,7 @@ export default class Filters extends Vue {
     MediaListStatus.Dropped,
   ] as const
 
-  public data: Data = []
+  public data: any[] = []
 
   public searchString = ''
 
@@ -83,7 +80,7 @@ export default class Filters extends Vue {
     return getSimklUser(this.$store)
   }
 
-  public filteredItems: Data = []
+  public filteredItems: any[] = []
 
   @Watch('searchString')
   public updateFilteredItems() {
@@ -92,10 +89,6 @@ export default class Filters extends Vue {
     const filteredByTitles = this.filterByTitles(items, this.searchString)
 
     this.filteredItems = filteredByTitles
-  }
-
-  public async mounted() {
-    this.data = await getListData(this)
   }
 
   @Watch('filteredItems')
@@ -115,21 +108,18 @@ export default class Filters extends Vue {
     )
   }
 
-  public filterByTitles(entries: Data, str: string): Data {
+  public filterByTitles(entries: any[], str: string): any[] {
     if (str.length < 4) return this.data
 
-    const fuse = new Fuse<Data[number]>(
-      entries,
-      {
-        caseSensitive: false,
-        shouldSort: true,
-        keys: ['media.title.english', 'media.title.romaji'] as any,
-        threshold: 0.35,
-      },
-    )
+    const fuse = new Fuse<any[][number]>(entries, {
+      caseSensitive: false,
+      shouldSort: true,
+      keys: ['media.title.english', 'media.title.romaji'] as any,
+      threshold: 0.35,
+    })
     const result = fuse.search(str)
 
-    console.log(result)
+    // console.log(result)
     return result
   }
 
