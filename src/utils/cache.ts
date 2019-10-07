@@ -2,7 +2,7 @@ import { DataProxy } from 'apollo-cache'
 import gql from 'graphql-tag'
 import { oc } from 'ts-optchain'
 
-import { EPISODE_LIST, LIST_LIST_ENTRIES } from '@/graphql/documents/queries'
+import { EPISODE_LIST, LIST_VIEW_QUERY } from '@/graphql/documents/queries'
 import {
   CachedAnimeListEntryFragment,
   EpisodeListEpisodes,
@@ -223,7 +223,7 @@ export const removeFromCacheList = (
         status,
       }
       data = cache.readQuery<ListViewQuery, ListViewQueryVariables>({
-        query: LIST_LIST_ENTRIES,
+        query: LIST_VIEW_QUERY,
         variables,
       })!
 
@@ -237,7 +237,7 @@ export const removeFromCacheList = (
       newData.ListEntries.splice(index, 1)
 
       cache.writeQuery<ListViewQuery, ListViewQueryVariables>({
-        query: LIST_LIST_ENTRIES,
+        query: LIST_VIEW_QUERY,
         variables,
         data: newData,
       })
@@ -260,7 +260,7 @@ export const addToCacheList = (
 
   try {
     data = cache.readQuery<ListViewQuery, ListViewQueryVariables>({
-      query: LIST_LIST_ENTRIES,
+      query: LIST_VIEW_QUERY,
       variables,
     })!
   } catch (e) {
@@ -269,7 +269,7 @@ export const addToCacheList = (
 
   const newData = { ListEntries: [entry, ...data.ListEntries] }
   cache.writeQuery<ListViewQuery, ListViewQueryVariables>({
-    query: LIST_LIST_ENTRIES,
+    query: LIST_VIEW_QUERY,
     variables,
     data: newData,
   })
