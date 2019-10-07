@@ -56,6 +56,7 @@ export default class ListRow extends Vue {
   @Prop(Boolean) double!: boolean
 
   public itemsScrolled = 0
+  public lastScroll = 0
 
   public expandSvg = mdiChevronDown
 
@@ -81,15 +82,17 @@ export default class ListRow extends Vue {
   }
 
   public handleScroll(e: WheelEvent) {
+    const msSinceLastScroll = Date.now() - this.lastScroll
     const scrollAmount = e.deltaY + e.deltaX
     let scrollDelta = Math.sign(scrollAmount)
 
-    if (this.list.length < 4) return
+    if (this.list.length < 5 || msSinceLastScroll <= 5) return
 
     if (this.double) {
       scrollDelta *= 2
     }
 
+    this.lastScroll = Date.now()
     this.itemsScrolled = clamp(
       this.itemsScrolled + scrollDelta,
       0,
