@@ -65,8 +65,8 @@ import { CHECK_FOR_UPDATES } from '@/messages'
 import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
 import { SimklListPlugin } from '@/plugins/list/simkl-plugin'
 
-const requireBg = require.context('@/assets/bg')
-const backgrounds = requireBg.keys().filter(name => name.includes('.webp'))
+const requireBg = require.context('@/assets/bg', false, /\.webp$/)
+const backgrounds = requireBg.keys()
 
 @Component({
   components: {
