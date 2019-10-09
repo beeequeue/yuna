@@ -36,14 +36,13 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { ListViewListEntries } from '@/graphql/types'
-import { Required } from '@/decorators'
-
-// @ts-ignore
-import { ListMedia } from '@/views/list/list.vue'
 import Actions from '@/common/components/actions.vue'
 import Loading from '@/common/components/loading.vue'
 import ScrollingText from '@/common/components/scrolling-text.vue'
+import { ListViewListEntries } from '@/graphql/types'
+
+import { Required } from '@/decorators'
+import { ListMedia } from '../types'
 
 @Component({ components: { ScrollingText, Loading, Actions } })
 export default class ListEntry extends Vue {

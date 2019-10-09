@@ -40,12 +40,11 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiChevronDown } from '@mdi/js'
 
-// @ts-ignore
-import { ListMedia } from '@/views/list/list.vue'
 import Icon from '@/common/components/icon.vue'
 import { Required } from '@/decorators'
 import { ListViewListEntries, MediaListStatus } from '@/graphql/types'
 import { clamp, humanizeMediaListStatus } from '@/utils'
+import { ListMedia } from '../types'
 import ListEntry from './list-entry.vue'
 
 @Component({ components: { Icon, ListEntry } })

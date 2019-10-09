@@ -29,25 +29,19 @@ import ListEntry from './components/list-entry.vue'
 import Filters from './components/filters.vue'
 import { LIST_MEDIA_QUERY, LIST_VIEW_QUERY } from '@/graphql/documents/queries'
 import {
-  ListMediaMedia,
   ListMediaQuery,
   ListMediaQueryVariables,
+  ListViewListEntries,
   ListViewQuery,
   ListViewQueryVariables,
   MediaListStatus,
 } from '@/graphql/types'
 
-import { isNil, isNotNil, LocalStorageKey, prop, propEq } from '@/utils'
-import { getALofOfEntries } from '@/graphql/queries'
 import { Query } from '@/decorators'
-
-export type ListMedia = {
-  [key: number]: { media: ListMediaMedia | null; loading: boolean } | undefined
-}
+import { isNil, isNotNil, LocalStorageKey, prop, propEq } from '@/utils'
+import { ListMedia } from './types'
 
 type MetaData = { [key in MediaListStatus]: { open: boolean } }
-
-type Entries = PromiseReturnType<typeof getALofOfEntries>
 
 @Component({
   components: { Filters, ListRow, Loading, ListEntry, TextInput, NumberInput },
@@ -58,7 +52,7 @@ export default class List extends Vue {
     variables: {},
     update: data => data.ListEntries,
   })
-  public entries!: Entries
+  public entries!: ListViewListEntries[]
 
   public media: ListMedia = {}
 
