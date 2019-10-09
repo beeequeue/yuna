@@ -10,7 +10,7 @@
     "@sentry/node": "5.6.2",
     "anitomyscript": "1.0.2",
     "bottleneck": "2.19.5",
-    "date-fns": "2.2.1",
+    "date-fns": "2.4.1",
     "discord-rpc": "3.1.0",
     "electron-debug": "3.0.1",
     "electron-log": "3.0.8",
