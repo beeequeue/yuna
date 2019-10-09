@@ -44,7 +44,7 @@ import Loading from '@/common/components/loading.vue'
 
 import { Default } from '@/decorators'
 import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
-import { ListViewListEntries, MediaListStatus } from '@/graphql/types'
+import { ListViewListEntries } from '@/graphql/types'
 import { debounce, prop } from '@/utils'
 import { ListMedia } from '../types'
 
@@ -58,15 +58,6 @@ export default class Filters extends Vue {
   public anichartLogo = anichartSvg
   public alLogo = anilistSvg
   public simklLogo = simklSvg
-
-  public lists = [
-    MediaListStatus.Current,
-    MediaListStatus.Repeating,
-    MediaListStatus.Planning,
-    MediaListStatus.Paused,
-    MediaListStatus.Completed,
-    MediaListStatus.Dropped,
-  ] as const
 
   public searchString = ''
 
