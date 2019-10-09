@@ -6,11 +6,15 @@
       :class="{ empty: !open || list.length < 1 }"
       @click="toggleOpen(status)"
     >
-      <icon class="collapser" :class="{ flip: open }" :icon="expandSvg" />
+      <icon
+        class="collapser"
+        :class="{ flip: list.length > 0 && open }"
+        :icon="expandSvg"
+      />
 
       {{ getHumanStatus(status) }}
 
-      ( {{ list.length }} )
+      <span v-if="lengthString !== '0'"> ( {{ lengthString }} ) </span>
     </div>
 
     <transition>
@@ -50,6 +54,7 @@ import ListEntry from './list-entry.vue'
 @Component({ components: { Icon, ListEntry } })
 export default class ListRow extends Vue {
   @Required(Array) list!: ListViewListEntries[]
+  @Required(Number) totalLength!: number
   @Required(Object) media!: ListMedia
   @Required(String) status!: MediaListStatus
   @Required(Function) toggleOpen!: (status: MediaListStatus) => any
@@ -80,6 +85,14 @@ export default class ListRow extends Vue {
       this.itemsScrolled,
       this.itemsScrolled + this.visibleItems,
     )
+  }
+
+  public get lengthString() {
+    if (this.list.length !== this.totalLength) {
+      return `${this.list.length}/${this.totalLength}`
+    }
+
+    return this.list.length.toString()
   }
 
   public handleScroll(e: WheelEvent) {

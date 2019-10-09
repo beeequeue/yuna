@@ -1,12 +1,17 @@
 <template>
   <div class="list-page">
-    <!--    <filters @show-filtered="" />-->
+    <filters
+      @show-filtered="updateFilteredEntryIds"
+      :entries="entries"
+      :media="media"
+    />
 
     <div class="list-container">
       <list-row
         v-for="status in lists"
         :key="status"
         :list="getList(status)"
+        :totalLength="getTotalListLength(status)"
         :status="status"
         :media="media"
         :open="meta[status].open"
@@ -54,6 +59,7 @@ export default class List extends Vue {
   })
   public entries!: ListViewListEntries[]
 
+  public filteredEntryIds: number[] | null = null
   public media: ListMedia = {}
 
   public lists = [
@@ -79,10 +85,22 @@ export default class List extends Vue {
     entries: HTMLDivElement
   }
 
+  public updateFilteredEntryIds(ids: number[]) {
+    this.filteredEntryIds = ids
+  }
+
   public getList(status: MediaListStatus) {
     if (isNil(this.entries)) return []
 
-    return this.entries.filter(propEq('status', status))
+    const entries = this.entries.filter(propEq('status', status))
+
+    if (isNil(this.filteredEntryIds)) return entries
+
+    return entries.filter(entry => this.filteredEntryIds!.includes(entry.id))
+  }
+
+  public getTotalListLength(status: MediaListStatus) {
+    return oc(this.entries)([]).filter(propEq('status', status)).length
   }
 
   private setMediaLoading(mediaIds: number[], loading: boolean) {

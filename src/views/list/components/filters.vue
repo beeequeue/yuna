@@ -41,16 +41,19 @@ import simklSvg from '@/assets/simkl.svg'
 import TextInput from '@/common/components/form/text-input.vue'
 import Loading from '@/common/components/loading.vue'
 
+import { Default } from '@/decorators'
 import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
-import { MediaListStatus } from '@/graphql/types'
+import { ListViewListEntries, MediaListStatus } from '@/graphql/types'
 import { debounce, prop } from '@/utils'
+import { ListMedia } from '../types'
 
-type EmittedLists = {
-  [key in MediaListStatus]: number[]
-}
+type Media = NonNullable<NonNullable<ListMedia[number]>['media']>
 
 @Component({ components: { Loading, TextInput } })
 export default class Filters extends Vue {
+  @Default(Array, () => []) public entries!: ListViewListEntries[]
+  @Default(Object, () => {}) public media!: ListMedia
+
   public anichartLogo = anichartSvg
   public alLogo = anilistSvg
   public simklLogo = simklSvg
@@ -63,8 +66,6 @@ export default class Filters extends Vue {
     MediaListStatus.Completed,
     MediaListStatus.Dropped,
   ] as const
-
-  public data: any[] = []
 
   public searchString = ''
 
@@ -80,55 +81,43 @@ export default class Filters extends Vue {
     return getSimklUser(this.$store)
   }
 
-  public filteredItems: any[] = []
+  public filteredMedia: number[] = []
 
-  @Watch('searchString')
-  public updateFilteredItems() {
-    const items = this.data
+  public filterByTitles(media: Media[]): Media[] {
+    if (this.searchString.length < 3) return media
 
-    const filteredByTitles = this.filterByTitles(items, this.searchString)
-
-    this.filteredItems = filteredByTitles
-  }
-
-  @Watch('filteredItems')
-  @Emit('show-filtered')
-  public emitFilteredItem(): EmittedLists | null {
-    if (this.searchString.length < 4) return null
-
-    return this.lists.reduce(
-      (obj, status) => {
-        obj[status] = this.filteredItems
-          .filter(e => e.status === status)
-          .map(prop('mediaId'))
-
-        return obj
-      },
-      {} as EmittedLists,
-    )
-  }
-
-  public filterByTitles(entries: any[], str: string): any[] {
-    if (str.length < 4) return this.data
-
-    const fuse = new Fuse<any[][number]>(entries, {
+    const fuse = new Fuse<Media>(media, {
       caseSensitive: false,
       shouldSort: true,
-      keys: ['media.title.english', 'media.title.romaji'] as any,
+      keys: ['title.english', 'title.romaji'] as any,
       threshold: 0.35,
     })
-    const result = fuse.search(str)
 
-    // console.log(result)
-    return result
+    return fuse.search(this.searchString)
+  }
+
+  @Watch('searchString')
+  public updateFilteredMedia() {
+    const media = Object.values(this.media).map(m => m!.media!)
+
+    const filteredByTitles = this.filterByTitles(media)
+
+    this.filteredMedia = filteredByTitles.map(prop('id'))
+  }
+
+  @Watch('filteredMedia')
+  @Emit('show-filtered')
+  public emitFilteredItem(): number[] | null {
+    return this.entries
+      .filter(entry => this.filteredMedia.includes(entry.mediaId))
+      .map(prop('id'))
   }
 
   // beautiful!
-  public debouncedSetSearchString = debounce((str: string) => {
-    if (str.length < 3) return
-
-    this.setSearchString(str)
-  }, 500)
+  public debouncedSetSearchString = debounce(
+    (str: string) => this.setSearchString(str),
+    500,
+  )
 
   public setSearchString(str: string) {
     this.searchString = str
@@ -172,7 +161,12 @@ export default class Filters extends Vue {
 
   & > .text-input,
   & > .number-input {
+    width: 250px;
+
     & /deep/ input {
+      &::-webkit-input-placeholder {
+        font-weight: 400;
+      }
       text-align: center;
     }
   }
