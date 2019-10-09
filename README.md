@@ -61,9 +61,9 @@ These builds are not guaranteed to work in any way.
 ### Get Started
 
 1. Install dependencies - `yarn`
-1. _(Windows only)_ Manually replace the relative path in `apollo.config.js` to an absolute one.
+1. Download the schema for auto-completion - `yarn get-schema`
 1. Start the development client - `yarn serve`
 
-### Generating types after changing/adding a GraphQL file
+### Generating types after changing/adding a GraphQL query/mutation
 
-`yarn codegen`
+`yarn gql-gen`
