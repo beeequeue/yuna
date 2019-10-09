@@ -19,13 +19,14 @@
     </div>
 
     <text-input
+      class="search"
       placeholder="Search in List..."
       :onChange="debouncedSetSearchString"
     />
 
-    <div class="aside right">
+    <div class="aside loader">
       <transition name="fade">
-        <loading v-if="$apollo.loading" :size="26" />
+        <loading v-if="true || $apollo.loading" :size="26" />
       </transition>
     </div>
   </div>
@@ -129,39 +130,52 @@ export default class Filters extends Vue {
 @import '../../../colors';
 
 .menu {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: 100%;
-  padding: 10px 0;
+  padding: 10px 15px;
+  position: relative;
+  display: grid;
+  grid-template-columns: 125px 1fr 250px 1fr 125px;
+  grid-template-areas: 'links filter search filter-2 loader';
+  grid-gap: 10px;
+  justify-items: center;
+  align-items: center;
   background: color($dark, 300);
   flex-shrink: 0;
 
   & > .aside {
-    position: absolute;
-    top: calc(50% + 2px);
-    left: 12px;
+    grid-area: links;
     display: flex;
+    justify-self: flex-start;
     align-items: center;
     text-decoration: none;
-    transform: translateY(-50%);
 
-    &.right {
-      left: auto;
-      right: 12px;
+    &.loader {
+      grid-area: loader;
+      justify-self: flex-end;
+    }
+
+    & > a {
+      height: 26px;
+      margin-right: 15px;
+
+      &:last-child {
+        margin-right: 0;
+      }
     }
 
     & /deep/ svg {
       height: 26px;
       width: 26px;
-      margin-right: 15px;
     }
+  }
+
+  & > .search {
+    grid-area: search;
   }
 
   & > .text-input,
   & > .number-input {
-    width: 250px;
+    width: 100%;
 
     & /deep/ input {
       &::-webkit-input-placeholder {
