@@ -1,5 +1,6 @@
 /* THIS IS A GENERATED FILE */
 export type Maybe<T> = T | null
+
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string
@@ -4060,6 +4061,7 @@ export type YearStats = {
   amount: Maybe<Scalars['Int']>
   meanScore: Maybe<Scalars['Int']>
 }
+
 export type LocalSourceAnimeQueryVariables = {
   id: Scalars['Int']
 }
@@ -4798,6 +4800,7 @@ export type ImportExternalLinksQuery = { __typename?: 'Query' } & {
       }
   >
 }
+
 export type LocalSourceAnimeVariables = LocalSourceAnimeQueryVariables
 export type LocalSourceAnimeAnime = NonNullable<LocalSourceAnimeQuery['anime']>
 export type LocalSourceAnimeTitle = NonNullable<

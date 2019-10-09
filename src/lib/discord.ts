@@ -3,20 +3,13 @@ import { ipcMain } from 'electron'
 import { debug } from 'electron-log'
 
 import { SettingsStore } from '@/state/settings'
-import { getConfig } from '../config'
+import { getConfig } from '@/config'
 import {
   DISCORD_DISABLE_RICH_PRESENCE,
   DISCORD_ENABLE_RICH_PRESENCE,
   DISCORD_PAUSE_WATCHING,
   DISCORD_SET_WATCHING,
-} from '../messages'
-
-declare module 'discord-rpc' {
-  interface Presence {
-    partySize: number
-    partyMax: number
-  }
-}
+} from '@/messages'
 
 interface WatchingOptions {
   animeName: string

@@ -113,7 +113,7 @@ export class LocalFiles {
             `Episode ${episodeNumber}`,
           thumbnail: `file://${thumbnailPath}`,
           episodeNumber,
-          duration: Math.round(probeData.format.duration),
+          duration: Math.round(probeData.format.duration!),
           format: item.file_extension!,
         }
       })
