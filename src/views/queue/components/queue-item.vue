@@ -22,17 +22,15 @@
     </div>
 
     <animated-size class="episodes-container">
-      <transition>
-        <episode-list
-          v-if="item.open"
-          :anime="anime"
-          :episodes="episodes"
-          :loading="episodesLoading !== 0"
-          :open="item.open"
-          small
-          scrollToNextEpisode
-        />
-      </transition>
+      <episode-list
+        v-if="item.open"
+        :anime="anime"
+        :episodes="episodes"
+        :loading="episodesLoading !== 0"
+        :open="item.open"
+        small
+        scrollToNextEpisode
+      />
     </animated-size>
 
     <div class="controls">
