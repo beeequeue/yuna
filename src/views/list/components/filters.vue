@@ -26,7 +26,7 @@
 
     <div class="aside loader">
       <transition name="fade">
-        <loading v-if="true || $apollo.loading" :size="26" />
+        <loading v-if="$apollo.loading" :size="26" />
       </transition>
     </div>
   </div>
