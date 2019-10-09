@@ -355,7 +355,7 @@ export const debounce = <P extends Array<any>>(
   ms: number,
   immediate = false,
 ) => {
-  let timeout: number | null = null
+  let timeout: number | NodeJS.Timeout | null = null
 
   return (...input: P) => {
     const later = function() {
@@ -365,8 +365,8 @@ export const debounce = <P extends Array<any>>(
       }
     }
 
-    window.clearTimeout(timeout!)
-    timeout = window.setTimeout(later, ms)
+    clearTimeout(timeout as any)
+    timeout = setTimeout(later, ms)
 
     const callNow = immediate && !timeout
     if (callNow) {
@@ -383,11 +383,11 @@ export const countdown = (
 
   fn(_seconds)
 
-  const interval = window.setInterval(() => {
+  const interval = setInterval(() => {
     _seconds--
 
     if (_seconds < 0) {
-      window.clearInterval(interval)
+      clearInterval(interval)
       return
     }
 

@@ -6,6 +6,7 @@ import {
   Menu,
   MenuItemConstructorOptions,
   protocol,
+  screen,
 } from 'electron'
 import electronDebug, { openDevTools } from 'electron-debug'
 import Store from 'electron-store'
@@ -29,7 +30,7 @@ import {
 import { initAutoUpdater } from './updater'
 import { version } from '../package.json'
 import { SupportedMediaKeys } from '@/types'
-import { enumKeysToArray } from '@/utils'
+import { clamp, debounce, enumKeysToArray } from '@/utils'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 if (isDevelopment) {
@@ -81,16 +82,33 @@ const unregisterMediaKeys = () => {
   })
 }
 
+const defaultSize = {
+  width: 1200,
+  height: 755,
+}
+
+const min = (num: number, num2: number) => (num < num2 ? num : num2)
+const max = (num: number, num2: number) => (num >= num2 ? num : num2)
+
 const createMainWindow = () => {
   const settingsStore = new Store<any>({ name: 'settings' })
 
   const position = settingsStore.get('window', {})
+  const bounds = screen.getAllDisplays().reduce(
+    (obj, { bounds }) => {
+      obj.x = [min(bounds.x, obj.x[0]), max(bounds.x + bounds.width, obj.x[1])]
+      obj.y = [min(bounds.y, obj.y[0]), max(bounds.y + bounds.height, obj.y[1])]
+
+      return obj
+    },
+    { x: [Infinity, -Infinity], y: [Infinity, -Infinity] },
+  )
 
   const window = new BrowserWindow({
-    width: 1200,
-    height: 755,
-    x: position.x,
-    y: position.y,
+    width: defaultSize.width,
+    height: defaultSize.height,
+    x: clamp(position.x, bounds.x[0], bounds.x[1] - defaultSize.width),
+    y: clamp(position.y, bounds.y[0], bounds.y[1] - defaultSize.height),
     maximizable: false,
     frame: false,
     darkTheme: true,
@@ -186,19 +204,22 @@ const createMainWindow = () => {
     )
   }
 
-  ipcMain.on(OPEN_DEVTOOLS, () => {
-    openDevTools()
-  })
-
+  ipcMain.on(OPEN_DEVTOOLS, () => openDevTools())
   ipcMain.on(REGISTER_MEDIA_KEYS, () => registerMediaKeys(window))
   ipcMain.on(UNREGISTER_MEDIA_KEYS, () => unregisterMediaKeys())
 
-  window.on('close', () => {
-    settingsStore.set('window', mainWindow!.getBounds())
-  })
+  const saveWindowLocation = debounce(() => {
+    settingsStore.set('window', {
+      ...mainWindow!.getBounds(),
+      ...defaultSize,
+    })
+  }, 250)
+
+  window.on('move', () => saveWindowLocation())
 
   window.on('closed', () => {
     mainWindow = null
+    unregisterMediaKeys()
   })
 
   window.webContents.on('devtools-opened', () => {
