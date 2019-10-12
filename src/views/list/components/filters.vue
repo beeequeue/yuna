@@ -59,8 +59,6 @@ export default class Filters extends Vue {
   public alLogo = anilistSvg
   public simklLogo = simklSvg
 
-  public searchString = ''
-
   public get isConnectedTo() {
     return getIsConnectedTo(this.$store)
   }
@@ -74,19 +72,6 @@ export default class Filters extends Vue {
   }
 
   public filteredMedia: number[] = []
-
-  public filterByTitles(media: Media[]): Media[] {
-    if (this.searchString.length < 3) return media
-
-    const fuse = new Fuse<Media>(media, {
-      caseSensitive: false,
-      shouldSort: true,
-      keys: ['title.english', 'title.romaji'] as any,
-      threshold: 0.35,
-    })
-
-    return fuse.search(this.searchString)
-  }
 
   @Watch('searchString')
   public updateFilteredMedia() {
@@ -105,6 +90,10 @@ export default class Filters extends Vue {
       .map(prop('id'))
   }
 
+  // Name filter
+
+  public searchString = ''
+
   // beautiful!
   public debouncedSetSearchString = debounce(
     (str: string) => this.setSearchString(str),
@@ -113,6 +102,19 @@ export default class Filters extends Vue {
 
   public setSearchString(str: string) {
     this.searchString = str
+  }
+
+  public filterByTitles(media: Media[]): Media[] {
+    if (this.searchString.length < 3) return media
+
+    const fuse = new Fuse<Media>(media, {
+      caseSensitive: false,
+      shouldSort: true,
+      keys: ['title.english', 'title.romaji'] as any,
+      threshold: 0.35,
+    })
+
+    return fuse.search(this.searchString)
   }
 }
 </script>
