@@ -100,18 +100,26 @@ export default class ListRow extends Vue {
     const scrollAmount = e.deltaY + e.deltaX
     let scrollDelta = Math.sign(scrollAmount)
 
-    if (this.list.length < 5 || msSinceLastScroll <= 5) return
+    if (this.list.length < 5) return
+
+    if (msSinceLastScroll <= 100) {
+      return e.preventDefault()
+    }
 
     if (this.double) {
       scrollDelta *= 2
     }
 
-    this.lastScroll = Date.now()
-    this.itemsScrolled = clamp(
+    const newScroll = clamp(
       this.itemsScrolled + scrollDelta,
       0,
       this.list.length - this.visibleItems + 2,
     )
+
+    this.lastScroll = Date.now()
+
+    if (newScroll === this.itemsScrolled) return
+    this.itemsScrolled = newScroll
 
     e.preventDefault()
   }
