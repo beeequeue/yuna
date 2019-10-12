@@ -42,6 +42,7 @@ export const LIST_MEDIA_QUERY = gql`
       }
       media(id_in: $ids, sort: [TITLE_ENGLISH, TITLE_ROMAJI]) {
         id
+        airingStatus: status
         title {
           userPreferred
           english

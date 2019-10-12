@@ -4221,7 +4221,7 @@ export type ListMediaQuery = { __typename?: 'Query' } & {
             { __typename?: 'Media' } & Pick<
               Media,
               'id' | 'bannerImage' | 'isFavourite' | 'episodes'
-            > & {
+            > & { airingStatus: Media['status'] } & {
                 title: Maybe<
                   { __typename?: 'MediaTitle' } & Pick<
                     MediaTitle,

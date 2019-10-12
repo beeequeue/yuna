@@ -2,7 +2,7 @@
   <transition>
     <div ref="button" class="multi-select" @click="open = !open">
       <span class="count">
-        {{ selectedLabel ? selectedLabel : 'Streaming Sources' }}
+        {{ selectedLabel ? selectedLabel : label }}
       </span>
 
       <icon :icon="backSvg" class="tick" :class="tickClasses" />
@@ -25,6 +25,7 @@
           <div
             v-for="item in items"
             class="item"
+            :class="{ selected: item.value === value }"
             :key="item.value"
             @click="select(item)"
           >
@@ -40,14 +41,16 @@
 import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator'
 import { mdiChevronDown } from '@mdi/js'
 
+import { Required } from '@/decorators'
+import { px } from '@/utils'
+import { SelectItem } from '@/types'
 import Icon from './icon.vue'
-import { capitalize, px } from '@/utils'
-import { SelectItem, StreamingSource } from '@/types'
 
 @Component<CSelect>({ components: { Icon } })
 export default class CSelect extends Vue {
-  @Prop(String)
-  public value!: string | null
+  @Prop(String) public value!: string | null
+  @Required(String) public label!: string
+  @Required(Array) public items!: SelectItem[]
 
   public $refs!: {
     button: HTMLDivElement
@@ -58,17 +61,6 @@ export default class CSelect extends Vue {
 
   public open = false
   public dropdownPosition: CSSProps = {}
-
-  public items: SelectItem[] = [
-    {
-      label: capitalize(StreamingSource.Crunchyroll),
-      value: StreamingSource.Crunchyroll,
-    },
-    {
-      label: capitalize(StreamingSource.Hidive),
-      value: StreamingSource.Hidive,
-    },
-  ]
 
   public get tickClasses() {
     return {
@@ -177,7 +169,8 @@ export default class CSelect extends Vue {
     user-select: none;
     transition: background 0.15s;
 
-    &:hover {
+    &:hover,
+    &.selected {
       background: color($dark, 500);
     }
   }

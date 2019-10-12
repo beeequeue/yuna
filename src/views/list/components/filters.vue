@@ -18,13 +18,25 @@
       />
     </div>
 
+    <c-select
+      class="airing-status"
+      label="Airing Status"
+      :items="airingStatuses"
+      v-model="selectedAiringStatus"
+    />
+
     <text-input
       class="search"
       placeholder="Search in List..."
       :onChange="debouncedSetSearchString"
     />
 
-    <c-select class="sources" :items="sources" v-model="selectedSource" />
+    <c-select
+      class="sources"
+      label="Streaming Source"
+      :items="sources"
+      v-model="selectedSource"
+    />
 
     <div class="aside loader">
       <transition name="fade">
@@ -47,10 +59,11 @@ import Loading from '@/common/components/loading.vue'
 
 import { Default } from '@/decorators'
 import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
-import { ListViewListEntries } from '@/graphql/types'
+import { ListViewListEntries, MediaStatus } from '@/graphql/types'
 import {
   capitalize,
   debounce,
+  enumKeysToArray,
   enumToArray,
   getStreamingSources,
   isNil,
@@ -88,6 +101,7 @@ export default class Filters extends Vue {
 
   @Watch('searchString')
   @Watch('selectedSource')
+  @Watch('selectedAiringStatus')
   public updateFilteredMedia() {
     const media = Object.values(this.media).map(m => m!.media!)
 
@@ -95,7 +109,9 @@ export default class Filters extends Vue {
 
     const filteredBySources = this.filterBySources(filteredByTitles)
 
-    this.filteredMedia = filteredBySources.map(prop('id'))
+    const filteredByStatus = this.filterByStatus(filteredBySources)
+
+    this.filteredMedia = filteredByStatus.map(prop('id'))
   }
 
   @Watch('filteredMedia')
@@ -158,6 +174,25 @@ export default class Filters extends Vue {
       )
     })
   }
+
+  // Airing Status
+  public airingStatuses: SelectItem[] = enumKeysToArray(MediaStatus).map<
+    SelectItem
+  >(status => ({
+    label: status
+      .toString()
+      .replace(/([A-Z])/g, ' $1')
+      .trim(),
+    value: MediaStatus[status],
+  }))
+
+  public selectedAiringStatus: string | null = null
+
+  public filterByStatus(media: Media[]): Media[] {
+    if (isNil(this.selectedAiringStatus)) return media
+
+    return media.filter(m => m.airingStatus === this.selectedAiringStatus)
+  }
 }
 </script>
 
@@ -170,7 +205,7 @@ export default class Filters extends Vue {
   position: relative;
   display: grid;
   grid-template-columns: 125px 1fr 250px 1fr 125px;
-  grid-template-areas: 'links filter search sources loader';
+  grid-template-areas: 'links airing-status search sources loader';
   grid-gap: 10px;
   justify-items: center;
   align-items: center;
@@ -202,6 +237,10 @@ export default class Filters extends Vue {
       height: 26px;
       width: 26px;
     }
+  }
+
+  & > .airing-status {
+    grid-area: airing-status;
   }
 
   & > .search {
