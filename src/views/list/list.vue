@@ -48,6 +48,12 @@ import { ListMedia } from './types'
 
 type MetaData = { [key in MediaListStatus]: { open: boolean } }
 
+declare global {
+  interface Window {
+    cachedMedia: NonNullable<NonNullable<ListMedia[number]>['media']>[] | null
+  }
+}
+
 @Component({
   components: { Filters, ListRow, Loading, ListEntry, TextInput, NumberInput },
 })
@@ -60,7 +66,7 @@ export default class List extends Vue {
   public entries!: ListViewListEntries[]
 
   public filteredEntryIds: number[] | null = null
-  public media: ListMedia = {}
+  public media: ListMedia = this.getCachedMedia()
 
   public lists = [
     MediaListStatus.Current,
@@ -188,6 +194,24 @@ export default class List extends Vue {
 
       this.setMediaLoading(newMedia.map(prop('id')), false)
     } while (page <= lastPage)
+
+    this.cacheMedia()
+  }
+
+  public getCachedMedia() {
+    if (!window.cachedMedia) return {}
+
+    return Object.fromEntries(
+      window.cachedMedia.map(media => [media.id, { media, loading: false }]),
+    )
+  }
+
+  public cacheMedia() {
+    const toCache = Object.values(this.media)
+      .filter(media => !isNil(media) && !isNil(media.media) && !media.loading)
+      .map(media => media!.media!)
+
+    window.cachedMedia = toCache
   }
 }
 </script>
