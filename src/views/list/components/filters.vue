@@ -191,7 +191,9 @@ export default class Filters extends Vue {
   public filterByStatus(media: Media[]): Media[] {
     if (isNil(this.selectedAiringStatus)) return media
 
-    return media.filter(m => m.airingStatus === this.selectedAiringStatus)
+    return media.filter(
+      m => !isNil(m) && m.airingStatus === this.selectedAiringStatus,
+    )
   }
 }
 </script>
