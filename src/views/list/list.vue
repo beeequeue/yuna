@@ -1,42 +1,21 @@
 <template>
   <div class="list-page">
-    <div class="menu">
-      <div class="aside">
-        <a class="anichart" href="https://anichart.net" v-html="anichartLogo" />
-
-        <a
-          v-if="isConnectedTo.anilist"
-          class="anilist"
-          :href="`https://anilist.co/user/${userId}/animelist`"
-          v-html="alLogo"
-        />
-
-        <a
-          v-if="isConnectedTo.simkl"
-          class="simkl"
-          :href="`${simklUser.url}/dashboard`"
-          v-html="simklLogo"
-        />
-      </div>
-
-      <text-input placeholder="Search in List..." :onChange="setSearchString" />
-
-      <div class="aside right">
-        <transition name="fade">
-          <loading v-if="$apollo.loading" :size="26" />
-        </transition>
-      </div>
-    </div>
+    <filters
+      @show-filtered="updateFilteredEntryIds"
+      :entries="entries"
+      :media="media"
+    />
 
     <div class="list-container">
       <list-row
         v-for="status in lists"
         :key="status"
         :list="getList(status)"
+        :totalLength="getTotalListLength(status)"
         :status="status"
-        :fetchMore="fetchMore"
         :media="media"
         :open="meta[status].open"
+        :double="status === 'PLANNING'"
         :toggleOpen="toggleOpen"
       />
     </div>
@@ -44,21 +23,17 @@
 </template>
 
 <script lang="ts">
-import { DollarApollo, SmartQuery } from 'vue-apollo/types/vue-apollo'
-import { Component, Vue } from 'vue-property-decorator'
-import { debounce } from 'ts-debounce'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 
-import anichartSvg from '@/assets/anichart.svg'
-import anilistSvg from '@/assets/anilist.svg'
-import simklSvg from '@/assets/simkl.svg'
 import Loading from '@/common/components/loading.vue'
 import TextInput from '@/common/components/form/text-input.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
+import ListRow from './components/list-row.vue'
 import ListEntry from './components/list-entry.vue'
-import { LIST_MEDIA_QUERY } from '@/graphql/documents/queries'
+import Filters from './components/filters.vue'
+import { LIST_MEDIA_QUERY, LIST_VIEW_QUERY } from '@/graphql/documents/queries'
 import {
-  ListMediaMedia,
   ListMediaQuery,
   ListMediaQueryVariables,
   ListViewListEntries,
@@ -67,42 +42,31 @@ import {
   MediaListStatus,
 } from '@/graphql/types'
 
-import { ListQuery } from '@/decorators'
-import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
-import { isNil, isNotNil, LocalStorageKey } from '@/utils'
-import ListRow from '@/views/list/components/list-row.vue'
+import { Query } from '@/decorators'
+import { isNil, isNotNil, LocalStorageKey, prop, propEq } from '@/utils'
+import { ListMedia } from './types'
 
-export type ListMedia = {
-  [key: number]: { media: ListMediaMedia | null; loading: boolean } | undefined
+type MetaData = { [key in MediaListStatus]: { open: boolean } }
+
+declare global {
+  interface Window {
+    cachedMedia: NonNullable<NonNullable<ListMedia[number]>['media']>[] | null
+  }
 }
 
-type MetaData = { [key in MediaListStatus]: { page: number; open: boolean } }
-
 @Component({
-  components: { ListRow, Loading, ListEntry, TextInput, NumberInput },
+  components: { Filters, ListRow, Loading, ListEntry, TextInput, NumberInput },
 })
 export default class List extends Vue {
-  @ListQuery(MediaListStatus.Current)
-  public current!: ListViewQuery
+  @Query<List, ListViewQuery, ListViewQueryVariables>({
+    query: LIST_VIEW_QUERY,
+    variables: {},
+    update: data => data.ListEntries,
+  })
+  public entries!: ListViewListEntries[]
 
-  @ListQuery(MediaListStatus.Repeating)
-  public repeating!: ListViewQuery
-
-  @ListQuery(MediaListStatus.Planning)
-  public planning!: ListViewQuery
-
-  @ListQuery(MediaListStatus.Paused)
-  public paused!: ListViewQuery
-
-  @ListQuery(MediaListStatus.Dropped)
-  public dropped!: ListViewQuery
-
-  @ListQuery(MediaListStatus.Completed)
-  public completed!: ListViewQuery
-
-  public media: ListMedia = {}
-
-  public searchString = ''
+  public filteredEntryIds: number[] | null = null
+  public media: ListMedia = this.getCachedMedia()
 
   public lists = [
     MediaListStatus.Current,
@@ -116,42 +80,33 @@ export default class List extends Vue {
   // page: -1 means no more can be fetched
   public meta: MetaData = this.lists.reduce(
     (obj, status) => {
-      obj[status] = { page: 1, open: this.getOpenState(status) }
+      obj[status] = { open: this.getOpenState(status) }
 
       return obj
     },
     {} as MetaData,
   )
 
-  public anichartLogo = anichartSvg
-  public alLogo = anilistSvg
-  public simklLogo = simklSvg
-
   public $refs!: {
     entries: HTMLDivElement
   }
-  public $apollo!: DollarApollo<any> & {
-    queries: {
-      lists: SmartQuery<List>
-    }
+
+  public updateFilteredEntryIds(ids: number[]) {
+    this.filteredEntryIds = ids
   }
 
   public getList(status: MediaListStatus) {
-    return oc(this as any)[status.toLowerCase()].ListEntries(
-      [],
-    ) as ListViewListEntries[]
+    if (isNil(this.entries)) return []
+
+    const entries = this.entries.filter(propEq('status', status))
+
+    if (isNil(this.filteredEntryIds)) return entries
+
+    return entries.filter(entry => this.filteredEntryIds!.includes(entry.id))
   }
 
-  public get userId() {
-    return getAnilistUserId(this.$store)
-  }
-
-  public get isConnectedTo() {
-    return getIsConnectedTo(this.$store)
-  }
-
-  public get simklUser() {
-    return getSimklUser(this.$store)
+  public getTotalListLength(status: MediaListStatus) {
+    return oc(this.entries)([]).filter(propEq('status', status)).length
   }
 
   private setMediaLoading(mediaIds: number[], loading: boolean) {
@@ -191,12 +146,17 @@ export default class List extends Vue {
   }
 
   public toggleOpen(status: MediaListStatus) {
+    if (this.getList(status).length < 1) return
+
     this.meta[status].open = !this.meta[status].open
 
     this.saveOpenState(status)
   }
 
-  public async getMedia(mediaIds: number[]) {
+  @Watch('entries')
+  public async getMedia() {
+    const mediaIds = this.entries.map(prop('mediaId'))
+
     const idsToFetch = mediaIds.filter(
       id => !Object.keys(this.media).includes(id.toString()),
     )
@@ -205,73 +165,56 @@ export default class List extends Vue {
 
     this.setMediaLoading(idsToFetch, true)
 
-    const variables: ListMediaQueryVariables = { mediaIds: idsToFetch }
-    const result = await this.$apollo.query<ListMediaQuery>({
-      fetchPolicy: 'cache-first',
-      query: LIST_MEDIA_QUERY,
-      variables,
-    })
+    let lastPage = Infinity
+    let page = 1
 
-    oc(result.data)
-      .Page.media([])
-      .filter(isNotNil)
-      .forEach(media => {
+    do {
+      if (page > lastPage) break
+
+      const variables: ListMediaQueryVariables = { page, ids: idsToFetch }
+      const { data, errors } = await this.$apollo.query<ListMediaQuery>({
+        fetchPolicy: 'cache-first',
+        query: LIST_MEDIA_QUERY,
+        variables,
+      })
+
+      if (errors || isNil(data)) break
+
+      lastPage = oc(data).Page.pageInfo.lastPage(Infinity)
+      page++
+
+      const newMedia = oc(data)
+        .Page.media([])
+        .filter(isNotNil)
+
+      newMedia.forEach(media => {
         Vue.set(this.media, media.id, {
           ...this.media[media.id]!,
           media,
         })
       })
 
-    this.setMediaLoading(idsToFetch, false)
+      this.setMediaLoading(newMedia.map(prop('id')), false)
+    } while (page <= lastPage)
+
+    this.cacheMedia()
   }
 
-  public fetchMore(status: MediaListStatus) {
-    const query = this.$apollo.queries[status.toLowerCase()]
-    const entries = oc(this as any)[status.toLowerCase()].ListEntries([])
+  public getCachedMedia() {
+    if (!window.cachedMedia) return {}
 
-    return (visible: boolean) => {
-      if (
-        !visible ||
-        query.loading ||
-        this.meta[status].page === -1 ||
-        entries.length % 10 !== 0
-      ) {
-        return
-      }
-
-      this.meta[status].page++
-
-      const variables: ListViewQueryVariables = {
-        page: this.meta[status].page,
-        perPage: 10,
-        status,
-      }
-      query.fetchMore({
-        variables,
-        updateQuery: (
-          previous: ListViewQuery,
-          { fetchMoreResult: result },
-        ): ListViewQuery => {
-          if (result.ListEntries.length < 1) {
-            this.meta[status].page = -1
-            return {
-              ListEntries: previous.ListEntries,
-            }
-          }
-
-          return {
-            ListEntries: [...previous.ListEntries, ...result.ListEntries],
-          }
-        },
-      })
-    }
+    return Object.fromEntries(
+      window.cachedMedia.map(media => [media.id, { media, loading: false }]),
+    )
   }
 
-  // beautiful!
-  public setSearchString = debounce(
-    (str: string) => (this.searchString = str),
-    500,
-  )
+  public cacheMedia() {
+    const toCache = Object.values(this.media)
+      .filter(media => !isNil(media) && !isNil(media.media) && !media.loading)
+      .map(media => media!.media!)
+
+    window.cachedMedia = toCache
+  }
 }
 </script>
 
@@ -289,45 +232,6 @@ export default class List extends Vue {
   background: rgba(0, 0, 0, 0.925);
   user-select: none;
 
-  & > .menu {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    padding: 10px 0;
-    background: color($dark, 300);
-    flex-shrink: 0;
-
-    & > .aside {
-      position: absolute;
-      top: calc(50% + 2px);
-      left: 12px;
-      display: flex;
-      align-items: center;
-      text-decoration: none;
-      transform: translateY(-50%);
-
-      &.right {
-        left: auto;
-        right: 12px;
-      }
-
-      & /deep/ svg {
-        height: 26px;
-        width: 26px;
-        margin-right: 15px;
-      }
-    }
-
-    & > .text-input,
-    & > .number-input {
-      & /deep/ input {
-        text-align: center;
-      }
-    }
-  }
-
   & > .list-container {
     display: flex;
     flex-direction: column;
@@ -336,6 +240,7 @@ export default class List extends Vue {
     height: 100%;
     width: 100%;
     padding-bottom: 50px;
+    overflow-x: hidden;
   }
 }
 

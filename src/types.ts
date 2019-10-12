@@ -47,3 +47,5 @@ export const CrunchyrollProviders = [
   Provider.Crunchyroll,
   Provider.CrunchyrollManual,
 ]
+
+export type SelectItem = { label: string; value: string }

@@ -6,9 +6,15 @@
       :class="{ empty: !open || list.length < 1 }"
       @click="toggleOpen(status)"
     >
-      <icon class="collapser" :class="{ flip: open }" :icon="expandSvg" />
+      <icon
+        class="collapser"
+        :class="{ flip: list.length > 0 && open }"
+        :icon="expandSvg"
+      />
 
       {{ getHumanStatus(status) }}
+
+      <span v-if="lengthString !== '0'"> ( {{ lengthString }} ) </span>
     </div>
 
     <transition>
@@ -22,17 +28,11 @@
           @wheel.native="handleScroll"
         >
           <list-entry
-            v-for="entry in list"
+            v-for="entry in visibleEntries"
             :key="entry.id"
             :entry="entry"
             :media="media[entry.mediaId]"
-          />
-
-          <div
-            v-if="list.length > 4"
-            key="last"
-            class="padding"
-            v-visibility="fetchMore(status)"
+            :class="{ double }"
           />
         </transition-group>
       </keep-alive>
@@ -44,39 +44,84 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiChevronDown } from '@mdi/js'
 
-// @ts-ignore
-import { ListMedia } from '@/views/list/list.vue'
 import Icon from '@/common/components/icon.vue'
 import { Required } from '@/decorators'
 import { ListViewListEntries, MediaListStatus } from '@/graphql/types'
-import { humanizeMediaListStatus } from '@/utils'
+import { clamp, humanizeMediaListStatus } from '@/utils'
+import { ListMedia } from '../types'
 import ListEntry from './list-entry.vue'
 
 @Component({ components: { Icon, ListEntry } })
 export default class ListRow extends Vue {
   @Required(Array) list!: ListViewListEntries[]
+  @Required(Number) totalLength!: number
   @Required(Object) media!: ListMedia
   @Required(String) status!: MediaListStatus
   @Required(Function) toggleOpen!: (status: MediaListStatus) => any
-  @Required(Function) fetchMore!: (status: MediaListStatus) => any
   @Prop(Boolean) open!: boolean
   @Prop(Boolean) double!: boolean
 
+  public itemsScrolled = 0
+  public lastScroll = 0
+
   public expandSvg = mdiChevronDown
+
+  public $refs!: {
+    entryContainer: HTMLDivElement
+  }
 
   public get classes() {
     return {
-      double: this.status === MediaListStatus.Planning,
+      double: this.double,
     }
   }
 
-  public handleScroll(e: WheelEvent) {
-    const target = e.currentTarget as HTMLDivElement
+  public get visibleItems() {
+    return this.double ? 10 : 5
+  }
 
-    if (target.childElementCount > 4) {
-      e.preventDefault()
-      target.scrollBy(e.deltaY + e.deltaX, 0)
+  public get visibleEntries() {
+    return this.list.slice(
+      this.itemsScrolled,
+      this.itemsScrolled + this.visibleItems,
+    )
+  }
+
+  public get lengthString() {
+    if (this.list.length !== this.totalLength) {
+      return `${this.list.length}/${this.totalLength}`
     }
+
+    return this.list.length.toString()
+  }
+
+  public handleScroll(e: WheelEvent) {
+    const msSinceLastScroll = Date.now() - this.lastScroll
+    const scrollAmount = e.deltaY + e.deltaX
+    let scrollDelta = Math.sign(scrollAmount)
+
+    if (this.list.length < 5) return
+
+    if (msSinceLastScroll <= 100) {
+      return e.preventDefault()
+    }
+
+    if (this.double) {
+      scrollDelta *= 2
+    }
+
+    const newScroll = clamp(
+      this.itemsScrolled + scrollDelta,
+      0,
+      this.list.length - this.visibleItems + 2,
+    )
+
+    this.lastScroll = Date.now()
+
+    if (newScroll === this.itemsScrolled) return
+    this.itemsScrolled = newScroll
+
+    e.preventDefault()
   }
 
   public getHumanStatus(status: MediaListStatus) {
@@ -105,6 +150,7 @@ export default class ListRow extends Vue {
     font-weight: 200;
     text-shadow: 0 1px 1px transparentize(white, 0.85);
     font-size: 1.5em;
+    font-variant-numeric: lining-nums;
     cursor: pointer;
     transition: padding-bottom 0.25s;
 
@@ -122,6 +168,7 @@ export default class ListRow extends Vue {
   }
 
   & > .entry-container {
+    position: relative;
     display: grid;
     grid-auto-columns: calc(#{$entryWidth} - (#{$triangleWidth}));
     grid-template-rows: $entryHeight;

@@ -1,10 +1,23 @@
 declare type UnPromisify<T> = T extends Promise<infer R> ? R : T
 
-declare type PromiseReturnType<T> = T extends () => Promise<infer R> ? R : T
+declare type PromiseReturnType<T> = T extends (...a: any[]) => Promise<infer R>
+  ? R
+  : T
 
 declare type GlobalFetch = {
   fetch: typeof window.fetch
 }
+
+declare type CSSProps = Partial<
+  Omit<
+    CSSStyleDeclaration,
+    | 'getPropertyPriority'
+    | 'getPropertyValue'
+    | 'item'
+    | 'removeProperty'
+    | 'setProperty'
+  >
+>
 
 declare interface Level {
   attrs: {

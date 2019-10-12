@@ -111,7 +111,7 @@ import {
 
 import { Query } from '@/decorators'
 import { getPlayerData, sendErrorToast, sendToast } from '@/state/app'
-import { getAnilistUserId, getAnilistUsername } from '@/state/auth'
+import { getAnilistUsername } from '@/state/auth'
 import {
   addToQueue,
   getQueue,
@@ -163,10 +163,6 @@ export default class Queue extends Vue {
   public planningSvg = mdiClockOutline
   public pausedSvg = mdiPause
   public clearListSvg = mdiPlaylistRemove
-
-  public get anilistUserId() {
-    return getAnilistUserId(this.$store)
-  }
 
   public get isPlayerOpen() {
     return !!getPlayerData(this.$store)

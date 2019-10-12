@@ -21,9 +21,9 @@ export const SINGLE_MEDIA_QUERY = gql`
   }
 `
 
-export const LIST_LIST_ENTRIES = gql`
-  query ListView($page: Int!, $perPage: Int!, $status: MediaListStatus!) {
-    ListEntries(page: $page, perPage: $perPage, status: $status) @client {
+export const LIST_VIEW_QUERY = gql`
+  query ListView {
+    ListEntries @client {
       id
       mediaId
       status
@@ -35,15 +35,18 @@ export const LIST_LIST_ENTRIES = gql`
 `
 
 export const LIST_MEDIA_QUERY = gql`
-  query ListMedia($mediaIds: [Int!]!) {
-    Page(page: 1, perPage: 50) {
-      media(id_in: $mediaIds, sort: [TITLE_ENGLISH, TITLE_ROMAJI]) {
+  query ListMedia($page: Int!, $ids: [Int!]!) {
+    Page(page: $page, perPage: 50) {
+      pageInfo {
+        lastPage
+      }
+      media(id_in: $ids, sort: [TITLE_ENGLISH, TITLE_ROMAJI]) {
         id
+        airingStatus: status
         title {
           userPreferred
           english
           romaji
-          native
         }
         bannerImage
         coverImage {
@@ -52,6 +55,10 @@ export const LIST_MEDIA_QUERY = gql`
         }
         isFavourite
         episodes
+        externalLinks {
+          id
+          site
+        }
       }
     }
   }

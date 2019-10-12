@@ -128,7 +128,7 @@ export default class EditModal extends Vue {
     status => ({
       label: humanizeMediaListStatus(
         { progress: null, status: status as any },
-        null,
+        false,
       ),
       value: status.toString(),
     }),

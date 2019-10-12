@@ -4197,11 +4197,7 @@ export type SingleMediaQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type ListViewQueryVariables = {
-  page: Scalars['Int']
-  perPage: Scalars['Int']
-  status: MediaListStatus
-}
+export type ListViewQueryVariables = {}
 
 export type ListViewQuery = { __typename?: 'Query' } & {
   ListEntries: Array<
@@ -4213,29 +4209,41 @@ export type ListViewQuery = { __typename?: 'Query' } & {
 }
 
 export type ListMediaQueryVariables = {
-  mediaIds: Array<Scalars['Int']>
+  page: Scalars['Int']
+  ids: Array<Scalars['Int']>
 }
 
 export type ListMediaQuery = { __typename?: 'Query' } & {
   Page: Maybe<
     { __typename?: 'Page' } & {
+      pageInfo: Maybe<{ __typename?: 'PageInfo' } & Pick<PageInfo, 'lastPage'>>
       media: Maybe<
         Array<
           Maybe<
             { __typename?: 'Media' } & Pick<
               Media,
               'id' | 'bannerImage' | 'isFavourite' | 'episodes'
-            > & {
+            > & { airingStatus: Media['status'] } & {
                 title: Maybe<
                   { __typename?: 'MediaTitle' } & Pick<
                     MediaTitle,
-                    'userPreferred' | 'english' | 'romaji' | 'native'
+                    'userPreferred' | 'english' | 'romaji'
                   >
                 >
                 coverImage: Maybe<
                   { __typename?: 'MediaCoverImage' } & Pick<
                     MediaCoverImage,
                     'extraLarge' | 'color'
+                  >
+                >
+                externalLinks: Maybe<
+                  Array<
+                    Maybe<
+                      { __typename?: 'MediaExternalLink' } & Pick<
+                        MediaExternalLink,
+                        'id' | 'site'
+                      >
+                    >
                   >
                 >
               }
@@ -4838,6 +4846,9 @@ export type ListViewVariables = ListViewQueryVariables
 export type ListViewListEntries = NonNullable<ListViewQuery['ListEntries'][0]>
 export type ListMediaVariables = ListMediaQueryVariables
 export type ListMediaPage = NonNullable<ListMediaQuery['Page']>
+export type ListMediaPageInfo = NonNullable<
+  (NonNullable<ListMediaQuery['Page']>)['pageInfo']
+>
 export type ListMediaMedia = NonNullable<
   (NonNullable<(NonNullable<ListMediaQuery['Page']>)['media']>)[0]
 >
@@ -4850,6 +4861,13 @@ export type ListMediaCoverImage = NonNullable<
   (NonNullable<
     (NonNullable<(NonNullable<ListMediaQuery['Page']>)['media']>)[0]
   >)['coverImage']
+>
+export type ListMediaExternalLinks = NonNullable<
+  (NonNullable<
+    (NonNullable<
+      (NonNullable<(NonNullable<ListMediaQuery['Page']>)['media']>)[0]
+    >)['externalLinks']
+  >)[0]
 >
 export type ListEntryVariables = ListEntryQueryVariables
 export type ListEntryListEntry = ListEntryQuery['ListEntry']
