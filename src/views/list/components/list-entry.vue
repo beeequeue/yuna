@@ -2,7 +2,7 @@
   <div class="entry" :class="{ [entry.mediaId]: true }">
     <transition mode="out-in">
       <loading
-        v-if="!entry || !media.media || media.loading"
+        v-if="!entry || !media || !media.media || media.loading"
         key="loader"
         :size="35"
       />
