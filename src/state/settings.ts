@@ -166,7 +166,7 @@ const initialState: SettingsState = {
   spoilers: SettingsStore.get('spoilers', { ...defaultSpoilers }),
   externalPlayers: SettingsStore.get('externalPlayers', { vlc: null }),
   localFilesFolder: SettingsStore.get('localFilesFolder', null),
-  mainListPlugin: SettingsStore.get('mainListPlugin', null),
+  mainListPlugin: SettingsStore.get('mainListPlugin', 'anilist'),
   setup: {
     finishedSteps: migratedSteps,
   },

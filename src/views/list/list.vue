@@ -146,6 +146,8 @@ export default class List extends Vue {
   }
 
   public toggleOpen(status: MediaListStatus) {
+    if (this.getList(status).length < 1) return
+
     this.meta[status].open = !this.meta[status].open
 
     this.saveOpenState(status)
