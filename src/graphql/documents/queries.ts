@@ -46,7 +46,6 @@ export const LIST_MEDIA_QUERY = gql`
           userPreferred
           english
           romaji
-          native
         }
         bannerImage
         coverImage {
@@ -55,6 +54,10 @@ export const LIST_MEDIA_QUERY = gql`
         }
         isFavourite
         episodes
+        externalLinks {
+          id
+          site
+        }
       }
     }
   }

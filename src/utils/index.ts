@@ -236,7 +236,7 @@ export const getRelations = (
 
 interface ExternalLink {
   site: string
-  url: string
+  url?: string
 }
 
 const streamingSites = enumKeysToArray(StreamingSource)
@@ -394,3 +394,5 @@ export const countdown = (
     fn(_seconds)
   }, 1000)
 }
+
+export const px = (num: number) => `${num}px`

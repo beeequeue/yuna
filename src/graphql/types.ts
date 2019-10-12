@@ -4225,13 +4225,23 @@ export type ListMediaQuery = { __typename?: 'Query' } & {
                 title: Maybe<
                   { __typename?: 'MediaTitle' } & Pick<
                     MediaTitle,
-                    'userPreferred' | 'english' | 'romaji' | 'native'
+                    'userPreferred' | 'english' | 'romaji'
                   >
                 >
                 coverImage: Maybe<
                   { __typename?: 'MediaCoverImage' } & Pick<
                     MediaCoverImage,
                     'extraLarge' | 'color'
+                  >
+                >
+                externalLinks: Maybe<
+                  Array<
+                    Maybe<
+                      { __typename?: 'MediaExternalLink' } & Pick<
+                        MediaExternalLink,
+                        'id' | 'site'
+                      >
+                    >
                   >
                 >
               }
@@ -4848,6 +4858,13 @@ export type ListMediaCoverImage = NonNullable<
   (NonNullable<
     (NonNullable<(NonNullable<ListMediaQuery['Page']>)['media']>)[0]
   >)['coverImage']
+>
+export type ListMediaExternalLinks = NonNullable<
+  (NonNullable<
+    (NonNullable<
+      (NonNullable<(NonNullable<ListMediaQuery['Page']>)['media']>)[0]
+    >)['externalLinks']
+  >)[0]
 >
 export type ListEntryVariables = ListEntryQueryVariables
 export type ListEntryListEntry = ListEntryQuery['ListEntry']

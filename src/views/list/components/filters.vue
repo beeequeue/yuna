@@ -24,6 +24,8 @@
       :onChange="debouncedSetSearchString"
     />
 
+    <c-select class="sources" :items="sources" v-model="selectedSource" />
+
     <div class="aside loader">
       <transition name="fade">
         <loading v-if="$apollo.loading" :size="26" />
@@ -40,17 +42,28 @@ import anichartSvg from '@/assets/anichart.svg'
 import anilistSvg from '@/assets/anilist.svg'
 import simklSvg from '@/assets/simkl.svg'
 import TextInput from '@/common/components/form/text-input.vue'
+import CSelect from '@/common/components/select.vue'
 import Loading from '@/common/components/loading.vue'
 
 import { Default } from '@/decorators'
 import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
 import { ListViewListEntries } from '@/graphql/types'
-import { debounce, prop } from '@/utils'
+import {
+  capitalize,
+  debounce,
+  enumToArray,
+  getStreamingSources,
+  isNil,
+  isNotNil,
+  prop,
+} from '@/utils'
 import { ListMedia } from '../types'
+import { SelectItem, StreamingSource } from '@/types'
+import { oc } from 'ts-optchain'
 
 type Media = NonNullable<NonNullable<ListMedia[number]>['media']>
 
-@Component({ components: { Loading, TextInput } })
+@Component({ components: { CSelect, Loading, TextInput } })
 export default class Filters extends Vue {
   @Default(Array, () => []) public entries!: ListViewListEntries[]
   @Default(Object, () => {}) public media!: ListMedia
@@ -74,12 +87,15 @@ export default class Filters extends Vue {
   public filteredMedia: number[] = []
 
   @Watch('searchString')
+  @Watch('selectedSource')
   public updateFilteredMedia() {
     const media = Object.values(this.media).map(m => m!.media!)
 
     const filteredByTitles = this.filterByTitles(media)
 
-    this.filteredMedia = filteredByTitles.map(prop('id'))
+    const filteredBySources = this.filterBySources(filteredByTitles)
+
+    this.filteredMedia = filteredBySources.map(prop('id'))
   }
 
   @Watch('filteredMedia')
@@ -116,6 +132,32 @@ export default class Filters extends Vue {
 
     return fuse.search(this.searchString)
   }
+
+  // Sources
+
+  public sources: SelectItem[] = enumToArray(StreamingSource).map<SelectItem>(
+    source => ({
+      label: capitalize(source.toString()),
+      value: source.toString(),
+    }),
+  )
+
+  public selectedSource: string | null = null
+
+  public filterBySources(media: Media[]): Media[] {
+    if (isNil(this.selectedSource)) return media
+
+    return media.filter(m => {
+      const links = oc(m)
+        .externalLinks([])
+        .filter(isNotNil)
+      const sources = getStreamingSources(links)
+
+      return sources.some(
+        source => source.site.toLowerCase() === this.selectedSource!,
+      )
+    })
+  }
 }
 </script>
 
@@ -128,7 +170,7 @@ export default class Filters extends Vue {
   position: relative;
   display: grid;
   grid-template-columns: 125px 1fr 250px 1fr 125px;
-  grid-template-areas: 'links filter search filter-2 loader';
+  grid-template-areas: 'links filter search sources loader';
   grid-gap: 10px;
   justify-items: center;
   align-items: center;
@@ -164,6 +206,10 @@ export default class Filters extends Vue {
 
   & > .search {
     grid-area: search;
+  }
+
+  & > .sources {
+    grid-area: sources;
   }
 
   & > .text-input,
