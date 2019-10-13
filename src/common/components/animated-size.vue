@@ -51,7 +51,7 @@ export default class AnimatedSize extends Vue {
     )
   }
 
-  public update(type: 'height' = 'height') {
+  public update() {
     this.$nextTick(() => {
       if (isNil(this.$refs.container)) {
         return
@@ -60,7 +60,8 @@ export default class AnimatedSize extends Vue {
       const children = Array.from(this.$refs.container.children)
 
       if (children.length < 1) {
-        this[type] = 0
+        this.height = 0
+        this.width = 0
 
         return
       }
