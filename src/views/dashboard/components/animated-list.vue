@@ -144,6 +144,7 @@ export default class AnimatedList extends Vue {
     & > .cover-image {
       position: relative;
       flex-shrink: 0;
+      min-height: 78px;
       height: 100%;
       width: 55px;
       object-fit: cover;
