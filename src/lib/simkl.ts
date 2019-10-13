@@ -335,12 +335,10 @@ export class Simkl {
     return fullResponse.body
   }
 
-  public static async getRating(malId: number) {
+  public static async getRating(malId: number): Promise<number | null> {
     const info = await this.getAnimeInfo(malId)
 
-    if (isNil(info)) return null
-
-    return info.ratings.simkl.rating
+    return oc(info).ratings.simkl.rating() || null
   }
 
   public static async getLink(malId: number) {
