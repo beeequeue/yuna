@@ -1,7 +1,7 @@
 {
   "name": "yuna",
   "description": "An anime player that integrates with AniList, Crunchyroll, and Hidive.",
-  "version": "1.4.0-beta.4",
+  "version": "1.4.0",
   "author": "BeeeQueue",
   "dependencies": {
     "@mdi/js": "4.5.95",
