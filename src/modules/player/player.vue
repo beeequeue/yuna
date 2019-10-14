@@ -106,11 +106,8 @@ import {
   PlayerAnimeTitle,
   Provider,
 } from '@/graphql/types'
-
-import { View } from '@/router'
 import { Required } from '@/decorators'
 import { Crunchyroll } from '@/lib/crunchyroll'
-import { trackView } from '@/lib/tracking'
 import {
   getIsFullscreen,
   PlayerData,
@@ -637,8 +634,6 @@ export default class Player extends Vue {
   }
 
   public scrobbleTimeProgress() {
-    trackView(View.Player)
-
     if (isCrunchyroll(this.playerData.provider)) {
       Crunchyroll.setProgressOfEpisode(
         Number(this.episode!.id),
