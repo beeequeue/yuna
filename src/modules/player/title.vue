@@ -16,6 +16,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { oc } from 'ts-optchain'
 
 import { EpisodeListEpisodes, PlayerAnimeAnime } from '@/graphql/types'
 
@@ -32,7 +33,7 @@ export default class PlayerTitle extends Vue {
   public get shouldHideTitle() {
     return (
       getSpoilerSettings(this.$store).episode.name &&
-      this.listEntry.progress < this.episode.episodeNumber
+      oc(this.listEntry).progress(-1) < this.episode.episodeNumber
     )
   }
 }
