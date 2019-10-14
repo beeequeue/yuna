@@ -1,7 +1,7 @@
 import {
-  Stacktrace,
   Event as SentryEvent,
   Exception as SentryException,
+  Stacktrace,
 } from '@sentry/browser'
 import { api } from 'electron-util'
 
@@ -79,8 +79,8 @@ export const normalizeEvent = (event: SentryEvent): SentryEvent => {
   if (breadcrumbs) {
     breadcrumbs.forEach(crumb => {
       if (crumb.category === 'navigation') {
-        crumb.data.from = normalizeUrl(crumb.data.from)
-        crumb.data.to = normalizeUrl(crumb.data.to)
+        crumb.data!.from = normalizeUrl(crumb.data!.from)
+        crumb.data!.to = normalizeUrl(crumb.data!.to)
       }
     })
   }
