@@ -208,7 +208,7 @@ export default class TitleBar extends Vue {
     margin-left: 10px;
     -webkit-app-region: no-drag;
 
-    & > svg {
+    & /deep/ svg {
       height: 12px;
     }
   }

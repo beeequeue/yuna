@@ -103,7 +103,9 @@ export default class Filters extends Vue {
   @Watch('selectedSource')
   @Watch('selectedAiringStatus')
   public updateFilteredMedia() {
-    const media = Object.values(this.media).map(m => m!.media!)
+    const media = Object.values(this.media)
+      .map(m => m!.media)
+      .filter(isNotNil)
 
     const filteredByTitles = this.filterByTitles(media)
 
