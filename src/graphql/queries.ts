@@ -26,17 +26,22 @@ type BaseResult = {
   }
 }
 
-type FetchAllPagesOptions<V extends { page: number }> = {
+type FetchAllPagesOptions<R extends BaseResult, V extends { page: number }> = {
   apollo: DollarApollo<any>
   query: DocumentNode
   variables: Omit<V, 'page'>
+  result?: (data: R) => void
 }
 
-const fetchAllPages = async <R extends BaseResult, V extends { page: number }>({
+export const fetchAllPages = async <
+  R extends BaseResult,
+  V extends { page: number }
+>({
   apollo,
   query,
   variables,
-}: FetchAllPagesOptions<V>) => {
+  result,
+}: FetchAllPagesOptions<R, V>) => {
   const firstResponse = await apollo.query<R>({
     query,
     variables: {
@@ -45,18 +50,25 @@ const fetchAllPages = async <R extends BaseResult, V extends { page: number }>({
     },
   })
 
+  if (!isNil(result)) result(firstResponse.data)
+
   const pagesLeft = oc(firstResponse).data.Page.pageInfo.lastPage(1) - 1
 
   const promises: Promise<ApolloQueryResult<R>>[] = []
 
   for (let i = 0; i < pagesLeft; i++) {
     promises.push(
-      apollo.query<R>({
-        query,
-        variables: {
-          ...variables,
-          page: i + 2, // 1 for first page loaded already and 1 for index
-        },
+      new Promise(async resolve => {
+        const response = await apollo.query<R>({
+          query,
+          variables: {
+            ...variables,
+            page: i + 2, // 1 for first page loaded already and 1 for index
+          },
+        })
+
+        if (!isNil(result)) result(response.data)
+        resolve(response)
       }),
     )
   }
