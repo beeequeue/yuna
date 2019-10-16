@@ -5,7 +5,7 @@
   "author": "BeeeQueue",
   "dependencies": {
     "@mdi/js": "4.5.95",
-    "@sentry/browser": "5.7.0",
+    "@sentry/browser": "5.7.1",
     "@sentry/integrations": "5.7.0",
     "@sentry/node": "5.7.0",
     "anitomyscript": "1.0.2",
