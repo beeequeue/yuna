@@ -242,7 +242,7 @@ export class Simkl {
     const response = await Simkl.request<
       _SyncAllItems | null,
       SimklQuery & { date_from: string }
-    >('sync/all-items', {
+    >('sync/all-items/anime', {
       type: 'post',
       query: { date_from: new Date(this.lastUpdate).toISOString() },
     })
