@@ -248,6 +248,7 @@ export default class LocalSourceModal extends Vue {
   & .anime-container {
     position: relative;
     max-height: 45vh;
+    min-width: 300px;
     overflow-y: auto;
     padding: 10px 20px;
 
