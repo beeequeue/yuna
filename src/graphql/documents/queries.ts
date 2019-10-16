@@ -112,9 +112,13 @@ export const MAL_ID_FROM_ANILIST_ID = gql`
 `
 
 export const ANILIST_IDS_FROM_MAL_IDS = gql`
-  query AnilistIdsFromMalIds($malIds: [Int!]!) {
-    Page(perPage: 50) {
-      media(idMal_in: $malIds) {
+  query AnilistIdsFromMalIds($page: Int!, $malIds: [Int!]!) {
+    Page(page: $page) {
+      pageInfo {
+        perPage
+        lastPage
+      }
+      media(type: ANIME, idMal_in: $malIds) {
         id
         idMal
       }

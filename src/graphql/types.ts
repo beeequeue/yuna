@@ -4068,7 +4068,7 @@ export type LocalSourceAnimeQueryVariables = {
 
 export type LocalSourceAnimeQuery = { __typename?: 'Query' } & {
   anime: Maybe<
-    { __typename?: 'Media' } & Pick<Media, 'episodes'> & {
+    { __typename?: 'Media' } & Pick<Media, 'id' | 'episodes'> & {
         title: Maybe<
           { __typename?: 'MediaTitle' } & Pick<
             MediaTitle,
@@ -4076,7 +4076,10 @@ export type LocalSourceAnimeQuery = { __typename?: 'Query' } & {
           >
         >
         listEntry: Maybe<
-          { __typename?: 'ListEntry' } & Pick<ListEntry, 'progress'>
+          { __typename?: 'ListEntry' } & Pick<
+            ListEntry,
+            'id' | 'mediaId' | 'progress'
+          >
         >
       }
   >
@@ -4307,12 +4310,16 @@ export type MalIdFromAnilistIdQuery = { __typename?: 'Query' } & {
 }
 
 export type AnilistIdsFromMalIdsQueryVariables = {
+  page: Scalars['Int']
   malIds: Array<Scalars['Int']>
 }
 
 export type AnilistIdsFromMalIdsQuery = { __typename?: 'Query' } & {
   Page: Maybe<
     { __typename?: 'Page' } & {
+      pageInfo: Maybe<
+        { __typename?: 'PageInfo' } & Pick<PageInfo, 'perPage' | 'lastPage'>
+      >
       media: Maybe<
         Array<Maybe<{ __typename?: 'Media' } & Pick<Media, 'id' | 'idMal'>>>
       >
@@ -4884,6 +4891,9 @@ export type MalIdFromAnilistIdMedia = NonNullable<
 export type AnilistIdsFromMalIdsVariables = AnilistIdsFromMalIdsQueryVariables
 export type AnilistIdsFromMalIdsPage = NonNullable<
   AnilistIdsFromMalIdsQuery['Page']
+>
+export type AnilistIdsFromMalIdsPageInfo = NonNullable<
+  (NonNullable<AnilistIdsFromMalIdsQuery['Page']>)['pageInfo']
 >
 export type AnilistIdsFromMalIdsMedia = NonNullable<
   (NonNullable<(NonNullable<AnilistIdsFromMalIdsQuery['Page']>)['media']>)[0]
