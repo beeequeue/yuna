@@ -45,6 +45,7 @@ import {
 import { Query } from '@/decorators'
 import { isNil, isNotNil, LocalStorageKey, prop, propEq } from '@/utils'
 import { ListMedia } from './types'
+import { fetchAllPages } from '@/graphql/queries'
 
 type MetaData = { [key in MediaListStatus]: { open: boolean } }
 
@@ -165,37 +166,27 @@ export default class List extends Vue {
 
     this.setMediaLoading(idsToFetch, true)
 
-    let lastPage = Infinity
-    let page = 1
+    fetchAllPages<ListMediaQuery, ListMediaQueryVariables>({
+      apollo: this.$apollo,
+      query: LIST_MEDIA_QUERY,
+      variables: { ids: idsToFetch },
+      result: data => {
+        if (isNil(data)) return
 
-    do {
-      if (page > lastPage) break
+        const newMedia = oc(data)
+          .Page.media([])
+          .filter(isNotNil)
 
-      const variables: ListMediaQueryVariables = { page, ids: idsToFetch }
-      const { data, errors } = await this.$apollo.query<ListMediaQuery>({
-        fetchPolicy: 'cache-first',
-        query: LIST_MEDIA_QUERY,
-        variables,
-      })
-
-      if (errors || isNil(data)) break
-
-      lastPage = oc(data).Page.pageInfo.lastPage(Infinity)
-      page++
-
-      const newMedia = oc(data)
-        .Page.media([])
-        .filter(isNotNil)
-
-      newMedia.forEach(media => {
-        Vue.set(this.media, media.id, {
-          ...this.media[media.id]!,
-          media,
+        newMedia.forEach(media => {
+          Vue.set(this.media, media.id, {
+            ...this.media[media.id]!,
+            media,
+          })
         })
-      })
 
-      this.setMediaLoading(newMedia.map(prop('id')), false)
-    } while (page <= lastPage)
+        this.setMediaLoading(newMedia.map(prop('id')), false)
+      },
+    })
 
     this.cacheMedia()
   }

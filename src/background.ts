@@ -44,6 +44,12 @@ init({
   dsn: 'https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205',
   environment: process.env.NODE_ENV,
   release: `v${version}`,
+  ignoreErrors: [
+    /operation not permitted/,
+    /temp-yuna-setup/,
+    /ERR_CONNECTION/,
+    /child "activity" fails/,
+  ],
 })
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)

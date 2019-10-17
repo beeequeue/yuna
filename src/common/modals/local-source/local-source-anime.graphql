@@ -1,5 +1,6 @@
 query LocalSourceAnime($id: Int!) {
   anime: Media(id: $id) {
+    id
     title {
       english
       romaji
@@ -7,6 +8,8 @@ query LocalSourceAnime($id: Int!) {
     }
     episodes
     listEntry @client {
+      id
+      mediaId
       progress
     }
   }

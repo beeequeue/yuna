@@ -108,11 +108,9 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
     const relations = await getAnilistIdsFromMalIds(this.apollo, malIds)
 
     const idInfoMap = result.map(info => {
-      const relation = relations.find(
-        ids => ids.idMal === Number(info.show.ids.mal),
-      )
+      const id = relations[Number(info.show.ids.mal)]
 
-      return [oc(relation).id(), info] as const
+      return [id, info] as const
     })
 
     let entries = idInfoMap

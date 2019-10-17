@@ -242,7 +242,7 @@ export class Simkl {
     const response = await Simkl.request<
       _SyncAllItems | null,
       SimklQuery & { date_from: string }
-    >('sync/all-items', {
+    >('sync/all-items/anime', {
       type: 'post',
       query: { date_from: new Date(this.lastUpdate).toISOString() },
     })
@@ -255,7 +255,10 @@ export class Simkl {
 
     if (isNil(response.body)) return
 
-    const updatedItems = response.body.anime
+    const updatedItems = [
+      ...oc(response.body).anime([]),
+      ...oc(response.body as any)['']([]),
+    ]
 
     updatedItems.forEach(item => {
       const index = this.watchlist.findIndex(
