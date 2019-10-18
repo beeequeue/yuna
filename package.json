@@ -84,7 +84,7 @@
     "browserslist": "4.7.1",
     "cross-env": "6.0.3",
     "electron": "5.0.8",
-    "electron-builder": "21.1.5",
+    "electron-builder": "21.2.0",
     "eslint-plugin-prettier": "3.1.1",
     "eslint-plugin-vue": "5.2.3",
     "graphql-cli": "3.0.14",
