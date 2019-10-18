@@ -48,7 +48,7 @@ module.exports = {
           .plugin('sentry')
           .use(SentryCliPlugin, [
             {
-              release: 'yuna-' + GIT_TAG,
+              release: GIT_TAG,
               include: resolve(__dirname, 'dist_electron', 'bundled'),
               ignore: ['node_modules', 'css'],
               // silent: true,
