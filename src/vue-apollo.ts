@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueApollo from 'vue-apollo'
 import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
 import { IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
+import { captureException } from '@sentry/browser'
 
 import introspectionResult from '@/graphql/introspection-result'
 import { resolvers } from '@/graphql/resolvers'
@@ -99,6 +100,10 @@ export function createProvider() {
       },
     },
     errorHandler(error) {
+      if (process.env.NODE_ENV === 'production') {
+        captureException(error)
+      }
+
       // eslint-disable-next-line no-console
       console.log(
         '%cError',
