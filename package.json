@@ -59,6 +59,7 @@
     "@graphql-codegen/typescript": "1.8.1",
     "@graphql-codegen/typescript-compatibility": "1.8.1",
     "@graphql-codegen/typescript-operations": "1.8.1",
+    "@sentry/webpack-plugin": "1.9.1",
     "@types/date-fns": "2.6.0",
     "@types/discord-rpc": "3.0.2",
     "@types/ffmpeg-static": "2.0.0",
