@@ -1,4 +1,10 @@
 const { resolve } = require('path')
+const { spawnSync } = require('child_process')
+const SentryCliPlugin = require('@sentry/webpack-plugin')
+
+const GIT_TAG = spawnSync('git', ['tag', '-l', '--points-at', 'HEAD'])
+  .output.filter(b => b && b.length > 0)
+  .map(buffer => buffer.toString().trim())[0]
 
 /**
  * @type { ProjectOptions }
@@ -11,6 +17,9 @@ module.exports = {
     target: 'electron-renderer',
   },
   lintOnSave: false,
+  /**
+   * @param config { import("webpack-chain").Config }
+   */
   chainWebpack: config => {
     const svgRules = config.module.rule('svg')
 
@@ -30,6 +39,25 @@ module.exports = {
 
       return [options]
     })
+
+    // Sentry Source Maps
+    config.when(
+      process.env.NODE_ENV === 'production' && GIT_TAG != null,
+      config => {
+        config
+          .plugin('sentry')
+          .use(SentryCliPlugin, [
+            {
+              release: GIT_TAG,
+              include: resolve(__dirname, 'dist_electron', 'bundled'),
+              ignore: ['node_modules', 'css'],
+              // silent: true,
+              urlPrefix: 'app://./',
+            },
+          ])
+          .after('fork-ts-checker')
+      },
+    )
   },
   pluginOptions: {
     electronBuilder: {
