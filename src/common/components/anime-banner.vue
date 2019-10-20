@@ -3,7 +3,7 @@
     v-if="link"
     :to="`/anime/${anime.id}`"
     class="anime-banner"
-    :class="{ hide: hideTitle }"
+    :class="{ hide: hideTitle, [`anime-${anime.id}`]: true }"
     :style="{ background: `url(${diagmondsWebp})` }"
   >
     <img class="image" :class="{ faded }" :src="anime.bannerImage" />
@@ -15,7 +15,7 @@
   <span
     v-else
     class="anime-banner"
-    :class="{ hide: hideTitle }"
+    :class="{ hide: hideTitle, [`anime-${anime.id}`]: true }"
     :style="{ background: `url(${diagmondsWebp})` }"
   >
     <img class="image" :class="{ faded }" :src="anime.bannerImage" />
