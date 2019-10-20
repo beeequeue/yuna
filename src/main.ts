@@ -3,10 +3,11 @@ import Vue from 'vue'
 import { ObserveVisibility } from 'vue-observe-visibility'
 import Tooltip from 'v-tooltip'
 import Portal from 'portal-vue'
-import { init } from '@sentry/browser'
+import { init, setExtra } from '@sentry/browser'
 import * as Integrations from '@sentry/integrations'
 
 import { updateRelations } from '@/lib/relations'
+import { getIsConnectedTo } from '@/state/auth'
 
 import App from './App.vue'
 import { router } from './router'
@@ -26,16 +27,22 @@ Vue.directive('visibility', ObserveVisibility)
 // Register services
 
 // Sentry
-if (process.env.NODE_ENV === 'production') {
-  init({
-    dsn: 'https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205',
-    integrations: [new Integrations.Vue({ Vue, attachProps: true })],
-    beforeSend: normalizeEvent,
-    environment: process.env.NODE_ENV,
-    release: `v${version}`,
-    ignoreErrors: [/Request has been terminated/],
-  })
-}
+init({
+  enabled: process.env.NODE_ENV === 'production',
+  dsn: 'https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205',
+  environment: process.env.NODE_ENV,
+  release: `v${version}`,
+  ignoreErrors: [/Request has been terminated/],
+  integrations: [new Integrations.Vue({ Vue, attachProps: true })],
+  beforeSend: event => {
+    const connectedTo = getIsConnectedTo(store)
+    Object.entries(connectedTo).forEach(([service, connected]) =>
+      setExtra(`connected.${service}`, connected),
+    )
+
+    return normalizeEvent(event)
+  },
+})
 
 // Handle outside links
 document.addEventListener('click', event => {

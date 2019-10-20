@@ -13,18 +13,34 @@ module.exports = {
   css: {
     sourceMap: true,
   },
-  configureWebpack: {
-    target: 'electron-renderer',
+  configureWebpack: config => {
+    config.target = 'electron-renderer'
+
+    if (process.env.NODE_ENV === 'development') {
+      config.devtool = 'eval-source-map'
+
+      config.output.devtoolModuleFilenameTemplate = info =>
+        info.resourcePath.match(/\.vue$/) &&
+        !info.identifier.match(/type=script/) // this is change ✨
+          ? `webpack-generated:///${info.resourcePath}?${info.hash}`
+          : `webpack:///${info.resourcePath}`
+
+      config.output.devtoolFallbackModuleFilenameTemplate =
+        'webpack:///[resource-path]?[hash]'
+    }
   },
   lintOnSave: false,
   /**
    * @param config { import("webpack-chain").Config }
    */
   chainWebpack: config => {
+    // prettier-ignore
+    config.output
+      .filename('js/[name].js')
+      .chunkFilename('js/[name].js')
+
     const svgRules = config.module.rule('svg')
-
     svgRules.uses.clear()
-
     svgRules.use('raw-loader').loader('raw-loader')
 
     // Define

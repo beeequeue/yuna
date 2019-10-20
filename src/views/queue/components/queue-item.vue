@@ -1,5 +1,5 @@
 <template>
-  <div class="queue-item">
+  <div class="queue-item" :class="{ [`anime-${anime.id}`]: true }">
     <div
       v-if="listEntry != null"
       class="status"

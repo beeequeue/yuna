@@ -1,12 +1,14 @@
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
 import { oc } from 'ts-optchain'
+import uuid from 'uuid/v4'
 
 import { ListEntry, Media, MediaListStatus, Provider } from '@/graphql/types'
 import { RootState } from '@/state/store'
 import { getDefaultProvider } from '@/state/auth'
 import { QueueItem, userStore } from '@/lib/user'
 import { isNotNil, propEq } from '@/utils'
+import { setExtra } from '@sentry/browser'
 
 const isInQueue = (state: UserState, id: number) =>
   isNotNil(state.queue.find(propEq('id', id)))
@@ -26,10 +28,12 @@ type AddToQueueOptions = Pick<Media, 'id' | 'externalLinks'> & {
 }
 
 export interface UserState {
+  deviceUuid: string
   queue: QueueItem[]
 }
 
 const initialState: UserState = {
+  deviceUuid: userStore.get('deviceUuid', uuid()),
   queue: userStore.get('queue', []),
 }
 
@@ -44,6 +48,10 @@ if (
     provider: Provider.Crunchyroll,
   }))
 }
+
+userStore.set(initialState)
+
+setExtra('device-uuid', initialState.deviceUuid)
 
 type UserContext = ActionContext<UserState, RootState>
 
