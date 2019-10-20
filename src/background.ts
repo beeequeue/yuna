@@ -47,8 +47,10 @@ init({
   ignoreErrors: [
     /operation not permitted/,
     /temp-yuna-setup/,
-    /ERR_CONNECTION/,
+    /net::ERR/,
     /child "activity" fails/,
+    /ENOENT/,
+    /Origin not allowed/,
   ],
 })
 
