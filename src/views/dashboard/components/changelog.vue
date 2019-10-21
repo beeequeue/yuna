@@ -102,7 +102,7 @@ export default class Changelog extends Vue {
       'https://api.github.com/repos/beeequeue/yuna/releases',
     )) as RequestResponse<GitHubRelease[]>
 
-    if (responseIsError(response)) {
+    if (responseIsError(response) || !Array.isArray(response.body)) {
       throw new Error('Something went wrong fetching the changelog!')
     }
 
