@@ -5,7 +5,7 @@ import { VueApolloQueryDefinition } from 'vue-apollo/types/options'
 import { createDecorator, VueDecorator } from 'vue-class-component'
 
 interface QueryOptions<C extends Vue, R = any>
-  extends VueApolloQueryDefinition<C, R> {
+  extends VueApolloQueryDefinition<R> {
   update?: (this: C, data: R) => void
   skip?: (this: C) => boolean
   result?: (this: C) => void

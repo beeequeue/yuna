@@ -40,7 +40,7 @@
     "uuid": "3.3.3",
     "v-tooltip": "2.0.2",
     "vue": "2.6.10",
-    "vue-apollo": "3.0.0-rc.5",
+    "vue-apollo": "3.0.0",
     "vue-class-component": "7.1.0",
     "vue-observe-visibility": "0.4.5",
     "vue-property-decorator": "8.3.0",
