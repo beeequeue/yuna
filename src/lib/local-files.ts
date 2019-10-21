@@ -137,7 +137,14 @@ export class LocalFiles {
     maxDepth = 2,
     level = 0,
   ): LocalAnime[] {
-    const content = readdirSync(folderPath)
+    let content: string[]
+
+    try {
+      content = readdirSync(folderPath)
+    } catch {
+      return []
+    }
+
     const childFolderPaths: string[] = []
     const fileNames: string[] = []
     const results: LocalAnime[] = []

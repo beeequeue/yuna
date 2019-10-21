@@ -19,7 +19,11 @@
         </div>
       </a>
 
-      <div class="item clear-cache" @click="clearCache">
+      <div
+        class="item clear-cache"
+        v-tooltip.left="'!! This will reload the app !!'"
+        @click="clearCache"
+      >
         <icon :icon="clearSvg" /> <span>Clear caches</span>
       </div>
 
@@ -58,6 +62,8 @@ export default class SettingsDropdown extends Vue {
   public clearCache() {
     EpisodeCache.clear()
     ;(this as any).$apolloProvider.defaultClient.cache.reset()
+
+    location.reload()
   }
 
   public openSettings() {

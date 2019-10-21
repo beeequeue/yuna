@@ -22,7 +22,7 @@
         v-for="result in results"
         :key="result.id"
         class="item"
-        @mousedown.left="$router.push(`/anime/${result.id}`)"
+        @mousedown.left="$router.push(`/anime/${result.id}`).catch(() => {})"
       >
         <img class="thumbnail" :src="result.coverImage.medium" />
 

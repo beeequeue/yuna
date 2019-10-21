@@ -720,7 +720,7 @@ const fixEpisodeNumbers = (episodes: EpisodeListEpisodes[]) => {
     return []
   }
 
-  const firstIndex = getEpisodeNumber(episodeNumber) - 1
+  const firstIndex = Math.max(0, getEpisodeNumber(episodeNumber) - 1)
 
   return episodes.map(ep => {
     const num = getEpisodeNumber(ep.episodeNumber)

@@ -51,6 +51,7 @@ init({
     /child "activity" fails/,
     /ENOENT/,
     /Origin not allowed/,
+    /code signature/,
   ],
 })
 
