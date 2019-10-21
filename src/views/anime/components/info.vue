@@ -18,8 +18,8 @@
     <list-link
       :logo="simklLogo"
       :loading="$apollo.loading"
-      :link="simklInfo.linkSimkl"
-      :score="simklInfo.scoreSimkl"
+      :link="simklInfo && simklInfo.linkSimkl"
+      :score="simklInfo && simklInfo.scoreSimkl"
     />
 
     <div class="item">
