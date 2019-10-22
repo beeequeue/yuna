@@ -201,7 +201,7 @@ export const writeEpisodeProgressToCache = (
 
   episodes = episodes.map(ep => ({
     ...ep,
-    isWatched: progress >= ep.episodeNumber,
+    isWatched: getIsWatched(cache, episode.animeId, ep.episodeNumber),
   }))
 
   cacheEpisodes(cache, episodes)
