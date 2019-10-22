@@ -85,3 +85,25 @@ router.afterEach(to => {
     trackView(view)
   }
 })
+
+/*
+ * Preventing "NavigationDuplicated" errors in console in Vue-router >= 3.1.0
+ * https://github.com/vuejs/vue-router/issues/2881#issuecomment-520554378
+ */
+
+const routerMethods = ['push', 'replace']
+
+routerMethods.forEach((method: string) => {
+  const originalCall = (Router.prototype as any)[method]
+  ;(Router.prototype as any)[method] = function(
+    location: any,
+    onResolve: any,
+    onReject: any,
+  ): Promise<any> {
+    if (onResolve || onReject) {
+      return originalCall.call(this, location, onResolve, onReject)
+    }
+
+    return (originalCall.call(this, location) as any).catch((err: any) => err)
+  }
+})

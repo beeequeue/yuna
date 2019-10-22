@@ -5,14 +5,7 @@ import { oc } from 'ts-optchain'
 import { userStore } from '@/lib/user'
 import { RootState } from '@/state/store'
 import { HidiveProfile } from '@/lib/hidive'
-import {
-  getStreamingSources,
-  isNil,
-  isNotNil,
-  omit,
-  propEq,
-  stripFalsy,
-} from '@/utils'
+import { getStreamingSources, isNil, isNotNil, omit, propEq } from '@/utils'
 import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
 import { SimklListPlugin } from '@/plugins/list/simkl-plugin'
 import { Provider } from '@/graphql/types'
@@ -66,24 +59,27 @@ export interface AuthState {
   simkl: SimklData
 }
 
-const existsAndIsConnected = (
-  state: AuthState,
-  provider: Provider,
-  source: StreamingSource,
-  sources: string[],
-): Provider | false => {
-  // Since enums are lowercase
-  const lowercaseSources = sources.map(str => str.toLowerCase())
+const getConnectionScore = (state: AuthState, provider: Provider) => {
   const connectedTo = _getIsConnectedTo(state)
   const isConnectedToProvider =
     connectedTo[provider.toLowerCase() as keyof typeof connectedTo]
 
-  return isConnectedToProvider && lowercaseSources.includes(source)
-    ? provider
-    : false
+  return isConnectedToProvider ? 100 : 0
 }
 
-export const getDefaultProvider = (state: AuthState, anime: _Anime) => {
+const getSourceScore = (source: StreamingSource, sources: string[]) => {
+  // Since enums are lowercase
+  const lowercaseSources = sources.map(str => str.toLowerCase())
+
+  return lowercaseSources.includes(source) ? 0 : -1000
+}
+
+// Being connected adds 100, while the source not existing removes -1000
+// effectively removing it from competition
+export const getDefaultProvider = (
+  state: AuthState,
+  anime: _Anime,
+): Provider => {
   const links = oc(anime).externalLinks([])
 
   if (isNil(links)) return Provider.Crunchyroll
@@ -92,22 +88,24 @@ export const getDefaultProvider = (state: AuthState, anime: _Anime) => {
     source => source.site,
   )
 
-  const supportedProviders = [
-    existsAndIsConnected(
-      state,
-      Provider.Crunchyroll,
-      StreamingSource.Crunchyroll,
-      sources,
-    ),
-    existsAndIsConnected(
-      state,
-      Provider.Hidive,
-      StreamingSource.Hidive,
-      sources,
-    ),
-  ]
+  const providers = {
+    [Provider.Crunchyroll]:
+      1 +
+      getConnectionScore(state, Provider.Crunchyroll) +
+      getSourceScore(StreamingSource.Crunchyroll, sources),
+    [Provider.Hidive]:
+      0 +
+      getConnectionScore(state, Provider.Hidive) +
+      getSourceScore(StreamingSource.Hidive, sources),
+  }
 
-  return stripFalsy(supportedProviders)[0] || Provider.Crunchyroll
+  const entries = Object.entries(providers) as Array<
+    [keyof typeof providers, number]
+  >
+  return entries.reduce(
+    (provider, entry) => (entry[1] > providers[provider] ? entry[0] : provider),
+    Provider.Crunchyroll as keyof typeof providers,
+  )
 }
 
 const initialState: AuthState = {

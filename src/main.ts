@@ -8,6 +8,7 @@ import * as Integrations from '@sentry/integrations'
 
 import { updateRelations } from '@/lib/relations'
 import { getIsConnectedTo } from '@/state/auth'
+import { getMainListPlugin } from '@/state/settings'
 
 import App from './App.vue'
 import { router } from './router'
@@ -39,6 +40,8 @@ init({
     Object.entries(connectedTo).forEach(([service, connected]) =>
       setExtra(`connected.${service}`, connected),
     )
+
+    setExtra('list-manager', getMainListPlugin(store))
 
     return normalizeEvent(event)
   },

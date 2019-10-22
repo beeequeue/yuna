@@ -1,5 +1,6 @@
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
 import { oc } from 'ts-optchain'
+import { captureException } from '@sentry/browser'
 
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
 import {
@@ -191,7 +192,7 @@ export const startRewatching = async (
         animeId: data.StartRewatching!.mediaId,
         episodeNumber: 0,
       }
-      writeEpisodeProgressToCache(cache, fakeEpisode, 0)
+      writeEpisodeProgressToCache(cache, fakeEpisode)
     },
   })
 }
@@ -214,6 +215,11 @@ export const setProgress = async (
   options: EpisodeMutationObject,
 ) => {
   const progress = options.episodeNumber
+
+  if (progress < 0) {
+    return captureException(new Error('Tried to set progress to -1'))
+  }
+
   const variables: UpdateProgressVariables = {
     anilistId: options.animeId,
     progress,
@@ -236,7 +242,7 @@ export const setProgress = async (
         addToCacheList(cache, data.UpdateProgress)
       }
 
-      writeEpisodeProgressToCache(cache, options, progress)
+      writeEpisodeProgressToCache(cache, options)
     },
   })
 }

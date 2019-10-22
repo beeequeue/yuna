@@ -278,8 +278,18 @@ export default class Queue extends Vue {
         })
       }
     } else {
+      let included: number[] = []
+      const firstTenEntries = entries.filter(entry => {
+        const include = !included.includes(entry.id)
+
+        if (!include || included.length >= 10) return false
+
+        included.push(entry.id)
+        return true
+      })
+
       await Promise.all(
-        entries.map(async ({ mediaId, status }) =>
+        firstTenEntries.map(async ({ mediaId, status }) =>
           addToQueue(this.$store, {
             id: mediaId,
             externalLinks: await this.getExternalLinks(mediaId),

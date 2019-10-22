@@ -5,6 +5,7 @@ import { autoUpdater } from 'electron-updater'
 import Store from 'electron-store'
 import { oc } from 'ts-optchain'
 
+import { isNil } from '@/utils'
 import {
   DOWNLOAD_UPDATE,
   UPDATE_AVAILABLE,
@@ -22,7 +23,7 @@ autoUpdater.autoDownload = false
 autoUpdater.autoInstallOnAppQuit = false
 
 const timeBetweenUpdateChecks = 30 * 60 * 1000
-let mainWindow: Electron.BrowserWindow
+let mainWindow: Electron.BrowserWindow | null = null
 let updateInterval: NodeJS.Timer | null = null
 
 interface Version {
@@ -32,6 +33,8 @@ interface Version {
 let availableVersion: Version | null = null
 
 const setAllProgressBars = (progress: number) => {
+  if (isNil(mainWindow)) return
+
   mainWindow.setProgressBar(progress)
 }
 
@@ -60,6 +63,12 @@ const initCheckForUpdates = () => {
 }
 
 const sendMessage = (message: string, arg?: string) => {
+  if (isNil(mainWindow)) {
+    setTimeout(() => sendMessage(message, arg), 1000)
+
+    return
+  }
+
   mainWindow.webContents.send(message, arg)
 }
 

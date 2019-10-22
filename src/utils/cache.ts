@@ -11,7 +11,6 @@ import {
   ListViewListEntries,
   ListViewQuery,
   ListViewQueryVariables,
-  MediaListStatus,
   Provider,
 } from '@/graphql/types'
 
@@ -48,6 +47,11 @@ export const getIsWatched = (
 
   const progress = oc(data).listEntry.progress()
   if (isNil(progress)) {
+    return false
+  }
+
+  // If episode number is 0 (prequel) only mark it was watched if episode 1 is watched
+  if (episode === 0 && progress < 1) {
     return false
   }
 
@@ -183,7 +187,6 @@ export interface EpisodeMutationObject {
 export const writeEpisodeProgressToCache = (
   cache: DataProxy,
   episode: EpisodeMutationObject,
-  progress: number,
 ) => {
   let episodes = getSoftCachedEpisodes(cache, episode.animeId, episode.provider)
 
@@ -196,16 +199,10 @@ export const writeEpisodeProgressToCache = (
 
   episodes = episodes.map(ep => ({
     ...ep,
-    isWatched: progress >= ep.episodeNumber,
+    isWatched: getIsWatched(cache, episode.animeId, ep.episodeNumber),
   }))
 
   cacheEpisodes(cache, episodes)
-}
-
-export const getRows = (status: MediaListStatus) => {
-  if (status === MediaListStatus.Planning) return 2
-
-  return 1
 }
 
 export const removeFromCacheList = (cache: DataProxy, anilistId: number) => {

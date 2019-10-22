@@ -15,26 +15,21 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { oc } from 'ts-optchain'
+import { Component, Vue } from 'vue-property-decorator'
 
 import { EpisodeListEpisodes, PlayerAnimeAnime } from '@/graphql/types'
 
 import { Required } from '@/decorators'
-import { ListEntry } from '@/state/app'
 import { getSpoilerSettings } from '@/state/settings'
 
 @Component
 export default class PlayerTitle extends Vue {
   @Required(Object) public anime!: PlayerAnimeAnime
   @Required(Object) public episode!: EpisodeListEpisodes
-  @Prop(Object) public listEntry!: ListEntry
+  @Required(Boolean) public episodeWatched!: boolean
 
   public get shouldHideTitle() {
-    return (
-      getSpoilerSettings(this.$store).episode.name &&
-      oc(this.listEntry).progress(-1) < this.episode.episodeNumber
-    )
+    return getSpoilerSettings(this.$store).episode.name && !this.episodeWatched
   }
 }
 </script>
