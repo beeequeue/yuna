@@ -8,7 +8,7 @@ import { RootState } from '@/state/store'
 import { getDefaultProvider } from '@/state/auth'
 import { QueueItem, userStore } from '@/lib/user'
 import { isNotNil, propEq } from '@/utils'
-import { setExtra } from '@sentry/browser'
+import { setUser } from '@sentry/browser'
 
 const isInQueue = (state: UserState, id: number) =>
   isNotNil(state.queue.find(propEq('id', id)))
@@ -51,7 +51,9 @@ if (
 
 userStore.set(initialState)
 
-setExtra('device-uuid', initialState.deviceUuid)
+setUser({
+  id: initialState.deviceUuid,
+})
 
 type UserContext = ActionContext<UserState, RootState>
 
