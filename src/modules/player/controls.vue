@@ -13,7 +13,7 @@
         v-if="isPlayerMaximized"
         :anime="anime"
         :episode="episode"
-        :listEntry="listEntry"
+        :episodeWatched="episodeWatched"
       />
     </transition>
 
@@ -85,24 +85,25 @@
         <span
           v-if="isPlayerMaximized && listEntry"
           class="completed button-collapser"
+          :class="{ disabled: episode.episodeNumber === 0 }"
         >
           <transition name="fade">
             <icon
-              v-if="listEntry.progress < episode.episodeNumber"
+              v-if="!episodeWatched"
               key="max"
               class="button"
               :icon="bookmarkSvg"
-              v-tooltip.top="'Mark as watched'"
-              @click.native="setProgress(episode.episodeNumber)"
+              v-tooltip.top="getMarkWatchedTooltip(false)"
+              @click.native="updateProgress(episode.episodeNumber)"
             />
             <icon
               v-else
               class="button"
               key="min"
               :icon="bookmarkRemoveSvg"
-              v-tooltip.top="'Unmark as watched'"
+              v-tooltip.top="getMarkWatchedTooltip(true)"
               @click.native="
-                setProgress(Math.max(0, episode.episodeNumber - 1))
+                updateProgress(Math.max(0, episode.episodeNumber - 1))
               "
             />
           </transition>
@@ -230,7 +231,7 @@ import {
   toggleFullscreen,
 } from '@/state/app'
 import { Levels } from '@/types'
-import { secondsToTimeString } from '@/utils'
+import { isNil, secondsToTimeString } from '@/utils'
 
 import Icon from '@/common/components/icon.vue'
 import PlayerTitle from './title.vue'
@@ -289,6 +290,24 @@ export default class Controls extends Vue {
 
   public get listEntry(): PlayerAnimeListEntry | null {
     return oc(this).anime.listEntry(null)
+  }
+
+  public get episodeWatched() {
+    if (isNil(this.listEntry)) return false
+
+    if (this.episode.episodeNumber === 0 && this.listEntry.progress < 1) {
+      return false
+    }
+
+    return this.listEntry.progress < this.episode.episodeNumber
+  }
+
+  public getMarkWatchedTooltip(watched: boolean) {
+    if (this.episode.episodeNumber === 0) {
+      return 'This episode shares watched status with episode 1.'
+    }
+
+    return watched ? 'Unmark as watched' : 'Mark as watched'
   }
 
   public get timeString() {
@@ -381,16 +400,18 @@ export default class Controls extends Vue {
     this.$router.push('/player-big')
   }
 
+  public updateProgress(progress: number) {
+    if (this.episode.episodeNumber === 0) return
+
+    this.setProgress(progress)
+  }
+
   public _toggleFullscreen() {
     toggleFullscreen(this.$store)
   }
 
   public _setFullscreen(value: boolean) {
     setFullscreen(this.$store, value)
-  }
-
-  public secondsToTimeString(input: number) {
-    return secondsToTimeString(input)
   }
 
   public go(amount: number) {
@@ -576,6 +597,16 @@ $buttonSize: 50px;
     max-width: $buttonSize;
     overflow: hidden;
     margin-top: 5px;
+    transition: opacity 0.25s, filter 0.25s;
+
+    &.disabled {
+      opacity: 0.75;
+      filter: brightness(0.75);
+
+      & > .button {
+        cursor: default;
+      }
+    }
 
     & > .button {
       margin: 0;

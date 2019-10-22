@@ -51,6 +51,11 @@ export const getIsWatched = (
     return false
   }
 
+  // If episode number is 0 (prequel) only mark it was watched if episode 1 is watched
+  if (episode === 0 && progress < 1) {
+    return false
+  }
+
   return progress >= episode
 }
 

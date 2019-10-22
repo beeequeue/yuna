@@ -17,13 +17,17 @@
       <c-button
         v-if="!episode.isWatched"
         :icon="bookmarkSvg"
-        @click.native.prevent="setProgress"
+        :click="setProgress"
+        :disabled="episode.episodeNumber === 0"
+        v-tooltip.top="buttonTooltip"
       />
       <c-button
         v-else
         type="danger"
         :icon="unbookmarkSvg"
-        @click.native.prevent="setProgress"
+        :click="setProgress"
+        :disabled="episode.episodeNumber === 0"
+        v-tooltip.top="buttonTooltip"
       />
     </transition>
 
@@ -82,6 +86,12 @@ export default class Episode extends Vue {
         Number(this.scrollerValue) === this.episode.episodeNumber,
       small: this.small,
     }
+  }
+
+  public get buttonTooltip() {
+    if (this.episode.episodeNumber > 0) return null
+
+    return 'This episode shares watched status with episode 1.'
   }
 
   public get blur() {
