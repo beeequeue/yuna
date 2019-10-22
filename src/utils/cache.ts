@@ -11,7 +11,6 @@ import {
   ListViewListEntries,
   ListViewQuery,
   ListViewQueryVariables,
-  MediaListStatus,
   Provider,
 } from '@/graphql/types'
 
@@ -188,7 +187,6 @@ export interface EpisodeMutationObject {
 export const writeEpisodeProgressToCache = (
   cache: DataProxy,
   episode: EpisodeMutationObject,
-  progress: number,
 ) => {
   let episodes = getSoftCachedEpisodes(cache, episode.animeId, episode.provider)
 
@@ -205,12 +203,6 @@ export const writeEpisodeProgressToCache = (
   }))
 
   cacheEpisodes(cache, episodes)
-}
-
-export const getRows = (status: MediaListStatus) => {
-  if (status === MediaListStatus.Planning) return 2
-
-  return 1
 }
 
 export const removeFromCacheList = (cache: DataProxy, anilistId: number) => {

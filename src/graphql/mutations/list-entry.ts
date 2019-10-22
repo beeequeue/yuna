@@ -192,7 +192,7 @@ export const startRewatching = async (
         animeId: data.StartRewatching!.mediaId,
         episodeNumber: 0,
       }
-      writeEpisodeProgressToCache(cache, fakeEpisode, 0)
+      writeEpisodeProgressToCache(cache, fakeEpisode)
     },
   })
 }
@@ -242,7 +242,7 @@ export const setProgress = async (
         addToCacheList(cache, data.UpdateProgress)
       }
 
-      writeEpisodeProgressToCache(cache, options, progress)
+      writeEpisodeProgressToCache(cache, options)
     },
   })
 }

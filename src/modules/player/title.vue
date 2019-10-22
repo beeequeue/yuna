@@ -15,13 +15,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { oc } from 'ts-optchain'
+import { Component, Vue } from 'vue-property-decorator'
 
 import { EpisodeListEpisodes, PlayerAnimeAnime } from '@/graphql/types'
 
 import { Required } from '@/decorators'
-import { ListEntry } from '@/state/app'
 import { getSpoilerSettings } from '@/state/settings'
 
 @Component
