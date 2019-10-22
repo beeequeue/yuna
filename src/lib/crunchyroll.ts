@@ -192,7 +192,7 @@ interface CrunchyrollSuccess<D extends object = any> {
 }
 
 interface CrunchyrollError {
-  code: 'bad_request' | 'bad_session' | 'object_not_found'
+  code: 'bad_request' | 'bad_session' | 'object_not_found' | 'forbidden'
   error: true
   message: string
 }
@@ -419,6 +419,8 @@ export class Crunchyroll {
       if (response.body.code === 'object_not_found') {
         return null
       }
+
+      if (response.body.code === 'forbidden') return null
 
       throw new Error(response.body.message)
     }
