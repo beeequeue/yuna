@@ -1,7 +1,13 @@
 import Vue from 'vue'
-import VueApollo from 'vue-apollo'
-import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
-import { IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
+import VueApollo, { ApolloProvider } from 'vue-apollo'
+import {
+  createApolloClient,
+  CreateClientOptions,
+} from 'vue-cli-plugin-apollo/graphql-client'
+import {
+  IntrospectionFragmentMatcher,
+  defaultDataIdFromObject,
+} from 'apollo-cache-inmemory'
 import { captureException } from '@sentry/browser'
 
 import introspectionResult from '@/graphql/introspection-result'
@@ -13,18 +19,10 @@ import { getEpisodeCacheKey, isOfTypename } from '@/utils'
 // Install the vue plugin
 Vue.use(VueApollo)
 
-const AUTH_TOKEN = 'apollo-token'
-
 // Http endpoint
 const httpEndpoint = 'https://graphql.anilist.co'
-// Files URL root
-export const filesRoot =
-  process.env.VUE_APP_FILES_ROOT ||
-  httpEndpoint.substr(0, httpEndpoint.indexOf('/graphql'))
 
-Vue.prototype.$filesRoot = filesRoot
-
-const dataIdFromObject = (obj: { __typename: string; [key: string]: any }) => {
+const dataIdFromObject = (obj: { __typename?: string; [key: string]: any }) => {
   // Episode
   if (isOfTypename<EpisodeListEpisodes>(obj, 'Episode')) {
     return getEpisodeCacheKey(obj)
@@ -44,32 +42,21 @@ const dataIdFromObject = (obj: { __typename: string; [key: string]: any }) => {
     }
   }
 
-  return null
+  return defaultDataIdFromObject(obj)
 }
 
 const fragmentMatcher = new IntrospectionFragmentMatcher({
   introspectionQueryResultData: introspectionResult,
 })
+
 // Config
-const options = {
+const options: CreateClientOptions = {
   // You can use `https` for secure connection (recommended in production)
   httpEndpoint,
 
-  // Enable Automatic Query persisting with Apollo Engine
   persisting: false,
-
-  // Is being rendered on the server?
   ssr: false,
-
-  // LocalStorage token
-  tokenName: AUTH_TOKEN,
-
-  // Use websockets for everything (no HTTP)
-  // You need to pass a `wsEndpoint` for this to work
   websocketsOnly: false,
-
-  // You can use `wss` for secure connection (recommended in production)
-  // Use `null` to disable subscriptions
   wsEndpoint: null,
 
   // Override the way the Authorization header is set
@@ -92,7 +79,7 @@ export function createProvider() {
   apolloClient.wsClient = wsClient
 
   // Create vue apollo provider
-  const apolloProvider = new VueApollo({
+  const apolloProvider = new ApolloProvider({
     defaultClient: apolloClient,
     defaultOptions: {
       $query: {
