@@ -19,11 +19,19 @@
 
     <span class="separator" />
 
-    <transition name="fade">
+    <transition name="fade" mode="out-in">
       <a v-if="!anilistOnline" class="alert" href="http://status.anilist.co/">
         It seems like AniList is down, most features will not work.
         <icon :icon="infoSvg" />
       </a>
+      <span
+        v-else-if="rateLimited"
+        class="alert"
+        v-tooltip.bottom="'This goes away in about a minute.'"
+      >
+        You've made too many requests too quickly and are being rate limited.
+        <icon :icon="infoSvg" />
+      </span>
     </transition>
 
     <span v-if="!isMac" class="menu-buttons">
@@ -51,7 +59,7 @@ import {
   mdiMinus,
 } from '@mdi/js'
 
-import { closeAllModals } from '@/state/app'
+import { closeAllModals, getAnilistRequestsUntilLimiting } from '@/state/app'
 import { getCrunchyrollCountry, getIsConnectedTo } from '@/state/auth'
 import { Query } from '@/decorators'
 
@@ -64,6 +72,7 @@ const flagContext = require.context('svg-country-flags/svg')
 export default class TitleBar extends Vue {
   @Query<TitleBar, { Viewer: null | { id: number } }>({
     fetchPolicy: 'no-cache',
+    errorPolicy: 'ignore',
     query: gql`
       {
         Viewer {
@@ -77,10 +86,9 @@ export default class TitleBar extends Vue {
     update(data) {
       return oc(data).Viewer.id() != null
     },
-    error() {
-      return false
+    error(err) {
+      return oc(err as any).networkError.statusCode() === 429
     },
-    errorPolicy: 'all',
     pollInterval: 60 * 1000,
   })
   public anilistOnline = true
@@ -120,6 +128,10 @@ export default class TitleBar extends Vue {
 
   public get isConnectedTo() {
     return getIsConnectedTo(this.$store)
+  }
+
+  public get rateLimited() {
+    return getAnilistRequestsUntilLimiting(this.$store) < 1
   }
 
   private restrictedViews = [/login/, /first-time-setup/]

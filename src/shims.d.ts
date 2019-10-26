@@ -81,8 +81,55 @@ declare interface InputEvent<
 }
 
 declare module 'vue-cli-plugin-apollo/graphql-client' {
+  import { ApolloClientOptions, Resolvers } from 'apollo-client'
+  import { ApolloLink, DocumentNode } from 'apollo-link'
+  import { FetchOptions } from 'apollo-link-http'
+  import { ClientStateConfig } from 'apollo-link-state'
+  import { ApolloCache } from 'apollo-cache'
+  import { InMemoryCacheConfig } from 'apollo-cache-inmemory'
+
+  interface CreateClientOptions {
+    /** URL to the HTTP API */
+    httpEndpoint: string
+    /** Url to the Websocket API; set `null` to disable websockets */
+    wsEndpoint?: string | null
+    /** Token used in localstorage */
+    tokenName?: string
+    /** Enable this if you use Query persisting with Apollo Engine */
+    persisting?: boolean
+    /** Is currently Server-Side Rendering or not */
+    ssr?: boolean
+    /** Only use Websocket for all requests (including queries and mutations) */
+    websocketsOnly?: boolean
+    /**
+     * Custom starting link.
+     * If you want to replace the default HttpLink , set `defaultHttpLink` to false
+     */
+    link?: ApolloLink
+    /**
+     * If true, add the default HttpLink.
+     * Disable it if you want to replace it with a terminating link using `link` option.
+     */
+    defaultHttpLink?: boolean
+    /** Options for the default HttpLink */
+    httpLinkOptions?: FetchOptions
+    /** Custom Apollo cache implementation (default is apollo-cache-inmemory) */
+    cache?: ApolloCache<any>
+    /** Options for the default cache */
+    inMemoryCacheOptions?: InMemoryCacheConfig
+    /** Additional Apollo client options */
+    apollo?: ApolloClientOptions<any>
+    /** apollo-link-state options */
+    clientState?: ClientStateConfig
+    /** Function returning Authorization header token */
+    getAuth?: (tokenName?: string) => string
+
+    typeDefs?: DocumentNode
+    resolvers?: Resolvers
+  }
+
   export const createApolloClient: (
-    options: any,
+    options: CreateClientOptions,
   ) => {
     apolloClient: any
     wsClient: any

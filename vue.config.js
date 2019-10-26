@@ -59,7 +59,7 @@ module.exports = {
     // Sentry Source Maps
     config.when(
       process.env.NODE_ENV === 'production' &&
-        process.env.CIRCLE_BUILD_URL != null &&
+        process.env.TRAVIS == null &&
         GIT_TAG != null,
       config => {
         config

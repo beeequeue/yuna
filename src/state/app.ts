@@ -77,6 +77,7 @@ export interface AppState {
   toasts: Toast[]
   isFullscreen: boolean
   player: PlayerData | null
+  anilistRequests: number
   modals: {
     about: ModalBase
     edit: ModalBase & {
@@ -102,6 +103,7 @@ const initialState: AppState = {
   toasts: [],
   isFullscreen: false,
   player: null,
+  anilistRequests: 85,
   modals: {
     about: { ...initialModalBase },
     edit: {
@@ -174,6 +176,10 @@ export const app = {
 
     getSelectedEpisodes(state: AppState) {
       return state.modals.manualSearch.selectedEpisodes
+    },
+
+    getAnilistRequestsUntilLimiting(state: AppState) {
+      return state.anilistRequests
     },
   },
 
@@ -328,6 +334,10 @@ export const app = {
 
       state.modals.manualSearch.selectedEpisodes = episodesWithFixedNumbers
     },
+
+    setAnilistRequests(state: AppState, requests: number) {
+      state.anilistRequests = requests
+    },
   },
 
   actions: {
@@ -423,6 +433,9 @@ export const getManualSearchOptions = read(app.getters.getManualSearchOptions)
 export const getLocalSourceOptions = read(app.getters.getLocalSourceAnime)
 export const getIsFullscreen = read(app.getters.getIsFullscreen)
 export const getSelectedEpisodes = read(app.getters.getSelectedEpisodes)
+export const getAnilistRequestsUntilLimiting = read(
+  app.getters.getAnilistRequestsUntilLimiting,
+)
 
 export const setIsUpdateAvailable = commit(app.mutations.setIsUpdateAvailable)
 const setEditingAnime = commit(app.mutations.setEditingAnime)
@@ -444,6 +457,7 @@ export const selectCrunchyrollEpisodes = commit(
 export const unselectCrunchyrollEpisodes = commit(
   app.mutations.unselectCrunchyrollEpisodes,
 )
+export const setAnilistRequests = commit(app.mutations.setAnilistRequests)
 
 export const toggleFullscreen = dispatch(app.actions.toggleFullscreen)
 export const sendToast = dispatch(app.actions.sendToast)

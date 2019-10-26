@@ -1,30 +1,35 @@
 import Vue from 'vue'
-import VueApollo from 'vue-apollo'
-import { createApolloClient } from 'vue-cli-plugin-apollo/graphql-client'
-import { IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
+import VueApollo, { ApolloProvider } from 'vue-apollo'
+import {
+  createApolloClient,
+  CreateClientOptions,
+} from 'vue-cli-plugin-apollo/graphql-client'
+import { Store } from 'vuex'
+import {
+  defaultDataIdFromObject,
+  IntrospectionFragmentMatcher,
+} from 'apollo-cache-inmemory'
+import Bottleneck from 'bottleneck'
+import { oc } from 'ts-optchain'
 import { captureException } from '@sentry/browser'
 
 import introspectionResult from '@/graphql/introspection-result'
 import { resolvers } from '@/graphql/resolvers'
 import { EpisodeListEpisodes, ListEntry } from '@/graphql/types'
 import { userStore } from '@/lib/user'
-import { getEpisodeCacheKey, isOfTypename } from '@/utils'
+import { getEpisodeCacheKey, isNil, isOfTypename } from '@/utils'
+import {
+  getAnilistRequestsUntilLimiting,
+  setAnilistRequests,
+} from '@/state/app'
 
 // Install the vue plugin
 Vue.use(VueApollo)
 
-const AUTH_TOKEN = 'apollo-token'
-
 // Http endpoint
 const httpEndpoint = 'https://graphql.anilist.co'
-// Files URL root
-export const filesRoot =
-  process.env.VUE_APP_FILES_ROOT ||
-  httpEndpoint.substr(0, httpEndpoint.indexOf('/graphql'))
 
-Vue.prototype.$filesRoot = filesRoot
-
-const dataIdFromObject = (obj: { __typename: string; [key: string]: any }) => {
+const dataIdFromObject = (obj: { __typename?: string; [key: string]: any }) => {
   // Episode
   if (isOfTypename<EpisodeListEpisodes>(obj, 'Episode')) {
     return getEpisodeCacheKey(obj)
@@ -44,36 +49,38 @@ const dataIdFromObject = (obj: { __typename: string; [key: string]: any }) => {
     }
   }
 
-  return null
+  return defaultDataIdFromObject(obj)
 }
 
 const fragmentMatcher = new IntrospectionFragmentMatcher({
   introspectionQueryResultData: introspectionResult,
 })
+
+const limiter = new Bottleneck({
+  reservoir: 85,
+  reservoirRefreshAmount: 85,
+  reservoirRefreshInterval: 60 * 1000,
+})
+
+const limitedFetch = limiter.wrap(window.fetch)
+
 // Config
-const options = {
+const options: CreateClientOptions = {
   // You can use `https` for secure connection (recommended in production)
   httpEndpoint,
 
-  // Enable Automatic Query persisting with Apollo Engine
   persisting: false,
-
-  // Is being rendered on the server?
   ssr: false,
-
-  // LocalStorage token
-  tokenName: AUTH_TOKEN,
-
-  // Use websockets for everything (no HTTP)
-  // You need to pass a `wsEndpoint` for this to work
   websocketsOnly: false,
-
-  // You can use `wss` for secure connection (recommended in production)
-  // Use `null` to disable subscriptions
   wsEndpoint: null,
 
   // Override the way the Authorization header is set
   getAuth: () => userStore.get('anilist.token'),
+
+  // Fetch override
+  httpLinkOptions: {
+    fetch: limitedFetch,
+  },
 
   // Cache Options
   inMemoryCacheOptions: {
@@ -86,29 +93,52 @@ const options = {
 }
 
 // Call this in the Vue app file
-export function createProvider() {
+export const createProvider = (store: Store<any>) => {
   // Create apollo client
   const { apolloClient, wsClient } = createApolloClient(options)
   apolloClient.wsClient = wsClient
 
+  setInterval(async () => {
+    const requests = (await limiter.currentReservoir()) || 60
+
+    const savedRequests = getAnilistRequestsUntilLimiting(store)
+
+    if (requests === savedRequests) return
+
+    setAnilistRequests(store, requests)
+  }, 1000)
+
   // Create vue apollo provider
-  const apolloProvider = new VueApollo({
+  const apolloProvider = new ApolloProvider({
     defaultClient: apolloClient,
     defaultOptions: {
       $query: {
         fetchPolicy: 'cache-first',
       },
     },
-    errorHandler(error) {
+    async errorHandler({ networkError, message }) {
+      if (
+        !isNil(networkError) &&
+        oc(networkError as any).statusCode() === 429
+      ) {
+        const currentReservoir = (await limiter.currentReservoir()) || 60
+        await limiter.incrementReservoir(-currentReservoir)
+        setAnilistRequests(store, (await limiter.currentReservoir()) || 0)
+
+        return
+      }
+
       if (process.env.NODE_ENV === 'production') {
-        captureException(error)
+        if (isNil(networkError)) return
+
+        captureException(networkError)
       }
 
       // eslint-disable-next-line no-console
       console.log(
         '%cError',
         'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;',
-        error.message,
+        message,
       )
     },
   })

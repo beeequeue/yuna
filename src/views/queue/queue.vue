@@ -7,7 +7,7 @@
         :get-child-payload="getChildPayload"
         @drop="handleDrop"
       >
-        <draggable v-for="anime in animes" :key="anime.id">
+        <draggable v-for="anime in animes" :key="anime && anime.id">
           <queue-item
             v-if="anime != null && getItem(anime.id) != null"
             :key="anime.id"
@@ -278,13 +278,21 @@ export default class Queue extends Vue {
         })
       }
     } else {
-      let included: number[] = []
+      const currentQueue = this.queue.map(item => item.id)
+      const newItems: number[] = []
+
       const firstTenEntries = entries.filter(entry => {
-        const include = !included.includes(entry.id)
+        const include = !newItems.includes(entry.mediaId)
 
-        if (!include || included.length >= 10) return false
+        if (
+          currentQueue.includes(entry.mediaId) ||
+          !include ||
+          newItems.length >= 10
+        ) {
+          return false
+        }
 
-        included.push(entry.id)
+        newItems.push(entry.mediaId)
         return true
       })
 
