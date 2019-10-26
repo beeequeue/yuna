@@ -72,6 +72,7 @@ const flagContext = require.context('svg-country-flags/svg')
 export default class TitleBar extends Vue {
   @Query<TitleBar, { Viewer: null | { id: number } }>({
     fetchPolicy: 'no-cache',
+    errorPolicy: 'ignore',
     query: gql`
       {
         Viewer {
@@ -88,7 +89,6 @@ export default class TitleBar extends Vue {
     error(err) {
       return oc(err as any).networkError.statusCode() === 429
     },
-    errorPolicy: 'all',
     pollInterval: 60 * 1000,
   })
   public anilistOnline = true

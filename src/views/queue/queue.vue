@@ -7,7 +7,7 @@
         :get-child-payload="getChildPayload"
         @drop="handleDrop"
       >
-        <draggable v-for="anime in animes" :key="anime.id">
+        <draggable v-for="anime in animes" :key="anime && anime.id">
           <queue-item
             v-if="anime != null && getItem(anime.id) != null"
             :key="anime.id"
