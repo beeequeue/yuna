@@ -18,6 +18,7 @@ import { normalizeEvent } from './normalize'
 import { version } from '../package.json'
 
 import 'normalize.css'
+import { getQueue } from '@/state/user'
 
 // Vue config
 Vue.config.productionTip = false
@@ -42,6 +43,10 @@ init({
     )
 
     setExtra('list-manager', getMainListPlugin(store))
+    setExtra(
+      'queue',
+      getQueue(store).map(item => `${item.id}:${item.provider}`),
+    )
 
     return normalizeEvent(event)
   },
