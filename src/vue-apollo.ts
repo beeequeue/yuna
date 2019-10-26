@@ -6,17 +6,18 @@ import {
 } from 'vue-cli-plugin-apollo/graphql-client'
 import { Store } from 'vuex'
 import {
-  IntrospectionFragmentMatcher,
   defaultDataIdFromObject,
+  IntrospectionFragmentMatcher,
 } from 'apollo-cache-inmemory'
 import Bottleneck from 'bottleneck'
+import { oc } from 'ts-optchain'
 import { captureException } from '@sentry/browser'
 
 import introspectionResult from '@/graphql/introspection-result'
 import { resolvers } from '@/graphql/resolvers'
 import { EpisodeListEpisodes, ListEntry } from '@/graphql/types'
 import { userStore } from '@/lib/user'
-import { getEpisodeCacheKey, isOfTypename } from '@/utils'
+import { getEpisodeCacheKey, isNil, isOfTypename } from '@/utils'
 import {
   getAnilistRequestsUntilLimiting,
   setAnilistRequests,
@@ -115,16 +116,29 @@ export const createProvider = (store: Store<any>) => {
         fetchPolicy: 'cache-first',
       },
     },
-    errorHandler(error) {
+    async errorHandler({ networkError, message }) {
+      if (
+        !isNil(networkError) &&
+        oc(networkError as any).statusCode() === 429
+      ) {
+        const currentReservoir = (await limiter.currentReservoir()) || 60
+        await limiter.incrementReservoir(-currentReservoir)
+        setAnilistRequests(store, (await limiter.currentReservoir()) || 0)
+
+        return
+      }
+
       if (process.env.NODE_ENV === 'production') {
-        captureException(error)
+        if (isNil(networkError)) return
+
+        captureException(networkError)
       }
 
       // eslint-disable-next-line no-console
       console.log(
         '%cError',
         'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;',
-        error.message,
+        message,
       )
     },
   })

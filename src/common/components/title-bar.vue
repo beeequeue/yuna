@@ -24,8 +24,12 @@
         It seems like AniList is down, most features will not work.
         <icon :icon="infoSvg" />
       </a>
-      <span v-else-if="rateLimited" class="alert">
-        You've made too many requests too quickly and is being rate limited.
+      <span
+        v-else-if="rateLimited"
+        class="alert"
+        v-tooltip.bottom="'This goes away in about a minute.'"
+      >
+        You've made too many requests too quickly and are being rate limited.
         <icon :icon="infoSvg" />
       </span>
     </transition>
@@ -81,8 +85,8 @@ export default class TitleBar extends Vue {
     update(data) {
       return oc(data).Viewer.id() != null
     },
-    error() {
-      return false
+    error(err) {
+      return oc(err as any).networkError.statusCode() === 429
     },
     errorPolicy: 'all',
     pollInterval: 60 * 1000,
