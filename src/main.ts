@@ -67,6 +67,6 @@ updateRelations()
 new Vue({
   router,
   store,
-  apolloProvider: createProvider(),
+  apolloProvider: createProvider(store),
   render: h => h(App),
 }).$mount('#app')

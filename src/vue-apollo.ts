@@ -4,10 +4,12 @@ import {
   createApolloClient,
   CreateClientOptions,
 } from 'vue-cli-plugin-apollo/graphql-client'
+import { Store } from 'vuex'
 import {
   IntrospectionFragmentMatcher,
   defaultDataIdFromObject,
 } from 'apollo-cache-inmemory'
+import Bottleneck from 'bottleneck'
 import { captureException } from '@sentry/browser'
 
 import introspectionResult from '@/graphql/introspection-result'
@@ -15,6 +17,10 @@ import { resolvers } from '@/graphql/resolvers'
 import { EpisodeListEpisodes, ListEntry } from '@/graphql/types'
 import { userStore } from '@/lib/user'
 import { getEpisodeCacheKey, isOfTypename } from '@/utils'
+import {
+  getAnilistRequestsUntilLimiting,
+  setAnilistRequests,
+} from '@/state/app'
 
 // Install the vue plugin
 Vue.use(VueApollo)
@@ -49,6 +55,14 @@ const fragmentMatcher = new IntrospectionFragmentMatcher({
   introspectionQueryResultData: introspectionResult,
 })
 
+const limiter = new Bottleneck({
+  reservoir: 85,
+  reservoirRefreshAmount: 85,
+  reservoirRefreshInterval: 60 * 1000,
+})
+
+const limitedFetch = limiter.wrap(window.fetch)
+
 // Config
 const options: CreateClientOptions = {
   // You can use `https` for secure connection (recommended in production)
@@ -62,6 +76,11 @@ const options: CreateClientOptions = {
   // Override the way the Authorization header is set
   getAuth: () => userStore.get('anilist.token'),
 
+  // Fetch override
+  httpLinkOptions: {
+    fetch: limitedFetch,
+  },
+
   // Cache Options
   inMemoryCacheOptions: {
     dataIdFromObject,
@@ -73,10 +92,20 @@ const options: CreateClientOptions = {
 }
 
 // Call this in the Vue app file
-export function createProvider() {
+export const createProvider = (store: Store<any>) => {
   // Create apollo client
   const { apolloClient, wsClient } = createApolloClient(options)
   apolloClient.wsClient = wsClient
+
+  setInterval(async () => {
+    const requests = (await limiter.currentReservoir()) || 60
+
+    const savedRequests = getAnilistRequestsUntilLimiting(store)
+
+    if (requests === savedRequests) return
+
+    setAnilistRequests(store, requests)
+  }, 1000)
 
   // Create vue apollo provider
   const apolloProvider = new ApolloProvider({
