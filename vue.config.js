@@ -58,9 +58,7 @@ module.exports = {
 
     // Sentry Source Maps
     config.when(
-      process.env.NODE_ENV === 'production' &&
-        process.env.TRAVIS == null &&
-        GIT_TAG != null,
+      process.env.NODE_ENV === 'production' && GIT_TAG != null,
       config => {
         config
           .plugin('sentry')
