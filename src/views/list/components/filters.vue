@@ -16,6 +16,14 @@
         :href="`${simklUser.url}/dashboard`"
         v-html="simklLogo"
       />
+
+      <icon
+        v-if="isConnectedTo.simkl"
+        :icon="infoSvg"
+        v-tooltip.bottom="
+          'Some list entries may be missing due to Simkl missing ID matching data.'
+        "
+      />
     </div>
 
     <c-select
@@ -49,6 +57,7 @@
 <script lang="ts">
 import { Component, Emit, Vue, Watch } from 'vue-property-decorator'
 import Fuse from 'fuse.js'
+import { mdiInformationOutline } from '@mdi/js'
 
 import anichartSvg from '@/assets/anichart.svg'
 import anilistSvg from '@/assets/anilist.svg'
@@ -56,6 +65,7 @@ import simklSvg from '@/assets/simkl.svg'
 import TextInput from '@/common/components/form/text-input.vue'
 import CSelect from '@/common/components/select.vue'
 import Loading from '@/common/components/loading.vue'
+import Icon from '@/common/components/icon.vue'
 
 import { Default } from '@/decorators'
 import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
@@ -76,7 +86,7 @@ import { oc } from 'ts-optchain'
 
 type Media = NonNullable<NonNullable<ListMedia[number]>['media']>
 
-@Component({ components: { CSelect, Loading, TextInput } })
+@Component({ components: { Icon, CSelect, Loading, TextInput } })
 export default class Filters extends Vue {
   @Default(Array, () => []) public entries!: ListViewListEntries[]
   @Default(Object, () => {}) public media!: ListMedia
@@ -84,6 +94,7 @@ export default class Filters extends Vue {
   public anichartLogo = anichartSvg
   public alLogo = anilistSvg
   public simklLogo = simklSvg
+  public infoSvg = mdiInformationOutline
 
   public get isConnectedTo() {
     return getIsConnectedTo(this.$store)
@@ -228,12 +239,23 @@ export default class Filters extends Vue {
       justify-self: flex-end;
     }
 
-    & > a {
+    & > a,
+    & > span {
       height: 26px;
       margin-right: 15px;
 
       &:last-child {
         margin-right: 0;
+      }
+    }
+
+    & > span {
+      margin-left: -15px;
+      fill: $white;
+      height: 20px;
+
+      & /deep/ svg {
+        height: 20px;
       }
     }
 

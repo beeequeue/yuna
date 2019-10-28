@@ -615,6 +615,7 @@ export type InternalPage = {
   threads: Maybe<Array<Maybe<Thread>>>
   threadComments: Maybe<Array<Maybe<ThreadComment>>>
   reviews: Maybe<Array<Maybe<Review>>>
+  recommendations: Maybe<Array<Maybe<Recommendation>>>
 }
 
 /** Page of data (Used for internal use only) */
@@ -680,6 +681,7 @@ export type InternalPageMediaArgs = {
   isAdult: Maybe<Scalars['Boolean']>
   genre: Maybe<Scalars['String']>
   tag: Maybe<Scalars['String']>
+  minimumTagRank: Maybe<Scalars['Int']>
   tagCategory: Maybe<Scalars['String']>
   onList: Maybe<Scalars['Boolean']>
   licensedBy: Maybe<Scalars['String']>
@@ -928,6 +930,18 @@ export type InternalPageReviewsArgs = {
   sort: Maybe<Array<Maybe<ReviewSort>>>
 }
 
+/** Page of data (Used for internal use only) */
+export type InternalPageRecommendationsArgs = {
+  id: Maybe<Scalars['Int']>
+  mediaId: Maybe<Scalars['Int']>
+  mediaRecommendationId: Maybe<Scalars['Int']>
+  userId: Maybe<Scalars['Int']>
+  rating: Maybe<Scalars['Int']>
+  rating_greater: Maybe<Scalars['Int']>
+  rating_lesser: Maybe<Scalars['Int']>
+  sort: Maybe<Array<Maybe<RecommendationSort>>>
+}
+
 /** Types that can be liked */
 export enum LikeableType {
   Thread = 'THREAD',
@@ -1090,11 +1104,15 @@ export type Media = {
   mediaListEntry: Maybe<MediaList>
   /** User reviews of the media */
   reviews: Maybe<ReviewConnection>
+  /** User recommendations for similar media */
+  recommendations: Maybe<RecommendationConnection>
   stats: Maybe<MediaStats>
   /** The url for the media page on the AniList website */
   siteUrl: Maybe<Scalars['String']>
   /** If the media should have forum thread automatically created for it on airing episode release */
   autoCreateForumThread: Maybe<Scalars['Boolean']>
+  /** If the media is blocked from being recommended to/from */
+  isRecommendationBlocked: Maybe<Scalars['Boolean']>
   /** Notes for site moderators */
   modNotes: Maybe<Scalars['String']>
   scoreMal: Maybe<Scalars['Int']>
@@ -1153,6 +1171,13 @@ export type MediaTrendsArgs = {
 export type MediaReviewsArgs = {
   limit: Maybe<Scalars['Int']>
   sort: Maybe<Array<Maybe<ReviewSort>>>
+  page: Maybe<Scalars['Int']>
+  perPage: Maybe<Scalars['Int']>
+}
+
+/** Anime or Manga */
+export type MediaRecommendationsArgs = {
+  sort: Maybe<Array<Maybe<RecommendationSort>>>
   page: Maybe<Scalars['Int']>
   perPage: Maybe<Scalars['Int']>
 }
@@ -1910,6 +1935,8 @@ export type Mutation = {
   DeleteReview: Maybe<Deleted>
   /** Rate a review */
   RateReview: Maybe<Review>
+  /** Recommendation a media */
+  SaveRecommendation: Maybe<Recommendation>
   /** Create or update a forum thread */
   SaveThread: Maybe<Thread>
   /** Delete a thread */
@@ -2069,6 +2096,12 @@ export type MutationDeleteReviewArgs = {
 export type MutationRateReviewArgs = {
   reviewId: Maybe<Scalars['Int']>
   rating: Maybe<ReviewRating>
+}
+
+export type MutationSaveRecommendationArgs = {
+  mediaId: Maybe<Scalars['Int']>
+  mediaRecommendationId: Maybe<Scalars['Int']>
+  rating: Maybe<RecommendationRating>
 }
 
 export type MutationSaveThreadArgs = {
@@ -2235,6 +2268,7 @@ export type Page = {
   threads: Maybe<Array<Maybe<Thread>>>
   threadComments: Maybe<Array<Maybe<ThreadComment>>>
   reviews: Maybe<Array<Maybe<Review>>>
+  recommendations: Maybe<Array<Maybe<Recommendation>>>
 }
 
 /** Page of data */
@@ -2263,6 +2297,7 @@ export type PageMediaArgs = {
   isAdult: Maybe<Scalars['Boolean']>
   genre: Maybe<Scalars['String']>
   tag: Maybe<Scalars['String']>
+  minimumTagRank: Maybe<Scalars['Int']>
   tagCategory: Maybe<Scalars['String']>
   onList: Maybe<Scalars['Boolean']>
   licensedBy: Maybe<Scalars['String']>
@@ -2511,6 +2546,18 @@ export type PageReviewsArgs = {
   sort: Maybe<Array<Maybe<ReviewSort>>>
 }
 
+/** Page of data */
+export type PageRecommendationsArgs = {
+  id: Maybe<Scalars['Int']>
+  mediaId: Maybe<Scalars['Int']>
+  mediaRecommendationId: Maybe<Scalars['Int']>
+  userId: Maybe<Scalars['Int']>
+  rating: Maybe<Scalars['Int']>
+  rating_greater: Maybe<Scalars['Int']>
+  rating_lesser: Maybe<Scalars['Int']>
+  sort: Maybe<Array<Maybe<RecommendationSort>>>
+}
+
 export type PageInfo = {
   __typename?: 'PageInfo'
   /** The total number of items */
@@ -2585,6 +2632,8 @@ export type Query = {
   Thread: Maybe<Thread>
   /** Comment query */
   ThreadComment: Maybe<Array<Maybe<ThreadComment>>>
+  /** Recommendation query */
+  Recommendation: Maybe<Recommendation>
   /** Provide AniList markdown to be converted to html (Requires auth) */
   Markdown: Maybe<ParsedMarkdown>
   AniChartUser: Maybe<AniChartUser>
@@ -2617,6 +2666,7 @@ export type QueryMediaArgs = {
   isAdult: Maybe<Scalars['Boolean']>
   genre: Maybe<Scalars['String']>
   tag: Maybe<Scalars['String']>
+  minimumTagRank: Maybe<Scalars['Int']>
   tagCategory: Maybe<Scalars['String']>
   onList: Maybe<Scalars['Boolean']>
   licensedBy: Maybe<Scalars['String']>
@@ -2886,6 +2936,17 @@ export type QueryThreadCommentArgs = {
   sort: Maybe<Array<Maybe<ThreadCommentSort>>>
 }
 
+export type QueryRecommendationArgs = {
+  id: Maybe<Scalars['Int']>
+  mediaId: Maybe<Scalars['Int']>
+  mediaRecommendationId: Maybe<Scalars['Int']>
+  userId: Maybe<Scalars['Int']>
+  rating: Maybe<Scalars['Int']>
+  rating_greater: Maybe<Scalars['Int']>
+  rating_lesser: Maybe<Scalars['Int']>
+  sort: Maybe<Array<Maybe<RecommendationSort>>>
+}
+
 export type QueryMarkdownArgs = {
   markdown: Scalars['String']
 }
@@ -2905,6 +2966,52 @@ export type QueryListEntriesArgs = {
   status_not: Maybe<MediaListStatus>
   page: Maybe<Scalars['Int']>
   perPage: Maybe<Scalars['Int']>
+}
+
+/** Media recommendation */
+export type Recommendation = {
+  __typename?: 'Recommendation'
+  /** The id of the recommendation */
+  id: Scalars['Int']
+  /** Users rating of the recommendation */
+  rating: Maybe<Scalars['Int']>
+  /** The rating of the recommendation by currently authenticated user */
+  userRating: Maybe<RecommendationRating>
+  /** The media the recommendation is from */
+  media: Maybe<Media>
+  /** The recommended media */
+  mediaRecommendation: Maybe<Media>
+  /** The user that first created the recommendation */
+  user: Maybe<User>
+}
+
+export type RecommendationConnection = {
+  __typename?: 'RecommendationConnection'
+  edges: Maybe<Array<Maybe<RecommendationEdge>>>
+  nodes: Maybe<Array<Maybe<Recommendation>>>
+  /** The pagination information */
+  pageInfo: Maybe<PageInfo>
+}
+
+/** Recommendation connection edge */
+export type RecommendationEdge = {
+  __typename?: 'RecommendationEdge'
+  node: Maybe<Recommendation>
+}
+
+/** Recommendation rating enums */
+export enum RecommendationRating {
+  NoRating = 'NO_RATING',
+  RateUp = 'RATE_UP',
+  RateDown = 'RATE_DOWN',
+}
+
+/** Recommendation sort enums */
+export enum RecommendationSort {
+  Id = 'ID',
+  IdDesc = 'ID_DESC',
+  Rating = 'RATING',
+  RatingDesc = 'RATING_DESC',
 }
 
 /** Notification for when new media is added to the site */

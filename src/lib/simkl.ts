@@ -492,7 +492,10 @@ export class Simkl {
     return this.watchlist
   }
 
-  public static async addItemToList(malId: number, list: SimklListStatus) {
+  public static async addItemToList(
+    malId: number,
+    list: SimklListStatus,
+  ): Promise<SimklListEntry> {
     const response = await this.request<
       { added: _SyncAddToList },
       _SyncAddToList
@@ -514,7 +517,14 @@ export class Simkl {
       throw new Error('Could not add show to list.')
     }
 
-    return response.body.added.shows[0]
+    const item =
+      this.watchlist.find(i => Number(i.show.ids.mal) === malId) ||
+      (await Simkl.watchedInfo(malId))!
+
+    return {
+      ...item,
+      status: response.body.added.shows[0].to,
+    }
   }
 
   public static async removeFromList(malId: number): Promise<boolean> {

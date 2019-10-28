@@ -25,7 +25,7 @@ import {
 import { getIsConnectedTo } from '@/state/auth'
 import { Simkl, SimklListEntry } from '@/lib/simkl'
 import { ArmServer } from '@/lib/arm-server'
-import { isNil } from '@/utils'
+import { isNil, isNotNil } from '@/utils'
 import { getFragment } from '@/utils/cache'
 import { MEDIA_MAL_ID_FRAGMENT } from '@/graphql/documents/fragments'
 
@@ -104,7 +104,10 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
     options = options || {}
 
     const result = await Simkl.getAllListEntries()
-    const malIds = result.map(info => Number(info.show.ids.mal))
+    const malIds = result
+      .map(info => info.show.ids.mal)
+      .filter(isNotNil)
+      .map(Number)
     const relations = await getAnilistIdsFromMalIds(this.apollo, malIds)
 
     const idInfoMap = result.map(info => {
@@ -222,9 +225,10 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
       throw new Error('Could not find necessary data to add item to list.')
     }
 
-    await Simkl.addItemToList(malId, Simkl.simklStatusFromMediaStatus(status))
-
-    const item = await Simkl.watchedInfo(malId)
+    const item = await Simkl.addItemToList(
+      malId,
+      Simkl.simklStatusFromMediaStatus(status),
+    )
 
     if (isNil(item)) {
       throw new Error('Failed to update list entry on Simkl.')
