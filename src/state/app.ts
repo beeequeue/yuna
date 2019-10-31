@@ -5,6 +5,7 @@ import {
 } from 'vue-notifications'
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
+import { addBreadcrumb, Severity } from '@sentry/browser'
 
 import {
   EpisodeListEpisodes,
@@ -356,6 +357,16 @@ export const app = {
       if (realOptions.consoleMessage && (console as any)[realOptions.type]) {
         ;(console as any)[realOptions.type](realOptions.consoleMessage)
       }
+
+      addBreadcrumb({
+        category: 'toast',
+        level:
+          realOptions.type !== 'success'
+            ? (realOptions.type as Severity)
+            : Severity.Info,
+        type: realOptions.type === 'error' ? 'error' : 'default',
+        message: `${options.title} - ${options.message}`,
+      })
 
       setTimeout(() => {
         removeToast(context, id)
