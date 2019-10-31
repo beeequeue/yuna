@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { resolve } = require('path')
 const { spawnSync } = require('child_process')
 const SentryCliPlugin = require('@sentry/webpack-plugin')
@@ -5,6 +6,9 @@ const SentryCliPlugin = require('@sentry/webpack-plugin')
 const GIT_TAG = spawnSync('git', ['tag', '-l', '--points-at', 'HEAD'])
   .output.filter(b => b && b.length > 0)
   .map(buffer => buffer.toString().trim())[0]
+
+console.log(`GIT_TAG=${GIT_TAG}`)
+console.log(`NODE_ENV=${process.env.NODE_ENV}`)
 
 /**
  * @type { ProjectOptions }
