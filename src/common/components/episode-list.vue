@@ -2,34 +2,39 @@
   <div v-if="loading" class="loading-wrapper">
     <loading :size="40" />
   </div>
-  <div
-    v-else-if="episodes && episodes.length > 0"
-    class="episode-list"
-    ref="container"
-    @wheel.prevent="handleScroll"
-  >
+  <div v-else-if="episodes && episodes.length > 0" class="episode-list">
     <transition name="fade">
       <div v-if="notAvailable" class="not-available-notice">
         This show is not available in your country. 😢
       </div>
     </transition>
 
-    <div class="episode-wrapper" :class="episodeWrapperClasses">
+    <recycle-scroller
+      direction="horizontal"
+      :items="episodes"
+      :itemSize="!small ? 320 : 230"
+      :buffer="500"
+      v-slot="{ item }"
+      class="episode-wrapper"
+      :class="episodeWrapperClasses"
+      ref="container"
+      @wheel.prevent.native="handleScroll"
+    >
       <episode
-        v-for="episode in episodes"
-        :key="`${episode.episodeNumber}:${episode.id}`"
+        :key="`${item.episodeNumber}:${item.id}`"
         ref="episodes"
-        :episode="episode"
+        :episode="item"
         :listEntry="listEntry"
         :small="small"
       />
-    </div>
+    </recycle-scroller>
   </div>
   <source-list v-else :links="anime.externalLinks" />
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { RecycleScroller } from 'vue-virtual-scroller'
 import { oc } from 'ts-optchain'
 
 import { EpisodeListEpisodes, Provider, QueueAnime } from '@/graphql/types'
@@ -42,7 +47,7 @@ import Episode from './episode.vue'
 import Loading from './loading.vue'
 import SourceList from './source-list.vue'
 
-@Component({ components: { SourceList, Loading, Episode } })
+@Component({ components: { RecycleScroller, SourceList, Loading, Episode } })
 export default class EpisodeList extends Vue {
   @Required(Object) public anime!: QueueAnime
   @Prop(Array) public episodes!: EpisodeListEpisodes[] | null
@@ -57,7 +62,7 @@ export default class EpisodeList extends Vue {
   public notAvailable = false
 
   public $refs!: {
-    container: HTMLDivElement
+    container: Vue
     episodes: Episode[]
   }
 
@@ -74,13 +79,14 @@ export default class EpisodeList extends Vue {
   }
 
   public handleScroll(e: WheelEvent) {
-    this.$refs.container.scrollBy(e.deltaY + e.deltaX, 0)
+    this.$refs.container.$el.scrollBy(e.deltaY + e.deltaX, 0)
   }
 
   public get episodeWrapperClasses() {
     return {
       'pad-right': this.padRight,
       padding: !this.noVerticalPadding,
+      small: this.small,
     }
   }
 
@@ -101,7 +107,7 @@ export default class EpisodeList extends Vue {
         if (err.message === HidiveResponseCode.RegionRestricted) {
           this.notAvailable = true
           setTimeout(() => {
-            this.$refs.container!.scrollTo({ left: 0, behavior: 'smooth' })
+            this.$refs.container!.$el.scrollTo({ left: 0, behavior: 'smooth' })
           }, 500)
           return
         }
@@ -132,19 +138,19 @@ export default class EpisodeList extends Vue {
       return
     }
 
-    const containerRect = this.$refs.container.getBoundingClientRect()
+    const containerRect = this.$refs.container.$el.getBoundingClientRect()
     const episodeRect = this.$refs.episodes[0].$el.getBoundingClientRect()
-    let offset = 0
+    let offset
 
     if (this.$refs.episodes.length > this.listEntry!.progress! || 0) {
       const nextEpisode = this.$refs.episodes[this.listEntry!.progress || 0]
 
       offset = (nextEpisode.$el as HTMLDivElement).offsetLeft
     } else {
-      offset = this.$refs.container.clientWidth * 2
+      offset = this.$refs.container.$el.clientWidth * 2
     }
 
-    this.$refs.container.scrollTo({
+    this.$refs.container.$el.scrollTo({
       left: offset - (containerRect.width / 2 - episodeRect.width / 2),
       behavior: 'smooth',
     })
@@ -163,12 +169,8 @@ export default class EpisodeList extends Vue {
   position: absolute;
   left: 0;
   right: 0;
-  overflow-x: scroll;
+  overflow-x: hidden;
   transition: opacity 0.25s;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
 
   & > .not-available-notice {
     position: absolute;
@@ -188,6 +190,14 @@ export default class EpisodeList extends Vue {
   & > .episode-wrapper {
     display: inline-flex;
     align-items: center;
+    box-sizing: content-box !important;
+    width: 100%;
+    height: 175px;
+    overflow-x: scroll;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     &.padding {
       padding: 15px;
@@ -195,6 +205,10 @@ export default class EpisodeList extends Vue {
 
     &.pad-right {
       padding-right: 320px;
+    }
+
+    &.small {
+      height: 125px;
     }
   }
 

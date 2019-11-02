@@ -18,6 +18,7 @@ import { normalizeEvent } from './normalize'
 import { version } from '../package.json'
 
 import 'normalize.css'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import { getQueue } from '@/state/user'
 
 // Vue config

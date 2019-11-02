@@ -174,6 +174,37 @@ declare module 'vue-notifications' {
   export default plugin
 }
 
+declare module 'vue-virtual-scroller' {
+  import { PluginObject } from 'vue'
+  import { ThisTypedComponentOptionsWithArrayProps } from 'vue/types/options'
+
+  export interface RecycleScrollerProps {
+    items: any[]
+    direction?: 'vertical' | 'horizontal'
+    itemSize?: number
+    minItemSize?: number
+    sizeField?: string
+    typeField?: string
+    keyField?: string
+    pageMode?: boolean
+    prerender?: boolean
+    buffer?: number
+    emitUpdate?: boolean
+  }
+
+  export const RecycleScroller: ThisTypedComponentOptionsWithArrayProps<
+    any,
+    any,
+    any,
+    any,
+    keyof RecycleScrollerProps
+  >
+
+  const plugin: PluginObject<{}>
+
+  export default plugin
+}
+
 declare module 'v-tooltip' {
   import { PluginObject } from 'vue'
 
