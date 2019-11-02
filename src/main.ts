@@ -34,7 +34,7 @@ init({
   dsn: 'https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205',
   environment: process.env.NODE_ENV,
   release: `v${version}`,
-  ignoreErrors: [/Request has been terminated/],
+  ignoreErrors: [/Request has been terminated/, /Failed to fetch/],
   integrations: [new Integrations.Vue({ Vue, attachProps: true })],
   beforeSend: event => {
     const connectedTo = getIsConnectedTo(store)
