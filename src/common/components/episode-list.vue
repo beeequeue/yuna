@@ -167,6 +167,7 @@ export default class EpisodeList extends Vue {
 
 .episode-list {
   position: absolute;
+  display: flex;
   left: 0;
   right: 0;
   overflow-x: hidden;
@@ -191,7 +192,6 @@ export default class EpisodeList extends Vue {
     display: inline-flex;
     align-items: center;
     box-sizing: content-box !important;
-    width: 100%;
     height: 175px;
     overflow-x: scroll;
 
