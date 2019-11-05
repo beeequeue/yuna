@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "7.5.5",
-    "@graphql-codegen/add": "1.8.2",
+    "@graphql-codegen/add": "1.8.3",
     "@graphql-codegen/cli": "1.8.2",
     "@graphql-codegen/fragment-matcher": "1.8.2",
     "@graphql-codegen/schema-ast": "1.8.2",
