@@ -44,8 +44,8 @@ import { Hidive, HidiveResponseCode } from '@/lib/hidive'
 import { isNil } from '@/utils'
 
 import Episode from './episode.vue'
-import Loading from './loading.vue'
-import SourceList from './source-list.vue'
+import Loading from '../loading.vue'
+import SourceList from '../source-list.vue'
 
 @Component({ components: { RecycleScroller, SourceList, Loading, Episode } })
 export default class EpisodeList extends Vue {
@@ -159,7 +159,7 @@ export default class EpisodeList extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import '../../../colors';
 
 .loading-wrapper {
   padding: 10px;

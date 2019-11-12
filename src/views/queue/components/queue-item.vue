@@ -147,7 +147,7 @@ import {
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import Icon from '@/common/components/icon.vue'
 import AnimeBanner from '@/common/components/anime-banner.vue'
-import EpisodeList from '@/common/components/episode-list.vue'
+import EpisodeList from '@/common/components/episode-list/episode-list.vue'
 import AnimatedSize from '@/common/components/animated-size.vue'
 import SourceList from '@/common/components/source-list.vue'
 import CButton from '@/common/components/button.vue'

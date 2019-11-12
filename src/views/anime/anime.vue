@@ -72,7 +72,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 
 import CButton from '@/common/components/button.vue'
-import EpisodeList from '@/common/components/episode-list.vue'
+import EpisodeList from '@/common/components/episode-list/episode-list.vue'
 import CoverImage from '@/common/components/cover-image.vue'
 import Actions from '@/common/components/actions.vue'
 import AnimeTitle from './components/title.vue'
