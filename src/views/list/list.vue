@@ -24,8 +24,6 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { oc } from 'ts-optchain'
-
 import Loading from '@/common/components/loading.vue'
 import TextInput from '@/common/components/form/text-input.vue'
 import NumberInput from '@/common/components/form/number-input.vue'
@@ -79,14 +77,11 @@ export default class List extends Vue {
   ] as const
 
   // page: -1 means no more can be fetched
-  public meta: MetaData = this.lists.reduce(
-    (obj, status) => {
-      obj[status] = { open: this.getOpenState(status) }
+  public meta: MetaData = this.lists.reduce((obj, status) => {
+    obj[status] = { open: this.getOpenState(status) }
 
-      return obj
-    },
-    {} as MetaData,
-  )
+    return obj
+  }, {} as MetaData)
 
   public $refs!: {
     entries: HTMLDivElement
@@ -107,7 +102,7 @@ export default class List extends Vue {
   }
 
   public getTotalListLength(status: MediaListStatus) {
-    return oc(this.entries)([]).filter(propEq('status', status)).length
+    return (this.entries || []).filter(propEq('status', status)).length
   }
 
   private setMediaLoading(mediaIds: number[], loading: boolean) {
@@ -173,9 +168,7 @@ export default class List extends Vue {
       result: data => {
         if (isNil(data)) return
 
-        const newMedia = oc(data)
-          .Page.media([])
-          .filter(isNotNil)
+        const newMedia = data.Page?.media?.filter(isNotNil) ?? []
 
         newMedia.forEach(media => {
           Vue.set(this.media, media.id, {

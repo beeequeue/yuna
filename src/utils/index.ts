@@ -2,7 +2,6 @@ import electron from 'electron'
 import { api } from 'electron-util'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { Response } from 'superagent'
-import { oc } from 'ts-optchain'
 import uuid from 'uuid/v4'
 import { resolve } from 'path'
 import {
@@ -62,7 +61,7 @@ export const responseIsError = (
 ): res is RequestError<any> | null => {
   if (!res) return true
 
-  return !!(oc(res) as any).body.error() || !!oc(res).error()
+  return !!(res as any)?.body?.error || !!res?.error
 }
 
 const add0ToNumber = (num: number) => num.toString().replace(/^(\d)$/, '0$1')
@@ -223,7 +222,7 @@ export const getRelations = (
   data: AnimeViewQuery | PlayerAnimeQuery,
   type: string | MediaRelation,
 ) => {
-  const relations = oc(data).anime.relations.edges([])!
+  const relations = data.anime?.relations?.edges ?? []
 
   if (relations.length < 1) return []
 
@@ -231,7 +230,7 @@ export const getRelations = (
     .filter(isNotNil)
     .filter(propEq('relationType', type as MediaRelation))
 
-  return filtered.map(relation => oc(relation).node(null))
+  return filtered.map(relation => relation?.node)
 }
 
 interface ExternalLink {

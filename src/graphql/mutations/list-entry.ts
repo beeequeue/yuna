@@ -1,5 +1,4 @@
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
-import { oc } from 'ts-optchain'
 import { captureException } from '@sentry/browser'
 
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
@@ -47,18 +46,18 @@ const getOptimisticResponse = (
   anilistId: number,
   newValues: Partial<Omit<ListEntry, '__typename' | 'mediaId'>>,
 ): ListEntryWithoutMedia => {
-  const entry = oc(apollo.provider.defaultClient.cache as any).data.data[
+  const entry = (apollo.provider.defaultClient.cache as any).data.data[
     `ListEntry:${anilistId}`
-  ]()
+  ] as ListEntry | undefined
 
   return {
     __typename: 'ListEntry',
-    id: oc(entry).id(-1),
+    id: entry?.id ?? -1,
     mediaId: anilistId,
-    score: oc(entry).score(-1),
-    progress: oc(entry).progress(-1),
-    rewatched: oc(entry).rewatched(-1),
-    status: oc(entry).status(MediaListStatus.Planning),
+    score: entry?.score ?? -1,
+    progress: entry?.progress ?? -1,
+    rewatched: entry?.rewatched ?? -1,
+    status: entry?.status ?? MediaListStatus.Planning,
     ...newValues,
   }
 }

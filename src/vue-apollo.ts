@@ -10,7 +10,6 @@ import {
   IntrospectionFragmentMatcher,
 } from 'apollo-cache-inmemory'
 import Bottleneck from 'bottleneck'
-import { oc } from 'ts-optchain'
 import { captureException } from '@sentry/browser'
 
 import introspectionResult from '@/graphql/introspection-result'
@@ -117,10 +116,7 @@ export const createProvider = (store: Store<any>) => {
       },
     },
     async errorHandler({ networkError, message }) {
-      if (
-        !isNil(networkError) &&
-        oc(networkError as any).statusCode() === 429
-      ) {
+      if (!isNil(networkError) && (networkError as any)?.statusCode === 429) {
         const currentReservoir = (await limiter.currentReservoir()) || 60
         await limiter.incrementReservoir(-currentReservoir)
         setAnilistRequests(store, (await limiter.currentReservoir()) || 0)

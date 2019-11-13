@@ -1,6 +1,5 @@
 import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
-import { oc } from 'ts-optchain'
 import uuid from 'uuid/v4'
 
 import { ListEntry, Media, MediaListStatus, Provider } from '@/graphql/types'
@@ -15,7 +14,7 @@ const isInQueue = (state: UserState, id: number) =>
 
 const isCurrentlyWatching = (anime: AddToQueueOptions) =>
   [MediaListStatus.Current, MediaListStatus.Repeating].includes(
-    oc(anime).listEntry.status(null as any)!,
+    anime.listEntry?.status!,
   )
 
 interface SetProviderOptions {
