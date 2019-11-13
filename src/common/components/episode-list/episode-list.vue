@@ -9,10 +9,16 @@
       </div>
     </transition>
 
+    <scroll-bar
+      :items="episodes.map(e => e.episodeNumber)"
+      :progress="listEntry && listEntry.progress"
+      :itemSize="itemSize"
+    />
+
     <recycle-scroller
       direction="horizontal"
       :items="episodes"
-      :itemSize="!small ? 320 : 230"
+      :itemSize="itemSize"
       :buffer="500"
       v-slot="{ item }"
       class="episode-wrapper"
@@ -44,10 +50,13 @@ import { Hidive, HidiveResponseCode } from '@/lib/hidive'
 import { isNil } from '@/utils'
 
 import Episode from './episode.vue'
+import ScrollBar from './scroll-bar.vue'
 import Loading from '../loading.vue'
 import SourceList from '../source-list.vue'
 
-@Component({ components: { RecycleScroller, SourceList, Loading, Episode } })
+@Component({
+  components: { ScrollBar, RecycleScroller, SourceList, Loading, Episode },
+})
 export default class EpisodeList extends Vue {
   @Required(Object) public anime!: QueueAnime
   @Prop(Array) public episodes!: EpisodeListEpisodes[] | null
@@ -72,6 +81,10 @@ export default class EpisodeList extends Vue {
 
   public get progress() {
     return oc(this.listEntry).progress() || null
+  }
+
+  public get itemSize() {
+    return !this.small ? 320 : 225
   }
 
   public mounted() {
@@ -189,10 +202,11 @@ export default class EpisodeList extends Vue {
   }
 
   & > .episode-wrapper {
+    position: relative;
     display: inline-flex;
     align-items: center;
     box-sizing: content-box !important;
-    height: 175px;
+    height: 195px;
     overflow-x: scroll;
 
     &::-webkit-scrollbar {
@@ -201,6 +215,7 @@ export default class EpisodeList extends Vue {
 
     &.padding {
       padding: 15px;
+      padding-top: 25px;
     }
 
     &.pad-right {
