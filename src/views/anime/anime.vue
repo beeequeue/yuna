@@ -2,7 +2,7 @@
   <div class="anime">
     <transition-group tag="span">
       <div v-if="error" key="error" class="error-container slide-down">
-        <h1>{{ error.graphQLErrors[0].message }}</h1>
+        <h1>{{ error.message || error }}</h1>
 
         <c-button content="Go back" @click.native="$router.back()" />
       </div>
