@@ -54,20 +54,29 @@ export const fetchAllPages = async <
 
   const pagesLeft = oc(firstResponse).data.Page.pageInfo.lastPage(1) - 1
 
-  const promises: Promise<ApolloQueryResult<R>>[] = []
+  const promises: Promise<ApolloQueryResult<R> | null>[] = []
 
   for (let i = 0; i < pagesLeft; i++) {
     promises.push(
       new Promise(async resolve => {
-        const response = await apollo.query<R>({
-          query,
-          variables: {
-            ...variables,
-            page: i + 2, // 1 for first page loaded already and 1 for index
-          },
-        })
+        let response: ApolloQueryResult<R> | null
+
+        try {
+          response = await apollo.query<R>({
+            query,
+            variables: {
+              ...variables,
+              page: i + 2, // 1 for first page loaded already and 1 for index
+            },
+          })
+        } catch {
+          response = null
+        }
+
+        if (isNil(response)) return resolve(null)
 
         if (!isNil(result)) result(response.data)
+
         resolve(response)
       }),
     )
