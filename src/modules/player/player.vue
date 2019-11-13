@@ -73,7 +73,7 @@
     <next-episode-overlay
       v-if="ended && nextEpisode"
       :nextEpisode="nextEpisode"
-      :episodesInAnime="anime.episodes"
+      :episodesInAnime="anime && anime.episodes"
       :progress="listEntry.progress"
       :isPlayerMaximized="isPlayerMaximized"
       :shouldAutoPlay="shouldAutoPlay"
@@ -84,8 +84,8 @@
       :listEntry="listEntry"
       :sequels="sequels"
       :episodeNumber="episode.episodeNumber"
-      :episodesInAnime="anime.episodes"
-      :nextAiringEpisode="anime.nextAiringEpisode"
+      :episodesInAnime="anime && anime.episodes"
+      :nextAiringEpisode="anime && anime.nextAiringEpisode"
       :isPlayerMaximized="isPlayerMaximized"
     />
   </div>
