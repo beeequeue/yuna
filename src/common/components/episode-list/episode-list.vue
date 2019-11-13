@@ -10,6 +10,7 @@
     </transition>
 
     <scroll-bar
+      v-if="!noVerticalPadding"
       :items="episodes.map(e => e.episodeNumber)"
       :progress="listEntry && listEntry.progress"
       :itemSize="itemSize"
