@@ -2,7 +2,7 @@
   <div class="anime">
     <transition-group tag="span">
       <div v-if="error" key="error" class="error-container slide-down">
-        <h1>{{ error.graphQLErrors[0].message }}</h1>
+        <h1>{{ error.message || error }}</h1>
 
         <c-button content="Go back" @click.native="$router.back()" />
       </div>
@@ -72,7 +72,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import { oc } from 'ts-optchain'
 
 import CButton from '@/common/components/button.vue'
-import EpisodeList from '@/common/components/episode-list.vue'
+import EpisodeList from '@/common/components/episode-list/episode-list.vue'
 import CoverImage from '@/common/components/cover-image.vue'
 import Actions from '@/common/components/actions.vue'
 import AnimeTitle from './components/title.vue'

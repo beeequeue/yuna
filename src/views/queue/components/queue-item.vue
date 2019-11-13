@@ -5,14 +5,16 @@
       class="status"
       v-tooltip.right="capitalize(status)"
     >
-      <icon v-if="iconForStatus" :icon="iconForStatus" />
+      <transition name="fade" mode="out-in">
+        <icon v-if="iconForStatus" :icon="iconForStatus" />
 
-      <animated-size>
-        <div v-if="isWatching" class="progress">
-          <div class="watched">{{ listEntry.progress }}</div>
-          <div class="total">{{ anime.episodes }}</div>
-        </div>
-      </animated-size>
+        <animated-size v-if="isWatching">
+          <div class="progress">
+            <div class="watched">{{ listEntry.progress }}</div>
+            <div class="total">{{ anime.episodes || '?' }}</div>
+          </div>
+        </animated-size>
+      </transition>
     </div>
 
     <anime-banner :anime="anime" :faded="!isWatching" link />
@@ -147,7 +149,7 @@ import {
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import Icon from '@/common/components/icon.vue'
 import AnimeBanner from '@/common/components/anime-banner.vue'
-import EpisodeList from '@/common/components/episode-list.vue'
+import EpisodeList from '@/common/components/episode-list/episode-list.vue'
 import AnimatedSize from '@/common/components/animated-size.vue'
 import SourceList from '@/common/components/source-list.vue'
 import CButton from '@/common/components/button.vue'
@@ -360,16 +362,12 @@ export default class QueueItem extends Vue {
     position: absolute;
     top: 0;
     height: 75px;
-    padding-left: 10px;
-    padding-right: 20px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-weight: 500;
+    font-weight: 700;
     border-top-left-radius: 5px;
-    //noinspection CssInvalidPropertyValue
-    background: gradient(black, 0.5);
     z-index: 5;
 
     & > * {
@@ -377,7 +375,9 @@ export default class QueueItem extends Vue {
     }
 
     & .progress {
-      filter: drop-shadow(0 0 2px black);
+      padding: 5px 20px 5px 10px;
+      text-shadow: $outline-light;
+      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 5px black);
 
       & > .total {
         margin-top: 3px;
@@ -387,8 +387,13 @@ export default class QueueItem extends Vue {
     }
 
     & > .icon {
+      box-sizing: content-box !important;
+      padding-left: 10px;
+      padding-right: 20px;
       width: 20px;
       fill: $white;
+      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.75))
+        drop-shadow(0 0 5px black);
     }
   }
 

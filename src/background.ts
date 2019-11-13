@@ -52,6 +52,7 @@ init({
     /ENOENT/,
     /Origin not allowed/,
     /code signature/,
+    /connection closed/,
   ],
 })
 
