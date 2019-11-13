@@ -1,7 +1,5 @@
 import { DataProxy } from 'apollo-cache'
 import gql from 'graphql-tag'
-import { oc } from 'ts-optchain'
-
 import { EPISODE_LIST, LIST_VIEW_QUERY } from '@/graphql/documents/queries'
 import {
   CachedAnimeListEntryFragment,
@@ -45,7 +43,7 @@ export const getIsWatched = (
     `,
   })
 
-  const progress = oc(data).listEntry.progress()
+  const progress = data?.listEntry?.progress
   if (isNil(progress)) {
     return false
   }
@@ -71,7 +69,7 @@ export const getCachedAnimeIdMal = (
     `,
   })
 
-  return oc(data).idMal() || null
+  return data?.idMal ?? null
 }
 
 interface CachedExternalLinks {
@@ -94,7 +92,7 @@ export const getCachedExternalLinks = (
     `,
   })
 
-  return oc(data).externalLinks() || null
+  return data?.externalLinks ?? null
 }
 
 interface CachedAiringData {
@@ -118,7 +116,7 @@ const getNextEpisodeAiringAt = (
     id: `Media:${animeId}`,
   })
 
-  const airingAt = oc(data).nextAiringEpisode.airingAt()
+  const airingAt = data?.nextAiringEpisode.airingAt
 
   return !isNil(airingAt) ? airingAt * 1000 : null
 }
@@ -137,7 +135,7 @@ export const getSoftCachedEpisodes = (
       },
     })
 
-    return oc(data).episodes() || null
+    return data?.episodes || null
   } catch (e) {
     return null
   }
@@ -192,7 +190,7 @@ export const writeEpisodeProgressToCache = (
 
   if (isNil(episodes)) {
     const data = EpisodeCache.get(episode.animeId, episode.provider)
-    episodes = oc(data).episodes() || null
+    episodes = data?.episodes || null
   }
 
   if (isNil(episodes)) return

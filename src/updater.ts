@@ -3,8 +3,6 @@ import { activeWindow } from 'electron-util'
 import log from 'electron-log'
 import { autoUpdater } from 'electron-updater'
 import Store from 'electron-store'
-import { oc } from 'ts-optchain'
-
 import { isNil } from '@/utils'
 import {
   DOWNLOAD_UPDATE,
@@ -90,7 +88,7 @@ autoUpdater.signals.updateDownloaded(() => {
 
 autoUpdater.on('error', () => {
   clearInterval(updateInterval as any)
-  sendMessage(UPDATE_ERROR, oc(availableVersion).version())
+  sendMessage(UPDATE_ERROR, availableVersion?.version)
 
   setAllProgressBars(-1)
 })

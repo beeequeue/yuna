@@ -33,8 +33,6 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { oc } from 'ts-optchain'
-import { mdiChevronDown } from '@mdi/js'
 
 import alLogo from '@/assets/anilist.svg'
 import malLogo from '@/assets/myanimelist.webp'
@@ -69,7 +67,7 @@ export default class Info extends Vue {
     variables() {
       return { id: this.id }
     },
-    update: data => oc(data).anime.scoreMal(null),
+    update: data => data.anime?.scoreMal ?? null,
   })
   public scoreMal!: number | null
 
@@ -78,7 +76,7 @@ export default class Info extends Vue {
     variables() {
       return { id: this.id }
     },
-    update: data => oc(data).Media(null),
+    update: data => data.Media ?? null,
   })
   public simklInfo: SimklInfoQuery['Media'] = {
     id: -1,
@@ -93,7 +91,6 @@ export default class Info extends Vue {
   public alLogo = alLogo
   public malLogo = malLogo
   public simklLogo = simklLogo
-  public openSvg = mdiChevronDown
 
   public get alLink() {
     return `https://anilist.co/anime/${this.id}`

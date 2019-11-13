@@ -50,8 +50,7 @@ import { SearchQuery, SearchResults, SearchVariables } from '@/graphql/types'
 import { Query } from '@/decorators'
 
 import Icon from '@/common/components/icon.vue'
-import { oc } from 'ts-optchain'
-
+import { isNotNil } from '@/utils'
 @Component({ components: { Icon } })
 export default class Search extends Vue {
   @Query<Search, SearchQuery, SearchVariables>({
@@ -80,8 +79,8 @@ export default class Search extends Vue {
   public emptySvg = mdiClose
   public loadingSvg = mdiLoading
 
-  public get results() {
-    return oc(this.search).anime.results([] as SearchResults[])
+  public get results(): SearchResults[] {
+    return this.search?.anime?.results?.filter(isNotNil) ?? []
   }
 
   public selectAllInInput(e: MouseEvent) {

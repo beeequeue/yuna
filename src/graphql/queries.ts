@@ -1,8 +1,6 @@
 import { DocumentNode } from 'graphql'
 import { ApolloQueryResult } from 'apollo-client'
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
-import { oc } from 'ts-optchain'
-
 import { ArmServer } from '@/lib/arm-server'
 import {
   ANILIST_IDS_FROM_MAL_IDS,
@@ -52,7 +50,7 @@ export const fetchAllPages = async <
 
   if (!isNil(result)) result(firstResponse.data)
 
-  const pagesLeft = oc(firstResponse).data.Page.pageInfo.lastPage(1) - 1
+  const pagesLeft = firstResponse.data.Page?.pageInfo?.lastPage ?? 1 - 1
 
   const promises: Promise<ApolloQueryResult<R> | null>[] = []
 
@@ -128,7 +126,7 @@ export const getAnilistIdsFromMalIds = async (
   })
 
   const anilistResults = responses
-    .map(data => oc(data).data.Page.media([]))
+    .map(data => data?.data.Page?.media ?? [])
     .flat()
     .reduce(
       (obj, item) => ({
@@ -161,7 +159,7 @@ export const getALofOfEntries = async (
       errorPolicy: 'all',
     })
 
-    if (errors || oc(data).ListEntries([]).length < 1) break
+    if (errors || data.ListEntries.length < 1) break
 
     entries.push(...data.ListEntries)
   }

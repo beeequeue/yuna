@@ -1,7 +1,5 @@
 // eslint-disable no-use-before-declare
 import { getStoreAccessors } from 'vuex-typescript'
-import { oc } from 'ts-optchain'
-
 import { userStore } from '@/lib/user'
 import { RootState } from '@/state/store'
 import { HidiveProfile } from '@/lib/hidive'
@@ -80,7 +78,7 @@ export const getDefaultProvider = (
   state: AuthState,
   anime: _Anime,
 ): Provider => {
-  const links = oc(anime).externalLinks([])
+  const links = anime.externalLinks || []
 
   if (isNil(links)) return Provider.Crunchyroll
 
@@ -176,7 +174,7 @@ export const auth = {
     },
 
     getHidiveProfileIndex(state: AuthState) {
-      const selectedId = oc(state).hidive.user.profile()
+      const selectedId = state.hidive.user?.profile
 
       if (isNil(selectedId)) return -1
 

@@ -2,8 +2,6 @@ import superagent from 'superagent/dist/superagent'
 import Bottleneck from 'bottleneck'
 import { OptionsV2, parseString as _parseString } from 'xml2js'
 import { parseBooleans, parseNumbers, stripPrefix } from 'xml2js/lib/processors'
-import { oc } from 'ts-optchain'
-
 import { getConfig } from '@/config'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { ArmServer } from '@/lib/arm-server'
@@ -58,7 +56,7 @@ const isXMLError = async (response: RequestResponse): Promise<boolean> => {
 
   const xmlBody = await parseString(response.text, {})
 
-  return !isNil(oc(xmlBody).error())
+  return !isNil(xmlBody?.error)
 }
 
 const getIdentifier = (ep: XmlEpisode) => {
@@ -99,7 +97,7 @@ export class AniDB {
   public static async getIdFromAnilistId(id: number) {
     const result = await ArmServer.getIdsFor('anilist', id)
 
-    return oc(result).anidb() || null
+    return result?.anidb || null
   }
 
   private static async getFirstEpisodeCrunchyrollId(anidbId: number) {
@@ -137,11 +135,11 @@ export class AniDB {
     })
 
     const episode =
-      oc(data).episodes.episode() || (null as XmlEpisode[] | XmlEpisode | null)
+      data?.episodes?.episode || (null as XmlEpisode[] | XmlEpisode | null)
 
     if (isNil(episode)) return null
 
-    let firstEpisode: XmlEpisode | null = null
+    let firstEpisode: XmlEpisode | null
 
     if (Array.isArray(episode)) {
       firstEpisode =
