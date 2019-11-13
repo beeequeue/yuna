@@ -64,6 +64,8 @@ import { getIsFullscreen, sendErrorToast } from '@/state/app'
 import { CHECK_FOR_UPDATES } from '@/messages'
 import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
 import { SimklListPlugin } from '@/plugins/list/simkl-plugin'
+import { trackView } from '@/lib/tracking'
+import { View } from '@/router'
 
 const requireBg = require.context('@/assets/bg', false, /\.webp$/)
 const backgrounds = requireBg.keys()
@@ -128,6 +130,8 @@ export default class App extends Vue {
   }
 
   public async created() {
+    trackView(View.Dashboard)
+
     window.listPlugins = this.setupListPlugins()
 
     if (!this.hasFinishedSetup) {

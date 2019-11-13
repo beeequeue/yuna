@@ -1,8 +1,6 @@
 import Vue from 'vue'
-import Router from 'vue-router'
-
-import { trackView } from '@/lib/tracking'
-import { enumToArray } from '@/utils'
+import Router, { RawLocation } from 'vue-router'
+import { ErrorHandler } from 'vue-router/types/router'
 
 Vue.use(Router)
 
@@ -72,34 +70,21 @@ export const router = new Router({
   ],
 })
 
-router.afterEach(to => {
-  let view = to.fullPath === '/' ? View.Dashboard : undefined
-
-  if (!view) {
-    view = enumToArray(View).find(v =>
-      to.fullPath.includes(v.toString()),
-    ) as any
-  }
-
-  if (view) {
-    trackView(view)
-  }
-})
-
 /*
  * Preventing "NavigationDuplicated" errors in console in Vue-router >= 3.1.0
  * https://github.com/vuejs/vue-router/issues/2881#issuecomment-520554378
  */
 
-const routerMethods = ['push', 'replace']
+const routerMethods = ['push', 'replace'] as const
 
-routerMethods.forEach((method: string) => {
-  const originalCall = (Router.prototype as any)[method]
-  ;(Router.prototype as any)[method] = function(
-    location: any,
-    onResolve: any,
-    onReject: any,
-  ): Promise<any> {
+routerMethods.forEach(method => {
+  const originalCall = Router.prototype[method]
+
+  Router.prototype[method] = function(
+    location: RawLocation,
+    onResolve?: Function,
+    onReject?: ErrorHandler,
+  ) {
     if (onResolve || onReject) {
       return originalCall.call(this, location, onResolve, onReject)
     }
