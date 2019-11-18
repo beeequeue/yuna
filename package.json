@@ -81,7 +81,7 @@
     "@vue/cli-plugin-eslint": "4.0.5",
     "@vue/cli-plugin-typescript": "4.0.5",
     "@vue/cli-service": "4.0.5",
-    "@vue/eslint-config-prettier": "5.0.0",
+    "@vue/eslint-config-prettier": "6.0.0",
     "@vue/eslint-config-typescript": "4.0.0",
     "babel-eslint": "10.0.3",
     "browserslist": "4.7.2",
