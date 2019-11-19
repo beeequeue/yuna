@@ -51,7 +51,6 @@ import Player from './player.vue'
 @Component({ components: { ExternalPlayer, Player } })
 export default class PlayerContainer extends Vue {
   @Query<PlayerContainer, PlayerAnimeQuery, PlayerAnimeVariables>({
-    fetchPolicy: 'network-only',
     query: ANIME_QUERY,
     variables() {
       return {
