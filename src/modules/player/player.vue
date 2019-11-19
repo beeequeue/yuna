@@ -74,7 +74,7 @@
       v-if="ended && nextEpisode"
       :nextEpisode="nextEpisode"
       :episodesInAnime="anime && anime.episodes"
-      :progress="listEntry.progress"
+      :progress="listEntry && listEntry.progress"
       :isPlayerMaximized="isPlayerMaximized"
       :shouldAutoPlay="shouldAutoPlay"
     />
