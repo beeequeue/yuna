@@ -95,7 +95,7 @@
 import { ipcRenderer } from 'electron'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import Hls from 'hls.js'
-import { oc } from 'ts-optchain'
+import { addBreadcrumb, Severity } from '@sentry/browser'
 
 import { mdiLoading, mdiPlayCircle } from '@mdi/js'
 
@@ -193,7 +193,7 @@ export default class Player extends Vue {
   }
 
   public get subtitlesUrl() {
-    return oc(this.subtitles)[this.selectedSubtitles][1]('')
+    return this.subtitles[this.selectedSubtitles]?.[1]
   }
   public selectedSubtitles = this.getNumberFromLocalStorage(
     LocalStorageKey.SUBTITLE,
@@ -254,7 +254,7 @@ export default class Player extends Vue {
   }
 
   public get listEntry() {
-    return oc(this.anime).listEntry(null)
+    return this.anime?.listEntry ?? null
   }
 
   public get sequels() {
@@ -349,6 +349,11 @@ export default class Player extends Vue {
   @Watch('episode.id')
   public async onNewEpisode() {
     if (!this.episode) return
+
+    addBreadcrumb({
+      category: 'action',
+      message: `Started ${this.episode.provider}:${this.episode.animeId}:${this.episode.episodeNumber}`,
+    })
 
     this.pause()
 
