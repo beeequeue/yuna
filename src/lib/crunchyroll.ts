@@ -1,4 +1,3 @@
-/* eslint-disable class-name */
 import { activeWindow } from 'electron-util'
 import superagent from 'superagent/dist/superagent'
 import { ActionContext, Store } from 'vuex'
@@ -35,10 +34,8 @@ const CR_UNBLOCKER_URL = 'api2.cr-unblocker.com'
 const API_URL = 'api.crunchyroll.com'
 const VERSION = '0'
 const ENGLISH = 'enUS'
-// eslint-disable-next-line variable-name
 const device_type = 'com.crunchyroll.windows.desktop'
 const device_id = getDeviceUuid()
-// eslint-disable-next-line variable-name
 const access_token = getConfig('CRUNCHYROLL_TOKEN')
 
 export interface User {
