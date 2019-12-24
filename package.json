@@ -4,14 +4,14 @@
   "version": "1.4.7",
   "author": "BeeeQueue",
   "dependencies": {
-    "@mdi/js": "4.5.95",
-    "@sentry/browser": "5.9.0",
-    "@sentry/integrations": "5.8.0",
-    "@sentry/node": "5.9.0",
+    "@mdi/js": "4.7.95",
+    "@sentry/browser": "5.10.2",
+    "@sentry/integrations": "5.10.2",
+    "@sentry/node": "5.10.2",
     "anitomyscript": "1.0.2",
     "bottleneck": "2.19.5",
-    "core-js": "3.4.1",
-    "date-fns": "2.7.0",
+    "core-js": "3.6.0",
+    "date-fns": "2.8.1",
     "discord-rpc": "3.1.0",
     "electron-debug": "3.0.1",
     "electron-log": "3.0.9",
@@ -66,10 +66,10 @@
     "@types/discord-rpc": "3.0.2",
     "@types/ffmpeg-static": "2.0.0",
     "@types/ffprobe-static": "2.0.0",
-    "@types/fluent-ffmpeg": "2.1.11",
+    "@types/fluent-ffmpeg": "2.1.12",
     "@types/hls.js": "0.12.5",
     "@types/lodash.keyby": "4.6.6",
-    "@types/marked": "0.7.1",
+    "@types/marked": "0.7.2",
     "@types/node": "12.7.12",
     "@types/semver": "6.2.0",
     "@types/superagent": "4.1.4",
@@ -103,7 +103,7 @@
     "vue-cli-plugin-apollo": "0.21.3",
     "vue-cli-plugin-electron-builder": "1.4.1",
     "vue-template-compiler": "2.6.11",
-    "webpack": "4.41.2"
+    "webpack": "4.41.4"
   },
   "husky": {
     "hooks": {
