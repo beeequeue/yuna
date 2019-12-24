@@ -1021,7 +1021,7 @@ export type ListEntry = {
   /**
    * Progress in episodes
    * Not started = 0
-   **/
+   */
   progress: Scalars['Int']
   /** Times rewatched */
   rewatched: Scalars['Int']
@@ -1310,7 +1310,7 @@ export enum MediaFormat {
    * (Original Video Animation) Anime that have been released directly on
    * DVD/Blu-ray without originally going through a theatrical release or
    * television broadcast
-   **/
+   */
   Ova = 'OVA',
   /** (Original Net Animation) Anime that have been originally released online or are only available through streaming services. */
   Ona = 'ONA',
@@ -1959,7 +1959,7 @@ export type Mutation = {
   /**
    * Add or remove a like from a likeable type.
    *                           Returns all the users who liked the same model
-   **/
+   */
   ToggleLike: Maybe<Array<Maybe<User>>>
   /** Add or remove a like from a likeable type. */
   ToggleLikeV2: Maybe<LikeableUnion>
@@ -2664,7 +2664,7 @@ export type Query = {
   /**
    * Media list collection query, provides list pre-grouped by status & custom
    * lists. User ID and Media Type arguments required.
-   **/
+   */
   MediaListCollection: Maybe<MediaListCollection>
   /** Collection of all the possible media genres */
   GenreCollection: Maybe<Array<Maybe<Scalars['String']>>>
