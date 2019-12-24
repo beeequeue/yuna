@@ -1,4 +1,4 @@
-import electron from 'electron'
+import { session } from 'electron'
 import { api } from 'electron-util'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { Response } from 'superagent'
@@ -25,7 +25,7 @@ import {
   Provider,
 } from '@/graphql/types'
 import { StreamingSource } from '@/types'
-import Filter = Electron.Filter
+import CookiesGetFilter = Electron.CookiesGetFilter
 
 export const NO_OP = () => {
   /* no-op */
@@ -192,27 +192,23 @@ export const arrayIsOfType = <T>(
 export const getEpisodeCacheKey = (ep: EpisodeListEpisodes) =>
   `Episode:${ep.provider}:${ep.id}`
 
-export const removeCookies = (filter: Filter) => {
-  if (!electron.remote.session.defaultSession) {
+export const removeCookies = async (filter: CookiesGetFilter) => {
+  if (!session.defaultSession) {
     // eslint-disable-next-line no-console
     return console.warn(
       `Could not get default session when deleting cookie.\n${filter}`,
     )
   }
 
-  const { cookies } = electron.remote.session.defaultSession
+  const cookies = await session.defaultSession.cookies.get(filter)
 
-  cookies.get(filter, (err, cooks) => {
-    if (err) throw new Error(err.message)
+  cookies.forEach(cookie => {
+    if (!cookie.domain) return
 
-    cooks.forEach(cookie => {
-      if (!cookie.domain) return
+    const prefix = cookie.domain.includes('crunchyroll') ? 'api.' : ''
+    const url = 'https://' + prefix + cookie.domain.replace(/^\./, '')
 
-      const prefix = cookie.domain.includes('crunchyroll') ? 'api.' : ''
-      const url = 'https://' + prefix + cookie.domain.replace(/^\./, '')
-
-      cookies.remove(url, cookie.name, NO_OP)
-    })
+    session.defaultSession.cookies.remove(url, cookie.name)
   })
 }
 
