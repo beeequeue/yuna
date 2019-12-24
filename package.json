@@ -88,7 +88,7 @@
     "babel-eslint": "10.0.3",
     "browserslist": "4.8.2",
     "cross-env": "6.0.3",
-    "electron": "6.0.10",
+    "electron": "6.1.7",
     "electron-builder": "22.2",
     "eslint-plugin-prettier": "3.1.2",
     "eslint-plugin-vue": "6.0.1",
