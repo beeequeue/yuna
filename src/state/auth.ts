@@ -35,7 +35,6 @@ export interface CrunchyrollData extends TokenService {
   country: string | null
 }
 
-// eslint-disable-next-line no-empty-interface
 export interface AnilistData extends TokenService {}
 
 export interface HidiveData extends UserPassService {

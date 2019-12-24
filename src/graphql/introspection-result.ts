@@ -11,7 +11,6 @@ export interface IntrospectionResultData {
     }[]
   }
 }
-
 const result: IntrospectionResultData = {
   __schema: {
     types: [
@@ -78,8 +77,31 @@ const result: IntrospectionResultData = {
           },
         ],
       },
+      {
+        kind: 'UNION',
+        name: 'LikeableUnion',
+        possibleTypes: [
+          {
+            name: 'ListActivity',
+          },
+          {
+            name: 'TextActivity',
+          },
+          {
+            name: 'MessageActivity',
+          },
+          {
+            name: 'ActivityReply',
+          },
+          {
+            name: 'Thread',
+          },
+          {
+            name: 'ThreadComment',
+          },
+        ],
+      },
     ],
   },
 }
-
 export default result

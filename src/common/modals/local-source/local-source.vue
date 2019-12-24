@@ -31,7 +31,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import Fuse from 'fuse.js'
+import Fuse, { FuseResultWithScore } from 'fuse.js'
 import { oc } from 'ts-optchain'
 
 import ModalBase from '@/common/modals/base.vue'
@@ -57,9 +57,9 @@ import { isNil } from '@/utils'
 import AnimatedSize from '@/common/components/animated-size.vue'
 
 const combineDuplicatesBasedOnScore = (
-  anime: Fuse.FuseResult<LocalAnime>[],
+  anime: FuseResultWithScore<LocalAnime>[],
 ) => {
-  const newArray: Fuse.FuseResult<LocalAnime>[] = []
+  const newArray: FuseResultWithScore<LocalAnime>[] = []
 
   anime.forEach(oldAnime => {
     const index = newArray.findIndex(

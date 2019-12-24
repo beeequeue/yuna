@@ -152,7 +152,7 @@ export default class Filters extends Vue {
   public filterByTitles(media: Media[]): Media[] {
     if (this.searchString.length < 3) return media
 
-    const fuse = new Fuse<Media>(media, {
+    const fuse = new Fuse(media, {
       caseSensitive: false,
       shouldSort: true,
       keys: ['title.english', 'title.romaji'] as any,

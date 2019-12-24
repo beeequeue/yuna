@@ -89,6 +89,10 @@ export type ActivityReply = {
   activityId: Maybe<Scalars['Int']>
   /** The reply text */
   text: Maybe<Scalars['String']>
+  /** The amount of likes the reply has */
+  likeCount: Scalars['Int']
+  /** If the currently authenticated user liked the reply */
+  isLiked: Maybe<Scalars['Boolean']>
   /** The time the reply was created at */
   createdAt: Scalars['Int']
   /** The user who created reply */
@@ -298,7 +302,6 @@ export type Character = {
   siteUrl: Maybe<Scalars['String']>
   /** Media that includes the character */
   media: Maybe<MediaConnection>
-  /** When the character's data was last updated */
   updatedAt: Maybe<Scalars['Int']>
   /** The amount of user's who have favourited the character */
   favourites: Maybe<Scalars['Int']>
@@ -616,6 +619,7 @@ export type InternalPage = {
   threadComments: Maybe<Array<Maybe<ThreadComment>>>
   reviews: Maybe<Array<Maybe<Review>>>
   recommendations: Maybe<Array<Maybe<Recommendation>>>
+  likes: Maybe<Array<Maybe<User>>>
 }
 
 /** Page of data (Used for internal use only) */
@@ -942,6 +946,12 @@ export type InternalPageRecommendationsArgs = {
   sort: Maybe<Array<Maybe<RecommendationSort>>>
 }
 
+/** Page of data (Used for internal use only) */
+export type InternalPageLikesArgs = {
+  likeableId: Maybe<Scalars['Int']>
+  type: Maybe<LikeableType>
+}
+
 /** Types that can be liked */
 export enum LikeableType {
   Thread = 'THREAD',
@@ -949,6 +959,15 @@ export enum LikeableType {
   Activity = 'ACTIVITY',
   ActivityReply = 'ACTIVITY_REPLY',
 }
+
+/** Likeable union type */
+export type LikeableUnion =
+  | ListActivity
+  | TextActivity
+  | MessageActivity
+  | ActivityReply
+  | Thread
+  | ThreadComment
 
 /** User list activity (anime & manga updates) */
 export type ListActivity = {
@@ -967,6 +986,12 @@ export type ListActivity = {
   progress: Maybe<Scalars['String']>
   /** If the activity is locked and can receive replies */
   isLocked: Maybe<Scalars['Boolean']>
+  /** If the currently authenticated user is subscribed to the activity */
+  isSubscribed: Maybe<Scalars['Boolean']>
+  /** The amount of likes the activity has */
+  likeCount: Scalars['Int']
+  /** If the currently authenticated user liked the activity */
+  isLiked: Maybe<Scalars['Boolean']>
   /** The url for the activity page on the AniList website */
   siteUrl: Maybe<Scalars['String']>
   /** The time the activity was created at */
@@ -996,7 +1021,7 @@ export type ListEntry = {
   /**
    * Progress in episodes
    * Not started = 0
-   **/
+   */
   progress: Scalars['Int']
   /** Times rewatched */
   rewatched: Scalars['Int']
@@ -1030,8 +1055,10 @@ export type Media = {
   startDate: Maybe<FuzzyDate>
   /** The last official release date of the media */
   endDate: Maybe<FuzzyDate>
-  /** The year & season the media was initially released in */
+  /** The season the media was initially released in */
   season: Maybe<MediaSeason>
+  /** The season year the media was initially released in */
+  seasonYear: Maybe<Scalars['Int']>
   /** The year & season the media was initially released in */
   seasonInt: Maybe<Scalars['Int']>
   /** The amount of episodes the anime has when complete */
@@ -1283,7 +1310,7 @@ export enum MediaFormat {
    * (Original Video Animation) Anime that have been released directly on
    * DVD/Blu-ray without originally going through a theatrical release or
    * television broadcast
-   **/
+   */
   Ova = 'OVA',
   /** (Original Net Animation) Anime that have been originally released online or are only available through streaming services. */
   Ona = 'ONA',
@@ -1853,6 +1880,14 @@ export type MessageActivity = {
   message: Maybe<Scalars['String']>
   /** If the activity is locked and can receive replies */
   isLocked: Maybe<Scalars['Boolean']>
+  /** If the currently authenticated user is subscribed to the activity */
+  isSubscribed: Maybe<Scalars['Boolean']>
+  /** The amount of likes the activity has */
+  likeCount: Scalars['Int']
+  /** If the currently authenticated user liked the activity */
+  isLiked: Maybe<Scalars['Boolean']>
+  /** If the message is private and only viewable to the sender and recipients */
+  isPrivate: Maybe<Scalars['Boolean']>
   /** The url for the activity page on the AniList website */
   siteUrl: Maybe<Scalars['String']>
   /** The time the activity was created at */
@@ -1893,6 +1928,7 @@ export enum ModActionType {
   Expire = 'EXPIRE',
   Report = 'REPORT',
   Reset = 'RESET',
+  Anon = 'ANON',
 }
 
 export type Mutation = {
@@ -1914,6 +1950,8 @@ export type Mutation = {
   SaveListActivity: Maybe<ListActivity>
   /** Delete an activity item of the authenticated users */
   DeleteActivity: Maybe<Deleted>
+  /** Toggle the subscription of an activity item */
+  ToggleActivitySubscription: Maybe<ActivityUnion>
   /** Create or update an activity reply */
   SaveActivityReply: Maybe<ActivityReply>
   /** Delete an activity reply of the authenticated users */
@@ -1921,8 +1959,10 @@ export type Mutation = {
   /**
    * Add or remove a like from a likeable type.
    *                           Returns all the users who liked the same model
-   **/
+   */
   ToggleLike: Maybe<Array<Maybe<User>>>
+  /** Add or remove a like from a likeable type. */
+  ToggleLikeV2: Maybe<LikeableUnion>
   /** Toggle the un/following of a user */
   ToggleFollow: Maybe<User>
   /** Favourite or unfavourite an anime, manga, character, staff member, or studio */
@@ -2028,7 +2068,9 @@ export type MutationSaveMessageActivityArgs = {
   id: Maybe<Scalars['Int']>
   message: Maybe<Scalars['String']>
   recipientId: Maybe<Scalars['Int']>
+  private: Maybe<Scalars['Boolean']>
   locked: Maybe<Scalars['Boolean']>
+  asMod: Maybe<Scalars['Boolean']>
 }
 
 export type MutationSaveListActivityArgs = {
@@ -2040,10 +2082,16 @@ export type MutationDeleteActivityArgs = {
   id: Maybe<Scalars['Int']>
 }
 
+export type MutationToggleActivitySubscriptionArgs = {
+  activityId: Maybe<Scalars['Int']>
+  subscribe: Maybe<Scalars['Boolean']>
+}
+
 export type MutationSaveActivityReplyArgs = {
   id: Maybe<Scalars['Int']>
   activityId: Maybe<Scalars['Int']>
   text: Maybe<Scalars['String']>
+  asMod: Maybe<Scalars['Boolean']>
 }
 
 export type MutationDeleteActivityReplyArgs = {
@@ -2051,6 +2099,11 @@ export type MutationDeleteActivityReplyArgs = {
 }
 
 export type MutationToggleLikeArgs = {
+  id: Maybe<Scalars['Int']>
+  type: Maybe<LikeableType>
+}
+
+export type MutationToggleLikeV2Args = {
   id: Maybe<Scalars['Int']>
   type: Maybe<LikeableType>
 }
@@ -2269,6 +2322,7 @@ export type Page = {
   threadComments: Maybe<Array<Maybe<ThreadComment>>>
   reviews: Maybe<Array<Maybe<Review>>>
   recommendations: Maybe<Array<Maybe<Recommendation>>>
+  likes: Maybe<Array<Maybe<User>>>
 }
 
 /** Page of data */
@@ -2558,6 +2612,12 @@ export type PageRecommendationsArgs = {
   sort: Maybe<Array<Maybe<RecommendationSort>>>
 }
 
+/** Page of data */
+export type PageLikesArgs = {
+  likeableId: Maybe<Scalars['Int']>
+  type: Maybe<LikeableType>
+}
+
 export type PageInfo = {
   __typename?: 'PageInfo'
   /** The total number of items */
@@ -2604,7 +2664,7 @@ export type Query = {
   /**
    * Media list collection query, provides list pre-grouped by status & custom
    * lists. User ID and Media Type arguments required.
-   **/
+   */
   MediaListCollection: Maybe<MediaListCollection>
   /** Collection of all the possible media genres */
   GenreCollection: Maybe<Array<Maybe<Scalars['String']>>>
@@ -2634,6 +2694,8 @@ export type Query = {
   ThreadComment: Maybe<Array<Maybe<ThreadComment>>>
   /** Recommendation query */
   Recommendation: Maybe<Recommendation>
+  /** Like query */
+  Like: Maybe<User>
   /** Provide AniList markdown to be converted to html (Requires auth) */
   Markdown: Maybe<ParsedMarkdown>
   AniChartUser: Maybe<AniChartUser>
@@ -2945,6 +3007,11 @@ export type QueryRecommendationArgs = {
   rating_greater: Maybe<Scalars['Int']>
   rating_lesser: Maybe<Scalars['Int']>
   sort: Maybe<Array<Maybe<RecommendationSort>>>
+}
+
+export type QueryLikeArgs = {
+  likeableId: Maybe<Scalars['Int']>
+  type: Maybe<LikeableType>
 }
 
 export type QueryMarkdownArgs = {
@@ -3277,7 +3344,6 @@ export type Staff = {
   staffMedia: Maybe<MediaConnection>
   /** Characters voiced by the actor */
   characters: Maybe<CharacterConnection>
-  /** When the staff's data was last updated */
   updatedAt: Maybe<Scalars['Int']>
   /** Staff member that the submission is referencing */
   staff: Maybe<Staff>
@@ -3543,6 +3609,12 @@ export type TextActivity = {
   siteUrl: Maybe<Scalars['String']>
   /** If the activity is locked and can receive replies */
   isLocked: Maybe<Scalars['Boolean']>
+  /** If the currently authenticated user is subscribed to the activity */
+  isSubscribed: Maybe<Scalars['Boolean']>
+  /** The amount of likes the activity has */
+  likeCount: Scalars['Int']
+  /** If the currently authenticated user liked the activity */
+  isLiked: Maybe<Scalars['Boolean']>
   /** The time the activity was created at */
   createdAt: Scalars['Int']
   /** The user who created the activity */
@@ -3583,6 +3655,10 @@ export type Thread = {
   isSticky: Maybe<Scalars['Boolean']>
   /** If the currently authenticated user is subscribed to the thread */
   isSubscribed: Maybe<Scalars['Boolean']>
+  /** The amount of likes the thread has */
+  likeCount: Scalars['Int']
+  /** If the currently authenticated user liked the thread */
+  isLiked: Maybe<Scalars['Boolean']>
   /** The time of the last reply */
   repliedAt: Maybe<Scalars['Int']>
   /** The time of the thread creation */
@@ -3628,6 +3704,10 @@ export type ThreadComment = {
   threadId: Maybe<Scalars['Int']>
   /** The text content of the comment (Markdown) */
   comment: Maybe<Scalars['String']>
+  /** The amount of likes the comment has */
+  likeCount: Scalars['Int']
+  /** If the currently authenticated user liked the comment */
+  isLiked: Maybe<Scalars['Boolean']>
   /** The url for the comment page on the AniList website */
   siteUrl: Maybe<Scalars['String']>
   /** The time of the comments creation */
@@ -3805,6 +3885,8 @@ export type User = {
   bannerImage: Maybe<Scalars['String']>
   /** If the authenticated user if following this user */
   isFollowing: Maybe<Scalars['Boolean']>
+  /** If this user if following the authenticated user */
+  isFollower: Maybe<Scalars['Boolean']>
   /** If the user is blocked by the authenticated user */
   isBlocked: Maybe<Scalars['Boolean']>
   bans: Maybe<Scalars['Json']>
@@ -4926,10 +5008,10 @@ export type ImportExternalLinksQuery = { __typename?: 'Query' } & {
 export type LocalSourceAnimeVariables = LocalSourceAnimeQueryVariables
 export type LocalSourceAnimeAnime = NonNullable<LocalSourceAnimeQuery['anime']>
 export type LocalSourceAnimeTitle = NonNullable<
-  (NonNullable<LocalSourceAnimeQuery['anime']>)['title']
+  NonNullable<LocalSourceAnimeQuery['anime']>['title']
 >
 export type LocalSourceAnimeListEntry = NonNullable<
-  (NonNullable<LocalSourceAnimeQuery['anime']>)['listEntry']
+  NonNullable<LocalSourceAnimeQuery['anime']>['listEntry']
 >
 export type MediaListEntryListEntry = ListEntryFragment
 export type AddToListVariables = AddToListMutationVariables
@@ -4951,37 +5033,37 @@ export type SingleMediaSingleMedia = NonNullable<
   SingleMediaQuery['SingleMedia']
 >
 export type SingleMediaTitle = NonNullable<
-  (NonNullable<SingleMediaQuery['SingleMedia']>)['title']
+  NonNullable<SingleMediaQuery['SingleMedia']>['title']
 >
 export type SingleMediaCoverImage = NonNullable<
-  (NonNullable<SingleMediaQuery['SingleMedia']>)['coverImage']
+  NonNullable<SingleMediaQuery['SingleMedia']>['coverImage']
 >
 export type ListViewVariables = ListViewQueryVariables
 export type ListViewListEntries = NonNullable<ListViewQuery['ListEntries'][0]>
 export type ListMediaVariables = ListMediaQueryVariables
 export type ListMediaPage = NonNullable<ListMediaQuery['Page']>
 export type ListMediaPageInfo = NonNullable<
-  (NonNullable<ListMediaQuery['Page']>)['pageInfo']
+  NonNullable<ListMediaQuery['Page']>['pageInfo']
 >
 export type ListMediaMedia = NonNullable<
-  (NonNullable<(NonNullable<ListMediaQuery['Page']>)['media']>)[0]
+  NonNullable<NonNullable<ListMediaQuery['Page']>['media']>[0]
 >
 export type ListMediaTitle = NonNullable<
-  (NonNullable<
-    (NonNullable<(NonNullable<ListMediaQuery['Page']>)['media']>)[0]
-  >)['title']
+  NonNullable<
+    NonNullable<NonNullable<ListMediaQuery['Page']>['media']>[0]
+  >['title']
 >
 export type ListMediaCoverImage = NonNullable<
-  (NonNullable<
-    (NonNullable<(NonNullable<ListMediaQuery['Page']>)['media']>)[0]
-  >)['coverImage']
+  NonNullable<
+    NonNullable<NonNullable<ListMediaQuery['Page']>['media']>[0]
+  >['coverImage']
 >
 export type ListMediaExternalLinks = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<(NonNullable<ListMediaQuery['Page']>)['media']>)[0]
-    >)['externalLinks']
-  >)[0]
+  NonNullable<
+    NonNullable<
+      NonNullable<NonNullable<ListMediaQuery['Page']>['media']>[0]
+    >['externalLinks']
+  >[0]
 >
 export type ListEntryVariables = ListEntryQueryVariables
 export type ListEntryListEntry = ListEntryQuery['ListEntry']
@@ -4989,7 +5071,7 @@ export type MediaListEntryFromMediaIdVariables = MediaListEntryFromMediaIdQueryV
 export type MediaListEntryFromMediaIdMediaList = AniListEntryFragment
 export type EpisodeListVariables = EpisodeListQueryVariables
 export type EpisodeListEpisodes = NonNullable<
-  (NonNullable<EpisodeListQuery['episodes']>)[0]
+  NonNullable<EpisodeListQuery['episodes']>[0]
 >
 export type MalIdFromAnilistIdVariables = MalIdFromAnilistIdQueryVariables
 export type MalIdFromAnilistIdMedia = NonNullable<
@@ -5000,10 +5082,10 @@ export type AnilistIdsFromMalIdsPage = NonNullable<
   AnilistIdsFromMalIdsQuery['Page']
 >
 export type AnilistIdsFromMalIdsPageInfo = NonNullable<
-  (NonNullable<AnilistIdsFromMalIdsQuery['Page']>)['pageInfo']
+  NonNullable<AnilistIdsFromMalIdsQuery['Page']>['pageInfo']
 >
 export type AnilistIdsFromMalIdsMedia = NonNullable<
-  (NonNullable<(NonNullable<AnilistIdsFromMalIdsQuery['Page']>)['media']>)[0]
+  NonNullable<NonNullable<AnilistIdsFromMalIdsQuery['Page']>['media']>[0]
 >
 export type EpisodeFeedListIdsVariables = EpisodeFeedListIdsQueryVariables
 export type EpisodeFeedListIdsListEntries = NonNullable<
@@ -5020,75 +5102,71 @@ export type CacheEpisodesAiringAiringSchedule = NonNullable<
 export type PlayerAnimeVariables = PlayerAnimeQueryVariables
 export type PlayerAnimeAnime = NonNullable<PlayerAnimeQuery['anime']>
 export type PlayerAnimeTitle = NonNullable<
-  (NonNullable<PlayerAnimeQuery['anime']>)['title']
+  NonNullable<PlayerAnimeQuery['anime']>['title']
 >
 export type PlayerAnimeNextAiringEpisode = NonNullable<
-  (NonNullable<PlayerAnimeQuery['anime']>)['nextAiringEpisode']
+  NonNullable<PlayerAnimeQuery['anime']>['nextAiringEpisode']
 >
 export type PlayerAnimeRelations = NonNullable<
-  (NonNullable<PlayerAnimeQuery['anime']>)['relations']
+  NonNullable<PlayerAnimeQuery['anime']>['relations']
 >
 export type PlayerAnimeEdges = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<PlayerAnimeQuery['anime']>)['relations']
-    >)['edges']
-  >)[0]
+  NonNullable<
+    NonNullable<NonNullable<PlayerAnimeQuery['anime']>['relations']>['edges']
+  >[0]
 >
 export type PlayerAnimeNode = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<PlayerAnimeQuery['anime']>)['relations']
-      >)['edges']
-    >)[0]
-  >)['node']
+  NonNullable<
+    NonNullable<
+      NonNullable<NonNullable<PlayerAnimeQuery['anime']>['relations']>['edges']
+    >[0]
+  >['node']
 >
 export type PlayerAnime_Title = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<
-          (NonNullable<PlayerAnimeQuery['anime']>)['relations']
-        >)['edges']
-      >)[0]
-    >)['node']
-  >)['title']
+  NonNullable<
+    NonNullable<
+      NonNullable<
+        NonNullable<
+          NonNullable<PlayerAnimeQuery['anime']>['relations']
+        >['edges']
+      >[0]
+    >['node']
+  >['title']
 >
 export type PlayerAnimeListEntry = NonNullable<
-  (NonNullable<PlayerAnimeQuery['anime']>)['listEntry']
+  NonNullable<PlayerAnimeQuery['anime']>['listEntry']
 >
 export type SearchVariables = SearchQueryVariables
 export type SearchAnime = NonNullable<SearchQuery['anime']>
 export type SearchPageInfo = NonNullable<
-  (NonNullable<SearchQuery['anime']>)['pageInfo']
+  NonNullable<SearchQuery['anime']>['pageInfo']
 >
 export type SearchResults = NonNullable<
-  (NonNullable<(NonNullable<SearchQuery['anime']>)['results']>)[0]
+  NonNullable<NonNullable<SearchQuery['anime']>['results']>[0]
 >
 export type SearchTitle = NonNullable<
-  (NonNullable<
-    (NonNullable<(NonNullable<SearchQuery['anime']>)['results']>)[0]
-  >)['title']
+  NonNullable<
+    NonNullable<NonNullable<SearchQuery['anime']>['results']>[0]
+  >['title']
 >
 export type SearchCoverImage = NonNullable<
-  (NonNullable<
-    (NonNullable<(NonNullable<SearchQuery['anime']>)['results']>)[0]
-  >)['coverImage']
+  NonNullable<
+    NonNullable<NonNullable<SearchQuery['anime']>['results']>[0]
+  >['coverImage']
 >
 export type SearchStreamingEpisodes = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<(NonNullable<SearchQuery['anime']>)['results']>)[0]
-    >)['streamingEpisodes']
-  >)[0]
+  NonNullable<
+    NonNullable<
+      NonNullable<NonNullable<SearchQuery['anime']>['results']>[0]
+    >['streamingEpisodes']
+  >[0]
 >
 export type SearchExternalLinks = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<(NonNullable<SearchQuery['anime']>)['results']>)[0]
-    >)['externalLinks']
-  >)[0]
+  NonNullable<
+    NonNullable<
+      NonNullable<NonNullable<SearchQuery['anime']>['results']>[0]
+    >['externalLinks']
+  >[0]
 >
 export type AnilistSetScoreVariables = AnilistSetScoreMutationVariables
 export type AnilistSetScoreSaveMediaListEntry = AniListEntryFragment
@@ -5113,16 +5191,16 @@ export type AnilistListEntriesListCollection = NonNullable<
   AnilistListEntriesQuery['listCollection']
 >
 export type AnilistListEntriesLists = NonNullable<
-  (NonNullable<
-    (NonNullable<AnilistListEntriesQuery['listCollection']>)['lists']
-  >)[0]
+  NonNullable<
+    NonNullable<AnilistListEntriesQuery['listCollection']>['lists']
+  >[0]
 >
 export type AnilistListEntriesEntries = AniListEntryFragment
 export type CachedAnimeListEntryListEntry = NonNullable<
   CachedAnimeListEntryFragment['listEntry']
 >
 export type CachedExternalLinksExternalLinks = NonNullable<
-  (NonNullable<CachedExternalLinksFragment['externalLinks']>)[0]
+  NonNullable<CachedExternalLinksFragment['externalLinks']>[0]
 >
 export type CacheAiringDataNextAiringEpisode = NonNullable<
   CacheAiringDataFragment['nextAiringEpisode']
@@ -5130,105 +5208,97 @@ export type CacheAiringDataNextAiringEpisode = NonNullable<
 export type AnimeViewVariables = AnimeViewQueryVariables
 export type AnimeViewAnime = NonNullable<AnimeViewQuery['anime']>
 export type AnimeViewTitle = NonNullable<
-  (NonNullable<AnimeViewQuery['anime']>)['title']
+  NonNullable<AnimeViewQuery['anime']>['title']
 >
 export type AnimeViewCoverImage = NonNullable<
-  (NonNullable<AnimeViewQuery['anime']>)['coverImage']
+  NonNullable<AnimeViewQuery['anime']>['coverImage']
 >
 export type AnimeViewNextAiringEpisode = NonNullable<
-  (NonNullable<AnimeViewQuery['anime']>)['nextAiringEpisode']
+  NonNullable<AnimeViewQuery['anime']>['nextAiringEpisode']
 >
 export type AnimeViewExternalLinks = NonNullable<
-  (NonNullable<(NonNullable<AnimeViewQuery['anime']>)['externalLinks']>)[0]
+  NonNullable<NonNullable<AnimeViewQuery['anime']>['externalLinks']>[0]
 >
 export type AnimeViewRelations = NonNullable<
-  (NonNullable<AnimeViewQuery['anime']>)['relations']
+  NonNullable<AnimeViewQuery['anime']>['relations']
 >
 export type AnimeViewEdges = NonNullable<
-  (NonNullable<
-    (NonNullable<(NonNullable<AnimeViewQuery['anime']>)['relations']>)['edges']
-  >)[0]
+  NonNullable<
+    NonNullable<NonNullable<AnimeViewQuery['anime']>['relations']>['edges']
+  >[0]
 >
 export type AnimeViewNode = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<AnimeViewQuery['anime']>)['relations']
-      >)['edges']
-    >)[0]
-  >)['node']
+  NonNullable<
+    NonNullable<
+      NonNullable<NonNullable<AnimeViewQuery['anime']>['relations']>['edges']
+    >[0]
+  >['node']
 >
 export type AnimeView_Title = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<
-          (NonNullable<AnimeViewQuery['anime']>)['relations']
-        >)['edges']
-      >)[0]
-    >)['node']
-  >)['title']
+  NonNullable<
+    NonNullable<
+      NonNullable<
+        NonNullable<NonNullable<AnimeViewQuery['anime']>['relations']>['edges']
+      >[0]
+    >['node']
+  >['title']
 >
 export type AnimeViewListEntry = NonNullable<
-  (NonNullable<AnimeViewQuery['anime']>)['listEntry']
+  NonNullable<AnimeViewQuery['anime']>['listEntry']
 >
 export type EpisodeFeedVariables = EpisodeFeedQueryVariables
 export type EpisodeFeedPage = NonNullable<EpisodeFeedQuery['Page']>
 export type EpisodeFeedAiringSchedules = NonNullable<
-  (NonNullable<(NonNullable<EpisodeFeedQuery['Page']>)['airingSchedules']>)[0]
+  NonNullable<NonNullable<EpisodeFeedQuery['Page']>['airingSchedules']>[0]
 >
 export type EpisodeFeedMedia = NonNullable<
-  (NonNullable<
-    (NonNullable<(NonNullable<EpisodeFeedQuery['Page']>)['airingSchedules']>)[0]
-  >)['media']
+  NonNullable<
+    NonNullable<NonNullable<EpisodeFeedQuery['Page']>['airingSchedules']>[0]
+  >['media']
 >
 export type EpisodeFeedTitle = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<EpisodeFeedQuery['Page']>)['airingSchedules']
-      >)[0]
-    >)['media']
-  >)['title']
+  NonNullable<
+    NonNullable<
+      NonNullable<NonNullable<EpisodeFeedQuery['Page']>['airingSchedules']>[0]
+    >['media']
+  >['title']
 >
 export type EpisodeFeedCoverImage = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<
-        (NonNullable<EpisodeFeedQuery['Page']>)['airingSchedules']
-      >)[0]
-    >)['media']
-  >)['coverImage']
+  NonNullable<
+    NonNullable<
+      NonNullable<NonNullable<EpisodeFeedQuery['Page']>['airingSchedules']>[0]
+    >['media']
+  >['coverImage']
 >
 export type EpisodeFeedPageInfo = NonNullable<
-  (NonNullable<EpisodeFeedQuery['Page']>)['pageInfo']
+  NonNullable<EpisodeFeedQuery['Page']>['pageInfo']
 >
 export type QueueVariables = QueueQueryVariables
 export type QueueQueue = NonNullable<QueueQuery['queue']>
 export type QueueAnime = NonNullable<
-  (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
+  NonNullable<NonNullable<QueueQuery['queue']>['anime']>[0]
 >
 export type QueueTitle = NonNullable<
-  (NonNullable<
-    (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
-  >)['title']
+  NonNullable<
+    NonNullable<NonNullable<QueueQuery['queue']>['anime']>[0]
+  >['title']
 >
 export type QueueNextAiringEpisode = NonNullable<
-  (NonNullable<
-    (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
-  >)['nextAiringEpisode']
+  NonNullable<
+    NonNullable<NonNullable<QueueQuery['queue']>['anime']>[0]
+  >['nextAiringEpisode']
 >
 export type QueueExternalLinks = NonNullable<
-  (NonNullable<
-    (NonNullable<
-      (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
-    >)['externalLinks']
-  >)[0]
+  NonNullable<
+    NonNullable<
+      NonNullable<NonNullable<QueueQuery['queue']>['anime']>[0]
+    >['externalLinks']
+  >[0]
 >
 export type QueueListEntry = NonNullable<
-  (NonNullable<
-    (NonNullable<(NonNullable<QueueQuery['queue']>)['anime']>)[0]
-  >)['listEntry']
+  NonNullable<
+    NonNullable<NonNullable<QueueQuery['queue']>['anime']>[0]
+  >['listEntry']
 >
 export type ImportVariables = ImportQueryVariables
 export type ImportListEntries = NonNullable<ImportQuery['ListEntries'][0]>
@@ -5240,7 +5310,7 @@ export type ImportExternalLinksMedia = NonNullable<
   ImportExternalLinksQuery['Media']
 >
 export type ImportExternalLinksExternalLinks = NonNullable<
-  (NonNullable<
-    (NonNullable<ImportExternalLinksQuery['Media']>)['externalLinks']
-  >)[0]
+  NonNullable<
+    NonNullable<ImportExternalLinksQuery['Media']>['externalLinks']
+  >[0]
 >

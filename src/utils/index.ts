@@ -183,7 +183,6 @@ export const isOfTypename = <T extends { __typename?: string }>(
   typename: T['__typename'],
 ): obj is T => obj.__typename === typename
 
-// eslint-disable-next-line array-type
 export const arrayIsOfType = <T>(
   arr: any[],
   ...properties: Array<keyof T>
@@ -193,7 +192,6 @@ export const arrayIsOfType = <T>(
 export const getEpisodeCacheKey = (ep: EpisodeListEpisodes) =>
   `Episode:${ep.provider}:${ep.id}`
 
-// eslint-disable-next-line no-shadowed-variable
 export const removeCookies = (filter: Filter) => {
   if (!electron.remote.session.defaultSession) {
     // eslint-disable-next-line no-console
