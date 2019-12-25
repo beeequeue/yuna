@@ -122,7 +122,6 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
-import { oc } from 'ts-optchain'
 import {
   mdiClose,
   mdiPause,
@@ -184,7 +183,7 @@ export default class Actions extends Vue {
   public exclude!: string[]
 
   public get mediaListStatus(): MediaListStatus | null {
-    return oc(this.listEntry).status() || null
+    return this.listEntry?.status ?? null
   }
 
   public ActionKeys = ActionKeys
@@ -211,8 +210,9 @@ export default class Actions extends Vue {
   }
 
   public get isWatching() {
-    return [MediaListStatus.Current, MediaListStatus.Repeating].includes(this
-      .mediaListStatus as MediaListStatus)
+    return [MediaListStatus.Current, MediaListStatus.Repeating].includes(
+      this.mediaListStatus as MediaListStatus,
+    )
   }
 
   public get isCompleted() {
@@ -263,9 +263,9 @@ export default class Actions extends Vue {
 
     initEditModal(this.$store, {
       animeId: this.anime.id,
-      title: oc(this.anime).title.userPreferred('MISSING_TITLE'),
+      title: this.anime?.title?.userPreferred ?? 'MISSING_TITLE',
       episodes: this.anime.episodes,
-      bannerImage: oc(this.anime).bannerImage(''),
+      bannerImage: this.anime?.bannerImage ?? '',
       listEntry: this.listEntry,
     })
   }

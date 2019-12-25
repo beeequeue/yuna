@@ -50,7 +50,6 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { activeWindow, is } from 'electron-util'
 import gql from 'graphql-tag'
-import { oc } from 'ts-optchain'
 import {
   mdiChevronLeft,
   mdiChevronRight,
@@ -84,10 +83,10 @@ export default class TitleBar extends Vue {
       return !this.isConnectedTo.anilist
     },
     update(data) {
-      return oc(data).Viewer.id() != null
+      return data.Viewer?.id != null
     },
     error(err) {
-      return oc(err as any).networkError.statusCode() === 429
+      return (err as any)?.networkError?.statusCode === 429
     },
     pollInterval: 60 * 1000,
   })

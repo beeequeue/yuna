@@ -27,8 +27,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiRepeat } from '@mdi/js'
-import { oc } from 'ts-optchain'
-
 import Score from '@/common/components/score.vue'
 import Icon from './icon.vue'
 
@@ -48,11 +46,11 @@ export default class CoverImage extends Vue {
   public repeatSvg = mdiRepeat
 
   public get mediaListStatus(): MediaListStatus | null {
-    return oc(this.listEntry).status() || null
+    return this.listEntry?.status ?? null
   }
 
   public get repeatedTimes(): number {
-    return oc(this.listEntry).rewatched(0)
+    return this.listEntry?.rewatched ?? 0
   }
 
   public get lowercaseStatus() {

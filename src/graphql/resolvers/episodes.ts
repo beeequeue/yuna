@@ -1,4 +1,3 @@
-import { oc } from 'ts-optchain'
 import { captureException } from '@sentry/browser'
 
 import { EpisodeListEpisodes, Provider } from '@/graphql/types'
@@ -31,8 +30,7 @@ const getEpisodesFromCache = (
   episodes = getSoftCachedEpisodes(cache, id, provider)
 
   if (!episodesExist(episodes)) {
-    const hardCachedEpisodes =
-      oc(EpisodeCache.get(id, provider)).episodes() || null
+    const hardCachedEpisodes = EpisodeCache.get(id, provider)?.episodes || null
 
     if (episodesExist(hardCachedEpisodes)) {
       episodes = hardCachedEpisodes

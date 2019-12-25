@@ -32,7 +32,6 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import Fuse, { FuseResultWithScore } from 'fuse.js'
-import { oc } from 'ts-optchain'
 
 import ModalBase from '@/common/modals/base.vue'
 import Loading from '@/common/components/loading.vue'
@@ -99,13 +98,13 @@ export default class LocalSourceModal extends Vue {
   public creatingEpisodes = false
 
   public get animeId() {
-    return oc(getLocalSourceOptions(this.$store)).anilistId() || null
+    return getLocalSourceOptions(this.$store)?.anilistId || null
   }
 
   public get titles() {
     return {
-      english: oc(this.anime).title.english(''),
-      romaji: oc(this.anime).title.romaji(''),
+      english: this.anime?.title?.english ?? '',
+      romaji: this.anime?.title?.romaji ?? '',
     }
   }
 
@@ -159,7 +158,7 @@ export default class LocalSourceModal extends Vue {
       })
     }
 
-    const progress = oc(this.anime).listEntry.progress(0)
+    const progress = this.anime?.listEntry?.progress ?? 0
 
     const episodes = files.map<EpisodeListEpisodes>((file, index) => ({
       __typename: 'Episode',
