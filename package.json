@@ -24,7 +24,7 @@
     "fluent-ffmpeg": "2.1.2",
     "fuse.js": "3.4.6",
     "graphql": "14.5.8",
-    "hls.js": "0.12.4",
+    "hls.js": "0.13.0",
     "husky": "3.1.0",
     "lodash.keyby": "4.6.0",
     "marked": "0.8.0",
