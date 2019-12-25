@@ -17,7 +17,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { oc } from 'ts-optchain'
 import { mdiLinkVariant, mdiLinkVariantOff } from '@mdi/js'
 
 import crIcon from '@/assets/crunchyroll.svg'
@@ -48,7 +47,7 @@ export default class Connection extends Vue {
   }
 
   public get user() {
-    return oc(this.$store.state as RootState).auth[this.type].user() || null
+    return (this.$store.state as RootState).auth[this.type]?.user ?? null
   }
 
   public async connect() {

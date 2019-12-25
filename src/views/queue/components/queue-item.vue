@@ -128,7 +128,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { oc } from 'ts-optchain'
 import { mdiChevronDown, mdiMenu, mdiPencil } from '@mdi/js'
 
 import { EPISODE_LIST } from '@/graphql/documents/queries'
@@ -240,7 +239,7 @@ export default class QueueItem extends Vue {
   public capitalize = capitalize
 
   public get listEntry() {
-    return oc(this.anime).listEntry(null)
+    return this.anime.listEntry ?? null
   }
 
   public get status() {
@@ -278,7 +277,7 @@ export default class QueueItem extends Vue {
   }
 
   public async statusMutation(status: MediaListStatus) {
-    const listEntryId = oc(this.anime).listEntry.id()
+    const listEntryId = this.anime.listEntry?.id
 
     if (isNil(listEntryId)) {
       return sendErrorToast(this.$store, 'No entry found..?')
@@ -301,7 +300,7 @@ export default class QueueItem extends Vue {
         return startRewatching(this, this.anime.id)
       }
 
-      await updateStatus(this, oc(this.anime).id()!, status)
+      await updateStatus(this, this.anime.id, status)
     } catch (err) {
       this.setOpenState(!this.item.open)
     }

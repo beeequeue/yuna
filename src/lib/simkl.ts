@@ -1,6 +1,5 @@
 import { Store } from 'vuex'
 import superagent from 'superagent/dist/superagent'
-import { oc } from 'ts-optchain'
 import { captureException } from '@sentry/browser'
 
 import { getConfig } from '@/config'
@@ -191,9 +190,7 @@ type SimklResponse<D extends {} | null = any> =
 
 const BASE_URL = 'https://api.simkl.com'
 
-const responseIsError = (
-  res: SimklResponse<any>,
-): res is RequestError<null> => {
+const responseIsError = (res: SimklResponse): res is RequestError<null> => {
   return res.status > 400 || !res.ok
 }
 
@@ -211,9 +208,9 @@ export class Simkl {
 
     if (isNil(anime)) throw new Error('Could not find Anime on Simkl.')
 
-    const episodes = Array.from({ length: anime.total_episodes }).map(
-      (_, i) => ({ number: i + 1 }),
-    )
+    const episodes = Array.from({
+      length: anime.total_episodes,
+    }).map((_, i) => ({ number: i + 1 }))
 
     const watchedEpisodes = episodes.slice(0, progress)
     const notWatchedEpisodes = episodes.slice(progress)
@@ -256,8 +253,8 @@ export class Simkl {
     if (isNil(response.body)) return
 
     const updatedItems = [
-      ...oc(response.body).anime([]),
-      ...oc(response.body as any)['']([]),
+      ...(response.body?.anime ?? []),
+      ...((response.body as any)?.[''] ?? []),
     ]
 
     updatedItems.forEach(item => {
@@ -321,7 +318,7 @@ export class Simkl {
       )
     }
 
-    const simklId = oc(response).body[0].ids.simkl() || null
+    const simklId = response.body?.[0]?.ids?.simkl ?? null
 
     if (isNil(simklId)) return null
 
@@ -341,7 +338,7 @@ export class Simkl {
   public static async getRating(malId: number): Promise<number | null> {
     const info = await this.getAnimeInfo(malId)
 
-    return oc(info).ratings.simkl.rating() || null
+    return info?.ratings.simkl.rating ?? null
   }
 
   public static async getLink(malId: number) {
@@ -351,7 +348,7 @@ export class Simkl {
   public static async getAnidbID(malId: number) {
     const anime = await this.getAnimeInfo(malId)
 
-    const id = oc(anime).ids.anidb()
+    const id = anime?.ids.anidb
 
     if (isNil(id)) return null
 

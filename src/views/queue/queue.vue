@@ -84,7 +84,6 @@ import { activeWindow, api } from 'electron-util'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
 import indexBy from 'lodash.keyby'
-import { oc } from 'ts-optchain'
 import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
 
 import CButton from '@/common/components/button.vue'
@@ -120,14 +119,7 @@ import {
   toggleQueueItemOpen,
 } from '@/state/user'
 import { QueueItem as IQueueItem } from '@/lib/user'
-import {
-  isNil,
-  isNotNil,
-  pick,
-  prop,
-  propEq,
-  sortNumber,
-} from '@/utils'
+import { isNil, isNotNil, pick, prop, propEq, sortNumber } from '@/utils'
 
 @Component({
   components: {
@@ -150,11 +142,8 @@ export default class Queue extends Vue {
       }
     },
     update(data) {
-      const items = indexBy(
-        oc(data)
-          .queue.anime([] as QueueAnime[])
-          .filter(isNotNil),
-        anime => anime.id.toString(),
+      const items = indexBy(data.queue?.anime?.filter(isNotNil), anime =>
+        anime.id.toString(),
       )
 
       return this.queue.map(item => items[item.id])
@@ -176,7 +165,7 @@ export default class Queue extends Vue {
   }
 
   public get isExternalPlayer() {
-    return oc(getPlayerData(this.$store)).provider() === Provider.Local
+    return getPlayerData(this.$store)?.provider === Provider.Local
   }
 
   public get queue() {
@@ -227,9 +216,7 @@ export default class Queue extends Vue {
       variables,
     })
 
-    return oc(result)
-      .data.Media.externalLinks([])
-      .filter(isNotNil)
+    return (result.data.Media?.externalLinks ?? []).filter(isNotNil)
   }
 
   public async importFrom(

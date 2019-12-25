@@ -4,8 +4,6 @@ import ffmpeg from 'fluent-ffmpeg'
 import { existsSync, readdirSync, statSync } from 'fs'
 import path from 'path'
 import crypto from 'crypto'
-import { oc } from 'ts-optchain'
-
 import { SettingsStore } from '@/state/settings'
 import { isNil } from '@/utils'
 import { FFMPEG_PATH, FFPROBE_PATH } from '@/utils/paths'
@@ -202,7 +200,7 @@ export class LocalFiles {
       stream => stream.codec_type === 'video',
     )
 
-    return oc(videoStream).tags.title(null) as string | null
+    return videoStream?.tags.title ?? (null as string | null)
   }
 
   private static generateScreenshot(

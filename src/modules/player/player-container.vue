@@ -25,8 +25,6 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { oc } from 'ts-optchain'
-
 import ExternalPlayer from '@/modules/player/external-player.vue'
 import { setProgress } from '@/graphql/mutations/list-entry'
 import ANIME_QUERY from './player-anime.graphql'
@@ -91,20 +89,20 @@ export default class PlayerContainer extends Vue {
   }
 
   get episode() {
-    const index = oc(this.playerData).index(-1)
+    const index = this.playerData?.index ?? -1
 
-    return oc(this.episodes)[index]() || null
+    return this.episodes?.[index] ?? null
   }
 
   get nextEpisode() {
-    const index = oc(this.playerData).index()
+    const index = this.playerData?.index
     if (isNil(this.episodes) || isNil(index)) return null
 
     return this.episodes[index + 1] as EpisodeListEpisodes
   }
 
   get listEntry() {
-    return oc(this.anime).listEntry(null)
+    return this.anime?.listEntry ?? null
   }
 
   get shouldAutoPlay() {
@@ -118,7 +116,7 @@ export default class PlayerContainer extends Vue {
   get classFromRoute() {
     let classNames = []
 
-    if (oc(this.episode).provider() === Provider.Local) {
+    if (this.episode?.provider === Provider.Local) {
       classNames.push('external')
     }
 

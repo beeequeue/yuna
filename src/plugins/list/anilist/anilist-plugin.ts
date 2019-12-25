@@ -1,5 +1,3 @@
-import { oc } from 'ts-optchain'
-
 import {
   AddToListMutation,
   AnilistCreateEntryMutation,
@@ -98,8 +96,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     data: AnilistListEntriesQuery = { listCollection: { lists: [] } },
   ) {
     return (
-      oc(data)
-        .listCollection.lists([])
+      (data.listCollection?.lists ?? [])
         // Remove nulls
         .filter(isNotNil)
         // Remove custom list entries
@@ -179,7 +176,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
       variables: { mediaId: anilistId } as AnilistCreateEntryVariables,
     })
 
-    const errors = oc(result).errors([])
+    const errors = result.errors ?? []
     if (errors.length > 0) throw new Error(errors[0].message)
 
     if (isNil(result.data)) throw new Error("Didn't get response from AniList")
@@ -213,12 +210,12 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
       variables: { id },
     })
 
-    const errors = oc(result).errors([])
+    const errors = result.errors ?? []
     if (errors.length > 0) throw new Error(errors[0].message)
 
     if (isNil(result.data)) throw new Error("Didn't get response from AniList")
 
-    return oc(result.data).DeleteMediaListEntry.deleted(false)
+    return result.data.DeleteMediaListEntry?.deleted ?? false
   }
 
   public async UpdateStatus(
@@ -230,7 +227,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
       variables: { mediaId: anilistId, status } as AnilistSetStatusVariables,
     })
 
-    const errors = oc(result).errors([])
+    const errors = result.errors ?? []
     if (errors.length > 0) throw new Error(errors[0].message)
 
     if (isNil(result.data)) throw new Error("Didn't get response from AniList")
@@ -246,7 +243,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
       variables: { mediaId: anilistId } as AnilistStartRewatchingVariables,
     })
 
-    const errors = oc(result).errors([])
+    const errors = result.errors ?? []
     if (errors.length > 0) throw new Error(errors[0].message)
 
     if (isNil(result.data)) throw new Error("Didn't get response from AniList")
@@ -266,7 +263,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
       } as AnilistSetProgressVariables,
     })
 
-    const errors = oc(result).errors([])
+    const errors = result.errors ?? []
     if (errors.length > 0) throw new Error(errors[0].message)
 
     if (isNil(result.data)) throw new Error("Didn't get response from AniList")
@@ -283,7 +280,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
       variables: { mediaId: anilistId, score } as AnilistSetScoreVariables,
     })
 
-    const errors = oc(result).errors([])
+    const errors = result.errors ?? []
     if (errors.length > 0) throw new Error(errors[0].message)
 
     if (isNil(result.data)) throw new Error("Didn't get response from AniList")
@@ -313,7 +310,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
       errorPolicy: 'all',
     })
 
-    const errors = oc(result).errors([])
+    const errors = result.errors ?? []
     if (errors.length > 0) throw new Error(errors[0].message)
 
     if (isNil(result.data)) throw new Error("Didn't get response from AniList")
