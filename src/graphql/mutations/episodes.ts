@@ -1,6 +1,4 @@
 import gql from 'graphql-tag'
-import { oc } from 'ts-optchain'
-
 import { EPISODE_LIST } from '@/graphql/documents/queries'
 import { CACHE_EPISODES } from '@/graphql/documents/mutations'
 import {
@@ -41,7 +39,7 @@ export const cacheEpisodes = async (
     errorPolicy: 'ignore',
   })
 
-  const airing = oc(data).AiringSchedule.airingAt(0) * 1000
+  const airing = (data.AiringSchedule?.airingAt ?? 0) * 1000
 
   return $apollo.mutate<CacheEpisodesMutation>({
     mutation: CACHE_EPISODES,

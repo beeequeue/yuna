@@ -215,8 +215,6 @@ import {
   mdiSkipNext,
   mdiSkipPrevious,
 } from '@mdi/js'
-import { oc } from 'ts-optchain'
-
 import {
   EpisodeListEpisodes,
   PlayerAnimeAnime,
@@ -289,7 +287,7 @@ export default class Controls extends Vue {
   }
 
   public get listEntry(): PlayerAnimeListEntry | null {
-    return oc(this).anime.listEntry(null)
+    return this.anime?.listEntry ?? null
   }
 
   public get episodeWatched() {

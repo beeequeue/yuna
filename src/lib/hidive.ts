@@ -2,7 +2,6 @@ import { format } from 'date-fns'
 import crypto from 'crypto'
 // import { captureException } from '@sentry/browser'
 import superagent from 'superagent/dist/superagent'
-import { oc } from 'ts-optchain'
 import { ActionContext, Store } from 'vuex'
 
 import { EpisodeListEpisodes, Provider } from '@/graphql/types'
@@ -397,8 +396,8 @@ export class Hidive {
 
     if (isOfType<{ store: StoreType }>(options, 'store')) {
       const login = getHidiveLogin(options.store)
-      user = oc(login).user('')
-      password = oc(login).password('')
+      user = login?.user ?? ''
+      password = login?.password ?? ''
     } else {
       user = options.user
       password = options.password

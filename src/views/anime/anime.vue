@@ -69,8 +69,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { oc } from 'ts-optchain'
-
 import CButton from '@/common/components/button.vue'
 import EpisodeList from '@/common/components/episode-list/episode-list.vue'
 import CoverImage from '@/common/components/cover-image.vue'
@@ -165,7 +163,7 @@ export default class Anime extends Vue {
       return false
     }
 
-    const progress = oc(this.getListEntry(data)).progress(0)
+    const progress = this.getListEntry(data)?.progress ?? 0
     const setting = getSpoilerSettings(this.$store).anime.description
     const shouldBlur =
       progress < Math.ceil((data.anime.episodes as number) * 0.33)
@@ -174,7 +172,7 @@ export default class Anime extends Vue {
   }
 
   public getListEntry(data: AnimeViewQuery): AnimeViewListEntry | null {
-    return oc(data).anime.listEntry(null)
+    return data.anime?.listEntry ?? null
   }
 
   public getRelations = getRelations

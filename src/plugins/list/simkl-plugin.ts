@@ -1,5 +1,3 @@
-import { oc } from 'ts-optchain'
-
 import {
   ListEntryWithoutMedia,
   ListPlugin,
@@ -42,7 +40,7 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
   private async getMALId(anilistId: number) {
     const ids = await ArmServer.getIdsFor('anilist', anilistId)
 
-    let malId = oc(ids).myanimelist() || null
+    let malId = ids?.myanimelist ?? null
 
     if (isNil(malId)) {
       const result = await this.apollo.query<MalIdFromAnilistIdQuery>({
@@ -50,7 +48,7 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
         variables: { mediaId: anilistId } as MalIdFromAnilistIdQueryVariables,
       })
 
-      malId = oc(result).data.Media.idMal() || null
+      malId = result.data.Media?.idMal ?? null
 
       // For some reason the above query always returns null - so we have to manually get the result from the cache
       if (isNil(malId)) {
@@ -62,7 +60,7 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
           },
         )
 
-        malId = oc(cached).idMal(null)
+        malId = cached?.idMal ?? null
       }
     }
 

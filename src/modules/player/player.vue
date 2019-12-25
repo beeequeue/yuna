@@ -96,7 +96,6 @@ import { ipcRenderer } from 'electron'
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import Hls from 'hls.js'
 import { addBreadcrumb } from '@sentry/browser'
-
 import { mdiLoading, mdiPlayCircle } from '@mdi/js'
 
 import {

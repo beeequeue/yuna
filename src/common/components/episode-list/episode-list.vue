@@ -42,8 +42,6 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { RecycleScroller } from 'vue-virtual-scroller'
-import { oc } from 'ts-optchain'
-
 import { EpisodeListEpisodes, Provider, QueueAnime } from '@/graphql/types'
 
 import { Required } from '@/decorators'
@@ -77,11 +75,11 @@ export default class EpisodeList extends Vue {
   }
 
   public get listEntry() {
-    return oc(this.anime).listEntry(null)
+    return this.anime?.listEntry ?? null
   }
 
   public get progress() {
-    return oc(this.listEntry).progress() || null
+    return this.listEntry?.progress ?? null
   }
 
   public get itemSize() {
@@ -134,7 +132,7 @@ export default class EpisodeList extends Vue {
   @Watch('open')
   @Watch('progress')
   public _scrollToNextEpisode(iteration: number = 0): void {
-    if (!oc(this.$refs).episodes[0]() && iteration < 50) {
+    if (!this.$refs.episodes?.[0] && iteration < 50) {
       setTimeout(() => this._scrollToNextEpisode(iteration + 1), 50)
 
       return

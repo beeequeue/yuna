@@ -82,8 +82,6 @@ import {
 } from '@/utils'
 import { ListMedia } from '../types'
 import { SelectItem, StreamingSource } from '@/types'
-import { oc } from 'ts-optchain'
-
 type Media = NonNullable<NonNullable<ListMedia[number]>['media']>
 
 @Component({ components: { Icon, CSelect, Loading, TextInput } })
@@ -177,9 +175,7 @@ export default class Filters extends Vue {
     if (isNil(this.selectedSource)) return media
 
     return media.filter(m => {
-      const links = oc(m)
-        .externalLinks([])
-        .filter(isNotNil)
+      const links = (m.externalLinks ?? []).filter(isNotNil)
       const sources = getStreamingSources(links)
 
       return sources.some(

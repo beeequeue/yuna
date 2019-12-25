@@ -1,8 +1,6 @@
 import { Store } from 'vuex'
 import ApolloClient from 'apollo-client'
 import { activeWindow } from 'electron-util'
-import { oc } from 'ts-optchain'
-
 import { SINGLE_MEDIA_QUERY } from '@/graphql/documents/queries'
 import {
   ListEntry,
@@ -43,7 +41,7 @@ export const GetListEntry = async (
 
   if (isNil(plugin)) throw new Error('Selected List Plugin could not be found.')
 
-  return plugin.GetListEntry((oc(media).id() || oc(variables).mediaId())!)
+  return plugin.GetListEntry((media?.id || variables?.mediaId)!)
 }
 
 export const GetListEntries = async (
@@ -92,7 +90,7 @@ const DoAction = (
 ) => {
   const mainPlugin = getMainListPlugin(store)!
   const errors: { [key: string]: Error } = {}
-  const secondParameter = oc(Object.values(rest) as any[])[0]()
+  const secondParameter = Object.values(rest)[0]
 
   const promises = getEnabledPlugins(store).map(plugin =>
     (plugin[action](anilistId, secondParameter as never) as Promise<any>).catch(

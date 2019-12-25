@@ -1,8 +1,6 @@
 import { activeWindow } from 'electron-util'
 import superagent from 'superagent/dist/superagent'
 import { ActionContext, Store } from 'vuex'
-import { oc } from 'ts-optchain'
-
 import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 
 import { getConfig } from '@/config'
@@ -713,7 +711,7 @@ const getEpisodeNumber = (num: string | number) => {
 }
 
 const fixEpisodeNumbers = (episodes: EpisodeListEpisodes[]) => {
-  const episodeNumber = oc(episodes)[0].episodeNumber()
+  const episodeNumber = episodes?.[0].episodeNumber
 
   if (isNil(episodeNumber)) {
     return []

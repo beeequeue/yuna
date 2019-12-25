@@ -32,8 +32,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import { addDays as _addDays, startOfDay } from 'date-fns'
-import { oc } from 'ts-optchain'
-
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import EPISODE_FEED_QUERY from './episode-feed.graphql'
 import {
@@ -65,9 +63,9 @@ export default class AnimatedList extends Vue {
       }
     },
     update(data) {
-      this.hasNextPage = oc(data).Page.pageInfo.hasNextPage(false)
+      this.hasNextPage = data.Page?.pageInfo?.hasNextPage ?? false
 
-      return oc(data).Page.airingSchedules(null)
+      return data.Page?.airingSchedules ?? null
     },
   })
   public airingSchedules!: EpisodeFeedAiringSchedules[]

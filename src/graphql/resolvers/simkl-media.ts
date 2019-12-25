@@ -1,6 +1,4 @@
 import { ApolloClient } from 'apollo-client'
-import { oc } from 'ts-optchain'
-
 import { MAL_ID_FROM_ANILIST_ID } from '@/graphql/documents/queries'
 import {
   MalIdFromAnilistIdQuery,
@@ -22,7 +20,7 @@ const getMalId = async (client: ApolloClient<any>, mediaId: number) => {
     variables,
   })
 
-  return oc(result.data).Media.idMal(null)
+  return result.data?.Media?.idMal ?? null
 }
 
 export const scoreSimklResolver = async (
@@ -30,7 +28,7 @@ export const scoreSimklResolver = async (
   _vars: null,
   { client }: Proxy,
 ): Promise<number | null> => {
-  let malId = oc(media).idMal()
+  let malId = media?.idMal
 
   if (isNil(malId)) {
     if (isNil(media.id)) {
@@ -56,7 +54,7 @@ export const linkSimklResolver = async (
   _vars: null,
   { client }: Proxy,
 ): Promise<string | null> => {
-  let malId = oc(media).idMal()
+  let malId = media?.idMal
 
   if (isNil(malId)) {
     if (isNil(media.id)) {
