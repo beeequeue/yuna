@@ -31,6 +31,7 @@ import { initAutoUpdater } from './updater'
 import { version } from '../package.json'
 import { SupportedMediaKeys } from '@/types'
 import { clamp, debounce, enumKeysToArray } from '@/utils'
+import { initDarkThemeWorkAround } from '@/utils/electron-win10darktheme-workaround'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 if (isDevelopment) {
@@ -38,6 +39,8 @@ if (isDevelopment) {
   // eslint-disable-next-line
   require('module').globalPaths.push(process.env.NODE_MODULES_PATH)
 }
+
+initDarkThemeWorkAround()
 
 init({
   enabled: process.env.NODE_ENV === 'production',
@@ -169,7 +172,7 @@ const createMainWindow = () => {
           type: 'normal',
           label: 'Select All',
           accelerator: 'CmdOrCtrl+A',
-          role: 'selectall',
+          role: 'selectAll',
         },
       ],
     },
@@ -184,7 +187,7 @@ const createMainWindow = () => {
         { role: 'services' },
         { type: 'separator' },
         { role: 'hide' },
-        { role: 'hideothers' },
+        { role: 'hideOthers' },
         { role: 'unhide' },
         { type: 'separator' },
         { role: 'quit' },
