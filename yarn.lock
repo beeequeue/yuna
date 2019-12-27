@@ -1720,10 +1720,10 @@
   resolved "https://registry.yarnpkg.com/@types/ffprobe-static/-/ffprobe-static-2.0.0.tgz#e89f978dd1a836f0e8100784def753960589548a"
   integrity sha512-rjyutd/DyrjuWqux7oswuH9kox71HjvlSTO0TKW+tqQVcP3RN570D/G/vzy41/KSZe3NAaOJvxkHXnAxaHAjdg==
 
-"@types/fluent-ffmpeg@2.1.12":
-  version "2.1.12"
-  resolved "https://registry.yarnpkg.com/@types/fluent-ffmpeg/-/fluent-ffmpeg-2.1.12.tgz#40b2a33c4d0a58a237ce73c0df21bf819394748e"
-  integrity sha512-gCZuFXcDL+rTTrIvVJq+QN+yQ18J3EPyjrh6G8iDnfx4P7p1Wo4iv53GpY37kGPWJK7o7xoTeWjuSjmaEmxkeQ==
+"@types/fluent-ffmpeg@2.1.13":
+  version "2.1.13"
+  resolved "https://registry.yarnpkg.com/@types/fluent-ffmpeg/-/fluent-ffmpeg-2.1.13.tgz#bfffbcf298b0980924e9ba9aa471aba234626afb"
+  integrity sha512-hg87ZQb9WVcNGQHNhrYwWJM0ARNYbQbLGh1c6CfPl55/I+BH5UTpFJAr5aZWYGbl8BFVY82oF5iG4I+Ra3btiQ==
   dependencies:
     "@types/node" "*"
 

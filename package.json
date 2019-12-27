@@ -65,7 +65,7 @@
     "@types/discord-rpc": "3.0.2",
     "@types/ffmpeg-static": "2.0.0",
     "@types/ffprobe-static": "2.0.0",
-    "@types/fluent-ffmpeg": "2.1.12",
+    "@types/fluent-ffmpeg": "2.1.13",
     "@types/hls.js": "0.12.5",
     "@types/lodash.keyby": "4.6.6",
     "@types/marked": "0.7.2",
