@@ -1,11 +1,11 @@
 import { api } from 'electron-util'
-import { parse } from 'anitomyscript'
+import parse from 'anitomyscript'
 import ffmpeg from 'fluent-ffmpeg'
 import { promises as fs, existsSync } from 'fs'
 import path from 'path'
 import crypto from 'crypto'
 import { SettingsStore } from '@/state/settings'
-import { isNil } from '@/utils'
+import { isNil, mapAsync } from '@/utils'
 import { FFMPEG_PATH, FFPROBE_PATH } from '@/utils/paths'
 
 export interface LocalAnime {
@@ -80,12 +80,20 @@ export class LocalFiles {
       isPlayableFile,
     )
 
-    const promises = files
-      // Parse file names
-      .map((f, i) => ({
+    const fileNames = await mapAsync(files, async (f, i) => {
+      let parsed = await parse(f)
+
+      if (Array.isArray(parsed)) {
+        parsed = parsed[0]
+      }
+
+      return {
         filePath: path.join(localAnime.folderPath, files[i]),
-        ...parse(f),
-      }))
+        ...parsed,
+      }
+    })
+
+    const promises = fileNames
       // Filter out files that don't belong to our anime
       .filter(item => item.anime_title === localAnime.title)
       // Map to result
@@ -148,18 +156,25 @@ export class LocalFiles {
     const fileNames: string[] = []
     const results: LocalAnime[] = []
 
-    await Promise.all(
-      content.map(async item => {
-        if (await isDirectory(path.join(folderPath, item))) {
-          return childFolderPaths.push(path.join(folderPath, item))
-        }
+    await mapAsync(content, async item => {
+      if (await isDirectory(path.join(folderPath, item))) {
+        return childFolderPaths.push(path.join(folderPath, item))
+      }
 
-        fileNames.push(item)
-      }),
-    )
+      fileNames.push(item)
+    })
 
-    fileNames
-      .map(path => parse(path))
+    const parsedFileNames = await mapAsync(fileNames, async path => {
+      let parsed = await parse(path)
+
+      if (Array.isArray(parsed)) {
+        parsed = parsed[0]
+      }
+
+      return parsed
+    })
+
+    parsedFileNames
       .filter(element => {
         const ext = (element.file_extension ?? '').toLowerCase()
         return (
@@ -176,12 +191,10 @@ export class LocalFiles {
       .forEach(el => results.push(el))
 
     if (maxDepth > level) {
-      await Promise.all(
-        childFolderPaths.map(async f => {
-          const items = await this.getAnimeInFolder(f, maxDepth, level + 1)
-          items.forEach(result => results.push(result))
-        }),
-      )
+      await mapAsync(childFolderPaths, async f => {
+        const items = await this.getAnimeInFolder(f, maxDepth, level + 1)
+        items.forEach(result => results.push(result))
+      })
     }
 
     return removeDuplicates(results)
