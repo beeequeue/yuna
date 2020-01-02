@@ -36,7 +36,6 @@ const isDirectory = async (path: string) => {
 }
 
 const isPlayableFile = (path: string) =>
-  !isDirectory(path) &&
   // eslint-disable-next-line no-useless-escape
   path.match(new RegExp(`\.${ACCEPTED_EXTENSIONS.join('|')}$`))
 
@@ -149,18 +148,20 @@ export class LocalFiles {
     const fileNames: string[] = []
     const results: LocalAnime[] = []
 
-    content.forEach(item => {
-      if (isDirectory(path.join(folderPath, item))) {
-        return childFolderPaths.push(path.join(folderPath, item))
-      }
+    await Promise.all(
+      content.map(async item => {
+        if (await isDirectory(path.join(folderPath, item))) {
+          return childFolderPaths.push(path.join(folderPath, item))
+        }
 
-      fileNames.push(item)
-    })
+        fileNames.push(item)
+      }),
+    )
 
     fileNames
       .map(path => parse(path))
       .filter(element => {
-        const ext = (element.file_extension || '').toLowerCase()
+        const ext = (element.file_extension ?? '').toLowerCase()
         return (
           ACCEPTED_EXTENSIONS.includes(ext) &&
           !isNil(element.anime_title) &&
@@ -175,10 +176,12 @@ export class LocalFiles {
       .forEach(el => results.push(el))
 
     if (maxDepth > level) {
-      childFolderPaths.forEach(async f => {
-        const items = await this.getAnimeInFolder(f, maxDepth, level + 1)
-        items.forEach(result => results.push(result))
-      })
+      await Promise.all(
+        childFolderPaths.map(async f => {
+          const items = await this.getAnimeInFolder(f, maxDepth, level + 1)
+          items.forEach(result => results.push(result))
+        }),
+      )
     }
 
     return removeDuplicates(results)
