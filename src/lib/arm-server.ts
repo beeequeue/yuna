@@ -1,14 +1,14 @@
 import superagent from 'superagent/dist/superagent'
 import { prop, RequestResponse, responseIsError, T } from '../utils'
 
-interface Relation {
+type Relation = {
   anilist: number | null
   anidb: number | null
   myanimelist: number | null
   kitsu: number | null
 }
 
-interface RelationError {
+type RelationError = {
   code: 400 | 404 | 500
   type: string
   messages: string[]

@@ -73,7 +73,7 @@ export const getCachedAnimeIdMal = (
   return data?.idMal ?? null
 }
 
-interface CachedExternalLinks {
+type CachedExternalLinks = {
   externalLinks: Array<{ site: string; url: string }>
 }
 
@@ -171,7 +171,7 @@ export const cacheRelations = (
   })
 }
 
-export interface EpisodeMutationObject {
+export type EpisodeMutationObject = {
   animeId: number
   provider: Provider
   episodeNumber: number

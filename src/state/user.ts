@@ -17,7 +17,7 @@ const isCurrentlyWatching = (anime: AddToQueueOptions) =>
     anime.listEntry?.status!,
   )
 
-interface SetProviderOptions {
+type SetProviderOptions = {
   id: number
   provider: Provider
 }
@@ -26,7 +26,7 @@ type AddToQueueOptions = Pick<Media, 'id' | 'externalLinks'> & {
   listEntry: Pick<ListEntry, 'status'> | null
 }
 
-export interface UserState {
+export type UserState = {
   deviceUuid: string
   queue: QueueItem[]
 }

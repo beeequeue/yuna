@@ -11,7 +11,7 @@ import {
 
 import { Instance } from '@/types'
 
-interface CacheEpisodesAiring {
+type CacheEpisodesAiring = {
   AiringSchedule: null | {
     id: number
     episode: number

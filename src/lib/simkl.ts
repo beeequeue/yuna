@@ -16,7 +16,7 @@ type SimklListStatus =
   | 'hold'
   | 'completed'
 
-interface _Show {
+type _Show = {
   title: string
   year: number
   type: 'anime'
@@ -26,7 +26,7 @@ interface _Show {
   }
 }
 
-interface _ShowFull extends _Show {
+type _ShowFull = {
   ids: {
     simkl: number
     slug: string
@@ -81,9 +81,9 @@ interface _ShowFull extends _Show {
     youtube: string
     size: number
   }>
-}
+} & _Show
 
-interface _OauthCode {
+type _OauthCode = {
   result: string
   device_code: 'DEVICE_CODE'
   user_code: string
@@ -92,17 +92,17 @@ interface _OauthCode {
   interval: number
 }
 
-interface _OauthPinPending {
+type _OauthPinPending = {
   result: 'KO'
   message: string
 }
 
-interface _OauthPinFinished {
+type _OauthPinFinished = {
   result: 'OK'
   access_token: string
 }
 
-interface _UserSettings {
+type _UserSettings = {
   user: {
     name: string
     joined_at: string
@@ -121,7 +121,7 @@ interface _UserSettings {
   }
 }
 
-interface _SyncHistory {
+type _SyncHistory = {
   added: {
     movies: number
     shows: number
@@ -134,13 +134,13 @@ interface _SyncHistory {
   }
 }
 
-interface _SyncAllItems {
+type _SyncAllItems = {
   shows: unknown[]
   movies: unknown[]
   anime: SimklListEntry[]
 }
 
-interface _SyncAddToList {
+type _SyncAddToList = {
   movies?: unknown[]
   shows: Array<{
     to: SimklListStatus
@@ -151,14 +151,14 @@ interface _SyncAddToList {
   }>
 }
 
-interface _SetWatchedBody {
+type _SetWatchedBody = {
   shows: Array<{
     ids: { mal: number }
     episodes: Array<{ number: number }>
   }>
 }
 
-export interface SimklListEntry {
+export type SimklListEntry = {
   last_watched_at: string
   user_rating: number
   status: SimklListStatus
@@ -180,7 +180,7 @@ export interface SimklListEntry {
   }
 }
 
-interface SimklQuery {
+type SimklQuery = {
   extended?: 'full'
 }
 

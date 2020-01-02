@@ -48,7 +48,7 @@ import { fetchAllPages } from '@/graphql/queries'
 type MetaData = { [key in MediaListStatus]: { open: boolean } }
 
 declare global {
-  interface Window {
+  type Window = {
     cachedMedia: NonNullable<NonNullable<ListMedia[number]>['media']>[] | null
   }
 }

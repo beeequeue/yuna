@@ -24,7 +24,7 @@ const timeBetweenUpdateChecks = 30 * 60 * 1000
 let mainWindow: Electron.BrowserWindow | null = null
 let updateInterval: NodeJS.Timer | null = null
 
-interface Version {
+type Version = {
   version: string
   releaseName: string
 }

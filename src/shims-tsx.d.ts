@@ -5,15 +5,15 @@ import { ListPlugin } from '@/plugins/list/plugin'
 declare global {
   namespace JSX {
     // eslint-disable no-empty-interface
-    interface Element extends VNode {}
+    type Element = {} & VNode
     // eslint-disable no-empty-interface
-    interface ElementClass extends Vue {}
-    interface IntrinsicElements {
+    type ElementClass = {} & Vue
+    type IntrinsicElements = {
       [elem: string]: any
     }
   }
 
-  interface RealProxy extends DataProxy {
+  type RealProxy = {
     data: {
       data: {
         [key: string]:
@@ -24,9 +24,9 @@ declare global {
             }
       }
     }
-  }
+  } & DataProxy
 
-  interface Window {
+  type Window = {
     listPlugins: ListPlugin[]
   }
 }

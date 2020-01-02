@@ -64,7 +64,7 @@ enum _Locale {
   Italian = 'ita',
 }
 
-export interface HidiveProfile {
+export type HidiveProfile = {
   AvatarJPGUrl: string
   AvatarPNGUrl: string
   Id: number
@@ -73,7 +73,7 @@ export interface HidiveProfile {
   Primary: boolean
 }
 
-interface _Title {
+type _Title = {
   ContinueWatching: {
     CreatedDT: string
     CurrentTime: number
@@ -113,7 +113,7 @@ interface _Title {
   UserRating: number
 }
 
-interface _Episode {
+type _Episode = {
   DisplayNameLong: string
   EpisodeNumberValue: number
   HIDIVEPremiereDate: string
@@ -130,7 +130,7 @@ interface _Episode {
   VideoKey: string
 }
 
-interface _Stream {
+type _Stream = {
   AdUrl: null
   AutoPlayNextEpisode: boolean
   CaptionCssUrl: string
@@ -156,12 +156,12 @@ interface _Stream {
   }
 }
 
-interface InitDeviceBody {
+type InitDeviceBody = {
   DeviceId: string
   VisitId: string
 }
 
-interface AuthenticateBody {
+type AuthenticateBody = {
   Profiles: HidiveProfile[]
   User: {
     CountryCode: string | null
@@ -173,11 +173,11 @@ interface AuthenticateBody {
   }
 }
 
-interface GetTitleBody {
+type GetTitleBody = {
   Title: _Title
 }
 
-interface ReqResponse {
+type ReqResponse = {
   Code: number
   Data: any
   IPAddress: string
@@ -187,19 +187,19 @@ interface ReqResponse {
   Timestamp: string
 }
 
-interface HidiveSuccess<D extends object = any> extends ReqResponse {
+type HidiveSuccess<D extends object = any> = {
   Code: 0
   Data: D
   IPAddress: string
   Message: null
   Messages: {}
   Status: 'Success'
-}
+} & ReqResponse
 
-interface HidiveError extends ReqResponse {
+type HidiveError = {
   Data: any
   Status: 'InvalidNonce' | string
-}
+} & ReqResponse
 
 type HidiveResponse<D extends object = any> =
   | RequestSuccess<HidiveSuccess<D>>

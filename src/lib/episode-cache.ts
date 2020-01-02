@@ -5,7 +5,7 @@ import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 // interface VersionSchema {
 //   __version: number
 // }
-interface EpisodeCacheSchema {
+type EpisodeCacheSchema = {
   [id: string]: {
     nextEpisodeAiringAt: number
     episodes: EpisodeListEpisodes[]

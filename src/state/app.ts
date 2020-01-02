@@ -17,7 +17,7 @@ import { router } from '@/router'
 import { RootState } from '@/state/store'
 import { generateId, isNil, pluck, propEq } from '@/utils'
 
-export interface Toast {
+export type Toast = {
   id: string
   title: string
   message: string
@@ -33,29 +33,29 @@ type AddToastMutationOptions = NotificationFunctionOptions<
   NotificationTypes
 > & { id: string; click?: (...a: any[]) => any }
 
-export interface ListEntry {
+export type ListEntry = {
   id: number
   status: MediaListStatus
   progress: number
 }
 
-export interface Sequel {
+export type Sequel = {
   id: number
   title: string
   bannerImage: string
 }
 
-export interface PlayerData {
+export type PlayerData = {
   id: number
   index: number
   provider: Provider
 }
 
-interface ModalBase {
+type ModalBase = {
   visible: boolean
 }
 
-export interface EditModalAnime {
+export type EditModalAnime = {
   animeId: number
   title: string
   bannerImage: string
@@ -63,17 +63,17 @@ export interface EditModalAnime {
   listEntry: Omit<IListEntry, '__typename' | 'mediaId' | 'media'>
 }
 
-export interface ManualSearchOptions {
+export type ManualSearchOptions = {
   provider: Provider
   anilistId: number | null
   selectedEpisodes: EpisodeListEpisodes[]
 }
 
-export interface LocalSourceOptions {
+export type LocalSourceOptions = {
   anilistId: number
 }
 
-export interface AppState {
+export type AppState = {
   isUpdateAvailable: boolean
   toasts: Toast[]
   isFullscreen: boolean
@@ -149,14 +149,11 @@ export const app = {
         ([key, obj]) => [key, obj.visible] as [string, boolean],
       )
 
-      return entries.reduce(
-        (obj, [key, value]) => {
-          obj[key] = value
+      return entries.reduce((obj, [key, value]) => {
+        obj[key] = value
 
-          return obj
-        },
-        {} as any,
-      )
+        return obj
+      }, {} as any)
     },
 
     getEditingAnime(state: AppState) {

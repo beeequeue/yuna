@@ -61,7 +61,7 @@ export default class Connection extends Vue {
         break
 
       case 'anilist':
-        await Anilist.logOut(this.$store)
+        Anilist.logOut(this.$store)
         break
 
       case 'hidive':

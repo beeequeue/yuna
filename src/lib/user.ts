@@ -6,7 +6,7 @@ import { Provider } from '@/graphql/types'
 const { NODE_ENV } = process.env
 const CURRENT_VERSION = 4
 
-export interface QueueItem {
+export type QueueItem = {
   id: number
   open: boolean
   provider: Provider

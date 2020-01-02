@@ -4,21 +4,16 @@ import { Prop } from 'vue/types/options'
 import { VueApolloQueryDefinition } from 'vue-apollo/types/options'
 import { createDecorator, VueDecorator } from 'vue-class-component'
 
-interface QueryOptions<C extends Vue, R = any>
-  extends VueApolloQueryDefinition<R> {
+type QueryOptions<C extends Vue, R = any> = {
   update?: (this: C, data: R) => void
   skip?: (this: C) => boolean
   result?: (this: C) => void
   error?: (this: C, error: Error | ApolloError | string) => void
-}
+} & VueApolloQueryDefinition<R>
 
-interface QueryOptionsWithVariables<
-  C extends Vue,
-  R = any,
-  V = undefined | null
-> extends QueryOptions<C, R> {
+type QueryOptionsWithVariables<C extends Vue, R = any, V = undefined | null> = {
   variables: ((this: C) => V) | V
-}
+} & QueryOptions<C, R>
 
 /**
  * An Apollo Query

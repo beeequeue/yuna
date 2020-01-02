@@ -5,7 +5,7 @@ import { Store } from 'vuex'
 import { sendToast, setCurrentEpisode } from '@/state/app'
 import { isNil } from '@/utils'
 
-export interface ExternalMetaData {
+export type ExternalMetaData = {
   animeId: number
   title: string
 }

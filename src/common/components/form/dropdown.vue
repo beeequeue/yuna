@@ -20,7 +20,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 import { Required } from '@/decorators'
 
-export interface DropdownItem {
+export type DropdownItem = {
   label: string
   value: string
   disabled?: boolean

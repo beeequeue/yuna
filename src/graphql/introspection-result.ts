@@ -1,6 +1,6 @@
 /* THIS IS A GENERATED FILE */
 
-export interface IntrospectionResultData {
+export type IntrospectionResultData = {
   __schema: {
     types: {
       kind: string

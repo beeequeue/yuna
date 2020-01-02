@@ -36,7 +36,7 @@ const device_type = 'com.crunchyroll.windows.desktop'
 const device_id = getDeviceUuid()
 const access_token = getConfig('CRUNCHYROLL_TOKEN')
 
-export interface User {
+export type User = {
   class: 'user'
   user_id: number
   etp_guid: string
@@ -50,7 +50,7 @@ export interface User {
   created: string
 }
 
-export interface _ImageSet {
+export type _ImageSet = {
   thumb_url: string
   small_url: string
   medium_url: string
@@ -64,20 +64,20 @@ export interface _ImageSet {
   height: string
 }
 
-export interface _StreamData {
+export type _StreamData = {
   hardsub_lang: string
   audio_lang: string
   format: 'hls'
   streams: _Stream[]
 }
 
-export interface _Stream {
+export type _Stream = {
   quality: 'adaptive' | 'low' | 'mid' | 'high' | 'ultra'
   expires: string
   url: string
 }
 
-export interface _Media {
+export type _Media = {
   class: string
   media_id: string
   etp_guid: string
@@ -109,7 +109,7 @@ export interface _Media {
   playhead: number
 }
 
-interface _Series {
+type _Series = {
   class: 'series'
   media_type: 'anime'
   series_id: string
@@ -122,7 +122,7 @@ interface _Series {
   portrait_image: _ImageSet
 }
 
-interface _Collection {
+type _Collection = {
   availability_notes: string
   class: 'collection'
   media_type: 'anime'
@@ -137,16 +137,16 @@ interface _Collection {
   created: string
 }
 
-interface _Locale {
+type _Locale = {
   locale_id: string
   label: string
 }
 
-export interface _CollectionWithEpisodes extends _Collection {
+export type _CollectionWithEpisodes = {
   episodes: EpisodeListEpisodes[]
-}
+} & _Collection
 
-export interface _SeriesWithCollections {
+export type _SeriesWithCollections = {
   id: number
   seriesId: number
   title: string
@@ -157,7 +157,7 @@ export interface _SeriesWithCollections {
   collections: _CollectionWithEpisodes[]
 }
 
-export interface _AutocompleteResult {
+export type _AutocompleteResult = {
   class: 'series'
   media_type: 'anime'
   series_id: string
@@ -169,7 +169,7 @@ export interface _AutocompleteResult {
   portrait_image: _ImageSet
 }
 
-export interface _QueueEntry {
+export type _QueueEntry = {
   last_watched_media: _Media
   most_likely_media: _Media
   ordering: number
@@ -180,13 +180,13 @@ export interface _QueueEntry {
   series: _Series
 }
 
-interface CrunchyrollSuccess<D extends object = any> {
+type CrunchyrollSuccess<D extends object = any> = {
   code: 'ok'
   error: false
   data: D
 }
 
-interface CrunchyrollError {
+type CrunchyrollError = {
   code: 'bad_request' | 'bad_session' | 'object_not_found' | 'forbidden'
   error: true
   message: string
@@ -196,13 +196,13 @@ type CrunchyrollResponse<D extends object = any> =
   | RequestSuccess<CrunchyrollSuccess<D>>
   | RequestError<CrunchyrollError>
 
-interface LoginSuccess {
+type LoginSuccess = {
   user: User
   auth: string
   expires: Date
 }
 
-export interface SearchResult {
+export type SearchResult = {
   id: number
   title: string
   description: string
@@ -239,12 +239,12 @@ const responseIsError = (
 let _sessionId: string = userStore.get('crunchyroll.token', '')
 let _locales: _Locale[] = []
 
-export interface SessionResponse {
+export type SessionResponse = {
   session_id: string
   country_code: string
 }
 
-interface StreamInfo {
+type StreamInfo = {
   playhead: number
   stream_data: _StreamData
 }

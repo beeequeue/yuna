@@ -85,7 +85,7 @@ ipcRenderer.on(SHOW_ERROR, (_e: any, message: string) => {
   sendErrorToast(store, message)
 })
 
-interface Parameters {
+type Parameters = {
   token: string
   expires: number
 }
@@ -94,7 +94,7 @@ ipcRenderer.on(ANILIST_LOGIN, async (_: any, params: Parameters) => {
   await Anilist.updateUserData(store, params)
 })
 
-export interface RootState {
+export type RootState = {
   app: AppState
   auth: AuthState
   user: UserState

@@ -11,7 +11,7 @@ import {
   DISCORD_SET_WATCHING,
 } from '@/messages'
 
-interface WatchingOptions {
+type WatchingOptions = {
   animeName: string
   episode: number
   totalEpisodes: number
