@@ -14,16 +14,23 @@
             Extracting thumbnails...
           </div>
         </div>
-        <div v-else class="anime-container">
+        <recycle-scroller
+          v-else
+          class="anime-container"
+          :items="localAnime"
+          :itemSize="45"
+          key-field="folderPath"
+          v-slot="{ item }"
+        >
           <div
-            v-for="local in localAnime"
-            :key="local.title + local.folderPath"
-            :title="local.folderPath"
-            @click="select(local)"
+            :key="item.title + item.folderPath"
+            :title="item.folderPath"
+            class="anime-item"
+            @click="select(item)"
           >
-            {{ local.title }} ({{ local.episodes }})
+            {{ item.title }} ({{ item.episodes }})
           </div>
-        </div>
+        </recycle-scroller>
       </animated-size>
     </div>
   </modal-base>
@@ -31,6 +38,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
+import { RecycleScroller } from 'vue-virtual-scroller'
 import Fuse, { FuseResultWithScore } from 'fuse.js'
 
 import ModalBase from '@/common/modals/base.vue'
@@ -77,7 +85,9 @@ const combineDuplicatesBasedOnScore = (
   return newArray
 }
 
-@Component({ components: { AnimatedSize, Loading, ModalBase } })
+@Component({
+  components: { AnimatedSize, Loading, ModalBase, RecycleScroller },
+})
 export default class LocalSourceModal extends Vue {
   public readonly modalName: ModalName = 'localSource'
 
@@ -115,7 +125,7 @@ export default class LocalSourceModal extends Vue {
     const fuse = new Fuse(this.localAnime, {
       caseSensitive: false,
       keys: ['title'],
-      threshold: 0.85,
+      threshold: 0.75,
       includeScore: true,
     })
 
@@ -247,12 +257,16 @@ export default class LocalSourceModal extends Vue {
   & .anime-container {
     position: relative;
     max-height: 45vh;
-    min-width: 300px;
+    min-width: 350px;
     overflow-y: auto;
     padding: 10px 20px;
 
-    & > div {
-      padding: 8px 15px;
+    & .anime-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 45px;
+      padding: 0 10px;
       margin-bottom: 8px;
       cursor: pointer;
       border-radius: 5px;
