@@ -31,7 +31,7 @@ import { initAutoUpdater } from './updater'
 import { version } from '../package.json'
 import { SupportedMediaKeys } from '@/types'
 import { clamp, debounce, enumKeysToArray } from '@/utils'
-import { initDarkThemeWorkAround } from '@/utils/electron-win10darktheme-workaround'
+// import { initDarkThemeWorkAround } from '@/utils/electron-win10darktheme-workaround'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 if (isDevelopment) {
@@ -40,7 +40,7 @@ if (isDevelopment) {
   require('module').globalPaths.push(process.env.NODE_MODULES_PATH)
 }
 
-initDarkThemeWorkAround()
+// initDarkThemeWorkAround()
 
 init({
   enabled: process.env.NODE_ENV === 'production',
@@ -274,7 +274,7 @@ app.on('ready', async () => {
 
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
-    await installVueDevtools()
+    // await installVueDevtools()
   }
 
   protocol.registerStringProtocol('yuna', async (req, cb) => {
