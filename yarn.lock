@@ -2512,10 +2512,12 @@ amdefine@>=0.0.4:
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
   integrity sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU=
 
-anitomyscript@1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/anitomyscript/-/anitomyscript-1.0.2.tgz#bf07491b06b185ad9b241a79a3217c970500ec8e"
-  integrity sha512-kDrzJryw+fGQ9dJpkRTjr2PCFKZvjY1pSlUQ+D6STKB21um45F+PCqBDqG0he1duHNWMJCvPs//YbXBu9hVJFg==
+anitomy-js@4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/anitomy-js/-/anitomy-js-4.0.1.tgz#1cba15a28cf86cf039810271ab22e6842b994899"
+  integrity sha512-xQXWxl9NHIoRXhSZAWLm+by6aQY+42a+Z3FW4wcwTOfyJO7fSAb/DhqHwAOUEfmj4NyTCL5kyt9YWur/A12d/A==
+  dependencies:
+    nan "^2.14.0"
 
 ansi-align@^2.0.0:
   version "2.0.0"
@@ -9915,7 +9917,7 @@ mz@^2.4.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
-nan@^2.13.2, nan@^2.9.2:
+nan@^2.13.2, nan@^2.14.0, nan@^2.9.2:
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
   integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
@@ -10071,6 +10073,11 @@ node-libs-browser@^2.2.1:
     url "^0.11.0"
     util "^0.11.0"
     vm-browserify "^1.0.1"
+
+node-loader@0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/node-loader/-/node-loader-0.6.0.tgz#c797ef51095ed5859902b157f6384f6361e05ae8"
+  integrity sha1-x5fvUQle1YWZArFX9jhPY2HgWug=
 
 node-pre-gyp@^0.10.0:
   version "0.10.3"

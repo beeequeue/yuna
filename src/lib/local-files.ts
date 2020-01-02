@@ -1,11 +1,12 @@
 import { api } from 'electron-util'
-import { parse } from 'anitomyscript'
+import anitomy from 'anitomy-js'
 import ffmpeg from 'fluent-ffmpeg'
-import { existsSync, readdirSync, statSync } from 'fs'
+import { existsSync, promises as fs } from 'fs'
 import path from 'path'
 import crypto from 'crypto'
+
 import { SettingsStore } from '@/state/settings'
-import { isNil } from '@/utils'
+import { isNil, mapAsync } from '@/utils'
 import { FFMPEG_PATH, FFPROBE_PATH } from '@/utils/paths'
 
 export interface LocalAnime {
@@ -29,14 +30,13 @@ ffmpeg.setFfprobePath(FFPROBE_PATH)
 
 const ACCEPTED_EXTENSIONS = ['mp4', 'mkv', 'av1']
 
-const isDirectory = (path: string) => {
+const isDirectory = async (path: string) => {
   if (!existsSync(path)) return false
 
-  return statSync(path).isDirectory()
+  return (await fs.stat(path)).isDirectory()
 }
 
 const isPlayableFile = (path: string) =>
-  !isDirectory(path) &&
   // eslint-disable-next-line no-useless-escape
   path.match(new RegExp(`\.${ACCEPTED_EXTENSIONS.join('|')}$`))
 
@@ -68,7 +68,7 @@ export class LocalFiles {
     return SettingsStore.get('localFilesFolder', null)
   }
 
-  public static getLocalAnime(): LocalAnime[] {
+  public static async getLocalAnime(): Promise<LocalAnime[]> {
     return this.getAnimeInFolder(this.folderPath)
   }
 
@@ -77,14 +77,20 @@ export class LocalFiles {
     localAnime: LocalAnime,
   ): Promise<LocalAnimeFile[]> {
     // Get files in directory
-    const files = readdirSync(localAnime.folderPath).filter(isPlayableFile)
+    const files = (await fs.readdir(localAnime.folderPath)).filter(
+      isPlayableFile,
+    )
 
-    const promises = files
-      // Parse file names
-      .map((f, i) => ({
+    const fileNames = await mapAsync(files, async (f, i) => {
+      let parsed = await anitomy.parse(f)
+
+      return {
         filePath: path.join(localAnime.folderPath, files[i]),
-        ...parse(f),
-      }))
+        ...parsed,
+      }
+    })
+
+    const promises = fileNames
       // Filter out files that don't belong to our anime
       .filter(item => item.anime_title === localAnime.title)
       // Map to result
@@ -130,15 +136,15 @@ export class LocalFiles {
   /**
    * Searches a folder and its children for anime episode files, and then returns them in an array.
    */
-  private static getAnimeInFolder(
+  private static async getAnimeInFolder(
     folderPath: string,
     maxDepth = 2,
     level = 0,
-  ): LocalAnime[] {
+  ): Promise<LocalAnime[]> {
     let content: string[]
 
     try {
-      content = readdirSync(folderPath)
+      content = await fs.readdir(folderPath)
     } catch {
       return []
     }
@@ -147,18 +153,21 @@ export class LocalFiles {
     const fileNames: string[] = []
     const results: LocalAnime[] = []
 
-    content.forEach(item => {
-      if (isDirectory(path.join(folderPath, item))) {
+    await mapAsync(content, async item => {
+      if (await isDirectory(path.join(folderPath, item))) {
         return childFolderPaths.push(path.join(folderPath, item))
       }
 
       fileNames.push(item)
     })
 
-    fileNames
-      .map(path => parse(path))
+    const parsedFileNames = await mapAsync(fileNames, async path =>
+      anitomy.parse(path),
+    )
+
+    parsedFileNames
       .filter(element => {
-        const ext = (element.file_extension || '').toLowerCase()
+        const ext = (element.file_extension ?? '').toLowerCase()
         return (
           ACCEPTED_EXTENSIONS.includes(ext) &&
           !isNil(element.anime_title) &&
@@ -173,10 +182,9 @@ export class LocalFiles {
       .forEach(el => results.push(el))
 
     if (maxDepth > level) {
-      childFolderPaths.forEach(f => {
-        this.getAnimeInFolder(f, maxDepth, level + 1).forEach(result =>
-          results.push(result),
-        )
+      await mapAsync(childFolderPaths, async f => {
+        const items = await this.getAnimeInFolder(f, maxDepth, level + 1)
+        items.forEach(result => results.push(result))
       })
     }
 

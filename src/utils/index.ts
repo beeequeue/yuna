@@ -306,7 +306,7 @@ export const complement = (fn: (...a: any[]) => any) => (input: any) =>
 
 export const mapAsync = async <T, R>(
   items: T[],
-  fn: (item: T) => Promise<R>,
+  fn: (item: T, index: number) => Promise<R>,
 ) => {
   const promises = items.map(fn)
 
