@@ -1,6 +1,5 @@
 import DiscordRPC, { Presence } from 'discord-rpc'
 import { ipcMain } from 'electron'
-import { debug } from 'electron-log'
 
 import { SettingsStore } from '@/state/settings'
 import { getConfig } from '@/config'
@@ -42,19 +41,7 @@ class Discord {
   constructor() {
     this.discord = new DiscordRPC.Client({ transport: 'ipc' })
 
-    this.discord.on('ready', () => {
-      debug(
-        `[Discord] Finished initializing: ${
-          this.errored ? 'Failed' : 'Successful'
-        }`,
-      )
-    })
-
-    this.discord.login({ clientId: id }).catch(() => {
-      debug(`[Discord] Init failed.`)
-
-      this.errored = true
-    })
+    this.discord.login({ clientId: id })
   }
 
   public async setActivity(activity: Presence) {

@@ -14,7 +14,6 @@
     "date-fns": "2.8.1",
     "discord-rpc": "3.1.0",
     "electron-debug": "3.0.1",
-    "electron-log": "3.0.9",
     "electron-store": "5.1.0",
     "electron-updater": "4.2.0",
     "electron-util": "0.12.3",
