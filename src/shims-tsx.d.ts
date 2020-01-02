@@ -1,19 +1,18 @@
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
 import Vue, { VNode } from 'vue'
 import { DataProxy } from 'apollo-cache'
 import { ListPlugin } from '@/plugins/list/plugin'
 
 declare global {
   namespace JSX {
-    // eslint-disable no-empty-interface
     type Element = {} & VNode
-    // eslint-disable no-empty-interface
     type ElementClass = {} & Vue
     type IntrinsicElements = {
       [elem: string]: any
     }
   }
 
-  type RealProxy = {
+  interface RealProxy extends DataProxy {
     data: {
       data: {
         [key: string]:
@@ -24,9 +23,9 @@ declare global {
             }
       }
     }
-  } & DataProxy
+  }
 
-  type Window = {
+  interface Window {
     listPlugins: ListPlugin[]
   }
 }
