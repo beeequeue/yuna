@@ -202,10 +202,15 @@ const createMainWindow = () => {
 
   registerDiscord()
 
+  if (!process.env.IS_TEST) {
+    if (isDevelopment || process.argv.includes('--devtools')) {
+      window.webContents.openDevTools()
+    }
+  }
+
   if (isDevelopment) {
     // Load the url of the dev server if in development mode
     window.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
-    if (!process.env.IS_TEST) window.webContents.openDevTools()
   } else {
     createProtocol('app')
     // Load the index.html when not in development
