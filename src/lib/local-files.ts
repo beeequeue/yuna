@@ -1,7 +1,7 @@
 import { api } from 'electron-util'
 import { parse } from 'anitomyscript'
 import ffmpeg from 'fluent-ffmpeg'
-import { existsSync, readdirSync, statSync } from 'fs'
+import { promises as fs, existsSync } from 'fs'
 import path from 'path'
 import crypto from 'crypto'
 import { SettingsStore } from '@/state/settings'
@@ -29,10 +29,10 @@ ffmpeg.setFfprobePath(FFPROBE_PATH)
 
 const ACCEPTED_EXTENSIONS = ['mp4', 'mkv', 'av1']
 
-const isDirectory = (path: string) => {
+const isDirectory = async (path: string) => {
   if (!existsSync(path)) return false
 
-  return statSync(path).isDirectory()
+  return (await fs.stat(path)).isDirectory()
 }
 
 const isPlayableFile = (path: string) =>
@@ -68,7 +68,7 @@ export class LocalFiles {
     return SettingsStore.get('localFilesFolder', null)
   }
 
-  public static getLocalAnime(): LocalAnime[] {
+  public static async getLocalAnime(): Promise<LocalAnime[]> {
     return this.getAnimeInFolder(this.folderPath)
   }
 
@@ -77,7 +77,9 @@ export class LocalFiles {
     localAnime: LocalAnime,
   ): Promise<LocalAnimeFile[]> {
     // Get files in directory
-    const files = readdirSync(localAnime.folderPath).filter(isPlayableFile)
+    const files = (await fs.readdir(localAnime.folderPath)).filter(
+      isPlayableFile,
+    )
 
     const promises = files
       // Parse file names
@@ -130,15 +132,15 @@ export class LocalFiles {
   /**
    * Searches a folder and its children for anime episode files, and then returns them in an array.
    */
-  private static getAnimeInFolder(
+  private static async getAnimeInFolder(
     folderPath: string,
     maxDepth = 2,
     level = 0,
-  ): LocalAnime[] {
+  ): Promise<LocalAnime[]> {
     let content: string[]
 
     try {
-      content = readdirSync(folderPath)
+      content = await fs.readdir(folderPath)
     } catch {
       return []
     }
@@ -173,10 +175,9 @@ export class LocalFiles {
       .forEach(el => results.push(el))
 
     if (maxDepth > level) {
-      childFolderPaths.forEach(f => {
-        this.getAnimeInFolder(f, maxDepth, level + 1).forEach(result =>
-          results.push(result),
-        )
+      childFolderPaths.forEach(async f => {
+        const items = await this.getAnimeInFolder(f, maxDepth, level + 1)
+        items.forEach(result => results.push(result))
       })
     }
 

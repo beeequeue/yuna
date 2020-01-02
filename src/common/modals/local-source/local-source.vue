@@ -109,8 +109,8 @@ export default class LocalSourceModal extends Vue {
   }
 
   @Watch('titles')
-  public updateLocalAnime() {
-    this.localAnime = LocalFiles.getLocalAnime()
+  public async updateLocalAnime() {
+    this.localAnime = await LocalFiles.getLocalAnime()
 
     const fuse = new Fuse(this.localAnime, {
       caseSensitive: false,
