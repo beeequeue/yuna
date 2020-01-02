@@ -1,19 +1,25 @@
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
 import { ApolloError } from 'apollo-client'
 import { Vue } from 'vue/types/vue'
 import { Prop } from 'vue/types/options'
 import { VueApolloQueryDefinition } from 'vue-apollo/types/options'
 import { createDecorator, VueDecorator } from 'vue-class-component'
 
-type QueryOptions<C extends Vue, R = any> = {
+interface QueryOptions<C extends Vue, R = any>
+  extends VueApolloQueryDefinition<R> {
   update?: (this: C, data: R) => void
   skip?: (this: C) => boolean
   result?: (this: C) => void
   error?: (this: C, error: Error | ApolloError | string) => void
-} & VueApolloQueryDefinition<R>
+}
 
-type QueryOptionsWithVariables<C extends Vue, R = any, V = undefined | null> = {
+interface QueryOptionsWithVariables<
+  C extends Vue,
+  R = any,
+  V = undefined | null
+> extends QueryOptions<C, R> {
   variables: ((this: C) => V) | V
-} & QueryOptions<C, R>
+}
 
 /**
  * An Apollo Query
@@ -56,6 +62,7 @@ type Constructor =
   | StringConstructor
   | ArrayConstructor
   | BooleanConstructor
+
 export function Default<T extends Constructor | ObjectConstructor>(
   type: T,
   defaultValue: ReturnType<T> extends Array<any>
