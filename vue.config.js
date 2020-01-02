@@ -89,6 +89,7 @@ module.exports = {
   },
   pluginOptions: {
     electronBuilder: {
+      externals: ['anitomy-js'],
       chainWebpackMainProcess: config => {
         config.resolve.alias.set('@', resolve(__dirname, 'src'))
       },
