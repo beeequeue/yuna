@@ -2512,10 +2512,10 @@ amdefine@>=0.0.4:
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
   integrity sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU=
 
-anitomyscript@1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/anitomyscript/-/anitomyscript-1.0.2.tgz#bf07491b06b185ad9b241a79a3217c970500ec8e"
-  integrity sha512-kDrzJryw+fGQ9dJpkRTjr2PCFKZvjY1pSlUQ+D6STKB21um45F+PCqBDqG0he1duHNWMJCvPs//YbXBu9hVJFg==
+anitomyscript@2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/anitomyscript/-/anitomyscript-2.0.4.tgz#eee8965f970a111b4f5b7c1b43ef926254be3a98"
+  integrity sha512-7LJ+td+POitox9fchXpNP0IydmsuODP+q8pgVeFhiYESNFPKWA+QH5IIIk+pZA9JYao7xTP7b1mXooL3I1XOFQ==
 
 ansi-align@^2.0.0:
   version "2.0.0"
