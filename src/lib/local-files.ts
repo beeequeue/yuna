@@ -9,13 +9,13 @@ import { SettingsStore } from '@/state/settings'
 import { isNil, mapAsync } from '@/utils'
 import { FFMPEG_PATH, FFPROBE_PATH } from '@/utils/paths'
 
-export interface LocalAnime {
+export type LocalAnime = {
   title: string
   folderPath: string
   episodes: number
 }
 
-interface LocalAnimeFile {
+type LocalAnimeFile = {
   id: string
   filePath: string
   title: string

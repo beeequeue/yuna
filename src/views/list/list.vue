@@ -48,6 +48,7 @@ import { fetchAllPages } from '@/graphql/queries'
 type MetaData = { [key in MediaListStatus]: { open: boolean } }
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
     cachedMedia: NonNullable<NonNullable<ListMedia[number]>['media']>[] | null
   }

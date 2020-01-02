@@ -1,4 +1,4 @@
-export interface VLCMeta {
+export type VLCMeta = {
   _STATISTICS_WRITING_APP: string
   CREATION_TIME: string
   BPS: string
@@ -11,7 +11,7 @@ export interface VLCMeta {
   _STATISTICS_WRITING_DATE_UTC: string
 }
 
-interface VLCVideoStream {
+type VLCVideoStream = {
   Type: 'Video'
   Decoded_format: string
   Color_transfer_function: string
@@ -24,14 +24,14 @@ interface VLCVideoStream {
   Codec: string
 }
 
-interface VLCSubtitleStream {
+type VLCSubtitleStream = {
   Type: 'Subtitle'
   Description: string
   Language: string
   Codec: string
 }
 
-interface VLCAudioStream {
+type VLCAudioStream = {
   Type: 'Audio'
   Description: string
   Language: string
@@ -39,7 +39,7 @@ interface VLCAudioStream {
   Sample_rate: string
 }
 
-export interface VLCStatusReport {
+export type VLCStatusReport = {
   fullscreen: false
   stats: {
     inputbitrate: number

@@ -119,7 +119,7 @@ const fetchEpisodesFromHidive = async (cache: RealProxy, id: number) => {
   return relations[id]
 }
 
-interface EpisodeVariables {
+type EpisodeVariables = {
   id: number
   provider: Provider
 }

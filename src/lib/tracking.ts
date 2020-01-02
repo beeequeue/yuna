@@ -6,7 +6,7 @@ import { View } from '@/router'
 import { SettingsStore } from '@/state/settings'
 import { isNil, T } from '@/utils'
 
-interface FathomQuery {
+type FathomQuery = {
   /** Page ID? */
   id: string
   /** Site ID */

@@ -9,17 +9,17 @@ export enum SupportedMediaKeys {
   MediaPreviousTrack = 'PLAYER_PREVIOUS',
 }
 
-export interface Levels {
+export type Levels = {
   [key: string]: number
 }
 
-export interface Stream {
+export type Stream = {
   url: string
   subtitles: [string, string][]
   progress: number
 }
 
-export interface Instance {
+export type Instance = {
   $store: Store<any>
   $apollo: DollarApollo<any>
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
 declare type UnPromisify<T> = T extends Promise<infer R> ? R : T
 
 declare type PromiseReturnType<T> = T extends (...a: any[]) => Promise<infer R>
@@ -69,6 +70,7 @@ declare module 'vue-smooth-dnd' {
   export const Draggable: VueConstructor<Vue>
 }
 
+// @ts-ignore
 declare interface Window {
   initialLogin: boolean
 }

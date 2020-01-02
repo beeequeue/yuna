@@ -40,17 +40,17 @@ export enum LocalStorageKey {
   LIST_OPEN = 'list_open',
 }
 
-export interface RequestSuccess<B extends {} | null> extends Response {
+export type RequestSuccess<B extends {} | null> = {
   status: 200 | 204
   ok: true
   body: B
-}
+} & Response
 
-export interface RequestError<B extends object | null> extends Response {
+export type RequestError<B extends object | null> = {
   status: 200 | 400 | 401 | 404 | 500 | 502 | 429
   ok: false
   body: B
-}
+} & Response
 
 export type RequestResponse<D extends object = any, E extends object = any> =
   | RequestSuccess<D>
@@ -73,7 +73,7 @@ export const secondsToTimeString = (input: number) => {
   return `${add0ToNumber(minutes)}:${add0ToNumber(seconds)}`
 }
 
-interface MediaListEntry {
+type MediaListEntry = {
   status: MediaListStatus | null
   progress: number | null
 }
@@ -227,7 +227,7 @@ export const getRelations = (
   return filtered.map(relation => relation?.node)
 }
 
-interface ExternalLink {
+type ExternalLink = {
   site: string
   url?: string
 }

@@ -1,14 +1,13 @@
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
 import Vue, { VNode } from 'vue'
 import { DataProxy } from 'apollo-cache'
 import { ListPlugin } from '@/plugins/list/plugin'
 
 declare global {
   namespace JSX {
-    // eslint-disable no-empty-interface
-    interface Element extends VNode {}
-    // eslint-disable no-empty-interface
-    interface ElementClass extends Vue {}
-    interface IntrinsicElements {
+    type Element = {} & VNode
+    type ElementClass = {} & Vue
+    type IntrinsicElements = {
       [elem: string]: any
     }
   }

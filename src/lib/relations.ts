@@ -12,16 +12,16 @@ const relationsCache = new Store<any>({
   name: 'relationsCache',
 })
 
-interface Branch {
+type Branch = {
   id: number
   type: string
   item: any
 }
 
-interface SectionLabel extends Branch {
+type SectionLabel = {
   type: 'label'
   item: string
-}
+} & Branch
 
 const getLabel = (str: string) => {
   const match = str.match(/^::(\w+)/)
@@ -29,20 +29,20 @@ const getLabel = (str: string) => {
   if (match) return match[1]
 }
 
-interface Comment extends Branch {
+type Comment = {
   type: 'comment'
   item: string[]
-}
+} & Branch
 
 const isComment = (obj: any): obj is Comment => {
   return obj != null && (/^#.*/.test(obj) || obj.type === 'comment')
 }
 
-interface KeyValue extends Branch {
+type KeyValue = {
   type: 'key-value'
   name: string
   item: string
-}
+} & Branch
 
 const keyValueRegex = /^- (.+): (.+).*/
 const isKeyValue = (obj: any): obj is KeyValue => {
@@ -57,7 +57,7 @@ const getKeyValue = (line: string) => {
   }
 }
 
-interface Rule extends Branch {
+type Rule = {
   type: 'rule'
   name: string
   item: {
@@ -75,7 +75,7 @@ interface Rule extends Branch {
     }
     redirectsToSelf: boolean
   }
-}
+} & Branch
 
 const ruleRegex = /([\d?~]+)\|([\d?~]+)\|([\d?~]+):(\d+(?:-\d+)?)/
 const isRule = (obj: any): obj is Rule => {
@@ -199,7 +199,7 @@ export const parseData = (data: string): ReadonlyArray<Branches> => {
   return tree
 }
 
-export interface Format {
+export type Format = {
   version: string
   lastModified: Date
   relations: {
@@ -308,7 +308,7 @@ export const updateRelations = async () => {
   })
 }
 
-export interface EpisodeRelations {
+export type EpisodeRelations = {
   [id: number]: EpisodeListEpisodes[]
 }
 

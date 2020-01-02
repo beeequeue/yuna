@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
 import { ApolloError } from 'apollo-client'
 import { Vue } from 'vue/types/vue'
 import { Prop } from 'vue/types/options'
@@ -61,6 +62,7 @@ type Constructor =
   | StringConstructor
   | ArrayConstructor
   | BooleanConstructor
+
 export function Default<T extends Constructor | ObjectConstructor>(
   type: T,
   defaultValue: ReturnType<T> extends Array<any>

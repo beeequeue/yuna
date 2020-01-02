@@ -1,6 +1,5 @@
 import DiscordRPC, { Presence } from 'discord-rpc'
 import { ipcMain } from 'electron'
-import { debug } from 'electron-log'
 
 import { SettingsStore } from '@/state/settings'
 import { getConfig } from '@/config'
@@ -11,7 +10,7 @@ import {
   DISCORD_SET_WATCHING,
 } from '@/messages'
 
-interface WatchingOptions {
+type WatchingOptions = {
   animeName: string
   episode: number
   totalEpisodes: number
@@ -42,19 +41,7 @@ class Discord {
   constructor() {
     this.discord = new DiscordRPC.Client({ transport: 'ipc' })
 
-    this.discord.on('ready', () => {
-      debug(
-        `[Discord] Finished initializing: ${
-          this.errored ? 'Failed' : 'Successful'
-        }`,
-      )
-    })
-
-    this.discord.login({ clientId: id }).catch(() => {
-      debug(`[Discord] Init failed.`)
-
-      this.errored = true
-    })
+    this.discord.login({ clientId: id })
   }
 
   public async setActivity(activity: Presence) {

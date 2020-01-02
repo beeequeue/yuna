@@ -9,7 +9,7 @@ import { SimklListPlugin } from '@/plugins/list/simkl-plugin'
 import { Provider } from '@/graphql/types'
 import { StreamingSource } from '@/types'
 
-interface ServiceData {
+type ServiceData = {
   user: null | {
     id: number | string
     name: string
@@ -17,27 +17,27 @@ interface ServiceData {
   }
 }
 
-interface TokenService extends ServiceData {
+type TokenService = {
   token: string | null
   expires: number | null
-}
+} & ServiceData
 
-interface UserPassService extends ServiceData {
+type UserPassService = {
   login: {
     user: string
     password: string
   }
-}
+} & ServiceData
 
-export interface CrunchyrollData extends TokenService {
+export type CrunchyrollData = {
   refreshToken: string
   token: string
   country: string | null
-}
+} & TokenService
 
-export interface AnilistData extends TokenService {}
+export type AnilistData = {} & TokenService
 
-export interface HidiveData extends UserPassService {
+export type HidiveData = {
   profiles: HidiveProfile[]
   user: null | {
     id: number
@@ -45,11 +45,11 @@ export interface HidiveData extends UserPassService {
     name: string
     url: string | null
   }
-}
+} & UserPassService
 
-export interface SimklData extends TokenService {}
+export type SimklData = {} & TokenService
 
-export interface AuthState {
+export type AuthState = {
   crunchyroll: CrunchyrollData
   anilist: AnilistData
   hidive: HidiveData
@@ -317,7 +317,7 @@ export const auth = {
 
 const { commit, read } = getStoreAccessors<AuthState, RootState>('auth')
 
-interface _Anime {
+type _Anime = {
   id: number
   externalLinks: null | Array<null | { site: string; url: string }>
 }

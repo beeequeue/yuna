@@ -32,7 +32,7 @@ import superagent from 'superagent'
 
 import { RequestResponse, responseIsError } from '@/utils'
 
-interface GitHubRelease {
+type GitHubRelease = {
   id: number
   tag_name: string
   name: string

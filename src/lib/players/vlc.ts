@@ -12,7 +12,7 @@ import { sendToast } from '@/state/app'
 import { SettingsStore } from '@/state/settings'
 import { isNil, isNotNil, NO_OP, RequestSuccess } from '@/utils'
 
-export interface ExternalMetaData {
+export type ExternalMetaData = {
   animeId: number
   title: string
 }

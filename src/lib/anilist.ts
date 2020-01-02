@@ -11,7 +11,7 @@ import { updateMainListPlugin } from '@/state/settings'
 type BrowserWindow = electron.BrowserWindow
 type StoreType = Store<any> | ActionContext<any, any>
 
-interface Parameters {
+type Parameters = {
   token: string
   expires: number
 }

@@ -26,15 +26,15 @@ export enum KeybindingAction {
   FRAME_BACK = 'FRAME_BACK',
 }
 
-interface KeybindingSettings {
+type KeybindingSettings = {
   [key: string]: KeybindingAction[]
 }
 
-interface ExternalPlayerPaths {
+type ExternalPlayerPaths = {
   vlc: string | null
 }
 
-interface SpoilerSettings {
+type SpoilerSettings = {
   anime: {
     description: boolean
   }
@@ -44,7 +44,7 @@ interface SpoilerSettings {
   }
 }
 
-interface DiscordSettings {
+type DiscordSettings = {
   richPresence: boolean
 }
 
@@ -58,7 +58,7 @@ export enum SetupStep {
 
 export const _setupSteps = enumKeysToArray(SetupStep) as SetupStep[]
 
-interface SetupSettings {
+type SetupSettings = {
   finishedSteps: SetupStep[]
 }
 
@@ -67,7 +67,7 @@ export enum EpisodeFeedMode {
   QUEUE = 'QUEUE',
 }
 
-export interface SettingsState {
+export type SettingsState = {
   episodeFeedMode: EpisodeFeedMode
   autoMarkAsPlanning: boolean
   useCRUnblocker: boolean
