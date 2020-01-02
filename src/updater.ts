@@ -2,15 +2,14 @@ import { ipcMain } from 'electron'
 import { activeWindow } from 'electron-util'
 import { autoUpdater } from 'electron-updater'
 import Store from 'electron-store'
-import { captureException } from '@sentry/node'
 
 import { isNil } from '@/utils'
 import {
+  CHECK_FOR_UPDATES,
   DOWNLOAD_UPDATE,
   UPDATE_AVAILABLE,
   UPDATE_DOWNLOADED,
   UPDATE_ERROR,
-  CHECK_FOR_UPDATES,
 } from './messages'
 
 const settingsStore = new Store<any>({ name: 'settings' })
@@ -18,8 +17,6 @@ const settingsStore = new Store<any>({ name: 'settings' })
 autoUpdater.allowPrerelease = settingsStore.get('beta') || false
 autoUpdater.autoDownload = false
 autoUpdater.autoInstallOnAppQuit = false
-
-autoUpdater.on('error', captureException)
 
 const timeBetweenUpdateChecks = 30 * 60 * 1000
 let mainWindow: Electron.BrowserWindow | null = null

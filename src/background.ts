@@ -14,10 +14,7 @@ import { enforceMacOSAppLocation } from 'electron-util'
 import { init } from '@sentry/node'
 import { join } from 'path'
 import { format as formatUrl } from 'url'
-import {
-  createProtocol,
-  installVueDevtools,
-} from 'vue-cli-plugin-electron-builder/lib'
+import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 
 import { destroyDiscord, registerDiscord } from './lib/discord'
 import {
@@ -31,7 +28,7 @@ import { initAutoUpdater } from './updater'
 import { version } from '../package.json'
 import { SupportedMediaKeys } from '@/types'
 import { clamp, debounce, enumKeysToArray } from '@/utils'
-import { initDarkThemeWorkAround } from '@/utils/electron-win10darktheme-workaround'
+// import { initDarkThemeWorkAround } from '@/utils/electron-win10darktheme-workaround'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 if (isDevelopment) {
@@ -40,7 +37,7 @@ if (isDevelopment) {
   require('module').globalPaths.push(process.env.NODE_MODULES_PATH)
 }
 
-initDarkThemeWorkAround()
+// initDarkThemeWorkAround()
 
 init({
   enabled: process.env.NODE_ENV === 'production',
@@ -202,10 +199,15 @@ const createMainWindow = () => {
 
   registerDiscord()
 
+  if (!process.env.IS_TEST) {
+    if (isDevelopment || process.argv.includes('--devtools')) {
+      window.webContents.openDevTools()
+    }
+  }
+
   if (isDevelopment) {
     // Load the url of the dev server if in development mode
     window.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
-    if (!process.env.IS_TEST) window.webContents.openDevTools()
   } else {
     createProtocol('app')
     // Load the index.html when not in development
@@ -274,7 +276,7 @@ app.on('ready', async () => {
 
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
-    await installVueDevtools()
+    // await installVueDevtools()
   }
 
   protocol.registerStringProtocol('yuna', async (req, cb) => {
