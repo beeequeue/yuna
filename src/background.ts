@@ -14,10 +14,7 @@ import { enforceMacOSAppLocation } from 'electron-util'
 import { init } from '@sentry/node'
 import { join } from 'path'
 import { format as formatUrl } from 'url'
-import {
-  createProtocol,
-  installVueDevtools,
-} from 'vue-cli-plugin-electron-builder/lib'
+import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 
 import { destroyDiscord, registerDiscord } from './lib/discord'
 import {
