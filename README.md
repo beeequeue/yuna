@@ -19,8 +19,8 @@
     <img src="https://img.shields.io/david/beeequeue/yuna.svg"/>
   </a>
 
-  <a href="https://travis-ci.org/BeeeQueue/yuna">
-    <img src="https://travis-ci.org/BeeeQueue/yuna.svg?branch=master"/>
+  <a href="https://app.circleci.com/github/BeeeQueue/yuna/pipelines?branch=master">
+    <img src="https://img.shields.io/circleci/build/github/BeeeQueue/yuna"/>
   </a>
 
   <a href="https://github.com/prettier/prettier">
@@ -35,7 +35,7 @@
   <a href="https://github.com/BeeeQueue/yuna/projects" target="_blank">Roadmap</a>
 </h4>
 <h4 align="center">
-  <a href="https://github.com/BeeeQueue/yuna/releases" target="_blank">Download</a>
+  <a href="https://github.com/BeeeQueue/yuna/releases" target="_blank">Download / Changelog</a>
 </h4>
 
 <p align="center">
