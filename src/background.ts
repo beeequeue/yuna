@@ -53,6 +53,7 @@ init({
     /net::ERR/,
     /child "activity" fails/,
     /ENOENT/,
+    /EPERM/,
     /Origin not allowed/,
     /code signature/,
     /connection closed/,
