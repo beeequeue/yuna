@@ -8,7 +8,7 @@
     "@sentry/browser": "5.10.2",
     "@sentry/integrations": "5.10.2",
     "@sentry/node": "5.10.2",
-    "anitomyscript": "2.0.4",
+    "anitomy-js": "4.0.1",
     "bottleneck": "2.19.5",
     "core-js": "3.6.0",
     "date-fns": "2.8.1",

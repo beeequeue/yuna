@@ -1,9 +1,10 @@
 import { api } from 'electron-util'
-import parse from 'anitomyscript'
+import anitomy from 'anitomy-js'
 import ffmpeg from 'fluent-ffmpeg'
-import { promises as fs, existsSync } from 'fs'
+import { existsSync, promises as fs } from 'fs'
 import path from 'path'
 import crypto from 'crypto'
+
 import { SettingsStore } from '@/state/settings'
 import { isNil, mapAsync } from '@/utils'
 import { FFMPEG_PATH, FFPROBE_PATH } from '@/utils/paths'
@@ -81,11 +82,7 @@ export class LocalFiles {
     )
 
     const fileNames = await mapAsync(files, async (f, i) => {
-      let parsed = await parse(f)
-
-      if (Array.isArray(parsed)) {
-        parsed = parsed[0]
-      }
+      let parsed = await anitomy.parse(f)
 
       return {
         filePath: path.join(localAnime.folderPath, files[i]),
@@ -164,15 +161,9 @@ export class LocalFiles {
       fileNames.push(item)
     })
 
-    const parsedFileNames = await mapAsync(fileNames, async path => {
-      let parsed = await parse(path)
-
-      if (Array.isArray(parsed)) {
-        parsed = parsed[0]
-      }
-
-      return parsed
-    })
+    const parsedFileNames = await mapAsync(fileNames, async path =>
+      anitomy.parse(path),
+    )
 
     parsedFileNames
       .filter(element => {
