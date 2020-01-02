@@ -2505,10 +2505,10 @@ amdefine@>=0.0.4:
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
   integrity sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU=
 
-anitomy-js@4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/anitomy-js/-/anitomy-js-4.0.1.tgz#1cba15a28cf86cf039810271ab22e6842b994899"
-  integrity sha512-xQXWxl9NHIoRXhSZAWLm+by6aQY+42a+Z3FW4wcwTOfyJO7fSAb/DhqHwAOUEfmj4NyTCL5kyt9YWur/A12d/A==
+anitomy-js@4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/anitomy-js/-/anitomy-js-4.0.2.tgz#2c3444291297ef1e5d7686cd698b4a72e2d7080d"
+  integrity sha512-4wG59RjSbRX2cCvy+idEjye3ULQy/eh9+xedSZp0UJIoi/SNALiJZCrVT/C1/jPehYm4N0L25r5W/0Y9RXRxmg==
   dependencies:
     nan "^2.14.0"
 
