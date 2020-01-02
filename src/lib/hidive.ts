@@ -311,7 +311,7 @@ export class Hidive {
       return null
     }
 
-    const title = response.body.Data.Title
+    const title = response.body.Data.Title as GetTitleBody['Title']
 
     return title.Episodes.map<Omit<EpisodeListEpisodes, 'isWatched'>>(
       (ep, index) => ({
@@ -346,7 +346,7 @@ export class Hidive {
       return null
     }
 
-    const { Data } = response.body
+    const Data = response.body.Data as _Stream
     const videoUrls = Data.VideoUrls
     const japaneseSubbedKey = Object.keys(videoUrls).find(str =>
       str.includes('Japanese'),
@@ -391,8 +391,8 @@ export class Hidive {
   private static async authenticate(
     options: { store: StoreType } | { user: string; password: string },
   ) {
-    let user = ''
-    let password = ''
+    let user: string
+    let password: string
 
     if (isOfType<{ store: StoreType }>(options, 'store')) {
       const login = getHidiveLogin(options.store)

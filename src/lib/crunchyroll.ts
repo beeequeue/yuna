@@ -313,14 +313,14 @@ export class Crunchyroll {
     )
     const user = response.body.data.user
 
-    _sessionId = session.session_id
+    _sessionId = session?.session_id ?? ''
     setCrunchyroll(store, {
       user: {
         id: Number(user.user_id),
         name: user.username,
         url: `https://www.crunchyroll.com/user/${user.username}`,
       },
-      token: session.session_id,
+      token: _sessionId,
       refreshToken: response.body.data.auth,
       expires: null,
     })
@@ -541,7 +541,9 @@ export class Crunchyroll {
       throw new Error(response.body.message)
     }
 
-    return response.body.data.map(result => ({
+    const data = response.body.data as _AutocompleteResult[]
+
+    return data.map(result => ({
       id: Number(result.series_id),
       title: result.name,
       description: result.description,
