@@ -16,7 +16,7 @@
     "electron-debug": "3.0.1",
     "electron-store": "5.1.0",
     "electron-updater": "4.2.0",
-    "electron-util": "0.12.3",
+    "electron-util": "0.13.1",
     "eslint": "6.8.0",
     "ffmpeg-static": "2.7.0",
     "ffprobe-static": "3.0.0",
