@@ -111,12 +111,12 @@
   },
   "license": "AGPL-3.0-only",
   "lint-staged": {
-    "*.{ts,vue,js}": [
+    "*.{ts,vue}": [
       "eslint --fix",
       "prettier --write",
       "git add"
     ],
-    "*.{json,graphql,yml,scss}": [
+    "*.{js,json,graphql,yml,scss}": [
       "prettier --write",
       "git add"
     ]
