@@ -45,11 +45,6 @@ module.exports = {
 
     config.resolve.extensions.add('.node')
 
-    config.resolve.alias.set(
-      '/root/app/node_modules/anitomy-js/build/Release/anitomy-js.node',
-      'node_modules/anitomy-js/build/Release/anitomy-js.node',
-    )
-
     const svgRules = config.module.rule('svg')
     svgRules.uses.clear()
     svgRules.use('raw-loader').loader('raw-loader')
@@ -71,6 +66,19 @@ module.exports = {
       }
 
       return [options]
+    })
+
+    config.plugin('copy').tap(([files]) => {
+      return [
+        [
+          ...files,
+          {
+            from: 'node_modules/anitomy-js/build/Release/anitomy-js.node',
+            to: 'dist/node_modules/anitomy-js/build/Release/anitomy-js.node',
+            toType: 'dir',
+          },
+        ],
+      ]
     })
 
     // Sentry Source Maps
@@ -96,6 +104,7 @@ module.exports = {
   },
   pluginOptions: {
     electronBuilder: {
+      externals: ['./build/Release/anitomy-js.node'],
       chainWebpackMainProcess: config => {
         config.resolve.alias.set('@', resolve(__dirname, 'src'))
       },
