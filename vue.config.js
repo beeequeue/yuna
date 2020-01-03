@@ -68,13 +68,14 @@ module.exports = {
       return [options]
     })
 
+    // anitomy-js fix
     config.plugin('copy').tap(([files]) => {
       return [
         [
           ...files,
           {
-            from: 'node_modules/anitomy-js/build/Release/anitomy-js.node',
-            to: 'dist/node_modules/anitomy-js/build/Release/anitomy-js.node',
+            from: 'node_modules/anitomy-js',
+            to: 'node_modules/anitomy-js',
             toType: 'dir',
           },
         ],
@@ -104,7 +105,7 @@ module.exports = {
   },
   pluginOptions: {
     electronBuilder: {
-      externals: ['./build/Release/anitomy-js.node'],
+      externals: ['anitomy-js'],
       chainWebpackMainProcess: config => {
         config.resolve.alias.set('@', resolve(__dirname, 'src'))
       },
