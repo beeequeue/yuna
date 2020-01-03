@@ -25,20 +25,9 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - restore_cache:
-          name: Restore Yarn Cache
-          keys:
-            - yarn-packages-{{ checksum "yarn.lock" }}
-            - yarn-packages-
       - run:
           name: Install NPM dependencies
           command: yarn install --frozen-lockfile
-      - save_cache:
-          name: Save Yarn Cache
-          key: yarn-packages-{{ checksum "yarn.lock" }}
-          paths:
-            - ./node_modules
-            - ~/.cache/yarn
       - persist_to_workspace:
           root: ~/app
           paths:
