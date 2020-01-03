@@ -47,7 +47,7 @@ module.exports = {
 
     config.resolve.alias.set(
       '/root/app/node_modules/anitomy-js/build/Release/anitomy-js.node',
-      './build/Release/anitomy-js.node',
+      'node_modules/anitomy-js/build/Release/anitomy-js.node',
     )
 
     const svgRules = config.module.rule('svg')
