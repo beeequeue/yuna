@@ -1,7 +1,7 @@
 import { api } from 'electron-util'
 import ffmpeg from 'fluent-ffmpeg'
 import { existsSync, promises as fs } from 'fs'
-import path from 'path'
+import path, { basename } from 'path'
 import crypto from 'crypto'
 
 import { SettingsStore } from '@/state/settings'
@@ -81,7 +81,7 @@ export class LocalFiles {
     )
 
     const fileNames = await mapAsync(files, async (f, i) => {
-      let parsed = this.parseFileName(f)
+      let parsed = await this.parseFileName(f, basename(localAnime.folderPath))
 
       if (isNil(parsed)) return null
 
@@ -142,28 +142,41 @@ export class LocalFiles {
     /[XxHh].?\d{3}(?:-\w*)?/, // x264 etc
   ]
 
-  private static parseFileName(filename: string) {
-    const original = filename
-
-    // Remove extension
-    const extension = filename.slice(
-      filename.lastIndexOf('.') + 1,
-      filename.length,
-    )
-    filename = filename.slice(0, filename.lastIndexOf('.'))
+  private static cleanupFilename(name: string): string {
+    // Remove extension if necessary
+    if (/(\..{1,4})$/.exec(name)) {
+      name = name.slice(0, name.lastIndexOf('.'))
+    }
 
     // Remove metadata ( [*] )
-    filename = filename.replace(/\[.*?\]/g, '').trim()
+    name = name.replace(/\[.*?\]/g, '').trim()
 
     this.bannedWords.forEach(regex => {
-      filename = filename
+      name = name
         .replace(new RegExp(`\\(.*(?:${regex.source}).*\\)`), '')
         .trim()
     })
 
     this.bannedWords.forEach(regex => {
-      filename = filename.replace(regex, '').trim()
+      name = name.replace(regex, '').trim()
     })
+
+    // Fix separators
+    name = name.replace(/[\._]/g, ' ').trim()
+
+    return name
+  }
+
+  private static async parseFileName(filename: string, folderName: string) {
+    const original = filename
+    const backupTitle = this.cleanupFilename(folderName)
+
+    const extension = filename.slice(
+      filename.lastIndexOf('.') + 1,
+      filename.length,
+    )
+
+    filename = this.cleanupFilename(filename)
 
     // Remove season info
     filename = filename
@@ -171,10 +184,7 @@ export class LocalFiles {
       .replace(/[Ss][Ee][Aa][Ss][Oo][Nn] *\d{1,2}/g, '')
       .trim()
 
-    // Fix separators
-    filename = filename.replace(/[\._]/g, ' ').trim()
-
-    let match = /[Ee](?:[Pp](?:isode)?)?(\d{1,4})/.exec(filename) || []
+    let match = /[Ee](?:[Pp](?:isode)?)? ?(\d{1,4})/.exec(filename) || []
     let num = Number(match[1])
 
     if (!match[1] || isNaN(num)) {
@@ -187,7 +197,7 @@ export class LocalFiles {
       num = Number(match[1])
     }
 
-    if (/([Oo][Vv][Aa])/.exec(original)) {
+    if (/(ova|special|op\d+|ed\d+)/.exec(original.toLowerCase())) {
       return null
     }
 
@@ -198,10 +208,9 @@ export class LocalFiles {
         .trim(),
     )
 
-    if (isNil(animeTitle)) return null
-
+    // || so it overrides empty strings
     return {
-      animeTitle: animeTitle,
+      animeTitle: animeTitle || backupTitle,
       episodeTitle: episodeTitle || !isNaN(num) ? `Episode ${num}` : null,
       episodeNumber: !isNaN(num) ? num : null,
       extension,
@@ -244,11 +253,12 @@ export class LocalFiles {
       fileNames.push(item)
     })
 
-    const parsedFileNames = fileNames
-      .map(path => this.parseFileName(path))
-      .filter(isNotNil)
+    const parsedFileNames = await mapAsync(fileNames, path =>
+      this.parseFileName(path, basename(folderPath)),
+    )
 
     parsedFileNames
+      .filter(isNotNil)
       .filter(element => {
         const ext = (element.extension ?? '').toLowerCase()
         return (
