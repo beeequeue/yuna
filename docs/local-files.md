@@ -23,7 +23,7 @@ Then go to your Queue and click the `Select source...` dropdown.
 
 Then select it in the menu.
 
-![](https://i.imgur.com/aNHxLqc.png)
+![](https://i.imgur.com/JlES64b.png)
 
 ## My show isn't showing up / the episodes are numbered incorrectly.
 
