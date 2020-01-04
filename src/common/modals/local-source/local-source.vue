@@ -8,12 +8,13 @@
       </div>
 
       <animated-size>
-        <div v-if="creatingEpisodes">
+        <div v-if="loadingLocalAnime || creatingEpisodes">
           <loading :size="50" />
-          <div class="creating-info">
+          <div v-if="creatingEpisodes" class="creating-info">
             Extracting thumbnails...
           </div>
         </div>
+
         <recycle-scroller
           v-else
           v-slot="{ item }"
@@ -105,6 +106,7 @@ export default class LocalSourceModal extends Vue {
   public anime!: LocalSourceAnimeQuery['anime']
 
   public localAnime: LocalAnime[] = []
+  public loadingLocalAnime = false
   public creatingEpisodes = false
 
   public get animeId() {
@@ -120,7 +122,9 @@ export default class LocalSourceModal extends Vue {
 
   @Watch('titles')
   public async updateLocalAnime() {
+    this.loadingLocalAnime = true
     this.localAnime = await LocalFiles.getLocalAnime()
+    this.loadingLocalAnime = false
 
     const fuse = new Fuse(this.localAnime, {
       caseSensitive: false,
@@ -258,6 +262,7 @@ export default class LocalSourceModal extends Vue {
     position: relative;
     max-height: 45vh;
     min-width: 350px;
+    width: 100%;
     overflow-y: auto;
     padding: 10px 20px;
 
