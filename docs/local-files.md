@@ -1,8 +1,8 @@
 # Local Files
 
-1. **Does it work?**
-1. **How do I use it?**
-1. **My show isn't showing up / the episodes are numbered incorrectly.**
+1. [**Does it work?**](#does-it-work)
+1. [**How do I use it?**](#how-do-i-use-it)
+1. [**My show isn't showing up / the episodes are numbered incorrectly.**](#my-show-isnt-showing-up--the-episodes-are-numbered-incorrectly)
 
 ## Does it work?
 
