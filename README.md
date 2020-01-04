@@ -32,6 +32,9 @@
   <a href="https://yuna.moe" target="_blank">Website</a>
 </h4>
 <h4 align="center">
+  <a href="https://github.com/BeeeQueue/yuna/tree/master/docs" target="_blank">Help</a>
+</h4>
+<h4 align="center">
   <a href="https://github.com/BeeeQueue/yuna/projects" target="_blank">Roadmap</a>
 </h4>
 <h4 align="center">
