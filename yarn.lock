@@ -2548,13 +2548,6 @@ amdefine@>=0.0.4:
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
   integrity sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU=
 
-anitomy-js@4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/anitomy-js/-/anitomy-js-4.0.2.tgz#2c3444291297ef1e5d7686cd698b4a72e2d7080d"
-  integrity sha512-4wG59RjSbRX2cCvy+idEjye3ULQy/eh9+xedSZp0UJIoi/SNALiJZCrVT/C1/jPehYm4N0L25r5W/0Y9RXRxmg==
-  dependencies:
-    nan "^2.14.0"
-
 ansi-align@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ansi-align/-/ansi-align-2.0.0.tgz#c36aeccba563b89ceb556f3690f0b1d9e3547f7f"
@@ -9949,7 +9942,7 @@ mz@^2.4.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
-nan@^2.13.2, nan@^2.14.0, nan@^2.9.2:
+nan@^2.13.2, nan@^2.9.2:
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
   integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
@@ -10105,11 +10098,6 @@ node-libs-browser@^2.2.1:
     url "^0.11.0"
     util "^0.11.0"
     vm-browserify "^1.0.1"
-
-node-loader@0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/node-loader/-/node-loader-0.6.0.tgz#c797ef51095ed5859902b157f6384f6361e05ae8"
-  integrity sha1-x5fvUQle1YWZArFX9jhPY2HgWug=
 
 node-pre-gyp@^0.10.0:
   version "0.10.3"

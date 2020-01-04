@@ -68,20 +68,6 @@ module.exports = {
       return [options]
     })
 
-    // anitomy-js fix
-    config.plugin('copy').tap(([files]) => {
-      return [
-        [
-          ...files,
-          {
-            from: 'node_modules/anitomy-js',
-            to: 'node_modules/anitomy-js',
-            toType: 'dir',
-          },
-        ],
-      ]
-    })
-
     // Sentry Source Maps
     config.when(
       process.env.CI &&
@@ -105,7 +91,6 @@ module.exports = {
   },
   pluginOptions: {
     electronBuilder: {
-      externals: ['anitomy-js'],
       chainWebpackMainProcess: config => {
         config.resolve.alias.set('@', resolve(__dirname, 'src'))
       },
