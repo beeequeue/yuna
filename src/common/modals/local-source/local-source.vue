@@ -5,6 +5,13 @@
         <div>Selecting Local Folder for</div>
         <div class="title">{{ anime.title.userPreferred }}</div>
         <div>({{ anime.episodes }} episodes)</div>
+
+        <a
+          href="https://github.com/BeeeQueue/yuna/blob/master/docs/local-files.md#my-show-isnt-showing-up--the-episodes-are-numbered-incorrectly"
+          class="help-link"
+        >
+          Is your show not showing up (heh)?
+        </a>
       </div>
 
       <animated-size>
@@ -242,6 +249,20 @@ export default class LocalSourceModal extends Vue {
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
+    }
+
+    & > .help-link {
+      display: inline-block;
+      margin-top: 15px;
+      font-weight: 700;
+      font-size: 0.85em;
+      text-decoration: none;
+      color: color($highlight, 600);
+      transition: color 0.15s;
+
+      &:hover {
+        color: color($highlight, 800);
+      }
     }
   }
 
