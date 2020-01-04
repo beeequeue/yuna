@@ -8,8 +8,8 @@
       />
       <div
         v-else
-        class="content"
         key="entry"
+        class="content"
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
       >
@@ -27,7 +27,7 @@
           {{ media.media.title.userPreferred }}
         </scrolling-text>
 
-        <actions :anime="media.media" :listEntry="entry" small horizontal />
+        <actions :anime="media.media" :list-entry="entry" small horizontal />
       </div>
     </transition>
   </div>

@@ -1,12 +1,12 @@
 <template>
   <div class="step discord">
-    <span v-html="discordSvg" class="icon" />
+    <span class="icon" v-html="discordSvg" />
 
     <checkbox
       setting="discord-rp"
       text="Enable Discord Rich Presence"
       :checked="discordRichPresence"
-      :onChange="toggleRichPresence"
+      :on-change="toggleRichPresence"
     />
 
     <img

@@ -13,7 +13,7 @@
         v-if="isPlayerMaximized"
         :anime="anime"
         :episode="episode"
-        :episodeWatched="episodeWatched"
+        :episode-watched="episodeWatched"
       />
     </transition>
 
@@ -22,9 +22,9 @@
     <div class="toolbar">
       <progress-bar
         :duration="duration"
-        :progressPercentage="progressPercentage"
-        :loadedPercentage="loadedPercentage"
-        :onSetTime="onSetTime"
+        :progress-percentage="progressPercentage"
+        :loaded-percentage="loadedPercentage"
+        :on-set-time="onSetTime"
         :visible="visible"
       />
 
@@ -49,8 +49,8 @@
           />
           <icon
             v-else
-            class="button"
             key="pause"
+            class="button"
             :icon="pauseSvg"
             @click.native="pause"
           />
@@ -70,8 +70,8 @@
       <volume-slider
         :muted="muted"
         :volume="volume"
-        :onChange="onSetVolume"
-        :onToggleMute="onToggleMute"
+        :on-change="onSetVolume"
+        :on-toggle-mute="onToggleMute"
         :open="isPlayerMaximized"
       />
 
@@ -91,17 +91,17 @@
             <icon
               v-if="!episodeWatched"
               key="max"
+              v-tooltip.top="getMarkWatchedTooltip(false)"
               class="button"
               :icon="bookmarkSvg"
-              v-tooltip.top="getMarkWatchedTooltip(false)"
               @click.native="updateProgress(episode.episodeNumber)"
             />
             <icon
               v-else
-              class="button"
               key="min"
-              :icon="bookmarkRemoveSvg"
               v-tooltip.top="getMarkWatchedTooltip(true)"
+              class="button"
+              :icon="bookmarkRemoveSvg"
               @click.native="
                 updateProgress(Math.max(0, episode.episodeNumber - 1))
               "
@@ -135,8 +135,8 @@
           />
           <icon
             v-else
-            class="button"
             key="min"
+            class="button"
             :icon="minimizeSvg"
             @click.native="$router.back()"
           />
@@ -154,8 +154,8 @@
           />
           <icon
             v-else
-            class="button"
             key="fullscreenExit"
+            class="button"
             :icon="fullscreenExitSvg"
             @click.native="_toggleFullscreen"
           />
@@ -167,7 +167,7 @@
       <div v-if="isPlayerMaximized && settingsOpen" class="settings-menu">
         <label v-if="levels != null">
           Quality:
-          <select @input="handleChangeQuality" :value="quality">
+          <select :value="quality" @input="handleChangeQuality">
             <option v-for="(_, q) in levels" :key="q" :value="q">
               {{ q }}p
             </option>
@@ -176,7 +176,7 @@
 
         <label v-if="subtitles.length > 0">
           Subtitles:
-          <select @input="handleChangeSubtitles" :value="subtitlesIndex">
+          <select :value="subtitlesIndex" @input="handleChangeSubtitles">
             <option v-for="(subtitle, q) in subtitles" :key="q" :value="q">
               {{ subtitle[0] }}
             </option>
@@ -185,7 +185,7 @@
 
         <label>
           Speed:
-          <select @input="onChangeSpeed" :value="speed">
+          <select :value="speed" @input="onChangeSpeed">
             <option :value="0.25">0.25x</option>
             <option :value="0.5">0.5x</option>
             <option :value="1">1x</option>

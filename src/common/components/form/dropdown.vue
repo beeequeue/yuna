@@ -1,5 +1,5 @@
 <template>
-  <label class="dropdown" :class="classes" v-tooltip.bottom="error">
+  <label v-tooltip.bottom="error" class="dropdown" :class="classes">
     <span v-if="label != null">{{ label }}</span>
 
     <select :value="value" @input="handleChange">

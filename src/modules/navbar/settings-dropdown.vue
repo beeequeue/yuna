@@ -20,8 +20,8 @@
       </a>
 
       <div
-        class="item clear-cache"
         v-tooltip.left="'!! This will reload the app !!'"
+        class="item clear-cache"
         @click="clearCache"
       >
         <icon :icon="clearSvg" /> <span>Clear caches</span>

@@ -13,7 +13,7 @@
     <checkbox
       :setting="`checked-${episode.id}`"
       :checked="selectedEpisode != null"
-      :onChange="handleCheckChange"
+      :on-change="handleCheckChange"
     />
   </div>
 </template>

@@ -1,8 +1,8 @@
 <template>
   <button
+    :id="id"
     ref="button"
     class="button"
-    :id="id"
     :class="classes"
     :style="{ minWidth: `${minWidth}px` }"
     @click="handleClick"

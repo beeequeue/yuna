@@ -12,9 +12,9 @@
 
     <span
       v-if="isConnectedTo.crunchyroll"
-      v-html="flag"
-      class="flag"
       v-tooltip.bottom="`Using ${country} Crunchyroll`"
+      class="flag"
+      v-html="flag"
     />
 
     <span class="separator" />
@@ -26,8 +26,8 @@
       </a>
       <span
         v-else-if="rateLimited"
-        class="alert"
         v-tooltip.bottom="'This goes away in about a minute.'"
+        class="alert"
       >
         You've made too many requests too quickly and are being rate limited.
         <icon :icon="infoSvg" />

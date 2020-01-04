@@ -13,25 +13,25 @@
       v-if="!noVerticalPadding"
       :items="episodes.map(e => e.episodeNumber)"
       :progress="listEntry && listEntry.progress"
-      :itemSize="itemSize"
+      :item-size="itemSize"
     />
 
     <recycle-scroller
+      v-slot="{ item }"
+      ref="container"
       direction="horizontal"
       :items="episodes"
-      :itemSize="itemSize"
+      :item-size="itemSize"
       :buffer="500"
-      v-slot="{ item }"
       class="episode-wrapper"
       :class="episodeWrapperClasses"
-      ref="container"
       @wheel.prevent.native="handleScroll"
     >
       <episode
         :key="`${item.episodeNumber}:${item.id}`"
         ref="episodes"
         :episode="item"
-        :listEntry="listEntry"
+        :list-entry="listEntry"
         :small="small"
       />
     </recycle-scroller>

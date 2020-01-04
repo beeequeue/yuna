@@ -2,9 +2,9 @@
   <div class="center-container">
     <info
       :id="id"
-      :idMal="idMal"
+      :id-mal="idMal"
       :score="score"
-      :nextAiringEpisode="nextAiringEpisode"
+      :next-airing-episode="nextAiringEpisode"
     />
 
     <description :content="content" :blur="blurDescription" />

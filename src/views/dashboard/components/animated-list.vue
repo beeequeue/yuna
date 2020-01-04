@@ -18,7 +18,7 @@
         <div class="title">{{ schedule.media.title.userPreferred }}</div>
 
         <next-episode-info
-          :nextAiringEpisode="{
+          :next-airing-episode="{
             episode: schedule.episode,
             airingAt: schedule.airingAt,
           }"

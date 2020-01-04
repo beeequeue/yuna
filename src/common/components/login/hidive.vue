@@ -1,21 +1,21 @@
 <template>
   <div class="step login-hidive" @keydown.enter="login">
-    <a href="https://hidive.com" class="logo" v-tooltip.top="'HIDIVE'">
+    <a v-tooltip.top="'HIDIVE'" href="https://hidive.com" class="logo">
       <span v-html="hidiveIcon" />
     </a>
 
-    <div class="container" v-if="hidiveProfiles.length < 1">
+    <div v-if="hidiveProfiles.length < 1" class="container">
       <text-input
         placeholder="Email"
         :class="{ 'full-width': fullWidth }"
-        :onChange="value => handleChange('email', value)"
+        :on-change="value => handleChange('email', value)"
       />
 
       <text-input
         password
         placeholder="Password"
         :class="{ 'full-width': fullWidth }"
-        :onChange="value => handleChange('password', value)"
+        :on-change="value => handleChange('password', value)"
       />
 
       <transition>
@@ -26,7 +26,7 @@
       <dropdown
         :items="hidiveProfiles"
         :value="selectedProfileIndex"
-        :onChange="setHidiveProfile"
+        :on-change="setHidiveProfile"
       />
     </div>
 

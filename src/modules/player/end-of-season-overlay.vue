@@ -8,7 +8,7 @@
         {{ nextEpisodeDateString }}
       </h2>
 
-      <score v-if="listEntry" :mediaId="listEntry.mediaId" />
+      <score v-if="listEntry" :media-id="listEntry.mediaId" />
 
       <div v-if="isFinalEpisode && sequels.length > 0" class="sequel-container">
         <h1 class="text">Sequel{{ sequels.length > 1 ? 's' : '' }}:</h1>

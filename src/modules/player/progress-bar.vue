@@ -1,7 +1,7 @@
 <template>
   <div
-    class="progress"
     ref="progressBar"
+    class="progress"
     @mousemove="handleMouseOver"
     @mouseleave="hovering = false"
     @mousedown="handleClick"
@@ -22,8 +22,8 @@
     />
 
     <div
-      class="time-tooltip"
       v-tooltip="tooltip"
+      class="time-tooltip"
       :style="{ left: `${mousePosition * 100}%` }"
     />
   </div>

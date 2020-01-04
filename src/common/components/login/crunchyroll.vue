@@ -1,9 +1,9 @@
 <template>
   <div class="step login-cr" @keydown.enter="login">
     <a
+      v-tooltip.top="'Crunchyroll'"
       href="https://crunchyroll.com"
       class="logo"
-      v-tooltip.top="'Crunchyroll'"
     >
       <span v-html="crIcon" />
     </a>
@@ -11,14 +11,14 @@
     <text-input
       placeholder="Username"
       :class="{ 'full-width': fullWidth }"
-      :onChange="value => handleChange('username', value)"
+      :on-change="value => handleChange('username', value)"
     />
 
     <text-input
       password
       placeholder="Password"
       :class="{ 'full-width': fullWidth }"
-      :onChange="value => handleChange('password', value)"
+      :on-change="value => handleChange('password', value)"
     />
 
     <transition>

@@ -9,7 +9,7 @@
       class="back-button"
     />
 
-    <a href="https://anilist.co" class="logo" v-tooltip.top="'AniList'">
+    <a v-tooltip.top="'AniList'" href="https://anilist.co" class="logo">
       <span v-html="alLogo" />
     </a>
 

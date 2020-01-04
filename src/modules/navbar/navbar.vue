@@ -5,19 +5,19 @@
     </router-link>
 
     <item
+      v-tooltip="getTooltip('queue')"
       text="Queue"
       path="/queue"
       class="align-right"
-      v-tooltip="getTooltip('queue')"
     />
 
     <search />
 
     <item
+      v-tooltip="getTooltip('list')"
       text="List"
       path="/list"
       class="align-left"
-      v-tooltip="getTooltip('list')"
     />
 
     <icon
@@ -30,7 +30,7 @@
     <settings-dropdown
       :class="openClass"
       :open="settingsOpen"
-      :toggleOpen="toggleOpen"
+      :toggle-open="toggleOpen"
     />
   </div>
 </template>

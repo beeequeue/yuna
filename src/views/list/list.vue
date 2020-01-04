@@ -1,9 +1,9 @@
 <template>
   <div class="list-page">
     <filters
-      @show-filtered="updateFilteredEntryIds"
       :entries="entries"
       :media="media"
+      @show-filtered="updateFilteredEntryIds"
     />
 
     <div class="list-container">
@@ -11,12 +11,12 @@
         v-for="status in lists"
         :key="status"
         :list="getList(status)"
-        :totalLength="getTotalListLength(status)"
+        :total-length="getTotalListLength(status)"
         :status="status"
         :media="media"
         :open="meta[status].open"
         :double="status === 'PLANNING'"
-        :toggleOpen="toggleOpen"
+        :toggle-open="toggleOpen"
       />
     </div>
   </div>

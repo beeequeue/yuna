@@ -8,7 +8,7 @@
           :disabled="saving"
           label="Status"
           :items="statusItems"
-          :onChange="value => setValue('status', value)"
+          :on-change="value => setValue('status', value)"
           :value="status"
         />
 
@@ -19,7 +19,7 @@
           :min="0"
           :max="anime.episodes"
           :value="progress"
-          :onChange="value => setValue('progress', value)"
+          :on-change="value => setValue('progress', value)"
         />
 
         <number-input
@@ -29,7 +29,7 @@
           :min="0"
           :max="100"
           :value="score"
-          :onChange="value => setValue('score', value)"
+          :on-change="value => setValue('score', value)"
         />
 
         <number-input
@@ -39,7 +39,7 @@
           :min="0"
           :max="999"
           :value="repeated"
-          :onChange="value => setValue('rewatched', value)"
+          :on-change="value => setValue('rewatched', value)"
         />
 
         <transition name="fade">

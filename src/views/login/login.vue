@@ -6,7 +6,7 @@
           <transition name="fade">
             <login-a-l
               v-if="!isConnectedTo.anilist"
-              :onFinished="onSuccessfulLogin"
+              :on-finished="onSuccessfulLogin"
             />
 
             <icon v-else :icon="checkSvg" />
@@ -17,7 +17,7 @@
           <transition name="fade">
             <login-simkl
               v-if="!isConnectedTo.simkl"
-              :onFinished="onSuccessfulLogin"
+              :on-finished="onSuccessfulLogin"
             />
 
             <icon v-else :icon="checkSvg" />
@@ -30,8 +30,8 @@
           <transition name="fade">
             <login-h-d
               v-if="!isConnectedTo.hidive || !selectedHidiveProfile"
-              :onFinished="confirmHidiveProfile"
-              fullWidth
+              :on-finished="confirmHidiveProfile"
+              full-width
             />
 
             <icon v-else :icon="checkSvg" />
@@ -42,8 +42,8 @@
           <transition name="fade">
             <login-c-r
               v-if="!isConnectedTo.crunchyroll"
-              :onFinished="onSuccessfulLogin"
-              fullWidth
+              :on-finished="onSuccessfulLogin"
+              full-width
             />
 
             <icon v-else :icon="checkSvg" />

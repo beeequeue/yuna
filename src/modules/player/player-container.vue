@@ -7,11 +7,11 @@
         :loading="$apollo.loading || !anime || !episode"
         :anime="anime"
         :episode="episode"
-        :nextEpisode="delayedNextEpisode"
-        :playerData="playerData"
-        :shouldAutoPlay="shouldAutoPlay"
-        :getShouldAutoMarkWatched="getShouldAutoMarkWatched"
-        :setProgress="setProgress"
+        :next-episode="delayedNextEpisode"
+        :player-data="playerData"
+        :should-auto-play="shouldAutoPlay"
+        :get-should-auto-mark-watched="getShouldAutoMarkWatched"
+        :set-progress="setProgress"
       />
       <external-player
         v-else-if="anime != null"

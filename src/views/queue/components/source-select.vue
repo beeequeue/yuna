@@ -4,10 +4,10 @@
       <span
         v-for="source in supportedSources"
         :key="source.site"
-        v-html="getLogo(source)"
         class="source"
         :class="getDropdownClasses(source)"
         :alt="source.site"
+        v-html="getLogo(source)"
       />
 
       <span class="text">

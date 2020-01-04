@@ -3,10 +3,10 @@
     <input
       ref="searchbar"
       placeholder="Search..."
+      :value="searchString"
       @focus="isOpen = true"
       @blur="isOpen = false"
       @mouseup.left="selectAllInInput"
-      :value="searchString"
       @input="setSearchString"
       @keydown.esc.capture="$refs.searchbar.blur()"
     />

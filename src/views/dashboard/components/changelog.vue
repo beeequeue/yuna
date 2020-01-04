@@ -5,9 +5,9 @@
     <div class="versions">
       <section
         v-for="version in changelog"
-        class="version"
-        :key="version.name"
         :id="version.tag_name"
+        :key="version.name"
+        class="version"
       >
         <a class="header" :href="version.html_url" target="_blank">
           <h2 v-html="getHeader(version.name)" />

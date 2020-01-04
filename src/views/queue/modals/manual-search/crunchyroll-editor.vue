@@ -10,13 +10,13 @@
       <div class="title">{{ anime.title }}</div>
 
       <c-button
+        v-tooltip.top="confirmTooltip"
         flat
         :confirm="!correctAmount"
         type="success"
         :icon="confirmSvg"
         :click="saveEpisodes"
-        :onConfirm="saveEpisodes"
-        v-tooltip.top="confirmTooltip"
+        :on-confirm="saveEpisodes"
       />
     </div>
 
@@ -25,9 +25,9 @@
         v-for="collection in anime.collections"
         :key="collection.collection_id"
         :collection="collection"
-        :selectedEpisodes="selectedEpisodes"
-        :selectEpisodes="selectEpisodes"
-        :unselectEpisodes="unselectEpisodes"
+        :selected-episodes="selectedEpisodes"
+        :select-episodes="selectEpisodes"
+        :unselect-episodes="unselectEpisodes"
       />
     </div>
 

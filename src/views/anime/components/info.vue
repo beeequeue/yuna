@@ -25,7 +25,7 @@
     <div class="item">
       <next-episode-info
         v-if="nextAiringEpisode"
-        :nextAiringEpisode="nextAiringEpisode"
+        :next-airing-episode="nextAiringEpisode"
       />
     </div>
   </div>

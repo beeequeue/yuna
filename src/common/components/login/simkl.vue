@@ -9,7 +9,7 @@
       class="back-button"
     />
 
-    <a href="https://simkl.com" class="logo" v-tooltip.top="'Simkl'">
+    <a v-tooltip.top="'Simkl'" href="https://simkl.com" class="logo">
       <span v-html="logo" />
     </a>
 

@@ -1,18 +1,18 @@
 <template>
-  <modal-base name="manualSearch" :toggleVisible="toggleModal">
+  <modal-base name="manualSearch" :toggle-visible="toggleModal">
     <animated-size class="manual-search-modal">
       <search-step
         v-if="selectedId == null"
-        :searchOptions="searchOptions"
-        :setSelectedId="setSelectedId"
+        :search-options="searchOptions"
+        :set-selected-id="setSelectedId"
       />
       <crunchyroll-editor
         v-else
-        :searchOptions="searchOptions"
         :id="selectedId"
-        :selectedEpisodes="selectedEpisodes"
-        :setSelectedId="setSelectedId"
-        :toggleVisible="toggleModal"
+        :search-options="searchOptions"
+        :selected-episodes="selectedEpisodes"
+        :set-selected-id="setSelectedId"
+        :toggle-visible="toggleModal"
       />
     </animated-size>
   </modal-base>

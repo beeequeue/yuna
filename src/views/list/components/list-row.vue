@@ -21,8 +21,8 @@
       <keep-alive>
         <transition-group
           v-if="list.length > 0 && open"
-          tag="div"
           key="EntryContainer"
+          tag="div"
           class="entry-container"
           :class="classes"
           @wheel.native="handleScroll"

@@ -1,8 +1,8 @@
 <template>
   <label
+    v-tooltip.bottom="validationError || error"
     class="number-input"
     :class="classes"
-    v-tooltip.bottom="validationError || error"
   >
     <span v-if="label != null">{{ label }}</span>
 

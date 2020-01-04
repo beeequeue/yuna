@@ -16,11 +16,11 @@
         </div>
         <recycle-scroller
           v-else
+          v-slot="{ item }"
           class="anime-container"
           :items="localAnime"
-          :itemSize="45"
+          :item-size="45"
           key-field="folderPath"
-          v-slot="{ item }"
         >
           <div
             :key="item.title + item.folderPath"

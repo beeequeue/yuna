@@ -4,8 +4,8 @@
       v-show="false"
       :id="setting"
       type="checkbox"
-      @change="handleChange"
       :checked="checked"
+      @change="handleChange"
     />
 
     <label :for="setting">

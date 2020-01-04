@@ -1,14 +1,14 @@
 <template>
   <div class="container" tabindex="0" @keydown.ctrl.d="openDevTools">
-    <div class="settings" ref="settings">
-      <section class="category" id="general">
+    <div ref="settings" class="settings">
+      <section id="general" class="category">
         <h1>General</h1>
 
         <checkbox
           setting="queue-auto-add-list"
           text="Mark shows as Planning when adding them to the queue."
           :checked="settings.autoMarkAsPlanning"
-          :onChange="checked => setSetting('autoMarkAsPlanning', checked)"
+          :on-change="checked => setSetting('autoMarkAsPlanning', checked)"
         />
 
         <section id="discord">
@@ -18,7 +18,7 @@
             setting="enable-discord-rp"
             text="Enable Discord Rich Presence"
             :checked="settings.discord.richPresence"
-            :onChange="handleDiscordPresenceChange"
+            :on-change="handleDiscordPresenceChange"
           />
         </section>
 
@@ -29,7 +29,7 @@
             setting="use-cr-unblocker"
             text="Try to use the US catalogue."
             :checked="settings.useCRUnblocker"
-            :onChange="handleUnblockerChange"
+            :on-change="handleUnblockerChange"
           />
 
           <div
@@ -50,24 +50,24 @@
           <p>
             Sub Language
             <icon
-              :icon="infoSvg"
               v-tooltip.top="
                 'Changing this may cause some<br/>shows to be unavailable unless<br/>changed back to English (US).'
               "
+              :icon="infoSvg"
             />
           </p>
 
           <dropdown
             :items="localeItems"
             :value="crunchyrollLocale"
-            :onChange="setCrunchyrollLocale"
+            :on-change="setCrunchyrollLocale"
           />
         </section>
 
         <section id="local-files">
           <h3>Local Files</h3>
 
-          <div class="path-container" id="local-files-path">
+          <div id="local-files-path" class="path-container">
             <c-button
               v-if="!localFilesFolder"
               content="Set path"
@@ -81,18 +81,18 @@
             />
 
             <div
-              class="path"
               v-tooltip.top="localFilesFolder"
+              class="path"
               @click="!!localFilesFolder ? setLocalFilesFolder() : null"
             >
               {{ localFilesFolder }}
             </div>
           </div>
 
-          <div class="path-container vlc" id="vlc-path">
+          <div id="vlc-path" class="path-container vlc">
             <icon :icon="vlcSvg" />
 
-            <div class="path" v-tooltip.top="vlcPath" @click="setVLCPath()">
+            <div v-tooltip.top="vlcPath" class="path" @click="setVLCPath()">
               <c-button v-if="!vlcPath" content="Set VLC path" />
               <span v-else>{{ vlcPath }}</span>
             </div>
@@ -100,7 +100,7 @@
         </section>
       </section>
 
-      <section class="category" id="updates">
+      <section id="updates" class="category">
         <h1>Updates</h1>
 
         <c-button
@@ -114,7 +114,7 @@
           setting="auto-update"
           text="Automatically update the program."
           :checked="settings.autoUpdate"
-          :onChange="checked => setSetting('autoUpdate', checked)"
+          :on-change="checked => setSetting('autoUpdate', checked)"
         />
 
         <!--<checkbox
@@ -125,16 +125,16 @@
         />-->
       </section>
 
-      <section class="category" id="spoilers">
+      <section id="spoilers" class="category">
         <h1>Spoiler Hiding</h1>
 
         <h3>
           Anime Info
           <icon
-            :icon="infoSvg"
             v-tooltip.top="
               'These spoilers will stop being<br/>hidden after watching one third<br/>of the season\'s episodes.'
             "
+            :icon="infoSvg"
           />
         </h3>
 
@@ -142,16 +142,16 @@
           setting="spoiler-descriptions"
           text="Descriptions"
           :checked="settings.spoilers.anime.description"
-          :onChange="checked => setSpoiler('anime.description', checked)"
+          :on-change="checked => setSpoiler('anime.description', checked)"
         />
 
         <h3>
           Episode Info
           <icon
-            :icon="infoSvg"
             v-tooltip.top="
               'These spoilers will stop<br/>being hidden after watching<br/>the episode.'
             "
+            :icon="infoSvg"
           />
         </h3>
 
@@ -159,40 +159,40 @@
           setting="spoiler-episode-title"
           text="Titles"
           :checked="settings.spoilers.episode.name"
-          :onChange="checked => setSpoiler('episode.name', checked)"
+          :on-change="checked => setSpoiler('episode.name', checked)"
         />
 
         <checkbox
           setting="spoiler-episode-thumbnail"
           text="Thumbnails"
           :checked="settings.spoilers.episode.thumbnail"
-          :onChange="checked => setSpoiler('episode.thumbnail', checked)"
+          :on-change="checked => setSpoiler('episode.thumbnail', checked)"
         />
       </section>
 
-      <section class="category" id="player">
+      <section id="player" class="category">
         <h1>Player</h1>
 
         <checkbox
           setting="autoPlay"
           text="AutoPlay next epsiode"
           :checked="settings.autoPlay"
-          :onChange="checked => setSetting('autoPlay', checked)"
+          :on-change="checked => setSetting('autoPlay', checked)"
         />
 
         <checkbox
           setting="autoMarkWatched"
           text="Automatically mark episodes as watched"
           :checked="settings.autoMarkWatched"
-          :onChange="checked => setSetting('autoMarkWatched', checked)"
+          :on-change="checked => setSetting('autoMarkWatched', checked)"
         />
 
-        <section class="category" id="keybindings">
+        <section id="keybindings" class="category">
           <h3>
             Keybindings
             <icon
-              :icon="infoSvg"
               v-tooltip.right="'Click a binding to remove it.'"
+              :icon="infoSvg"
             />
           </h3>
 
@@ -212,8 +212,8 @@
                 v-for="action in keybindingActions"
                 :key="action"
                 :action="action"
-                :unbindKey="unbindKey"
-                :openKeybindModal="openKeybindModal"
+                :unbind-key="unbindKey"
+                :open-keybind-modal="openKeybindModal"
               />
             </div>
           </div>
@@ -228,37 +228,37 @@
         </section>
       </section>
 
-      <section class="category" id="accounts">
+      <section id="accounts" class="category">
         <h1>Accounts</h1>
 
         <h3>List managers</h3>
 
-        <connection type="anilist" :setCurrentWindow="setCurrentWindow" />
+        <connection type="anilist" :set-current-window="setCurrentWindow" />
 
-        <connection type="simkl" :setCurrentWindow="setCurrentWindow" />
+        <connection type="simkl" :set-current-window="setCurrentWindow" />
 
         <p>
           Main list manager
 
           <icon
-            :icon="infoSvg"
             v-tooltip.top="{
               content:
                 'This is the service that will be used to show what status shows are in etc.',
             }"
+            :icon="infoSvg"
           />
         </p>
         <dropdown
           :items="mainListPluginSelectItems"
           :value="mainListPlugin"
-          :onChange="setMainListPlugin"
+          :on-change="setMainListPlugin"
         />
 
         <h3>Streaming services</h3>
 
-        <connection type="crunchyroll" :setCurrentWindow="setCurrentWindow" />
+        <connection type="crunchyroll" :set-current-window="setCurrentWindow" />
 
-        <connection type="hidive" :setCurrentWindow="setCurrentWindow" />
+        <connection type="hidive" :set-current-window="setCurrentWindow" />
       </section>
     </div>
 
@@ -267,22 +267,22 @@
         <div v-if="currentWindow" class="login-window">
           <login-a-l
             v-if="currentWindow === Window.Anilist"
-            :onFinished="() => setCurrentWindow(null)"
+            :on-finished="() => setCurrentWindow(null)"
           />
 
           <login-c-r
             v-if="currentWindow === Window.Crunchyroll"
-            :onFinished="() => setCurrentWindow(null)"
+            :on-finished="() => setCurrentWindow(null)"
           />
 
           <login-h-d
             v-if="currentWindow === Window.Hidive"
-            :onFinished="() => setCurrentWindow(null)"
+            :on-finished="() => setCurrentWindow(null)"
           />
 
           <login-simkl
             v-if="currentWindow === Window.Simkl"
-            :onFinished="() => setCurrentWindow(null)"
+            :on-finished="() => setCurrentWindow(null)"
           />
         </div>
       </transition>
@@ -291,8 +291,8 @@
     <transition name="fade">
       <div
         v-if="actionToBind"
-        class="keybinding-modal"
         ref="keybindModal"
+        class="keybinding-modal"
         tabindex="0"
         @keydown="bindKey"
       >

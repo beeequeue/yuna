@@ -13,7 +13,7 @@
             :key="anime.id"
             :anime="anime"
             :item="getItem(anime.id)"
-            :setProvider="setProvider(anime.id)"
+            :set-provider="setProvider(anime.id)"
           />
         </draggable>
       </container>

@@ -6,7 +6,7 @@
 
     <score
       v-if="showRating && listEntry"
-      :mediaId="listEntry.mediaId"
+      :media-id="listEntry.mediaId"
       :size="38"
     />
 

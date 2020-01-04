@@ -10,23 +10,23 @@
       <portal to="modal">
         <div
           v-if="open"
-          class="backdrop"
           key="backdrop"
+          class="backdrop"
           @click="open = false"
         />
 
         <div
           v-if="open"
           key="dropdown"
+          ref="dropdown"
           class="dropdown"
           :style="dropdownPosition"
-          ref="dropdown"
         >
           <div
             v-for="item in items"
+            :key="item.value"
             class="item"
             :class="{ selected: item.value === value }"
-            :key="item.value"
             @click="select(item)"
           >
             {{ item.label }}

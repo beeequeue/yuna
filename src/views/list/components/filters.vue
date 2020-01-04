@@ -19,31 +19,31 @@
 
       <icon
         v-if="isConnectedTo.simkl"
-        :icon="infoSvg"
         v-tooltip.bottom="
           'Some list entries may be missing due to Simkl missing ID matching data.'
         "
+        :icon="infoSvg"
       />
     </div>
 
     <c-select
+      v-model="selectedAiringStatus"
       class="airing-status"
       label="Airing Status"
       :items="airingStatuses"
-      v-model="selectedAiringStatus"
     />
 
     <text-input
       class="search"
       placeholder="Search in List..."
-      :onChange="debouncedSetSearchString"
+      :on-change="debouncedSetSearchString"
     />
 
     <c-select
+      v-model="selectedSource"
       class="sources"
       label="Streaming Source"
       :items="sources"
-      v-model="selectedSource"
     />
 
     <div class="aside loader">

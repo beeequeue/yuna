@@ -9,33 +9,33 @@
         :class="{ hide: currentStep == null }"
       >
         <list-plugins
-          key="list-plugins"
           v-if="currentStep === SetupStep.LIST_MANAGERS"
-          :finishStep="finishStep"
+          key="list-plugins"
+          :finish-step="finishStep"
         />
 
         <connections
-          key="connections"
           v-if="currentStep === SetupStep.CONNECT"
-          :finishStep="finishStep"
+          key="connections"
+          :finish-step="finishStep"
         />
 
         <spoiler-settings
-          key="s-s"
           v-if="currentStep === SetupStep.SPOILERS"
-          :finishStep="finishStep"
+          key="s-s"
+          :finish-step="finishStep"
         />
 
         <discord
-          key="discord"
           v-if="currentStep === SetupStep.DISCORD"
-          :finishStep="finishStep"
+          key="discord"
+          :finish-step="finishStep"
         />
 
         <local-files-setup
-          key="local-files-setup"
           v-if="currentStep === SetupStep.LOCAL_FILES"
-          :finishStep="finishStep"
+          key="local-files-setup"
+          :finish-step="finishStep"
         />
       </transition-group>
     </div>

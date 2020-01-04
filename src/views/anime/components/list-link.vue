@@ -4,8 +4,8 @@
     <img v-else class="logo" :src="logo" />
 
     <animated-size>
-      <span v-if="loading" class="rating" key="loading">...</span>
-      <span v-else-if="scoreString != null" class="rating" key="rating">{{
+      <span v-if="loading" key="loading" class="rating">...</span>
+      <span v-else-if="scoreString != null" key="rating" class="rating">{{
         scoreString
       }}</span>
     </animated-size>

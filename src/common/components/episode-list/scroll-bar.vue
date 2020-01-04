@@ -3,11 +3,11 @@
     <div
       v-for="(item, i) in items"
       :key="i"
+      v-tooltip="item.toString()"
       class="episode"
       :class="getClasses(item)"
       :style="{ width: `${tickWidth}px` }"
       @click="handleClick(i)"
-      v-tooltip="item.toString()"
     />
   </div>
 </template>

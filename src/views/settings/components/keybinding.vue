@@ -11,8 +11,8 @@
 
     <c-button
       v-if="keys.length < 2"
-      @click.native="openKeybindModal(action)"
       :icon="plusSvg"
+      @click.native="openKeybindModal(action)"
     />
   </div>
 </template>

@@ -9,18 +9,18 @@
 
     <div class="control-panel">
       <div
+        v-tooltip.top="'All shows in List'"
         class="switch list"
         :class="{ active: mode === EpisodeFeedMode.LIST }"
-        v-tooltip.top="'All shows in List'"
         @click="updateMode(EpisodeFeedMode.LIST)"
       >
         <icon :icon="listSvg" />
       </div>
 
       <div
+        v-tooltip.top="'Shows in Queue'"
         class="switch queue"
         :class="{ active: mode === EpisodeFeedMode.QUEUE }"
-        v-tooltip.top="'Shows in Queue'"
         @click="updateMode(EpisodeFeedMode.QUEUE)"
       >
         <icon :icon="queueSvg" />

@@ -13,9 +13,9 @@
         class="slide-down"
         :src="data.anime.coverImage.extraLarge"
         :color="data.anime.coverImage.color"
-        :listEntry="getListEntry(data)"
+        :list-entry="getListEntry(data)"
         :length="data.anime.episodes"
-        showRating
+        show-rating
       />
 
       <actions
@@ -23,7 +23,7 @@
         key="actions"
         class="slide-up"
         :anime="data.anime"
-        :listEntry="data.anime.listEntry"
+        :list-entry="data.anime.listEntry"
       />
 
       <anime-title
@@ -35,25 +35,25 @@
 
       <center-container
         v-if="data && data.anime"
+        :id="data.anime.id"
         key="center"
         class="slide-up"
-        :id="data.anime.id"
-        :idMal="data.anime.idMal"
+        :id-mal="data.anime.idMal"
         :score="data.anime.averageScore"
         :content="data.anime.description"
-        :nextAiringEpisode="data.anime.nextAiringEpisode"
-        :blurDescription="getShouldBlurDescription(data)"
+        :next-airing-episode="data.anime.nextAiringEpisode"
+        :blur-description="getShouldBlurDescription(data)"
       />
 
       <episode-list
-        key="episodes"
         v-if="data && data.anime"
+        key="episodes"
         class="slide-up"
         :loading="episodesLoading !== 0"
         :anime="data.anime"
         :episodes="episodes"
-        padRight
-        noVerticalPadding
+        pad-right
+        no-vertical-padding
       />
 
       <relations

@@ -2,8 +2,8 @@
   <div class="queue-item" :class="{ [`anime-${anime.id}`]: true }">
     <div
       v-if="listEntry != null"
-      class="status"
       v-tooltip.right="capitalize(status)"
+      class="status"
     >
       <transition name="fade" mode="out-in">
         <icon v-if="iconForStatus" :icon="iconForStatus" />
@@ -31,7 +31,7 @@
         :loading="episodesLoading !== 0"
         :open="item.open"
         small
-        scrollToNextEpisode
+        scroll-to-next-episode
       />
     </animated-size>
 
@@ -45,8 +45,8 @@
 
       <source-select
         :anime="anime"
-        :currentProvider="item.provider"
-        :setProvider="setProvider"
+        :current-provider="item.provider"
+        :set-provider="setProvider"
         :highlight="highlightSourceSelector"
       />
 
@@ -54,7 +54,7 @@
 
       <next-episode-info
         v-if="anime.nextAiringEpisode"
-        :nextAiringEpisode="anime.nextAiringEpisode"
+        :next-airing-episode="anime.nextAiringEpisode"
       />
 
       <div class="buttons">

@@ -1,8 +1,8 @@
 <template>
   <div
     v-if="nextAiringEpisode"
-    class="next-episode-info"
     v-tooltip.top="nextEpisodeDateString"
+    class="next-episode-info"
   >
     Episode {{ nextAiringEpisode.episode }} {{ nextEpisodeDistanceString }}
   </div>

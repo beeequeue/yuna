@@ -3,7 +3,7 @@
     <text-input
       class="search-bar"
       :placeholder="`Search on ${capitalizedProvider}`"
-      :onChange="handleSearchChange"
+      :on-change="handleSearchChange"
     />
 
     <div class="status">
@@ -19,7 +19,7 @@
         v-for="result in results"
         :key="result.id"
         :anime="{ title: result.title, bannerImage: result.landscapeImage }"
-        hideTitle
+        hide-title
         @click.native="setSelectedId(result.id)"
       />
     </div>

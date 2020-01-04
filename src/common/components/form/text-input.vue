@@ -1,5 +1,5 @@
 <template>
-  <label class="text-input" :class="classes" v-tooltip.bottom="error">
+  <label v-tooltip.bottom="error" class="text-input" :class="classes">
     <span v-if="label != null">{{ label }}</span>
 
     <input

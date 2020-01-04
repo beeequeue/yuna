@@ -4,8 +4,8 @@
       v-for="link in sources"
       :key="link.url"
       :href="link.url"
-      v-html="getLogo(link.site)"
       class="link"
+      v-html="getLogo(link.site)"
     />
   </div>
 </template>

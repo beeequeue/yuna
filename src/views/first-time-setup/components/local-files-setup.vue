@@ -6,9 +6,9 @@
       <div>Anime Folder</div>
 
       <c-button
+        v-tooltip="localFilesFolder"
         :icon="folderSvg"
         :content="localFilesFolder == null ? 'Select folder' : 'Change folder'"
-        v-tooltip="localFilesFolder"
         :click="setTemporaryLocalFilesFolder"
       />
     </section>
@@ -20,9 +20,9 @@
       <div class="container">
         <div class="vlc">
           <icon
+            v-tooltip="vlcPath"
             :icon="vlcSvg"
             :class="{ exists: vlcPath != null }"
-            v-tooltip="vlcPath"
             @click="setTemporaryVLCPath"
           />
           <div v-if="vlcPath != null">Found!</div>

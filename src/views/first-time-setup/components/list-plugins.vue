@@ -10,7 +10,7 @@
         :class="{ connected: connected.anilist }"
         @click="setCurrentWindow(Window.Anilist)"
       >
-        <span v-html="alLogo" class="logo" />
+        <span class="logo" v-html="alLogo" />
       </div>
 
       <div
@@ -18,7 +18,7 @@
         :class="{ connected: connected.simkl }"
         @click="setCurrentWindow(Window.Simkl)"
       >
-        <span v-html="simklLogo" class="logo" />
+        <span class="logo" v-html="simklLogo" />
       </div>
     </div>
 
@@ -32,14 +32,14 @@
   <login-a-l
     v-else-if="currentWindow === Window.Anilist"
     :key="Window.Anilist"
-    :onFinished="showMainWindow"
+    :on-finished="showMainWindow"
     :cancel="showMainWindow"
   />
 
   <login-simkl
     v-else-if="currentWindow === Window.Simkl"
     :key="Window.Simkl"
-    :onFinished="showMainWindow"
+    :on-finished="showMainWindow"
     :cancel="showMainWindow"
   />
 </template>
