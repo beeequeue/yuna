@@ -1,12 +1,11 @@
 import { api } from 'electron-util'
-import anitomy from 'anitomy-js'
 import ffmpeg from 'fluent-ffmpeg'
 import { existsSync, promises as fs } from 'fs'
 import path from 'path'
 import crypto from 'crypto'
 
 import { SettingsStore } from '@/state/settings'
-import { isNil, mapAsync } from '@/utils'
+import { isNil, isNotNil, mapAsync } from '@/utils'
 import { FFMPEG_PATH, FFPROBE_PATH } from '@/utils/paths'
 
 export type LocalAnime = {
@@ -82,7 +81,9 @@ export class LocalFiles {
     )
 
     const fileNames = await mapAsync(files, async (f, i) => {
-      let parsed = await anitomy.parse(f)
+      let parsed = this.parseFileName(f)
+
+      if (isNil(parsed)) return null
 
       return {
         filePath: path.join(localAnime.folderPath, files[i]),
@@ -91,12 +92,13 @@ export class LocalFiles {
     })
 
     const promises = fileNames
+      .filter(isNotNil)
       // Filter out files that don't belong to our anime
-      .filter(item => item.anime_title === localAnime.title)
+      .filter(item => item.animeTitle === localAnime.title)
       // Map to result
       .map<Promise<LocalAnimeFile>>(async item => {
         const id = this.generateId(item.filePath)
-        const episodeNumber = Number(item.episode_number)
+        const episodeNumber = Number(item.episodeNumber)
         const filename = `${anilistId}-${episodeNumber}`
 
         const command = ffmpeg(item.filePath)
@@ -112,17 +114,98 @@ export class LocalFiles {
           id,
           filePath: item.filePath,
           title:
-            item.episode_title ||
+            item.episodeTitle ||
             this.getVideoStreamTitle(probeData) ||
             `Episode ${episodeNumber}`,
           thumbnail: `file://${thumbnailPath}`,
           episodeNumber,
           duration: Math.round(probeData.format.duration!),
-          format: item.file_extension!,
+          format: item.extension!,
         }
       })
 
     return Promise.all(promises)
+  }
+
+  private static bannedWords = [
+    /[Ee][Nn][Hh][Aa][Nn][Cc][Ee][Dd]/,
+    /HEVC|hevc/,
+    /(?:FLAC|flac)(?:x\d*)? ?(?:\d.\d)?/,
+    /WEBP|webp/,
+    /AAC|aac/,
+    /AVC|avc/,
+    /[Hh][Ii]10/,
+    /BD|[Bb]lu[- .]?[Rr]ay/,
+    /[Dd]ual[ .-_][Aa]udio/,
+    /(?:1080|1920|1820|720|540|360|2160)p?/,
+    /\d{2}bit/, // 10bit etc
+    /[XxHh].?\d{3}(?:-\w*)?/, // x264 etc
+  ]
+
+  private static parseFileName(filename: string) {
+    const original = filename
+
+    // Remove extension
+    const extension = filename.slice(
+      filename.lastIndexOf('.') + 1,
+      filename.length,
+    )
+    filename = filename.slice(0, filename.lastIndexOf('.'))
+
+    // Remove metadata ( [*] )
+    filename = filename.replace(/\[.*?\]/g, '').trim()
+
+    this.bannedWords.forEach(regex => {
+      filename = filename
+        .replace(new RegExp(`\\(.*(?:${regex.source}).*\\)`), '')
+        .trim()
+    })
+
+    this.bannedWords.forEach(regex => {
+      filename = filename.replace(regex, '').trim()
+    })
+
+    // Remove season info
+    filename = filename
+      .replace(/[Ss]\d{1,2}/g, '')
+      .replace(/[Ss][Ee][Aa][Ss][Oo][Nn] *\d{1,2}/g, '')
+      .trim()
+
+    // Fix separators
+    filename = filename.replace(/[\._]/g, ' ').trim()
+
+    let match = /[Ee](?:[Pp](?:isode)?)?(\d{1,4})/.exec(filename) || []
+    let num = Number(match[1])
+
+    if (!match[1] || isNaN(num)) {
+      match = /(\d{2,4})/.exec(filename) || []
+      num = Number(match[1])
+    }
+
+    if (!match[1] || isNaN(num)) {
+      match = /\[(\d{2,4})\]/.exec(original) || []
+      num = Number(match[1])
+    }
+
+    if (/([Oo][Vv][Aa])/.exec(original)) {
+      return null
+    }
+
+    const [animeTitle, episodeTitle] = filename.split(match[0]).map(str =>
+      str
+        .replace(/ - $/, '')
+        .replace(/^ - /, '')
+        .trim(),
+    )
+
+    if (isNil(animeTitle)) return null
+
+    return {
+      animeTitle: animeTitle,
+      episodeTitle: episodeTitle || !isNaN(num) ? `Episode ${num}` : null,
+      episodeNumber: !isNaN(num) ? num : null,
+      extension,
+    }
   }
 
   private static generateId(path: string) {
@@ -161,22 +244,22 @@ export class LocalFiles {
       fileNames.push(item)
     })
 
-    const parsedFileNames = await mapAsync(fileNames, async path =>
-      anitomy.parse(path),
-    )
+    const parsedFileNames = fileNames
+      .map(path => this.parseFileName(path))
+      .filter(isNotNil)
 
     parsedFileNames
       .filter(element => {
-        const ext = (element.file_extension ?? '').toLowerCase()
+        const ext = (element.extension ?? '').toLowerCase()
         return (
           ACCEPTED_EXTENSIONS.includes(ext) &&
-          !isNil(element.anime_title) &&
-          !isNil(element.episode_number)
+          !isNil(element.animeTitle) &&
+          !isNil(element.episodeNumber)
         )
       })
       .map<LocalAnime>(el => ({
         folderPath,
-        title: el.anime_title!,
+        title: el.animeTitle,
         episodes: 1,
       }))
       .forEach(el => results.push(el))
