@@ -81,7 +81,7 @@ export class LocalFiles {
     )
 
     const fileNames = await mapAsync(files, async (f, i) => {
-      let parsed = await this.parseFileName(f, basename(localAnime.folderPath))
+      let parsed = await this.parseFileName(f, localAnime.folderPath)
 
       if (isNil(parsed)) return null
 
@@ -162,14 +162,28 @@ export class LocalFiles {
     })
 
     // Fix separators
-    name = name.replace(/[\._]/g, ' ').trim()
+    name = name.replace(/[._]/g, ' ').trim()
 
     return name
   }
 
-  private static async parseFileName(filename: string, folderName: string) {
+  private static getGoodBackupTitle(folderPath: string): string {
+    const lastPart = basename(folderPath)
+
+    if (/[Ss](?:eason) ?\d+/.exec(lastPart)) {
+      const separator = folderPath.includes('\\') ? '\\' : '/'
+      const oneStepUp = folderPath.slice(0, folderPath.lastIndexOf(separator))
+      return `${basename(oneStepUp)} - ${lastPart}`
+    }
+
+    return lastPart
+  }
+
+  private static async parseFileName(filename: string, folderPath: string) {
     const original = filename
-    const backupTitle = this.cleanupFilename(folderName)
+    const backupTitle = this.cleanupFilename(
+      this.getGoodBackupTitle(folderPath),
+    )
 
     const extension = filename.slice(
       filename.lastIndexOf('.') + 1,
@@ -254,7 +268,7 @@ export class LocalFiles {
     })
 
     const parsedFileNames = await mapAsync(fileNames, path =>
-      this.parseFileName(path, basename(folderPath)),
+      this.parseFileName(path, folderPath),
     )
 
     parsedFileNames
