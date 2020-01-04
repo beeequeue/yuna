@@ -249,11 +249,13 @@ export const app = {
       }
     },
 
-    setLocalSourceAnime(state: AppState, animeId: number) {
-      state.modals.localSource.visible = true
-      state.modals.localSource.options = {
-        anilistId: animeId,
-      }
+    setLocalSourceAnime(state: AppState, animeId: number | null) {
+      state.modals.localSource.visible = !isNil(animeId)
+      state.modals.localSource.options = !animeId
+        ? null
+        : {
+            anilistId: animeId,
+          }
     },
 
     setFullscreen(state: AppState, b: boolean) {

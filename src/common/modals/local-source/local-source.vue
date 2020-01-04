@@ -58,6 +58,7 @@ import {
   getLocalSourceOptions,
   ModalName,
   sendToast,
+  setLocalSourceAnime,
   toggleModal,
 } from '@/state/app'
 import { LocalAnime, LocalFiles } from '@/lib/local-files'
@@ -210,7 +211,7 @@ export default class LocalSourceModal extends Vue {
       timeout: 10_000,
     })
 
-    new Notification(notification.title, { body: notification.message })
+    setLocalSourceAnime(this.$store, null)
   }
 }
 </script>
