@@ -38,6 +38,13 @@
     >
       <span class="fill" />
 
+      <a
+        href="https://github.com/BeeeQueue/yuna/blob/master/docs/local-files.md"
+        class="local-files-help"
+      >
+        Want to play local files?
+      </a>
+
       <c-button
         content="Import Watching from List"
         :icon="currentSvg"
@@ -471,6 +478,18 @@ export default class Queue extends Vue {
     padding: 20px 25px;
     background: #202130;
     transition: margin-bottom 0.25s;
+
+    & > .local-files-help {
+      margin-bottom: 10px;
+      font-weight: 700;
+      text-decoration: none;
+      color: color($highlightText, 400);
+      transition: color 0.15s;
+
+      &:hover {
+        color: color($highlightText, 600);
+      }
+    }
 
     &.small {
       margin-bottom: 183px;
