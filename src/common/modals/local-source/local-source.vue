@@ -14,6 +14,25 @@
         </a>
       </div>
 
+      <div class="folder" :title="selectedFolder">
+        <div class="placeholder" />
+
+        <div class="text">
+          {{ selectedFolder }}
+        </div>
+
+        <c-button
+          v-tooltip.top="
+            !manuallySelected
+              ? 'Manually select folder'
+              : 'Reset to default local folder'
+          "
+          :click="!manuallySelected ? manuallySelectFolder : updateLocalAnime"
+          :icon="!manuallySelected ? folderSvg : resetSvg"
+          class="manually-select"
+        />
+      </div>
+
       <animated-size>
         <div v-if="loadingLocalAnime || creatingEpisodes">
           <loading :size="50" />
@@ -48,6 +67,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import Fuse, { FuseResultWithScore } from 'fuse.js'
+import { mdiClose, mdiFolder } from '@mdi/js'
 
 import ModalBase from '@/common/modals/base.vue'
 import Loading from '@/common/components/loading.vue'
@@ -69,8 +89,11 @@ import {
   toggleModal,
 } from '@/state/app'
 import { LocalAnime, LocalFiles } from '@/lib/local-files'
-import { isNil } from '@/utils'
+import { getLocalFilesFolder } from '@/state/settings'
+import CButton from '@/common/components/button.vue'
 import AnimatedSize from '@/common/components/animated-size.vue'
+import { isNil } from '@/utils'
+import { getFolderPath } from '@/utils/paths'
 
 const combineDuplicatesBasedOnScore = (
   anime: FuseResultWithScore<LocalAnime>[],
@@ -95,7 +118,7 @@ const combineDuplicatesBasedOnScore = (
 }
 
 @Component({
-  components: { AnimatedSize, Loading, ModalBase, RecycleScroller },
+  components: { CButton, AnimatedSize, Loading, ModalBase, RecycleScroller },
 })
 export default class LocalSourceModal extends Vue {
   public readonly modalName: ModalName = 'localSource'
@@ -113,9 +136,13 @@ export default class LocalSourceModal extends Vue {
   })
   public anime!: LocalSourceAnimeQuery['anime']
 
+  public selectedFolder = getLocalFilesFolder(this.$store)
   public localAnime: LocalAnime[] = []
   public loadingLocalAnime = false
   public creatingEpisodes = false
+
+  public folderSvg = mdiFolder
+  public resetSvg = mdiClose
 
   public get animeId() {
     return getLocalSourceOptions(this.$store)?.anilistId || null
@@ -128,8 +155,29 @@ export default class LocalSourceModal extends Vue {
     }
   }
 
+  public folderPathLimit = 50
+  public get shortFolderPath() {
+    if (isNil(this.selectedFolder)) return null
+
+    const { length } = this.selectedFolder
+    if (length < this.folderPathLimit) {
+      return this.selectedFolder
+    }
+
+    return (
+      '...' + this.selectedFolder.slice(length - this.folderPathLimit, length)
+    )
+  }
+
+  public get manuallySelected() {
+    if (isNil(this.selectedFolder)) return false
+
+    return this.selectedFolder !== getLocalFilesFolder(this.$store)
+  }
+
   @Watch('titles')
   public async updateLocalAnime() {
+    this.selectedFolder = getLocalFilesFolder(this.$store)
     this.loadingLocalAnime = true
     this.localAnime = await LocalFiles.getLocalAnime()
     this.loadingLocalAnime = false
@@ -156,6 +204,17 @@ export default class LocalSourceModal extends Vue {
       .sort((a, b) => a.score! - b.score!)
       // Map back to the anime
       .map(result => result.item)
+  }
+
+  public async manuallySelectFolder() {
+    const folder = await getFolderPath({
+      title: 'Manually select anime folder...',
+    })
+
+    if (isNil(folder)) return
+
+    this.selectedFolder = folder
+    this.localAnime = await LocalFiles.getAnimeInFolder(folder)
   }
 
   public async select(localAnime: LocalAnime) {
@@ -231,6 +290,7 @@ export default class LocalSourceModal extends Vue {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: 600px;
   background: $dark;
   border-radius: 5px;
   box-shadow: $shadow;
@@ -238,7 +298,6 @@ export default class LocalSourceModal extends Vue {
 
   & > .header {
     padding: 15px 35px;
-    border-bottom: 2px solid color($dark, 600);
 
     & > .title {
       margin: 15px 0 0;
@@ -266,6 +325,38 @@ export default class LocalSourceModal extends Vue {
     }
   }
 
+  & > .folder {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    border-bottom: 2px solid color($dark, 600);
+    border-top: 2px solid color($dark, 600);
+    padding: 8px 15px;
+    font-weight: 400;
+    font-size: 0.9em;
+    color: gray;
+
+    & > .text {
+      width: 500px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    & > .placeholder {
+      margin-right: auto;
+      height: 30px;
+      width: 30px;
+      flex-shrink: 0;
+    }
+
+    & > .manually-select {
+      margin-left: auto;
+    }
+  }
+
   & .loader {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -283,7 +374,7 @@ export default class LocalSourceModal extends Vue {
   & .anime-container {
     position: relative;
     max-height: 45vh;
-    min-width: 350px;
+    min-width: 600px;
     width: 100%;
     overflow-y: auto;
     padding: 10px 20px;

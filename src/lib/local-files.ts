@@ -242,7 +242,7 @@ export class LocalFiles {
   /**
    * Searches a folder and its children for anime episode files, and then returns them in an array.
    */
-  private static async getAnimeInFolder(
+  public static async getAnimeInFolder(
     folderPath: string,
     maxDepth = 2,
     level = 0,
