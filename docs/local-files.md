@@ -21,6 +21,10 @@ Then go to your Queue and click the `Select source...` dropdown.
 
 ![](https://i.imgur.com/cMU9414.png)
 
+Click `Local files`
+
+<img height="200" src="https://i.imgur.com/5fvP7dC.png"/>
+
 Then select it in the menu.
 
 ![](https://i.imgur.com/JlES64b.png)
