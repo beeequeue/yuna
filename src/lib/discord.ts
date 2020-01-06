@@ -9,7 +9,6 @@ import {
   DISCORD_PAUSE_WATCHING,
   DISCORD_SET_WATCHING,
 } from '@/messages'
-import { NO_OP } from '@/utils'
 
 type WatchingOptions = {
   animeName: string
@@ -42,7 +41,9 @@ class Discord {
   constructor() {
     this.discord = new DiscordRPC.Client({ transport: 'ipc' })
 
-    this.discord.login({ clientId: id }).catch(NO_OP)
+    this.discord.login({ clientId: id }).catch(() => {
+      this.disabled = true
+    })
   }
 
   public async setActivity(activity: Presence) {
