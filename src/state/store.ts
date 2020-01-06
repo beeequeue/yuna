@@ -61,7 +61,11 @@ ipcRenderer.on(UPDATE_DOWNLOADED, () => {
   })
 })
 
+let hasErrored = false
 ipcRenderer.on(UPDATE_ERROR, (_e: any, version?: string) => {
+  if (hasErrored) return
+  hasErrored = true
+
   setIsUpdateAvailable(store, false)
 
   let url = 'https://github.com/BeeeQueue/yuna/releases'

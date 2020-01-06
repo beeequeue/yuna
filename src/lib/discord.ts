@@ -41,7 +41,9 @@ class Discord {
   constructor() {
     this.discord = new DiscordRPC.Client({ transport: 'ipc' })
 
-    this.discord.login({ clientId: id })
+    this.discord.login({ clientId: id }).catch(() => {
+      this.disabled = true
+    })
   }
 
   public async setActivity(activity: Presence) {
