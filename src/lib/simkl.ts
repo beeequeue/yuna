@@ -62,15 +62,15 @@ type _ShowFull = {
   network: string
   anime_type: 'tv'
   ratings?: {
-    simkl: {
+    simkl?: {
       rating: number
       votes: number
     }
-    imdb: {
+    imdb?: {
       rating: number
       votes: number
     }
-    mal: {
+    mal?: {
       rating: number
       votes: number
       rank: number
@@ -338,7 +338,7 @@ export class Simkl {
   public static async getRating(malId: number): Promise<number | null> {
     const info = await this.getAnimeInfo(malId)
 
-    return info?.ratings?.simkl.rating ?? null
+    return info?.ratings?.simkl?.rating ?? null
   }
 
   public static async getLink(malId: number) {

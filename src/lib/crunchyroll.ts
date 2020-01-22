@@ -713,7 +713,7 @@ const getEpisodeNumber = (num: string | number) => {
 }
 
 const fixEpisodeNumbers = (episodes: EpisodeListEpisodes[]) => {
-  const episodeNumber = episodes?.[0].episodeNumber
+  const episodeNumber = episodes[0]?.episodeNumber
 
   if (isNil(episodeNumber)) {
     return []

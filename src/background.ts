@@ -54,6 +54,11 @@ init({
     /Origin not allowed/,
     /code signature/,
     /connection closed/,
+    /RPC_CONNECTION_TIMEOUT/,
+    /Cannot read property 'write' of null/,
+    /Redirect was cancelled/,
+    /no such file/,
+    /Cannot find latest/,
   ],
 })
 

@@ -7,9 +7,5 @@ export const scoreMalResolver = async (
 ): Promise<number | null> => {
   if (isNil(media) || isNil(media.idMal)) return null
 
-  try {
-    return fetchRating(media.idMal)
-  } catch (err) {
-    return null
-  }
+  return fetchRating(media.idMal)
 }

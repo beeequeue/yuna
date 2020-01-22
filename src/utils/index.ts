@@ -193,6 +193,8 @@ export const getEpisodeCacheKey = (ep: EpisodeListEpisodes) =>
   `Episode:${ep.provider}:${ep.id}`
 
 export const removeCookies = async (filter: CookiesGetFilter) => {
+  if (isNil(session)) return
+
   if (!session.defaultSession) {
     // eslint-disable-next-line no-console
     return console.warn(
