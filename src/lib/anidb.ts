@@ -68,10 +68,10 @@ const getIdentifier = (ep: XmlEpisode) => {
     )
     if (correctType == null) return null
 
-    return correctType.externalentity.identifier[0]
+    return correctType.externalentity.identifier?.[0]
   }
 
-  return ep.resources.resource.externalentity.identifier[0]
+  return ep.resources.resource.externalentity.identifier?.[0]
 }
 
 const limiter = new Bottleneck({
