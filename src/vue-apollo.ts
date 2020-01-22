@@ -127,7 +127,7 @@ export const createProvider = (store: Store<any>) => {
       if (process.env.NODE_ENV === 'production') {
         if (isNil(networkError)) return
 
-        captureException(networkError)
+        return captureException(networkError)
       }
 
       // eslint-disable-next-line no-console

@@ -1,10 +1,11 @@
 import Bottleneck from 'bottleneck'
 import request from 'superagent/dist/superagent'
+import { captureException } from '@sentry/browser'
 
 import { EpisodeListEpisodes } from '@/graphql/types'
 
 import { Crunchyroll } from '@/lib/crunchyroll'
-import { RequestResponse, responseIsError, T } from '@/utils'
+import { isNil, RequestResponse, responseIsError, T } from '@/utils'
 
 const baseUrl = `https://myanimelist.net/anime`
 const CRUNCHYROLL_PROVIDER_ID = '1'
@@ -86,7 +87,9 @@ export const fetchEpisodesOfSeries = async (
   return Crunchyroll.fetchSeasonFromEpisode(id, mediaIdMatch[1])
 }
 
-export const fetchRating = async (id: string | number): Promise<number> => {
+export const fetchRating = async (
+  id: string | number,
+): Promise<number | null> => {
   let response: RequestResponse<{ score: string | null }> | null = null
 
   try {
@@ -97,8 +100,9 @@ export const fetchRating = async (id: string | number): Promise<number> => {
     // noop
   }
 
-  if (responseIsError(response)) {
-    return handleError(response, 'Could not fetch MAL rating. 😟')
+  if (isNil(response) || responseIsError(response)) {
+    captureException(new Error(`Could not fetch MAL rating for MAL:${id}`))
+    return null
   }
 
   const { score } = response.body
