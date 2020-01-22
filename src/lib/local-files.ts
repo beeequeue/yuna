@@ -105,6 +105,10 @@ export class LocalFiles {
 
         const probeData = await this.probeFile(command)
 
+        if (isNil(probeData)) {
+          throw new Error(`Could not parse ${basename(item.filePath)}`)
+        }
+
         const thumbnailPath = path.join(this.thumbnailFolder, `${filename}.png`)
         if (!existsSync(thumbnailPath)) {
           await this.generateScreenshot(command, filename)
@@ -124,7 +128,11 @@ export class LocalFiles {
         }
       })
 
-    return Promise.all(promises)
+    const episodes = await Promise.all(promises)
+
+    episodes.sort((a, b) => a.episodeNumber - b.episodeNumber)
+
+    return episodes
   }
 
   private static bannedWords = [
@@ -299,10 +307,10 @@ export class LocalFiles {
   }
 
   private static probeFile(command: ffmpeg.FfmpegCommand) {
-    return new Promise<ffmpeg.FfprobeData>((resolve, reject) => {
+    return new Promise<ffmpeg.FfprobeData | null>(resolve => {
       command.ffprobe((err, data) => {
         if (!isNil(err)) {
-          reject(err)
+          resolve(null)
         }
 
         resolve(data)
