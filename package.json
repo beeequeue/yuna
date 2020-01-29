@@ -17,7 +17,7 @@
     "electron-updater": "4.2.0",
     "electron-util": "0.12.3",
     "eslint": "6.8.0",
-    "ffmpeg-static": "2.7.0",
+    "ffmpeg-static": "4.0.0",
     "ffprobe-static": "3.0.0",
     "fluent-ffmpeg": "2.1.2",
     "fuse.js": "3.4.6",
