@@ -84,7 +84,7 @@
     "@vue/eslint-config-prettier": "6.0.0",
     "@vue/eslint-config-typescript": "5.0.1",
     "babel-eslint": "10.0.3",
-    "browserslist": "4.8.2",
+    "browserslist": "4.8.7",
     "cross-env": "6.0.3",
     "electron": "7.1.7",
     "electron-builder": "22.2",
