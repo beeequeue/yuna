@@ -5957,10 +5957,10 @@ electron-updater@4.2.0:
     pako "^1.0.10"
     semver "^6.3.0"
 
-electron-util@0.12.3:
-  version "0.12.3"
-  resolved "https://registry.yarnpkg.com/electron-util/-/electron-util-0.12.3.tgz#e2c0059b4109b512542d66261888c2beb2fc2b29"
-  integrity sha512-6Vq8UzUFcwghVpXazIY4cD5TkTvqXOTvJpzsoeiQY051Twdwu6ofHHP/shEFkpxf8X81M6F8/cdeoT+2XYpTBg==
+electron-util@0.14.0:
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/electron-util/-/electron-util-0.14.0.tgz#44d2421d06df7252ae5a7c37fda9b140f3643ad0"
+  integrity sha512-f8DXlOLrI7aq2S1yRlgx8Dc+Zbq5hlKKyVUnc73HyLEijo8/0KT9Cqlcduy75qwwynVw+cvbuqtqgIlrHLijyw==
   dependencies:
     electron-is-dev "^1.1.0"
     new-github-issue-url "^0.2.1"
