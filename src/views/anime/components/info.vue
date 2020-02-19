@@ -1,6 +1,7 @@
 <template>
   <div class="info-container">
     <list-link
+      title="AniList"
       :logo="alLogo"
       :loading="$apollo.loading"
       :link="alLink"
@@ -9,6 +10,7 @@
     />
 
     <list-link
+      title="MyAnimeList"
       :logo="malLogo"
       :loading="$apollo.loading"
       :link="malLink"
@@ -16,6 +18,7 @@
     />
 
     <list-link
+      title="Simkl"
       :logo="simklLogo"
       :loading="$apollo.loading"
       :link="simklInfo && simklInfo.linkSimkl"
