@@ -1,6 +1,7 @@
 import { activeWindow } from 'electron-util'
 import superagent from 'superagent/dist/superagent'
 import { ActionContext, Store } from 'vuex'
+import missingThumbnail from '@/assets/missing-thumbnail.webp'
 import { EpisodeListEpisodes, Provider } from '@/graphql/types'
 
 import { getConfig } from '@/config'
@@ -91,7 +92,7 @@ export type _Media = {
   duration: number
   name: string
   description: string
-  screenshot_image: _ImageSet
+  screenshot_image: _ImageSet | null
   bif_url: string
   url: string
   clip: boolean
@@ -167,17 +168,6 @@ export type _AutocompleteResult = {
   etp_guid: string
   landscape_image: _ImageSet
   portrait_image: _ImageSet
-}
-
-export type _QueueEntry = {
-  last_watched_media: _Media
-  most_likely_media: _Media
-  ordering: number
-  queue_entry_id: number
-  last_watched_media_playhead: number
-  most_likely_media_playhead: number
-  playhead: number
-  series: _Series
 }
 
 type CrunchyrollSuccess<D extends object = any> = {
@@ -471,7 +461,7 @@ export class Crunchyroll {
 
     const episodes = response.body.data
       .filter(isRealEpisode)
-      .map(mediaToEpisode(id)) as any
+      .map(mediaToEpisode(id))
 
     return fixEpisodeNumbers(episodes)
   }
@@ -698,7 +688,7 @@ const mediaToEpisode = (id: number) => (
   duration,
   url,
   subtitles: [],
-  thumbnail: screenshot_image.full_url,
+  thumbnail: screenshot_image?.full_url ?? missingThumbnail,
 })
 
 const notNumberRegex = /[^\d.]/g
