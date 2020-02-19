@@ -115,7 +115,7 @@ export const createProvider = (store: Store<any>) => {
         fetchPolicy: 'cache-first',
       },
     },
-    async errorHandler({ networkError, message }) {
+    async errorHandler({ networkError }) {
       if (!isNil(networkError) && (networkError as any)?.statusCode === 429) {
         const currentReservoir = (await limiter.currentReservoir()) || 60
         await limiter.incrementReservoir(-currentReservoir)
@@ -131,11 +131,7 @@ export const createProvider = (store: Store<any>) => {
       }
 
       // eslint-disable-next-line no-console
-      console.log(
-        '%cError',
-        'background: red; color: white; padding: 2px 4px; border-radius: 3px; font-weight: bold;',
-        message,
-      )
+      console.error(networkError)
     },
   })
 

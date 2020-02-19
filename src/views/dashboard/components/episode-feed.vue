@@ -52,7 +52,7 @@ import { prop } from '@/utils'
 export default class EpisodeFeed extends Vue {
   @Query<EpisodeFeed, EpisodeFeedListIdsQuery>({
     query: EPISODE_FEED_LIST_IDS,
-    update: data => data.ListEntries.map(prop('mediaId')),
+    update: data => data.ListEntries?.map(prop('mediaId')) ?? [],
   })
   public listIds!: number[]
 

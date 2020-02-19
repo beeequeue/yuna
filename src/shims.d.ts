@@ -53,6 +53,11 @@ declare module '*.svg' {
   export default Vue
 }
 
+declare module '!url-loader!' {
+  const str: string
+  export default str
+}
+
 declare module '*.webp' {
   const content: string
   export default content
