@@ -115,7 +115,7 @@ export const createProvider = (store: Store<any>) => {
         fetchPolicy: 'cache-first',
       },
     },
-    async errorHandler({ networkError, message }) {
+    async errorHandler({ networkError }) {
       if (!isNil(networkError) && (networkError as any)?.statusCode === 429) {
         const currentReservoir = (await limiter.currentReservoir()) || 60
         await limiter.incrementReservoir(-currentReservoir)
