@@ -71,7 +71,7 @@ export default class EpisodeList extends Vue {
 
   public $refs!: {
     container: Vue
-    episodes: Episode[]
+    episodes: Episode
   }
 
   public get listEntry() {
@@ -130,40 +130,34 @@ export default class EpisodeList extends Vue {
   }
 
   @Watch('open')
-  @Watch('progress')
   public _scrollToNextEpisode(iteration: number = 0): void {
-    if (!this.$refs.episodes?.[0] && iteration < 50) {
+    if (!this.$refs.episodes && iteration < 50) {
       setTimeout(() => this._scrollToNextEpisode(iteration + 1), 50)
 
       return
     }
 
     if (
-      !this.scrollToNextEpisode ||
-      !this.open ||
       isNil(this.listEntry) ||
       isNil(this.episodes) ||
       isNil(this.$refs.episodes) ||
-      isNil(this.$refs.episodes[0]) ||
       this.episodes.length < 1
     ) {
       return
     }
 
-    const containerRect = this.$refs.container.$el.getBoundingClientRect()
-    const episodeRect = this.$refs.episodes[0].$el.getBoundingClientRect()
-    let offset
+    const episodeRect = this.$refs.episodes.$el.getBoundingClientRect()
+    let nextEpisodeIndex: number
 
-    if (this.$refs.episodes.length > this.listEntry!.progress! || 0) {
-      const nextEpisode = this.$refs.episodes[this.listEntry!.progress || 0]
-
-      offset = (nextEpisode.$el as HTMLDivElement).offsetLeft
+    if (this.episodes.length > this.listEntry!.progress! || 0) {
+      nextEpisodeIndex = this.episodes[this.listEntry!.progress || 0].index
     } else {
-      offset = this.$refs.container.$el.clientWidth * 2
+      nextEpisodeIndex = this.$refs.container.$el.clientWidth * 2
     }
 
+    // Not sure why it doesn't scroll all the way but the added number seems to get it there
     this.$refs.container.$el.scrollTo({
-      left: offset - (containerRect.width / 2 - episodeRect.width / 2),
+      left: episodeRect.width * (nextEpisodeIndex + 7.5),
       behavior: 'smooth',
     })
   }
