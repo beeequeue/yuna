@@ -3,6 +3,9 @@
   "description": "An anime player that integrates with AniList, Crunchyroll, and Hidive.",
   "version": "1.4.12",
   "author": "BeeeQueue",
+  "engines": {
+    "node": "12"
+  },
   "dependencies": {
     "@mdi/js": "5.0.45",
     "@sentry/browser": "5.14.2",
