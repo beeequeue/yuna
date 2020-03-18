@@ -4,7 +4,7 @@ import {
   MalIdFromAnilistIdQuery,
   MalIdFromAnilistIdQueryVariables,
   Media,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 import { Simkl } from '@/lib/simkl'
 import { isNil } from '@/utils'
 

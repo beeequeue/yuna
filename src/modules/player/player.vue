@@ -104,7 +104,7 @@ import {
   PlayerAnimeAnime,
   PlayerAnimeTitle,
   Provider,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 import { Required } from '@/decorators'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import {

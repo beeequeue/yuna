@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+import { DocumentNode } from 'graphql'
 
 export const LIST_ENTRY_FRAGMENT = gql`
   fragment ListEntry on ListEntry {
@@ -18,7 +19,7 @@ export const MEDIA_MAL_ID_FRAGMENT = gql`
   }
 `
 
-export const MEDIA_LIST_ENTRY_FRAGMENT = gql`
+export const MEDIA_LIST_ENTRY_FRAGMENT: DocumentNode & { name: string } = gql`
   fragment MediaListEntry on Media {
     listEntry {
       ...ListEntry
@@ -26,7 +27,7 @@ export const MEDIA_LIST_ENTRY_FRAGMENT = gql`
   }
 
   ${LIST_ENTRY_FRAGMENT}
-`
+` as any
 
 MEDIA_LIST_ENTRY_FRAGMENT.name = 'MediaListEntry'
 

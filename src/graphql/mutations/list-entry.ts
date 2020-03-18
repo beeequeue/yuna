@@ -22,7 +22,7 @@ import {
   UpdateScoreVariables,
   UpdateStatusMutation,
   UpdateStatusVariables,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 import {
   ADD_TO_LIST,
   DELETE_FROM_LIST,

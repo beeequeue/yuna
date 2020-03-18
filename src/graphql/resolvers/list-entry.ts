@@ -9,7 +9,7 @@ import {
   SingleMediaQuery,
   SingleMediaQueryVariables,
   SingleMediaSingleMedia,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 import { ListEntryWithoutMedia, ListPlugin } from '@/plugins/list/plugin'
 import { getListPlugins } from '@/state/auth'
 import { getMainListPlugin } from '@/state/settings'

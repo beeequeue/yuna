@@ -17,7 +17,10 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 
-import { EpisodeListEpisodes, PlayerAnimeAnime } from '@/graphql/types'
+import {
+  EpisodeListEpisodes,
+  PlayerAnimeAnime,
+} from '@/graphql/generated/types'
 
 import { Required } from '@/decorators'
 import { getSpoilerSettings } from '@/state/settings'

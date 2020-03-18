@@ -12,9 +12,9 @@ import {
 import Bottleneck from 'bottleneck'
 import { captureException } from '@sentry/browser'
 
-import introspectionResult from '@/graphql/introspection-result'
+import introspectionResult from '@/graphql/generated/introspection-result'
 import { resolvers } from '@/graphql/resolvers'
-import { EpisodeListEpisodes, ListEntry } from '@/graphql/types'
+import { EpisodeListEpisodes, ListEntry } from '@/graphql/generated/types'
 import { userStore } from '@/lib/user'
 import { getEpisodeCacheKey, isNil, isOfTypename } from '@/utils'
 import {

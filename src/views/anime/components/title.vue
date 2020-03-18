@@ -17,7 +17,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { AnimeViewTitle } from '@/graphql/types'
+import { AnimeViewTitle } from '@/graphql/generated/types'
 
 @Component
 export default class AnimeTitle extends Vue {

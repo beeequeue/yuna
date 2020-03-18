@@ -47,7 +47,7 @@ init({
   ignoreErrors: [
     /operation not permitted/,
     /temp-yuna-setup/,
-    /net::ERR/,
+    /.*net::ERR.*/,
     /child "activity" fails/,
     /ENOENT/,
     /EPERM/,
@@ -59,6 +59,8 @@ init({
     /Redirect was cancelled/,
     /no such file/,
     /Cannot find latest/,
+    /Cannot parse releases feed/,
+    /The play\(\) request was interrupted/,
   ],
 })
 

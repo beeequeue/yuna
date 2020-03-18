@@ -14,7 +14,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { AnimeViewNextAiringEpisode } from '@/graphql/types'
+import { AnimeViewNextAiringEpisode } from '@/graphql/generated/types'
 import { Required } from '@/decorators'
 
 import Icon from '@/common/components/icon.vue'

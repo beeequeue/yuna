@@ -19,7 +19,7 @@ import {
   UpdateProgressMutation,
   UpdateScoreMutation,
   UpdateStatusMutation,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 import { getIsConnectedTo } from '@/state/auth'
 import { Simkl, SimklListEntry } from '@/lib/simkl'
 import { ArmServer } from '@/lib/arm-server'

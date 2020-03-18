@@ -69,7 +69,7 @@ import Icon from '@/common/components/icon.vue'
 
 import { Default } from '@/decorators'
 import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
-import { ListViewListEntries, MediaStatus } from '@/graphql/types'
+import { ListViewListEntries, MediaStatus } from '@/graphql/generated/types'
 import {
   capitalize,
   debounce,

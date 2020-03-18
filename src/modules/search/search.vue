@@ -45,7 +45,11 @@ import { Component, Vue } from 'vue-property-decorator'
 import { mdiClose, mdiLoading } from '@mdi/js'
 
 import SEARCH_QUERY from './search.graphql'
-import { SearchQuery, SearchResults, SearchVariables } from '@/graphql/types'
+import {
+  SearchQuery,
+  SearchResults,
+  SearchVariables,
+} from '@/graphql/generated/types'
 
 import { Query } from '@/decorators'
 

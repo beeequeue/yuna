@@ -39,9 +39,9 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import {
   mdiBugOutline,
   mdiCached,
-  mdiGithubCircle,
+  mdiCogOutline,
+  mdiGithub,
   mdiInformationOutline,
-  mdiSettingsOutline,
 } from '@mdi/js'
 
 import { EpisodeCache } from '@/lib/episode-cache'
@@ -53,9 +53,9 @@ export default class SettingsDropdown extends Vue {
   @Prop(Boolean) public open!: boolean
   @Prop() public toggleOpen!: () => any
 
-  public settingsSvg = mdiSettingsOutline
+  public settingsSvg = mdiCogOutline
   public bugSvg = mdiBugOutline
-  public githubSvg = mdiGithubCircle
+  public githubSvg = mdiGithub
   public clearSvg = mdiCached
   public infoSvg = mdiInformationOutline
 

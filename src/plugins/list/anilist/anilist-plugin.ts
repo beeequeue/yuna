@@ -28,7 +28,7 @@ import {
   UpdateProgressMutation,
   UpdateScoreMutation,
   UpdateStatusMutation,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 import {
   ListEntryWithoutMedia,
   ListPlugin,

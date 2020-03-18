@@ -86,7 +86,7 @@ import {
   EpisodeListEpisodes,
   EpisodeListQuery,
   EpisodeListVariables,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 
 import { Query } from '@/decorators'
 import { getDefaultProvider } from '@/state/auth'

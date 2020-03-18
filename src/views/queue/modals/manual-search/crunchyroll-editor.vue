@@ -47,7 +47,7 @@ import gql from 'graphql-tag'
 import { mdiArrowLeft, mdiCheck } from '@mdi/js'
 
 import { cacheEpisodes } from '@/graphql/mutations/episodes'
-import { EpisodeListEpisodes, Provider, Maybe } from '@/graphql/types'
+import { EpisodeListEpisodes, Provider, Maybe } from '@/graphql/generated/types'
 import Loading from '@/common/components/loading.vue'
 import Icon from '@/common/components/icon.vue'
 import CButton from '@/common/components/button.vue'

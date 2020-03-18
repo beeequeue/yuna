@@ -211,7 +211,7 @@ import {
   mdiFullscreenExit,
   mdiPause,
   mdiPlay,
-  mdiSettingsOutline,
+  mdiCogOutline,
   mdiSkipNext,
   mdiSkipPrevious,
 } from '@mdi/js'
@@ -219,7 +219,7 @@ import {
   EpisodeListEpisodes,
   PlayerAnimeAnime,
   PlayerAnimeListEntry,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 
 import { Required } from '@/decorators'
 import {
@@ -280,7 +280,7 @@ export default class Controls extends Vue {
   public hovering = this.settingsOpen || this.paused || false
   public hoveringTimeout: number | null = null
 
-  public settingSvg = mdiSettingsOutline
+  public settingSvg = mdiCogOutline
 
   public get visible() {
     return this.settingsOpen || this.hovering

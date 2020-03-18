@@ -28,7 +28,7 @@ import { format, formatDistance } from 'date-fns'
 import {
   AnimeViewNextAiringEpisode,
   PlayerAnimeListEntry,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 
 import { Required } from '@/decorators'
 import { Sequel } from '@/state/app'

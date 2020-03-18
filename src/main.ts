@@ -40,6 +40,8 @@ init({
     /Failed to fetch/,
     /ENOENT/,
     /EPERM/,
+    /'TimeRanges': The index provided/,
+    /Unauthenticated request/,
   ],
   integrations: [new Integrations.Vue({ Vue, attachProps: true })],
   beforeSend: event => {

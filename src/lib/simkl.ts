@@ -6,7 +6,7 @@ import { getConfig } from '@/config'
 import { isNil, RequestError, RequestSuccess } from '@/utils'
 import { setSimkl } from '@/state/auth'
 import { updateMainListPlugin } from '@/state/settings'
-import { MediaListStatus } from '@/graphql/types'
+import { MediaListStatus } from '@/graphql/generated/types'
 import { userStore } from '@/lib/user'
 
 type SimklListStatus =

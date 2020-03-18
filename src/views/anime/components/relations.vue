@@ -39,7 +39,7 @@ import { MediaRelation } from '../../graphql/types'
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiArrowLeftBold, mdiArrowRightBold } from '@mdi/js'
 
-import { AnimeViewRelations } from '@/graphql/types'
+import { AnimeViewRelations } from '@/graphql/generated/types'
 
 import Icon from '@/common/components/icon.vue'
 import { Required } from '@/decorators'

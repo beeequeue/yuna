@@ -52,7 +52,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { mdiPlay } from '@mdi/js'
 
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { EpisodeListEpisodes } from '@/graphql/generated/types'
 
 import { Required } from '@/decorators'
 import { setCurrentEpisode } from '@/state/app'

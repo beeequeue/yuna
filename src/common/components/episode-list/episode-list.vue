@@ -42,7 +42,11 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { RecycleScroller } from 'vue-virtual-scroller'
-import { EpisodeListEpisodes, Provider, QueueAnime } from '@/graphql/types'
+import {
+  EpisodeListEpisodes,
+  Provider,
+  QueueAnime,
+} from '@/graphql/generated/types'
 
 import { Required } from '@/decorators'
 import { Hidive, HidiveResponseCode } from '@/lib/hidive'

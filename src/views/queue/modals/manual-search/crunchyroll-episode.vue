@@ -21,7 +21,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
 
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { EpisodeListEpisodes } from '@/graphql/generated/types'
 import Checkbox from '@/common/components/form/checkbox.vue'
 
 import { Required } from '@/decorators'

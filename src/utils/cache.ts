@@ -11,7 +11,7 @@ import {
   ListViewQuery,
   ListViewQueryVariables,
   Provider,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 
 import { EpisodeCache } from '@/lib/episode-cache'
 import { EpisodeRelations } from '@/lib/relations'

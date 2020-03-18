@@ -12,7 +12,7 @@ import {
   ListViewListEntries,
   ListViewQuery,
   ListViewQueryVariables,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 import { Instance } from '@/types'
 import { isNil } from '@/utils'
 

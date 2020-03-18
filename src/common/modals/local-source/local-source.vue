@@ -78,7 +78,7 @@ import {
   LocalSourceAnimeQuery,
   LocalSourceAnimeVariables,
   Provider,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 
 import { Query } from '@/decorators'
 import {

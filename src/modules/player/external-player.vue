@@ -9,7 +9,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { basename } from 'path'
 
 import { setProgress } from '@/graphql/mutations/list-entry'
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { EpisodeListEpisodes } from '@/graphql/generated/types'
 
 import { Required } from '@/decorators'
 import {

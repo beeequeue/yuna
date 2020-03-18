@@ -1,6 +1,6 @@
 import { Store } from 'vuex'
 import { DollarApollo } from 'vue-apollo/types/vue-apollo'
-import { Provider } from '@/graphql/types'
+import { Provider } from '@/graphql/generated/types'
 
 export enum SupportedMediaKeys {
   MediaPlayPause = 'PLAYER_PLAY_PAUSE',

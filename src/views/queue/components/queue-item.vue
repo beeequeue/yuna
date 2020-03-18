@@ -143,7 +143,7 @@ import {
   MediaListStatus,
   Provider,
   QueueAnime,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import Icon from '@/common/components/icon.vue'

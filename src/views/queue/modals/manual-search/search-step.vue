@@ -35,7 +35,7 @@ import Loading from '@/common/components/loading.vue'
 import Icon from '@/common/components/icon.vue'
 import AnimeBanner from '@/common/components/anime-banner.vue'
 
-import { Provider } from '@/graphql/types'
+import { Provider } from '@/graphql/generated/types'
 import { Required } from '@/decorators'
 import { ManualSearchOptions } from '@/state/app'
 import { Crunchyroll, SearchResult } from '@/lib/crunchyroll'

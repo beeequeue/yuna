@@ -142,7 +142,7 @@ import {
   AnimeViewAnime,
   AnimeViewListEntry,
   MediaListStatus,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 
 import { getAnilistUserId } from '@/state/auth'
 import {

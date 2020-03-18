@@ -51,7 +51,7 @@ jobs:
           at: .
       - run:
           name: Compile
-          command: yarn vue-cli-service build
+          command: yarn vue-cli-service build -wl --ia32 --x64
 
   # build_macos:
   #   executor: macos
@@ -82,12 +82,12 @@ workflows:
       - dependencies:
           requires:
             - checkout_code
-      - build_linux:
-          requires:
-            - dependencies
       - compile:
           requires:
             - dependencies
+      - build_linux:
+          requires:
+            - compile
       # - build_macos:
       #     requires:
       #       - dependencies
