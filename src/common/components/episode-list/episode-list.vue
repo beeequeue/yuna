@@ -29,7 +29,6 @@
     >
       <episode
         :key="`${item.episodeNumber}:${item.id}`"
-        ref="episodes"
         :episode="item"
         :list-entry="listEntry"
         :small="small"
