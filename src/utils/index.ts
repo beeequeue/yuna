@@ -2,7 +2,7 @@ import { session } from 'electron'
 import { api } from 'electron-util'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { Response } from 'superagent'
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 import { resolve } from 'path'
 import {
   mdiCheckboxMarked,

@@ -1,5 +1,5 @@
 import superagent from 'superagent'
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 
 import { getConfig } from '@/config'
 import { View } from '@/router'
