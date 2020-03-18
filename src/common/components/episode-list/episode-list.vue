@@ -14,6 +14,7 @@
       :items="episodes.map(e => e.episodeNumber)"
       :progress="listEntry && listEntry.progress"
       :item-size="itemSize"
+      :scroll-to-episode="scrollToEpisode"
     />
 
     <recycle-scroller
@@ -45,7 +46,7 @@ import { EpisodeListEpisodes, Provider, QueueAnime } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import { Hidive, HidiveResponseCode } from '@/lib/hidive'
-import { isNil } from '@/utils'
+import { delay, isNil } from '@/utils'
 
 import Episode from './episode.vue'
 import ScrollBar from './scroll-bar.vue'
@@ -127,29 +128,40 @@ export default class EpisodeList extends Vue {
     }
   }
 
-  @Watch('open')
-  public _scrollToNextEpisode(iteration: number = 0): void {
-    if (iteration < 50) {
-      setTimeout(() => this._scrollToNextEpisode(iteration + 1), 50)
+  public scrollToEpisode(index: number) {
+    if (isNil(this.episodes) || this.episodes.length < 1) {
       return
     }
 
+    const { container } = this.$refs
+    const innerWidth = container.$el.clientWidth
+    const baseOffset = (index / this.episodes.length) * innerWidth
+    const extraOffset = (index / this.episodes.length) * this.itemSize
+
+    container.$el.scrollTo({
+      left: index * this.itemSize - baseOffset + extraOffset,
+      behavior: 'smooth',
+    })
+  }
+
+  @Watch('open')
+  public async _scrollToNextEpisode() {
+    // Have to wait for opening animation to finished before the component inside is rendered
+    await delay(255)
+
     if (
-      isNil(this.listEntry) ||
+      !this.scrollToNextEpisode ||
+      !this.open ||
       isNil(this.episodes) ||
-      this.episodes.length < 1
+      this.episodes.length < 1 ||
+      isNil(this.listEntry)
     ) {
       return
     }
 
-    const container = this.$refs.container
-    let nextEpisodeIndex: number
-    if (this.episodes.length > (this.listEntry?.progress! ?? 0)) {
-      nextEpisodeIndex = this.episodes[this.listEntry?.progress ?? 0].index
-    } else {
-      nextEpisodeIndex = container.$el.clientWidth * 2
-    }
-    container.scrollToItem(nextEpisodeIndex)
+    this.scrollToEpisode(
+      this.episodes[this.listEntry.progress ?? 0]?.index ?? 0,
+    )
   }
 }
 </script>
