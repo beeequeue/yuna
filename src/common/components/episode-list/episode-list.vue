@@ -14,6 +14,7 @@
       :items="episodes.map(e => e.episodeNumber)"
       :progress="listEntry && listEntry.progress"
       :item-size="itemSize"
+      :scroll-to-episode="scrollToEpisode"
     />
 
     <recycle-scroller
@@ -29,7 +30,6 @@
     >
       <episode
         :key="`${item.episodeNumber}:${item.id}`"
-        ref="episodes"
         :episode="item"
         :list-entry="listEntry"
         :small="small"
@@ -46,7 +46,7 @@ import { EpisodeListEpisodes, Provider, QueueAnime } from '@/graphql/types'
 
 import { Required } from '@/decorators'
 import { Hidive, HidiveResponseCode } from '@/lib/hidive'
-import { isNil } from '@/utils'
+import { delay, isNil } from '@/utils'
 
 import Episode from './episode.vue'
 import ScrollBar from './scroll-bar.vue'
@@ -71,7 +71,6 @@ export default class EpisodeList extends Vue {
 
   public $refs!: {
     container: Vue
-    episodes: Episode[]
   }
 
   public get listEntry() {
@@ -129,43 +128,40 @@ export default class EpisodeList extends Vue {
     }
   }
 
-  @Watch('open')
-  @Watch('progress')
-  public _scrollToNextEpisode(iteration: number = 0): void {
-    if (!this.$refs.episodes?.[0] && iteration < 50) {
-      setTimeout(() => this._scrollToNextEpisode(iteration + 1), 50)
-
+  public scrollToEpisode(index: number) {
+    if (isNil(this.episodes) || this.episodes.length < 1) {
       return
     }
+
+    const { container } = this.$refs
+    const innerWidth = container.$el.clientWidth
+    const baseOffset = (index / this.episodes.length) * innerWidth
+    const extraOffset = (index / this.episodes.length) * this.itemSize
+
+    container.$el.scrollTo({
+      left: index * this.itemSize - baseOffset + extraOffset,
+      behavior: 'smooth',
+    })
+  }
+
+  @Watch('open')
+  public async _scrollToNextEpisode() {
+    // Have to wait for opening animation to finished before the component inside is rendered
+    await delay(255)
 
     if (
       !this.scrollToNextEpisode ||
       !this.open ||
-      isNil(this.listEntry) ||
       isNil(this.episodes) ||
-      isNil(this.$refs.episodes) ||
-      isNil(this.$refs.episodes[0]) ||
-      this.episodes.length < 1
+      this.episodes.length < 1 ||
+      isNil(this.listEntry)
     ) {
       return
     }
 
-    const containerRect = this.$refs.container.$el.getBoundingClientRect()
-    const episodeRect = this.$refs.episodes[0].$el.getBoundingClientRect()
-    let offset
-
-    if (this.$refs.episodes.length > this.listEntry!.progress! || 0) {
-      const nextEpisode = this.$refs.episodes[this.listEntry!.progress || 0]
-
-      offset = (nextEpisode.$el as HTMLDivElement).offsetLeft
-    } else {
-      offset = this.$refs.container.$el.clientWidth * 2
-    }
-
-    this.$refs.container.$el.scrollTo({
-      left: offset - (containerRect.width / 2 - episodeRect.width / 2),
-      behavior: 'smooth',
-    })
+    this.scrollToEpisode(
+      this.episodes[this.listEntry.progress ?? 0]?.index ?? 0,
+    )
   }
 }
 </script>

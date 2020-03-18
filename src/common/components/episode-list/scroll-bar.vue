@@ -21,6 +21,7 @@ import { clamp, isNil } from '@/utils'
 export default class ScrollBar extends Vue {
   @Required(Array) public items!: number[]
   @Required(Number) public itemSize!: number
+  @Required(Function) public scrollToEpisode!: (index: number) => void
   @Prop(Number) public progress!: number | null
 
   public episodeWrapper: Vue | null = null
@@ -86,14 +87,7 @@ export default class ScrollBar extends Vue {
   }
 
   public handleClick(index: number) {
-    const innerWidth = this.episodeWrapper!.$el.clientWidth
-    const baseOffset = (index / this.items.length) * innerWidth
-    const extraOffset = (index / this.items.length) * this.itemSize
-
-    this.episodeWrapper!.$el.scrollTo({
-      left: index * this.itemSize - baseOffset + extraOffset,
-      behavior: 'smooth',
-    })
+    this.scrollToEpisode(index)
   }
 }
 </script>
