@@ -1,4 +1,4 @@
-import { CacheEpisodesVariables } from '@/graphql/types'
+import { CacheEpisodesVariables } from '@/graphql/generated/types'
 import { cacheEpisodes } from '@/utils/cache'
 
 export const CacheEpisodesResolver = (

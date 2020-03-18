@@ -34,7 +34,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { mdiChevronDown } from '@mdi/js'
 
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { EpisodeListEpisodes } from '@/graphql/generated/types'
 import Icon from '@/common/components/icon.vue'
 import Checkbox from '@/common/components/form/checkbox.vue'
 import AnimatedSize from '@/common/components/animated-size.vue'

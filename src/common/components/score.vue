@@ -24,7 +24,10 @@ import Icon from '@/common/components/icon.vue'
 import { Default, Query, Required } from '@/decorators'
 import { LIST_ENTRY_SCORE_QUERY } from '@/graphql/documents/queries'
 import { updateScore } from '@/graphql/mutations/list-entry'
-import { ListEntryQuery, ListEntryQueryVariables } from '@/graphql/types'
+import {
+  ListEntryQuery,
+  ListEntryQueryVariables,
+} from '@/graphql/generated/types'
 
 @Component({ components: { Icon } })
 export default class Score extends Vue {

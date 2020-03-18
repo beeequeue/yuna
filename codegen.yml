@@ -10,7 +10,7 @@ hooks:
   afterOneFileWrite:
     - prettier --write
 generates:
-  src/graphql/types.ts:
+  src/graphql/generated/types.ts:
     plugins:
       - add: '/* THIS IS A GENERATED FILE */'
       - typescript
@@ -19,7 +19,7 @@ generates:
     config:
       avoidOptionals: true
       strict: true # compatibility only
-  src/graphql/introspection-result.ts:
+  src/graphql/generated/introspection-result.ts:
     plugins:
       - add: '/* THIS IS A GENERATED FILE */'
       - fragment-matcher

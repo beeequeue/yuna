@@ -1,4 +1,4 @@
-import { AnimeViewAnime } from '@/graphql/types'
+import { AnimeViewAnime } from '@/graphql/generated/types'
 import { isNil } from '@/utils'
 import { fetchRating } from '@/lib/myanimelist'
 

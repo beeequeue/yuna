@@ -1,6 +1,6 @@
 import Store from 'electron-store'
 
-import { Provider } from '@/graphql/types'
+import { Provider } from '@/graphql/generated/types'
 // import { AnilistData, CrunchyrollData, HidiveData } from '@/state/auth'
 
 const { NODE_ENV } = process.env

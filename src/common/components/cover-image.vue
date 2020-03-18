@@ -30,7 +30,7 @@ import { mdiRepeat } from '@mdi/js'
 import Score from '@/common/components/score.vue'
 import Icon from './icon.vue'
 
-import { AnimeViewListEntry, MediaListStatus } from '@/graphql/types'
+import { AnimeViewListEntry, MediaListStatus } from '@/graphql/generated/types'
 
 import { Required } from '@/decorators'
 import { getIconForStatus, humanizeMediaListStatus } from '@/utils'

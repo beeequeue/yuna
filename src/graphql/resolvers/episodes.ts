@@ -1,6 +1,6 @@
 import { captureException } from '@sentry/browser'
 
-import { EpisodeListEpisodes, Provider } from '@/graphql/types'
+import { EpisodeListEpisodes, Provider } from '@/graphql/generated/types'
 
 import { fetchEpisodesOfSeries } from '@/lib/myanimelist'
 import { getEpisodeRelations } from '@/lib/relations'

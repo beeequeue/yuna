@@ -2,7 +2,7 @@ import { activeWindow } from 'electron-util'
 import superagent from 'superagent/dist/superagent'
 import { ActionContext, Store } from 'vuex'
 import missingThumbnail from '@/assets/missing-thumbnail.webp'
-import { EpisodeListEpisodes, Provider } from '@/graphql/types'
+import { EpisodeListEpisodes, Provider } from '@/graphql/generated/types'
 
 import { getConfig } from '@/config'
 import {

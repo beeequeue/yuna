@@ -113,7 +113,7 @@ import {
   QueueAnime,
   QueueQuery,
   QueueVariables,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 
 import { Query } from '@/decorators'
 import { getPlayerData, sendErrorToast, sendToast } from '@/state/app'

@@ -1,4 +1,4 @@
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { EpisodeListEpisodes } from '@/graphql/generated/types'
 import { getIsWatched } from '@/utils/cache'
 
 export const isWatchedResolver = (

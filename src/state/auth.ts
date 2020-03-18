@@ -6,7 +6,7 @@ import { HidiveProfile } from '@/lib/hidive'
 import { getStreamingSources, isNil, isNotNil, omit, propEq } from '@/utils'
 import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
 import { SimklListPlugin } from '@/plugins/list/simkl-plugin'
-import { Provider } from '@/graphql/types'
+import { Provider } from '@/graphql/generated/types'
 import { StreamingSource } from '@/types'
 
 type ServiceData = {

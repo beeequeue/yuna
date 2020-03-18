@@ -38,7 +38,7 @@ import {
   ListViewQuery,
   ListViewQueryVariables,
   MediaListStatus,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 
 import { Query } from '@/decorators'
 import { isNil, isNotNil, LocalStorageKey, prop, propEq } from '@/utils'

@@ -2,7 +2,12 @@ import { ActionContext } from 'vuex'
 import { getStoreAccessors } from 'vuex-typescript'
 import uuid from 'uuid/v4'
 
-import { ListEntry, Media, MediaListStatus, Provider } from '@/graphql/types'
+import {
+  ListEntry,
+  Media,
+  MediaListStatus,
+  Provider,
+} from '@/graphql/generated/types'
 import { RootState } from '@/state/store'
 import { getDefaultProvider } from '@/state/auth'
 import { QueueItem, userStore } from '@/lib/user'

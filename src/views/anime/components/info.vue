@@ -49,7 +49,7 @@ import {
   MalScoreQueryVariables,
   SimklInfoQuery,
   SimklInfoQueryVariables,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 
 import ListLink from '@/views/anime/components/list-link.vue'
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'

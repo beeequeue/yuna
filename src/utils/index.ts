@@ -23,7 +23,7 @@ import {
   MediaRelation,
   PlayerAnimeQuery,
   Provider,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 import { StreamingSource } from '@/types'
 import CookiesGetFilter = Electron.CookiesGetFilter
 

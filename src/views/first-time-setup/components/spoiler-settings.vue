@@ -61,7 +61,7 @@ import Checkbox from '@/common/components/form/checkbox.vue'
 import CButton from '@/common/components/button.vue'
 import Episode from '@/common/components/episode-list/episode.vue'
 
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { EpisodeListEpisodes } from '@/graphql/generated/types'
 import thumbnailWebp from '@/assets/setup/episode_thumb.webp'
 import { getSettings, setSpoiler } from '@/state/settings'
 

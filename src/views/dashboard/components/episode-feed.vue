@@ -36,7 +36,7 @@ import { mdiClipboardTextOutline, mdiPlaylistCheck } from '@mdi/js'
 import Icon from '@/common/components/icon.vue'
 import AnimatedList from './animated-list.vue'
 import { EPISODE_FEED_LIST_IDS } from '@/graphql/documents/queries'
-import { EpisodeFeedListIdsQuery } from '@/graphql/types'
+import { EpisodeFeedListIdsQuery } from '@/graphql/generated/types'
 
 import { Query } from '@/decorators'
 import {

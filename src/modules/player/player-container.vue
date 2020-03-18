@@ -37,7 +37,7 @@ import {
   PlayerAnimeQuery,
   PlayerAnimeVariables,
   Provider,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 
 import { Query } from '@/decorators'
 import { getPlayerData } from '@/state/app'

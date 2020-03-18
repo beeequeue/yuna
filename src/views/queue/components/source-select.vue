@@ -72,7 +72,11 @@ import crIcon from '@/assets/crunchyroll.svg'
 import hidiveIcon from '@/assets/hidive.svg'
 import Icon from '@/common/components/icon.vue'
 
-import { Provider, QueueAnime, QueueExternalLinks } from '@/graphql/types'
+import {
+  Provider,
+  QueueAnime,
+  QueueExternalLinks,
+} from '@/graphql/generated/types'
 
 import { Required } from '@/decorators'
 import { initManualSearch, setLocalSourceAnime } from '@/state/app'

@@ -11,7 +11,7 @@ import {
   UpdateProgressMutation,
   UpdateScoreMutation,
   UpdateStatusMutation,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 
 export enum ListPluginType {
   Full = 'FULL', // Support all or almost all the states of AniList

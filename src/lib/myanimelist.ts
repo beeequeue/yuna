@@ -2,7 +2,7 @@ import Bottleneck from 'bottleneck'
 import request from 'superagent/dist/superagent'
 import { captureException } from '@sentry/browser'
 
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { EpisodeListEpisodes } from '@/graphql/generated/types'
 
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { isNil, RequestResponse, responseIsError, T } from '@/utils'

@@ -4,7 +4,7 @@ import crypto from 'crypto'
 import superagent from 'superagent/dist/superagent'
 import { ActionContext, Store } from 'vuex'
 
-import { EpisodeListEpisodes, Provider } from '@/graphql/types'
+import { EpisodeListEpisodes, Provider } from '@/graphql/generated/types'
 import { getConfig } from '@/config'
 import { userStore } from '@/lib/user'
 import { getHidiveLogin, getIsConnectedTo, setHidive } from '@/state/auth'

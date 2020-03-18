@@ -7,7 +7,7 @@ import {
   EpisodeInput,
   EpisodeListVariables,
   Provider,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 
 import { Instance } from '@/types'
 

@@ -12,7 +12,7 @@ import {
   ListEntry as IListEntry,
   MediaListStatus,
   Provider,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 import { router } from '@/router'
 import { RootState } from '@/state/store'
 import { generateId, isNil, pluck, propEq } from '@/utils'

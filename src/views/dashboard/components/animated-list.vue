@@ -38,7 +38,7 @@ import {
   EpisodeFeedAiringSchedules,
   EpisodeFeedQuery,
   EpisodeFeedVariables,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 
 import { Query, Required } from '@/decorators'
 

@@ -1,6 +1,6 @@
 import Store from 'electron-store'
 import superagent from 'superagent/dist/superagent'
-import { EpisodeListEpisodes } from '@/graphql/types'
+import { EpisodeListEpisodes } from '@/graphql/generated/types'
 
 // Branches
 

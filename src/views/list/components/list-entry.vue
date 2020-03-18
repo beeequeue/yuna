@@ -39,7 +39,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 import Actions from '@/common/components/actions.vue'
 import Loading from '@/common/components/loading.vue'
 import ScrollingText from '@/common/components/scrolling-text.vue'
-import { ListViewListEntries } from '@/graphql/types'
+import { ListViewListEntries } from '@/graphql/generated/types'
 
 import { Required } from '@/decorators'
 import { ListMedia } from '../types'

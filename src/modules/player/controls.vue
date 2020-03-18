@@ -219,7 +219,7 @@ import {
   EpisodeListEpisodes,
   PlayerAnimeAnime,
   PlayerAnimeListEntry,
-} from '@/graphql/types'
+} from '@/graphql/generated/types'
 
 import { Required } from '@/decorators'
 import {
