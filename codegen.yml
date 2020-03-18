@@ -1,8 +1,10 @@
 overwrite: true
 schema:
-  - https://graphql.anilist.co
-  - src/graphql/client-schema.graphqls
-documents: src/**/*.{graphql,ts}
+  - 'https://graphql.anilist.co'
+  - 'src/graphql/client-schema.graphqls'
+documents:
+  - 'src/**/*.{graphql,ts}'
+  - '!**/*.d.ts'
 config:
   avoidOptionals: true
   noNamespaces: true
