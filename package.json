@@ -108,12 +108,10 @@
   "lint-staged": {
     "*.{ts,vue}": [
       "eslint --fix",
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ],
     "*.{js,json,graphql,yml,scss}": [
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ]
   },
   "main": "background.js",
