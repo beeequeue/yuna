@@ -67,7 +67,7 @@
     "@types/hls.js": "0.12.5",
     "@types/lodash.keyby": "4.6.6",
     "@types/marked": "0.7.3",
-    "@types/node": "12.7.12",
+    "@types/node": "13.9.2",
     "@types/semver": "7.1.0",
     "@types/superagent": "4.1.7",
     "@types/uuid": "7.0.2",
