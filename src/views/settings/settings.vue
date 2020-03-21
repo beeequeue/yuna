@@ -100,31 +100,6 @@
         </section>
       </section>
 
-      <section id="updates" class="category">
-        <h1>Updates</h1>
-
-        <c-button
-          v-if="updateIsAvailable"
-          content="Install update!"
-          type="success"
-          :click="downloadUpdate"
-        />
-
-        <checkbox
-          setting="auto-update"
-          text="Automatically update the program."
-          :checked="settings.autoUpdate"
-          :on-change="checked => setSetting('autoUpdate', checked)"
-        />
-
-        <!--<checkbox
-          setting="beta"
-          text="Install pre-releases (beta versions)."
-          :checked="settings.beta"
-          :onChange="checked => setSetting('beta', checked)"
-        />-->
-      </section>
-
       <section id="spoilers" class="category">
         <h1>Spoiler Hiding</h1>
 
@@ -333,7 +308,6 @@ import Connection from './components/connection.vue'
 import Keybinding from './components/keybinding.vue'
 
 import { Crunchyroll } from '@/lib/crunchyroll'
-import { getIsUpdateAvailable } from '@/state/app'
 import {
   getCrunchyrollCountry,
   getIsConnectedTo,
@@ -356,7 +330,7 @@ import {
   SettingsState,
   setVLCPath,
 } from '@/state/settings'
-import { DOWNLOAD_UPDATE, OPEN_DEVTOOLS } from '@/messages'
+import { OPEN_DEVTOOLS } from '@/messages'
 import { capitalize, isNil } from '@/utils'
 import { getFilePath, getFolderPath } from '@/utils/paths'
 
@@ -419,10 +393,6 @@ export default class Settings extends Vue {
 
   public get settings(): SettingsState {
     return getSettings(this.$store)
-  }
-
-  public get updateIsAvailable() {
-    return getIsUpdateAvailable(this.$store)
   }
 
   public get isUsingUSSession() {
@@ -539,10 +509,6 @@ export default class Settings extends Vue {
 
   public handleDiscordPresenceChange(checked: boolean) {
     setDiscordRichPresence(this.$store, checked)
-  }
-
-  public downloadUpdate() {
-    ipcRenderer.send(DOWNLOAD_UPDATE)
   }
 
   public openKeybindModal(action: KeybindingAction) {

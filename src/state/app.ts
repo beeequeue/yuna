@@ -130,7 +130,7 @@ export const app = {
   state: { ...initialState },
 
   getters: {
-    getIsUpdateAvailable(state: AppState) {
+    getUpdateUrl(state: AppState) {
       return state.isUpdateAvailable
     },
 
@@ -434,7 +434,7 @@ export const app = {
 
 const { read, commit, dispatch } = getStoreAccessors<AppState, RootState>('app')
 
-export const getIsUpdateAvailable = read(app.getters.getIsUpdateAvailable)
+export const getUpdateUrl = read(app.getters.getUpdateUrl)
 export const getToasts = read(app.getters.getToasts)
 export const getPlayerData = read(app.getters.getPlayerData)
 export const getModalStates = read(app.getters.getModalStates)
