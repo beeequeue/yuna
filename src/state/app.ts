@@ -74,7 +74,7 @@ export type LocalSourceOptions = {
 }
 
 export type AppState = {
-  isUpdateAvailable: boolean
+  isUpdateAvailable: string | null
   toasts: Toast[]
   isFullscreen: boolean
   player: PlayerData | null
@@ -100,7 +100,7 @@ const initialModalBase: ModalBase = {
 }
 
 const initialState: AppState = {
-  isUpdateAvailable: false,
+  isUpdateAvailable: null,
   toasts: [],
   isFullscreen: false,
   player: null,
@@ -182,8 +182,8 @@ export const app = {
   },
 
   mutations: {
-    setIsUpdateAvailable(state: AppState, available: boolean) {
-      state.isUpdateAvailable = available
+    setIsUpdateAvailable(state: AppState, url: string | null) {
+      state.isUpdateAvailable = url
     },
 
     addToast(state: AppState, payload: AddToastMutationOptions) {

@@ -1,6 +1,5 @@
 import { platform } from 'os'
 import { ipcMain } from 'electron'
-import logger from 'electron-timber'
 import { activeWindow } from 'electron-util'
 import fetch from 'node-fetch'
 
@@ -10,12 +9,6 @@ import { CHECK_FOR_UPDATES, UPDATE_AVAILABLE } from './messages'
 const timeBetweenUpdateChecks = 30 * 60 * 1000
 let mainWindow: Electron.BrowserWindow | null = null
 let updateInterval: NodeJS.Timer | null = null
-
-type Version = {
-  version: string
-  releaseName: string
-}
-let availableVersion: Version | null = null
 
 export const initUpdateChecker = () => {
   mainWindow = activeWindow()
