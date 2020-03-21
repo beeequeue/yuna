@@ -1,61 +1,85 @@
-import { ipcMain } from 'electron'
+import { platform } from 'os'
+import { app, ipcMain } from 'electron'
 import { activeWindow } from 'electron-util'
-import { autoUpdater } from 'electron-updater'
-import Store from 'electron-store'
+import fetch from 'node-fetch'
+import { lte } from 'semver'
 
 import { isNil } from '@/utils'
-import {
-  CHECK_FOR_UPDATES,
-  DOWNLOAD_UPDATE,
-  UPDATE_AVAILABLE,
-  UPDATE_DOWNLOADED,
-  UPDATE_ERROR,
-} from './messages'
-
-const settingsStore = new Store<any>({ name: 'settings' })
-
-autoUpdater.allowPrerelease = settingsStore.get('beta') || false
-autoUpdater.autoDownload = false
-autoUpdater.autoInstallOnAppQuit = false
+import { CHECK_FOR_UPDATES, UPDATE_AVAILABLE } from './messages'
 
 const timeBetweenUpdateChecks = 30 * 60 * 1000
 let mainWindow: Electron.BrowserWindow | null = null
 let updateInterval: NodeJS.Timer | null = null
 
-type Version = {
-  version: string
-  releaseName: string
-}
-let availableVersion: Version | null = null
-
-const setAllProgressBars = (progress: number) => {
-  if (isNil(mainWindow)) return
-
-  mainWindow.setProgressBar(progress)
-}
-
-export const initAutoUpdater = () => {
+export const initUpdateChecker = () => {
   mainWindow = activeWindow()
-
-  ipcMain.on(DOWNLOAD_UPDATE, () => {
-    autoUpdater.downloadUpdate()
-    autoUpdater.autoInstallOnAppQuit = true
-  })
 
   ipcMain.on(CHECK_FOR_UPDATES, () => {
     initCheckForUpdates()
   })
 }
 
+type GitHubRelease = {
+  tag_name: string
+  name: string
+  url: string
+  prerelease: boolean
+  assets: Array<{
+    name: string
+    browser_download_url: string
+  }>
+}
+
+const getExtension = () => {
+  switch (platform()) {
+    case 'darwin':
+      return '.dmg'
+    case 'win32':
+      return '.exe'
+    default:
+      return null
+  }
+}
+
+const defaultUrl = 'https://github.com/beeequeue/yuna/releases'
+const getDownloadUrl = (data: GitHubRelease) => {
+  const extension = getExtension()
+
+  if (extension == null) {
+    return defaultUrl
+  }
+
+  const url = data.assets.find(asset =>
+    asset.browser_download_url.endsWith(extension),
+  )
+
+  return url?.browser_download_url ?? defaultUrl
+}
+
+const checkForUpdates = async () => {
+  const response = await fetch(
+    'https://api.github.com/repos/beeequeue/yuna/releases/latest',
+  )
+
+  const body = (await response.json()) as GitHubRelease
+
+  if (!response.ok && updateInterval != null) {
+    global.clearInterval(updateInterval)
+    updateInterval = null
+
+    return
+  }
+
+  const latestVersion = body.tag_name.match(/(\d+\.\d+\.\d+)/)?.[0]
+  if (isNil(latestVersion) || lte(latestVersion, app.getVersion())) return
+
+  sendMessage(UPDATE_AVAILABLE, getDownloadUrl(body))
+}
+
 const initCheckForUpdates = () => {
-  autoUpdater.allowPrerelease = settingsStore.get('beta') || false
-  autoUpdater.checkForUpdates()
+  checkForUpdates()
 
-  updateInterval = setInterval(() => {
-    autoUpdater.allowPrerelease = settingsStore.get('beta') || false
-
-    autoUpdater.checkForUpdates()
-  }, timeBetweenUpdateChecks)
+  updateInterval = setInterval(checkForUpdates, timeBetweenUpdateChecks)
 }
 
 const sendMessage = (message: string, arg?: string) => {
@@ -67,26 +91,3 @@ const sendMessage = (message: string, arg?: string) => {
 
   mainWindow.webContents.send(message, arg)
 }
-
-autoUpdater.on('update-available', (info: Version) => {
-  availableVersion = info
-  clearInterval(updateInterval as any)
-  sendMessage(UPDATE_AVAILABLE)
-})
-
-autoUpdater.signals.progress(progress => {
-  setAllProgressBars(progress.percent || -1)
-})
-
-autoUpdater.signals.updateDownloaded(() => {
-  setAllProgressBars(-1)
-
-  sendMessage(UPDATE_DOWNLOADED)
-})
-
-autoUpdater.on('error', () => {
-  clearInterval(updateInterval as any)
-  sendMessage(UPDATE_ERROR, availableVersion?.version)
-
-  setAllProgressBars(-1)
-})

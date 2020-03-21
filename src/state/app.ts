@@ -74,7 +74,7 @@ export type LocalSourceOptions = {
 }
 
 export type AppState = {
-  isUpdateAvailable: boolean
+  isUpdateAvailable: string | null
   toasts: Toast[]
   isFullscreen: boolean
   player: PlayerData | null
@@ -100,7 +100,7 @@ const initialModalBase: ModalBase = {
 }
 
 const initialState: AppState = {
-  isUpdateAvailable: false,
+  isUpdateAvailable: null,
   toasts: [],
   isFullscreen: false,
   player: null,
@@ -130,7 +130,7 @@ export const app = {
   state: { ...initialState },
 
   getters: {
-    getIsUpdateAvailable(state: AppState) {
+    getUpdateUrl(state: AppState) {
       return state.isUpdateAvailable
     },
 
@@ -182,8 +182,8 @@ export const app = {
   },
 
   mutations: {
-    setIsUpdateAvailable(state: AppState, available: boolean) {
-      state.isUpdateAvailable = available
+    setIsUpdateAvailable(state: AppState, url: string | null) {
+      state.isUpdateAvailable = url
     },
 
     addToast(state: AppState, payload: AddToastMutationOptions) {
@@ -434,7 +434,7 @@ export const app = {
 
 const { read, commit, dispatch } = getStoreAccessors<AppState, RootState>('app')
 
-export const getIsUpdateAvailable = read(app.getters.getIsUpdateAvailable)
+export const getUpdateUrl = read(app.getters.getUpdateUrl)
 export const getToasts = read(app.getters.getToasts)
 export const getPlayerData = read(app.getters.getPlayerData)
 export const getModalStates = read(app.getters.getModalStates)
