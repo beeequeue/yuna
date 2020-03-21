@@ -1,7 +1,8 @@
 import { platform } from 'os'
-import { ipcMain } from 'electron'
+import { app, ipcMain } from 'electron'
 import { activeWindow } from 'electron-util'
 import fetch from 'node-fetch'
+import { lte } from 'semver'
 
 import { isNil } from '@/utils'
 import { CHECK_FOR_UPDATES, UPDATE_AVAILABLE } from './messages'
@@ -68,6 +69,9 @@ const checkForUpdates = async () => {
 
     return
   }
+
+  const latestVersion = body.tag_name.match(/(\d+\.\d+\.\d+)/)?.[0]
+  if (isNil(latestVersion) || lte(latestVersion, app.getVersion())) return
 
   sendMessage(UPDATE_AVAILABLE, getDownloadUrl(body))
 }
