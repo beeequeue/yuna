@@ -269,3 +269,12 @@ declare module 'v-tooltip' {
 
   export default plugin
 }
+
+declare module 'electron-timber' {
+  const content: {
+    log: (...values: any[]) => void
+    warn: (...values: any[]) => void
+    error: (...values: any[]) => void
+  }
+  export = content
+}

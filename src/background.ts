@@ -24,7 +24,7 @@ import {
   REGISTER_MEDIA_KEYS,
   UNREGISTER_MEDIA_KEYS,
 } from './messages'
-import { initAutoUpdater } from './updater'
+import { initUpdateChecker } from './updater'
 import { version } from '../package.json'
 import { SupportedMediaKeys } from '@/types'
 import { clamp, debounce, enumKeysToArray } from '@/utils'
@@ -202,7 +202,7 @@ const createMainWindow = () => {
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template))
 
-  initAutoUpdater()
+  initUpdateChecker()
 
   registerDiscord()
 
