@@ -9,7 +9,7 @@
   "dependencies": {
     "@mdi/js": "5.0.45",
     "@sentry/browser": "5.14.2",
-    "@sentry/integrations": "5.14.2",
+    "@sentry/integrations": "5.15.0",
     "@sentry/node": "5.14.2",
     "bottleneck": "2.19.5",
     "core-js": "3.6.4",
