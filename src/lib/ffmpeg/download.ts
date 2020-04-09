@@ -2,9 +2,12 @@ import Electron from 'electron'
 import { download } from 'electron-dl'
 import { log } from 'electron-log'
 import extractZip from 'extract-zip'
+import { extract as extractTar } from 'tar-fs'
+import { createDecompressor } from 'lzma-native'
 import os from 'os'
 import { join } from 'path'
-import { existsSync, promises as fs } from 'fs'
+import { createReadStream, existsSync, promises as fs } from 'fs'
+import { delay } from '@/utils'
 
 const platform = os.platform() as 'win32' | 'linux' | 'darwin'
 const arch = os.arch() as 'x64' | 'ia32'
@@ -75,6 +78,42 @@ const extractZipBinaries = async () => {
   await fs.unlink(zipFile)
 }
 
+const extractTarBinaries = async () => {
+  const tarFile = join(process.resourcesPath, 'ffmpeg.tar.xz')
+  await new Promise(resolve =>
+    createReadStream(tarFile)
+      .on('close', resolve)
+      .pipe(createDecompressor())
+      .pipe(
+        extractTar(process.resourcesPath, {
+          filter: name => !goodFileRegex.test(name),
+        }),
+      ),
+  )
+
+  await delay(1000)
+
+  const extractedFolder = join(
+    process.resourcesPath,
+    'ffmpeg-4.0.3-64bit-static',
+  )
+  await Promise.all([
+    fs.rename(
+      join(extractedFolder, 'ffmpeg'),
+      join(process.resourcesPath, 'ffmpeg'),
+    ),
+    fs.rename(
+      join(extractedFolder, 'ffprobe'),
+      join(process.resourcesPath, 'ffprobe'),
+    ),
+  ])
+
+  await delay(1000)
+
+  await fs.rmdir(extractedFolder)
+  await fs.unlink(tarFile)
+}
+
 export const downloadBinaries = async () => {
   const window = Electron.BrowserWindow.getFocusedWindow()!
   const filename = platform !== 'linux' ? 'ffmpeg.zip' : 'ffmpeg.tar.xz'
@@ -89,5 +128,7 @@ export const downloadBinaries = async () => {
 
   if (platform !== 'linux') {
     await extractZipBinaries()
+  } else {
+    await extractTarBinaries()
   }
 }

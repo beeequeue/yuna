@@ -1920,6 +1920,13 @@
   resolved "https://registry.yarnpkg.com/@types/long/-/long-4.0.0.tgz#719551d2352d301ac8b81db732acb6bdc28dbdef"
   integrity sha512-1w52Nyx4Gq47uuu0EVcsHBxZFJgurQ+rTKS3qMHxR1GY2T8c2AJYd6vZoZ9q1rupaDjU0yT+Jc2XTyXkjeMA+Q==
 
+"@types/lzma-native@4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@types/lzma-native/-/lzma-native-4.0.0.tgz#86440e70b1431f2bc1a470eb0ea8bcfc5788fe14"
+  integrity sha512-9mBLyFWJe8/whIRjGwca5pbXv7ANzPj7KNgsgCU/l5z8xcyIe6LNae+iKdT5rjnXcXGOwyW/PKYt0N6+7N5QlA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/marked@0.7.3":
   version "0.7.3"
   resolved "https://registry.yarnpkg.com/@types/marked/-/marked-0.7.3.tgz#3859f6fea52a2b73f42283018bd34b03f3c4fb3f"
@@ -2012,6 +2019,21 @@
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@types/tapable/-/tapable-1.0.4.tgz#b4ffc7dc97b498c969b360a41eee247f82616370"
   integrity sha512-78AdXtlhpCHT0K3EytMpn4JNxaf5tbqbLcbIRoQIHzpTIyjpxLQKRoxU55ujBXAtg3Nl2h/XWvfDa9dsMOd0pQ==
+
+"@types/tar-fs@1.16.3":
+  version "1.16.3"
+  resolved "https://registry.yarnpkg.com/@types/tar-fs/-/tar-fs-1.16.3.tgz#425b2b817c405d13d051f36ec6ec6ebd25e31069"
+  integrity sha512-Y+fdeg11tb9J3UNIatNtrTPM1i8U+WLv2mMhZ3W13mtU19stCgrXJ4iXLkTpoF8jqHi3T/qTS8+fQ3IPzXxpuA==
+  dependencies:
+    "@types/node" "*"
+    "@types/tar-stream" "*"
+
+"@types/tar-stream@*":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@types/tar-stream/-/tar-stream-2.1.0.tgz#884b1cbe6c35ff459c05a5eba86b406805943ef6"
+  integrity sha512-s1UQxQUVMHbSkCC0X4qdoiWgHF8DoyY1JjQouFsnk/8ysoTdBaiCHud/exoAZzKDbzAXVc+ah6sczxGVMAohFw==
+  dependencies:
+    "@types/node" "*"
 
 "@types/uglify-js@*":
   version "3.0.4"
@@ -9648,6 +9670,16 @@ lru_map@^0.3.3:
   resolved "https://registry.yarnpkg.com/lru_map/-/lru_map-0.3.3.tgz#b5c8351b9464cbd750335a79650a0ec0e56118dd"
   integrity sha1-tcg1G5Rky9dQM1p5ZQoOwOVhGN0=
 
+lzma-native@6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/lzma-native/-/lzma-native-6.0.0.tgz#e49d57023c81c4e2a1cbe5ebcf223618457ce31d"
+  integrity sha512-rf5f4opPymsPHotgY2d0cUP3kbVxERSxWDGEbi2gnbnxuWGokFrBaQ02Oe9pssIwsgp0r0PnbSNg7VPY3AYe7w==
+  dependencies:
+    node-addon-api "^1.6.0"
+    node-pre-gyp "^0.11.0"
+    readable-stream "^2.3.5"
+    rimraf "^2.7.1"
+
 make-dir@^1.0.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/make-dir/-/make-dir-1.3.0.tgz#79c1033b80515bd6d24ec9933e860ca75ee27f0c"
@@ -10155,6 +10187,11 @@ node-addon-api@^1.3.0:
   resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-1.6.2.tgz#d8aad9781a5cfc4132cc2fecdbdd982534265217"
   integrity sha512-479Bjw9nTE5DdBSZZWprFryHGjUaQC31y1wHo19We/k0BZlrmhqQitWoUL0cD8+scljCbIUL+E58oRDEakdGGA==
 
+node-addon-api@^1.6.0:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/node-addon-api/-/node-addon-api-1.7.1.tgz#cf813cd69bb8d9100f6bdca6755fc268f54ac492"
+  integrity sha512-2+DuKodWvwRTrCfKOeR24KIc5unKjOh8mz17NCzVnHWfjAdDqbfbjqh7gUT+BkXBRQM52+xCHciKWonJ3CbJMQ==
+
 node-fetch@2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.1.2.tgz#ab884e8e7e57e38a944753cec706f788d1768bb5"
@@ -10243,6 +10280,22 @@ node-pre-gyp@^0.10.0:
   version "0.10.3"
   resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.10.3.tgz#3070040716afdc778747b61b6887bf78880b80fc"
   integrity sha512-d1xFs+C/IPS8Id0qPTZ4bUT8wWryfR/OzzAFxweG+uLN85oPzyo2Iw6bVlLQ/JOdgNonXLCoRyqDzDWq4iw72A==
+  dependencies:
+    detect-libc "^1.0.2"
+    mkdirp "^0.5.1"
+    needle "^2.2.1"
+    nopt "^4.0.1"
+    npm-packlist "^1.1.6"
+    npmlog "^4.0.2"
+    rc "^1.2.7"
+    rimraf "^2.6.1"
+    semver "^5.3.0"
+    tar "^4"
+
+node-pre-gyp@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.11.0.tgz#db1f33215272f692cd38f03238e3e9b47c5dd054"
+  integrity sha512-TwWAOZb0j7e9eGaf9esRx3ZcLaE5tQ2lvYy1pb5IAaG1a2e2Kv5Lms1Y4hpj+ciXJRofIxxlt5haeQ/2ANeE0Q==
   dependencies:
     detect-libc "^1.0.2"
     mkdirp "^0.5.1"
