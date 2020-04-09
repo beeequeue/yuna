@@ -114,7 +114,14 @@ const extractTarBinaries = async () => {
   await fs.unlink(tarFile)
 }
 
-export const downloadBinaries = async () => {
+export const downloadBinariesIfNecessary = async () => {
+  if (
+    existsSync(join(process.resourcesPath, 'ffmpeg' + ext)) &&
+    existsSync(join(process.resourcesPath, 'ffprobe' + ext))
+  ) {
+    return
+  }
+
   const window = Electron.BrowserWindow.getFocusedWindow()!
   const filename = platform !== 'linux' ? 'ffmpeg.zip' : 'ffmpeg.tar.xz'
 
