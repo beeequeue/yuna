@@ -18,8 +18,6 @@
     "electron-debug": "3.0.1",
     "electron-store": "5.1.1",
     "electron-util": "0.14.0",
-    "ffmpeg-static": "4.0.1",
-    "ffprobe-static": "3.0.0",
     "fluent-ffmpeg": "2.1.2",
     "fuse.js": "5.0.5-beta",
     "graphql": "14.6.0",

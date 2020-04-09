@@ -1,6 +1,4 @@
 import { remote, FileFilter } from 'electron'
-import ffmpegPath from 'ffmpeg-static'
-import { path as ffprobePath } from 'ffprobe-static'
 import { join } from 'path'
 import { isNil } from '@/utils/index'
 
