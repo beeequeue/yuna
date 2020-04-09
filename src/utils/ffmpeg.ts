@@ -26,7 +26,6 @@ export const getFilePath = async ({
 
 const platform = os.platform()
 const arch = os.arch()
-const ext = platform === 'win32' ? '.exe' : ''
 
 export const getFolderPath = async ({ title }: { title: string }) => {
   const { filePaths } = await remote.dialog.showOpenDialog({
@@ -41,7 +40,7 @@ export const getFolderPath = async ({ title }: { title: string }) => {
 }
 
 const getPathWithBase = (basePath: string, name: string) =>
-  join(basePath, 'lib', platform, arch, name + ext)
+  join(basePath, 'lib', platform, arch, name)
 
 const getPath = (name: string) =>
   getPathWithBase(
