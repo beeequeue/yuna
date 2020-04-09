@@ -332,7 +332,7 @@ import {
 } from '@/state/settings'
 import { OPEN_DEVTOOLS } from '@/messages'
 import { capitalize, isNil } from '@/utils'
-import { getFilePath, getFolderPath } from '@/utils/paths'
+import { getFilePath, getFolderPath } from '@/utils/ffmpeg'
 
 enum Window {
   Anilist = 'Anilist',

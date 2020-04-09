@@ -6,7 +6,7 @@ import crypto from 'crypto'
 
 import { SettingsStore } from '@/state/settings'
 import { isNil, isNotNil, mapAsync } from '@/utils'
-import { FFMPEG_PATH, FFPROBE_PATH } from '@/utils/paths'
+import { FFMPEG_PATH, FFPROBE_PATH } from '@/utils/ffmpeg'
 
 export type LocalAnime = {
   title: string
