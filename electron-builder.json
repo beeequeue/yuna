@@ -4,14 +4,14 @@
     "buildResources": "public"
   },
   "win": {
-    "extraResources": ["node_modules/*/bin/win32/**/*"]
+    "extraResources": ["lib/win32/**/*"]
   },
   "linux": {
     "category": "Video",
-    "extraResources": ["node_modules/*/bin/linux/**/*"]
+    "extraResources": ["lib/linux/**/*"]
   },
   "mac": {
     "category": "public.app-category.entertainment",
-    "extraResources": ["node_modules/*/bin/darwin/**/*"]
+    "extraResources": ["lib/darwin/**/*"]
   }
 }
