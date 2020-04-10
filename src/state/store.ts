@@ -10,16 +10,11 @@ import {
   UPDATE_AVAILABLE,
 } from '@/messages'
 
-import {
-  app,
-  AppState,
-  sendErrorToast,
-  sendToast,
-  setIsUpdateAvailable,
-} from './app'
+import { app, AppState, sendToast, setIsUpdateAvailable } from './app'
 import { auth, AuthState } from './auth'
 import { setFfmpegFailed, settings, SettingsState } from './settings'
 import { user, UserState } from './user'
+import { router } from '@/router'
 
 Vue.use(Vuex)
 
@@ -61,12 +56,20 @@ export const store = new Vuex.Store<RootState>({
 ipcRenderer.on(FFMPEG_FAILED, () => {
   setFfmpegFailed(store, true)
 
-  sendErrorToast(
-    store,
-    'Could not download FFMPEG, local video playback will not work.',
-  )
+  sendToast(store, {
+    type: 'error',
+    title: 'Could not download FFMPEG.',
+    message: 'Local video playback will not work.',
+    click: () => router.push('/settings#ffmpeg'),
+  })
 })
 
 ipcRenderer.on(FFMPEG_DOWNLOADED, () => {
   setFfmpegFailed(store, false)
+
+  sendToast(store, {
+    type: 'success',
+    title: 'Successfully downloaded FFMPEG!',
+    message: 'Local video playback will work now!',
+  })
 })
