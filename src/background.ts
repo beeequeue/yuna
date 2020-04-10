@@ -11,7 +11,7 @@ import {
 import electronDebug, { openDevTools } from 'electron-debug'
 import Store from 'electron-store'
 import { enforceMacOSAppLocation } from 'electron-util'
-import { init } from '@sentry/node'
+import { captureException, init } from '@sentry/node'
 import { join } from 'path'
 import { format as formatUrl } from 'url'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
@@ -19,6 +19,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import { destroyDiscord, registerDiscord } from './lib/discord'
 import {
   ANILIST_LOGIN,
+  FFMPEG_FAILED,
   LOGGED_INTO_ANILIST,
   OPEN_DEVTOOLS,
   REGISTER_MEDIA_KEYS,
@@ -28,6 +29,7 @@ import { initUpdateChecker } from './updater'
 import { version } from '../package.json'
 import { SupportedMediaKeys } from '@/types'
 import { clamp, debounce, enumKeysToArray } from '@/utils'
+import { downloadBinariesIfNecessary } from '@/lib/ffmpeg/download'
 // import { initDarkThemeWorkAround } from '@/utils/electron-win10darktheme-workaround'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -125,6 +127,7 @@ const createMainWindow = () => {
   const window = new BrowserWindow({
     width: defaultSize.width,
     height: defaultSize.height,
+    show: false,
     x: clamp(position.x, bounds.x[0], bounds.x[1] - defaultSize.width),
     y: clamp(position.y, bounds.y[0], bounds.y[1] - defaultSize.height),
     maximizable: false,
@@ -245,6 +248,18 @@ const createMainWindow = () => {
     unregisterMediaKeys()
   })
 
+  window.once('ready-to-show', () => {
+    mainWindow!.show()
+
+    if (!settingsStore.get('ffmpegFailed')) {
+      downloadBinariesIfNecessary().catch(async err => {
+        mainWindow!.webContents.send(FFMPEG_FAILED)
+
+        captureException(err)
+      })
+    }
+  })
+
   window.webContents.on('devtools-opened', () => {
     window.focus()
     setImmediate(() => {
@@ -273,7 +288,6 @@ app.on('activate', () => {
   // on macOS it is common to re-create a window even after all windows have been closed
   if (mainWindow === null) {
     mainWindow = createMainWindow()
-    mainWindow.once('did-finish-load' as any, () => mainWindow!.show)
   }
 })
 
@@ -303,5 +317,4 @@ app.on('ready', async () => {
   })
 
   mainWindow = createMainWindow()
-  mainWindow.once('did-finish-load' as any, () => mainWindow!.show)
 })

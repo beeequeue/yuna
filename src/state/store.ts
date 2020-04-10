@@ -3,11 +3,17 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import { Anilist } from '@/lib/anilist'
-import { ANILIST_LOGIN, UPDATE_AVAILABLE } from '@/messages'
+import { ANILIST_LOGIN, FFMPEG_FAILED, UPDATE_AVAILABLE } from '@/messages'
 
-import { app, AppState, sendToast, setIsUpdateAvailable } from './app'
+import {
+  app,
+  AppState,
+  sendErrorToast,
+  sendToast,
+  setIsUpdateAvailable,
+} from './app'
 import { auth, AuthState } from './auth'
-import { settings, SettingsState } from './settings'
+import { setFfmpegFailed, settings, SettingsState } from './settings'
 import { user, UserState } from './user'
 
 Vue.use(Vuex)
@@ -45,4 +51,13 @@ export type RootState = {
 export const store = new Vuex.Store<RootState>({
   modules,
   strict: process.env.NODE_ENV !== 'production',
+})
+
+ipcRenderer.on(FFMPEG_FAILED, () => {
+  setFfmpegFailed(store, true)
+
+  sendErrorToast(
+    store,
+    'Could not download FFMPEG, local video playback will not work.',
+  )
 })
