@@ -59,7 +59,7 @@ ipcRenderer.on(FFMPEG_FAILED, () => {
   sendToast(store, {
     type: 'error',
     title: 'Could not download FFMPEG.',
-    message: 'Local video playback will not work.',
+    message: 'Local file support will not work.',
     click: () => router.push('/settings#ffmpeg'),
   })
 })
@@ -70,6 +70,6 @@ ipcRenderer.on(FFMPEG_DOWNLOADED, () => {
   sendToast(store, {
     type: 'success',
     title: 'Successfully downloaded FFMPEG!',
-    message: 'Local video playback will work now!',
+    message: 'Local file support will work now!',
   })
 })
