@@ -1,13 +1,16 @@
 import Electron from 'electron'
 import { download } from 'electron-dl'
-import { log } from 'electron-log'
+import { activeWindow } from 'electron-util'
 import extractZip from 'extract-zip'
 import { extract as extractTar } from 'tar-fs'
 import { createDecompressor } from 'lzma-native'
 import os from 'os'
 import { join } from 'path'
 import { createReadStream, existsSync, promises as fs } from 'fs'
+import { captureException } from '@sentry/node'
+
 import { delay } from '@/utils'
+import { FFMPEG_DOWNLOADED, FFMPEG_FAILED } from '@/messages'
 
 const platform = os.platform() as 'win32' | 'linux' | 'darwin'
 const arch = os.arch() as 'x64' | 'ia32'
@@ -62,7 +65,6 @@ const extractZipBinaries = async () => {
     onEntry: entry => {
       if (firstDirName.length < 1) {
         firstDirName = entry.fileName.slice(0, entry.fileName.length - 1)
-        log(firstDirName)
       }
 
       const match = goodFileRegex.exec(entry.fileName)
@@ -114,28 +116,37 @@ const extractTarBinaries = async () => {
   await fs.unlink(tarFile)
 }
 
-export const downloadBinariesIfNecessary = async () => {
+export const downloadBinariesIfNecessary = async (force?: boolean) => {
   if (
+    !force &&
     existsSync(join(process.resourcesPath, 'ffmpeg' + ext)) &&
     existsSync(join(process.resourcesPath, 'ffprobe' + ext))
   ) {
     return
   }
 
-  const window = Electron.BrowserWindow.getFocusedWindow()!
-  const filename = platform !== 'linux' ? 'ffmpeg.zip' : 'ffmpeg.tar.xz'
+  try {
+    const window = Electron.BrowserWindow.getFocusedWindow()!
+    const filename = platform !== 'linux' ? 'ffmpeg.zip' : 'ffmpeg.tar.xz'
 
-  if (!existsSync(join(process.resourcesPath, filename))) {
-    await download(window, downloadUrls[platform][arch], {
-      directory: process.resourcesPath,
-      filename,
-      showBadge: false,
-    })
-  }
+    if (!existsSync(join(process.resourcesPath, filename))) {
+      await download(window, downloadUrls[platform][arch], {
+        directory: process.resourcesPath,
+        filename,
+        showBadge: false,
+      })
+    }
 
-  if (platform !== 'linux') {
-    await extractZipBinaries()
-  } else {
-    await extractTarBinaries()
+    if (platform !== 'linux') {
+      await extractZipBinaries()
+    } else {
+      await extractTarBinaries()
+    }
+
+    activeWindow().webContents.send(FFMPEG_DOWNLOADED)
+  } catch (err) {
+    activeWindow().webContents.send(FFMPEG_FAILED)
+
+    captureException(err)
   }
 }

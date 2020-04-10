@@ -11,7 +11,7 @@ import {
 import electronDebug, { openDevTools } from 'electron-debug'
 import Store from 'electron-store'
 import { enforceMacOSAppLocation } from 'electron-util'
-import { captureException, init } from '@sentry/node'
+import { init } from '@sentry/node'
 import { join } from 'path'
 import { format as formatUrl } from 'url'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
@@ -19,7 +19,7 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import { destroyDiscord, registerDiscord } from './lib/discord'
 import {
   ANILIST_LOGIN,
-  FFMPEG_FAILED,
+  FFMPEG_RETRY,
   LOGGED_INTO_ANILIST,
   OPEN_DEVTOOLS,
   REGISTER_MEDIA_KEYS,
@@ -233,6 +233,7 @@ const createMainWindow = () => {
   ipcMain.on(OPEN_DEVTOOLS, () => openDevTools())
   ipcMain.on(REGISTER_MEDIA_KEYS, () => registerMediaKeys(window))
   ipcMain.on(UNREGISTER_MEDIA_KEYS, () => unregisterMediaKeys())
+  ipcMain.on(FFMPEG_RETRY, () => downloadBinariesIfNecessary(true))
 
   const saveWindowLocation = debounce(() => {
     settingsStore.set('window', {
@@ -252,11 +253,7 @@ const createMainWindow = () => {
     mainWindow!.show()
 
     if (!settingsStore.get('ffmpegFailed')) {
-      downloadBinariesIfNecessary().catch(async err => {
-        mainWindow!.webContents.send(FFMPEG_FAILED)
-
-        captureException(err)
-      })
+      downloadBinariesIfNecessary()
     }
   })
 

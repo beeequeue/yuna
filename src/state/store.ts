@@ -3,7 +3,12 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import { Anilist } from '@/lib/anilist'
-import { ANILIST_LOGIN, FFMPEG_FAILED, UPDATE_AVAILABLE } from '@/messages'
+import {
+  ANILIST_LOGIN,
+  FFMPEG_DOWNLOADED,
+  FFMPEG_FAILED,
+  UPDATE_AVAILABLE,
+} from '@/messages'
 
 import {
   app,
@@ -60,4 +65,8 @@ ipcRenderer.on(FFMPEG_FAILED, () => {
     store,
     'Could not download FFMPEG, local video playback will not work.',
   )
+})
+
+ipcRenderer.on(FFMPEG_DOWNLOADED, () => {
+  setFfmpegFailed(store, false)
 })
