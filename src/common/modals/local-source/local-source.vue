@@ -93,7 +93,7 @@ import { getLocalFilesFolder } from '@/state/settings'
 import CButton from '@/common/components/button.vue'
 import AnimatedSize from '@/common/components/animated-size.vue'
 import { isNil } from '@/utils'
-import { getFolderPath } from '@/utils/paths'
+import { getFolderPath } from '@/utils/ffmpeg'
 
 const combineDuplicatesBasedOnScore = (
   anime: FuseResultWithScore<LocalAnime>[],

@@ -3,15 +3,11 @@
   "directories": {
     "buildResources": "public"
   },
-  "win": {
-    "extraResources": ["node_modules/*/bin/win32/**/*"]
-  },
+  "win": {},
   "linux": {
-    "category": "Video",
-    "extraResources": ["node_modules/*/bin/linux/**/*"]
+    "category": "Video"
   },
   "mac": {
-    "category": "public.app-category.entertainment",
-    "extraResources": ["node_modules/*/bin/darwin/**/*"]
+    "category": "public.app-category.entertainment"
   }
 }

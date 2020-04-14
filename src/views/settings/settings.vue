@@ -89,12 +89,31 @@
             </div>
           </div>
 
-          <div id="vlc-path" class="path-container vlc">
-            <icon :icon="vlcSvg" />
+          <div id="vlc-path" class="path-container with-icon">
+            <icon class="vlc" :icon="vlcSvg" />
 
             <div v-tooltip.top="vlcPath" class="path" @click="setVLCPath()">
               <c-button v-if="!vlcPath" content="Set VLC path" />
               <span v-else>{{ vlcPath }}</span>
+            </div>
+          </div>
+
+          <div id="ffmpeg" class="path-container with-icon">
+            <Icon
+              :icon="ffmpegFailed ? crossSvg : checkSvg"
+              class="ffmpeg"
+              :class="{ failed: ffmpegFailed }"
+            />
+
+            <div v-if="ffmpegFailed" class="path" style="direction: ltr;">
+              <c-button content="Retry FFMPEG download" :click="retryFfmpeg" />
+            </div>
+            <div
+              v-else
+              class="path"
+              style="direction: ltr; pointer-events: none;"
+            >
+              FFMPEG downloaded.
             </div>
           </div>
         </section>
@@ -288,6 +307,8 @@ import { Component, Vue } from 'vue-property-decorator'
 import { ipcRenderer, shell } from 'electron'
 import { Key } from 'ts-key-enum'
 import {
+  mdiCheckBold,
+  mdiCloseThick,
   mdiDelete,
   mdiInformationOutline,
   mdiRefresh,
@@ -330,9 +351,9 @@ import {
   SettingsState,
   setVLCPath,
 } from '@/state/settings'
-import { OPEN_DEVTOOLS } from '@/messages'
+import { FFMPEG_RETRY, OPEN_DEVTOOLS } from '@/messages'
 import { capitalize, isNil } from '@/utils'
-import { getFilePath, getFolderPath } from '@/utils/paths'
+import { getFilePath, getFolderPath } from '@/utils/ffmpeg'
 
 enum Window {
   Anilist = 'Anilist',
@@ -364,6 +385,8 @@ export default class Settings extends Vue {
   public removeSvg = mdiDelete
   public resetSvg = mdiUndoVariant
   public vlcSvg = mdiVlc
+  public checkSvg = mdiCheckBold
+  public crossSvg = mdiCloseThick
   public Window = Window
 
   public $refs!: {
@@ -434,6 +457,10 @@ export default class Settings extends Vue {
       value: plugin.name,
       disabled: !plugin.available,
     }))
+  }
+
+  public get ffmpegFailed(): boolean {
+    return this.$store.state.settings.ffmpegFailed
   }
 
   public openDevTools() {
@@ -567,6 +594,10 @@ export default class Settings extends Vue {
         return action
     }
   }
+
+  public retryFfmpeg() {
+    ipcRenderer.send(FFMPEG_RETRY)
+  }
 }
 </script>
 
@@ -651,13 +682,24 @@ export default class Settings extends Vue {
         display: flex;
         align-items: center;
 
-        &.vlc {
+        &.with-icon {
           margin-top: 10px;
 
           & > .icon {
             height: 30px;
             width: 30px;
-            fill: $vlc;
+
+            &.vlc {
+              fill: $vlc;
+            }
+
+            &.ffmpeg {
+              fill: $success;
+
+              &.failed {
+                fill: $danger;
+              }
+            }
           }
         }
 

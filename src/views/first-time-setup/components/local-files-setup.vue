@@ -45,7 +45,7 @@ import Checkbox from '@/common/components/form/checkbox.vue'
 import { VLC } from '@/lib/players/vlc'
 import { getSettings, setLocalFilesFolder, setVLCPath } from '@/state/settings'
 import { isNil } from '@/utils'
-import { getFilePath, getFolderPath } from '@/utils/paths'
+import { getFilePath, getFolderPath } from '@/utils/ffmpeg'
 
 @Component({ components: { Icon, CButton, Checkbox } })
 export default class Discord extends Vue {

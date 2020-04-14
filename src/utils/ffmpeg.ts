@@ -1,10 +1,9 @@
 import { remote, FileFilter } from 'electron'
-import ffmpegPath from 'ffmpeg-static'
-import { path as ffprobePath } from 'ffprobe-static'
+import os from 'os'
 import { join } from 'path'
 import { isNil } from '@/utils/index'
 
-const isDevelopment = process.env.NODE_ENV === 'development'
+const ext = os.platform() === 'win32' ? '.exe' : ''
 
 export const getFilePath = async ({
   title,
@@ -37,21 +36,7 @@ export const getFolderPath = async ({ title }: { title: string }) => {
   return filePaths[0] || null
 }
 
-const getDevPath = (name: string, path: string) =>
-  join(
-    process.env.DEV_BASE_PATH!,
-    'node_modules',
-    name,
-    path.substr(path.lastIndexOf('bin')),
-  )
-const getProdPath = (name: string, path: string) =>
-  join(
-    process.resourcesPath!,
-    `node_modules/${name}`,
-    path.substr(path.lastIndexOf('bin')),
-  )
-const getPath = (name: string, path: string) =>
-  isDevelopment ? getDevPath(name, path) : getProdPath(name, path)
+const getPath = (name: string) => join(process.resourcesPath, name + ext)
 
-export const FFMPEG_PATH = getPath('ffmpeg-static', ffmpegPath)
-export const FFPROBE_PATH = getPath('ffprobe-static', ffprobePath)
+export const FFMPEG_PATH = getPath('ffmpeg')
+export const FFPROBE_PATH = getPath('ffprobe')
