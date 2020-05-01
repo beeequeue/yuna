@@ -66,7 +66,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { RecycleScroller } from 'vue-virtual-scroller'
-import Fuse, { FuseResultWithScore } from 'fuse.js'
+import Fuse from 'fuse.js'
 import { mdiClose, mdiFolder } from '@mdi/js'
 
 import ModalBase from '@/common/modals/base.vue'
@@ -96,9 +96,9 @@ import { isNil } from '@/utils'
 import { getFolderPath } from '@/utils/ffmpeg'
 
 const combineDuplicatesBasedOnScore = (
-  anime: FuseResultWithScore<LocalAnime>[],
+  anime: Fuse.FuseResult<LocalAnime>[],
 ) => {
-  const newArray: FuseResultWithScore<LocalAnime>[] = []
+  const newArray: Fuse.FuseResult<LocalAnime>[] = []
 
   anime.forEach(oldAnime => {
     const index = newArray.findIndex(
