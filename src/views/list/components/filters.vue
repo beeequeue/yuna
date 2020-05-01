@@ -157,7 +157,7 @@ export default class Filters extends Vue {
       threshold: 0.35,
     })
 
-    return fuse.search(this.searchString)
+    return fuse.search(this.searchString).map(item => item.item)
   }
 
   // Sources
