@@ -1,7 +1,7 @@
 {
   "name": "yuna",
   "description": "An anime player that integrates with AniList, Crunchyroll, and Hidive.",
-  "version": "1.4.14-ffmpeg.2",
+  "version": "1.4.14-ffmpeg.3",
   "author": "BeeeQueue",
   "engines": {
     "node": "12"
