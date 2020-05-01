@@ -1,6 +1,7 @@
 import { activeWindow } from 'electron-util'
 import superagent from 'superagent/dist/superagent'
 import { ActionContext, Store } from 'vuex'
+
 import missingThumbnail from '@/assets/missing-thumbnail.webp'
 import { EpisodeListEpisodes, Provider } from '@/graphql/generated/types'
 
@@ -29,7 +30,6 @@ import {
 } from '@/utils'
 import { Stream } from '@/types'
 
-const CR_UNBLOCKER_URL = 'api2.cr-unblocker.com'
 const API_URL = 'api.crunchyroll.com'
 const VERSION = '0'
 const ENGLISH = 'enUS'
@@ -252,7 +252,11 @@ export class Crunchyroll {
 
     if (useCRUnblocker) {
       try {
-        data = await Crunchyroll.createUnblockedSession(store, auth)
+        data = await Crunchyroll.createSessionFromUrl(
+          store,
+          `https://cr.yuna.moe/api/passthrough`,
+          auth,
+        )
       } catch (e) {
         if (getIsConnectedTo(store).crunchyroll) {
           store.dispatch(
@@ -267,7 +271,11 @@ export class Crunchyroll {
     }
 
     if (data == null) {
-      data = await Crunchyroll.createNormalSession(store, auth)
+      data = await Crunchyroll.createSessionFromUrl(
+        store,
+        getUrl('start_session'),
+        auth,
+      )
     }
 
     if (getIsConnectedTo(store).crunchyroll) {
@@ -566,12 +574,13 @@ export class Crunchyroll {
       ...query,
     })) as CrunchyrollResponse<B>
 
-  private static createNormalSession = async (
+  private static createSessionFromUrl = async (
     store: StoreType,
+    url: string,
     auth?: string,
   ) => {
     const response = (await superagent
-      .get(getUrl('start_session'))
+      .get(url)
       .query({
         access_token,
         device_type,
@@ -589,32 +598,6 @@ export class Crunchyroll {
 
     userStore.set('crunchyroll.sessionId', _sessionId)
     userStore.set('crunchyroll.country', response.body.data.country_code)
-
-    setCrunchyrollCountry(store, response.body.data.country_code)
-
-    return response.body.data
-  }
-
-  private static createUnblockedSession = async (
-    store: StoreType,
-    auth?: string,
-  ) => {
-    const response = (await superagent
-      .get(`https://${CR_UNBLOCKER_URL}/start_session`)
-      .ok(T)
-      .query({
-        auth: auth || userStore.get('crunchyroll.refreshToken', null),
-        version: '1.1',
-        user_id: userStore.get('crunchyroll.user.id', null),
-      })) as CrunchyrollResponse<SessionResponse>
-
-    if (responseIsError(response)) {
-      return Promise.reject(response.body.message)
-    }
-
-    _sessionId = response.body.data.session_id
-
-    userStore.set('crunchyroll.sessionId', _sessionId)
 
     setCrunchyrollCountry(store, response.body.data.country_code)
 
