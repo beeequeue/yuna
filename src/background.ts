@@ -233,7 +233,7 @@ const createMainWindow = () => {
   ipcMain.on(OPEN_DEVTOOLS, () => openDevTools())
   ipcMain.on(REGISTER_MEDIA_KEYS, () => registerMediaKeys(window))
   ipcMain.on(UNREGISTER_MEDIA_KEYS, () => unregisterMediaKeys())
-  ipcMain.on(FFMPEG_RETRY, () => downloadBinariesIfNecessary(true))
+  ipcMain.on(FFMPEG_RETRY, () => downloadBinariesIfNecessary(mainWindow!, true))
 
   const saveWindowLocation = debounce(() => {
     settingsStore.set('window', {
@@ -253,7 +253,7 @@ const createMainWindow = () => {
     mainWindow!.show()
 
     if (!settingsStore.get('ffmpegFailed')) {
-      downloadBinariesIfNecessary()
+      downloadBinariesIfNecessary(mainWindow!)
     }
   })
 
