@@ -1,8 +1,8 @@
 import { BrowserWindow } from 'electron'
 import { download } from 'electron-dl'
 import extractZip from 'extract-zip'
-import { extract as extractTar } from 'tar-fs'
-import { createDecompressor } from 'lzma-native'
+import type * as TarFs from 'tar-fs'
+import type * as LmzaNative from 'lzma-native'
 import os from 'os'
 import { join } from 'path'
 import { createReadStream, existsSync, promises as fs } from 'fs'
@@ -36,7 +36,7 @@ const downloadUrls = {
 }
 
 const deleteFolderRecursive = async (path: string) => {
-  const promises = (await fs.readdir(path)).map<Promise<void>>(async file => {
+  const promises = (await fs.readdir(path)).map<Promise<void>>(async (file) => {
     const curPath = join(path, file)
 
     if ((await fs.lstat(curPath)).isDirectory()) {
@@ -61,7 +61,7 @@ const extractZipBinaries = async () => {
 
   await extractZip(zipFile, {
     dir: process.resourcesPath,
-    onEntry: entry => {
+    onEntry: (entry) => {
       if (firstDirName.length < 1) {
         firstDirName = entry.fileName.slice(0, entry.fileName.length - 1)
       }
@@ -80,14 +80,17 @@ const extractZipBinaries = async () => {
 }
 
 const extractTarBinaries = async () => {
+  const { createDecompressor } = require('lzma-native') as typeof LmzaNative
+  const { extract: extractTar } = require('tar-fs') as typeof TarFs
   const tarFile = join(process.resourcesPath, 'ffmpeg.tar.xz')
-  await new Promise(resolve =>
+
+  await new Promise((resolve) =>
     createReadStream(tarFile)
       .on('close', resolve)
       .pipe(createDecompressor())
       .pipe(
         extractTar(process.resourcesPath, {
-          filter: name => !goodFileRegex.test(name),
+          filter: (name) => !goodFileRegex.test(name),
         }),
       ),
   )
