@@ -29,7 +29,7 @@ import {
 } from '@/utils'
 import { Stream } from '@/types'
 
-const CR_UNBLOCKER_URL = 'api2.cr-unblocker.com'
+const CR_UNBLOCKER_URL = 'crunchyblock.com'
 const API_URL = 'api.crunchyroll.com'
 const VERSION = '0'
 const ENGLISH = 'enUS'
@@ -600,7 +600,7 @@ export class Crunchyroll {
     auth?: string,
   ) => {
     const response = (await superagent
-      .get(`https://${CR_UNBLOCKER_URL}/start_session`)
+      .get(`https://${CR_UNBLOCKER_URL}/back/gencookie.php`)
       .ok(T)
       .query({
         auth: auth || userStore.get('crunchyroll.refreshToken', null),
