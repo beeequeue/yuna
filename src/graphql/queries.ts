@@ -108,10 +108,7 @@ export const getAnilistIdsFromMalIds = async (
     )
 
   const idsLeft = malIds.filter(
-    id =>
-      !Object.keys(armResults)
-        .map(Number)
-        .includes(id),
+    id => !Object.keys(armResults).map(Number).includes(id),
   )
 
   const responses = await fetchAllPages<

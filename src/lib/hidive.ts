@@ -428,10 +428,7 @@ export class Hidive {
 
     const nonce = date + TOKEN
 
-    const hashedNonce = crypto
-      .createHash('sha256')
-      .update(nonce)
-      .digest('hex')
+    const hashedNonce = crypto.createHash('sha256').update(nonce).digest('hex')
 
     return hashedNonce
   }
@@ -448,10 +445,7 @@ export class Hidive {
       nonce +
       TOKEN
 
-    return crypto
-      .createHash('sha256')
-      .update(sigCleanStr)
-      .digest('hex')
+    return crypto.createHash('sha256').update(sigCleanStr).digest('hex')
   }
 
   private static convertName(name: string) {

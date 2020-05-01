@@ -62,9 +62,5 @@ export const trackView = async (view: View) => {
     newSession = false
   }
 
-  await superagent
-    .get(URL)
-    .query(query)
-    .ok(T)
-    .retry(5)
+  await superagent.get(URL).query(query).ok(T).retry(5)
 }

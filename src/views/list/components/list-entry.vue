@@ -17,8 +17,8 @@
           <img
             :src="
               media.media.bannerImage ||
-                media.media.coverImage.extraLarge ||
-                `http://lorempixel.com/325/115/abstract?${entry.id}`
+              media.media.coverImage.extraLarge ||
+              `http://lorempixel.com/325/115/abstract?${entry.id}`
             "
           />
         </router-link>

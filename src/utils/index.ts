@@ -353,7 +353,7 @@ export const debounce = <P extends Array<any>>(
   let timeout: number | NodeJS.Timeout | null = null
 
   return (...input: P) => {
-    const later = function() {
+    const later = function () {
       timeout = null
       if (!immediate) {
         func.apply(null, input)

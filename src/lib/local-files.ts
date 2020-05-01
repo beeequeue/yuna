@@ -223,12 +223,9 @@ export class LocalFiles {
       return null
     }
 
-    const [animeTitle, episodeTitle] = filename.split(match[0]).map(str =>
-      str
-        .replace(/ - $/, '')
-        .replace(/^ - /, '')
-        .trim(),
-    )
+    const [animeTitle, episodeTitle] = filename
+      .split(match[0])
+      .map(str => str.replace(/ - $/, '').replace(/^ - /, '').trim())
 
     // || so it overrides empty strings
     return {
@@ -240,11 +237,7 @@ export class LocalFiles {
   }
 
   private static generateId(path: string) {
-    return crypto
-      .createHash('md5')
-      .update(path)
-      .digest('hex')
-      .substr(0, 10)
+    return crypto.createHash('md5').update(path).digest('hex').substr(0, 10)
   }
 
   /**

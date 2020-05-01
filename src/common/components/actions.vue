@@ -4,11 +4,11 @@
       <c-button
         v-if="
           (isNotExcluded(ActionKeys.ADD) && !isOnList) ||
-            (!isPlanning &&
-              !isWatching &&
-              !isCompleted &&
-              !isDropped &&
-              !isPaused)
+          (!isPlanning &&
+            !isWatching &&
+            !isCompleted &&
+            !isDropped &&
+            !isPaused)
         "
         :key="ActionKeys.ADD"
         v-tooltip="getTooltip('Set as Planning')"

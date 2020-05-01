@@ -80,7 +80,7 @@ const routerMethods = ['push', 'replace'] as const
 routerMethods.forEach(method => {
   const originalCall = Router.prototype[method]
 
-  Router.prototype[method] = function(
+  Router.prototype[method] = function (
     location: RawLocation,
     onResolve?: Function,
     onReject?: ErrorHandler,
