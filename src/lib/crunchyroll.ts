@@ -612,13 +612,13 @@ export class Crunchyroll {
       return Promise.reject(response.body.message)
     }
 
-    _sessionId = response.body.data.session_id
+    _sessionId = response.body.session_id
 
     userStore.set('crunchyroll.sessionId', _sessionId)
 
-    setCrunchyrollCountry(store, response.body.data.country_code)
+    setCrunchyrollCountry(store, response.body.country_code)
 
-    return response.body.data
+    return response.body
   }
 
   private static fetchStreamInfo = async (
