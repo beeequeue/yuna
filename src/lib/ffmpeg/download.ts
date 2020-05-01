@@ -115,7 +115,10 @@ const extractTarBinaries = async () => {
   await fs.unlink(tarFile)
 }
 
-export const downloadBinariesIfNecessary = async (force?: boolean) => {
+export const downloadBinariesIfNecessary = async (
+  window: BrowserWindow,
+  force?: boolean,
+) => {
   if (
     !force &&
     existsSync(join(process.resourcesPath, 'ffmpeg' + ext)) &&
@@ -123,8 +126,6 @@ export const downloadBinariesIfNecessary = async (force?: boolean) => {
   ) {
     return
   }
-
-  const window = BrowserWindow.getFocusedWindow()!
 
   try {
     const filename = platform !== 'linux' ? 'ffmpeg.zip' : 'ffmpeg.tar.xz'
