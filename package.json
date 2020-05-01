@@ -22,7 +22,7 @@
     "electron-util": "0.14.0",
     "extract-zip": "2.0.0",
     "fluent-ffmpeg": "2.1.2",
-    "fuse.js": "5.0.5-beta",
+    "fuse.js": "5.2.3",
     "graphql": "14.6.0",
     "hls.js": "0.13.2",
     "husky": "4.2.3",
