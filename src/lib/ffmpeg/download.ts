@@ -1,6 +1,5 @@
-import Electron from 'electron'
+import { BrowserWindow } from 'electron'
 import { download } from 'electron-dl'
-import { activeWindow } from 'electron-util'
 import extractZip from 'extract-zip'
 import { extract as extractTar } from 'tar-fs'
 import { createDecompressor } from 'lzma-native'
@@ -125,8 +124,9 @@ export const downloadBinariesIfNecessary = async (force?: boolean) => {
     return
   }
 
+  const window = BrowserWindow.getFocusedWindow()!
+
   try {
-    const window = Electron.BrowserWindow.getFocusedWindow()!
     const filename = platform !== 'linux' ? 'ffmpeg.zip' : 'ffmpeg.tar.xz'
 
     if (!existsSync(join(process.resourcesPath, filename))) {
@@ -143,9 +143,9 @@ export const downloadBinariesIfNecessary = async (force?: boolean) => {
       await extractTarBinaries()
     }
 
-    activeWindow().webContents.send(FFMPEG_DOWNLOADED)
+    window.webContents.send(FFMPEG_DOWNLOADED)
   } catch (err) {
-    activeWindow().webContents.send(FFMPEG_FAILED)
+    window.webContents.send(FFMPEG_FAILED)
 
     captureException(err)
   }
