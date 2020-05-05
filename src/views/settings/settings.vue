@@ -108,12 +108,15 @@
             <div v-if="ffmpegFailed" class="path" style="direction: ltr;">
               <c-button content="Retry FFMPEG download" :click="retryFfmpeg" />
             </div>
-            <div
-              v-else
-              class="path"
-              style="direction: ltr; pointer-events: none;"
-            >
+            <div v-else class="item">
               FFMPEG downloaded.
+
+              <c-button
+                v-tooltip.top="'Re-download'"
+                :icon="resetSvg"
+                style="margin-left: 10px;"
+                :click="retryFfmpeg"
+              />
             </div>
           </div>
         </section>
@@ -705,6 +708,14 @@ export default class Settings extends Vue {
 
         & > .button {
           flex-shrink: 0;
+        }
+
+        & > .item {
+          display: flex;
+          align-items: center;
+          margin-left: 10px;
+          padding: 5px;
+          max-width: 100%;
         }
 
         & > .path {
