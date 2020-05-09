@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import { download } from 'electron-dl'
 import extractZip from 'extract-zip'
 import type * as TarFs from 'tar-fs'
@@ -11,9 +11,10 @@ import { captureException } from '@sentry/node'
 import { delay } from '@/utils'
 import { FFMPEG_DOWNLOADED, FFMPEG_FAILED } from '@/messages'
 
-const platform = os.platform() as 'win32' | 'linux' | 'darwin'
-const arch = os.arch() as 'x64' | 'ia32'
-const ext = platform === 'win32' ? '.exe' : ''
+const SAVE_FOLDER = join(app.getPath('userData'), 'ffmpeg')
+const PLATFORM = os.platform() as 'win32' | 'linux' | 'darwin'
+const ARCH = os.arch() as 'x64' | 'ia32'
+const EXT = PLATFORM === 'win32' ? '.exe' : ''
 
 const downloadUrls = {
   win32: {
@@ -56,11 +57,11 @@ const deleteFolderRecursive = async (path: string) => {
 const goodFileRegex = /((?:ffprobe|ffmpeg)(?:\.exe)?)$/
 
 const extractZipBinaries = async () => {
-  const zipFile = join(process.resourcesPath, 'ffmpeg.zip')
+  const zipFile = join(SAVE_FOLDER, 'ffmpeg.zip')
   let firstDirName = ''
 
   await extractZip(zipFile, {
-    dir: process.resourcesPath,
+    dir: SAVE_FOLDER,
     onEntry: entry => {
       if (firstDirName.length < 1) {
         firstDirName = entry.fileName.slice(0, entry.fileName.length - 1)
@@ -75,21 +76,22 @@ const extractZipBinaries = async () => {
     },
   })
 
-  await deleteFolderRecursive(join(process.resourcesPath, firstDirName))
+  await deleteFolderRecursive(join(SAVE_FOLDER, firstDirName))
   await fs.unlink(zipFile)
 }
 
 const extractTarBinaries = async () => {
+  // We do this instead of `import`ing so it only does it on the correct platforms.
   const { createDecompressor } = require('lzma-native') as typeof LmzaNative
   const { extract: extractTar } = require('tar-fs') as typeof TarFs
-  const tarFile = join(process.resourcesPath, 'ffmpeg.tar.xz')
+  const tarFile = join(SAVE_FOLDER, 'ffmpeg.tar.xz')
 
   await new Promise(resolve =>
     createReadStream(tarFile)
       .on('close', resolve)
       .pipe(createDecompressor())
       .pipe(
-        extractTar(process.resourcesPath, {
+        extractTar(SAVE_FOLDER, {
           filter: name => !goodFileRegex.test(name),
         }),
       ),
@@ -97,19 +99,10 @@ const extractTarBinaries = async () => {
 
   await delay(1000)
 
-  const extractedFolder = join(
-    process.resourcesPath,
-    'ffmpeg-4.0.3-64bit-static',
-  )
+  const extractedFolder = join(SAVE_FOLDER, 'ffmpeg-4.0.3-64bit-static')
   await Promise.all([
-    fs.rename(
-      join(extractedFolder, 'ffmpeg'),
-      join(process.resourcesPath, 'ffmpeg'),
-    ),
-    fs.rename(
-      join(extractedFolder, 'ffprobe'),
-      join(process.resourcesPath, 'ffprobe'),
-    ),
+    fs.rename(join(extractedFolder, 'ffmpeg'), join(SAVE_FOLDER, 'ffmpeg')),
+    fs.rename(join(extractedFolder, 'ffprobe'), join(SAVE_FOLDER, 'ffprobe')),
   ])
 
   await delay(1000)
@@ -124,24 +117,24 @@ export const downloadBinariesIfNecessary = async (
 ) => {
   if (
     !force &&
-    existsSync(join(process.resourcesPath, 'ffmpeg' + ext)) &&
-    existsSync(join(process.resourcesPath, 'ffprobe' + ext))
+    existsSync(join(SAVE_FOLDER, 'ffmpeg' + EXT)) &&
+    existsSync(join(SAVE_FOLDER, 'ffprobe' + EXT))
   ) {
     return
   }
 
   try {
-    const filename = platform !== 'linux' ? 'ffmpeg.zip' : 'ffmpeg.tar.xz'
+    const filename = PLATFORM !== 'linux' ? 'ffmpeg.zip' : 'ffmpeg.tar.xz'
 
-    if (!existsSync(join(process.resourcesPath, filename))) {
-      await download(window, downloadUrls[platform][arch], {
-        directory: process.resourcesPath,
+    if (!existsSync(join(SAVE_FOLDER, filename))) {
+      await download(window, downloadUrls[PLATFORM][ARCH], {
+        directory: SAVE_FOLDER,
         filename,
         showBadge: false,
       })
     }
 
-    if (platform !== 'linux') {
+    if (PLATFORM !== 'linux') {
       await extractZipBinaries()
     } else {
       await extractTarBinaries()
