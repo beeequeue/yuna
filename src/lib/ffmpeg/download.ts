@@ -80,6 +80,7 @@ const extractZipBinaries = async () => {
 }
 
 const extractTarBinaries = async () => {
+  // We do this instead of `import`ing so it only does it on the correct platforms.
   const { createDecompressor } = require('lzma-native') as typeof LmzaNative
   const { extract: extractTar } = require('tar-fs') as typeof TarFs
   const tarFile = join(process.resourcesPath, 'ffmpeg.tar.xz')
