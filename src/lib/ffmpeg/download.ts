@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import { download } from 'electron-dl'
 import extractZip from 'extract-zip'
 import type * as TarFs from 'tar-fs'
@@ -11,7 +11,7 @@ import { captureException } from '@sentry/node'
 import { delay } from '@/utils'
 import { FFMPEG_DOWNLOADED, FFMPEG_FAILED } from '@/messages'
 
-const SAVE_FOLDER = process.resourcesPath
+const SAVE_FOLDER = join(app.getPath('userData'), 'ffmpeg')
 const PLATFORM = os.platform() as 'win32' | 'linux' | 'darwin'
 const ARCH = os.arch() as 'x64' | 'ia32'
 const EXT = PLATFORM === 'win32' ? '.exe' : ''
