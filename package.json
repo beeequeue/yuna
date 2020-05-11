@@ -39,7 +39,7 @@
     "tar-fs": "2.0.1",
     "ts-debounce": "2.0.1",
     "ts-key-enum": "2.0.2",
-    "uuid": "7.0.2",
+    "uuid": "8.0.0",
     "v-tooltip": "2.0.3",
     "vue": "2.6.11",
     "vue-apollo": "3.0.3",
