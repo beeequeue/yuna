@@ -3,6 +3,7 @@ import Vue from 'vue'
 import { ObserveVisibility } from 'vue-observe-visibility'
 import Tooltip from 'v-tooltip'
 import Portal from 'portal-vue'
+import Composition from '@vue/composition-api'
 import { init, setExtra } from '@sentry/browser'
 import * as Integrations from '@sentry/integrations'
 
@@ -25,6 +26,7 @@ import { getQueue } from '@/state/user'
 Vue.config.productionTip = false
 Vue.use(Tooltip)
 Vue.use(Portal)
+Vue.use(Composition)
 Vue.directive('visibility', ObserveVisibility)
 
 // Register services

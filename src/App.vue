@@ -45,9 +45,13 @@
 
 <script lang="ts">
 import { ipcRenderer } from 'electron'
-import { Vue, Watch } from 'vue-property-decorator'
-import Component from 'vue-class-component'
 import { captureException } from '@sentry/browser'
+import {
+  computed,
+  defineComponent,
+  onErrorCaptured,
+  watch,
+} from '@vue/composition-api'
 
 import TitleBar from '@/common/components/title-bar.vue'
 import ToastOverlay from '@/common/components/toast-overlay.vue'
@@ -70,7 +74,7 @@ import { View } from '@/router'
 const requireBg = require.context('@/assets/bg', false, /\.webp$/)
 const backgrounds = requireBg.keys()
 
-@Component({
+export default defineComponent({
   components: {
     TitleBar,
     PlayerContainer,
@@ -80,77 +84,73 @@ const backgrounds = requireBg.keys()
     LocalSourceModal,
     EditModal,
   },
-})
-export default class App extends Vue {
-  public get isDev() {
-    return process.env.NODE_ENV === 'development'
-  }
-
-  public get isFinishedConnecting() {
-    return getFinishedConnecting(this.$store)
-  }
-
-  public get isFullscreen() {
-    return getIsFullscreen(this.$store)
-  }
-
-  public get hasFinishedSetup() {
-    return getHasFinishedSetup(this.$store)
-  }
-
-  public errorCaptured(err: any) {
-    sendErrorToast(this.$store, err)
-
-    switch (process.env.NODE_ENV) {
-      case 'development':
-        //eslint-disable-next-line no-console
-        console.error(err)
-        break
-      case 'production':
-        captureException(err)
-        break
-    }
-  }
-
-  public backgroundImage = requireBg(
-    backgrounds[Math.floor(Math.random() * backgrounds.length)],
-  )
-
-  public setupListPlugins() {
-    const plugins = [AnilistListPlugin, SimklListPlugin]
-
-    return plugins.map(plugin => new plugin(this.$apollo, this.$store))
-  }
-
-  @Watch('hasFinishedSetup')
-  public finishedConnectingChanged() {
-    if (!this.isFinishedConnecting && this.hasFinishedSetup) {
-      this.$router.push('login')
-    }
-  }
-
-  public async created() {
-    trackView(View.Dashboard)
-
-    window.listPlugins = this.setupListPlugins()
-
-    if (!this.hasFinishedSetup) {
-      this.$router.push('/first-time-setup')
-    }
-
-    if (!this.isFinishedConnecting && this.hasFinishedSetup) {
-      window.initialLogin = true
-      this.$router.push('login')
-    }
-
-    Hidive.createVisit(this.$store)
-    Crunchyroll.createSession(this.$store)
-
+  setup: (_props, context) => {
     if (process.env.NODE_ENV === 'production') {
       ipcRenderer.send(CHECK_FOR_UPDATES)
     }
-  }
-}
+
+    onErrorCaptured((err: Error) => {
+      sendErrorToast(context.root.$store, err.message)
+
+      switch (process.env.NODE_ENV) {
+        case 'development':
+          //eslint-disable-next-line no-console
+          console.error(err)
+          break
+        case 'production':
+          captureException(err)
+          break
+      }
+    })
+
+    const setupListPlugins = () => {
+      const plugins = [AnilistListPlugin, SimklListPlugin]
+
+      return plugins.map(
+        plugin => new plugin(context.root.$apollo, context.root.$store),
+      )
+    }
+
+    window.listPlugins = setupListPlugins()
+
+    const hasFinishedSetup = computed(() =>
+      getHasFinishedSetup(context.root.$store),
+    )
+    const isFinishedConnecting = computed(() =>
+      getFinishedConnecting(context.root.$store),
+    )
+
+    if (!hasFinishedSetup) {
+      context.root.$router.push('/first-time-setup')
+    }
+
+    if (!isFinishedConnecting && hasFinishedSetup) {
+      window.initialLogin = true
+      context.root.$router.push('login')
+    }
+
+    Hidive.createVisit(context.root.$store)
+    Crunchyroll.createSession(context.root.$store)
+
+    watch(hasFinishedSetup, () => {
+      if (!isFinishedConnecting && hasFinishedSetup) {
+        context.root.$router.push('login')
+      }
+    })
+
+    trackView(View.Dashboard)
+
+    return {
+      isDev: process.env.NODE_ENV === 'development',
+      backgroundImage: requireBg(
+        backgrounds[Math.floor(Math.random() * backgrounds.length)],
+      ),
+      isFinishedConnecting,
+      hasFinishedSetup,
+      isFullscreen: getIsFullscreen(context.root.$store),
+    }
+  },
+})
 </script>
 
 <style lang="scss">
