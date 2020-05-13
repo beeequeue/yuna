@@ -180,7 +180,7 @@ export default defineComponent<Props>({
     anime: Object,
     listEntry: Object,
     small: Boolean,
-    horizontal: { type: Boolean, default: () => [] },
+    horizontal: { type: Boolean },
   },
   setup: (props, { root }) => {
     const isInQueue = computed(

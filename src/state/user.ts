@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid'
 import {
   ListEntry,
   Media,
+  MediaExternalLink,
   MediaListStatus,
   Provider,
 } from '@/graphql/generated/types'
@@ -27,7 +28,8 @@ type SetProviderOptions = {
   provider: Provider
 }
 
-type AddToQueueOptions = Pick<Media, 'id' | 'externalLinks'> & {
+type AddToQueueOptions = Pick<Media, 'id'> & {
+  externalLinks: Array<null | Pick<MediaExternalLink, 'site' | 'url'>> | null
   listEntry: Pick<ListEntry, 'status'> | null
 }
 
