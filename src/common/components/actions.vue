@@ -3,7 +3,7 @@
     <transition-group tag="div" class="actions" :class="{ small, horizontal }">
       <c-button
         v-if="
-          (isNotExcluded(ActionKeys.ADD) && !isOnList) ||
+          !isOnList ||
           (!isPlanning &&
             !isWatching &&
             !isCompleted &&
@@ -18,7 +18,7 @@
       />
 
       <c-button
-        v-if="isPlanning && isNotExcluded(ActionKeys.START)"
+        v-if="isPlanning"
         :key="ActionKeys.START"
         v-tooltip="getTooltip('Set as Watching')"
         type="success"
@@ -28,7 +28,7 @@
       />
 
       <c-button
-        v-if="isDropped || (isPaused && isNotExcluded(ActionKeys.RESUME))"
+        v-if="isDropped || isPaused"
         :key="ActionKeys.RESUME"
         v-tooltip="getTooltip('Resume')"
         :icon="mdiRepeat"
@@ -43,7 +43,6 @@
         class="multi-button"
       >
         <c-button
-          v-if="isNotExcluded(ActionKeys.PAUSE)"
           v-tooltip="getTooltip('Pause')"
           :icon="mdiPause"
           type="warning"
@@ -52,7 +51,6 @@
         />
 
         <c-button
-          v-if="isNotExcluded(ActionKeys.DROP)"
           v-tooltip="getTooltip('Drop')"
           :icon="mdiClose"
           type="danger"
@@ -62,9 +60,7 @@
       </div>
 
       <c-button
-        v-if="
-          ifBig(false, true) && isWatching && isNotExcluded(ActionKeys.PAUSE)
-        "
+        v-if="ifBig(false, true) && isWatching"
         :key="ActionKeys.PAUSE"
         v-tooltip="getTooltip('Pause')"
         :icon="mdiPause"
@@ -74,9 +70,7 @@
       />
 
       <c-button
-        v-if="
-          ifBig(false, true) && isWatching && isNotExcluded(ActionKeys.DROP)
-        "
+        v-if="ifBig(false, true) && isWatching"
         :key="ActionKeys.DROP"
         v-tooltip="getTooltip('Drop')"
         :icon="mdiClose"
@@ -86,7 +80,7 @@
       />
 
       <c-button
-        v-if="isCompleted && isNotExcluded(ActionKeys.REPEAT)"
+        v-if="isCompleted"
         :key="ActionKeys.REPEAT"
         v-tooltip="getTooltip('Rewatch')"
         type="success"
@@ -96,7 +90,7 @@
       />
 
       <c-button
-        v-if="!isInQueue && isNotExcluded(ActionKeys.ADD_QUEUE)"
+        v-if="!isInQueue"
         :key="ActionKeys.ADD_QUEUE"
         v-tooltip="getTooltip('Add to Queue')"
         :icon="mdiPlaylistPlay"
@@ -104,7 +98,7 @@
         :click="addToQueue"
       />
       <c-button
-        v-else-if="isNotExcluded(ActionKeys.REMOVE_QUEUE)"
+        v-else
         :key="ActionKeys.REMOVE_QUEUE"
         v-tooltip="getTooltip('Remove from Queue')"
         :icon="mdiPlaylistMinus"
@@ -113,7 +107,7 @@
       />
 
       <c-button
-        v-if="isOnList && isNotExcluded(ActionKeys.EDIT)"
+        v-if="isOnList"
         :key="ActionKeys.EDIT"
         v-tooltip="getTooltip('Edit')"
         :icon="mdiPencil"
@@ -125,7 +119,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from '@vue/composition-api'
+import { computed, defineComponent } from '@vue/composition-api'
 import {
   mdiClose,
   mdiPause,
@@ -196,13 +190,10 @@ export default defineComponent<Props>({
       () => getSettings(root.$store).autoMarkAsPlanning,
     )
 
-    const exclude = ref<string[]>([])
     const mediaListStatus = computed(() => props.listEntry?.status ?? null)
 
     const statusIs = (...statuses: MediaListStatus[]) =>
       statuses.includes(mediaListStatus.value!)
-
-    const isNotExcluded = (key: string) => !exclude.value.includes(key)
 
     const ifBig = <T1, T2>(bigValue: T1, smallValue?: T2) =>
       props.small !== true ? bigValue : smallValue
@@ -273,9 +264,6 @@ export default defineComponent<Props>({
     }
 
     return {
-      // Variables
-      exclude,
-
       // Computed
       mediaListStatus,
       isOnList: mediaListStatus.value != null,
@@ -288,7 +276,6 @@ export default defineComponent<Props>({
       shouldAddToListAsWell,
 
       // Util funcs
-      isNotExcluded,
       ifBig,
       getTooltip,
 
