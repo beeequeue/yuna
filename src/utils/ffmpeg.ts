@@ -1,3 +1,4 @@
+import { api } from 'electron-util'
 import { remote, FileFilter } from 'electron'
 import os from 'os'
 import { join } from 'path'
@@ -36,7 +37,9 @@ export const getFolderPath = async ({ title }: { title: string }) => {
   return filePaths[0] || null
 }
 
-const getPath = (name: string) => join(process.resourcesPath, name + ext)
+export const FFMPEG_SAVE_FOLDER = join(api.app.getPath('userData'), 'ffmpeg')
+
+const getPath = (name: string) => join(FFMPEG_SAVE_FOLDER, name + ext)
 
 export const FFMPEG_PATH = getPath('ffmpeg')
 export const FFPROBE_PATH = getPath('ffprobe')
