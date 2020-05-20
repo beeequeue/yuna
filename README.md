@@ -12,6 +12,7 @@
   <a href="https://github.com/BeeeQueue/yuna/releases">
     <img src="https://img.shields.io/github/release-pre/beeequeue/yuna.svg"/>
   </a>
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2FBeeeQueue%2Fyuna?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2FBeeeQueue%2Fyuna.svg?type=shield"/></a>
 </p>
 
 <p align="center">
@@ -70,3 +71,7 @@ These builds are not guaranteed to work in any way.
 ### Generating types after changing/adding a GraphQL query/mutation
 
 `yarn gql-gen`
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FBeeeQueue%2Fyuna.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FBeeeQueue%2Fyuna?ref=badge_large)
