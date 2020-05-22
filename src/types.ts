@@ -51,3 +51,12 @@ export const CrunchyrollProviders = [
 ]
 
 export type SelectItem = { label: string; value: string }
+
+export type GitHubRelease = {
+  id: number
+  tag_name: string
+  name: string
+  body: string
+  html_url: string
+  published_at: string
+}

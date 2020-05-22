@@ -3,8 +3,40 @@
   "description": "An anime player that integrates with AniList, Crunchyroll, and Hidive.",
   "version": "1.4.16",
   "author": "BeeeQueue",
+  "license": "AGPL-3.0-only",
   "engines": {
     "node": "12"
+  },
+  "private": true,
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/BeeeQueue/yuna"
+  },
+  "main": "background.js",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production vue-cli-service electron:build",
+    "codegen": "gql-gen",
+    "get-schema": "yarn graphql get-schema",
+    "lint": "yarn eslint \"src/**/*.{js,ts,vue}\"",
+    "lint:ci": "yarn lint -f junit -o test-results/eslint/results.xml",
+    "postinstall": "yarn electron-builder install-app-deps",
+    "postuninstall": "yarn electron-builder install-app-deps",
+    "serve": "vue-cli-service electron:serve",
+    "test": "cross-env NODE_ENV=test vue-cli-service test:unit"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,vue}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{js,json,graphql,yml,scss}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@mdi/js": "5.3.45",
@@ -64,12 +96,15 @@
     "@graphql-codegen/typescript-compatibility": "1.15.0",
     "@graphql-codegen/typescript-operations": "1.15.0",
     "@sentry/webpack-plugin": "1.11.1",
+    "@testing-library/jest-dom": "5.8.0",
+    "@testing-library/vue": "5.0.3",
     "@types/date-fns": "2.6.0",
     "@types/discord-rpc": "3.0.4",
     "@types/ffmpeg-static": "3.0.0",
     "@types/ffprobe-static": "2.0.0",
     "@types/fluent-ffmpeg": "2.1.14",
     "@types/hls.js": "0.12.6",
+    "@types/jest": "24.0.19",
     "@types/lodash.keyby": "4.6.6",
     "@types/lzma-native": "4.0.0",
     "@types/marked": "0.7.4",
@@ -87,6 +122,7 @@
     "@vue/cli-plugin-babel": "4.4.1",
     "@vue/cli-plugin-eslint": "4.4.1",
     "@vue/cli-plugin-typescript": "4.4.1",
+    "@vue/cli-plugin-unit-jest": "4.3.0",
     "@vue/cli-service": "4.4.1",
     "@vue/eslint-config-prettier": "6.0.0",
     "@vue/eslint-config-typescript": "5.0.2",
@@ -100,6 +136,7 @@
     "graphql-cli": "3.0.14",
     "graphql-tag": "2.10.3",
     "lint-staged": "10.2.7",
+    "nock": "12.0.3",
     "node-sass": "4.14.1",
     "prettier": "2.0.5",
     "sass-loader": "8.0.2",
@@ -109,36 +146,5 @@
     "vue-cli-plugin-electron-builder": "1.4.6",
     "vue-template-compiler": "2.6.11",
     "webpack": "4.43.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "license": "AGPL-3.0-only",
-  "lint-staged": {
-    "*.{ts,vue}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{js,json,graphql,yml,scss}": [
-      "prettier --write"
-    ]
-  },
-  "main": "background.js",
-  "private": true,
-  "repository": {
-    "type": "github",
-    "url": "https://github.com/BeeeQueue/yuna"
-  },
-  "scripts": {
-    "build": "cross-env NODE_ENV=production vue-cli-service electron:build",
-    "codegen": "gql-gen",
-    "get-schema": "yarn graphql get-schema",
-    "lint": "yarn eslint \"src/**/*.{js,ts,vue}\"",
-    "lint:ci": "yarn lint -f junit -o test-results/eslint/results.xml",
-    "postinstall": "yarn electron-builder install-app-deps",
-    "postuninstall": "yarn electron-builder install-app-deps",
-    "serve": "vue-cli-service electron:serve"
   }
 }
