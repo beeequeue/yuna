@@ -2,12 +2,13 @@
   <div class="changelog">
     <h1 class="title">Changelog</h1>
 
-    <div class="versions">
+    <div class="versions" data-testid="version-container">
       <section
         v-for="version in changelog"
         :id="version.tag_name"
         :key="version.name"
         class="version"
+        data-testid="version"
       >
         <a class="header" :href="version.html_url" target="_blank">
           <h2 v-html="getHeader(version.name)" />
@@ -28,23 +29,10 @@
 <script lang="ts">
 import marked from 'marked'
 import superagent from 'superagent'
-
-import { RequestResponse, responseIsError } from '@/utils'
 import { defineComponent, ref, watch } from '@vue/composition-api'
 
-type GitHubRelease = {
-  id: number
-  tag_name: string
-  name: string
-  body: string
-  url: string
-  html_url: string
-  draft: boolean
-  author: any
-  prerelease: boolean
-  published_at: string
-  assets: any[]
-}
+import { RequestResponse, responseIsError } from '@/utils'
+import type { GitHubRelease } from '@/types'
 
 type LiteRelease = Pick<
   GitHubRelease,
@@ -57,12 +45,21 @@ const CHANGELOG_FETCH_TIMEOUT = 1000 * 60 * 25
 
 const renderer = new marked.Renderer()
 
-renderer.text = (content: string) =>
-  content.replace(
-    / #(\d+) ?/g,
-    (original: string, id: string) =>
-      `<a href="https://github.com/beeequeue/yuna/issues/${id}" target="_blank">${original}</a>`,
-  )
+const regex = / (#\d+)/g
+renderer.text = (content: string) => {
+  const matches = content.match(regex) ?? []
+
+  return matches.reduce((accum, match) => {
+    const hash = match.trim()
+    const id = hash.slice(1)
+
+    return accum.replace(
+      match,
+      // Keep the space! It's in the regex!
+      ` <a href="https://github.com/beeequeue/yuna/issues/${id}" target="_blank">${hash}</a>`,
+    )
+  }, content)
+}
 
 const fetchChangelog = async () => {
   const response = (await superagent.get(
