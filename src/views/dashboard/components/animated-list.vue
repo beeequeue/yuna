@@ -32,9 +32,11 @@
 <script lang="ts">
 import { addDays as _addDays, startOfDay } from 'date-fns'
 import { useQuery } from '@vue/apollo-composable'
-import { defineComponent, ref } from '@vue/composition-api'
+import { computed, defineComponent, ref } from '@vue/composition-api'
 
+import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import {
+  AiringFeedItemFragment,
   EpisodeFeedQuery,
   EpisodeFeedVariables,
 } from '@/graphql/generated/types'
@@ -46,6 +48,7 @@ const addDays = (days: number) =>
   Math.round(startOfDay(_addDays(new Date(), days)).valueOf() / 1000)
 
 export default defineComponent<{ ids: number[] }>({
+  components: { NextEpisodeInfo },
   props: {
     ids: {
       type: Array,
@@ -64,16 +67,17 @@ export default defineComponent<{ ids: number[] }>({
         endDate: addDays(7),
       },
     )
+    const airingSchedules = computed(
+      () => result.value?.Page?.airingSchedules ?? [],
+    )
 
-    const getEpisodeClass = (
-      schedule: any, // TODO
-    ) => ({
+    const getEpisodeClass = (schedule: AiringFeedItemFragment) => ({
       aired: schedule.airingAt * 1000 < Date.now(),
     })
 
     return {
       page,
-      airingSchedules: result.value.Page?.airingSchedules,
+      airingSchedules,
       getEpisodeClass,
     }
   },

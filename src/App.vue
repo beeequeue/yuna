@@ -120,11 +120,11 @@ export default defineComponent({
       getFinishedConnecting(context.root.$store),
     )
 
-    if (!hasFinishedSetup) {
+    if (!hasFinishedSetup.value) {
       context.root.$router.push('/first-time-setup')
     }
 
-    if (!isFinishedConnecting && hasFinishedSetup) {
+    if (!isFinishedConnecting && hasFinishedSetup.value) {
       window.initialLogin = true
       context.root.$router.push('login')
     }
@@ -133,7 +133,7 @@ export default defineComponent({
     Crunchyroll.createSession(context.root.$store)
 
     watch(hasFinishedSetup, () => {
-      if (!isFinishedConnecting && hasFinishedSetup) {
+      if (!isFinishedConnecting.value && hasFinishedSetup.value) {
         context.root.$router.push('login')
       }
     })
