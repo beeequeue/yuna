@@ -31,16 +31,15 @@ import marked from 'marked'
 import superagent from 'superagent'
 import { defineComponent, ref, watch } from '@vue/composition-api'
 
-import { RequestResponse, responseIsError } from '@/utils'
+import { LocalStorageKey } from '@/lib/local-storage'
 import type { GitHubRelease } from '@/types'
+import { RequestResponse, responseIsError } from '@/utils'
 
 type LiteRelease = Pick<
   GitHubRelease,
   'id' | 'tag_name' | 'name' | 'body' | 'html_url' | 'published_at'
 >
 
-const CHANGELOG_KEY = 'changelog'
-const CHANGELOG_LAST_FETCHED_KEY = 'changelog-fetched'
 const CHANGELOG_FETCH_TIMEOUT = 1000 * 60 * 25
 
 const renderer = new marked.Renderer()
@@ -83,8 +82,11 @@ const fetchChangelog = async () => {
     )
     .slice(0, 10)
 
-  localStorage.setItem(CHANGELOG_KEY, JSON.stringify(changelog))
-  localStorage.setItem(CHANGELOG_LAST_FETCHED_KEY, Date.now().toString())
+  localStorage.setItem(LocalStorageKey.Changelog, JSON.stringify(changelog))
+  localStorage.setItem(
+    LocalStorageKey.ChangelogFetchedAt,
+    Date.now().toString(),
+  )
 
   return changelog
 }
@@ -92,10 +94,10 @@ const fetchChangelog = async () => {
 export default defineComponent({
   setup: () => {
     const changelog = ref<LiteRelease[]>(
-      JSON.parse(localStorage.getItem(CHANGELOG_KEY) || '[]'),
+      JSON.parse(localStorage.getItem(LocalStorageKey.Changelog) || '[]'),
     )
     const lastFetchedAt = ref(
-      Number(localStorage.getItem(CHANGELOG_LAST_FETCHED_KEY) || 0),
+      Number(localStorage.getItem(LocalStorageKey.ChangelogFetchedAt) || 0),
     )
 
     watch(lastFetchedAt, async () => {
