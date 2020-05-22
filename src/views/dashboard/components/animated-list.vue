@@ -30,54 +30,54 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
 import { addDays as _addDays, startOfDay } from 'date-fns'
-import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
-import EPISODE_FEED_QUERY from './episode-feed.graphql'
+import { useQuery } from '@vue/apollo-composable'
+import { defineComponent, ref } from '@vue/composition-api'
+
 import {
-  EpisodeFeedAiringSchedules,
   EpisodeFeedQuery,
   EpisodeFeedVariables,
 } from '@/graphql/generated/types'
-
-import { Query, Required } from '@/decorators'
+import EPISODE_FEED_QUERY from './episode-feed.graphql'
 
 // startOfDay is used to make sure we can cache the results properly
 // if we don't, every query will have different time variables
 const addDays = (days: number) =>
   Math.round(startOfDay(_addDays(new Date(), days)).valueOf() / 1000)
 
-@Component({ components: { NextEpisodeInfo } })
-export default class AnimatedList extends Vue {
-  @Required(Array) ids!: number[]
+export default defineComponent<{ ids: number[] }>({
+  props: {
+    ids: {
+      type: Array,
+      required: true,
+    },
+  },
+  setup: ({ ids }) => {
+    const page = ref(1)
 
-  @Query<AnimatedList, EpisodeFeedQuery, EpisodeFeedVariables>({
-    fetchPolicy: 'cache-first',
-    query: EPISODE_FEED_QUERY,
-    variables() {
-      return {
-        page: this.page,
+    const { result } = useQuery<EpisodeFeedQuery, EpisodeFeedVariables>(
+      EPISODE_FEED_QUERY,
+      {
+        ids,
+        page: page.value,
         startDate: addDays(-1),
         endDate: addDays(7),
-        ids: this.ids,
-      }
-    },
-    update(data) {
-      this.hasNextPage = data.Page?.pageInfo?.hasNextPage ?? false
+      },
+    )
 
-      return data.Page?.airingSchedules ?? null
-    },
-  })
-  public airingSchedules!: EpisodeFeedAiringSchedules[]
-  public hasNextPage = false
-  public page = 1
-
-  public getEpisodeClass(schedule: AnimatedList['airingSchedules'][number]) {
-    return {
+    const getEpisodeClass = (
+      schedule: any, // TODO
+    ) => ({
       aired: schedule.airingAt * 1000 < Date.now(),
+    })
+
+    return {
+      page,
+      airingSchedules: result.value.Page?.airingSchedules,
+      getEpisodeClass,
     }
-  }
-}
+  },
+})
 </script>
 
 <style scoped lang="scss">
