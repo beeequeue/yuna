@@ -40,7 +40,7 @@ type LiteRelease = Pick<
   'id' | 'tag_name' | 'name' | 'body' | 'html_url' | 'published_at'
 >
 
-const CHANGELOG_FETCH_TIMEOUT = 1000 * 60 * 25
+const CHANGELOG_FETCH_TIMEOUT = 1000 * 60 * 30
 
 const renderer = new marked.Renderer()
 
@@ -77,10 +77,10 @@ const fetchChangelog = async () => {
         body,
         html_url,
         tag_name,
-        published_at: published_at,
+        published_at,
       }),
     )
-    .slice(0, 10)
+    .slice(0, 5)
 
   localStorage.setItem(LocalStorageKey.Changelog, JSON.stringify(changelog))
   localStorage.setItem(
