@@ -54,7 +54,7 @@
     "xml2js": "0.4.23"
   },
   "devDependencies": {
-    "@graphql-codegen/add": "1.13.1",
+    "@graphql-codegen/add": "1.15.0",
     "@graphql-codegen/cli": "1.13.1",
     "@graphql-codegen/fragment-matcher": "1.13.1",
     "@graphql-codegen/schema-ast": "1.13.1",
