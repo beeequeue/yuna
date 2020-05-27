@@ -60,7 +60,7 @@
     "@graphql-codegen/schema-ast": "1.13.1",
     "@graphql-codegen/typescript": "1.13.1",
     "@graphql-codegen/typescript-compatibility": "1.13.1",
-    "@graphql-codegen/typescript-operations": "1.13.1",
+    "@graphql-codegen/typescript-operations": "1.15.0",
     "@sentry/webpack-plugin": "1.11.1",
     "@types/date-fns": "2.6.0",
     "@types/discord-rpc": "3.0.3",
