@@ -1105,14 +1105,30 @@
     tslib "1.11.1"
     upper-case "2.0.1"
 
-"@graphql-codegen/schema-ast@1.13.1":
-  version "1.13.1"
-  resolved "https://registry.yarnpkg.com/@graphql-codegen/schema-ast/-/schema-ast-1.13.1.tgz#9840b0f22290bd67b0b70db7039aad07e9b12784"
-  integrity sha512-gJ6YAq/o9bUWhtTb8oT0erTa6kKaC3JfbCG4R+Lx3fLaSYHZUTrQF41NTOCH8UCqAt2B2BoDzB68zYQvZPQD+w==
+"@graphql-codegen/plugin-helpers@1.15.0":
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/plugin-helpers/-/plugin-helpers-1.15.0.tgz#140ba0b3c452eb6b81b820bbec536ee99faa8cfb"
+  integrity sha512-wCD5mY7g3ZP0ftuYEHiycmRgEyPuMihMyaas2Xd5DNgQ9MHUndjxOKbvlIA64Ju0BCL0tSSL5TKy2iITpEPbKQ==
   dependencies:
-    "@graphql-codegen/plugin-helpers" "1.13.1"
-    "@graphql-toolkit/common" "0.9.9"
-    tslib "1.11.1"
+    "@graphql-tools/utils" "6.0.1"
+    camel-case "4.1.1"
+    common-tags "1.8.0"
+    constant-case "3.0.3"
+    import-from "3.0.0"
+    lower-case "2.0.1"
+    param-case "3.0.3"
+    pascal-case "3.1.1"
+    tslib "~2.0.0"
+    upper-case "2.0.1"
+
+"@graphql-codegen/schema-ast@1.15.0":
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/schema-ast/-/schema-ast-1.15.0.tgz#101aa77d39ad630f39d5d5dea0d251c2c55350b4"
+  integrity sha512-txoiZ74SQZEo/90QnrGWhNSwm9wXGyMlKT8o/uG0+GRz+6JMPlBt/NOSP8u+A1JUXOQpAU6SrN+rbdR8i9mBMQ==
+  dependencies:
+    "@graphql-codegen/plugin-helpers" "1.15.0"
+    "@graphql-tools/utils" "6.0.1"
+    tslib "~2.0.0"
 
 "@graphql-codegen/typescript-compatibility@1.13.1":
   version "1.13.1"
@@ -1350,6 +1366,13 @@
     graphql-tools-fork "8.9.6"
     tslib "1.11.1"
     valid-url "1.0.9"
+
+"@graphql-tools/utils@6.0.1":
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/@graphql-tools/utils/-/utils-6.0.1.tgz#2c65c15102ff59963d0c399c48616402c110bbc1"
+  integrity sha512-HqqJFYFG464ydL6XgUkwmYJLO/VzCsD86Bl25AX7aCLabPpn4O/pwCKSKRFsGQZvZbrth+urkHpyRU82Iqw2RQ==
+  dependencies:
+    camel-case "4.1.1"
 
 "@hapi/address@2.x.x":
   version "2.0.0"
@@ -14159,6 +14182,11 @@ tslib@1.11.1, tslib@^1, tslib@^1.10.0, tslib@^1.8.0, tslib@^1.8.1, tslib@^1.9.0,
   version "1.11.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.11.1.tgz#eb15d128827fbee2841549e171f45ed338ac7e35"
   integrity sha512-aZW88SY8kQbU7gpV19lN24LtXh/yD4ZZg6qieAJDDg+YBsJcSmLGK9QpnUjAKVG/xefmvJGd1WUmfpT/g6AJGA==
+
+tslib@~2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.0.0.tgz#18d13fc2dce04051e20f074cc8387fd8089ce4f3"
+  integrity sha512-lTqkx847PI7xEDYJntxZH89L2/aXInsyF2luSafe/+0fHOMjlBNXdH6th7f70qxLDhul7KZK0zC8V5ZIyHl0/g==
 
 tslint@^5.20.1:
   version "5.20.1"
