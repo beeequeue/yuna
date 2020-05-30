@@ -29,6 +29,8 @@ test('fetches and caches changelog if not cached', async () => {
 
   // Wait for the fetch and render to finish
   const versions = await findAllByTestId('version')
+  const fetchedAt = Date.now()
+
   expect(Nock.pendingMocks().length).toBe(0)
   expect(versions.length).toBe(5)
 
@@ -50,5 +52,43 @@ test('fetches and caches changelog if not cached', async () => {
   expect(localStorage[LocalStorageKey.Changelog]).toEqual(
     JSON.stringify(releasesJson.slice(0, 5)), // We cache 5 items
   )
-  expect(approximateFetchedAt).toBe(Math.round(Date.now() / 1000))
+  expect(approximateFetchedAt).toBe(Math.round(fetchedAt / 1000))
+})
+
+test('fetches changelog if cached but stale', async () => {
+  localStorage.__STORE__[LocalStorageKey.Changelog] = JSON.stringify(
+    releasesJson.slice(0, 5),
+  )
+  localStorage.__STORE__[LocalStorageKey.ChangelogFetchedAt] = addMinutes(
+    new Date(),
+    -35,
+  )
+    .getTime()
+    .toString()
+
+  const { findAllByTestId } = render(Changelog)
+
+  const versions = await findAllByTestId('version')
+
+  expect(Nock.pendingMocks().length).toBe(0)
+  expect(versions.length).toBe(5)
+})
+
+test('does not fetch changelog if not stale', async () => {
+  localStorage.__STORE__[LocalStorageKey.Changelog] = JSON.stringify(
+    releasesJson.slice(0, 5),
+  )
+  localStorage.__STORE__[LocalStorageKey.ChangelogFetchedAt] = addMinutes(
+    new Date(),
+    15,
+  )
+    .getTime()
+    .toString()
+
+  const { findAllByTestId } = render(Changelog)
+
+  const versions = await findAllByTestId('version')
+
+  expect(Nock.pendingMocks().length).toBe(1)
+  expect(versions.length).toBe(5)
 })
