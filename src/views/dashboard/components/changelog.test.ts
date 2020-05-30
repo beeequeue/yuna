@@ -4,6 +4,7 @@ import { render } from '@testing-library/vue'
 
 import releasesJson from '@/../fixtures/github/releases.json'
 import { LocalStorageKey } from '@/lib/local-storage'
+import { mockLocaleStorage } from '@/testing'
 import { GitHubRelease } from '@/types'
 import Changelog from './changelog.vue'
 
@@ -56,15 +57,12 @@ test('fetches and caches changelog if not cached', async () => {
 })
 
 test('fetches changelog if cached but stale', async () => {
-  localStorage.__STORE__[LocalStorageKey.Changelog] = JSON.stringify(
-    releasesJson.slice(0, 5),
-  )
-  localStorage.__STORE__[LocalStorageKey.ChangelogFetchedAt] = addMinutes(
-    new Date(),
-    -35,
-  )
-    .getTime()
-    .toString()
+  mockLocaleStorage({
+    [LocalStorageKey.Changelog]: JSON.stringify(releasesJson.slice(0, 5)),
+    [LocalStorageKey.ChangelogFetchedAt]: addMinutes(new Date(), -35)
+      .getTime()
+      .toString(),
+  })
 
   const { findAllByTestId } = render(Changelog)
 
@@ -75,15 +73,12 @@ test('fetches changelog if cached but stale', async () => {
 })
 
 test('does not fetch changelog if not stale', async () => {
-  localStorage.__STORE__[LocalStorageKey.Changelog] = JSON.stringify(
-    releasesJson.slice(0, 5),
-  )
-  localStorage.__STORE__[LocalStorageKey.ChangelogFetchedAt] = addMinutes(
-    new Date(),
-    15,
-  )
-    .getTime()
-    .toString()
+  mockLocaleStorage({
+    [LocalStorageKey.Changelog]: JSON.stringify(releasesJson.slice(0, 5)),
+    [LocalStorageKey.ChangelogFetchedAt]: addMinutes(new Date(), 15)
+      .getTime()
+      .toString(),
+  })
 
   const { findAllByTestId } = render(Changelog)
 
