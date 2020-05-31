@@ -81,7 +81,7 @@ export class LocalFiles {
     )
 
     const fileNames = await mapAsync(files, async (f, i) => {
-      let parsed = await this.parseFileName(f, localAnime.folderPath)
+      const parsed = await this.parseFileName(f, localAnime.folderPath)
 
       if (isNil(parsed)) return null
 

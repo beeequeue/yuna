@@ -37,7 +37,7 @@
     <c-button
       :disabled="!isFinishedConnecting"
       :content="isFinishedConnecting ? 'Next' : 'Connect at least one service!'"
-      :click="this.finishStep"
+      :click="finishStep"
     />
   </div>
 

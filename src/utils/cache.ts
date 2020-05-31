@@ -151,7 +151,7 @@ export const cacheEpisodes = (
   }
 
   const { animeId, provider } = episodes[0]
-  let nextEpisodeAiringAt = getNextEpisodeAiringAt(cache, animeId)
+  const nextEpisodeAiringAt = getNextEpisodeAiringAt(cache, animeId)
 
   cache.writeQuery<EpisodeListQuery, EpisodeListVariables>({
     query: EPISODE_LIST,

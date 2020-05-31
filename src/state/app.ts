@@ -323,7 +323,7 @@ export const app = {
       let lastEpNumber = 0
       const episodesWithFixedNumbers = remainingEpisodes.map(episode => {
         // TODO: implement fix for multiple episodes with same number
-        let realNum = lastEpNumber + 1
+        const realNum = lastEpNumber + 1
         lastEpNumber = realNum
 
         return {

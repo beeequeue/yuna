@@ -15,7 +15,7 @@
       />
       <external-player
         v-else-if="anime != null"
-        :index="this.episode.index"
+        :index="episode.index"
         :episodes="episodes"
         :title="anime.title"
       />
