@@ -356,7 +356,7 @@ export const debounce = <P extends Array<any>>(
     const later = function () {
       timeout = null
       if (!immediate) {
-        func.apply(null, input)
+        func(...input)
       }
     }
 
@@ -365,7 +365,7 @@ export const debounce = <P extends Array<any>>(
 
     const callNow = immediate && !timeout
     if (callNow) {
-      func.apply(null, input)
+      func(...input)
     }
   }
 }
