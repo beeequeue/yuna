@@ -31,6 +31,7 @@ import ListRow from './components/list-row.vue'
 import ListEntry from './components/list-entry.vue'
 import Filters from './components/filters.vue'
 import { LIST_MEDIA_QUERY, LIST_VIEW_QUERY } from '@/graphql/documents/queries'
+import { fetchAllPages } from '@/graphql/queries'
 import {
   ListMediaQuery,
   ListMediaQueryVariables,
@@ -41,9 +42,9 @@ import {
 } from '@/graphql/generated/types'
 
 import { Query } from '@/decorators'
-import { isNil, isNotNil, LocalStorageKey, prop, propEq } from '@/utils'
+import { LocalStorageKey } from '@/lib/local-storage'
+import { isNil, isNotNil, prop, propEq } from '@/utils'
 import { ListMedia } from './types'
-import { fetchAllPages } from '@/graphql/queries'
 
 type MetaData = { [key in MediaListStatus]: { open: boolean } }
 
@@ -126,7 +127,7 @@ export default class List extends Vue {
   }
 
   private getLocalStorageKey(status: MediaListStatus) {
-    return `${LocalStorageKey.LIST_OPEN}_${status}`
+    return `${LocalStorageKey.ListOpen}_${status}`
   }
 
   private saveOpenState(status: MediaListStatus) {

@@ -6,7 +6,7 @@ import { HidiveProfile } from '@/lib/hidive'
 import { getStreamingSources, isNil, isNotNil, omit, propEq } from '@/utils'
 import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
 import { SimklListPlugin } from '@/plugins/list/simkl-plugin'
-import { Provider } from '@/graphql/generated/types'
+import { MediaExternalLink, Provider } from '@/graphql/generated/types'
 import { StreamingSource } from '@/types'
 
 type ServiceData = {
@@ -319,7 +319,7 @@ const { commit, read } = getStoreAccessors<AuthState, RootState>('auth')
 
 type _Anime = {
   id: number
-  externalLinks: null | Array<null | { site: string; url: string }>
+  externalLinks: null | Array<null | Pick<MediaExternalLink, 'site' | 'url'>>
 }
 
 export const getIsConnectedTo = read(auth.getters.getIsConnectedTo)

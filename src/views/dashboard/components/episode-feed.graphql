@@ -11,23 +11,27 @@ query EpisodeFeed(
       sort: [TIME]
       mediaId_in: $ids
     ) {
-      id
-      episode
-      airingAt
-      media {
-        id
-        title {
-          userPreferred
-        }
-        coverImage {
-          color
-          medium
-        }
-      }
+      ...AiringFeedItem
     }
 
     pageInfo {
       hasNextPage
+    }
+  }
+}
+
+fragment AiringFeedItem on AiringSchedule {
+  id
+  episode
+  airingAt
+  media {
+    id
+    title {
+      userPreferred
+    }
+    coverImage {
+      color
+      medium
     }
   }
 }

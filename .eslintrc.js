@@ -24,6 +24,7 @@ module.exports = {
       { assertionStyle: 'as' },
     ],
   },
+  ignorePatterns: ['jest.*.ts'],
   overrides: [
     {
       files: '*.js',
@@ -33,6 +34,12 @@ module.exports = {
       },
       parserOptions: {
         parser: 'babel-eslint',
+      },
+    },
+    {
+      files: ['src/**/*.test.ts'],
+      env: {
+        jest: true,
       },
     },
   ],

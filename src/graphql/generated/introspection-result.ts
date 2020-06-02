@@ -1,6 +1,7 @@
 /* THIS IS A GENERATED FILE */
+/* eslint-disable */
 
-export type IntrospectionResultData = {
+export interface IntrospectionResultData {
   __schema: {
     types: {
       kind: string

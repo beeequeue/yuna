@@ -3,6 +3,8 @@ import Vue from 'vue'
 import { ObserveVisibility } from 'vue-observe-visibility'
 import Tooltip from 'v-tooltip'
 import Portal from 'portal-vue'
+import Composition, { provide } from '@vue/composition-api'
+import { DefaultApolloClient } from '@vue/apollo-composable'
 import { init, setExtra } from '@sentry/browser'
 import * as Integrations from '@sentry/integrations'
 
@@ -25,6 +27,7 @@ import { getQueue } from '@/state/user'
 Vue.config.productionTip = false
 Vue.use(Tooltip)
 Vue.use(Portal)
+Vue.use(Composition)
 Vue.directive('visibility', ObserveVisibility)
 
 // Register services
@@ -77,9 +80,16 @@ document.addEventListener('click', event => {
 // Fetch relation data
 updateRelations()
 
+const apolloProvider = createProvider(store)
+
 new Vue({
   router,
   store,
-  apolloProvider: createProvider(store),
+  apolloProvider,
+  setup() {
+    provide(DefaultApolloClient, apolloProvider.defaultClient)
+
+    return {}
+  },
   render: h => h(App),
 }).$mount('#app')

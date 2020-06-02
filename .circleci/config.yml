@@ -33,6 +33,13 @@ jobs:
           paths:
             - node_modules
 
+  test:
+    executor: linux
+    steps:
+      - attach_workspace:
+          at: .
+      - run: yarn test
+
   build_linux:
     executor: linux
     docker:

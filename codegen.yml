@@ -15,6 +15,7 @@ generates:
   src/graphql/generated/types.ts:
     plugins:
       - add: '/* THIS IS A GENERATED FILE */'
+      - add: '/* eslint-disable */'
       - typescript
       - typescript-operations
       - typescript-compatibility
@@ -24,4 +25,5 @@ generates:
   src/graphql/generated/introspection-result.ts:
     plugins:
       - add: '/* THIS IS A GENERATED FILE */'
+      - add: '/* eslint-disable */'
       - fragment-matcher

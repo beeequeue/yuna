@@ -1,0 +1,50 @@
+[
+  {
+    "id": 26615991,
+    "name": "v1.4.16 - Really Fix Local Playback",
+    "body": "### Known issues\r\n\r\n- HIDIVE integration is broken until further notice.\r\n\r\nSee [bugs](https://github.com/BeeeQueue/yuna/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3Abug) for more!\r\n\r\nFixed:\r\n- Local file playback (for real this time) #614 #602\r\n  Thanks @r52!",
+    "html_url": "https://github.com/BeeeQueue/yuna/releases/tag/v1.4.16",
+    "tag_name": "v1.4.16",
+    "published_at": "2020-05-18T08:26:10Z"
+  },
+  {
+    "id": 26354404,
+    "name": "v1.4.15 - Fix Local File Playback, List Search",
+    "body": "Changes:\r\n- Removed the auto-updater as it barely worked on Windows, and didn't on Linux and Mac.\r\n  _(You will now have to download each update manually 😟)_\r\n\r\nFixes:\r\n- Fixed creating US Crunchyroll sessions. #591 #593 #596\r\n- Fixed local file playback. #552 #573 #575 #594 #601\r\n\r\nMisc:\r\n- Updated dependencies.\r\n\r\n---\r\n\r\n### Known issues\r\n\r\n- HIDIVE integration is broken until further notice.\r\n\r\nSee [bugs](https://github.com/BeeeQueue/yuna/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3Abug) for more!",
+    "html_url": "https://github.com/BeeeQueue/yuna/releases/tag/v1.4.15",
+    "tag_name": "v1.4.15",
+    "published_at": "2020-05-10T13:33:15Z"
+  },
+  {
+    "id": 24642070,
+    "name": "v1.4.13 - Fix Automatic Episode Scrolling",
+    "body": "Fixes:\r\n- Automatically scrolling to the next unwatched episode in Queue! (Thanks @LoganxDev) #521 #524\r\n\r\nMisc:\r\n- Updated dependencies. #530\r\n\r\n---\r\n\r\n### Known issues\r\n\r\n- HIDIVE integration is broken until further notice.\r\n\r\nSee [bugs](https://github.com/BeeeQueue/yuna/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3Abug) for more!",
+    "html_url": "https://github.com/BeeeQueue/yuna/releases/tag/v1.4.13",
+    "tag_name": "v1.4.13",
+    "published_at": "2020-03-18T17:30:14Z"
+  },
+  {
+    "id": 23817822,
+    "name": "v1.4.12 - More More Fixes",
+    "body": "Fixes:\r\n- Null pointers caused by missing episode thumbnails from Crunchyroll\r\n- A null pointer related to lists\r\n- The tooltips on anime scores\r\n\r\n---\r\n\r\n### Known issues\r\n\r\n- HIDIVE integration is broken until further notice.\r\n\r\nSee [bugs](https://github.com/BeeeQueue/yuna/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3Abug) for more!",
+    "html_url": "https://github.com/BeeeQueue/yuna/releases/tag/v1.4.12",
+    "tag_name": "v1.4.12",
+    "published_at": "2020-02-19T20:35:18Z"
+  },
+  {
+    "id": 23054959,
+    "name": "v1.4.11 - More Error Fixes",
+    "body": "Fixed:\r\n- Local file episodes being ordered incorrectly #453\r\n- Null pointers due to:\r\n  - Missing simkl rating\r\n  - Some random missing session thing?\r\n  - Missing AniDB data\r\n- Failure to fetch MAL rating resulting in error instead of silently returning null\r\n- Error message from failure to parse local file\r\n\r\n---\r\n\r\n### Known issues\r\n\r\n- HIDIVE integration is broken until further notice.\r\n\r\nSee [bugs](https://github.com/BeeeQueue/yuna/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3Abug) for more!",
+    "html_url": "https://github.com/BeeeQueue/yuna/releases/tag/v1.4.11",
+    "tag_name": "v1.4.11",
+    "published_at": "2020-01-22T22:51:34Z"
+  },
+  {
+    "id": 22614803,
+    "name": "v1.4.10 - Error Fixing",
+    "body": "Fixed:\r\n- Some of the errors popping up all over the place.\r\n\r\n---\r\n\r\n### Known issues\r\n\r\n- HIDIVE integration is broken until further notice.\r\n\r\nSee [bugs](https://github.com/BeeeQueue/yuna/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc+label%3Abug) for more!",
+    "html_url": "https://github.com/BeeeQueue/yuna/releases/tag/v1.4.10",
+    "tag_name": "v1.4.10",
+    "published_at": "2020-01-06T11:44:06Z"
+  }
+]

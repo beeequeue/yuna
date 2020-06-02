@@ -1,4 +1,5 @@
 /* THIS IS A GENERATED FILE */
+/* eslint-disable */
 export type Maybe<T> = T | null
 
 /** All built-in and custom scalars, mapped to their actual values */
@@ -4919,31 +4920,7 @@ export type EpisodeFeedQuery = { __typename?: 'Query' } & {
   Page: Maybe<
     { __typename?: 'Page' } & {
       airingSchedules: Maybe<
-        Array<
-          Maybe<
-            { __typename?: 'AiringSchedule' } & Pick<
-              AiringSchedule,
-              'id' | 'episode' | 'airingAt'
-            > & {
-                media: Maybe<
-                  { __typename?: 'Media' } & Pick<Media, 'id'> & {
-                      title: Maybe<
-                        { __typename?: 'MediaTitle' } & Pick<
-                          MediaTitle,
-                          'userPreferred'
-                        >
-                      >
-                      coverImage: Maybe<
-                        { __typename?: 'MediaCoverImage' } & Pick<
-                          MediaCoverImage,
-                          'color' | 'medium'
-                        >
-                      >
-                    }
-                >
-              }
-          >
-        >
+        Array<Maybe<{ __typename?: 'AiringSchedule' } & AiringFeedItemFragment>>
       >
       pageInfo: Maybe<
         { __typename?: 'PageInfo' } & Pick<PageInfo, 'hasNextPage'>
@@ -4951,6 +4928,25 @@ export type EpisodeFeedQuery = { __typename?: 'Query' } & {
     }
   >
 }
+
+export type AiringFeedItemFragment = { __typename?: 'AiringSchedule' } & Pick<
+  AiringSchedule,
+  'id' | 'episode' | 'airingAt'
+> & {
+    media: Maybe<
+      { __typename?: 'Media' } & Pick<Media, 'id'> & {
+          title: Maybe<
+            { __typename?: 'MediaTitle' } & Pick<MediaTitle, 'userPreferred'>
+          >
+          coverImage: Maybe<
+            { __typename?: 'MediaCoverImage' } & Pick<
+              MediaCoverImage,
+              'color' | 'medium'
+            >
+          >
+        }
+    >
+  }
 
 export type QueueQueryVariables = {
   ids: Array<Scalars['Int']>
@@ -5306,27 +5302,15 @@ export type EpisodeFeedPage = NonNullable<EpisodeFeedQuery['Page']>
 export type EpisodeFeedAiringSchedules = NonNullable<
   NonNullable<NonNullable<EpisodeFeedQuery['Page']>['airingSchedules']>[0]
 >
-export type EpisodeFeedMedia = NonNullable<
-  NonNullable<
-    NonNullable<NonNullable<EpisodeFeedQuery['Page']>['airingSchedules']>[0]
-  >['media']
->
-export type EpisodeFeedTitle = NonNullable<
-  NonNullable<
-    NonNullable<
-      NonNullable<NonNullable<EpisodeFeedQuery['Page']>['airingSchedules']>[0]
-    >['media']
-  >['title']
->
-export type EpisodeFeedCoverImage = NonNullable<
-  NonNullable<
-    NonNullable<
-      NonNullable<NonNullable<EpisodeFeedQuery['Page']>['airingSchedules']>[0]
-    >['media']
-  >['coverImage']
->
 export type EpisodeFeedPageInfo = NonNullable<
   NonNullable<EpisodeFeedQuery['Page']>['pageInfo']
+>
+export type AiringFeedItemMedia = NonNullable<AiringFeedItemFragment['media']>
+export type AiringFeedItemTitle = NonNullable<
+  NonNullable<AiringFeedItemFragment['media']>['title']
+>
+export type AiringFeedItemCoverImage = NonNullable<
+  NonNullable<AiringFeedItemFragment['media']>['coverImage']
 >
 export type QueueVariables = QueueQueryVariables
 export type QueueQueue = NonNullable<QueueQuery['queue']>

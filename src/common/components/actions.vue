@@ -3,7 +3,7 @@
     <transition-group tag="div" class="actions" :class="{ small, horizontal }">
       <c-button
         v-if="
-          (isNotExcluded(ActionKeys.ADD) && !isOnList) ||
+          !isOnList ||
           (!isPlanning &&
             !isWatching &&
             !isCompleted &&
@@ -12,26 +12,26 @@
         "
         :key="ActionKeys.ADD"
         v-tooltip="getTooltip('Set as Planning')"
-        :icon="addToListSvg"
+        :icon="mdiPlaylistPlus"
         :content="ifBig('Set as Planning')"
         :click="() => createListEntry()"
       />
 
       <c-button
-        v-if="isPlanning && isNotExcluded(ActionKeys.START)"
+        v-if="isPlanning"
         :key="ActionKeys.START"
         v-tooltip="getTooltip('Set as Watching')"
         type="success"
-        :icon="setCurrentSvg"
+        :icon="mdiPlay"
         :content="ifBig('Set as Watching')"
         :click="() => statusMutation(MediaListStatus.Current)"
       />
 
       <c-button
-        v-if="isDropped || (isPaused && isNotExcluded(ActionKeys.RESUME))"
+        v-if="isDropped || isPaused"
         :key="ActionKeys.RESUME"
         v-tooltip="getTooltip('Resume')"
-        :icon="setToRepeatSvg"
+        :icon="mdiRepeat"
         type="success"
         :content="ifBig('Resume')"
         :click="() => statusMutation(MediaListStatus.Current)"
@@ -43,18 +43,16 @@
         class="multi-button"
       >
         <c-button
-          v-if="isNotExcluded(ActionKeys.PAUSE)"
           v-tooltip="getTooltip('Pause')"
-          :icon="pauseSvg"
+          :icon="mdiPause"
           type="warning"
           :content="ifBig('Pause')"
           :click="() => statusMutation(MediaListStatus.Paused)"
         />
 
         <c-button
-          v-if="isNotExcluded(ActionKeys.DROP)"
           v-tooltip="getTooltip('Drop')"
-          :icon="dropSvg"
+          :icon="mdiClose"
           type="danger"
           :content="ifBig('Drop')"
           :click="() => statusMutation(MediaListStatus.Dropped)"
@@ -62,57 +60,57 @@
       </div>
 
       <c-button
-        v-if="ifSmall(true) && isWatching && isNotExcluded(ActionKeys.PAUSE)"
+        v-if="ifBig(false, true) && isWatching"
         :key="ActionKeys.PAUSE"
         v-tooltip="getTooltip('Pause')"
-        :icon="pauseSvg"
+        :icon="mdiPause"
         type="warning"
         :content="ifBig('Pause')"
         :click="() => statusMutation(MediaListStatus.Paused)"
       />
 
       <c-button
-        v-if="ifSmall(true) && isWatching && isNotExcluded(ActionKeys.DROP)"
+        v-if="ifBig(false, true) && isWatching"
         :key="ActionKeys.DROP"
         v-tooltip="getTooltip('Drop')"
-        :icon="dropSvg"
+        :icon="mdiClose"
         type="danger"
         :content="ifBig('Drop')"
         :click="() => statusMutation(MediaListStatus.Dropped)"
       />
 
       <c-button
-        v-if="isCompleted && isNotExcluded(ActionKeys.REPEAT)"
+        v-if="isCompleted"
         :key="ActionKeys.REPEAT"
         v-tooltip="getTooltip('Rewatch')"
         type="success"
-        :icon="setToRepeatSvg"
+        :icon="mdiRepeat"
         :content="ifBig('Rewatch')"
         :click="() => statusMutation(MediaListStatus.Repeating)"
       />
 
       <c-button
-        v-if="!isInQueue && isNotExcluded(ActionKeys.ADD_QUEUE)"
+        v-if="!isInQueue"
         :key="ActionKeys.ADD_QUEUE"
         v-tooltip="getTooltip('Add to Queue')"
-        :icon="addToQueueSvg"
+        :icon="mdiPlaylistPlay"
         :content="ifBig('Add to Queue')"
         :click="addToQueue"
       />
       <c-button
-        v-else-if="isNotExcluded(ActionKeys.REMOVE_QUEUE)"
+        v-else
         :key="ActionKeys.REMOVE_QUEUE"
         v-tooltip="getTooltip('Remove from Queue')"
-        :icon="removeFromQueueSvg"
+        :icon="mdiPlaylistMinus"
         :content="ifBig('Remove from Queue')"
         :click="removeFromQueue"
       />
 
       <c-button
-        v-if="isOnList && isNotExcluded(ActionKeys.EDIT)"
+        v-if="isOnList"
         :key="ActionKeys.EDIT"
         v-tooltip="getTooltip('Edit')"
-        :icon="editSvg"
+        :icon="mdiPencil"
         :content="ifBig('Edit')"
         :click="editAnime"
       />
@@ -121,7 +119,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { computed, defineComponent } from '@vue/composition-api'
 import {
   mdiClose,
   mdiPause,
@@ -143,10 +141,8 @@ import {
   AnimeViewListEntry,
   MediaListStatus,
 } from '@/graphql/generated/types'
-
-import { getAnilistUserId } from '@/state/auth'
 import {
-  addToQueue,
+  addToQueue as _addToQueue,
   getIsInQueue,
   getQueue,
   removeFromQueueByIndex,
@@ -156,8 +152,8 @@ import { getSettings } from '@/state/settings'
 import { isNil, propEq } from '@/utils'
 
 import CButton from '@/common/components/button.vue'
-import { Default } from '@/decorators'
 import { TooltipSettings } from 'v-tooltip'
+import { Maybe } from '@/types'
 
 export enum ActionKeys {
   ADD = 'addEntry',
@@ -171,147 +167,143 @@ export enum ActionKeys {
   EDIT = 'editEntry',
 }
 
-@Component({
+type Props = {
+  listEntry: Maybe<AnimeViewListEntry>
+  anime: Maybe<AnimeViewAnime>
+  small: Maybe<boolean>
+  horizontal: Maybe<boolean>
+}
+
+export default defineComponent<Props>({
   components: { CButton },
-})
-export default class Actions extends Vue {
-  @Prop(Object) public listEntry!: AnimeViewListEntry | null
-  @Prop(Object) public anime!: AnimeViewAnime | null
-  @Prop(Boolean) public small!: boolean | null
-  @Prop(Boolean) public horizontal!: boolean | null
-  @Default(Array, () => [])
-  public exclude!: string[]
-
-  public get mediaListStatus(): MediaListStatus | null {
-    return this.listEntry?.status ?? null
-  }
-
-  public ActionKeys = ActionKeys
-  public MediaListStatus = MediaListStatus
-  public addToListSvg = mdiPlaylistPlus
-  public addToQueueSvg = mdiPlaylistPlay
-  public removeFromQueueSvg = mdiPlaylistMinus
-  public setToRepeatSvg = mdiRepeat
-  public setCurrentSvg = mdiPlay
-  public pauseSvg = mdiPause
-  public dropSvg = mdiClose
-  public editSvg = mdiPencil
-
-  public get userId() {
-    return getAnilistUserId(this.$store)
-  }
-
-  public get isOnList() {
-    return this.mediaListStatus != null
-  }
-
-  public get isPlanning() {
-    return this.mediaListStatus === MediaListStatus.Planning
-  }
-
-  public get isWatching() {
-    return [MediaListStatus.Current, MediaListStatus.Repeating].includes(
-      this.mediaListStatus as MediaListStatus,
+  props: {
+    anime: Object,
+    listEntry: Object,
+    small: Boolean,
+    horizontal: { type: Boolean },
+  },
+  setup: (props, { root }) => {
+    const isInQueue = computed(
+      () => !isNil(props.anime) && getIsInQueue(root.$store)(props.anime.id),
     )
-  }
+    const shouldAddToListAsWell = computed(
+      () => getSettings(root.$store).autoMarkAsPlanning,
+    )
 
-  public get isCompleted() {
-    return this.mediaListStatus === MediaListStatus.Completed
-  }
+    const mediaListStatus = computed(() => props.listEntry?.status ?? null)
 
-  public get isDropped() {
-    return this.mediaListStatus === MediaListStatus.Dropped
-  }
+    const statusIs = (...statuses: MediaListStatus[]) =>
+      statuses.includes(mediaListStatus.value!)
 
-  public get isPaused() {
-    return this.mediaListStatus === MediaListStatus.Paused
-  }
+    const ifBig = <T1, T2>(bigValue: T1, smallValue?: T2) =>
+      props.small !== true ? bigValue : smallValue
 
-  public get isInQueue() {
-    if (isNil(this.anime)) return false
+    const getTooltip = (content: string): TooltipSettings | false => {
+      if (!props.small) return false
 
-    return getIsInQueue(this.$store)(this.anime.id)
-  }
+      return {
+        content,
+        placement: props.horizontal ? 'top' : 'right',
+      }
+    }
 
-  public get shouldAddToListAsWell() {
-    return getSettings(this.$store).autoMarkAsPlanning
-  }
+    const editAnime = () => {
+      if (isNil(props.anime) || isNil(props.listEntry)) return
 
-  public isNotExcluded(key: string) {
-    return !this.exclude.includes(key)
-  }
+      initEditModal(root.$store, {
+        animeId: props.anime.id,
+        title: props.anime?.title?.userPreferred ?? 'MISSING_TITLE',
+        episodes: props.anime.episodes,
+        bannerImage: props.anime?.bannerImage ?? '',
+        listEntry: props.listEntry,
+      })
+    }
 
-  public ifBig(value: any) {
-    return !this.small ? value : null
-  }
+    const createListEntry = async () => {
+      if (!props.anime) {
+        return sendErrorToast(root.$store, 'No anime found..?')
+      }
 
-  public ifSmall(value: any) {
-    return this.small ? value : null
-  }
+      await addToList(root, props.anime.id)
+    }
 
-  public getTooltip(content: string): TooltipSettings | false {
-    if (!this.small) return false
+    const addToQueue = async () => {
+      if (!props.anime) {
+        return sendErrorToast(root.$store, 'No anime found..?')
+      }
+
+      if (!props.listEntry && shouldAddToListAsWell.value) {
+        await createListEntry()
+      }
+
+      _addToQueue(root.$store, props.anime)
+    }
+
+    const removeFromQueue = () => {
+      if (!props.anime) {
+        return sendErrorToast(root.$store, 'No anime found..?')
+      }
+
+      const index = getQueue(root.$store).findIndex(
+        propEq('id', props.anime.id),
+      )
+
+      removeFromQueueByIndex(root.$store, index)
+    }
+
+    const statusMutation = async (status: MediaListStatus) => {
+      if (!props.anime) {
+        return sendErrorToast(root.$store, 'No anime found..?')
+      }
+
+      if (status === MediaListStatus.Repeating) {
+        return startRewatching(root, props.anime.id)
+      }
+
+      await updateStatus(root, props.anime.id, status)
+    }
 
     return {
-      content,
-      placement: this.horizontal ? 'top' : 'right',
+      // Computed
+      mediaListStatus,
+      isOnList: mediaListStatus.value != null,
+      isPlanning: computed(() => statusIs(MediaListStatus.Planning)),
+      isWatching: computed(() =>
+        statusIs(MediaListStatus.Current, MediaListStatus.Repeating),
+      ),
+      isCompleted: computed(() => statusIs(MediaListStatus.Completed)),
+      isDropped: computed(() => statusIs(MediaListStatus.Dropped)),
+      isPaused: computed(() => statusIs(MediaListStatus.Paused)),
+      isInQueue,
+      shouldAddToListAsWell,
+
+      // Util funcs
+      ifBig,
+      getTooltip,
+
+      // Actions
+      editAnime,
+      createListEntry,
+      addToQueue,
+      removeFromQueue,
+      statusMutation,
+
+      // Constants
+      ActionKeys,
+      MediaListStatus,
+
+      // Icons
+      mdiPlaylistPlus,
+      mdiPlaylistPlay,
+      mdiPlaylistMinus,
+      mdiRepeat,
+      mdiPlay,
+      mdiPause,
+      mdiClose,
+      mdiPencil,
     }
-  }
-
-  public editAnime() {
-    if (!this.anime || !this.listEntry) return
-
-    initEditModal(this.$store, {
-      animeId: this.anime.id,
-      title: this.anime?.title?.userPreferred ?? 'MISSING_TITLE',
-      episodes: this.anime.episodes,
-      bannerImage: this.anime?.bannerImage ?? '',
-      listEntry: this.listEntry,
-    })
-  }
-
-  public async addToQueue() {
-    if (!this.anime) {
-      return sendErrorToast(this.$store, 'No anime found..?')
-    }
-
-    if (!this.listEntry && this.shouldAddToListAsWell) {
-      await this.createListEntry()
-    }
-
-    addToQueue(this.$store, this.anime as any)
-  }
-
-  public async removeFromQueue() {
-    if (!this.anime) {
-      return sendErrorToast(this.$store, 'No anime found..?')
-    }
-
-    const index = getQueue(this.$store).findIndex(propEq('id', this.anime.id))
-
-    removeFromQueueByIndex(this.$store, index)
-  }
-
-  public async statusMutation(status: MediaListStatus) {
-    if (!this.anime) {
-      return sendErrorToast(this.$store, 'No anime found..?')
-    }
-
-    if (status === MediaListStatus.Repeating) {
-      return startRewatching(this, this.anime.id)
-    }
-
-    await updateStatus(this, this.anime.id, status)
-  }
-
-  public async createListEntry() {
-    if (!this.anime) {
-      return sendErrorToast(this.$store, 'No anime found..?')
-    }
-
-    await addToList(this, this.anime.id)
-  }
-}
+  },
+})
 </script>
 
 <style scoped lang="scss">

@@ -31,15 +31,6 @@ export const NO_OP = () => {
   /* no-op */
 }
 
-export enum LocalStorageKey {
-  QUALITY = 'quality_v2',
-  VOLUME = 'volume',
-  MUTED = 'muted',
-  SPEED = 'speed',
-  SUBTITLE = 'subtitle',
-  LIST_OPEN = 'list_open',
-}
-
 export type RequestSuccess<B extends {} | null> = {
   status: 200 | 204
   ok: true

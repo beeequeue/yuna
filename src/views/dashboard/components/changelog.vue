@@ -2,12 +2,13 @@
   <div class="changelog">
     <h1 class="title">Changelog</h1>
 
-    <div class="versions">
+    <div class="versions" data-testid="version-container">
       <section
         v-for="version in changelog"
         :id="version.tag_name"
         :key="version.name"
         class="version"
+        data-testid="version"
       >
         <a class="header" :href="version.html_url" target="_blank">
           <h2 v-html="getHeader(version.name)" />
@@ -26,104 +27,101 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
 import marked from 'marked'
 import superagent from 'superagent'
+import { defineComponent, ref, watch } from '@vue/composition-api'
 
+import { LocalStorageKey } from '@/lib/local-storage'
+import type { GitHubRelease } from '@/types'
 import { RequestResponse, responseIsError } from '@/utils'
-
-type GitHubRelease = {
-  id: number
-  tag_name: string
-  name: string
-  body: string
-  url: string
-  html_url: string
-  draft: boolean
-  author: any
-  prerelease: boolean
-  published_at: string
-  assets: any[]
-}
 
 type LiteRelease = Pick<
   GitHubRelease,
   'id' | 'tag_name' | 'name' | 'body' | 'html_url' | 'published_at'
 >
 
-const CHANGELOG_KEY = 'changelog'
-const CHANGELOG_LAST_FETCHED_KEY = 'changelog-fetched'
-const CHANGELOG_FETCH_TIMEOUT = 1000 * 60 * 25
+const CHANGELOG_FETCH_TIMEOUT = 1000 * 60 * 30
 
 const renderer = new marked.Renderer()
 
-renderer.text = (content: string) =>
-  content.replace(
-    / #(\d+) ?/g,
-    (original: string, id: string) =>
-      `<a href="https://github.com/beeequeue/yuna/issues/${id}" target="_blank">${original}</a>`,
+const regex = / (#\d+)/g
+renderer.text = (content: string) => {
+  const matches = content.match(regex) ?? []
+
+  return matches.reduce((accum, match) => {
+    const hash = match.trim()
+    const id = hash.slice(1)
+
+    return accum.replace(
+      match,
+      // Keep the space! It's in the regex!
+      ` <a href="https://github.com/beeequeue/yuna/issues/${id}" target="_blank">${hash}</a>`,
+    )
+  }, content)
+}
+
+const fetchChangelog = async () => {
+  const response = (await superagent.get(
+    'https://api.github.com/repos/beeequeue/yuna/releases',
+  )) as RequestResponse<GitHubRelease[]>
+
+  if (responseIsError(response) || !Array.isArray(response.body)) {
+    throw new Error('Something went wrong fetching the changelog!')
+  }
+
+  const changelog = response.body
+    .map<LiteRelease>(
+      ({ id, name, body, html_url, tag_name, published_at }) => ({
+        id,
+        name,
+        body,
+        html_url,
+        tag_name,
+        published_at,
+      }),
+    )
+    .slice(0, 5)
+
+  localStorage.setItem(LocalStorageKey.Changelog, JSON.stringify(changelog))
+  localStorage.setItem(
+    LocalStorageKey.ChangelogFetchedAt,
+    Date.now().toString(),
   )
 
-@Component
-export default class Changelog extends Vue {
-  public changelog: LiteRelease[] = JSON.parse(
-    localStorage.getItem(CHANGELOG_KEY) || '[]',
-  )
+  return changelog
+}
 
-  public async created() {
-    const lastFetchedAt = Number(
-      localStorage.getItem(CHANGELOG_LAST_FETCHED_KEY) || 0,
+export default defineComponent({
+  setup: () => {
+    const changelog = ref<LiteRelease[]>(
+      JSON.parse(localStorage.getItem(LocalStorageKey.Changelog) || '[]'),
+    )
+    const lastFetchedAt = ref(
+      Number(localStorage.getItem(LocalStorageKey.ChangelogFetchedAt) || 0),
     )
 
-    if (lastFetchedAt + CHANGELOG_FETCH_TIMEOUT >= Date.now()) {
-      return
-    }
+    watch(lastFetchedAt, async () => {
+      if (lastFetchedAt.value + CHANGELOG_FETCH_TIMEOUT >= Date.now()) {
+        return
+      }
 
-    this.fetchChangelog()
-  }
-
-  public getHeader(str: string) {
-    return str.replace(' - ', '<br/>')
-  }
-
-  public compileMarkdown(str: string) {
-    return marked(str, {
-      gfm: true,
-      renderer,
+      changelog.value = await fetchChangelog()
     })
-  }
 
-  public formatDate = (date: string) =>
-    // sv-SE uses YYYY-MM-DD, the only correct way
-    Intl.DateTimeFormat('sv-SE').format(new Date(date))
-
-  private async fetchChangelog() {
-    const response = (await superagent.get(
-      'https://api.github.com/repos/beeequeue/yuna/releases',
-    )) as RequestResponse<GitHubRelease[]>
-
-    if (responseIsError(response) || !Array.isArray(response.body)) {
-      throw new Error('Something went wrong fetching the changelog!')
-    }
-
-    const changelog = response.body
-      .map<LiteRelease>(
-        ({ id, name, body, html_url, tag_name, published_at }) => ({
-          id,
-          name,
-          body,
-          html_url,
-          tag_name,
-          published_at: published_at,
+    return {
+      changelog,
+      getHeader: (str: string) => str.replace(' - ', '<br/>'),
+      formatDate: (date: string) =>
+        // sv-SE uses YYYY-MM-DD, the only correct way
+        Intl.DateTimeFormat('sv-SE').format(new Date(date)),
+      compileMarkdown: (str: string) =>
+        marked(str, {
+          gfm: true,
+          renderer,
         }),
-      )
-      .slice(0, 10)
-
-    localStorage.setItem(CHANGELOG_KEY, JSON.stringify(changelog))
-    localStorage.setItem(CHANGELOG_LAST_FETCHED_KEY, Date.now().toString())
-    this.changelog = changelog
-  }
-}
+    }
+  },
+})
 </script>
 
 <style scoped lang="scss">

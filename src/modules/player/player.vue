@@ -107,6 +107,7 @@ import {
 } from '@/graphql/generated/types'
 import { Required } from '@/decorators'
 import { Crunchyroll } from '@/lib/crunchyroll'
+import { LocalStorageKey } from '@/lib/local-storage'
 import {
   getIsFullscreen,
   PlayerData,
@@ -134,7 +135,6 @@ import {
   isCrunchyroll,
   isNil,
   lastItem,
-  LocalStorageKey,
 } from '@/utils'
 
 import Icon from '@/common/components/icon.vue'
@@ -166,14 +166,14 @@ export default class Player extends Vue {
   public loaded = false
   public loadingVideo = false
   public paused = true
-  public muted: boolean = localStorage.getItem(LocalStorageKey.MUTED) === 'true'
+  public muted: boolean = localStorage.getItem(LocalStorageKey.Muted) === 'true'
   public volume: number = this.getNumberFromLocalStorage(
-    LocalStorageKey.VOLUME,
+    LocalStorageKey.Volume,
     70,
   )
   public speed: number = 1
   public quality: string =
-    localStorage.getItem(LocalStorageKey.QUALITY) || '1080'
+    localStorage.getItem(LocalStorageKey.Quality) || '1080'
   public duration = 0
   public progressPercentage = 0
   public progressInSeconds = 0
@@ -195,11 +195,11 @@ export default class Player extends Vue {
     return this.subtitles[this.selectedSubtitles]?.[1]
   }
   public selectedSubtitles = this.getNumberFromLocalStorage(
-    LocalStorageKey.SUBTITLE,
+    LocalStorageKey.Subtitle,
     0,
   )
   public onChangeSubtitles(index: number) {
-    localStorage.setItem(LocalStorageKey.SUBTITLE, index.toString())
+    localStorage.setItem(LocalStorageKey.Subtitle, index.toString())
     this.selectedSubtitles = index
   }
 
@@ -430,7 +430,7 @@ export default class Player extends Vue {
       if (this.levels[this.quality] == null) {
         const newQuality = lastItem(Object.keys(this.levels)) as string
 
-        localStorage.setItem(LocalStorageKey.QUALITY, newQuality)
+        localStorage.setItem(LocalStorageKey.Quality, newQuality)
         this.quality = newQuality
       }
 
@@ -547,7 +547,7 @@ export default class Player extends Vue {
     const value = clamp(+Number(element.value).toFixed(2), 0, 200)
 
     this.volume = value
-    localStorage.setItem(LocalStorageKey.VOLUME, value.toString())
+    localStorage.setItem(LocalStorageKey.Volume, value.toString())
 
     this.gainNode.gain.value = value / 100
   }
@@ -555,7 +555,7 @@ export default class Player extends Vue {
   public onToggleMute() {
     this.muted = !this.muted
 
-    localStorage.setItem(LocalStorageKey.MUTED, this.muted.toString())
+    localStorage.setItem(LocalStorageKey.Muted, this.muted.toString())
   }
 
   public onChangeSpeed(e: Event) {
@@ -568,7 +568,7 @@ export default class Player extends Vue {
   public onChangeQuality(quality: string) {
     this.quality = quality
     this.hls.currentLevel = this.levels![quality]
-    localStorage.setItem(LocalStorageKey.QUALITY, quality)
+    localStorage.setItem(LocalStorageKey.Quality, quality)
   }
 
   public onKeyDown(e: KeyboardEvent) {
