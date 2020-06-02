@@ -7178,7 +7178,7 @@ execa@^1.0.0:
     signal-exit "^3.0.0"
     strip-eof "^1.0.0"
 
-execa@^3.0.0, execa@^3.2.0, execa@^3.3.0:
+execa@^3.2.0, execa@^3.3.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/execa/-/execa-3.4.0.tgz#c08ed4550ef65d858fac269ffc8572446f37eb89"
   integrity sha512-r9vdGQk4bmCuK1yKQu1KTwcT2zwfWdbdaXfCtAh+5nU/4fSX+JAb7vZGvI5naJrQlvONrEB20jeruESI69530g==
@@ -7194,7 +7194,7 @@ execa@^3.0.0, execa@^3.2.0, execa@^3.3.0:
     signal-exit "^3.0.2"
     strip-final-newline "^2.0.0"
 
-execa@^4.0.1:
+execa@^4.0.0, execa@^4.0.1:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/execa/-/execa-4.0.2.tgz#ad87fb7b2d9d564f70d2b62d511bee41d5cbb240"
   integrity sha512-QI2zLa6CjGWdiQsmSkZoGtDx2N+cQIGb3yNolGTdjSQzydzLgYYf8LRuagp7S7fPimjcrzUDSUFd/MgzELMi4Q==
@@ -16290,14 +16290,14 @@ vue-cli-plugin-apollo@0.21.3:
     subscriptions-transport-ws "^0.9.16"
     ts-node "^8.4.1"
 
-vue-cli-plugin-electron-builder@2.0.0-beta.5:
-  version "2.0.0-beta.5"
-  resolved "https://registry.yarnpkg.com/vue-cli-plugin-electron-builder/-/vue-cli-plugin-electron-builder-2.0.0-beta.5.tgz#bfbd2d35f57f6789f4f2b60bf33fe5e761331eec"
-  integrity sha512-9rWBko6dQ+RSc5Drxi/O64DgEL9TXTzDTQOV6mUDBo2D+Aij3MNmO2KF87ksVW3JEQSrCERXLKWq6sGRao/ybw==
+vue-cli-plugin-electron-builder@2.0.0-rc.1:
+  version "2.0.0-rc.1"
+  resolved "https://registry.yarnpkg.com/vue-cli-plugin-electron-builder/-/vue-cli-plugin-electron-builder-2.0.0-rc.1.tgz#cabea59d6afe4853ec8666469869f10f91254223"
+  integrity sha512-4BDx3zN3InHCMOy5bpvx5Rp+ccJOyozrizV+b/+O7dNpHPGeOXMNdU9y6bg+V+09i6jlwDBdN2nORrkNxmuhrw==
   dependencies:
     chokidar "^3.0.2"
     electron-builder "^22.2.0"
-    execa "^3.0.0"
+    execa "^4.0.0"
     friendly-errors-webpack-plugin "^1.7.0"
     fs-extra "^8.1.0"
     lodash.merge "^4.6.1"
@@ -16312,6 +16312,7 @@ vue-cli-plugin-electron-builder@2.0.0-beta.5:
     unzip-crx "^0.2.0"
     webpack "^4.18.0"
     webpack-chain "^6.0.0"
+    webpack-merge "^4.2.2"
     yargs "^14.0.0"
 
 vue-eslint-parser@^7.0.0:
