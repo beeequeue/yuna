@@ -267,11 +267,13 @@ export default defineComponent<Props>({
       // Computed
       mediaListStatus,
       isOnList: mediaListStatus.value != null,
-      isPlanning: statusIs(MediaListStatus.Planning),
-      isWatching: statusIs(MediaListStatus.Current, MediaListStatus.Repeating),
-      isCompleted: statusIs(MediaListStatus.Completed),
-      isDropped: statusIs(MediaListStatus.Dropped),
-      isPaused: statusIs(MediaListStatus.Paused),
+      isPlanning: computed(() => statusIs(MediaListStatus.Planning)),
+      isWatching: computed(() =>
+        statusIs(MediaListStatus.Current, MediaListStatus.Repeating),
+      ),
+      isCompleted: computed(() => statusIs(MediaListStatus.Completed)),
+      isDropped: computed(() => statusIs(MediaListStatus.Dropped)),
+      isPaused: computed(() => statusIs(MediaListStatus.Paused)),
       isInQueue,
       shouldAddToListAsWell,
 
