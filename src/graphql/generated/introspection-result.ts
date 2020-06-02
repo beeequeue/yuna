@@ -1,4 +1,5 @@
 /* THIS IS A GENERATED FILE */
+/* eslint-disable */
 
 export interface IntrospectionResultData {
   __schema: {
