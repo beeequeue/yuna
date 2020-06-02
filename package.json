@@ -76,7 +76,7 @@
     "@types/superagent": "4.1.7",
     "@types/tar-fs": "2.0.0",
     "@types/uuid": "8.0.0",
-    "@types/webpack": "4.41.16",
+    "@types/webpack": "4.41.17",
     "@types/webpack-chain": "5.2.0",
     "@types/webpack-env": "1.15.2",
     "@types/xml2js": "0.4.5",
