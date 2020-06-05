@@ -91,6 +91,7 @@ module.exports = {
   },
   pluginOptions: {
     electronBuilder: {
+      nodeIntegration: true,
       chainWebpackMainProcess: config => {
         config.resolve.alias.set('@', resolve(__dirname, 'src'))
       },

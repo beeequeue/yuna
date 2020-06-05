@@ -14,7 +14,10 @@ import { enforceMacOSAppLocation } from 'electron-util'
 import { init } from '@sentry/node'
 import { join } from 'path'
 import { format as formatUrl } from 'url'
-import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
+import {
+  createProtocol,
+  installVueDevtools,
+} from 'vue-cli-plugin-electron-builder/lib'
 
 import { destroyDiscord, registerDiscord } from './lib/discord'
 import {
@@ -30,7 +33,6 @@ import { version } from '../package.json'
 import { SupportedMediaKeys } from '@/types'
 import { clamp, debounce, enumKeysToArray } from '@/utils'
 import { downloadBinariesIfNecessary } from '@/lib/ffmpeg/download'
-// import { initDarkThemeWorkAround } from '@/utils/electron-win10darktheme-workaround'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 if (isDevelopment) {
@@ -38,8 +40,6 @@ if (isDevelopment) {
   // eslint-disable-next-line
   require('module').globalPaths.push(process.env.NODE_MODULES_PATH)
 }
-
-// initDarkThemeWorkAround()
 
 init({
   enabled: process.env.NODE_ENV === 'production',
@@ -137,7 +137,7 @@ const createMainWindow = () => {
     webPreferences: {
       webSecurity: false,
       allowRunningInsecureContent: false,
-      nodeIntegration: true,
+      nodeIntegration: !!process.env.ELECTRON_NODE_INTEGRATION,
     },
   })
 
@@ -294,7 +294,7 @@ app.on('ready', async () => {
 
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
-    // await installVueDevtools()
+    await installVueDevtools()
   }
 
   protocol.registerStringProtocol('yuna', async (req, cb) => {
