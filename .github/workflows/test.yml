@@ -1,9 +1,9 @@
-name: test
+name: Test
 
 on: push
 
 jobs:
-  release:
+  test:
     runs-on: ubuntu-latest
 
     steps:

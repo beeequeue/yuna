@@ -1,9 +1,9 @@
-name: build / publish
+name: Build & Publish
 
 on: push
 
 jobs:
-  release:
+  build:
     runs-on: ${{ matrix.os }}
 
     env:
