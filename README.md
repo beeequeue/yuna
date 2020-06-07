@@ -19,12 +19,22 @@
     <img src="https://img.shields.io/david/beeequeue/yuna.svg"/>
   </a>
 
-  <a href="https://app.circleci.com/github/BeeeQueue/yuna/pipelines?branch=master">
-    <img src="https://img.shields.io/circleci/build/github/BeeeQueue/yuna"/>
-  </a>
-
   <a href="https://github.com/prettier/prettier">
     <img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg"/>
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/BeeeQueue/yuna/actions?query=workflow%3A%22Build+%26+Publish%22+branch%3Amaster">
+    <img src="https://img.shields.io/github/workflow/status/BeeeQueue/yuna/Build & Publish?label=build"/>
+  </a>
+  
+  <a href="https://github.com/BeeeQueue/yuna/actions?query=workflow%3A%22Test%22+branch%3Amaster">
+    <img src="https://img.shields.io/github/workflow/status/BeeeQueue/yuna/Test?label=tests"/>
+  </a>
+  
+  <a href="https://github.com/BeeeQueue/yuna/actions?query=workflow%3A%22Lint%22+branch%3Amaster">
+    <img src="https://img.shields.io/github/workflow/status/BeeeQueue/yuna/Lint?label=lint"/>
   </a>
 </p>
 
