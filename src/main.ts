@@ -46,7 +46,7 @@ init({
     /'TimeRanges': The index provided/,
     /Unauthenticated request/,
   ],
-  integrations: [new Integrations.Vue({ Vue, attachProps: true })],
+  integrations: [new Integrations.Vue({ Vue: Vue as any, attachProps: true })],
   beforeSend: event => {
     const connectedTo = getIsConnectedTo(store)
     Object.entries(connectedTo).forEach(([service, connected]) =>
