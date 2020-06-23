@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+const { platform } = require('os')
 const { resolve } = require('path')
 const { spawnSync } = require('child_process')
 const SentryCliPlugin = require('@sentry/webpack-plugin')
@@ -71,6 +72,7 @@ module.exports = {
     // Sentry Source Maps
     config.when(
       process.env.CI &&
+        platform() === 'linux' &&
         process.env.NODE_ENV === 'production' &&
         GIT_TAG != null,
       config => {
@@ -81,7 +83,6 @@ module.exports = {
               release: GIT_TAG,
               include: resolve(__dirname, 'dist_electron', 'bundled'),
               ignore: ['node_modules', 'css'],
-              // silent: true,
               urlPrefix: 'app://./',
             },
           ])
