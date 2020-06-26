@@ -147,7 +147,7 @@ export default defineComponent({
       ),
       isFinishedConnecting,
       hasFinishedSetup,
-      isFullscreen: getIsFullscreen(context.root.$store),
+      isFullscreen: computed(() => getIsFullscreen(context.root.$store)),
     }
   },
 })
