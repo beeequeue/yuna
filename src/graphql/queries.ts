@@ -147,12 +147,11 @@ export const getALofOfEntries = async (
   const fiveHundreds = Math.floor(amount / 500)
 
   for (let i = 0; i < fiveHundreds; i++) {
-    const variables: ListViewQueryVariables = {
-      page: i + 1,
-    }
-    const { data, errors } = await $apollo.query<ListViewQuery>({
+    const { data, errors } = await $apollo.query<
+      ListViewQuery,
+      ListViewQueryVariables
+    >({
       query: LIST_VIEW_QUERY,
-      variables,
       errorPolicy: 'all',
     })
 
