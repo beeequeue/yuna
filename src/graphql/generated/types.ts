@@ -1,6 +1,7 @@
 /* THIS IS A GENERATED FILE */
 /* eslint-disable */
 export type Maybe<T> = T | null
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] }
 
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -634,6 +635,7 @@ export type InternalPageMediaSubmissionsArgs = {
   userId: Maybe<Scalars['Int']>
   status: Maybe<SubmissionStatus>
   type: Maybe<MediaType>
+  sort: Maybe<Array<Maybe<SubmissionSort>>>
 }
 
 /** Page of data (Used for internal use only) */
@@ -641,6 +643,7 @@ export type InternalPageCharacterSubmissionsArgs = {
   characterId: Maybe<Scalars['Int']>
   userId: Maybe<Scalars['Int']>
   status: Maybe<SubmissionStatus>
+  sort: Maybe<Array<Maybe<SubmissionSort>>>
 }
 
 /** Page of data (Used for internal use only) */
@@ -648,6 +651,7 @@ export type InternalPageStaffSubmissionsArgs = {
   staffId: Maybe<Scalars['Int']>
   userId: Maybe<Scalars['Int']>
   status: Maybe<SubmissionStatus>
+  sort: Maybe<Array<Maybe<SubmissionSort>>>
 }
 
 /** Page of data (Used for internal use only) */
@@ -3605,6 +3609,12 @@ export type StudioStats = {
   timeWatched: Maybe<Scalars['Int']>
 }
 
+/** Submission sort enums */
+export enum SubmissionSort {
+  Id = 'ID',
+  IdDesc = 'ID_DESC',
+}
+
 /** Submission status */
 export enum SubmissionStatus {
   Pending = 'PENDING',
@@ -4285,9 +4295,9 @@ export type YearStats = {
   meanScore: Maybe<Scalars['Int']>
 }
 
-export type LocalSourceAnimeQueryVariables = {
+export type LocalSourceAnimeQueryVariables = Exact<{
   id: Scalars['Int']
-}
+}>
 
 export type LocalSourceAnimeQuery = { __typename?: 'Query' } & {
   anime: Maybe<
@@ -4327,79 +4337,79 @@ export type AniListEntryFragment = { __typename?: 'MediaList' } & Pick<
   'id' | 'mediaId' | 'score' | 'progress' | 'status' | 'repeat'
 >
 
-export type AddToListMutationVariables = {
+export type AddToListMutationVariables = Exact<{
   anilistId: Scalars['Int']
-}
+}>
 
 export type AddToListMutation = { __typename?: 'Mutation' } & {
   AddToList: { __typename?: 'ListEntry' } & ListEntryFragment
 }
 
-export type UpdateStatusMutationVariables = {
+export type UpdateStatusMutationVariables = Exact<{
   anilistId: Scalars['Int']
   status: MediaListStatus
-}
+}>
 
 export type UpdateStatusMutation = { __typename?: 'Mutation' } & {
   UpdateStatus: { __typename?: 'ListEntry' } & ListEntryFragment
 }
 
-export type StartRewatchingMutationVariables = {
+export type StartRewatchingMutationVariables = Exact<{
   anilistId: Scalars['Int']
-}
+}>
 
 export type StartRewatchingMutation = { __typename?: 'Mutation' } & {
   StartRewatching: { __typename?: 'ListEntry' } & ListEntryFragment
 }
 
-export type UpdateProgressMutationVariables = {
+export type UpdateProgressMutationVariables = Exact<{
   anilistId: Scalars['Int']
   progress: Scalars['Int']
-}
+}>
 
 export type UpdateProgressMutation = { __typename?: 'Mutation' } & {
   UpdateProgress: { __typename?: 'ListEntry' } & ListEntryFragment
 }
 
-export type UpdateScoreMutationVariables = {
+export type UpdateScoreMutationVariables = Exact<{
   anilistId: Scalars['Int']
   score: Scalars['Int']
-}
+}>
 
 export type UpdateScoreMutation = { __typename?: 'Mutation' } & {
   UpdateScore: { __typename?: 'ListEntry' } & ListEntryFragment
 }
 
-export type DeleteFromListMutationVariables = {
+export type DeleteFromListMutationVariables = Exact<{
   anilistId: Scalars['Int']
-}
+}>
 
 export type DeleteFromListMutation = { __typename?: 'Mutation' } & Pick<
   Mutation,
   'DeleteFromList'
 >
 
-export type EditListEntryMutationVariables = {
+export type EditListEntryMutationVariables = Exact<{
   anilistId: Scalars['Int']
   options: EditListEntryOptions
-}
+}>
 
 export type EditListEntryMutation = { __typename?: 'Mutation' } & {
   EditListEntry: { __typename?: 'ListEntry' } & ListEntryFragment
 }
 
-export type CacheEpisodesMutationVariables = {
+export type CacheEpisodesMutationVariables = Exact<{
   episodes: Array<EpisodeInput>
-}
+}>
 
 export type CacheEpisodesMutation = { __typename?: 'Mutation' } & Pick<
   Mutation,
   'CacheEpisodes'
 >
 
-export type SingleMediaQueryVariables = {
+export type SingleMediaQueryVariables = Exact<{
   mediaId: Scalars['Int']
-}
+}>
 
 export type SingleMediaQuery = { __typename?: 'Query' } & {
   SingleMedia: Maybe<
@@ -4423,7 +4433,7 @@ export type SingleMediaQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type ListViewQueryVariables = {}
+export type ListViewQueryVariables = Exact<{ [key: string]: never }>
 
 export type ListViewQuery = { __typename?: 'Query' } & {
   ListEntries: Array<
@@ -4434,10 +4444,10 @@ export type ListViewQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type ListMediaQueryVariables = {
+export type ListMediaQueryVariables = Exact<{
   page: Scalars['Int']
   ids: Array<Scalars['Int']>
-}
+}>
 
 export type ListMediaQuery = { __typename?: 'Query' } & {
   Page: Maybe<
@@ -4480,27 +4490,27 @@ export type ListMediaQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type ListEntryQueryVariables = {
+export type ListEntryQueryVariables = Exact<{
   mediaId: Scalars['Int']
-}
+}>
 
 export type ListEntryQuery = { __typename?: 'Query' } & {
   ListEntry: { __typename?: 'ListEntry' } & Pick<ListEntry, 'id' | 'score'>
 }
 
-export type MediaListEntryFromMediaIdQueryVariables = {
+export type MediaListEntryFromMediaIdQueryVariables = Exact<{
   mediaId: Scalars['Int']
   userId: Scalars['Int']
-}
+}>
 
 export type MediaListEntryFromMediaIdQuery = { __typename?: 'Query' } & {
   MediaList: Maybe<{ __typename?: 'MediaList' } & AniListEntryFragment>
 }
 
-export type EpisodeListQueryVariables = {
+export type EpisodeListQueryVariables = Exact<{
   id: Scalars['Int']
   provider: Provider
-}
+}>
 
 export type EpisodeListQuery = { __typename?: 'Query' } & {
   episodes: Maybe<
@@ -4524,18 +4534,18 @@ export type EpisodeListQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type MalIdFromAnilistIdQueryVariables = {
+export type MalIdFromAnilistIdQueryVariables = Exact<{
   mediaId: Scalars['Int']
-}
+}>
 
 export type MalIdFromAnilistIdQuery = { __typename?: 'Query' } & {
   Media: Maybe<{ __typename?: 'Media' } & Pick<Media, 'id' | 'idMal'>>
 }
 
-export type AnilistIdsFromMalIdsQueryVariables = {
+export type AnilistIdsFromMalIdsQueryVariables = Exact<{
   page: Scalars['Int']
   malIds: Array<Scalars['Int']>
-}
+}>
 
 export type AnilistIdsFromMalIdsQuery = { __typename?: 'Query' } & {
   Page: Maybe<
@@ -4550,7 +4560,7 @@ export type AnilistIdsFromMalIdsQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type EpisodeFeedListIdsQueryVariables = {}
+export type EpisodeFeedListIdsQueryVariables = Exact<{ [key: string]: never }>
 
 export type EpisodeFeedListIdsQuery = { __typename?: 'Query' } & {
   ListEntries: Array<
@@ -4558,9 +4568,9 @@ export type EpisodeFeedListIdsQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type MalScoreQueryVariables = {
+export type MalScoreQueryVariables = Exact<{
   id: Scalars['Int']
-}
+}>
 
 export type MalScoreQuery = { __typename?: 'Query' } & {
   anime: Maybe<
@@ -4568,9 +4578,9 @@ export type MalScoreQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type SimklInfoQueryVariables = {
+export type SimklInfoQueryVariables = Exact<{
   id: Scalars['Int']
-}
+}>
 
 export type SimklInfoQuery = { __typename?: 'Query' } & {
   Media: Maybe<
@@ -4578,9 +4588,9 @@ export type SimklInfoQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type CacheEpisodesAiringQueryVariables = {
+export type CacheEpisodesAiringQueryVariables = Exact<{
   id: Scalars['Int']
-}
+}>
 
 export type CacheEpisodesAiringQuery = { __typename?: 'Query' } & {
   AiringSchedule: Maybe<
@@ -4591,9 +4601,9 @@ export type CacheEpisodesAiringQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type PlayerAnimeQueryVariables = {
+export type PlayerAnimeQueryVariables = Exact<{
   id: Scalars['Int']
-}
+}>
 
 export type PlayerAnimeQuery = { __typename?: 'Query' } & {
   anime: Maybe<
@@ -4645,9 +4655,9 @@ export type PlayerAnimeQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type SearchQueryVariables = {
+export type SearchQueryVariables = Exact<{
   search: Maybe<Scalars['String']>
-}
+}>
 
 export type SearchQuery = { __typename?: 'Query' } & {
   anime: Maybe<
@@ -4697,52 +4707,52 @@ export type SearchQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type AnilistSetScoreMutationVariables = {
+export type AnilistSetScoreMutationVariables = Exact<{
   mediaId: Maybe<Scalars['Int']>
   score: Maybe<Scalars['Int']>
-}
+}>
 
 export type AnilistSetScoreMutation = { __typename?: 'Mutation' } & {
   SaveMediaListEntry: Maybe<{ __typename?: 'MediaList' } & AniListEntryFragment>
 }
 
-export type AnilistSetStatusMutationVariables = {
+export type AnilistSetStatusMutationVariables = Exact<{
   mediaId: Maybe<Scalars['Int']>
   status: Maybe<MediaListStatus>
-}
+}>
 
 export type AnilistSetStatusMutation = { __typename?: 'Mutation' } & {
   SaveMediaListEntry: Maybe<{ __typename?: 'MediaList' } & AniListEntryFragment>
 }
 
-export type AnilistSetProgressMutationVariables = {
+export type AnilistSetProgressMutationVariables = Exact<{
   mediaId: Maybe<Scalars['Int']>
   progress: Maybe<Scalars['Int']>
-}
+}>
 
 export type AnilistSetProgressMutation = { __typename?: 'Mutation' } & {
   SaveMediaListEntry: Maybe<{ __typename?: 'MediaList' } & AniListEntryFragment>
 }
 
-export type AnilistCreateEntryMutationVariables = {
+export type AnilistCreateEntryMutationVariables = Exact<{
   mediaId: Maybe<Scalars['Int']>
-}
+}>
 
 export type AnilistCreateEntryMutation = { __typename?: 'Mutation' } & {
   SaveMediaListEntry: Maybe<{ __typename?: 'MediaList' } & AniListEntryFragment>
 }
 
-export type AnilistStartRewatchingMutationVariables = {
+export type AnilistStartRewatchingMutationVariables = Exact<{
   mediaId: Maybe<Scalars['Int']>
-}
+}>
 
 export type AnilistStartRewatchingMutation = { __typename?: 'Mutation' } & {
   SaveMediaListEntry: Maybe<{ __typename?: 'MediaList' } & AniListEntryFragment>
 }
 
-export type AnilistDeleteEntryMutationVariables = {
+export type AnilistDeleteEntryMutationVariables = Exact<{
   id: Scalars['Int']
-}
+}>
 
 export type AnilistDeleteEntryMutation = { __typename?: 'Mutation' } & {
   DeleteMediaListEntry: Maybe<
@@ -4750,13 +4760,13 @@ export type AnilistDeleteEntryMutation = { __typename?: 'Mutation' } & {
   >
 }
 
-export type AnilistEditListEntryMutationVariables = {
+export type AnilistEditListEntryMutationVariables = Exact<{
   id: Scalars['Int']
   progress: Scalars['Int']
   status: MediaListStatus
   repeat: Scalars['Int']
   score: Maybe<Scalars['Int']>
-}
+}>
 
 export type AnilistEditListEntryMutation = { __typename?: 'Mutation' } & {
   SaveMediaListEntry: Maybe<
@@ -4767,13 +4777,13 @@ export type AnilistEditListEntryMutation = { __typename?: 'Mutation' } & {
   >
 }
 
-export type AnilistListEntriesQueryVariables = {
+export type AnilistListEntriesQueryVariables = Exact<{
   userId: Scalars['Int']
   page: Maybe<Scalars['Int']>
   perPage: Maybe<Scalars['Int']>
   status: Maybe<MediaListStatus>
   status_not: Maybe<MediaListStatus>
-}
+}>
 
 export type AnilistListEntriesQuery = { __typename?: 'Query' } & {
   listCollection: Maybe<
@@ -4826,9 +4836,9 @@ export type CacheAiringDataFragment = { __typename?: 'Media' } & {
   >
 }
 
-export type AnimeViewQueryVariables = {
+export type AnimeViewQueryVariables = Exact<{
   id: Maybe<Scalars['Int']>
-}
+}>
 
 export type AnimeViewQuery = { __typename?: 'Query' } & {
   anime: Maybe<
@@ -4909,12 +4919,12 @@ export type AnimeViewQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type EpisodeFeedQueryVariables = {
+export type EpisodeFeedQueryVariables = Exact<{
   page: Scalars['Int']
   startDate: Scalars['Int']
   endDate: Scalars['Int']
   ids: Array<Scalars['Int']>
-}
+}>
 
 export type EpisodeFeedQuery = { __typename?: 'Query' } & {
   Page: Maybe<
@@ -4948,9 +4958,9 @@ export type AiringFeedItemFragment = { __typename?: 'AiringSchedule' } & Pick<
     >
   }
 
-export type QueueQueryVariables = {
+export type QueueQueryVariables = Exact<{
   ids: Array<Scalars['Int']>
-}
+}>
 
 export type QueueQuery = { __typename?: 'Query' } & {
   queue: Maybe<
@@ -4998,11 +5008,11 @@ export type QueueQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type ImportQueryVariables = {
+export type ImportQueryVariables = Exact<{
   status: MediaListStatus
   useExtraStatus: Scalars['Boolean']
   extraStatus: Maybe<MediaListStatus>
-}
+}>
 
 export type ImportQuery = { __typename?: 'Query' } & {
   ListEntries: Array<
@@ -5013,9 +5023,9 @@ export type ImportQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type ImportExternalLinksQueryVariables = {
+export type ImportExternalLinksQueryVariables = Exact<{
   mediaId: Scalars['Int']
-}
+}>
 
 export type ImportExternalLinksQuery = { __typename?: 'Query' } & {
   Media: Maybe<
