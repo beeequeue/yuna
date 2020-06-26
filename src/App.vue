@@ -50,7 +50,7 @@ import {
   computed,
   defineComponent,
   onErrorCaptured,
-  watch,
+  watchEffect,
 } from '@vue/composition-api'
 
 import TitleBar from '@/common/components/title-bar.vue'
@@ -132,7 +132,7 @@ export default defineComponent({
     Hidive.createVisit(context.root.$store)
     Crunchyroll.createSession(context.root.$store)
 
-    watch(hasFinishedSetup, () => {
+    watchEffect(() => {
       if (!isFinishedConnecting.value && hasFinishedSetup.value) {
         context.root.$router.push('login')
       }
