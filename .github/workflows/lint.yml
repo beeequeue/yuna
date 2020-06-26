@@ -15,4 +15,14 @@ jobs:
         env:
           VALIDATE_JAVASCRIPT_STANDARD: false
           VALIDATE_TYPESCRIPT_STANDARD: false
-          VALIDATE_MD_STANDARD: false
+          VALIDATE_PERL: false
+          VALIDATE_MD: false
+          VALIDATE_PHP: false
+          VALIDATE_PYTHON: false
+          VALIDATE_COFFEE: false
+          VALIDATE_RUBY: false
+          VALIDATE_ANSIBLE: false
+          VALIDATE_GO: false
+          VALIDATE_POWERSHELL: false
+          VALIDATE_TERRAFORM: false
+          VALIDATE_KOTLIN: false
