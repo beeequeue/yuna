@@ -15,7 +15,7 @@ import { getMainListPlugin } from '@/state/settings'
 
 import App from './App.vue'
 import { router } from './router'
-import { store } from './state/store'
+import { createStore } from './state/store'
 import { createProvider } from './vue-apollo'
 import { normalizeEvent } from './normalize'
 import { version } from '../package.json'
@@ -31,6 +31,9 @@ Vue.use(Tooltip)
 Vue.use(Portal)
 Vue.use(Composition)
 Vue.directive('visibility', ObserveVisibility)
+
+// Create store
+const store = createStore()
 
 // Register services
 

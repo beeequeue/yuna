@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { ipcRenderer } from 'electron'
+import { ipcRenderer, shell } from 'electron'
 import { captureException } from '@sentry/browser'
 import {
   computed,
@@ -63,13 +63,26 @@ import Navbar from '@/modules/navbar/navbar.vue'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { Hidive } from '@/lib/hidive'
 import { getFinishedConnecting } from '@/state/auth'
-import { getHasFinishedSetup } from '@/state/settings'
-import { getIsFullscreen, sendErrorToast } from '@/state/app'
-import { CHECK_FOR_UPDATES } from '@/messages'
+import { getHasFinishedSetup, setFfmpegFailed } from '@/state/settings'
+import {
+  getIsFullscreen,
+  sendErrorToast,
+  sendToast,
+  setIsUpdateAvailable,
+} from '@/state/app'
+import {
+  ANILIST_LOGIN,
+  CHECK_FOR_UPDATES,
+  FFMPEG_DOWNLOADED,
+  FFMPEG_FAILED,
+  UPDATE_AVAILABLE,
+} from '@/messages'
 import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
 import { SimklListPlugin } from '@/plugins/list/simkl-plugin'
 import { trackView } from '@/lib/tracking'
-import { View } from '@/router'
+import { router, View } from '@/router'
+import { ProvidePlayer } from '@/state/player'
+import { Anilist } from '@/lib/anilist'
 
 const requireBg = require.context('@/assets/bg', false, /\.webp$/)
 const backgrounds = requireBg.keys()
@@ -133,7 +146,51 @@ export default defineComponent({
       }
     })
 
+    ProvidePlayer()
+
     trackView(View.Dashboard)
+
+    ipcRenderer.on(UPDATE_AVAILABLE, (_, downloadUrl) => {
+      setIsUpdateAvailable(context.root.$store, downloadUrl)
+
+      sendToast(context.root.$store, {
+        type: 'info',
+        title: 'A new update is available!',
+        message: 'Click here to download it.',
+        timeout: 15 * 1000,
+        click: () => shell.openExternal(downloadUrl),
+      })
+    })
+
+    ipcRenderer.on(FFMPEG_FAILED, () => {
+      setFfmpegFailed(context.root.$store, true)
+
+      sendToast(context.root.$store, {
+        type: 'error',
+        title: 'Could not download FFMPEG.',
+        message: 'Local file support will not work.',
+        click: () => router.push('/settings#ffmpeg'),
+      })
+    })
+
+    ipcRenderer.on(FFMPEG_DOWNLOADED, () => {
+      setFfmpegFailed(context.root.$store, false)
+
+      sendToast(context.root.$store, {
+        type: 'success',
+        title: 'Successfully downloaded FFMPEG!',
+        message: 'Local file support will work now!',
+      })
+    })
+
+    type Parameters = {
+      token: string
+      expires: number
+    }
+
+    ipcRenderer.on(ANILIST_LOGIN, async (_: any, params: Parameters) => {
+      await Anilist.updateUserData(context.root.$store, params)
+    })
 
     return {
       isDev: process.env.NODE_ENV === 'development',
