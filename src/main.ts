@@ -1,5 +1,6 @@
 import { shell } from 'electron'
 import Vue from 'vue'
+import Vuex from 'vuex'
 import { ObserveVisibility } from 'vue-observe-visibility'
 import Tooltip from 'v-tooltip'
 import Portal from 'portal-vue'
@@ -25,6 +26,7 @@ import { getQueue } from '@/state/user'
 
 // Vue config
 Vue.config.productionTip = false
+Vue.use(Vuex)
 Vue.use(Tooltip)
 Vue.use(Portal)
 Vue.use(Composition)

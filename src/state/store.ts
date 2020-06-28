@@ -1,6 +1,5 @@
 import { ipcRenderer, shell } from 'electron'
-import Vue from 'vue'
-import Vuex from 'vuex'
+import { Store } from 'vuex'
 
 import { Anilist } from '@/lib/anilist'
 import {
@@ -15,8 +14,6 @@ import { auth, AuthState } from './auth'
 import { setFfmpegFailed, settings, SettingsState } from './settings'
 import { user, UserState } from './user'
 import { router } from '@/router'
-
-Vue.use(Vuex)
 
 const modules = { app, auth, user, settings }
 
@@ -48,7 +45,7 @@ export type RootState = {
   settings: SettingsState
 }
 
-export const store = new Vuex.Store<RootState>({
+export const store = new Store<RootState>({
   modules,
   strict: process.env.NODE_ENV !== 'production',
 })

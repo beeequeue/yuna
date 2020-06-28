@@ -1,8 +1,9 @@
 import Vue from 'vue'
+import Vuex from 'vuex'
 import Composition from '@vue/composition-api'
 
-jest.mock('electron-util', () => ({
-  api: { app: { getPath: () => 'USER_DATA_PATH' } },
-}))
+import './src/testing/mock-electron'
+import './src/testing/mock-store'
 
+Vue.use(Vuex)
 Vue.use(Composition)
