@@ -103,15 +103,10 @@ export default defineComponent({
       }
     })
 
-    const setupListPlugins = () => {
-      const plugins = [AnilistListPlugin, SimklListPlugin]
-
-      return plugins.map(
-        plugin => new plugin(context.root.$apollo, context.root.$store),
-      )
-    }
-
-    window.listPlugins = setupListPlugins()
+    const plugins = [AnilistListPlugin, SimklListPlugin]
+    window.listPlugins = plugins.map(
+      plugin => new plugin(context.root.$apollo, context.root.$store),
+    )
 
     const hasFinishedSetup = computed(() =>
       getHasFinishedSetup(context.root.$store),
@@ -124,7 +119,7 @@ export default defineComponent({
       context.root.$router.push('/first-time-setup')
     }
 
-    if (!isFinishedConnecting && hasFinishedSetup.value) {
+    if (!isFinishedConnecting.value && hasFinishedSetup.value) {
       window.initialLogin = true
       context.root.$router.push('login')
     }
