@@ -1,22 +1,23 @@
 <template>
-  <div class="episode" :class="classes">
+  <div data-testid="episode" class="episode" :class="classes">
     <img
-      v-if="!empty"
       class="thumbnail"
       :class="{ blur: blur.thumbnail }"
       :src="episode.thumbnail"
-      @click="handleThumbnailClick"
+      :alt="`Episode ${episode.episodeNumber}`"
+      @click="handleClick"
     />
 
-    <div v-if="!empty" class="title-container">
+    <div class="title-container">
       <div class="episode-number">Episode {{ episode.episodeNumber }}</div>
       <div class="title" :class="{ blur: blur.title }">{{ episode.title }}</div>
     </div>
 
-    <transition v-if="!empty && listEntry != null" name="fade">
+    <transition v-if="listEntry != null" name="fade">
       <c-button
         v-if="!episode.isWatched"
         v-tooltip.top="buttonTooltip"
+        data-testid="setWatched"
         :icon="bookmarkSvg"
         :click="setProgress"
         :disabled="episode.episodeNumber === 0"
@@ -24,6 +25,7 @@
       <c-button
         v-else
         v-tooltip.top="buttonTooltip"
+        data-testid="setUnwatched"
         type="danger"
         :icon="unbookmarkSvg"
         :click="setProgress"
@@ -31,100 +33,86 @@
       />
     </transition>
 
-    <transition v-if="!empty">
-      <icon v-if="episode.isWatched" :icon="checkSvg" class="check" />
+    <transition>
+      <icon
+        v-if="episode.isWatched"
+        :icon="checkSvg"
+        label="watched"
+        class="check"
+      />
     </transition>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { computed, defineComponent } from '@vue/composition-api'
 import { mdiBookmark, mdiBookmarkRemove, mdiCheckCircleOutline } from '@mdi/js'
-
-import { setProgress } from '@/graphql/mutations/list-entry'
-import { EpisodeListEpisodes } from '@/graphql/generated/types'
-
-import { Required } from '@/decorators'
-import { ListEntry, setCurrentEpisode } from '@/state/app'
 import { getSpoilerSettings } from '@/state/settings'
 
 import CButton from '../button.vue'
 import Icon from '../icon.vue'
+import { EpisodeProps } from './episode.props'
 
-@Component({ components: { CButton, Icon } })
-export default class Episode extends Vue {
-  @Required(Object) public episode!: EpisodeListEpisodes
-  @Prop(Object) public listEntry!: ListEntry | null
-  @Prop(String) public scrollerValue!: string | null
-  @Prop(Boolean) public small!: boolean | null
-  @Prop(Boolean) public empty!: boolean | null
+export default defineComponent<EpisodeProps>({
+  components: { CButton, Icon },
+  props: {
+    episode: {
+      type: Object,
+      required: true,
+    },
+    listEntry: {
+      type: Object,
+      default: null,
+    },
+    scrollerValue: {
+      type: String,
+      default: null,
+    },
+    small: Boolean,
+  },
+  setup(props, { emit, root }) {
+    const setProgress = () => {
+      const newProgress =
+        props.episode.episodeNumber + (props.episode.isWatched ? 1 : -1)
 
-  public bookmarkSvg = mdiBookmark
-  public unbookmarkSvg = mdiBookmarkRemove
-  public checkSvg = mdiCheckCircleOutline
-
-  public get isCurrent() {
-    return (
-      this.listEntry &&
-      this.listEntry.progress + 1 === this.episode.episodeNumber
-    )
-  }
-
-  public get classes() {
-    if (this.empty === true) {
-      return {
-        empty: true,
-        small: this.small,
-      }
+      emit('update-progress', newProgress)
     }
 
     return {
-      watched: this.episode.isWatched,
-      current: this.isCurrent,
-      active:
-        !this.small &&
-        Number(this.scrollerValue) === this.episode.episodeNumber,
-      small: this.small,
+      handleClick: () => emit('click'),
+      setProgress,
+
+      blur: computed(() => {
+        const { episode: settings } = getSpoilerSettings(
+          root._vnode.componentInstance.$store,
+        )
+
+        return {
+          title: settings.name && !props.episode.isWatched,
+          thumbnail: settings.thumbnail && !props.episode.isWatched,
+        }
+      }),
+
+      buttonTooltip: computed(() =>
+        props.episode.episodeNumber > 0
+          ? null
+          : 'This episode shares watched status with episode 1.',
+      ),
+
+      classes: computed(() => ({
+        watched: props.episode.isWatched,
+        active:
+          !props.small &&
+          Number(props.scrollerValue) === props.episode.episodeNumber,
+        small: props.small,
+      })),
+
+      bookmarkSvg: mdiBookmark,
+      unbookmarkSvg: mdiBookmarkRemove,
+      checkSvg: mdiCheckCircleOutline,
     }
-  }
-
-  public get buttonTooltip() {
-    if (this.episode.episodeNumber > 0) return null
-
-    return 'This episode shares watched status with episode 1.'
-  }
-
-  public get blur() {
-    const settings = getSpoilerSettings(this.$store).episode
-
-    return {
-      title: settings.name && !this.episode.isWatched,
-      thumbnail: settings.thumbnail && !this.episode.isWatched,
-    }
-  }
-
-  public handleThumbnailClick() {
-    setCurrentEpisode(this.$store, {
-      id: this.episode.animeId,
-      index: this.episode.index,
-      provider: this.episode.provider,
-    })
-  }
-
-  public setProgress() {
-    if (!this.listEntry) return
-
-    if (!this.episode.isWatched) {
-      setProgress(this, { ...this.episode, ...this.listEntry })
-    } else {
-      setProgress(this, {
-        ...this.episode,
-        episodeNumber: this.episode.episodeNumber - 1,
-        ...this.listEntry,
-      })
-    }
-  }
-}
+  },
+})
 </script>
 
 <style scoped lang="scss">
@@ -160,15 +148,6 @@ export default class Episode extends Vue {
 
   &.active {
     height: 200px;
-  }
-
-  &.empty {
-    width: 300px;
-    box-shadow: none;
-
-    &.small {
-      width: 200px;
-    }
   }
 
   & > * {

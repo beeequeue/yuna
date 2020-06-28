@@ -1,5 +1,5 @@
 <template>
-  <span class="icon">
+  <span class="icon" :aria-label="label">
     <svg viewBox="0 0 24 24">
       <path :d="icon"></path>
     </svg>
@@ -7,13 +7,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { Required } from '@/decorators'
+import { defineComponent } from '@vue/composition-api'
 
-@Component
-export default class Icon extends Vue {
-  @Required(String) public icon!: string
-}
+export default defineComponent({
+  props: {
+    icon: {
+      type: String,
+      required: true,
+    },
+    label: {
+      type: String,
+      default: null,
+    },
+  },
+})
 </script>
 
 <style scoped lang="scss">
