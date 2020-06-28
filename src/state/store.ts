@@ -1,4 +1,4 @@
-import { Store } from 'vuex'
+import { StoreOptions } from 'vuex'
 
 import { app, AppState } from './app'
 import { auth, AuthState } from './auth'
@@ -14,8 +14,7 @@ export type RootState = {
   settings: SettingsState
 }
 
-export const createStore = () =>
-  new Store<RootState>({
-    modules,
-    strict: process.env.NODE_ENV !== 'production',
-  })
+export const storeOptions: StoreOptions<any> = {
+  modules,
+  strict: process.env.NODE_ENV !== 'production',
+}
