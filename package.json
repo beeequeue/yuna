@@ -53,7 +53,7 @@
     "electron-dl": "3.0.1",
     "electron-log": "4.2.2",
     "electron-store": "5.2.0",
-    "electron-util": "0.14.1",
+    "electron-util": "0.14.2",
     "extract-zip": "2.0.1",
     "fluent-ffmpeg": "2.1.2",
     "fuse.js": "5.2.3",
