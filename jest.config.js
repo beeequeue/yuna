@@ -4,5 +4,6 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts', 'jest-localstorage-mock'],
   transform: {
     '\\.(gql|graphql)$': 'jest-transform-graphql',
+    '\\.vue$': './vue-transform-root-store.js',
   },
 }
