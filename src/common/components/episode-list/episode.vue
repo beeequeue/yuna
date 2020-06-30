@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from '@vue/composition-api'
+import { defineComponent } from '@vue/composition-api'
 import { mdiBookmark, mdiBookmarkRemove, mdiCheckCircleOutline } from '@mdi/js'
 import { getSpoilerSettings } from '@/state/settings'
 
@@ -70,45 +70,45 @@ export default defineComponent<EpisodeProps>({
     },
     small: Boolean,
   },
-  setup(props, { emit, root }) {
-    const setProgress = () => {
-      const newProgress =
-        props.episode.episodeNumber + (props.episode.isWatched ? -1 : 0)
+  data: () => ({
+    bookmarkSvg: mdiBookmark,
+    unbookmarkSvg: mdiBookmarkRemove,
+    checkSvg: mdiCheckCircleOutline,
+  }),
+  computed: {
+    blur() {
+      const { episode: settings } = getSpoilerSettings(this.$store)
 
-      emit('update-progress', newProgress)
-    }
-
-    return {
-      handleClick: () => emit('click'),
-      setProgress,
-
-      blur: computed(() => {
-        const { episode: settings } = getSpoilerSettings(root.$store)
-
-        return {
-          title: settings.name && !props.episode.isWatched,
-          thumbnail: settings.thumbnail && !props.episode.isWatched,
-        }
-      }),
-
-      buttonTooltip: computed(() =>
-        props.episode.episodeNumber > 0
-          ? null
-          : 'This episode shares watched status with episode 1.',
-      ),
-
-      classes: computed(() => ({
-        watched: props.episode.isWatched,
+      return {
+        title: settings.name && !this.episode.isWatched,
+        thumbnail: settings.thumbnail && !this.episode.isWatched,
+      }
+    },
+    buttonTooltip() {
+      return this.episode.episodeNumber > 0
+        ? null
+        : 'This episode shares watched status with episode 1.'
+    },
+    classes() {
+      return {
+        watched: this.episode.isWatched,
         active:
-          !props.small &&
-          Number(props.scrollerValue) === props.episode.episodeNumber,
-        small: props.small,
-      })),
+          !this.small &&
+          Number(this.scrollerValue) === this.episode.episodeNumber,
+        small: this.small,
+      }
+    },
+  },
+  methods: {
+    handleClick() {
+      this.$emit('click')
+    },
+    setProgress() {
+      const newProgress =
+        this.episode.episodeNumber + (this.episode.isWatched ? -1 : 0)
 
-      bookmarkSvg: mdiBookmark,
-      unbookmarkSvg: mdiBookmarkRemove,
-      checkSvg: mdiCheckCircleOutline,
-    }
+      this.$emit('update-progress', newProgress)
+    },
   },
 })
 </script>
