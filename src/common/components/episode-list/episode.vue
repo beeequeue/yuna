@@ -45,23 +45,36 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api'
+import Vue, { PropType } from 'vue'
 import { mdiBookmark, mdiBookmarkRemove, mdiCheckCircleOutline } from '@mdi/js'
+
 import { getSpoilerSettings } from '@/state/settings'
 
 import CButton from '../button.vue'
 import Icon from '../icon.vue'
-import { EpisodeProps } from './episode.props'
+import { ListEntry } from '@/state/app'
+import { Episode as IEpisode } from '@/graphql/generated/types'
 
-export default defineComponent<EpisodeProps>({
+export default Vue.extend({
   components: { CButton, Icon },
   props: {
     episode: {
-      type: Object,
+      type: Object as PropType<
+        Pick<
+          IEpisode,
+          | 'animeId'
+          | 'index'
+          | 'provider'
+          | 'episodeNumber'
+          | 'thumbnail'
+          | 'title'
+          | 'isWatched'
+        >
+      >,
       required: true,
     },
     listEntry: {
-      type: Object,
+      type: Object as PropType<ListEntry | null>,
       default: null,
     },
     scrollerValue: {
@@ -76,7 +89,7 @@ export default defineComponent<EpisodeProps>({
     checkSvg: mdiCheckCircleOutline,
   }),
   computed: {
-    blur() {
+    blur(): { title: boolean; thumbnail: boolean } {
       const { episode: settings } = getSpoilerSettings(this.$store)
 
       return {
@@ -84,12 +97,12 @@ export default defineComponent<EpisodeProps>({
         thumbnail: settings.thumbnail && !this.episode.isWatched,
       }
     },
-    buttonTooltip() {
+    buttonTooltip(): string | null {
       return this.episode.episodeNumber > 0
         ? null
         : 'This episode shares watched status with episode 1.'
     },
-    classes() {
+    classes(): Record<string, boolean> {
       return {
         watched: this.episode.isWatched,
         active:
