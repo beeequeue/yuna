@@ -75,7 +75,8 @@ export default class EpisodeList extends Vue {
   @Prop(Boolean) public noVerticalPadding!: boolean
   @Prop(Boolean) public open!: boolean
 
-  @Inject(PlayerSymbol as symbol) private player!: PlayerState
+  @Inject(PlayerSymbol as symbol)
+  private player!: PlayerState
 
   public notAvailable = false
 
@@ -144,7 +145,7 @@ export default class EpisodeList extends Vue {
     this.player.playlist = this.episodes.map(
       ({ animeId, provider, index }) => ({ animeId, provider, index }),
     )
-    this.player.current = index
+    this.player.currentIndex = index
   }
 
   public toggleWatched(episodeNumber: number) {

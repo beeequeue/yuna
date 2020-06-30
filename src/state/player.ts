@@ -1,4 +1,10 @@
-import { inject, InjectionKey, provide, reactive } from '@vue/composition-api'
+import {
+  computed,
+  inject,
+  InjectionKey,
+  provide,
+  reactive,
+} from '@vue/composition-api'
 import {
   Episode,
   Provider as StreamingProvider,
@@ -11,7 +17,7 @@ export type PlayerState = {
     index: number
     provider: StreamingProvider
   }>
-  current: number | null
+  currentIndex: number | null
 }
 
 export const PlayerSymbol: InjectionKey<PlayerState> = Symbol('playerState')
@@ -21,7 +27,7 @@ export const ProvidePlayer = () => {
     PlayerSymbol,
     reactive({
       playlist: [],
-      current: null,
+      currentIndex: null,
     }),
   )
 }
@@ -35,8 +41,11 @@ export const usePlayer = () => {
 
   return {
     // State
-    playlist: state.playlist as Readonly<PlayerState['playlist']>,
-    current: state.current,
+    playlist: computed(() => state.playlist),
+    currentIndex: computed(() => state.currentIndex),
+    current: computed<PlayerState['playlist'][number] | null>(
+      () => state.playlist[state.currentIndex ?? -1] ?? null,
+    ),
 
     // Mutations
     setPlaylist: (
@@ -49,19 +58,19 @@ export const usePlayer = () => {
 
     traversePlaylist: (steps: number) => {
       if (
-        state.current == null ||
-        state.playlist[state.current + steps] == null
+        state.currentIndex == null ||
+        state.playlist[state.currentIndex + steps] == null
       ) {
         return
       }
 
-      state.current += steps
+      state.currentIndex += steps
     },
 
     goToInPlaylist: (index: number) => {
       if (state.playlist[index] == null) return
 
-      state.current = index
+      state.currentIndex = index
     },
   } as const
 }
