@@ -73,7 +73,7 @@ export default defineComponent<EpisodeProps>({
   setup(props, { emit, root }) {
     const setProgress = () => {
       const newProgress =
-        props.episode.episodeNumber + (props.episode.isWatched ? 1 : -1)
+        props.episode.episodeNumber + (props.episode.isWatched ? -1 : 0)
 
       emit('update-progress', newProgress)
     }

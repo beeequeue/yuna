@@ -150,10 +150,10 @@ export const app = {
       )
 
       return entries.reduce((obj, [key, value]) => {
-        obj[key] = value
+        obj[key as keyof AppState['modals']] = value
 
         return obj
-      }, {} as any)
+      }, {} as Record<keyof AppState['modals'], boolean>)
     },
 
     getEditingAnime(state: AppState) {

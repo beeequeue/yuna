@@ -5,7 +5,7 @@ import {
 } from '@/graphql/generated/types'
 import { pick } from '@/utils'
 
-type PlayerState = {
+export type PlayerState = {
   playlist: Array<{
     animeId: number
     index: number
@@ -14,7 +14,7 @@ type PlayerState = {
   current: number | null
 }
 
-const PlayerSymbol: InjectionKey<PlayerState> = Symbol('playerState')
+export const PlayerSymbol: InjectionKey<PlayerState> = Symbol('playerState')
 
 export const ProvidePlayer = () => {
   provide(
