@@ -130,46 +130,74 @@ test('renders spoiler-hidden episode correctly', async () => {
   expect(getByAltText('Episode 4')).not.toHaveClass('blur')
 })
 
-test('emits click event when clicked', async () => {
-  const props: EpisodeProps = {
-    episode: defaultEpisode,
-    listEntry: {
-      id: 1337,
-      progress: 0,
-      status: MediaListStatus.Current,
-    },
-    scrollerValue: null,
-    small: false,
-  }
+describe('emit', () => {
+  test('emits click event when clicked', async () => {
+    const props: EpisodeProps = {
+      episode: defaultEpisode,
+      listEntry: {
+        id: 1337,
+        progress: 0,
+        status: MediaListStatus.Current,
+      },
+      scrollerValue: null,
+      small: false,
+    }
 
-  const { getByAltText, emitted } = render(Episode, props)
+    const { getByAltText, emitted } = render(Episode, props)
 
-  const container = getByAltText('Episode 4')
+    const container = getByAltText('Episode 4')
 
-  expect(container).toBeVisible()
-  await fireEvent.click(container)
+    expect(container).toBeVisible()
+    await fireEvent.click(container)
 
-  expect(emitted().click).toHaveLength(1)
-})
+    expect(emitted().click).toHaveLength(1)
+  })
 
-test('emits update-progress event when progress button is clicked', async () => {
-  const props: EpisodeProps = {
-    episode: defaultEpisode,
-    listEntry: {
-      id: 1337,
-      progress: 0,
-      status: MediaListStatus.Current,
-    },
-    scrollerValue: null,
-    small: false,
-  }
+  describe('update-progress', () => {
+    test('emits new progress on click when not watched', async () => {
+      const props: EpisodeProps = {
+        episode: defaultEpisode,
+        listEntry: {
+          id: 1337,
+          progress: 0,
+          status: MediaListStatus.Current,
+        },
+        scrollerValue: null,
+        small: false,
+      }
 
-  const { getByTestId, emitted } = render(Episode, props)
+      const { getByTestId, emitted } = render(Episode, props)
 
-  const container = getByTestId('setWatched')
+      const container = getByTestId('setWatched')
 
-  expect(container).toBeVisible()
-  await fireEvent.click(container)
+      expect(container).toBeVisible()
+      await fireEvent.click(container)
 
-  expect(emitted()['update-progress']).toHaveLength(1)
+      expect(emitted()['update-progress']).toHaveLength(1)
+      expect(emitted()['update-progress'][0]).toStrictEqual([4])
+    })
+
+    test('emits new progress on click when watched', async () => {
+      const props: EpisodeProps = {
+        episode: { ...defaultEpisode, isWatched: true },
+        listEntry: {
+          id: 1337,
+          progress: 4,
+          status: MediaListStatus.Current,
+        },
+        scrollerValue: null,
+        small: false,
+      }
+
+      const { getByTestId, emitted } = render(Episode, props)
+
+      const container = getByTestId('setUnwatched')
+
+      expect(container).toBeVisible()
+      await fireEvent.click(container)
+
+      expect(emitted()['update-progress']).toHaveLength(1)
+      expect(emitted()['update-progress'][0]).toStrictEqual([3])
+    })
+  })
 })
