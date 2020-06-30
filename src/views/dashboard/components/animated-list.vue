@@ -61,7 +61,7 @@ export default defineComponent<{ ids: number[] }>({
     const { result } = useQuery<EpisodeFeedQuery, EpisodeFeedVariables>(
       EPISODE_FEED_QUERY,
       {
-        ids: props.id,
+        ids: props.ids,
         page: page.value,
         startDate: addDays(-1),
         endDate: addDays(7),

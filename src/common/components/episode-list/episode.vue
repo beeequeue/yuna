@@ -83,9 +83,7 @@ export default defineComponent<EpisodeProps>({
       setProgress,
 
       blur: computed(() => {
-        const { episode: settings } = getSpoilerSettings(
-          root._vnode.componentInstance.$store,
-        )
+        const { episode: settings } = getSpoilerSettings(root.$store)
 
         return {
           title: settings.name && !props.episode.isWatched,
