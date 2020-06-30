@@ -1,6 +1,6 @@
 <template>
   <transition>
-    <div v-if="playerData" class="player-container" :class="classFromRoute">
+    <div v-if="playerData" class="player-container" :class="classes">
       <player
         v-if="playerData.provider !== 'LOCAL'"
         key="player"
@@ -10,8 +10,8 @@
         :next-episode="delayedNextEpisode"
         :player-data="playerData"
         :should-auto-play="shouldAutoPlay"
-        :get-should-auto-mark-watched="getShouldAutoMarkWatched"
-        :set-progress="setProgress"
+        :get-should-auto-mark-watched="shouldAutoMarkWatched"
+        :set-progress="toggleProgress"
       />
       <external-player
         v-else-if="anime != null"
@@ -148,12 +148,12 @@ export default defineComponent({
       episode,
       nextEpisode,
       delayedNextEpisode,
-      setProgress: toggleProgress,
+      toggleProgress,
 
       shouldAutoPlay,
-      getShouldAutoMarkWatched: shouldAutoMarkWatched,
+      shouldAutoMarkWatched,
 
-      classFromRoute: classes,
+      classes,
     }
   },
 })
