@@ -1,11 +1,8 @@
-import { render, fireEvent } from '@testing-library/vue'
-import Router from 'vue-router'
-import { StoreOptions } from 'vuex'
+import { fireEvent } from '@testing-library/vue'
 import deepmerge from 'deepmerge'
 
 import { MediaListStatus, Provider } from '@/graphql/generated/types'
-import { RootState, storeOptions } from '@/state/store'
-import { DeepPartial } from '@/types'
+import { render } from '@/testing'
 
 import Episode from './episode.vue'
 import { EpisodeProps } from './episode.props'
@@ -20,16 +17,6 @@ const defaultEpisode: EpisodeProps['episode'] = {
   provider: Provider.Crunchyroll,
 }
 
-const renderEpisode = (
-  props: EpisodeProps,
-  customStore: DeepPartial<StoreOptions<RootState>> = {},
-) =>
-  render(Episode, {
-    props,
-    store: deepmerge(storeOptions, customStore),
-    router: new Router(),
-  })
-
 beforeEach(() => {
   jest.clearAllMocks()
 })
@@ -42,10 +29,10 @@ test('renders an unwatched, unlisted episode correctly', async () => {
     small: false,
   }
 
-  const { getByText, getByTestId, queryByTestId } = renderEpisode(props)
+  const { getByText, getByTestId, queryByTestId } = render(Episode, props)
 
   expect(getByTestId('episode')).not.toHaveClass('current')
-  expect(queryByTestId('setWatched')).not.toBeVisible()
+  expect(queryByTestId('setWatched')).toBeNull()
   expect(getByText('Episode 4')).toBeVisible()
 })
 
@@ -61,7 +48,7 @@ test('renders an unwatched, listed episode correctly', async () => {
     small: false,
   }
 
-  const { getByText, getByTestId } = renderEpisode(props)
+  const { getByText, getByTestId } = render(Episode, props)
 
   expect(getByTestId('episode')).not.toHaveClass('current')
   expect(getByTestId('setWatched')).toBeVisible()
@@ -83,7 +70,7 @@ test('renders a watched episode correctly', async () => {
     small: false,
   }
 
-  const { getByText, getByTestId, getByLabelText } = renderEpisode(props)
+  const { getByText, getByTestId, getByLabelText } = render(Episode, props)
 
   expect(getByTestId('episode')).not.toHaveClass('current')
   expect(getByTestId('setUnwatched')).toBeVisible()
@@ -99,7 +86,7 @@ test('renders a small episode correctly', async () => {
     small: true,
   }
 
-  const { getByTestId } = renderEpisode(props)
+  const { getByTestId } = render(Episode, props)
 
   expect(getByTestId('episode')).toHaveClass('small')
 })
@@ -116,7 +103,7 @@ test('renders spoiler-hidden episode correctly', async () => {
     small: false,
   }
 
-  const { getByText, getByAltText, updateProps } = renderEpisode(props, {
+  const { getByText, getByAltText, updateProps } = render(Episode, props, {
     modules: {
       settings: {
         state: {
@@ -155,7 +142,7 @@ test('emits click event when clicked', async () => {
     small: false,
   }
 
-  const { getByAltText, emitted } = renderEpisode(props)
+  const { getByAltText, emitted } = render(Episode, props)
 
   const container = getByAltText('Episode 4')
 
@@ -177,7 +164,7 @@ test('emits update-progress event when progress button is clicked', async () => 
     small: false,
   }
 
-  const { getByTestId, emitted } = renderEpisode(props)
+  const { getByTestId, emitted } = render(Episode, props)
 
   const container = getByTestId('setWatched')
 

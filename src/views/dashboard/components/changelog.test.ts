@@ -1,10 +1,9 @@
 import { addMinutes } from 'date-fns'
 import Nock from 'nock'
-import { render } from '@testing-library/vue'
 
 import releasesJson from '@/../fixtures/github/releases.json'
 import { LocalStorageKey } from '@/lib/local-storage'
-import { mockLocaleStorage } from '@/testing'
+import { mockLocaleStorage, render } from '@/testing'
 import { GitHubRelease } from '@/types'
 import Changelog from './changelog.vue'
 
