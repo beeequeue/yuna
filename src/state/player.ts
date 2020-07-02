@@ -48,9 +48,17 @@ export const usePlayer = () => {
     ),
 
     // Mutations
+    // TODO: add clear()
     setPlaylist: (
-      episodes: Pick<Episode, 'animeId' | 'index' | 'provider'>[],
+      episodes: null | Pick<Episode, 'animeId' | 'index' | 'provider'>[],
     ) => {
+      if (episodes == null) {
+        state.playlist = []
+        state.currentIndex = null
+
+        return
+      }
+
       state.playlist = episodes.map(ep =>
         pick(ep, ['animeId', 'index', 'provider']),
       )
