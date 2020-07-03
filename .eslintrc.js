@@ -3,7 +3,12 @@ module.exports = {
   env: {
     node: true,
   },
-  extends: ['plugin:vue/vue3-recommended', '@vue/prettier', '@vue/typescript'],
+  extends: [
+    'plugin:vue/recommended',
+    'plugin:vue/vue3-recommended',
+    '@vue/prettier',
+    '@vue/typescript',
+  ],
   rules: {
     'no-console': 'error',
     'no-debugger': 'error',
