@@ -8,7 +8,6 @@
         :anime="anime"
         :episode="episode"
         :next-episode="delayedNextEpisode"
-        :player-data="playerData"
         :should-auto-play="shouldAutoPlay"
         :get-should-auto-mark-watched="shouldAutoMarkWatched"
         :set-progress="toggleProgress"
