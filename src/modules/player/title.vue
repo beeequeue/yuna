@@ -7,34 +7,43 @@
         {{ episode.title }}
       </h1>
 
-      <router-link :to="`/anime/${anime.id}`">
-        <h3 class="anime-title">{{ anime.title.userPreferred }}</h3>
+      <router-link :to="`/anime/${animeId}`">
+        <h3 class="anime-title">{{ title }}</h3>
       </router-link>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import Vue, { PropType } from 'vue'
 
-import {
-  EpisodeListEpisodes,
-  PlayerAnimeAnime,
-} from '@/graphql/generated/types'
-
-import { Required } from '@/decorators'
+import { EpisodeListEpisodes } from '@/graphql/generated/types'
 import { getSpoilerSettings } from '@/state/settings'
 
-@Component
-export default class PlayerTitle extends Vue {
-  @Required(Object) public anime!: PlayerAnimeAnime
-  @Required(Object) public episode!: EpisodeListEpisodes
-  @Required(Boolean) public episodeWatched!: boolean
-
-  public get shouldHideTitle() {
-    return getSpoilerSettings(this.$store).episode.name && !this.episodeWatched
-  }
-}
+export default Vue.extend({
+  props: {
+    animeId: {
+      type: Number,
+      required: true,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    episode: {
+      type: Object as PropType<
+        Pick<EpisodeListEpisodes, 'episodeNumber' | 'title'>
+      >,
+      required: true,
+    },
+    watched: Boolean,
+  },
+  computed: {
+    shouldHideTitle() {
+      return getSpoilerSettings(this.$store).episode.name && !this.watched
+    },
+  },
+})
 </script>
 
 <style scoped lang="scss">

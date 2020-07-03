@@ -41,31 +41,23 @@
       v-if="anime && episode"
       :episode="episode"
       :next-episode="nextEpisode"
-      :anime="anime"
-      :loading="loading || state.loading"
-      :paused="state.paused"
-      :is-player-maximized="isPlayerMaximized"
-      :muted="state.muted"
-      :volume="state.volume"
-      :duration="state.duration || episode.duration"
-      :progress-percentage="state.progress.percent"
-      :progress-in-seconds="state.progress.seconds"
-      :loaded-percentage="state.loadProgress.percent"
-      :speed="state.speed"
-      :quality="state.quality"
-      :levels="state.levels"
-      :subtitles="subtitles.tracks"
-      :subtitles-index="subtitles.selected"
-      :on-set-time="onSetTime"
-      :on-set-volume="onSetVolume"
-      :on-toggle-mute="onToggleMute"
-      :on-change-speed="onChangeSpeed"
-      :on-change-quality="onChangeQuality"
-      :on-change-subtitles="onChangeSubtitles"
-      :play="play"
-      :pause="pause"
-      :set-progress="setProgress"
-      :close-player="closePlayer"
+      :list-entry="anime.listEntry"
+      :title="anime.title.userPreferred"
+      :state="state"
+      :subtitles="subtitles"
+      :fullscreen="isFullscreen"
+      :maximized="isPlayerMaximized"
+      @play="play"
+      @pause="pause"
+      @timeskip="onSetTime"
+      @set-volume="onSetVolume"
+      @toggle-mute="onToggleMute"
+      @set-speed="onChangeSpeed"
+      @set-quality="onChangeQuality"
+      @set-subtitles-track="onChangeSubtitles"
+      @set-fullscreen="setFullscreen"
+      @update-progress="setProgress"
+      @close="closePlayer"
     />
 
     <next-episode-overlay
@@ -116,7 +108,7 @@ import { LocalStorageKey } from '@/lib/local-storage'
 import {
   getIsFullscreen,
   sendErrorToast,
-  toggleFullscreen as toggleFullScreenAction,
+  setFullscreen as setFullscreenAction,
 } from '@/state/app'
 import { getAnilistUsername } from '@/state/auth'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
@@ -190,7 +182,10 @@ export default defineComponent({
     const sequels = computed(() => getRelations(props, MediaRelation.Sequel))
 
     const isFullscreen = computed(() => getIsFullscreen(root.$store))
-    const toggleFullscreen = computed(() => toggleFullScreenAction(root.$store))
+    const setFullscreen = (fullscreen: boolean) => {
+      setFullscreenAction(root.$store, fullscreen)
+    }
+    const toggleFullscreen = computed(() => setFullscreen(isFullscreen.value))
 
     const hls = ref(new Hls())
     const gainNode = ref<GainNode | null>(null)
@@ -264,12 +259,10 @@ export default defineComponent({
       // TODO: watch paused and show controls in controls
     }
 
-    const _setVolume = (e: Event) => {
+    const _setVolume = (volume: number) => {
       if (gainNode.value == null) return
 
-      const { value: inputValue } = e.target as HTMLInputElement
-      // TODO: check if we can use numberValue or whatever its called
-      const value = clamp(+Number(inputValue).toFixed(2), 0, 200)
+      const value = clamp(+Number(volume).toFixed(2), 0, 200)
 
       state.volume = value
       gainNode.value.gain.value = value / 100
@@ -328,11 +321,10 @@ export default defineComponent({
 
         localStorage.setItem(LocalStorageKey.Muted, state.muted.toString())
       },
-      setSpeed: (e: Event) => {
+      setSpeed: (speed: number) => {
         if (player.value == null) return
-        const { value } = e.target as HTMLSelectElement
 
-        state.speed = Number(value)
+        state.speed = speed
         player.value.playbackRate = state.speed
         localStorage.setItem(LocalStorageKey.Speed, state.speed.toString())
       },
@@ -354,6 +346,19 @@ export default defineComponent({
 
     // region Handlers
     const handlers = {
+      setVolume: (e: Event) => {
+        if (gainNode.value == null) return
+
+        const { valueAsNumber } = e.target as HTMLInputElement
+        // TODO: check if we can use numberValue or whatever its called
+        actions.setVolume(valueAsNumber)
+      },
+      setSpeed: (e: Event) => {
+        if (player.value == null) return
+        const { value } = e.target as HTMLSelectElement
+
+        actions.setSpeed(Number(value))
+      },
       playerScroll: (e: WheelEvent) => {
         const direction = Math.sign(-e.deltaY)
 
@@ -584,6 +589,7 @@ export default defineComponent({
       sequels,
 
       isFullscreen,
+      setFullscreen,
       toggleFullscreen,
 
       state,
@@ -598,9 +604,9 @@ export default defineComponent({
       onSetTime: actions.setTime,
       pauseAndTraverseFrames: actions.traverseFrames,
       onChangeQuality: actions.setQuality,
-      onSetVolume: actions.setVolume,
+      onSetVolume: handlers.setVolume,
       onToggleMute: actions.toggleMute,
-      onChangeSpeed: actions.setSpeed,
+      onChangeSpeed: handlers.setSpeed,
       closePlayer: actions.close,
 
       onScroll: handlers.playerScroll,

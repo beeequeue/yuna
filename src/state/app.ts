@@ -263,6 +263,12 @@ export const app = {
 
       state.isFullscreen = b
       browserWindow.setFullScreen(b)
+
+      if (state.isFullscreen) {
+        router.push('/player-full')
+      } else {
+        router.back()
+      }
     },
 
     selectCrunchyrollEpisodes(
@@ -380,18 +386,6 @@ export const app = {
       })
     },
 
-    toggleFullscreen(context: AppContext) {
-      const isFullscreen = context.state.isFullscreen
-
-      if (!isFullscreen) {
-        router.push('/player-full')
-      } else {
-        router.back()
-      }
-
-      setFullscreen(context, !isFullscreen)
-    },
-
     initEditModal(context: AppContext, anime: EditModalAnime) {
       setEditingAnime(context, anime)
       toggleModal(context, 'edit')
@@ -436,7 +430,6 @@ const { read, commit, dispatch } = getStoreAccessors<AppState, RootState>('app')
 
 export const getUpdateUrl = read(app.getters.getUpdateUrl)
 export const getToasts = read(app.getters.getToasts)
-export const getPlayerData = read(app.getters.getPlayerData)
 export const getModalStates = read(app.getters.getModalStates)
 export const getEditingAnime = read(app.getters.getEditingAnime)
 export const getManualSearchOptions = read(app.getters.getManualSearchOptions)
@@ -469,7 +462,6 @@ export const unselectCrunchyrollEpisodes = commit(
 )
 export const setAnilistRequests = commit(app.mutations.setAnilistRequests)
 
-export const toggleFullscreen = dispatch(app.actions.toggleFullscreen)
 export const sendToast = dispatch(app.actions.sendToast)
 export const sendErrorToast = dispatch(app.actions.sendErrorToast)
 export const initEditModal = dispatch(app.actions.initEditModal)
