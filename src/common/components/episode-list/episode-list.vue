@@ -34,7 +34,7 @@
         :list-entry="listEntry"
         :small="small"
         @click="playEpisode(item.index)"
-        @update-progress="toggleWatched"
+        @update-progress="updateProgress"
       />
     </recycle-scroller>
   </div>
@@ -148,7 +148,7 @@ export default class EpisodeList extends Vue {
     this.player.currentIndex = index
   }
 
-  public toggleWatched(episodeNumber: number) {
+  public updateProgress(episodeNumber: number) {
     if (!this.episodes || !this.listEntry) return
 
     setProgress(this, {
