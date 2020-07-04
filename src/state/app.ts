@@ -45,12 +45,6 @@ export type Sequel = {
   bannerImage: string
 }
 
-export type PlayerData = {
-  id: number
-  index: number
-  provider: Provider
-}
-
 type ModalBase = {
   visible: boolean
 }
@@ -77,7 +71,6 @@ export type AppState = {
   isUpdateAvailable: string | null
   toasts: Toast[]
   isFullscreen: boolean
-  player: PlayerData | null
   anilistRequests: number
   modals: {
     about: ModalBase
@@ -103,7 +96,6 @@ const initialState: AppState = {
   isUpdateAvailable: null,
   toasts: [],
   isFullscreen: false,
-  player: null,
   anilistRequests: 85,
   modals: {
     about: { ...initialModalBase },
@@ -138,10 +130,6 @@ export const app = {
       return state.toasts
     },
 
-    getPlayerData(state: AppState) {
-      return state.player
-    },
-
     getModalStates(
       state: AppState,
     ): { [key in keyof AppState['modals']]: boolean } {
@@ -150,10 +138,10 @@ export const app = {
       )
 
       return entries.reduce((obj, [key, value]) => {
-        obj[key] = value
+        obj[key as keyof AppState['modals']] = value
 
         return obj
-      }, {} as any)
+      }, {} as Record<keyof AppState['modals'], boolean>)
     },
 
     getEditingAnime(state: AppState) {
@@ -205,16 +193,6 @@ export const app = {
       )
     },
 
-    setPlaylist(state: AppState, options: PlayerData | null) {
-      state.player = options
-    },
-
-    setCurrentEpisode(state: AppState, index: number) {
-      if (!state.player) return
-
-      state.player.index = index
-    },
-
     toggleModal(state: AppState, modal: keyof AppState['modals']) {
       state.modals[modal].visible = !state.modals[modal].visible
     },
@@ -263,6 +241,12 @@ export const app = {
 
       state.isFullscreen = b
       browserWindow.setFullScreen(b)
+
+      if (state.isFullscreen) {
+        router.push('/player-full')
+      } else {
+        router.back()
+      }
     },
 
     selectCrunchyrollEpisodes(
@@ -380,18 +364,6 @@ export const app = {
       })
     },
 
-    toggleFullscreen(context: AppContext) {
-      const isFullscreen = context.state.isFullscreen
-
-      if (!isFullscreen) {
-        router.push('/player-full')
-      } else {
-        router.back()
-      }
-
-      setFullscreen(context, !isFullscreen)
-    },
-
     initEditModal(context: AppContext, anime: EditModalAnime) {
       setEditingAnime(context, anime)
       toggleModal(context, 'edit')
@@ -407,28 +379,6 @@ export const app = {
       })
       toggleModal(context, 'manualSearch')
     },
-
-    setCurrentEpisode(
-      context: AppContext,
-      options:
-        | number
-        | { id: number; index: number; provider: Provider }
-        | null,
-    ) {
-      if (isNil(options)) {
-        return setPlaylist(context, null)
-      }
-
-      if (typeof options === 'number') {
-        _setCurrentEpisode(context, options)
-      } else {
-        setPlaylist(context, {
-          id: options.id,
-          index: options.index,
-          provider: options.provider,
-        })
-      }
-    },
   },
 }
 
@@ -436,7 +386,6 @@ const { read, commit, dispatch } = getStoreAccessors<AppState, RootState>('app')
 
 export const getUpdateUrl = read(app.getters.getUpdateUrl)
 export const getToasts = read(app.getters.getToasts)
-export const getPlayerData = read(app.getters.getPlayerData)
 export const getModalStates = read(app.getters.getModalStates)
 export const getEditingAnime = read(app.getters.getEditingAnime)
 export const getManualSearchOptions = read(app.getters.getManualSearchOptions)
@@ -455,8 +404,6 @@ export const setManualSearchOptions = commit(
 )
 export const setLocalSourceAnime = commit(app.mutations.setLocalSourceAnime)
 export const removeToast = commit(app.mutations.removeToast)
-const setPlaylist = commit(app.mutations.setPlaylist)
-const _setCurrentEpisode = commit(app.mutations.setCurrentEpisode)
 export const toggleModal = commit(app.mutations.toggleModal)
 const addToast = commit(app.mutations.addToast)
 export const closeAllModals = commit(app.mutations.closeAllModals)
@@ -469,9 +416,7 @@ export const unselectCrunchyrollEpisodes = commit(
 )
 export const setAnilistRequests = commit(app.mutations.setAnilistRequests)
 
-export const toggleFullscreen = dispatch(app.actions.toggleFullscreen)
 export const sendToast = dispatch(app.actions.sendToast)
 export const sendErrorToast = dispatch(app.actions.sendErrorToast)
 export const initEditModal = dispatch(app.actions.initEditModal)
 export const initManualSearch = dispatch(app.actions.initManualSearch)
-export const setCurrentEpisode = dispatch(app.actions.setCurrentEpisode)

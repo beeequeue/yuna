@@ -55,13 +55,13 @@ export default defineComponent<{ ids: number[] }>({
       required: true,
     },
   },
-  setup: ({ ids }) => {
+  setup: props => {
     const page = ref(1)
 
     const { result } = useQuery<EpisodeFeedQuery, EpisodeFeedVariables>(
       EPISODE_FEED_QUERY,
       {
-        ids,
+        ids: props.ids,
         page: page.value,
         startDate: addDays(-1),
         endDate: addDays(7),

@@ -13,7 +13,7 @@ import Bottleneck from 'bottleneck'
 import { captureException } from '@sentry/browser'
 
 import introspectionResult from '@/graphql/generated/introspection-result'
-import { resolvers } from '@/graphql/resolvers'
+import { createResolvers } from '@/graphql/resolvers'
 import { EpisodeListEpisodes, ListEntry } from '@/graphql/generated/types'
 import { userStore } from '@/lib/user'
 import { getEpisodeCacheKey, isNil, isOfTypename } from '@/utils'
@@ -64,7 +64,7 @@ const limiter = new Bottleneck({
 const limitedFetch = limiter.wrap(window.fetch)
 
 // Config
-const options: CreateClientOptions = {
+const createOptions = (store: Store<any>): CreateClientOptions => ({
   // You can use `https` for secure connection (recommended in production)
   httpEndpoint,
 
@@ -88,13 +88,13 @@ const options: CreateClientOptions = {
   },
 
   // Client local data
-  resolvers,
-}
+  resolvers: createResolvers(store),
+})
 
 // Call this in the Vue app file
 export const createProvider = (store: Store<any>) => {
   // Create apollo client
-  const { apolloClient, wsClient } = createApolloClient(options)
+  const { apolloClient, wsClient } = createApolloClient(createOptions(store))
   apolloClient.wsClient = wsClient
 
   setInterval(async () => {

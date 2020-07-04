@@ -33,6 +33,8 @@
         :episode="item"
         :list-entry="listEntry"
         :small="small"
+        @click="playEpisode(item.index)"
+        @update-progress="updateProgress"
       />
     </recycle-scroller>
   </div>
@@ -40,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
+import { Component, Inject, Prop, Vue, Watch } from 'vue-property-decorator'
 import { RecycleScroller } from 'vue-virtual-scroller'
 import {
   EpisodeListEpisodes,
@@ -49,13 +51,15 @@ import {
 } from '@/graphql/generated/types'
 
 import { Required } from '@/decorators'
+import { setProgress } from '@/graphql/mutations/list-entry'
 import { Hidive, HidiveResponseCode } from '@/lib/hidive'
+import { PlayerState, PlayerSymbol } from '@/state/player'
 import { delay, isNil } from '@/utils'
 
-import Episode from './episode.vue'
-import ScrollBar from './scroll-bar.vue'
 import Loading from '../loading.vue'
 import SourceList from '../source-list.vue'
+import ScrollBar from './scroll-bar.vue'
+import Episode from './episode.vue'
 
 @Component({
   components: { ScrollBar, RecycleScroller, SourceList, Loading, Episode },
@@ -70,6 +74,9 @@ export default class EpisodeList extends Vue {
   @Prop(Boolean) public padRight!: boolean
   @Prop(Boolean) public noVerticalPadding!: boolean
   @Prop(Boolean) public open!: boolean
+
+  @Inject(PlayerSymbol as symbol)
+  private player!: PlayerState
 
   public notAvailable = false
 
@@ -90,7 +97,7 @@ export default class EpisodeList extends Vue {
   }
 
   public mounted() {
-    this._scrollToNextEpisode()
+    this.handleOpeningList()
   }
 
   public handleScroll(e: WheelEvent) {
@@ -132,6 +139,25 @@ export default class EpisodeList extends Vue {
     }
   }
 
+  public playEpisode(index: number) {
+    if (this.episodes == null) return
+
+    this.player.playlist = this.episodes.map(
+      ({ animeId, provider, index }) => ({ animeId, provider, index }),
+    )
+    this.player.currentIndex = index
+  }
+
+  public updateProgress(episodeNumber: number) {
+    if (!this.episodes || !this.listEntry) return
+
+    setProgress(this, {
+      animeId: this.anime.id,
+      episodeNumber: episodeNumber,
+      provider: this.episodes[0].provider,
+    })
+  }
+
   public scrollToEpisode(index: number) {
     if (isNil(this.episodes) || this.episodes.length < 1) {
       return
@@ -149,7 +175,7 @@ export default class EpisodeList extends Vue {
   }
 
   @Watch('open')
-  public async _scrollToNextEpisode() {
+  public async handleOpeningList() {
     // Have to wait for opening animation to finished before the component inside is rendered
     await delay(255)
 

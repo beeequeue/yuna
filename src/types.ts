@@ -4,6 +4,12 @@ import { Provider } from '@/graphql/generated/types'
 
 export type Maybe<T> = T | null | undefined
 
+export type DeepPartial<T> = T extends Function
+  ? T
+  : T extends object
+  ? { [P in keyof T]?: DeepPartial<T[P]> }
+  : T
+
 export enum SupportedMediaKeys {
   MediaPlayPause = 'PLAYER_PLAY_PAUSE',
   MediaStop = 'PLAYER_STOP',

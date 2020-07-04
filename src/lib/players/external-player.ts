@@ -2,7 +2,7 @@ import { ChildProcess, spawn } from 'child_process'
 import { EventEmitter } from 'events'
 import { Store } from 'vuex'
 
-import { sendToast, setCurrentEpisode } from '@/state/app'
+import { sendToast } from '@/state/app'
 import { isNil } from '@/utils'
 
 export type ExternalMetaData = {
@@ -15,6 +15,7 @@ export enum ExternalPlayerEvent {
   PROGRESS = 'PROGRESS',
   FINISHED_EPISODE = 'FINISHED_EPISODE',
   CHANGED_EPISODE = 'CHANGED_EPISODE',
+  CLEAR_PLAYLIST = 'CLEAR_PLAYLIST',
 }
 
 export abstract class ExternalPlayer extends EventEmitter {
@@ -62,7 +63,7 @@ export abstract class ExternalPlayer extends EventEmitter {
   private exit() {
     this.emit(ExternalPlayerEvent.EXITED)
 
-    setCurrentEpisode(this.store, null)
+    this.emit(ExternalPlayerEvent.CLEAR_PLAYLIST)
   }
 
   public close() {

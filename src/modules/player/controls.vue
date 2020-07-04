@@ -2,46 +2,47 @@
   <div
     class="controls"
     :class="{ visible: settingsOpen || visible }"
-    @mousemove="goVisible"
-    @click="goVisible"
-    @mouseout="handleMouseLeave"
+    @mousemove="show"
+    @click="show"
+    @mouseleave="hide"
   >
     <div class="cover" @click="debounceCoverClick" />
 
     <transition name="fade">
       <player-title
-        v-if="isPlayerMaximized"
-        :anime="anime"
+        v-if="maximized"
+        :anime-id="animeId"
+        :title="title"
         :episode="episode"
-        :episode-watched="episodeWatched"
+        :watched="watched"
       />
     </transition>
 
-    <icon class="button close" :icon="closeSvg" @click.native="closePlayer" />
+    <icon class="button close" :icon="closeSvg" @click.native="close" />
 
     <div class="toolbar">
       <progress-bar
-        :duration="duration"
-        :progress-percentage="progressPercentage"
-        :loaded-percentage="loadedPercentage"
-        :on-set-time="onSetTime"
+        :duration="state.duration"
+        :progress-percentage="state.progress.percent"
+        :loaded-percentage="state.loadProgress.percent"
+        :on-set-time="timeskip"
         :visible="visible"
       />
 
       <transition name="shrink">
         <icon
-          v-if="isPlayerMaximized"
+          v-if="maximized"
           class="button"
           :class="{ disabled: episode.index < 1 }"
           :icon="prevSvg"
-          @click.native="go(-1)"
+          @click.native="traversePlaylist(-1)"
         />
       </transition>
 
       <span class="play-pause button-collapser">
         <transition>
           <icon
-            v-if="paused"
+            v-if="state.paused"
             key="play"
             class="button"
             :icon="playSvg"
@@ -59,39 +60,39 @@
 
       <transition name="shrink">
         <icon
-          v-if="isPlayerMaximized"
+          v-if="maximized"
           class="button"
           :class="{ disabled: nextEpisode == null }"
           :icon="nextSvg"
-          @click.native="go(1)"
+          @click.native="traversePlaylist(1)"
         />
       </transition>
 
       <volume-slider
-        :muted="muted"
-        :volume="volume"
-        :on-change="onSetVolume"
-        :on-toggle-mute="onToggleMute"
-        :open="isPlayerMaximized"
+        :muted="state.muted"
+        :volume="state.volume"
+        :on-change="setVolume"
+        :on-toggle-mute="toggleMute"
+        :open="maximized"
       />
 
       <transition name="shrink">
-        <span v-if="isPlayerMaximized" class="time">{{ timeString }}</span>
+        <span v-if="maximized" class="time">{{ timeString }}</span>
       </transition>
 
       <span class="separator" />
 
       <transition name="shrink">
         <span
-          v-if="isPlayerMaximized && listEntry"
+          v-if="maximized && listEntry"
           class="completed button-collapser"
           :class="{ disabled: episode.episodeNumber === 0 }"
         >
           <transition name="fade">
             <icon
-              v-if="!episodeWatched"
+              v-if="!watched"
               key="max"
-              v-tooltip.top="getMarkWatchedTooltip(false)"
+              v-tooltip.top="markWatchedTooltip"
               class="button"
               :icon="bookmarkSvg"
               @click.native="updateProgress(episode.episodeNumber)"
@@ -99,7 +100,7 @@
             <icon
               v-else
               key="min"
-              v-tooltip.top="getMarkWatchedTooltip(true)"
+              v-tooltip.top="markWatchedTooltip"
               class="button"
               :icon="bookmarkRemoveSvg"
               @click.native="
@@ -112,26 +113,26 @@
 
       <transition name="shrink">
         <span
-          v-if="isPlayerMaximized"
+          v-if="maximized"
           class="settings button-collapser"
           :class="{ open: settingsOpen }"
         >
           <icon
             class="button"
             :icon="settingSvg"
-            @click.native="toggleSettingsMenu"
+            @click.native="toggleSettingsOpen"
           />
         </span>
       </transition>
 
-      <span v-if="!isFullscreen" class="maximize button-collapser">
+      <span v-if="!fullscreen" class="maximize button-collapser">
         <transition name="fade">
           <icon
-            v-if="!isPlayerMaximized"
+            v-if="!maximized"
             key="max"
             class="button"
             :icon="maximizeSvg"
-            @click.native="maximizePlayer"
+            @click.native="maximize"
           />
           <icon
             v-else
@@ -146,38 +147,42 @@
       <span class="fullscreen button-collapser">
         <transition name="fade">
           <icon
-            v-if="!isFullscreen"
+            v-if="!fullscreen"
             key="fullscreen"
             class="button"
             :icon="fullscreenSvg"
-            @click.native="_toggleFullscreen"
+            @click.native="toggleFullscreen"
           />
           <icon
             v-else
             key="fullscreenExit"
             class="button"
             :icon="fullscreenExitSvg"
-            @click.native="_toggleFullscreen"
+            @click.native="toggleFullscreen"
           />
         </transition>
       </span>
     </div>
 
     <transition>
-      <div v-if="isPlayerMaximized && settingsOpen" class="settings-menu">
-        <label v-if="levels != null">
+      <div v-if="maximized && settingsOpen" class="settings-menu">
+        <label v-if="state.levels != null">
           Quality:
-          <select :value="quality" @input="handleChangeQuality">
-            <option v-for="(_, q) in levels" :key="q" :value="q">
+          <select :value="state.quality" @input="handleSetQuality">
+            <option v-for="(_, q) in state.levels" :key="q" :value="q">
               {{ q }}p
             </option>
           </select>
         </label>
 
-        <label v-if="subtitles.length > 0">
+        <label v-if="subtitles.tracks.length > 0">
           Subtitles:
-          <select :value="subtitlesIndex" @input="handleChangeSubtitles">
-            <option v-for="(subtitle, q) in subtitles" :key="q" :value="q">
+          <select :value="subtitles.selected" @input="handleSetSubtitlesTrack">
+            <option
+              v-for="(subtitle, q) in subtitles.tracks"
+              :key="q"
+              :value="q"
+            >
               {{ subtitle[0] }}
             </option>
           </select>
@@ -185,7 +190,7 @@
 
         <label>
           Speed:
-          <select :value="speed" @input="onChangeSpeed">
+          <select :value="state.speed" @input="setSpeed">
             <option :value="0.25">0.25x</option>
             <option :value="0.5">0.5x</option>
             <option :value="1">1x</option>
@@ -199,223 +204,219 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { Route } from 'vue-router'
+import {
+  computed,
+  defineComponent,
+  PropType,
+  ref,
+  watch,
+} from '@vue/composition-api'
 import {
   mdiArrowCollapse,
   mdiArrowExpand,
   mdiBookmark,
   mdiBookmarkRemove,
   mdiClose,
+  mdiCogOutline,
   mdiFullscreen,
   mdiFullscreenExit,
   mdiPause,
   mdiPlay,
-  mdiCogOutline,
   mdiSkipNext,
   mdiSkipPrevious,
 } from '@mdi/js'
 import {
   EpisodeListEpisodes,
   PlayerAnimeAnime,
-  PlayerAnimeListEntry,
 } from '@/graphql/generated/types'
 
-import { Required } from '@/decorators'
-import {
-  getIsFullscreen,
-  setCurrentEpisode,
-  setFullscreen,
-  toggleFullscreen,
-} from '@/state/app'
-import { Levels } from '@/types'
-import { isNil, secondsToTimeString } from '@/utils'
+import { usePlayer } from '@/state/player'
+import { secondsToTimeString } from '@/utils'
 
 import Icon from '@/common/components/icon.vue'
 import PlayerTitle from './title.vue'
 import ProgressBar from './progress-bar.vue'
 import VolumeSlider from './volume-slider.vue'
+import { PlayerState } from './player.types'
 
-@Component<Controls>({
+enum ControlsEvent {
+  Play = 'play',
+  Pause = 'pause',
+  Timeskip = 'timeskip',
+  SetVolume = 'set-volume',
+  ToggleMute = 'toggle-mute',
+  SetSpeed = 'set-speed',
+  SetQuality = 'set-quality',
+  SetSubtitlesTrack = 'set-subtitles-track',
+  SetFullscreen = 'set-fullscreen',
+  UpdateProgress = 'update-progress',
+  Close = 'close',
+}
+
+export default defineComponent({
   components: { PlayerTitle, VolumeSlider, ProgressBar, Icon },
-  watch: {
-    $route(newRoute: Route) {
-      if (!newRoute.path.includes('/player-full') && this.isFullscreen) {
-        this._setFullscreen(false)
-      }
+  props: {
+    episode: {
+      type: Object as PropType<EpisodeListEpisodes>,
+      required: true,
     },
+    nextEpisode: {
+      type: Object as PropType<EpisodeListEpisodes | null>,
+      default: null,
+    },
+    listEntry: {
+      type: Object as PropType<PlayerAnimeAnime['listEntry'] | null>,
+      default: null,
+    },
+    title: {
+      type: String,
+      default: '',
+    },
+    subtitles: {
+      type: Object as PropType<{
+        tracks: [string, string][]
+        selected: number
+      }>,
+      required: true,
+    },
+    state: {
+      type: Object as PropType<PlayerState>,
+      required: true,
+    },
+    fullscreen: Boolean,
+    maximized: Boolean,
+  },
+  setup(props, { emit, root }) {
+    const playlist = usePlayer()
+
+    const watched = computed(() => props.episode.isWatched)
+    const markWatchedTooltip = computed(() => {
+      if (props.episode.episodeNumber === 0) {
+        return 'This episode shares watched status with episode 1.'
+      }
+
+      return watched.value ? 'Unmark as watched' : 'Mark as watched'
+    })
+
+    const settingsOpen = ref(false)
+
+    const hovering = ref(false)
+    const hoveringTimeout = ref<number | null>(null)
+    const visible = computed(() => settingsOpen.value || hovering.value)
+    const show = () => {
+      hovering.value = true
+
+      if (hoveringTimeout.value) window.clearTimeout(hoveringTimeout.value)
+
+      hoveringTimeout.value = window.setTimeout(() => {
+        hovering.value = false
+        hoveringTimeout.value = null
+      }, 2000)
+    }
+    const hide = () => {
+      hovering.value = false
+
+      if (hoveringTimeout.value) window.clearTimeout(hoveringTimeout.value)
+    }
+
+    const timeString = computed(() => {
+      const current = secondsToTimeString(
+        Math.min(props.state.progress.seconds, props.state.duration),
+      )
+      const duration = secondsToTimeString(props.state.duration)
+
+      return `${current} / ${duration}`
+    })
+    const toggleFullscreen = () =>
+      emit(ControlsEvent.SetFullscreen, !props.fullscreen)
+
+    const clickTimeout = ref<number | null>(null)
+    const handleCoverClick = () => {
+      if (props.state.ended) return
+
+      props.state.paused ? emit(ControlsEvent.Play) : emit(ControlsEvent.Pause)
+    }
+    const debounceCoverClick = () => {
+      handleCoverClick()
+
+      if (!clickTimeout.value) {
+        clickTimeout.value = window.setTimeout(() => {
+          clickTimeout.value = null
+        }, 175)
+
+        return
+      }
+
+      clearTimeout(clickTimeout.value)
+      clickTimeout.value = null
+
+      handleCoverClick()
+      toggleFullscreen()
+    }
+
+    watch(
+      () => root.$route.path,
+      newPath => {
+        if (!newPath.includes('/player-full') && props.fullscreen) {
+          emit(ControlsEvent.SetFullscreen, false)
+        }
+      },
+    )
+
+    return {
+      animeId: computed(() => playlist.current.value?.animeId),
+      watched,
+      markWatchedTooltip,
+
+      settingsOpen,
+      toggleSettingsOpen: () => (settingsOpen.value = !settingsOpen.value),
+
+      hovering,
+      visible,
+      show,
+      hide,
+
+      timeString,
+      toggleFullscreen,
+      debounceCoverClick,
+      traversePlaylist: playlist.traversePlaylist,
+      updateProgress: (progress: number) =>
+        // 0 is for Re:Zero's double first episode
+        props.episode.episodeNumber !== 0 &&
+        emit(ControlsEvent.UpdateProgress, progress),
+      maximize: () => root.$router.push('/player-big'),
+      play: () => emit(ControlsEvent.Play),
+      pause: () => emit(ControlsEvent.Pause),
+      timeskip: (seconds: number) => emit(ControlsEvent.Timeskip, seconds),
+      setVolume: (volume: number) => emit(ControlsEvent.SetVolume, volume),
+      toggleMute: () => emit(ControlsEvent.ToggleMute),
+      setSpeed: (speed: number) => emit(ControlsEvent.SetSpeed, speed),
+      close: () => emit(ControlsEvent.Close),
+
+      handleSetQuality: (e: Event) => {
+        const element = e.target as HTMLSelectElement
+        emit(ControlsEvent.SetQuality, element.value)
+      },
+      handleSetSubtitlesTrack: (e: Event) => {
+        const element = e.target as HTMLSelectElement
+        emit(ControlsEvent.SetSubtitlesTrack, element.value)
+      },
+
+      closeSvg: mdiClose,
+      playSvg: mdiPlay,
+      pauseSvg: mdiPause,
+      prevSvg: mdiSkipPrevious,
+      nextSvg: mdiSkipNext,
+      bookmarkSvg: mdiBookmark,
+      bookmarkRemoveSvg: mdiBookmarkRemove,
+      maximizeSvg: mdiArrowExpand,
+      minimizeSvg: mdiArrowCollapse,
+      fullscreenSvg: mdiFullscreen,
+      fullscreenExitSvg: mdiFullscreenExit,
+      settingSvg: mdiCogOutline,
+    }
   },
 })
-export default class Controls extends Vue {
-  @Required(Object) public episode!: EpisodeListEpisodes
-  @Prop(Object) public nextEpisode!: EpisodeListEpisodes | null
-  @Prop(Object) public anime!: PlayerAnimeAnime | null
-  @Required(Boolean) public paused!: boolean
-  @Required(Boolean) public muted!: boolean
-  @Required(Boolean) public isPlayerMaximized!: boolean
-  @Required(Number) public volume!: number
-  @Required(Number) public duration!: number
-  @Required(Number) public progressInSeconds!: number
-  @Required(Number) public progressPercentage!: number
-  @Required(Number) public loadedPercentage!: number
-  @Required(Number) public speed!: number
-  @Required(String) public quality!: string
-  @Prop(Object) public levels!: Levels | null
-  @Required(Array) public subtitles!: string[]
-  @Required(Number) public subtitlesIndex!: number
-  @Required(Function) public play!: () => void
-  @Required(Function) public pause!: () => void
-  @Required(Function) public onSetTime!: (e: Event) => void
-  @Required(Function) public onSetVolume!: (e: Event) => void
-  @Required(Function) public onToggleMute!: (e: Event) => void
-  @Required(Function) public onChangeSpeed!: (e: Event) => void
-  @Required(Function) public onChangeQuality!: (quality: string) => void
-  @Required(Function) public onChangeSubtitles!: (
-    subtitlesIndex: number,
-  ) => void
-  @Required(Function) public setProgress!: (progress: number) => any
-  @Required(Function) public closePlayer!: (progress: number) => any
-
-  public settingsOpen = false
-  public hovering = this.settingsOpen || this.paused || false
-  public hoveringTimeout: number | null = null
-
-  public settingSvg = mdiCogOutline
-
-  public get visible() {
-    return this.settingsOpen || this.hovering
-  }
-
-  public get listEntry(): PlayerAnimeListEntry | null {
-    return this.anime?.listEntry ?? null
-  }
-
-  public get episodeWatched() {
-    if (isNil(this.listEntry)) return false
-
-    if (this.episode.episodeNumber === 0 && this.listEntry.progress < 1) {
-      return false
-    }
-
-    return this.listEntry.progress < this.episode.episodeNumber
-  }
-
-  public getMarkWatchedTooltip(watched: boolean) {
-    if (this.episode.episodeNumber === 0) {
-      return 'This episode shares watched status with episode 1.'
-    }
-
-    return watched ? 'Unmark as watched' : 'Mark as watched'
-  }
-
-  public get timeString() {
-    const current = secondsToTimeString(
-      Math.min(this.progressInSeconds, this.duration),
-    )
-    const duration = secondsToTimeString(this.duration)
-
-    return `${current} / ${duration}`
-  }
-
-  public get isFullscreen() {
-    return getIsFullscreen(this.$store)
-  }
-
-  public closeSvg = mdiClose
-  public playSvg = mdiPlay
-  public pauseSvg = mdiPause
-  public prevSvg = mdiSkipPrevious
-  public nextSvg = mdiSkipNext
-  public bookmarkSvg = mdiBookmark
-  public bookmarkRemoveSvg = mdiBookmarkRemove
-  public maximizeSvg = mdiArrowExpand
-  public minimizeSvg = mdiArrowCollapse
-  public fullscreenSvg = mdiFullscreen
-  public fullscreenExitSvg = mdiFullscreenExit
-
-  private clickTimeout: number | null = null
-
-  public toggleSettingsMenu() {
-    this.settingsOpen = !this.settingsOpen
-  }
-
-  public debounceCoverClick() {
-    this.handleCoverClick()
-
-    if (!this.clickTimeout) {
-      this.clickTimeout = window.setTimeout(() => {
-        this.clickTimeout = null
-      }, 175)
-    } else {
-      clearTimeout(this.clickTimeout)
-      this.clickTimeout = null
-
-      this.handleCoverClick()
-      toggleFullscreen(this.$store)
-    }
-  }
-
-  public handleCoverClick() {
-    if (this.progressInSeconds >= this.duration) {
-      return
-    }
-
-    if (this.paused) {
-      this.play()
-    } else {
-      this.pause()
-    }
-  }
-
-  public handleChangeQuality(e: Event) {
-    const element = e.target as HTMLSelectElement
-    this.onChangeQuality(element.value)
-  }
-
-  public handleChangeSubtitles(e: Event) {
-    const element = e.target as HTMLSelectElement
-    this.onChangeSubtitles(Number(element.value))
-  }
-
-  public goVisible() {
-    this.hovering = true
-
-    if (this.hoveringTimeout) window.clearTimeout(this.hoveringTimeout)
-
-    this.hoveringTimeout = window.setTimeout(() => {
-      this.hovering = false
-      this.hoveringTimeout = null
-    }, 2000)
-  }
-
-  public handleMouseLeave() {
-    this.hovering = false
-
-    if (this.hoveringTimeout) window.clearTimeout(this.hoveringTimeout)
-  }
-
-  public maximizePlayer() {
-    this.$router.push('/player-big')
-  }
-
-  public updateProgress(progress: number) {
-    if (this.episode.episodeNumber === 0) return
-
-    this.setProgress(progress)
-  }
-
-  public _toggleFullscreen() {
-    toggleFullscreen(this.$store)
-  }
-
-  public _setFullscreen(value: boolean) {
-    setFullscreen(this.$store, value)
-  }
-
-  public go(amount: number) {
-    setCurrentEpisode(this.$store, this.episode.index + amount)
-  }
-}
 </script>
 
 <style scoped lang="scss">
@@ -541,6 +542,7 @@ $buttonSize: 50px;
       transition: opacity 0.5s ease-in-out, max-width 0.5s ease-in-out,
         padding 0.5s ease-in-out !important;
     }
+
     &.shrink-leave-active {
       transition: opacity 0.25s, max-width 0.25s, padding 0.25s !important;
     }

@@ -1,5 +1,6 @@
 import { shell } from 'electron'
 import Vue from 'vue'
+import Vuex, { Store } from 'vuex'
 import { ObserveVisibility } from 'vue-observe-visibility'
 import Tooltip from 'v-tooltip'
 import Portal from 'portal-vue'
@@ -11,24 +12,28 @@ import * as Integrations from '@sentry/integrations'
 import { updateRelations } from '@/lib/relations'
 import { getIsConnectedTo } from '@/state/auth'
 import { getMainListPlugin } from '@/state/settings'
+import { getQueue } from '@/state/user'
 
 import App from './App.vue'
 import { router } from './router'
-import { store } from './state/store'
+import { storeOptions } from './state/store'
 import { createProvider } from './vue-apollo'
 import { normalizeEvent } from './normalize'
 import { version } from '../package.json'
 
 import 'normalize.css'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import { getQueue } from '@/state/user'
 
 // Vue config
 Vue.config.productionTip = false
+Vue.use(Vuex)
 Vue.use(Tooltip)
 Vue.use(Portal)
 Vue.use(Composition)
 Vue.directive('visibility', ObserveVisibility)
+
+// Create store
+const store = new Store(storeOptions)
 
 // Register services
 

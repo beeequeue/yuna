@@ -13,7 +13,6 @@ import {
 import { ListEntryWithoutMedia, ListPlugin } from '@/plugins/list/plugin'
 import { getListPlugins } from '@/state/auth'
 import { getMainListPlugin } from '@/state/settings'
-import { store } from '@/state/store'
 import { SHOW_ERROR } from '@/messages'
 import { isNil } from '@/utils'
 
@@ -29,7 +28,7 @@ const getEnabledPlugins = (store: Store<any>) => {
   )
 }
 
-export const GetListEntry = async (
+export const GetListEntry = (store: Store<any>) => async (
   media: Media | null,
   variables: { mediaId: number } | null,
   _cache: { cache: RealProxy },
@@ -44,7 +43,7 @@ export const GetListEntry = async (
   return plugin.GetListEntry((media?.id || variables?.mediaId)!)
 }
 
-export const GetListEntries = async (
+export const GetListEntries = (store: Store<any>) => async (
   _: undefined,
   variables: QueryListEntriesArgs,
   _cache: { cache: RealProxy },
@@ -83,7 +82,7 @@ const DoAction = (
     | 'UpdateScore'
     | 'EditListEntry'
   >,
-) => async (
+) => (store: Store<any>) => async (
   _root: undefined,
   { anilistId, ...rest }: any,
   _cache: { cache: RealProxy },

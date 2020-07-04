@@ -4,16 +4,16 @@
     tabindex="0"
     @keydown.exact="onKeyDown"
     @keydown.exact.escape.prevent="isFullscreen ? toggleFullscreen() : null"
-    @wheel.capture="onScroll"
+    @wheel.capture="playerScroll"
   >
     <transition name="fade">
       <video
         ref="player"
         preload
-        :muted="muted"
+        :muted="state.muted"
         :autoplay="shouldAutoPlay"
         :poster="episode && episode.thumbnail"
-        :class="{ ended }"
+        :class="{ ended: state.ended }"
       >
         <track
           v-if="subtitlesUrl && subtitlesUrl.length > 0"
@@ -25,76 +25,76 @@
 
     <transition name="fade">
       <icon
-        v-if="!initiated && loaded"
+        v-if="!state.initiated && state.loaded"
         class="uninitiated-icon"
-        :icon="playCircleSvg"
+        :icon="mdiPlayCircle"
       />
     </transition>
 
     <transition name="fade">
-      <span v-if="loading || loadingVideo" class="loading-spinner">
-        <icon :icon="loadingSvg" />
+      <span v-if="loading || state.loading" class="loading-spinner">
+        <icon :icon="mdiLoading" />
       </span>
     </transition>
 
     <controls
       v-if="anime && episode"
-      ref="controls"
       :episode="episode"
       :next-episode="nextEpisode"
-      :anime="anime"
       :list-entry="anime.listEntry"
-      :loading="loading || loadingVideo"
-      :paused="paused"
-      :is-player-maximized="isPlayerMaximized"
-      :muted="muted"
-      :volume="volume"
-      :duration="duration || episode.duration"
-      :progress-percentage="progressPercentage"
-      :progress-in-seconds="progressInSeconds"
-      :loaded-percentage="loadedPercentage"
-      :speed="speed"
-      :quality="quality"
-      :levels="levels"
+      :title="anime.title.userPreferred"
+      :state="state"
       :subtitles="subtitles"
-      :subtitles-index="selectedSubtitles"
-      :on-set-time="onSetTime"
-      :on-set-volume="onSetVolume"
-      :on-toggle-mute="onToggleMute"
-      :on-change-speed="onChangeSpeed"
-      :on-change-quality="onChangeQuality"
-      :on-change-subtitles="onChangeSubtitles"
-      :play="play"
-      :pause="pause"
-      :set-progress="setProgress"
-      :close-player="closePlayer"
+      :fullscreen="isFullscreen"
+      :maximized="maximized"
+      @play="play"
+      @pause="pause"
+      @timeskip="onSetTime"
+      @set-volume="setVolume"
+      @toggle-mute="toggleMute"
+      @set-speed="setSpeed"
+      @set-quality="setQuality"
+      @set-subtitles-track="onChangeSubtitles"
+      @set-fullscreen="setFullscreen"
+      @update-progress="updateProgress"
+      @close="close"
     />
 
     <next-episode-overlay
-      v-if="ended && nextEpisode"
+      v-if="state.ended && nextEpisode"
       :next-episode="nextEpisode"
       :episodes-in-anime="anime && anime.episodes"
       :progress="listEntry && listEntry.progress"
-      :is-player-maximized="isPlayerMaximized"
+      :maximized="maximized"
       :should-auto-play="shouldAutoPlay"
+      @traverse-playlist="traversePlaylist"
     />
 
     <end-of-season-overlay
-      v-if="ended && !nextEpisode"
+      v-if="state.ended && !nextEpisode"
       :list-entry="listEntry"
       :sequels="sequels"
       :episode-number="episode.episodeNumber"
       :episodes-in-anime="anime && anime.episodes"
       :next-airing-episode="anime && anime.nextAiringEpisode"
-      :is-player-maximized="isPlayerMaximized"
+      :maximized="maximized"
     />
   </div>
 </template>
 
 <script lang="ts">
 import { ipcRenderer } from 'electron'
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import Hls from 'hls.js'
+import {
+  computed,
+  defineComponent,
+  onBeforeUnmount,
+  onMounted,
+  PropType,
+  reactive,
+  ref,
+  watch,
+} from '@vue/composition-api'
 import { addBreadcrumb } from '@sentry/browser'
 import { mdiLoading, mdiPlayCircle } from '@mdi/js'
 
@@ -102,588 +102,564 @@ import {
   EpisodeListEpisodes,
   MediaRelation,
   PlayerAnimeAnime,
-  PlayerAnimeTitle,
   Provider,
 } from '@/graphql/generated/types'
-import { Required } from '@/decorators'
+import { DISCORD_PAUSE_WATCHING, DISCORD_SET_WATCHING } from '@/messages'
 import { Crunchyroll } from '@/lib/crunchyroll'
+import { Hidive, HidiveResponseCode } from '@/lib/hidive'
 import { LocalStorageKey } from '@/lib/local-storage'
 import {
   getIsFullscreen,
-  PlayerData,
   sendErrorToast,
-  setCurrentEpisode,
-  toggleFullscreen,
+  setFullscreen as setFullscreenAction,
 } from '@/state/app'
 import { getAnilistUsername } from '@/state/auth'
 import { getKeydownHandler, KeybindingAction } from '@/state/settings'
-import {
-  DISCORD_PAUSE_WATCHING,
-  DISCORD_SET_WATCHING,
-  PLAYER_NEXT,
-  PLAYER_PLAY_PAUSE,
-  PLAYER_PREVIOUS,
-  PLAYER_STOP,
-  REGISTER_MEDIA_KEYS,
-  UNREGISTER_MEDIA_KEYS,
-} from '@/messages'
+import { usePlayer } from '@/state/player'
 import { Levels, Stream } from '@/types'
-import {
-  capitalize,
-  clamp,
-  getRelations,
-  isCrunchyroll,
-  isNil,
-  lastItem,
-} from '@/utils'
+import { capitalize, clamp, getRelations, lastItem } from '@/utils'
 
 import Icon from '@/common/components/icon.vue'
 import Controls from './controls.vue'
 import NextEpisodeOverlay from './next-episode-overlay.vue'
 import EndOfSeasonOverlay from './end-of-season-overlay.vue'
-import { Hidive, HidiveResponseCode } from '@/lib/hidive'
+import { registerMediaKeys } from './register-media-keys'
+import { PlayerState } from './player.types'
 
-@Component({
-  components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
-})
-export default class Player extends Vue {
-  @Prop(Object) public episode!: EpisodeListEpisodes | null
-  @Prop(Object) public nextEpisode!: EpisodeListEpisodes | null
-  @Prop(Object) public anime!: PlayerAnimeAnime | null
-  @Required(Object) public playerData!: PlayerData
-  @Prop(Boolean) public loading!: boolean | null
-  @Prop(Boolean) public shouldAutoPlay!: boolean | null
-  @Prop(Boolean) public getShouldAutoMarkWatched?: boolean
-  @Required(Function) public setProgress!: (p: number) => any
+const getNumberFromLocalStorage = (
+  key: LocalStorageKey,
+  defaultValue: number,
+) => Number(localStorage.getItem(key) ?? defaultValue)
 
-  public streamUrl: string | null = null
-  public levels: Levels | null = null
-
-  public initiated = !!this.shouldAutoPlay
-  public ended = false
-  // Gotten to the 'soft end' - e.g. 80% of the way
-  public softEnded = false
-  public loaded = false
-  public loadingVideo = false
-  public paused = true
-  public muted: boolean = localStorage.getItem(LocalStorageKey.Muted) === 'true'
-  public volume: number = this.getNumberFromLocalStorage(
-    LocalStorageKey.Volume,
-    70,
-  )
-  public speed: number = 1
-  public quality: string =
-    localStorage.getItem(LocalStorageKey.Quality) || '1080'
-  public duration = 0
-  public progressPercentage = 0
-  public progressInSeconds = 0
-  public playhead = 0
-  public loadedSeconds = 0
-  public loadedPercentage = 0
-
-  // Subtitles
-  private subtitles: [string, string][] = []
-  private setSubtitles(arr: [string, string][]) {
-    if (arr.length < 1) {
-      return (this.subtitles = arr)
-    }
-
-    this.subtitles = [...arr, ['None', '']]
+const fetchStream = async (
+  provider: Provider,
+  id: string,
+): Promise<Stream | null> => {
+  if ([Provider.Crunchyroll, Provider.CrunchyrollManual].includes(provider)) {
+    return Crunchyroll.fetchStream(id)
   }
 
-  public get subtitlesUrl() {
-    return this.subtitles[this.selectedSubtitles]?.[1]
-  }
-  public selectedSubtitles = this.getNumberFromLocalStorage(
-    LocalStorageKey.Subtitle,
-    0,
-  )
-  public onChangeSubtitles(index: number) {
-    localStorage.setItem(LocalStorageKey.Subtitle, index.toString())
-    this.selectedSubtitles = index
-  }
-
-  private lastScrobble = 0
-  private lastHeartbeat = 0
-
-  public hls = new Hls()
-
-  // Volume
-  private gainNode: GainNode | null = null
-
-  public playCircleSvg = mdiPlayCircle
-  public loadingSvg = mdiLoading
-
-  public $refs!: {
-    player: HTMLVideoElement
-    controls: Controls
-  }
-
-  public get isPlayerMaximized() {
-    return ['/player-big', '/player-full'].includes(this.$route.path)
-  }
-
-  private get actionFunctionMap() {
-    return {
-      [KeybindingAction.PAUSE]: () => this.pause(),
-      [KeybindingAction.PLAY]: () => this.pause(),
-      [KeybindingAction.PAUSE_PLAY]: () =>
-        this.paused ? this.play() : this.pause(),
-      [KeybindingAction.SKIP_BACK]: () => this.skipBySeconds(-5),
-      [KeybindingAction.SKIP_FORWARD]: () => this.skipBySeconds(5),
-      [KeybindingAction.VOLUME_DOWN]: () => this.increaseVolume(-10),
-      [KeybindingAction.VOLUME_UP]: () => this.increaseVolume(10),
-      [KeybindingAction.TOGGLE_MUTED]: () => this.onToggleMute(),
-      [KeybindingAction.TOGGLE_FULLSCREEN]: () => this.toggleFullscreen(),
-      [KeybindingAction.FRAME_FORWARD]: () => this.pauseAndTraverseFrames(1),
-      [KeybindingAction.FRAME_BACK]: () => this.pauseAndTraverseFrames(-1),
-    }
-  }
-
-  private get keyDownHandler() {
-    return getKeydownHandler(this.$store)(this.actionFunctionMap)
-  }
-
-  public get isFullscreen() {
-    return getIsFullscreen(this.$store)
-  }
-
-  public get username() {
-    return getAnilistUsername(this.$store)
-  }
-
-  public get listEntry() {
-    return this.anime?.listEntry ?? null
-  }
-
-  public get sequels() {
-    return getRelations(this, MediaRelation.Sequel)
-  }
-
-  public mounted() {
-    this.onNewEpisode()
-
-    const audioContext = new AudioContext()
-    this.gainNode = audioContext.createGain()
-    this.gainNode.gain.value = this.volume / 100
-
-    audioContext
-      .createMediaElementSource(this.$refs.player)
-      .connect(this.gainNode)
-
-    this.gainNode.connect(audioContext.destination)
-
-    this.registerMediaKeys()
-  }
-
-  public beforeDestroy() {
-    this.fadeOutVolume()
-
-    setTimeout(() => this.hls.destroy(), 500)
-  }
-
-  public destroyed() {
-    this.unregisterMediaKeys()
-  }
-
-  public registerMediaKeys() {
-    ipcRenderer.send(REGISTER_MEDIA_KEYS)
-
-    ipcRenderer.on(PLAYER_PLAY_PAUSE, () =>
-      this.paused ? this.play() : this.pause(),
-    )
-    ipcRenderer.on(PLAYER_STOP, this.pause)
-
-    ipcRenderer.on(PLAYER_NEXT, () => this.skipBySeconds(10))
-    ipcRenderer.on(PLAYER_PREVIOUS, () => this.skipBySeconds(-10))
-  }
-
-  public unregisterMediaKeys() {
-    ipcRenderer.send(UNREGISTER_MEDIA_KEYS)
-
-    ipcRenderer.removeAllListeners(PLAYER_PLAY_PAUSE)
-    ipcRenderer.removeAllListeners(PLAYER_STOP)
-    ipcRenderer.removeAllListeners(PLAYER_NEXT)
-    ipcRenderer.removeAllListeners(PLAYER_PREVIOUS)
-  }
-
-  public closePlayer() {
-    setCurrentEpisode(this.$store, null)
-    this.setDiscordState('paused')
-
-    if (this.isFullscreen) {
-      this.toggleFullscreen()
-    }
-
-    // Toggle fullscreen already goes back so we only do it on big player, not full
-    if (this.$route.path === '/player-big') {
-      this.$router.back()
-    }
-  }
-
-  private async fetchStream(
-    provider: Provider,
-    id: string,
-  ): Promise<Stream | null> {
-    if ([Provider.Crunchyroll, Provider.CrunchyrollManual].includes(provider)) {
-      return Crunchyroll.fetchStream(id)
-    }
-
-    if (provider === Provider.Hidive) {
-      try {
-        return await Hidive.fetchStream(id)
-      } catch (err) {
-        if (err.message === HidiveResponseCode.RegionRestricted) {
-          this.closePlayer()
-          throw new Error('This show is not available in your country.')
-        }
-
-        throw new Error(err)
+  if (provider === Provider.Hidive) {
+    try {
+      return await Hidive.fetchStream(id)
+    } catch (err) {
+      if (err.message === HidiveResponseCode.RegionRestricted) {
+        throw new Error('This show is not available in your country.')
       }
-    }
 
-    return null
+      throw new Error(err)
+    }
   }
 
-  @Watch('episode.id')
-  public async onNewEpisode() {
-    if (!this.episode) return
+  return null
+}
 
-    addBreadcrumb({
-      category: 'action',
-      message: `Started ${this.episode.provider}:${this.episode.animeId}:${this.episode.episodeNumber}`,
+enum PlayerEvent {
+  UpdateProgress = 'update-progress',
+}
+
+export default defineComponent({
+  components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
+  props: {
+    episode: {
+      type: Object as PropType<EpisodeListEpisodes | null>,
+      default: null,
+    },
+    nextEpisode: {
+      type: Object as PropType<EpisodeListEpisodes | null>,
+      default: null,
+    },
+    anime: {
+      type: Object as PropType<PlayerAnimeAnime | null>,
+      default: null,
+    },
+    loading: Boolean,
+    shouldAutoPlay: Boolean,
+    shouldAutoMarkWatched: Boolean,
+  },
+  setup(props, { root, emit }) {
+    const player = ref<HTMLVideoElement>(null)
+
+    const username = computed(() => getAnilistUsername(root.$store))
+    const listEntry = computed(() => props.anime?.listEntry ?? null)
+    const sequels = computed(() => getRelations(props, MediaRelation.Sequel))
+
+    const isFullscreen = computed(() => getIsFullscreen(root.$store))
+    const setFullscreen = (fullscreen: boolean) => {
+      setFullscreenAction(root.$store, fullscreen)
+    }
+    const toggleFullscreen = computed(() => setFullscreen(isFullscreen.value))
+
+    const hls = ref(new Hls())
+    const gainNode = ref<GainNode | null>(null)
+    const initGainNode = () => {
+      const audioContext = new AudioContext()
+      gainNode.value = audioContext.createGain()
+      gainNode.value.gain.value = state.volume / 100
+
+      audioContext
+        .createMediaElementSource(player.value!)
+        .connect(gainNode.value)
+
+      gainNode.value.connect(audioContext.destination)
+    }
+
+    const playlist = usePlayer()
+    const state = reactive<PlayerState>({
+      streamUrl: null as string | null,
+      levels: null as Levels | null,
+
+      loading: false,
+      loaded: false,
+      loadProgress: {
+        percent: 0,
+        seconds: 0,
+      },
+
+      initiated: !!props.shouldAutoPlay,
+      ended: false,
+      softEnded: false, // Gotten to the 'soft end' - e.g. 80% of the way
+      paused: false,
+      playhead: 0, // Where to start playing
+      duration: 0,
+      progress: {
+        percent: 0,
+        seconds: 0,
+      },
+
+      lastScrobble: 0,
+      lastHeartbeat: 0,
+
+      muted: localStorage.getItem(LocalStorageKey.Muted) === 'true',
+      volume: getNumberFromLocalStorage(LocalStorageKey.Volume, 70),
+      speed: getNumberFromLocalStorage(LocalStorageKey.Speed, 1),
+      quality: localStorage.getItem(LocalStorageKey.Quality) ?? '1080',
     })
 
-    this.pause()
+    const updateProgress = (progress: number) =>
+      emit(PlayerEvent.UpdateProgress, progress)
+    const updateProgressIfNecessary = () => {
+      if (props.episode == null) return
 
-    try {
-      const stream = await this.fetchStream(
-        this.episode.provider,
-        this.episode.id,
+      if (
+        listEntry.value == null ||
+        !props.shouldAutoMarkWatched ||
+        (listEntry.value.progress as number) >= props.episode.episodeNumber
+      ) {
+        return
+      }
+
+      updateProgress(props.episode.episodeNumber)
+    }
+    const setDiscordState = (
+      discordState: 'watching' | 'paused',
+      progress?: number,
+    ) => {
+      if (props.episode == null || props.anime == null) return
+
+      ipcRenderer.send(
+        discordState === 'watching'
+          ? DISCORD_SET_WATCHING
+          : DISCORD_PAUSE_WATCHING,
+        {
+          animeName: props.anime.title?.userPreferred,
+          episode: props.episode.episodeNumber,
+          totalEpisodes: props.anime.episodes,
+          progress: progress ?? state.progress.seconds,
+          username,
+        },
       )
-
-      if (!stream) {
-        throw new Error(
-          `Did not receive stream data from ${capitalize(
-            this.episode.provider,
-          )}.`,
-        )
-      }
-
-      if (stream.subtitles.length > 0) {
-        this.setSubtitles(stream.subtitles)
-      }
-      this.streamUrl = stream.url
-      this.playhead = stream.progress || 0
-    } catch (e) {
-      return sendErrorToast(this.$store, e.message)
     }
 
-    if (!this.streamUrl) return
+    // region Subtitles
+    const subtitles = reactive({
+      tracks: [] as [string, string][],
+      selected: getNumberFromLocalStorage(LocalStorageKey.Subtitle, 0),
+    })
+    const subtitlesUrl = computed<string | undefined>(
+      () => subtitles.tracks[subtitles.selected]?.[1],
+    )
+    const setSubtitleTracks = (arr: [string, string][]) => {
+      subtitles.tracks =
+        arr.length > 0 ? [...arr, ['None', '']] : (subtitles.tracks = arr)
+    }
+    const changeSubtitles = (index: number) => {
+      localStorage.setItem(LocalStorageKey.Subtitle, index.toString())
+      subtitles.selected = index
+    }
+    // endregion
 
-    this.duration = 0
-    this.progressInSeconds = 0
-    this.progressPercentage = 0
-    this.ended = false
-    this.softEnded = false
-    this.initiated = !!this.shouldAutoPlay
-    this.paused = true
-    this.loadingVideo = true
-    this.loaded = false
-    this.levels = null
+    // region Actions
+    const _pause = () => {
+      if (state.paused || player.value == null) return
 
-    if (this.subtitles.length < 1) {
-      this.setSubtitles(this.episode.subtitles as any)
+      player.value.pause()
+      // TODO: watch paused and show controls in controls
     }
 
-    const oldHls = this.hls
+    const _setVolume = (volume: number) => {
+      if (gainNode.value == null) return
 
-    const hls = new Hls()
+      const value = clamp(+Number(volume).toFixed(2), 0, 200)
 
-    hls.loadSource(this.streamUrl)
-    hls.attachMedia(this.$refs.player)
+      state.volume = value
+      gainNode.value.gain.value = value / 100
+      localStorage.setItem(LocalStorageKey.Volume, value.toString())
+    }
 
-    this.hls = hls
+    const _setTime = (time: number) => {
+      if (player.value == null) return
 
-    oldHls && oldHls.destroy()
+      state.lastHeartbeat = state.progress.seconds - 30
 
-    this.registerEvents()
-  }
+      player.value.currentTime = time
 
-  public registerEvents() {
-    if (!this.$refs.player || !this.episode) return
+      if (!state.paused) {
+        setDiscordState('watching', time)
+      }
+    }
 
-    this.hls.on('hlsManifestParsed', (_event, data) => {
-      let i = 0
-      const qualities = (data.levels as any).reduce(
-        (map: any, level: Level) => {
+    const _skipBySeconds = (seconds: number) => {
+      if (player.value == null) return
+
+      _setTime(player.value.currentTime + seconds)
+    }
+
+    const actions = {
+      play: () => {
+        if (!state.paused || player.value == null) return
+
+        if (!state.initiated) state.initiated = true
+
+        player.value.play()
+      },
+      pause: _pause,
+      setTime: _setTime,
+      skipBySeconds: _skipBySeconds,
+      traverseFrames: (frames: number) => {
+        _pause()
+
+        // We assume framerate to be 24 since there's no way to get it from the player :(
+        _skipBySeconds(frames / 24)
+      },
+      setQuality: (quality: string) => {
+        state.quality = quality
+        hls.value.currentLevel = state.levels![quality]
+
+        localStorage.setItem(LocalStorageKey.Quality, quality)
+      },
+      setVolume: _setVolume,
+      incrementVolume: (amount: number) => {
+        _setVolume({
+          target: { value: clamp(state.volume + amount, 0, 200) },
+        } as any)
+      },
+      toggleMute: () => {
+        state.muted = !state.muted
+
+        localStorage.setItem(LocalStorageKey.Muted, state.muted.toString())
+      },
+      setSpeed: (speed: number) => {
+        if (player.value == null) return
+
+        state.speed = speed
+        player.value.playbackRate = state.speed
+        localStorage.setItem(LocalStorageKey.Speed, state.speed.toString())
+      },
+      close: () => {
+        playlist.setPlaylist(null)
+        setDiscordState('paused')
+
+        if (isFullscreen.value) {
+          // toggleFullscreen
+        }
+
+        // Toggling fullscreen already goes back so we only manually do it on big player, not full
+        if (root.$route.path === '/player-big') {
+          root.$router.back()
+        }
+      },
+    }
+    // endregion
+
+    // region Handlers
+    const handlers = {
+      setVolume: (e: Event) => {
+        if (gainNode.value == null) return
+
+        const { valueAsNumber } = e.target as HTMLInputElement
+        actions.setVolume(valueAsNumber)
+      },
+      setSpeed: (e: Event) => {
+        if (player.value == null) return
+        const { value } = e.target as HTMLSelectElement
+
+        actions.setSpeed(Number(value))
+      },
+      playerScroll: (e: WheelEvent) => {
+        const direction = Math.sign(-e.deltaY)
+
+        actions.incrementVolume(direction * 10)
+      },
+      loadedProgress: (e: Event) => {
+        const element = e.target as HTMLVideoElement
+
+        if (props.episode == null || element.buffered.length < 1) return
+
+        state.loadProgress.seconds = element.buffered.end(0)
+        state.loadProgress.percent = state.loadProgress.seconds / state.duration
+      },
+      timeUpdate: (e: Event) => {
+        if (!props.episode) return
+
+        const element = e.target as HTMLVideoElement
+
+        if (state.ended) {
+          state.ended = false
+        }
+
+        state.progress.seconds = Math.round(element.currentTime)
+        state.progress.percent = element.currentTime / state.duration
+
+        if (!state.softEnded && state.progress.percent >= 0.8) {
+          state.softEnded = true
+
+          updateProgressIfNecessary()
+        }
+      },
+      ended: () => {
+        state.softEnded = true
+        state.ended = true
+
+        updateProgressIfNecessary()
+      },
+    }
+    // endregion
+
+    // region Keyboard Shortcuts
+    const actionFunctionMap = {
+      [KeybindingAction.PAUSE]: () => actions.pause(),
+      [KeybindingAction.PLAY]: () => actions.pause(),
+      [KeybindingAction.PAUSE_PLAY]: () =>
+        state.paused ? actions.play() : actions.pause(),
+      [KeybindingAction.SKIP_BACK]: () => actions.skipBySeconds(-5),
+      [KeybindingAction.SKIP_FORWARD]: () => actions.skipBySeconds(5),
+      [KeybindingAction.VOLUME_DOWN]: () => actions.incrementVolume(-10),
+      [KeybindingAction.VOLUME_UP]: () => actions.incrementVolume(10),
+      [KeybindingAction.TOGGLE_MUTED]: () => actions.toggleMute(),
+      [KeybindingAction.TOGGLE_FULLSCREEN]: () => (toggleFullscreen as any)(),
+      [KeybindingAction.FRAME_FORWARD]: () => actions.traverseFrames(1),
+      [KeybindingAction.FRAME_BACK]: () => actions.traverseFrames(-1),
+    }
+
+    const keyDownHandler = computed(() =>
+      getKeydownHandler(root.$store)(actionFunctionMap),
+    )
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      // @ts-ignore
+      keyDownHandler.value(e.key)
+    }
+    // endregion
+
+    const registerEventHandlers = () => {
+      if (player.value == null || props.episode == null) return
+
+      hls.value.on('hlsManifestParsed', (_event, data) => {
+        let i = 0
+
+        state.levels = (data.levels as any).reduce((map: any, level: Level) => {
           map[level.height.toString()] = i
           i++
 
           return map
-        },
-        {} as any,
-      ) as Levels
+        }, {} as any) as Levels
 
-      this.levels = qualities
+        if (state.levels[state.quality] == null) {
+          const newQuality = lastItem(Object.keys(state.levels)) as string
 
-      if (this.levels[this.quality] == null) {
-        const newQuality = lastItem(Object.keys(this.levels)) as string
+          localStorage.setItem(LocalStorageKey.Quality, newQuality)
+          state.quality = newQuality
+        }
 
-        localStorage.setItem(LocalStorageKey.Quality, newQuality)
-        this.quality = newQuality
-      }
-
-      this.hls.loadLevel = this.levels[this.quality]
-    })
-
-    this.hls.on('hlsMediaAttached', () => {
-      this.$refs.player.currentTime =
-        this.playhead < (this.episode as EpisodeListEpisodes).duration * 0.8
-          ? this.playhead
-          : 0
-
-      this.$refs.player.playbackRate = this.speed
-    })
-
-    this.$refs.player.onplay = () => {
-      this.paused = false
-
-      this.setDiscordState('watching')
-    }
-    this.$refs.player.onpause = () => {
-      this.paused = true
-
-      this.setDiscordState('paused')
-    }
-    this.$refs.player.oncanplay = () => {
-      this.loadingVideo = false
-      this.loaded = true
-      this.duration = Math.round(this.$refs.player.duration)
-    }
-    this.$refs.player.onwaiting = () => {
-      this.loadingVideo = true
-    }
-
-    this.$refs.player.onprogress = this.onLoadedProgress
-    this.$refs.player.ontimeupdate = this.onTimeUpdate
-    this.$refs.player.addEventListener('ended', this.onEnded)
-  }
-
-  public onLoadedProgress(e: Event) {
-    const element = e.target as HTMLVideoElement
-
-    if (!this.episode || element.buffered.length < 1) return
-
-    this.loadedSeconds = element.buffered.end(0)
-    this.loadedPercentage = this.loadedSeconds / this.duration
-  }
-
-  public onTimeUpdate(e: Event) {
-    if (!this.episode) return
-
-    const element = e.target as HTMLVideoElement
-
-    if (this.ended) {
-      this.ended = false
-    }
-
-    this.progressInSeconds = Math.round(element.currentTime)
-    this.progressPercentage = element.currentTime / this.duration
-
-    if (
-      this.progressInSeconds % 10 === 0 &&
-      this.lastScrobble < this.progressInSeconds
-    ) {
-      this.lastScrobble = this.progressInSeconds
-
-      this.scrobbleTimeProgress()
-    }
-
-    if (
-      this.progressInSeconds % 60 === 0 &&
-      this.lastHeartbeat < this.progressInSeconds
-    ) {
-      this.lastHeartbeat = this.progressInSeconds
-    }
-
-    if (!this.softEnded && this.progressPercentage >= 0.8) {
-      this.softEnded = true
-      this.lastScrobble = this.duration
-
-      if (
-        isCrunchyroll(this.playerData.provider) &&
-        this.lastScrobble !== this.duration
-      ) {
-        Crunchyroll.setProgressOfEpisode(Number(this.episode.id), this.duration)
-      }
-
-      this.updateProgressIfNecessary()
-    }
-  }
-
-  public onEnded() {
-    this.ended = true
-    this.softEnded = true
-
-    this.updateProgressIfNecessary()
-  }
-
-  public onSetTime(value: number) {
-    this.lastHeartbeat = this.progressInSeconds - 30
-
-    if (!this.paused) {
-      this.setDiscordState('watching')
-    }
-
-    this.$refs.player.currentTime = value
-  }
-
-  public onSetVolume(e: Event) {
-    if (!this.gainNode) return
-
-    const element = e.target as HTMLInputElement
-
-    const value = clamp(+Number(element.value).toFixed(2), 0, 200)
-
-    this.volume = value
-    localStorage.setItem(LocalStorageKey.Volume, value.toString())
-
-    this.gainNode.gain.value = value / 100
-  }
-
-  public onToggleMute() {
-    this.muted = !this.muted
-
-    localStorage.setItem(LocalStorageKey.Muted, this.muted.toString())
-  }
-
-  public onChangeSpeed(e: Event) {
-    const { value } = e.target as HTMLSelectElement
-
-    this.speed = Number(value)
-    this.$refs.player.playbackRate = this.speed
-  }
-
-  public onChangeQuality(quality: string) {
-    this.quality = quality
-    this.hls.currentLevel = this.levels![quality]
-    localStorage.setItem(LocalStorageKey.Quality, quality)
-  }
-
-  public onKeyDown(e: KeyboardEvent) {
-    return this.keyDownHandler(e.key)
-  }
-
-  public onScroll(e: WheelEvent) {
-    const direction = Math.sign(-e.deltaY)
-
-    this.increaseVolume(direction * 10)
-  }
-
-  public play() {
-    if (!this.paused) return
-
-    if (!this.initiated) this.initiated = true
-
-    this.$refs.player.play()
-  }
-
-  public pause() {
-    if (this.paused) return
-    ;(this.$refs.controls as any).goVisible()
-    this.$refs.player.pause()
-  }
-
-  public increaseVolume(n: number) {
-    this.onSetVolume({
-      target: {
-        value: clamp(this.volume + n, 0, 200),
-      },
-    } as any)
-  }
-
-  public fadeOutVolume() {
-    const interval = window.setInterval(() => {
-      if (!this.gainNode) return
-
-      if (this.gainNode.gain.value <= 0) {
-        return clearInterval(interval)
-      }
-
-      this.gainNode.gain.value = clamp(this.gainNode.gain.value - 0.05, 0, 2)
-    }, 10)
-  }
-
-  public skipBySeconds(n: number) {
-    this.onSetTime(this.$refs.player.currentTime + n)
-  }
-
-  public toggleFullscreen() {
-    toggleFullscreen(this.$store)
-  }
-
-  public updateProgressIfNecessary() {
-    if (!this.episode) return
-
-    if (
-      !this.listEntry ||
-      !this.getShouldAutoMarkWatched ||
-      (this.listEntry.progress as number) >= this.episode.episodeNumber
-    ) {
-      return
-    }
-
-    this.setProgress(this.episode.episodeNumber)
-  }
-
-  public scrobbleTimeProgress() {
-    if (isCrunchyroll(this.playerData.provider)) {
-      Crunchyroll.setProgressOfEpisode(
-        Number(this.episode!.id),
-        this.progressInSeconds,
-      ).catch(() => {
-        // If it fails to set progress, set lastScrobble to duration
-        // to stop it trying again for this episode.
-        this.lastScrobble = this.duration
+        hls.value.loadLevel = state.levels[state.quality]
       })
+
+      hls.value.on('hlsMediaAttached', () => {
+        player.value!.currentTime =
+          state.playhead < (props.episode as EpisodeListEpisodes).duration * 0.8
+            ? state.playhead
+            : 0
+
+        player.value!.playbackRate = state.speed
+      })
+
+      player.value.onplay = () => {
+        state.paused = false
+
+        setDiscordState('watching')
+      }
+      player.value.onpause = () => {
+        state.paused = true
+
+        setDiscordState('paused')
+      }
+      player.value.oncanplay = () => {
+        state.loading = false
+        state.loaded = true
+        state.duration = Math.round(player.value!.duration)
+      }
+      player.value.onwaiting = () => {
+        state.loading = true
+      }
+
+      player.value.onprogress = handlers.loadedProgress
+      player.value.ontimeupdate = handlers.timeUpdate
+      player.value.addEventListener('ended', handlers.ended)
     }
-  }
 
-  private pauseAndTraverseFrames(frames: number) {
-    this.pause()
+    const handleNewEpisode = async () => {
+      if (!props.episode) return
 
-    // We assume framerate to be 24 since there's no way to get it from the player :(
-    this.skipBySeconds(frames / 24)
-  }
+      addBreadcrumb({
+        category: 'action',
+        message: `Started ${props.episode.provider}:${props.episode.animeId}:${props.episode.episodeNumber}`,
+      })
 
-  private setDiscordState(state: 'watching' | 'paused') {
-    if (!this.episode || !this.anime) return
+      actions.pause()
 
-    ipcRenderer.send(
-      state === 'watching' ? DISCORD_SET_WATCHING : DISCORD_PAUSE_WATCHING,
-      {
-        animeName: (this.anime.title as PlayerAnimeTitle).userPreferred,
-        episode: this.episode.episodeNumber,
-        totalEpisodes: this.anime.episodes,
-        progress: this.progressInSeconds,
-        username: this.username,
-      },
+      try {
+        const stream = await fetchStream(
+          props.episode.provider,
+          props.episode.id,
+        )
+
+        if (!stream) {
+          throw new Error(
+            `Did not receive stream data from ${capitalize(
+              props.episode.provider,
+            )}.`,
+          )
+        }
+
+        if (stream.subtitles.length > 0) {
+          setSubtitleTracks(stream.subtitles)
+        }
+
+        state.streamUrl = stream.url
+        state.playhead = stream.progress || 0
+      } catch (e) {
+        playlist.setPlaylist(null)
+        return sendErrorToast(root.$store, e.message)
+      }
+
+      if (!state.streamUrl) return
+
+      state.duration = 0
+      state.progress.seconds = 0
+      state.progress.percent = 0
+      state.ended = false
+      state.softEnded = false
+      state.initiated = !!props.shouldAutoPlay
+      state.paused = true
+      state.loading = true
+      state.loaded = false
+      state.levels = null
+
+      if (subtitles.tracks.length < 1) {
+        setSubtitleTracks(props.episode.subtitles as any)
+      }
+
+      const oldHls = hls.value
+
+      const newHls = new Hls()
+
+      newHls.loadSource(state.streamUrl)
+      newHls.attachMedia(player.value!)
+
+      hls.value = newHls
+
+      oldHls && oldHls.destroy()
+
+      registerEventHandlers()
+    }
+
+    const fadeOutVolume = () => {
+      const interval = window.setInterval(() => {
+        if (gainNode.value == null) return
+
+        if (gainNode.value.gain.value <= 0) {
+          return clearInterval(interval)
+        }
+
+        gainNode.value.gain.value = clamp(
+          gainNode.value.gain.value - 0.05,
+          0,
+          2,
+        )
+      }, 10)
+    }
+
+    registerMediaKeys(state, actions)
+
+    watch(
+      () => props.episode?.id ?? null,
+      () => handleNewEpisode(),
     )
-  }
 
-  private getNumberFromLocalStorage(key: LocalStorageKey, def: number) {
-    const storedValue = localStorage.getItem(key)
-    const numberValue = Number(storedValue)
+    onMounted(() => {
+      handleNewEpisode()
 
-    if (isNil(storedValue) || isNaN(numberValue)) {
-      localStorage.setItem(key, def.toString())
-      return def
+      initGainNode()
+    })
+
+    onBeforeUnmount(() => {
+      fadeOutVolume()
+
+      setTimeout(() => hls.value.destroy(), 500)
+    })
+
+    return {
+      player,
+
+      listEntry,
+      sequels,
+
+      isFullscreen,
+      setFullscreen,
+      toggleFullscreen,
+
+      state,
+      updateProgress,
+
+      subtitles,
+      subtitlesUrl,
+      onChangeSubtitles: changeSubtitles,
+
+      // Actions
+      play: actions.play,
+      pause: actions.pause,
+      onSetTime: actions.setTime,
+      pauseAndTraverseFrames: actions.traverseFrames,
+      setQuality: actions.setQuality,
+      setVolume: handlers.setVolume,
+      toggleMute: actions.toggleMute,
+      setSpeed: handlers.setSpeed,
+      traversePlaylist: playlist.traversePlaylist,
+      playerScroll: handlers.playerScroll,
+      close: actions.close,
+
+      onKeyDown,
+
+      maximized: computed(() =>
+        ['/player-big', '/player-full'].includes(root.$route.path),
+      ),
+
+      mdiPlayCircle,
+      mdiLoading,
     }
-
-    return numberValue
-  }
-}
+  },
+})
 </script>
 
 <style scoped lang="scss">

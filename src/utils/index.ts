@@ -319,7 +319,7 @@ export const pick = <T extends {}, K extends Array<keyof T>>(
   keys: K,
 ): Pick<T, K[number]> =>
   Object.entries(obj)
-    .filter(([key]) => keys.includes(key as any))
+    .filter(([key]) => keys.includes(key as keyof T))
     .reduce<Pick<T, K[number]>>(
       (obj, [key, val]) => Object.assign(obj, { [key]: val }),
       {} as any,

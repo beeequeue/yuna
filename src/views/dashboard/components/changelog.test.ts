@@ -1,10 +1,9 @@
 import { addMinutes } from 'date-fns'
 import Nock from 'nock'
-import { render } from '@testing-library/vue'
 
 import releasesJson from '@/../fixtures/github/releases.json'
 import { LocalStorageKey } from '@/lib/local-storage'
-import { mockLocaleStorage } from '@/testing'
+import { mockLocaleStorage, render } from '@/testing'
 import { GitHubRelease } from '@/types'
 import Changelog from './changelog.vue'
 
@@ -46,14 +45,14 @@ test('fetches and caches changelog if not cached', async () => {
   )
 
   // Check that it was cached
-  const approximateFetchedAt = Math.round(
+  const approximateFetchedAt = Math.floor(
     localStorage[LocalStorageKey.ChangelogFetchedAt] / 1000,
   )
 
   expect(localStorage[LocalStorageKey.Changelog]).toEqual(
     JSON.stringify(releasesJson.slice(0, 5)), // We cache 5 items
   )
-  expect(approximateFetchedAt).toBe(Math.round(fetchedAt / 1000))
+  expect(approximateFetchedAt).toBe(Math.floor(fetchedAt / 1000))
 })
 
 test('fetches changelog if cached but stale', async () => {

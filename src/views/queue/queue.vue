@@ -84,7 +84,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Inject, Vue } from 'vue-property-decorator'
 import { Container, Draggable } from 'vue-smooth-dnd'
 import { remote, shell } from 'electron'
 import { activeWindow, api } from 'electron-util'
@@ -116,7 +116,7 @@ import {
 } from '@/graphql/generated/types'
 
 import { Query } from '@/decorators'
-import { getPlayerData, sendErrorToast, sendToast } from '@/state/app'
+import { sendErrorToast, sendToast } from '@/state/app'
 import { getAnilistUsername } from '@/state/auth'
 import {
   addToQueue,
@@ -127,6 +127,7 @@ import {
 } from '@/state/user'
 import { QueueItem as IQueueItem } from '@/lib/user'
 import { isNil, isNotNil, pick, prop, propEq, sortNumber } from '@/utils'
+import { PlayerState, PlayerSymbol } from '@/state/player'
 
 @Component({
   components: {
@@ -140,6 +141,9 @@ import { isNil, isNotNil, pick, prop, propEq, sortNumber } from '@/utils'
 export default class Queue extends Vue {
   private defaultBackupPath = resolve(api.app.getPath('userData'), 'backups')
   private jsonFilter = { extensions: ['json'], name: '*' }
+
+  @Inject(PlayerSymbol as symbol)
+  private playerState!: Readonly<PlayerState>
 
   @Query<Queue, QueueQuery, QueueVariables>({
     query: QUEUE_QUERY,
@@ -168,11 +172,14 @@ export default class Queue extends Vue {
   public clearListSvg = mdiPlaylistRemove
 
   public get isPlayerOpen() {
-    return !!getPlayerData(this.$store)
+    return this.playerState.currentIndex != null
   }
 
   public get isExternalPlayer() {
-    return getPlayerData(this.$store)?.provider === Provider.Local
+    return (
+      this.playerState.playlist[this.playerState.currentIndex ?? -1]
+        ?.provider === Provider.Local
+    )
   }
 
   public get queue() {

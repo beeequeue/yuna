@@ -3,7 +3,7 @@
     <div v-if="nextEpisode" class="next-episode-container">
       <transition>
         <div
-          v-if="isPlayerMaximized"
+          v-if="maximized"
           class="text"
           :class="{ 'hide-title': shouldHide.title }"
         >
@@ -19,7 +19,7 @@
         </div>
       </transition>
 
-      <div class="episode" @click="setToNextEpisode">
+      <div class="episode" @click="goToNextEpisode">
         <img
           :src="nextEpisode.thumbnail"
           class="thumbnail"
@@ -31,7 +31,7 @@
 
       <transition>
         <div
-          v-if="isPlayerMaximized && shouldAutoPlay && intervalId"
+          v-if="maximized && shouldAutoPlay && intervalId"
           class="timer-container"
         >
           <span>Starting in {{ secondsLeft }}...</span>
@@ -55,7 +55,6 @@ import { mdiPlay } from '@mdi/js'
 import { EpisodeListEpisodes } from '@/graphql/generated/types'
 
 import { Required } from '@/decorators'
-import { setCurrentEpisode } from '@/state/app'
 import { getSpoilerSettings } from '@/state/settings'
 
 import CButton from '@/common/components/button.vue'
@@ -68,7 +67,7 @@ export default class NextEpisodeOverlay extends Vue {
   @Prop(Object) public nextEpisode!: EpisodeListEpisodes | null
   @Prop(Number) public episodesInAnime!: number | null
   @Prop(Number) public progress!: number | null
-  @Required(Boolean) public isPlayerMaximized!: boolean
+  @Required(Boolean) public maximized!: boolean
   @Prop(Boolean) public shouldAutoPlay?: boolean
 
   public secondsLeft = 5
@@ -98,7 +97,7 @@ export default class NextEpisodeOverlay extends Vue {
         window.clearInterval(this.intervalId as number)
         this.intervalId = null
 
-        this.setToNextEpisode()
+        this.goToNextEpisode()
       }, 1000)
     }
   }
@@ -114,10 +113,10 @@ export default class NextEpisodeOverlay extends Vue {
     this.intervalId = null
   }
 
-  public setToNextEpisode() {
+  public goToNextEpisode() {
     if (!this.nextEpisode) return
 
-    setCurrentEpisode(this.$store, this.nextEpisode.index)
+    this.$emit('traverse-playlist', 1)
   }
 }
 </script>
