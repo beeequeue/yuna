@@ -17,6 +17,7 @@
         :index="episode.index"
         :episodes="episodes"
         :title="anime.title"
+        @clear-playlist="clearPlaylist"
       />
     </div>
   </transition>
@@ -47,15 +48,15 @@ import { PlayerData } from '@/state/app'
 export default defineComponent({
   components: { ExternalPlayer, Player },
   setup(_, { root }) {
-    const player = usePlayer()
-    const id = computed(() => player.current.value?.animeId ?? null)
-    const provider = computed(() => player.current.value?.provider ?? null)
+    const playlist = usePlayer()
+    const id = computed(() => playlist.current.value?.animeId ?? null)
+    const provider = computed(() => playlist.current.value?.provider ?? null)
     const playerData = computed<PlayerData | null>(() =>
-      player.current.value == null
+      playlist.current.value == null
         ? null
         : {
-            ...player.current.value,
-            id: player.current.value.animeId,
+            ...playlist.current.value,
+            id: playlist.current.value.animeId,
           },
     )
 
@@ -93,14 +94,14 @@ export default defineComponent({
       data => data.episodes,
     )
     const episode = computed(() =>
-      player.currentIndex.value == null
+      playlist.currentIndex.value == null
         ? null
-        : episodes.value?.[player.currentIndex.value] ?? null,
+        : episodes.value?.[playlist.currentIndex.value] ?? null,
     )
     const nextEpisode = computed(() =>
-      player.currentIndex.value == null
+      playlist.currentIndex.value == null
         ? null
-        : episodes.value?.[player.currentIndex.value + 1] ?? null,
+        : episodes.value?.[playlist.currentIndex.value + 1] ?? null,
     )
     const delayedNextEpisode = ref<EpisodeListEpisodes | null>(null)
 
@@ -138,6 +139,7 @@ export default defineComponent({
 
     return {
       playerData,
+      clearPlaylist: () => playlist.setPlaylist(null),
 
       anime,
       listEntry,

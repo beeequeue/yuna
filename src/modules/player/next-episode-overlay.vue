@@ -19,7 +19,7 @@
         </div>
       </transition>
 
-      <div class="episode" @click="setToNextEpisode">
+      <div class="episode" @click="goToNextEpisode">
         <img
           :src="nextEpisode.thumbnail"
           class="thumbnail"
@@ -55,7 +55,6 @@ import { mdiPlay } from '@mdi/js'
 import { EpisodeListEpisodes } from '@/graphql/generated/types'
 
 import { Required } from '@/decorators'
-import { setCurrentEpisode } from '@/state/app'
 import { getSpoilerSettings } from '@/state/settings'
 
 import CButton from '@/common/components/button.vue'
@@ -98,7 +97,7 @@ export default class NextEpisodeOverlay extends Vue {
         window.clearInterval(this.intervalId as number)
         this.intervalId = null
 
-        this.setToNextEpisode()
+        this.goToNextEpisode()
       }, 1000)
     }
   }
@@ -114,10 +113,10 @@ export default class NextEpisodeOverlay extends Vue {
     this.intervalId = null
   }
 
-  public setToNextEpisode() {
+  public goToNextEpisode() {
     if (!this.nextEpisode) return
 
-    setCurrentEpisode(this.$store, this.nextEpisode.index)
+    this.$emit('traverse-playlist', 1)
   }
 }
 </script>

@@ -67,6 +67,7 @@
       :progress="listEntry && listEntry.progress"
       :is-player-maximized="isPlayerMaximized"
       :should-auto-play="shouldAutoPlay"
+      @traverse-playlist="traversePlaylist"
     />
 
     <end-of-season-overlay
@@ -641,6 +642,7 @@ export default defineComponent({
       onSetVolume: handlers.setVolume,
       onToggleMute: actions.toggleMute,
       onChangeSpeed: handlers.setSpeed,
+      traversePlaylist: playlist.traversePlaylist,
       closePlayer: actions.close,
 
       onScroll: handlers.playerScroll,
