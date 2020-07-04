@@ -251,7 +251,10 @@ export default defineComponent({
 
       updateProgress(props.episode.episodeNumber)
     }
-    const setDiscordState = (discordState: 'watching' | 'paused') => {
+    const setDiscordState = (
+      discordState: 'watching' | 'paused',
+      progress?: number,
+    ) => {
       if (props.episode == null || props.anime == null) return
 
       ipcRenderer.send(
@@ -262,7 +265,7 @@ export default defineComponent({
           animeName: props.anime.title?.userPreferred,
           episode: props.episode.episodeNumber,
           totalEpisodes: props.anime.episodes,
-          progress: state.progress.seconds,
+          progress: progress ?? state.progress.seconds,
           username,
         },
       )
@@ -309,11 +312,11 @@ export default defineComponent({
 
       state.lastHeartbeat = state.progress.seconds - 30
 
-      if (!state.paused) {
-        setDiscordState('watching')
-      }
-
       player.value.currentTime = time
+
+      if (!state.paused) {
+        setDiscordState('watching', time)
+      }
     }
 
     const _skipBySeconds = (seconds: number) => {
