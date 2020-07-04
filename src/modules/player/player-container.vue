@@ -1,6 +1,10 @@
 <template>
   <transition>
-    <div v-if="playlist.current.value" class="player-container" :class="classes">
+    <div
+      v-if="playlist.current.value"
+      class="player-container"
+      :class="classes"
+    >
       <player
         v-if="playlist.current.value.provider !== 'LOCAL'"
         key="player"

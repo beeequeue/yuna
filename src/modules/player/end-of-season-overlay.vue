@@ -1,6 +1,6 @@
 <template>
   <transition>
-    <div class="end-of-season-container" :class="{ small: !isPlayerMaximized }">
+    <div class="end-of-season-container" :class="{ small: !maximized }">
       <h1 class="text">{{ endMessage }}</h1>
 
       <h2 v-if="!isFinalEpisode" class="text two-lines">
@@ -48,7 +48,7 @@ export default class EndOfSeasonOverlay extends Vue {
   @Prop(Number) public episodesInAnime!: number | null
   @Prop(Object)
   public nextAiringEpisode!: AnimeViewNextAiringEpisode | null
-  @Required(Boolean) public isPlayerMaximized!: boolean
+  @Required(Boolean) public maximized!: boolean
 
   public get isFinalEpisode() {
     if (this.episodesInAnime == null) return false

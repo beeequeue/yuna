@@ -3,7 +3,7 @@
     <div v-if="nextEpisode" class="next-episode-container">
       <transition>
         <div
-          v-if="isPlayerMaximized"
+          v-if="maximized"
           class="text"
           :class="{ 'hide-title': shouldHide.title }"
         >
@@ -31,7 +31,7 @@
 
       <transition>
         <div
-          v-if="isPlayerMaximized && shouldAutoPlay && intervalId"
+          v-if="maximized && shouldAutoPlay && intervalId"
           class="timer-container"
         >
           <span>Starting in {{ secondsLeft }}...</span>
@@ -67,7 +67,7 @@ export default class NextEpisodeOverlay extends Vue {
   @Prop(Object) public nextEpisode!: EpisodeListEpisodes | null
   @Prop(Number) public episodesInAnime!: number | null
   @Prop(Number) public progress!: number | null
-  @Required(Boolean) public isPlayerMaximized!: boolean
+  @Required(Boolean) public maximized!: boolean
   @Prop(Boolean) public shouldAutoPlay?: boolean
 
   public secondsLeft = 5

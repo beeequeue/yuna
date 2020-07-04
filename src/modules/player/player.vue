@@ -4,7 +4,7 @@
     tabindex="0"
     @keydown.exact="onKeyDown"
     @keydown.exact.escape.prevent="isFullscreen ? toggleFullscreen() : null"
-    @wheel.capture="onScroll"
+    @wheel.capture="playerScroll"
   >
     <transition name="fade">
       <video
@@ -27,13 +27,13 @@
       <icon
         v-if="!state.initiated && state.loaded"
         class="uninitiated-icon"
-        :icon="playCircleSvg"
+        :icon="mdiPlayCircle"
       />
     </transition>
 
     <transition name="fade">
       <span v-if="loading || state.loading" class="loading-spinner">
-        <icon :icon="loadingSvg" />
+        <icon :icon="mdiLoading" />
       </span>
     </transition>
 
@@ -46,18 +46,18 @@
       :state="state"
       :subtitles="subtitles"
       :fullscreen="isFullscreen"
-      :maximized="isPlayerMaximized"
+      :maximized="maximized"
       @play="play"
       @pause="pause"
       @timeskip="onSetTime"
-      @set-volume="onSetVolume"
-      @toggle-mute="onToggleMute"
-      @set-speed="onChangeSpeed"
-      @set-quality="onChangeQuality"
+      @set-volume="setVolume"
+      @toggle-mute="toggleMute"
+      @set-speed="setSpeed"
+      @set-quality="setQuality"
       @set-subtitles-track="onChangeSubtitles"
       @set-fullscreen="setFullscreen"
       @update-progress="updateProgress"
-      @close="closePlayer"
+      @close="close"
     />
 
     <next-episode-overlay
@@ -65,7 +65,7 @@
       :next-episode="nextEpisode"
       :episodes-in-anime="anime && anime.episodes"
       :progress="listEntry && listEntry.progress"
-      :is-player-maximized="isPlayerMaximized"
+      :maximized="maximized"
       :should-auto-play="shouldAutoPlay"
       @traverse-playlist="traversePlaylist"
     />
@@ -77,7 +77,7 @@
       :episode-number="episode.episodeNumber"
       :episodes-in-anime="anime && anime.episodes"
       :next-airing-episode="anime && anime.nextAiringEpisode"
-      :is-player-maximized="isPlayerMaximized"
+      :maximized="maximized"
     />
   </div>
 </template>
@@ -638,23 +638,22 @@ export default defineComponent({
       pause: actions.pause,
       onSetTime: actions.setTime,
       pauseAndTraverseFrames: actions.traverseFrames,
-      onChangeQuality: actions.setQuality,
-      onSetVolume: handlers.setVolume,
-      onToggleMute: actions.toggleMute,
-      onChangeSpeed: handlers.setSpeed,
+      setQuality: actions.setQuality,
+      setVolume: handlers.setVolume,
+      toggleMute: actions.toggleMute,
+      setSpeed: handlers.setSpeed,
       traversePlaylist: playlist.traversePlaylist,
-      closePlayer: actions.close,
-
-      onScroll: handlers.playerScroll,
+      playerScroll: handlers.playerScroll,
+      close: actions.close,
 
       onKeyDown,
 
-      isPlayerMaximized: computed(() =>
+      maximized: computed(() =>
         ['/player-big', '/player-full'].includes(root.$route.path),
       ),
 
-      playCircleSvg: mdiPlayCircle,
-      loadingSvg: mdiLoading,
+      mdiPlayCircle,
+      mdiLoading,
     }
   },
 })
