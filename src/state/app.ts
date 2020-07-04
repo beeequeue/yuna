@@ -45,12 +45,6 @@ export type Sequel = {
   bannerImage: string
 }
 
-export type PlayerData = {
-  id: number
-  index: number
-  provider: Provider
-}
-
 type ModalBase = {
   visible: boolean
 }
@@ -77,7 +71,6 @@ export type AppState = {
   isUpdateAvailable: string | null
   toasts: Toast[]
   isFullscreen: boolean
-  player: PlayerData | null
   anilistRequests: number
   modals: {
     about: ModalBase
@@ -103,7 +96,6 @@ const initialState: AppState = {
   isUpdateAvailable: null,
   toasts: [],
   isFullscreen: false,
-  player: null,
   anilistRequests: 85,
   modals: {
     about: { ...initialModalBase },
@@ -136,10 +128,6 @@ export const app = {
 
     getToasts(state: AppState) {
       return state.toasts
-    },
-
-    getPlayerData(state: AppState) {
-      return state.player
     },
 
     getModalStates(
@@ -203,16 +191,6 @@ export const app = {
       state.toasts = state.toasts.filter(
         toast => !propEq<typeof toast, 'id'>('id', id)(toast),
       )
-    },
-
-    setPlaylist(state: AppState, options: PlayerData | null) {
-      state.player = options
-    },
-
-    setCurrentEpisode(state: AppState, index: number) {
-      if (!state.player) return
-
-      state.player.index = index
     },
 
     toggleModal(state: AppState, modal: keyof AppState['modals']) {
@@ -401,28 +379,6 @@ export const app = {
       })
       toggleModal(context, 'manualSearch')
     },
-
-    setCurrentEpisode(
-      context: AppContext,
-      options:
-        | number
-        | { id: number; index: number; provider: Provider }
-        | null,
-    ) {
-      if (isNil(options)) {
-        return setPlaylist(context, null)
-      }
-
-      if (typeof options === 'number') {
-        _setCurrentEpisode(context, options)
-      } else {
-        setPlaylist(context, {
-          id: options.id,
-          index: options.index,
-          provider: options.provider,
-        })
-      }
-    },
   },
 }
 
@@ -448,8 +404,6 @@ export const setManualSearchOptions = commit(
 )
 export const setLocalSourceAnime = commit(app.mutations.setLocalSourceAnime)
 export const removeToast = commit(app.mutations.removeToast)
-const setPlaylist = commit(app.mutations.setPlaylist)
-const _setCurrentEpisode = commit(app.mutations.setCurrentEpisode)
 export const toggleModal = commit(app.mutations.toggleModal)
 const addToast = commit(app.mutations.addToast)
 export const closeAllModals = commit(app.mutations.closeAllModals)
@@ -466,4 +420,3 @@ export const sendToast = dispatch(app.actions.sendToast)
 export const sendErrorToast = dispatch(app.actions.sendErrorToast)
 export const initEditModal = dispatch(app.actions.initEditModal)
 export const initManualSearch = dispatch(app.actions.initManualSearch)
-export const setCurrentEpisode = dispatch(app.actions.setCurrentEpisode)

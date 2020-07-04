@@ -1,8 +1,8 @@
 <template>
   <transition>
-    <div v-if="playerData" class="player-container" :class="classes">
+    <div v-if="playlist.current.value" class="player-container" :class="classes">
       <player
-        v-if="playerData.provider !== 'LOCAL'"
+        v-if="playlist.current.value.provider !== 'LOCAL'"
         key="player"
         :loading="$apollo.loading || !anime || !episode"
         :anime="anime"
@@ -14,6 +14,7 @@
       />
       <external-player
         v-else-if="anime != null"
+        key="external"
         :index="episode.index"
         :episodes="episodes"
         :title="anime.title"
@@ -43,7 +44,6 @@ import { usePlayer } from '@/state/player'
 import { getShouldAutoMarkWatched, getShouldAutoPlay } from '@/state/settings'
 
 import Player from './player.vue'
-import { PlayerData } from '@/state/app'
 
 export default defineComponent({
   components: { ExternalPlayer, Player },
@@ -51,14 +51,6 @@ export default defineComponent({
     const playlist = usePlayer()
     const id = computed(() => playlist.current.value?.animeId ?? null)
     const provider = computed(() => playlist.current.value?.provider ?? null)
-    const playerData = computed<PlayerData | null>(() =>
-      playlist.current.value == null
-        ? null
-        : {
-            ...playlist.current.value,
-            id: playlist.current.value.animeId,
-          },
-    )
 
     const animeQuery = useQuery<PlayerAnimeQuery, PlayerAnimeVariables>(
       ANIME_QUERY,
@@ -138,7 +130,7 @@ export default defineComponent({
     }
 
     return {
-      playerData,
+      playlist,
       clearPlaylist: () => playlist.setPlaylist(null),
 
       anime,
