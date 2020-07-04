@@ -82,6 +82,7 @@
 </template>
 
 <script lang="ts">
+import { ipcRenderer } from 'electron'
 import Hls from 'hls.js'
 import {
   computed,
@@ -102,6 +103,7 @@ import {
   PlayerAnimeAnime,
   Provider,
 } from '@/graphql/generated/types'
+import { DISCORD_PAUSE_WATCHING, DISCORD_SET_WATCHING } from '@/messages'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { Hidive, HidiveResponseCode } from '@/lib/hidive'
 import { LocalStorageKey } from '@/lib/local-storage'
@@ -248,6 +250,22 @@ export default defineComponent({
 
       updateProgress(props.episode.episodeNumber)
     }
+    const setDiscordState = (discordState: 'watching' | 'paused') => {
+      if (props.episode == null || props.anime == null) return
+
+      ipcRenderer.send(
+        discordState === 'watching'
+          ? DISCORD_SET_WATCHING
+          : DISCORD_PAUSE_WATCHING,
+        {
+          animeName: props.anime.title?.userPreferred,
+          episode: props.episode.episodeNumber,
+          totalEpisodes: props.anime.episodes,
+          progress: state.progress.seconds,
+          username,
+        },
+      )
+    }
 
     // region Subtitles
     const subtitles = reactive({
@@ -291,7 +309,7 @@ export default defineComponent({
       state.lastHeartbeat = state.progress.seconds - 30
 
       if (!state.paused) {
-        // TODO: setDiscordState('watching')
+        setDiscordState('watching')
       }
 
       player.value.currentTime = time
@@ -346,7 +364,7 @@ export default defineComponent({
       },
       close: () => {
         playlist.setPlaylist(null)
-        // TODO: setDiscordState('paused')
+        setDiscordState('paused')
 
         if (isFullscreen.value) {
           // toggleFullscreen
@@ -475,12 +493,12 @@ export default defineComponent({
       player.value.onplay = () => {
         state.paused = false
 
-        // TODO: setDiscordState('watching')
+        setDiscordState('watching')
       }
       player.value.onpause = () => {
         state.paused = true
 
-        // TODO: setDiscordState('paused')
+        setDiscordState('paused')
       }
       player.value.oncanplay = () => {
         state.loading = false
@@ -638,23 +656,6 @@ export default defineComponent({
     }
   },
 })
-
-// export class Player extends Vue {
-//   private setDiscordState(state: 'watching' | 'paused') {
-//     if (!this.episode || !this.anime) return
-//
-//     ipcRenderer.send(
-//       state === 'watching' ? DISCORD_SET_WATCHING : DISCORD_PAUSE_WATCHING,
-//       {
-//         animeName: (this.anime.title as PlayerAnimeTitle).userPreferred,
-//         episode: this.episode.episodeNumber,
-//         totalEpisodes: this.anime.episodes,
-//         progress: this.progressInSeconds,
-//         username: this.username,
-//       },
-//     )
-//   }
-// }
 </script>
 
 <style scoped lang="scss">
