@@ -9,8 +9,8 @@
         :episode="episode"
         :next-episode="delayedNextEpisode"
         :should-auto-play="shouldAutoPlay"
-        :get-should-auto-mark-watched="shouldAutoMarkWatched"
-        :set-progress="toggleProgress"
+        :should-auto-mark-watched="shouldAutoMarkWatched"
+        @update-progress="updateProgress"
       />
       <external-player
         v-else-if="anime != null"
@@ -27,7 +27,7 @@ import { computed, defineComponent, ref, watch } from '@vue/composition-api'
 import { useQuery, useResult } from '@vue/apollo-composable'
 
 import ExternalPlayer from '@/modules/player/external-player.vue'
-import { setProgress } from '@/graphql/mutations/list-entry'
+import { setProgress as setProgressAction } from '@/graphql/mutations/list-entry'
 import ANIME_QUERY from './player-anime.graphql'
 import { EPISODE_LIST } from '@/graphql/documents/queries'
 import {
@@ -126,13 +126,12 @@ export default defineComponent({
       external: episode.value?.provider === Provider.Local,
     }))
 
-    const toggleProgress = () => {
+    const updateProgress = (progress: number) => {
       if (episode.value == null || listEntry.value == null) return
 
-      setProgress(root, {
+      setProgressAction(root, {
         animeId: episode.value.animeId,
-        episodeNumber:
-          episode.value.episodeNumber + (episode.value.isWatched ? -1 : 0),
+        episodeNumber: progress,
         provider: episode.value.provider,
       })
     }
@@ -147,7 +146,7 @@ export default defineComponent({
       episode,
       nextEpisode,
       delayedNextEpisode,
-      toggleProgress,
+      updateProgress,
 
       shouldAutoPlay,
       shouldAutoMarkWatched,

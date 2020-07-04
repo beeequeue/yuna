@@ -56,7 +56,7 @@
       @set-quality="onChangeQuality"
       @set-subtitles-track="onChangeSubtitles"
       @set-fullscreen="setFullscreen"
-      @update-progress="setProgress"
+      @update-progress="updateProgress"
       @close="closePlayer"
     />
 
@@ -151,6 +151,10 @@ const fetchStream = async (
   return null
 }
 
+enum PlayerEvent {
+  UpdateProgress = 'update-progress',
+}
+
 export default defineComponent({
   components: { Controls, EndOfSeasonOverlay, Icon, NextEpisodeOverlay },
   props: {
@@ -168,13 +172,9 @@ export default defineComponent({
     },
     loading: Boolean,
     shouldAutoPlay: Boolean,
-    getShouldAutoMarkWatched: Boolean,
-    setProgress: {
-      type: Function as PropType<(p: number) => void>,
-      required: true,
-    },
+    shouldAutoMarkWatched: Boolean,
   },
-  setup(props, { root }) {
+  setup(props, { root, emit }) {
     const player = ref<HTMLVideoElement>(null)
 
     const username = computed(() => getAnilistUsername(root.$store))
@@ -232,6 +232,22 @@ export default defineComponent({
       speed: getNumberFromLocalStorage(LocalStorageKey.Speed, 1),
       quality: localStorage.getItem(LocalStorageKey.Quality) ?? '1080',
     })
+
+    const updateProgress = (progress: number) =>
+      emit(PlayerEvent.UpdateProgress, progress)
+    const updateProgressIfNecessary = () => {
+      if (props.episode == null) return
+
+      if (
+        listEntry.value == null ||
+        !props.shouldAutoMarkWatched ||
+        (listEntry.value.progress as number) >= props.episode.episodeNumber
+      ) {
+        return
+      }
+
+      updateProgress(props.episode.episodeNumber)
+    }
 
     // region Subtitles
     const subtitles = reactive({
@@ -350,7 +366,6 @@ export default defineComponent({
         if (gainNode.value == null) return
 
         const { valueAsNumber } = e.target as HTMLInputElement
-        // TODO: check if we can use numberValue or whatever its called
         actions.setVolume(valueAsNumber)
       },
       setSpeed: (e: Event) => {
@@ -387,14 +402,14 @@ export default defineComponent({
         if (!state.softEnded && state.progress.percent >= 0.8) {
           state.softEnded = true
 
-          // TODO: updateProgressIfNecessary()
+          updateProgressIfNecessary()
         }
       },
       ended: () => {
         state.softEnded = true
         state.ended = true
 
-        // TODO: updateProgressIfNecessary()
+        updateProgressIfNecessary()
       },
     }
     // endregion
@@ -593,6 +608,7 @@ export default defineComponent({
       toggleFullscreen,
 
       state,
+      updateProgress,
 
       subtitles,
       subtitlesUrl,
@@ -624,20 +640,6 @@ export default defineComponent({
 })
 
 // export class Player extends Vue {
-//   public updateProgressIfNecessary() {
-//     if (!this.episode) return
-//
-//     if (
-//       !this.listEntry ||
-//       !this.getShouldAutoMarkWatched ||
-//       (this.listEntry.progress as number) >= this.episode.episodeNumber
-//     ) {
-//       return
-//     }
-//
-//     this.setProgress(this.episode.episodeNumber)
-//   }
-//
 //   private setDiscordState(state: 'watching' | 'paused') {
 //     if (!this.episode || !this.anime) return
 //
