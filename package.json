@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@mdi/js": "5.3.45",
-    "@sentry/browser": "5.18.1",
+    "@sentry/browser": "5.20.0",
     "@sentry/integrations": "5.18.1",
     "@sentry/node": "5.18.1",
     "@vue/apollo-composable": "4.0.0-alpha.8",
