@@ -2496,7 +2496,7 @@
   resolved "https://registry.yarnpkg.com/@types/range-parser/-/range-parser-1.2.3.tgz#7ee330ba7caafb98090bece86a5ee44115904c2c"
   integrity sha512-ewFXqrQHlFsgc09MK5jP5iR7vumV/BYayNC6PgJO2LPe8vrnNFyjQjSppfEngITi0qvfKtzFvgKymGheFM9UOA==
 
-"@types/semver@7.3.1", "@types/semver@^7.2.0":
+"@types/semver@7.3.1":
   version "7.3.1"
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.3.1.tgz#7a9a5d595b6d873f338c867dcef64df289468cfa"
   integrity sha512-ooD/FJ8EuwlDKOI6D9HWxgIgJjMg2cuziXm/42npDC8y4NjxplBUn9loewZiBNCt44450lHAU0OSb51/UqXeag==
@@ -7112,13 +7112,12 @@ eslint-plugin-prettier@3.1.4:
   dependencies:
     prettier-linter-helpers "^1.0.0"
 
-eslint-plugin-vue@7.0.0-alpha.7:
-  version "7.0.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-7.0.0-alpha.7.tgz#0fafa8beb1c75bb4c3248ba3fc7fbe0771b5875d"
-  integrity sha512-9o7TiRKuQIF4V5T0vuy5XLfN/0tR1YSe95dvlhVULcGMWs5lHD+ZOsPZBJpd3n0ekw/qp5X0RyU45pJdRkvzaQ==
+eslint-plugin-vue@7.0.0-beta.1:
+  version "7.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-7.0.0-beta.1.tgz#818e2e88767581c136e6964f18179910e36ff5f9"
+  integrity sha512-kUkSwRZeMDwaNcCoj5ZTuaxRTzPNazKJCgd56MxKzsIe7SbNBpIiyyS2QQYh5WOr9M3tTKNROQJGSrh3KV5LOw==
   dependencies:
-    "@types/semver" "^7.2.0"
-    eslint-utils "^2.0.0"
+    eslint-utils "^2.1.0"
     natural-compare "^1.4.0"
     semver "^7.3.2"
     vue-eslint-parser "^7.1.0"
@@ -7139,10 +7138,10 @@ eslint-scope@^5.0.0, eslint-scope@^5.1.0:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
 
-eslint-utils@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-utils/-/eslint-utils-2.0.0.tgz#7be1cc70f27a72a76cd14aa698bcabed6890e1cd"
-  integrity sha512-0HCPuJv+7Wv1bACm8y5/ECVfYdfsAm9xmVb7saeFlxjPYALefjhbYoCkBjPdPzGH8wWyTpAez82Fh3VKYEZ8OA==
+eslint-utils@^2.0.0, eslint-utils@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/eslint-utils/-/eslint-utils-2.1.0.tgz#d2de5e03424e707dc10c74068ddedae708741b27"
+  integrity sha512-w94dQYoauyvlDc43XnGB8lU3Zt713vNChgt4EWwhXAP2XkBvndfxF0AgIqKOOasjPIPzj9JqgwkwbCYD0/V3Zg==
   dependencies:
     eslint-visitor-keys "^1.1.0"
 
