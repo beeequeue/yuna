@@ -96,7 +96,7 @@
     "@graphql-codegen/typescript-compatibility": "1.15.4",
     "@graphql-codegen/typescript-operations": "1.15.4",
     "@sentry/webpack-plugin": "1.11.1",
-    "@testing-library/jest-dom": "5.11.0",
+    "@testing-library/jest-dom": "5.11.2",
     "@testing-library/vue": "5.0.4",
     "@types/date-fns": "2.6.0",
     "@types/discord-rpc": "3.0.4",
