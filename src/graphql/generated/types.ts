@@ -1,7 +1,9 @@
 /* THIS IS A GENERATED FILE */
 /* eslint-disable */
 export type Maybe<T> = T | null
-export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] }
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K]
+}
 
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -666,6 +668,7 @@ export type InternalPageRevisionHistoryArgs = {
 /** Page of data (Used for internal use only) */
 export type InternalPageModActionsArgs = {
   userId: Maybe<Scalars['Int']>
+  modId: Maybe<Scalars['Int']>
 }
 
 /** Page of data (Used for internal use only) */
