@@ -118,7 +118,7 @@
     "@types/webpack-env": "1.15.2",
     "@types/xml2js": "0.4.5",
     "@typescript-eslint/eslint-plugin": "3.4.0",
-    "@typescript-eslint/parser": "3.4.0",
+    "@typescript-eslint/parser": "3.10.0",
     "@vue/cli-plugin-babel": "4.4.6",
     "@vue/cli-plugin-eslint": "4.4.6",
     "@vue/cli-plugin-typescript": "4.4.6",
