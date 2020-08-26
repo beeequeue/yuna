@@ -6517,10 +6517,10 @@ dir-glob@^3.0.1:
   dependencies:
     path-type "^4.0.0"
 
-discord-rpc@3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/discord-rpc/-/discord-rpc-3.1.1.tgz#23942a6e3ec1e523d1fcd69b5823e64b719cdffe"
-  integrity sha512-2nTB+82q4OnCtataJkWMQ2YBWs2UEjs490uC7/xSTvXAOb7I+ZDsweHWFL692sSpDzg7pRlmy1+XVyjWqleulg==
+discord-rpc@3.1.3:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/discord-rpc/-/discord-rpc-3.1.3.tgz#9ba77b2679e3d069d400247da58333c0c87645fb"
+  integrity sha512-V081xCPFm8YDNLJYJv3Vo2BrCv/Knh0mdvq37RIN1keh7VGpf7s1kypaFDIYiuUmAlZXI5pupthF5hCrx/CzhA==
   dependencies:
     node-fetch "2.6.0"
     ws "7.1.2"
