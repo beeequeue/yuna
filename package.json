@@ -68,7 +68,7 @@
     "raw-loader": "4.0.1",
     "register-scheme": "0.0.2",
     "semver": "7.3.2",
-    "superagent": "5.2.2",
+    "superagent": "6.1.0",
     "svg-country-flags": "1.2.7",
     "tar-fs": "2.1.0",
     "ts-debounce": "2.0.1",
