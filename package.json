@@ -77,7 +77,7 @@
     "v-tooltip": "2.0.3",
     "vue": "2.6.11",
     "vue-apollo": "3.0.3",
-    "vue-class-component": "7.2.3",
+    "vue-class-component": "7.2.6",
     "vue-observe-visibility": "0.4.6",
     "vue-property-decorator": "9.0.0",
     "vue-router": "3.3.4",
