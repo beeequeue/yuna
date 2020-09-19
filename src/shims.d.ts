@@ -63,6 +63,13 @@ declare module '*.webp' {
   export default content
 }
 
+declare module '*.graphql' {
+  import { DocumentNode } from 'graphql'
+
+  const content: DocumentNode
+  export default content
+}
+
 declare module 'superagent/dist/superagent' {
   import request from 'superagent'
   export = request

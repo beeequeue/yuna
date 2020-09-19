@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import VueApollo, { ApolloProvider } from 'vue-apollo'
+import { ApolloProvider } from '@vue/apollo-option'
 import {
   createApolloClient,
   CreateClientOptions,
@@ -21,9 +20,6 @@ import {
   getAnilistRequestsUntilLimiting,
   setAnilistRequests,
 } from '@/state/app'
-
-// Install the vue plugin
-Vue.use(VueApollo)
 
 // Http endpoint
 const httpEndpoint = 'https://graphql.anilist.co'

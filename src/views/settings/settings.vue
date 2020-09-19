@@ -105,7 +105,7 @@
               :class="{ failed: ffmpegFailed }"
             />
 
-            <div v-if="ffmpegFailed" class="path" style="direction: ltr;">
+            <div v-if="ffmpegFailed" class="path" style="direction: ltr">
               <c-button content="Retry FFMPEG download" :click="retryFfmpeg" />
             </div>
             <div v-else class="item">
@@ -114,7 +114,7 @@
               <c-button
                 v-tooltip.top="'Re-download'"
                 :icon="resetSvg"
-                style="margin-left: 10px;"
+                style="margin-left: 10px"
                 :click="retryFfmpeg"
               />
             </div>

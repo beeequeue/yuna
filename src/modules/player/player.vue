@@ -178,7 +178,7 @@ export default defineComponent({
     shouldAutoMarkWatched: Boolean,
   },
   setup(props, { root, emit }) {
-    const player = ref<HTMLVideoElement>(null)
+    const player = ref<HTMLVideoElement | null>(null)
 
     const username = computed(() => getAnilistUsername(root.$store))
     const listEntry = computed(() => props.anime?.listEntry ?? null)
@@ -605,6 +605,7 @@ export default defineComponent({
     watch(
       () => props.episode?.id ?? null,
       () => handleNewEpisode(),
+      { immediate: true },
     )
 
     onMounted(() => {

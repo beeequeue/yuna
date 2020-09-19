@@ -1,4 +1,4 @@
-import { DollarApollo } from 'vue-apollo/types/vue-apollo'
+import { DollarApollo } from '@vue/apollo-option/types/vue-apollo'
 import { captureException } from '@sentry/browser'
 
 import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'

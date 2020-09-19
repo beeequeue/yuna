@@ -102,15 +102,19 @@ export default defineComponent({
     const delayedNextEpisode = ref<EpisodeListEpisodes | null>(null)
 
     const timeout = ref<number | null>(null)
-    watch(nextEpisode, newEpisode => {
-      if (timeout.value != null) {
-        clearTimeout(timeout.value)
-      }
+    watch(
+      nextEpisode,
+      newEpisode => {
+        if (timeout.value != null) {
+          clearTimeout(timeout.value)
+        }
 
-      timeout.value = window.setTimeout(() => {
-        delayedNextEpisode.value = newEpisode
-      }, 1000)
-    })
+        timeout.value = window.setTimeout(() => {
+          delayedNextEpisode.value = newEpisode
+        }, 1000)
+      },
+      { immediate: true },
+    )
 
     const shouldAutoPlay = computed(() => getShouldAutoPlay(root.$store))
     const shouldAutoMarkWatched = computed(() => {

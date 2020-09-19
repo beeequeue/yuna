@@ -361,6 +361,7 @@ export default defineComponent({
           emit(ControlsEvent.SetFullscreen, false)
         }
       },
+      { immediate: true },
     )
 
     return {

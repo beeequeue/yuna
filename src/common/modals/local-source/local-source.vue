@@ -183,7 +183,7 @@ export default class LocalSourceModal extends Vue {
     this.loadingLocalAnime = false
 
     const fuse = new Fuse(this.localAnime, {
-      caseSensitive: false,
+      isCaseSensitive: false,
       keys: ['title'],
       threshold: 0.75,
       includeScore: true,

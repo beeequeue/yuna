@@ -29,7 +29,7 @@
 <script lang="ts">
 import marked from 'marked'
 import superagent from 'superagent'
-import { defineComponent, ref, watch } from '@vue/composition-api'
+import { defineComponent, ref } from '@vue/composition-api'
 
 import { LocalStorageKey } from '@/lib/local-storage'
 import type { GitHubRelease } from '@/types'
@@ -100,13 +100,11 @@ export default defineComponent({
       Number(localStorage.getItem(LocalStorageKey.ChangelogFetchedAt) || 0),
     )
 
-    watch(lastFetchedAt, async () => {
-      if (lastFetchedAt.value + CHANGELOG_FETCH_TIMEOUT >= Date.now()) {
-        return
-      }
-
-      changelog.value = await fetchChangelog()
-    })
+    if (lastFetchedAt.value + CHANGELOG_FETCH_TIMEOUT < Date.now()) {
+      fetchChangelog().then(newChangelog => {
+        changelog.value = newChangelog
+      })
+    }
 
     return {
       changelog,
