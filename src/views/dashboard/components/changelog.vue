@@ -100,13 +100,17 @@ export default defineComponent({
       Number(localStorage.getItem(LocalStorageKey.ChangelogFetchedAt) || 0),
     )
 
-    watch(lastFetchedAt, async () => {
-      if (lastFetchedAt.value + CHANGELOG_FETCH_TIMEOUT >= Date.now()) {
-        return
-      }
+    watch(
+      lastFetchedAt,
+      async () => {
+        if (lastFetchedAt.value + CHANGELOG_FETCH_TIMEOUT >= Date.now()) {
+          return
+        }
 
-      changelog.value = await fetchChangelog()
-    })
+        changelog.value = await fetchChangelog()
+      },
+      { immediate: true },
+    )
 
     return {
       changelog,
