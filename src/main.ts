@@ -21,6 +21,9 @@ import { createProvider } from './vue-apollo'
 import { normalizeEvent } from './normalize'
 import { version } from '../package.json'
 
+// https://github.com/Akryum/vue-cli-plugin-apollo/issues/355
+import 'regenerator-runtime/runtime'
+
 import 'normalize.css'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 

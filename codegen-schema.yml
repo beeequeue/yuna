@@ -1,0 +1,15 @@
+overwrite: true
+
+schema:
+  - https://graphql.anilist.co
+
+hooks:
+  afterOneFileWrite:
+    - prettier --write
+
+generates:
+  schema.graphql:
+    plugins:
+      - add:
+          content: '# THIS IS A GENERATED FILE'
+      - schema-ast
