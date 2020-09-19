@@ -267,8 +267,9 @@ const createMainWindow = () => {
   return window
 }
 
+// App Config
+app.allowRendererProcessReuse = false
 app.commandLine.appendSwitch('force-color-profile', 'srgb')
-
 app.setAppUserModelId(process.execPath)
 
 // quit application when all windows are closed

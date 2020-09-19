@@ -38,6 +38,10 @@
       "prettier --write"
     ]
   },
+  "resolutions": {
+    "@types/node": "12.12.62",
+    "@types/webpack": "4.41.22"
+  },
   "dependencies": {
     "@mdi/js": "5.6.55",
     "@sentry/browser": "5.24.2",
@@ -112,7 +116,7 @@
     "@types/lodash.keyby": "4.6.6",
     "@types/lzma-native": "4.0.0",
     "@types/marked": "1.1.0",
-    "@types/node": "12.12.44",
+    "@types/node": "12.12.62",
     "@types/semver": "7.3.4",
     "@types/superagent": "4.1.10",
     "@types/tar-fs": "2.0.0",
