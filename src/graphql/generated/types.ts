@@ -4,7 +4,6 @@ export type Maybe<T> = T | null
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K]
 }
-
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string
@@ -5059,18 +5058,28 @@ export type MediaListEntryListEntry = NonNullable<
   MediaListEntryFragment['listEntry']
 >
 export type AddToListVariables = AddToListMutationVariables
-export type AddToListAddToList = AddToListMutation['AddToList']
+export type AddToListAddToList = NonNullable<AddToListMutation['AddToList']>
 export type UpdateStatusVariables = UpdateStatusMutationVariables
-export type UpdateStatusUpdateStatus = UpdateStatusMutation['UpdateStatus']
+export type UpdateStatusUpdateStatus = NonNullable<
+  UpdateStatusMutation['UpdateStatus']
+>
 export type StartRewatchingVariables = StartRewatchingMutationVariables
-export type StartRewatchingStartRewatching = StartRewatchingMutation['StartRewatching']
+export type StartRewatchingStartRewatching = NonNullable<
+  StartRewatchingMutation['StartRewatching']
+>
 export type UpdateProgressVariables = UpdateProgressMutationVariables
-export type UpdateProgressUpdateProgress = UpdateProgressMutation['UpdateProgress']
+export type UpdateProgressUpdateProgress = NonNullable<
+  UpdateProgressMutation['UpdateProgress']
+>
 export type UpdateScoreVariables = UpdateScoreMutationVariables
-export type UpdateScoreUpdateScore = UpdateScoreMutation['UpdateScore']
+export type UpdateScoreUpdateScore = NonNullable<
+  UpdateScoreMutation['UpdateScore']
+>
 export type DeleteFromListVariables = DeleteFromListMutationVariables
 export type EditListEntryVariables = EditListEntryMutationVariables
-export type EditListEntryEditListEntry = EditListEntryMutation['EditListEntry']
+export type EditListEntryEditListEntry = NonNullable<
+  EditListEntryMutation['EditListEntry']
+>
 export type CacheEpisodesVariables = CacheEpisodesMutationVariables
 export type SingleMediaVariables = SingleMediaQueryVariables
 export type SingleMediaSingleMedia = NonNullable<
@@ -5083,41 +5092,43 @@ export type SingleMediaCoverImage = NonNullable<
   NonNullable<SingleMediaQuery['SingleMedia']>['coverImage']
 >
 export type ListViewVariables = ListViewQueryVariables
-export type ListViewListEntries = NonNullable<ListViewQuery['ListEntries'][0]>
+export type ListViewListEntries = NonNullable<
+  NonNullable<ListViewQuery['ListEntries']>[number]
+>
 export type ListMediaVariables = ListMediaQueryVariables
 export type ListMediaPage = NonNullable<ListMediaQuery['Page']>
 export type ListMediaPageInfo = NonNullable<
   NonNullable<ListMediaQuery['Page']>['pageInfo']
 >
 export type ListMediaMedia = NonNullable<
-  NonNullable<NonNullable<ListMediaQuery['Page']>['media']>[0]
+  NonNullable<NonNullable<ListMediaQuery['Page']>['media']>[number]
 >
 export type ListMediaTitle = NonNullable<
   NonNullable<
-    NonNullable<NonNullable<ListMediaQuery['Page']>['media']>[0]
+    NonNullable<NonNullable<ListMediaQuery['Page']>['media']>[number]
   >['title']
 >
 export type ListMediaCoverImage = NonNullable<
   NonNullable<
-    NonNullable<NonNullable<ListMediaQuery['Page']>['media']>[0]
+    NonNullable<NonNullable<ListMediaQuery['Page']>['media']>[number]
   >['coverImage']
 >
 export type ListMediaExternalLinks = NonNullable<
   NonNullable<
     NonNullable<
-      NonNullable<NonNullable<ListMediaQuery['Page']>['media']>[0]
+      NonNullable<NonNullable<ListMediaQuery['Page']>['media']>[number]
     >['externalLinks']
-  >[0]
+  >[number]
 >
 export type ListEntryVariables = ListEntryQueryVariables
-export type ListEntryListEntry = ListEntryQuery['ListEntry']
+export type ListEntryListEntry = NonNullable<ListEntryQuery['ListEntry']>
 export type MediaListEntryFromMediaIdVariables = MediaListEntryFromMediaIdQueryVariables
 export type MediaListEntryFromMediaIdMediaList = NonNullable<
   MediaListEntryFromMediaIdQuery['MediaList']
 >
 export type EpisodeListVariables = EpisodeListQueryVariables
 export type EpisodeListEpisodes = NonNullable<
-  NonNullable<EpisodeListQuery['episodes']>[0]
+  NonNullable<EpisodeListQuery['episodes']>[number]
 >
 export type MalIdFromAnilistIdVariables = MalIdFromAnilistIdQueryVariables
 export type MalIdFromAnilistIdMedia = NonNullable<
@@ -5131,11 +5142,11 @@ export type AnilistIdsFromMalIdsPageInfo = NonNullable<
   NonNullable<AnilistIdsFromMalIdsQuery['Page']>['pageInfo']
 >
 export type AnilistIdsFromMalIdsMedia = NonNullable<
-  NonNullable<NonNullable<AnilistIdsFromMalIdsQuery['Page']>['media']>[0]
+  NonNullable<NonNullable<AnilistIdsFromMalIdsQuery['Page']>['media']>[number]
 >
 export type EpisodeFeedListIdsVariables = EpisodeFeedListIdsQueryVariables
 export type EpisodeFeedListIdsListEntries = NonNullable<
-  EpisodeFeedListIdsQuery['ListEntries'][0]
+  NonNullable<EpisodeFeedListIdsQuery['ListEntries']>[number]
 >
 export type MalScoreVariables = MalScoreQueryVariables
 export type MalScoreAnime = NonNullable<MalScoreQuery['anime']>
@@ -5159,13 +5170,13 @@ export type PlayerAnimeRelations = NonNullable<
 export type PlayerAnimeEdges = NonNullable<
   NonNullable<
     NonNullable<NonNullable<PlayerAnimeQuery['anime']>['relations']>['edges']
-  >[0]
+  >[number]
 >
 export type PlayerAnimeNode = NonNullable<
   NonNullable<
     NonNullable<
       NonNullable<NonNullable<PlayerAnimeQuery['anime']>['relations']>['edges']
-    >[0]
+    >[number]
   >['node']
 >
 export type PlayerAnime_Title = NonNullable<
@@ -5175,7 +5186,7 @@ export type PlayerAnime_Title = NonNullable<
         NonNullable<
           NonNullable<PlayerAnimeQuery['anime']>['relations']
         >['edges']
-      >[0]
+      >[number]
     >['node']
   >['title']
 >
@@ -5188,31 +5199,31 @@ export type SearchPageInfo = NonNullable<
   NonNullable<SearchQuery['anime']>['pageInfo']
 >
 export type SearchResults = NonNullable<
-  NonNullable<NonNullable<SearchQuery['anime']>['results']>[0]
+  NonNullable<NonNullable<SearchQuery['anime']>['results']>[number]
 >
 export type SearchTitle = NonNullable<
   NonNullable<
-    NonNullable<NonNullable<SearchQuery['anime']>['results']>[0]
+    NonNullable<NonNullable<SearchQuery['anime']>['results']>[number]
   >['title']
 >
 export type SearchCoverImage = NonNullable<
   NonNullable<
-    NonNullable<NonNullable<SearchQuery['anime']>['results']>[0]
+    NonNullable<NonNullable<SearchQuery['anime']>['results']>[number]
   >['coverImage']
 >
 export type SearchStreamingEpisodes = NonNullable<
   NonNullable<
     NonNullable<
-      NonNullable<NonNullable<SearchQuery['anime']>['results']>[0]
+      NonNullable<NonNullable<SearchQuery['anime']>['results']>[number]
     >['streamingEpisodes']
-  >[0]
+  >[number]
 >
 export type SearchExternalLinks = NonNullable<
   NonNullable<
     NonNullable<
-      NonNullable<NonNullable<SearchQuery['anime']>['results']>[0]
+      NonNullable<NonNullable<SearchQuery['anime']>['results']>[number]
     >['externalLinks']
-  >[0]
+  >[number]
 >
 export type AnilistSetScoreVariables = AnilistSetScoreMutationVariables
 export type AnilistSetScoreSaveMediaListEntry = NonNullable<
@@ -5249,22 +5260,22 @@ export type AnilistListEntriesListCollection = NonNullable<
 export type AnilistListEntriesLists = NonNullable<
   NonNullable<
     NonNullable<AnilistListEntriesQuery['listCollection']>['lists']
-  >[0]
+  >[number]
 >
 export type AnilistListEntriesEntries = NonNullable<
   NonNullable<
     NonNullable<
       NonNullable<
         NonNullable<AnilistListEntriesQuery['listCollection']>['lists']
-      >[0]
+      >[number]
     >['entries']
-  >[0]
+  >[number]
 >
 export type CachedAnimeListEntryListEntry = NonNullable<
   CachedAnimeListEntryFragment['listEntry']
 >
 export type CachedExternalLinksExternalLinks = NonNullable<
-  NonNullable<CachedExternalLinksFragment['externalLinks']>[0]
+  NonNullable<CachedExternalLinksFragment['externalLinks']>[number]
 >
 export type CacheAiringDataNextAiringEpisode = NonNullable<
   CacheAiringDataFragment['nextAiringEpisode']
@@ -5281,7 +5292,7 @@ export type AnimeViewNextAiringEpisode = NonNullable<
   NonNullable<AnimeViewQuery['anime']>['nextAiringEpisode']
 >
 export type AnimeViewExternalLinks = NonNullable<
-  NonNullable<NonNullable<AnimeViewQuery['anime']>['externalLinks']>[0]
+  NonNullable<NonNullable<AnimeViewQuery['anime']>['externalLinks']>[number]
 >
 export type AnimeViewRelations = NonNullable<
   NonNullable<AnimeViewQuery['anime']>['relations']
@@ -5289,13 +5300,13 @@ export type AnimeViewRelations = NonNullable<
 export type AnimeViewEdges = NonNullable<
   NonNullable<
     NonNullable<NonNullable<AnimeViewQuery['anime']>['relations']>['edges']
-  >[0]
+  >[number]
 >
 export type AnimeViewNode = NonNullable<
   NonNullable<
     NonNullable<
       NonNullable<NonNullable<AnimeViewQuery['anime']>['relations']>['edges']
-    >[0]
+    >[number]
   >['node']
 >
 export type AnimeView_Title = NonNullable<
@@ -5303,7 +5314,7 @@ export type AnimeView_Title = NonNullable<
     NonNullable<
       NonNullable<
         NonNullable<NonNullable<AnimeViewQuery['anime']>['relations']>['edges']
-      >[0]
+      >[number]
     >['node']
   >['title']
 >
@@ -5313,7 +5324,7 @@ export type AnimeViewListEntry = NonNullable<
 export type EpisodeFeedVariables = EpisodeFeedQueryVariables
 export type EpisodeFeedPage = NonNullable<EpisodeFeedQuery['Page']>
 export type EpisodeFeedAiringSchedules = NonNullable<
-  NonNullable<NonNullable<EpisodeFeedQuery['Page']>['airingSchedules']>[0]
+  NonNullable<NonNullable<EpisodeFeedQuery['Page']>['airingSchedules']>[number]
 >
 export type EpisodeFeedPageInfo = NonNullable<
   NonNullable<EpisodeFeedQuery['Page']>['pageInfo']
@@ -5328,34 +5339,36 @@ export type AiringFeedItemCoverImage = NonNullable<
 export type QueueVariables = QueueQueryVariables
 export type QueueQueue = NonNullable<QueueQuery['queue']>
 export type QueueAnime = NonNullable<
-  NonNullable<NonNullable<QueueQuery['queue']>['anime']>[0]
+  NonNullable<NonNullable<QueueQuery['queue']>['anime']>[number]
 >
 export type QueueTitle = NonNullable<
   NonNullable<
-    NonNullable<NonNullable<QueueQuery['queue']>['anime']>[0]
+    NonNullable<NonNullable<QueueQuery['queue']>['anime']>[number]
   >['title']
 >
 export type QueueNextAiringEpisode = NonNullable<
   NonNullable<
-    NonNullable<NonNullable<QueueQuery['queue']>['anime']>[0]
+    NonNullable<NonNullable<QueueQuery['queue']>['anime']>[number]
   >['nextAiringEpisode']
 >
 export type QueueExternalLinks = NonNullable<
   NonNullable<
     NonNullable<
-      NonNullable<NonNullable<QueueQuery['queue']>['anime']>[0]
+      NonNullable<NonNullable<QueueQuery['queue']>['anime']>[number]
     >['externalLinks']
-  >[0]
+  >[number]
 >
 export type QueueListEntry = NonNullable<
   NonNullable<
-    NonNullable<NonNullable<QueueQuery['queue']>['anime']>[0]
+    NonNullable<NonNullable<QueueQuery['queue']>['anime']>[number]
   >['listEntry']
 >
 export type ImportVariables = ImportQueryVariables
-export type ImportListEntries = NonNullable<ImportQuery['ListEntries'][0]>
+export type ImportListEntries = NonNullable<
+  NonNullable<ImportQuery['ListEntries']>[number]
+>
 export type ImportExtraListEntries = NonNullable<
-  ImportQuery['ExtraListEntries'][0]
+  NonNullable<ImportQuery['ExtraListEntries']>[number]
 >
 export type ImportExternalLinksVariables = ImportExternalLinksQueryVariables
 export type ImportExternalLinksMedia = NonNullable<
@@ -5364,5 +5377,5 @@ export type ImportExternalLinksMedia = NonNullable<
 export type ImportExternalLinksExternalLinks = NonNullable<
   NonNullable<
     NonNullable<ImportExternalLinksQuery['Media']>['externalLinks']
-  >[0]
+  >[number]
 >
