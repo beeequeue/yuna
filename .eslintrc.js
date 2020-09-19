@@ -26,6 +26,7 @@ module.exports = {
     ],
     // vue 3 only
     'vue/no-deprecated-v-on-native-modifier': 'off',
+    'vue/require-explicit-emits': 'off',
   },
   ignorePatterns: ['jest.*.ts'],
   overrides: [

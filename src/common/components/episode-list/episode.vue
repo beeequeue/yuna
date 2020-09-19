@@ -83,6 +83,8 @@ export default Vue.extend({
     },
     small: Boolean,
   },
+  // TODO: uncomment in Vue 3
+  // emits: ["click", "update-progress"],
   data: () => ({
     bookmarkSvg: mdiBookmark,
     unbookmarkSvg: mdiBookmarkRemove,

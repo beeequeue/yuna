@@ -177,10 +177,16 @@ type Props = {
 export default defineComponent<Props>({
   components: { CButton },
   props: {
-    anime: Object,
-    listEntry: Object,
+    anime: {
+      type: Object,
+      default: null,
+    },
+    listEntry: {
+      type: Object,
+      default: null,
+    },
     small: Boolean,
-    horizontal: { type: Boolean },
+    horizontal: Boolean,
   },
   setup: (props, { root }) => {
     const isInQueue = computed(
