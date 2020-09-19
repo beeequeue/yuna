@@ -4,8 +4,9 @@ import Vuex, { Store } from 'vuex'
 import { ObserveVisibility } from 'vue-observe-visibility'
 import Tooltip from 'v-tooltip'
 import Portal from 'portal-vue'
-import Composition, { provide } from '@vue/composition-api'
+import VueComposition, { provide } from '@vue/composition-api'
 import { DefaultApolloClient } from '@vue/apollo-composable'
+import ApolloOption from '@vue/apollo-option'
 import { init, setExtra } from '@sentry/browser'
 import * as Integrations from '@sentry/integrations'
 
@@ -32,7 +33,8 @@ Vue.config.productionTip = false
 Vue.use(Vuex)
 Vue.use(Tooltip)
 Vue.use(Portal)
-Vue.use(Composition)
+Vue.use(VueComposition)
+Vue.use(ApolloOption)
 Vue.directive('visibility', ObserveVisibility)
 
 // Create store

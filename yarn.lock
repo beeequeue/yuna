@@ -2862,6 +2862,13 @@
     throttle-debounce "^2.1.0"
     vue-demi latest
 
+"@vue/apollo-option@4.0.0-alpha.7":
+  version "4.0.0-alpha.7"
+  resolved "https://registry.yarnpkg.com/@vue/apollo-option/-/apollo-option-4.0.0-alpha.7.tgz#3ac4bad50ab31f202cee64f9e6bf32b077e46847"
+  integrity sha512-hWFNxzHbz16hhPOBbOqoA0eSdMnwh/1ALvEuqu/QbQcmUa7e5Di0+rBG+JESG98dVRNLOziy2nwrF3fR1oQicA==
+  dependencies:
+    throttle-debounce "^2.1.0"
+
 "@vue/babel-helper-vue-jsx-merge-props@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@vue/babel-helper-vue-jsx-merge-props/-/babel-helper-vue-jsx-merge-props-1.0.0.tgz#048fe579958da408fb7a8b2a3ec050b50a661040"
@@ -15797,15 +15804,6 @@ vscode-uri@^1.0.6:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/vscode-uri/-/vscode-uri-1.0.8.tgz#9769aaececae4026fb6e22359cb38946580ded59"
   integrity sha512-obtSWTlbJ+a+TFRYGaUumtVwb+InIUVI0Lu0VBUAPmj2cU5JutEXg3xUE0c2J5Tcy7h2DEKVJBFi+Y9ZSFzzPQ==
-
-vue-apollo@3.0.4:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/vue-apollo/-/vue-apollo-3.0.4.tgz#d48a990d02c1febb5248d097f921c74c50a22e8a"
-  integrity sha512-sthSS9E6FB7OMmSJmIG7e89QZvzwK/1PCD8A/IfGBST48pxY7sdSxRp22Gu2/s/gxQBnQPI1H1ZPZE97IG+zXA==
-  dependencies:
-    chalk "^2.4.2"
-    serialize-javascript "^4.0.0"
-    throttle-debounce "^2.1.0"
 
 vue-class-component@7.2.6:
   version "7.2.6"

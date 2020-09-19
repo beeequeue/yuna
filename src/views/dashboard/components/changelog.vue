@@ -29,7 +29,7 @@
 <script lang="ts">
 import marked from 'marked'
 import superagent from 'superagent'
-import { defineComponent, ref, watch } from '@vue/composition-api'
+import { defineComponent, ref } from '@vue/composition-api'
 
 import { LocalStorageKey } from '@/lib/local-storage'
 import type { GitHubRelease } from '@/types'
