@@ -151,7 +151,7 @@ export default class Filters extends Vue {
     if (this.searchString.length < 3) return media
 
     const fuse = new Fuse(media, {
-      caseSensitive: false,
+      isCaseSensitive: false,
       shouldSort: true,
       keys: ['title.english', 'title.romaji'] as any,
       threshold: 0.35,
