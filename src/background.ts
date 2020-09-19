@@ -14,10 +14,9 @@ import { enforceMacOSAppLocation } from 'electron-util'
 import { init } from '@sentry/node'
 import { join } from 'path'
 import { format as formatUrl } from 'url'
-import {
-  createProtocol,
-  installVueDevtools,
-} from 'vue-cli-plugin-electron-builder/lib'
+import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
+// TODO: remove types package when electron-builder is updated
+import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 
 import { destroyDiscord, registerDiscord } from './lib/discord'
 import {
@@ -137,7 +136,8 @@ const createMainWindow = () => {
     webPreferences: {
       webSecurity: false,
       allowRunningInsecureContent: false,
-      nodeIntegration: !!process.env.ELECTRON_NODE_INTEGRATION,
+      nodeIntegration: (process.env
+        .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
     },
   })
 
@@ -294,7 +294,7 @@ app.on('ready', async () => {
 
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
-    await installVueDevtools()
+    await installExtension(VUEJS_DEVTOOLS)
   }
 
   protocol.registerStringProtocol('yuna', async (req, cb) => {
