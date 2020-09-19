@@ -10,9 +10,7 @@
         v-html="getLogo(source)"
       />
 
-      <span class="text">
-        Select source...
-      </span>
+      <span class="text"> Select source... </span>
 
       <icon :icon="expandSvg" class="expand" />
     </div>

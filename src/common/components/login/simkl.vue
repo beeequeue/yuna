@@ -13,7 +13,7 @@
       <span v-html="logo" />
     </a>
 
-    <animated-size style="width: 100%;">
+    <animated-size style="width: 100%">
       <c-button v-if="!codeDetails" content="Connect" :click="start" />
 
       <div v-if="codeDetails" class="code-details">
