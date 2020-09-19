@@ -1,6 +1,6 @@
 import { DocumentNode } from 'graphql'
 import { ApolloQueryResult } from 'apollo-client'
-import { DollarApollo } from 'vue-apollo/types/vue-apollo'
+import { DollarApollo } from '@vue/apollo-option/types/vue-apollo'
 import { ArmServer } from '@/lib/arm-server'
 import {
   ANILIST_IDS_FROM_MAL_IDS,

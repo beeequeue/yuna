@@ -1,5 +1,5 @@
 import { Store } from 'vuex'
-import { DollarApollo } from 'vue-apollo/types/vue-apollo'
+import { DollarApollo } from '@vue/apollo-option/types/vue-apollo'
 import { Provider } from '@/graphql/generated/types'
 
 export type Maybe<T> = T | null | undefined

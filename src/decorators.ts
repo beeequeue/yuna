@@ -2,7 +2,7 @@
 import { ApolloError } from 'apollo-client'
 import { Vue } from 'vue/types/vue'
 import { Prop } from 'vue/types/options'
-import { VueApolloQueryDefinition } from 'vue-apollo/types/options'
+import { VueApolloQueryDefinition } from '@vue/apollo-option/types/options'
 import { createDecorator, VueDecorator } from 'vue-class-component'
 
 interface QueryOptions<C extends Vue, R = any>
