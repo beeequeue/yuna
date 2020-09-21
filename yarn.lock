@@ -7133,10 +7133,10 @@ eslint-plugin-prettier@3.1.4:
   dependencies:
     prettier-linter-helpers "^1.0.0"
 
-eslint-plugin-vue@7.0.0-beta.1:
-  version "7.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-7.0.0-beta.1.tgz#818e2e88767581c136e6964f18179910e36ff5f9"
-  integrity sha512-kUkSwRZeMDwaNcCoj5ZTuaxRTzPNazKJCgd56MxKzsIe7SbNBpIiyyS2QQYh5WOr9M3tTKNROQJGSrh3KV5LOw==
+eslint-plugin-vue@7.0.0-beta.3:
+  version "7.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-7.0.0-beta.3.tgz#37a4fedf46db74cdb3be268390b4541eb7a810b7"
+  integrity sha512-/p23IRPN9gFNN7dzesrctt06Kvs9E3VRB8BGIAPSEaQNk5yhlKUzntPARjUpsTWW+DQg0mqglZptfkUJK4+4EQ==
   dependencies:
     eslint-utils "^2.1.0"
     natural-compare "^1.4.0"
