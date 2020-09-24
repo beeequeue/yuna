@@ -141,7 +141,7 @@
     "electron": "8.3.1",
     "eslint": "7.9.0",
     "eslint-plugin-prettier": "3.1.4",
-    "eslint-plugin-vue": "7.0.0-beta.1",
+    "eslint-plugin-vue": "7.0.0-beta.4",
     "graphql-tag": "2.11.0",
     "jest-localstorage-mock": "2.4.3",
     "jest-transform-graphql": "2.1.0",
