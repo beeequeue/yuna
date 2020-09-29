@@ -125,7 +125,7 @@
     "@types/webpack-chain": "5.2.0",
     "@types/webpack-env": "1.15.3",
     "@types/xml2js": "0.4.5",
-    "@typescript-eslint/eslint-plugin": "4.1.1",
+    "@typescript-eslint/eslint-plugin": "4.3.0",
     "@typescript-eslint/parser": "4.1.1",
     "@vue/cli-plugin-babel": "4.5.6",
     "@vue/cli-plugin-eslint": "4.5.6",
