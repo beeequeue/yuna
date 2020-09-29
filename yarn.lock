@@ -990,7 +990,7 @@
     core-js-pure "^3.0.0"
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.3", "@babel/runtime@^7.11.0", "@babel/runtime@^7.11.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2", "@babel/runtime@^7.9.6":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.10.2", "@babel/runtime@^7.10.3", "@babel/runtime@^7.11.0", "@babel/runtime@^7.11.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.9.2":
   version "7.11.2"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.11.2.tgz#f549c13c754cc40b87644b9fa9f09a6a95fe0736"
   integrity sha512-TeWkU52so0mPtDcaCTxNBI/IHiz0pZgr8VEFqXFtZWpYD08ZB6FaSwVAS8MKRQAP3bYKiVjwysOJgMFY28o6Tw==
@@ -2118,10 +2118,10 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@testing-library/dom@^7.5.7":
-  version "7.24.2"
-  resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-7.24.2.tgz#6d2b7dd21efbd5358b98c2777fc47c252f3ae55e"
-  integrity sha512-ERxcZSoHx0EcN4HfshySEWmEf5Kkmgi+J7O79yCJ3xggzVlBJ2w/QjJUC+EBkJJ2OeSw48i3IoePN4w8JlVUIA==
+"@testing-library/dom@^7.24.3", "@testing-library/dom@^7.5.7":
+  version "7.24.3"
+  resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-7.24.3.tgz#dae3071463cf28dc7755b43d9cf2202e34cbb85d"
+  integrity sha512-6eW9fUhEbR423FZvoHRwbWm9RUUByLWGayYFNVvqTnQLYvsNpBS4uEuKH9aqr3trhxFwGVneJUonehL3B1sHJw==
   dependencies:
     "@babel/code-frame" "^7.10.4"
     "@babel/runtime" "^7.10.3"
@@ -2145,15 +2145,15 @@
     lodash "^4.17.15"
     redent "^3.0.0"
 
-"@testing-library/vue@5.0.4":
-  version "5.0.4"
-  resolved "https://registry.yarnpkg.com/@testing-library/vue/-/vue-5.0.4.tgz#25d1de4a8c7a18ad28a4c6fa458f56f93cb190b9"
-  integrity sha512-09Ahx9DJB3sWsgZN8iSATDKgN5DFQAZr+lUJ+wQpkK3mfe2AyAwR2f9UDaCczvAjsoagHDaYrIyqyFb5bSJ1sA==
+"@testing-library/vue@5.1.0":
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/@testing-library/vue/-/vue-5.1.0.tgz#3d0eb3d1861661c44f2bc20f6a1b5d8bd8b7500c"
+  integrity sha512-RuV63Ywys7rhF+UpdSKpFrcQfyiGj9ecxAL76HCOCGbtlXdyqUbGegZ+vZpC22scTCSxmr42l0g0gJEyp00W+g==
   dependencies:
-    "@babel/runtime" "^7.9.6"
-    "@testing-library/dom" "^7.5.7"
-    "@types/testing-library__vue" "^2.0.1"
-    "@vue/test-utils" "^1.0.3"
+    "@babel/runtime" "^7.11.2"
+    "@testing-library/dom" "^7.24.3"
+    "@types/testing-library__vue" "^5.0.0"
+    "@vue/test-utils" "^1.1.0"
 
 "@tootallnate/once@1":
   version "1.1.2"
@@ -2664,13 +2664,13 @@
   dependencies:
     "@types/jest" "*"
 
-"@types/testing-library__vue@^2.0.1":
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/@types/testing-library__vue/-/testing-library__vue-2.0.3.tgz#5559a0af03de44d751c9352ce8cdf254716a26ee"
-  integrity sha512-TPkSj+kwQVpUh4FOhcztMUBd1C12CQBOOaOyKuKtloBRkNcBqZJ+t/O6hwX6wdyGFLLMhosMH9VsZk/VF4eerQ==
+"@types/testing-library__vue@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@types/testing-library__vue/-/testing-library__vue-5.0.0.tgz#b16de69eb2769f6c9bb85c66a1dab53ca56ee1fd"
+  integrity sha512-R94Vv9UfDoW/Vvb+ZBsy9evZO7utmFhEoe4F7+Xo8G/DpO5TZM/BdL07zkF3sjqWSyRhbHYHwXIrPwJAXQZGHg==
   dependencies:
     "@testing-library/dom" "^7.5.7"
-    "@vue/test-utils" "^1.0.0-beta.29"
+    "@vue/test-utils" "^1.0.3"
     pretty-format "^25.5.0"
     vue "^2.6.10"
     vue-router "^3.0"
@@ -3178,7 +3178,7 @@
   resolved "https://registry.yarnpkg.com/@vue/preload-webpack-plugin/-/preload-webpack-plugin-1.1.2.tgz#ceb924b4ecb3b9c43871c7a429a02f8423e621ab"
   integrity sha512-LIZMuJk38pk9U9Ur4YzHjlIyMuxPlACdBIHH9/nGYVTsaGKOSnSuELiE8vS9wa+dJpIYspYUOqk+L1Q4pgHQHQ==
 
-"@vue/test-utils@^1.0.0-beta.29", "@vue/test-utils@^1.0.3":
+"@vue/test-utils@^1.0.3", "@vue/test-utils@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@vue/test-utils/-/test-utils-1.1.0.tgz#76305e73a786c921ede1352849614e26c7113f94"
   integrity sha512-M+3jtVqNYIrvzO5gaxogre5a5+96h0hN/dXw+5Lj0t+dp6fAhYcUjpLrC9j9cEEkl2Rcuh/gKYRUmR5N4vcqPw==
