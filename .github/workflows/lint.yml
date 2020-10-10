@@ -10,19 +10,8 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v1
 
-      - name: Super-Linter
-        uses: github/super-linter@v2.0.0
-        env:
-          VALIDATE_JAVASCRIPT_STANDARD: false
-          VALIDATE_TYPESCRIPT_STANDARD: false
-          VALIDATE_PERL: false
-          VALIDATE_MD: false
-          VALIDATE_PHP: false
-          VALIDATE_PYTHON: false
-          VALIDATE_COFFEE: false
-          VALIDATE_RUBY: false
-          VALIDATE_ANSIBLE: false
-          VALIDATE_GO: false
-          VALIDATE_POWERSHELL: false
-          VALIDATE_TERRAFORM: false
-          VALIDATE_KOTLIN: false
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Run linting
+        run: yarn lint

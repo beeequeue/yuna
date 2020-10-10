@@ -18,23 +18,8 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v1
 
-      - name: Install Node.js, NPM and Yarn
-        uses: actions/setup-node@v2-beta
-        with:
-          node-version: 12.13
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache node_modules
-        uses: actions/cache@v2
-        with:
-          path: |
-            ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
 
       - name: Cache electron, electron-builder
         uses: actions/cache@v2
