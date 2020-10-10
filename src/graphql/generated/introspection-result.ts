@@ -17,21 +17,6 @@ const result: IntrospectionResultData = {
     types: [
       {
         kind: 'UNION',
-        name: 'ActivityUnion',
-        possibleTypes: [
-          {
-            name: 'TextActivity',
-          },
-          {
-            name: 'ListActivity',
-          },
-          {
-            name: 'MessageActivity',
-          },
-        ],
-      },
-      {
-        kind: 'UNION',
         name: 'NotificationUnion',
         possibleTypes: [
           {
@@ -75,6 +60,21 @@ const result: IntrospectionResultData = {
           },
           {
             name: 'RelatedMediaAdditionNotification',
+          },
+        ],
+      },
+      {
+        kind: 'UNION',
+        name: 'ActivityUnion',
+        possibleTypes: [
+          {
+            name: 'TextActivity',
+          },
+          {
+            name: 'ListActivity',
+          },
+          {
+            name: 'MessageActivity',
           },
         ],
       },
