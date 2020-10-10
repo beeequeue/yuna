@@ -95,10 +95,10 @@
   },
   "devDependencies": {
     "@graphql-codegen/add": "2.0.1",
-    "@graphql-codegen/cli": "1.17.8",
+    "@graphql-codegen/cli": "1.17.10",
     "@graphql-codegen/fragment-matcher": "1.17.8",
     "@graphql-codegen/schema-ast": "1.17.8",
-    "@graphql-codegen/typescript": "1.17.9",
+    "@graphql-codegen/typescript": "1.17.10",
     "@graphql-codegen/typescript-compatibility": "2.0.0",
     "@graphql-codegen/typescript-operations": "1.17.8",
     "@sentry/webpack-plugin": "1.12.1",
