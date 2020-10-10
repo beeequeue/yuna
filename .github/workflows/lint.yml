@@ -13,5 +13,5 @@ jobs:
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
 
-      - name: Run tests
-        run: yarn test
+      - name: Run linting
+        run: yarn lint
