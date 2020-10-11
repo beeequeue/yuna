@@ -1,7 +1,7 @@
 import { session } from 'electron'
 import { api } from 'electron-util'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
-import { Response } from 'superagent'
+import { HTTPError, Response } from 'superagent'
 import { v4 as uuid } from 'uuid'
 import { resolve } from 'path'
 import {
@@ -41,6 +41,7 @@ export type RequestError<B extends object | null> = {
   status: 200 | 400 | 401 | 404 | 500 | 502 | 429
   ok: false
   body: B
+  error: HTTPError
 } & Response
 
 export type RequestResponse<D extends object = any, E extends object = any> =
