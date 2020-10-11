@@ -1,14 +1,12 @@
 import { BrowserWindow } from 'electron'
 import { download } from 'electron-dl'
 import extractZip from 'extract-zip'
-import type * as TarFs from 'tar-fs'
-import type * as LmzaNative from 'lzma-native'
+import fetch from 'node-fetch'
 import os from 'os'
 import { join } from 'path'
-import { createReadStream, existsSync, promises as fs } from 'fs'
+import { existsSync, promises as fs } from 'fs'
 import { captureException } from '@sentry/node'
 
-import { delay } from '@/utils'
 import { FFMPEG_SAVE_FOLDER } from '@/utils/ffmpeg'
 import { FFMPEG_DOWNLOADED, FFMPEG_FAILED } from '@/messages'
 
@@ -16,24 +14,59 @@ const PLATFORM = os.platform() as 'win32' | 'linux' | 'darwin'
 const ARCH = os.arch() as 'x64' | 'ia32'
 const EXT = PLATFORM === 'win32' ? '.exe' : ''
 
-const downloadUrls = {
-  win32: {
-    ia32:
-      'https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-4.2.2-win32-static.zip',
-    x64:
-      'https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.2.2-win64-static.zip',
-  },
-  linux: {
-    ia32:
-      'https://www.johnvansickle.com/ffmpeg/old-releases/ffmpeg-4.0.3-32bit-static.tar.xz',
-    x64:
-      'https://www.johnvansickle.com/ffmpeg/old-releases/ffmpeg-4.0.3-64bit-static.tar.xz',
-  },
-  darwin: {
-    x64:
-      'https://ffmpeg.zeranoe.com/builds/macos64/static/ffmpeg-4.2.2-macos64-static.zip',
-    ia32: '', // doesn't exist
-  },
+type FfmpegVersion = {
+  ffmpeg: string
+  ffprobe: string
+  ffplay?: string
+}
+
+type FfmpegTargets =
+  | 'windows-64'
+  | 'windows-32'
+  | 'osx-64'
+  | 'linux-32'
+  | 'linux-64'
+  | 'linux-armhf'
+  | 'linux-armel'
+  | 'linux-arm64'
+
+type DownloadUrls = {
+  bin: Record<FfmpegTargets, FfmpegVersion>
+  permalink: string
+  version: string
+}
+
+const fetchDownloadUrls = async (): Promise<DownloadUrls> => {
+  const response = await fetch('https://ffbinaries.com/api/v1/version/latest')
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch FFMPEG versions: ${response.error.status} ${response.error.message}`,
+    )
+  }
+
+  return response.json()
+}
+
+const match = <I extends string, O extends string>(
+  input: I,
+  matches: Array<[matchString: I | string, output: O]>,
+): O | null =>
+  matches.find(matchArray => matchArray.includes(input))?.[1] ?? null
+
+const getDownloadUrlForPlatform = (urls: DownloadUrls) => {
+  const platform = match(PLATFORM, [
+    ['win32', 'windows'],
+    ['darwin', 'osx'],
+    ['linux', 'linux'],
+  ])!
+  const arch = match(ARCH, [
+    ['ia32', '32'],
+    ['x64', '64'],
+  ])!
+  const versionToDownload = `${platform}-${arch}` as FfmpegTargets
+
+  return urls.bin[versionToDownload]
 }
 
 const deleteFolderRecursive = async (path: string) => {
@@ -56,14 +89,14 @@ const deleteFolderRecursive = async (path: string) => {
 
 const goodFileRegex = /((?:ffprobe|ffmpeg)(?:\.exe)?)$/
 
-const extractZipBinaries = async () => {
-  const zipFile = join(FFMPEG_SAVE_FOLDER, 'ffmpeg.zip')
-  let firstDirName = ''
+const extractZipBinaries = async (filename: string) => {
+  const zipFile = join(FFMPEG_SAVE_FOLDER, filename)
+  let firstDirName: string | null = null
 
   await extractZip(zipFile, {
     dir: FFMPEG_SAVE_FOLDER,
     onEntry: entry => {
-      if (firstDirName.length < 1) {
+      if (firstDirName == null && !entry.fileName.includes('.')) {
         firstDirName = entry.fileName.slice(0, entry.fileName.length - 1)
       }
 
@@ -76,45 +109,10 @@ const extractZipBinaries = async () => {
     },
   })
 
-  await deleteFolderRecursive(join(FFMPEG_SAVE_FOLDER, firstDirName))
+  if (firstDirName != null) {
+    await deleteFolderRecursive(join(FFMPEG_SAVE_FOLDER, firstDirName))
+  }
   await fs.unlink(zipFile)
-}
-
-const extractTarBinaries = async () => {
-  // We do this instead of `import`ing so it only does it on the correct platforms.
-  const { createDecompressor } = require('lzma-native') as typeof LmzaNative
-  const { extract: extractTar } = require('tar-fs') as typeof TarFs
-  const tarFile = join(FFMPEG_SAVE_FOLDER, 'ffmpeg.tar.xz')
-
-  await new Promise(resolve =>
-    createReadStream(tarFile)
-      .on('close', resolve)
-      .pipe(createDecompressor())
-      .pipe(
-        extractTar(FFMPEG_SAVE_FOLDER, {
-          filter: name => !goodFileRegex.test(name),
-        }),
-      ),
-  )
-
-  await delay(1000)
-
-  const extractedFolder = join(FFMPEG_SAVE_FOLDER, 'ffmpeg-4.0.3-64bit-static')
-  await Promise.all([
-    fs.rename(
-      join(extractedFolder, 'ffmpeg'),
-      join(FFMPEG_SAVE_FOLDER, 'ffmpeg'),
-    ),
-    fs.rename(
-      join(extractedFolder, 'ffprobe'),
-      join(FFMPEG_SAVE_FOLDER, 'ffprobe'),
-    ),
-  ])
-
-  await delay(1000)
-
-  await fs.rmdir(extractedFolder)
-  await fs.unlink(tarFile)
 }
 
 export const downloadBinariesIfNecessary = async (
@@ -129,27 +127,37 @@ export const downloadBinariesIfNecessary = async (
     return
   }
 
+  if (existsSync(FFMPEG_SAVE_FOLDER)) {
+    await deleteFolderRecursive(FFMPEG_SAVE_FOLDER)
+  }
+  await fs.mkdir(FFMPEG_SAVE_FOLDER)
+
+  const downloadUrls = await fetchDownloadUrls()
+  const downloadUrl = getDownloadUrlForPlatform(downloadUrls)
+
   try {
-    const filename = PLATFORM !== 'linux' ? 'ffmpeg.zip' : 'ffmpeg.tar.xz'
+    await download(window, downloadUrl.ffmpeg, {
+      directory: FFMPEG_SAVE_FOLDER,
+      filename: 'ffmpeg.zip',
+      showBadge: false,
+    })
+    await download(window, downloadUrl.ffprobe, {
+      directory: FFMPEG_SAVE_FOLDER,
+      filename: 'ffprobe.zip',
+      showBadge: false,
+    })
 
-    if (!existsSync(join(FFMPEG_SAVE_FOLDER, filename))) {
-      await download(window, downloadUrls[PLATFORM][ARCH], {
-        directory: FFMPEG_SAVE_FOLDER,
-        filename,
-        showBadge: false,
-      })
-    }
-
-    if (PLATFORM !== 'linux') {
-      await extractZipBinaries()
-    } else {
-      await extractTarBinaries()
-    }
+    await extractZipBinaries('ffmpeg.zip')
+    await extractZipBinaries('ffprobe.zip')
 
     window.webContents.send(FFMPEG_DOWNLOADED)
   } catch (err) {
     window.webContents.send(FFMPEG_FAILED)
 
-    captureException(err)
+    if (process.env.NODE_ENV !== 'production') {
+      throw err
+    } else {
+      captureException(err)
+    }
   }
 }
