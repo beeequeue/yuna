@@ -91,15 +91,10 @@ const goodFileRegex = /((?:ffprobe|ffmpeg)(?:\.exe)?)$/
 
 const extractZipBinaries = async (filename: string) => {
   const zipFile = join(FFMPEG_SAVE_FOLDER, filename)
-  let firstDirName: string | null = null
 
   await extractZip(zipFile, {
     dir: FFMPEG_SAVE_FOLDER,
     onEntry: entry => {
-      if (firstDirName == null && !entry.fileName.includes('.')) {
-        firstDirName = entry.fileName.slice(0, entry.fileName.length - 1)
-      }
-
       const match = goodFileRegex.exec(entry.fileName)
       if (!match || !match[1]) {
         return
@@ -109,9 +104,6 @@ const extractZipBinaries = async (filename: string) => {
     },
   })
 
-  if (firstDirName != null) {
-    await deleteFolderRecursive(join(FFMPEG_SAVE_FOLDER, firstDirName))
-  }
   await fs.unlink(zipFile)
 }
 
