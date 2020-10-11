@@ -41,7 +41,7 @@ const fetchDownloadUrls = async (): Promise<DownloadUrls> => {
 
   if (!response.ok) {
     throw new Error(
-      `Failed to fetch FFMPEG versions: ${response.error.status} ${response.error.message}`,
+      `Failed to fetch FFMPEG versions: ${response.status} ${response.statusText}`,
     )
   }
 
