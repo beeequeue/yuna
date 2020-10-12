@@ -31,8 +31,8 @@
 
 <script lang="ts">
 import { addDays as _addDays, startOfDay } from 'date-fns'
-import { useQuery } from '@vue/apollo-composable'
-import { computed, defineComponent, ref } from '@vue/composition-api'
+import { useQuery, useResult } from '@vue/apollo-composable'
+import { defineComponent, ref } from '@vue/composition-api'
 
 import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
 import {
@@ -58,17 +58,21 @@ export default defineComponent<{ ids: number[] }>({
   setup: props => {
     const page = ref(1)
 
-    const { result } = useQuery<EpisodeFeedQuery, EpisodeFeedVariables>(
+    const query = useQuery<EpisodeFeedQuery, EpisodeFeedVariables>(
       EPISODE_FEED_QUERY,
-      {
+      () => ({
         ids: props.ids,
         page: page.value,
         startDate: addDays(-1),
         endDate: addDays(7),
-      },
+      }),
+      // Required for type inference
+      () => ({}),
     )
-    const airingSchedules = computed(
-      () => result.value?.Page?.airingSchedules ?? [],
+    const airingSchedules = useResult(
+      query.result,
+      [],
+      data => data.Page?.airingSchedules,
     )
 
     const getEpisodeClass = (schedule: AiringFeedItemFragment) => ({

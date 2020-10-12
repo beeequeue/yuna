@@ -12,7 +12,7 @@
         v-tooltip.top="'All shows in List'"
         class="switch list"
         :class="{ active: mode === EpisodeFeedMode.LIST }"
-        @click="updateMode(EpisodeFeedMode.LIST)"
+        @click="mode = EpisodeFeedMode.LIST"
       >
         <icon :icon="listSvg" />
       </div>
@@ -21,7 +21,7 @@
         v-tooltip.top="'Shows in Queue'"
         class="switch queue"
         :class="{ active: mode === EpisodeFeedMode.QUEUE }"
-        @click="updateMode(EpisodeFeedMode.QUEUE)"
+        @click="mode = EpisodeFeedMode.QUEUE"
       >
         <icon :icon="queueSvg" />
       </div>
@@ -30,52 +30,51 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
 import { mdiClipboardTextOutline, mdiPlaylistCheck } from '@mdi/js'
+import { computed, defineComponent, ref } from '@vue/composition-api'
+import { useQuery, useResult } from '@vue/apollo-composable'
 
 import Icon from '@/common/components/icon.vue'
-import AnimatedList from './animated-list.vue'
 import { EPISODE_FEED_LIST_IDS } from '@/graphql/documents/queries'
 import { EpisodeFeedListIdsQuery } from '@/graphql/generated/types'
 
-import { Query } from '@/decorators'
-import {
-  EpisodeFeedMode,
-  getEpisodeFeedMode,
-  setEpisodeFeedMode,
-} from '@/state/settings'
 import { getAnilistUserId } from '@/state/auth'
 import { getQueue } from '@/state/user'
 import { prop } from '@/utils'
 
-@Component({ components: { AnimatedList, Icon } })
-export default class EpisodeFeed extends Vue {
-  @Query<EpisodeFeed, EpisodeFeedListIdsQuery>({
-    query: EPISODE_FEED_LIST_IDS,
-    update: data => data.ListEntries?.map(prop('mediaId')) ?? [],
-  })
-  public listIds!: number[]
+import AnimatedList from './animated-list.vue'
 
-  public get userId() {
-    return getAnilistUserId(this.$store)
-  }
-
-  public get mode(): EpisodeFeedMode {
-    return getEpisodeFeedMode(this.$store)
-  }
-
-  public get queueIds(): number[] {
-    return getQueue(this.$store).map(prop('id'))
-  }
-
-  public updateMode(mode: EpisodeFeedMode) {
-    setEpisodeFeedMode(this.$store, mode)
-  }
-
-  public EpisodeFeedMode = EpisodeFeedMode
-  public listSvg = mdiClipboardTextOutline
-  public queueSvg = mdiPlaylistCheck
+enum EpisodeFeedMode {
+  LIST = 'LIST',
+  QUEUE = 'QUEUE',
 }
+
+export default defineComponent({
+  components: { AnimatedList, Icon },
+  setup: (_, { root }) => {
+    const mode = ref(EpisodeFeedMode.QUEUE)
+
+    const query = useQuery<EpisodeFeedListIdsQuery>(EPISODE_FEED_LIST_IDS)
+    const listIds = useResult(query.result, null, data =>
+      data.ListEntries.map(prop('mediaId')),
+    )
+
+    const queueIds = getQueue(root.$store).map(prop('id'))
+
+    return {
+      mode,
+      EpisodeFeedMode,
+
+      listIds,
+      queueIds,
+
+      userId: computed(() => getAnilistUserId(root.$store)),
+
+      listSvg: mdiClipboardTextOutline,
+      queueSvg: mdiPlaylistCheck,
+    }
+  },
+})
 </script>
 
 <style scoped lang="scss">
