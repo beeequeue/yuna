@@ -67,7 +67,9 @@ export default defineComponent<{ ids: number[] }>({
         endDate: addDays(7),
       }),
       // Required for type inference
-      () => ({}),
+      () => ({
+        enabled: props.ids.length > 0,
+      }),
     )
     const airingSchedules = useResult(
       query.result,
