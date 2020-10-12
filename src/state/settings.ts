@@ -62,13 +62,7 @@ type SetupSettings = {
   finishedSteps: SetupStep[]
 }
 
-export enum EpisodeFeedMode {
-  LIST = 'LIST',
-  QUEUE = 'QUEUE',
-}
-
 export type SettingsState = {
-  episodeFeedMode: EpisodeFeedMode
   autoMarkAsPlanning: boolean
   useCRUnblocker: boolean
   crLocale: string
@@ -154,7 +148,6 @@ const migratedSteps =
         .filter(isNotNil)
 
 const initialState: SettingsState = {
-  episodeFeedMode: SettingsStore.get('episodeFeedMode', EpisodeFeedMode.QUEUE),
   autoMarkAsPlanning: SettingsStore.get('autoMarkAsPlanning', true),
   useCRUnblocker: SettingsStore.get('useCRUnblocker', true),
   crLocale: SettingsStore.get('crLocale', 'enUS'),
@@ -185,10 +178,6 @@ export const settings = {
   getters: {
     getSettings(state: SettingsState) {
       return state
-    },
-
-    getEpisodeFeedMode(state: SettingsState) {
-      return state.episodeFeedMode
     },
 
     getShouldAutoPlay(state: SettingsState) {
@@ -266,12 +255,6 @@ export const settings = {
   },
 
   mutations: {
-    setEpisodeFeedMode(state: SettingsState, mode: EpisodeFeedMode) {
-      state.episodeFeedMode = mode
-
-      SettingsStore.set('episodeFeedMode', mode)
-    },
-
     setCrunchyrollLocale(state: SettingsState, locale: string) {
       state.crLocale = locale
 
@@ -445,7 +428,6 @@ const { read, commit, dispatch } = getStoreAccessors<SettingsState, RootState>(
 )
 
 export const getSettings = read(settings.getters.getSettings)
-export const getEpisodeFeedMode = read(settings.getters.getEpisodeFeedMode)
 export const getShouldAutoPlay = read(settings.getters.getShouldAutoPlay)
 export const getShouldAutoMarkWatched = read(
   settings.getters.getShouldAutoMarkWatched,
@@ -462,7 +444,6 @@ export const getNextUnfinishedStep = read(
 )
 export const getMainListPlugin = read(settings.getters.getMainListPlugin)
 
-export const setEpisodeFeedMode = commit(settings.mutations.setEpisodeFeedMode)
 export const setCrunchyrollLocale = commit(
   settings.mutations.setCrunchyrollLocale,
 )
