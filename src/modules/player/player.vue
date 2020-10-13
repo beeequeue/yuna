@@ -188,7 +188,7 @@ export default defineComponent({
     const setFullscreen = (fullscreen: boolean) => {
       setFullscreenAction(root.$store, fullscreen)
     }
-    const toggleFullscreen = computed(() => setFullscreen(isFullscreen.value))
+    const toggleFullscreen = () => setFullscreen(!isFullscreen.value)
 
     const hls = ref(new Hls())
     const gainNode = ref<GainNode | null>(null)
@@ -350,9 +350,7 @@ export default defineComponent({
       },
       setVolume: _setVolume,
       incrementVolume: (amount: number) => {
-        _setVolume({
-          target: { value: clamp(state.volume + amount, 0, 200) },
-        } as any)
+        _setVolume(clamp(state.volume + amount, 0, 200))
       },
       toggleMute: () => {
         state.muted = !state.muted
@@ -447,7 +445,7 @@ export default defineComponent({
       [KeybindingAction.VOLUME_DOWN]: () => actions.incrementVolume(-10),
       [KeybindingAction.VOLUME_UP]: () => actions.incrementVolume(10),
       [KeybindingAction.TOGGLE_MUTED]: () => actions.toggleMute(),
-      [KeybindingAction.TOGGLE_FULLSCREEN]: () => (toggleFullscreen as any)(),
+      [KeybindingAction.TOGGLE_FULLSCREEN]: () => toggleFullscreen(),
       [KeybindingAction.FRAME_FORWARD]: () => actions.traverseFrames(1),
       [KeybindingAction.FRAME_BACK]: () => actions.traverseFrames(-1),
     }
@@ -567,7 +565,7 @@ export default defineComponent({
       state.levels = null
 
       if (subtitles.tracks.length < 1) {
-        setSubtitleTracks(props.episode.subtitles as any)
+        setSubtitleTracks(props.episode.subtitles as [string, string][])
       }
 
       const oldHls = hls.value
