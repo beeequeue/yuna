@@ -148,8 +148,6 @@ export default defineComponent({
 
     ProvidePlayer()
 
-    trackView(View.Dashboard)
-
     ipcRenderer.on(UPDATE_AVAILABLE, (_, downloadUrl) => {
       setIsUpdateAvailable(context.root.$store, downloadUrl)
 

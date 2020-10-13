@@ -7,4 +7,5 @@ export enum LocalStorageKey {
   Speed = 'speed',
   Subtitle = 'subtitle',
   ListOpen = 'list_open',
+  BlockFathom = 'blockFathomTracking',
 }

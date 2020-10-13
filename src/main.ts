@@ -11,6 +11,7 @@ import { init, setExtra } from '@sentry/browser'
 import * as Integrations from '@sentry/integrations'
 
 import { updateRelations } from '@/lib/relations'
+import { LocalStorageKey } from '@/lib/local-storage'
 import { getIsConnectedTo } from '@/state/auth'
 import { getMainListPlugin } from '@/state/settings'
 import { getQueue } from '@/state/user'
@@ -27,6 +28,12 @@ import 'regenerator-runtime/runtime'
 
 import 'normalize.css'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+
+if (process.env.NODE_ENV !== 'production') {
+  localStorage.setItem(LocalStorageKey.BlockFathom, 'true')
+} else {
+  localStorage.removeItem(LocalStorageKey.BlockFathom)
+}
 
 // Vue config
 Vue.config.productionTip = false
