@@ -5,6 +5,19 @@ declare type PromiseReturnType<T> = T extends (...a: any[]) => Promise<infer R>
   ? R
   : T
 
+type Fathom = {
+  blockTrackingForMe: () => void
+  enableTrackingForMe: () => void
+  trackPageview: (options?: { url?: string; referrer?: string }) => void
+  trackGoal: (id: string, value: number) => void
+}
+
+// @ts-ignore
+declare interface Window {
+  initialLogin: boolean
+  fathom: Fathom
+}
+
 declare type GlobalFetch = {
   fetch: typeof window.fetch
 }
@@ -80,11 +93,6 @@ declare module 'vue-smooth-dnd' {
 
   export const Container: VueConstructor<Vue>
   export const Draggable: VueConstructor<Vue>
-}
-
-// @ts-ignore
-declare interface Window {
-  initialLogin: boolean
 }
 
 declare interface InputEvent<

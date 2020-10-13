@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router, { RawLocation } from 'vue-router'
 import { ErrorHandler } from 'vue-router/types/router'
+import { trackView } from '@/lib/tracking'
 
 Vue.use(Router)
 
@@ -12,7 +13,6 @@ export enum View {
   Queue = 'queue',
   Anime = 'anime',
   Settings = 'settings',
-  Player = 'player',
 }
 
 export const router = new Router({
@@ -70,11 +70,16 @@ export const router = new Router({
   ],
 })
 
+router.afterEach(to => {
+  if (to.name != null && Object.values(View).includes(to.name as View)) {
+    trackView(to.name as View)
+  }
+})
+
 /*
  * Preventing "NavigationDuplicated" errors in console in Vue-router >= 3.1.0
  * https://github.com/vuejs/vue-router/issues/2881#issuecomment-520554378
  */
-
 const routerMethods = ['push', 'replace'] as const
 
 routerMethods.forEach(method => {

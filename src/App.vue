@@ -60,6 +60,7 @@ import EditModal from '@/common/modals/edit-modal.vue'
 import LocalSourceModal from '@/common/modals/local-source/local-source.vue'
 import PlayerContainer from '@/modules/player/player-container.vue'
 import Navbar from '@/modules/navbar/navbar.vue'
+import { Anilist } from '@/lib/anilist'
 import { Crunchyroll } from '@/lib/crunchyroll'
 import { Hidive } from '@/lib/hidive'
 import { getFinishedConnecting } from '@/state/auth'
@@ -79,10 +80,8 @@ import {
 } from '@/messages'
 import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
 import { SimklListPlugin } from '@/plugins/list/simkl-plugin'
-import { trackView } from '@/lib/tracking'
-import { router, View } from '@/router'
+import { router } from '@/router'
 import { ProvidePlayer } from '@/state/player'
-import { Anilist } from '@/lib/anilist'
 
 const requireBg = require.context('@/assets/bg', false, /\.webp$/)
 const backgrounds = requireBg.keys()
@@ -147,8 +146,6 @@ export default defineComponent({
     })
 
     ProvidePlayer()
-
-    trackView(View.Dashboard)
 
     ipcRenderer.on(UPDATE_AVAILABLE, (_, downloadUrl) => {
       setIsUpdateAvailable(context.root.$store, downloadUrl)
