@@ -319,6 +319,16 @@ export default defineComponent({
       if (hoveringTimeout.value) window.clearTimeout(hoveringTimeout.value)
     }
 
+    // Show the controls temporarily when pausing
+    watch(
+      () => props.state.paused,
+      willPause => {
+        if (willPause != true) return
+
+        show()
+      },
+    )
+
     const timeString = computed(() => {
       const current = secondsToTimeString(
         Math.min(props.state.progress.seconds, props.state.duration),

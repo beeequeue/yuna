@@ -294,7 +294,6 @@ export default defineComponent({
       if (state.paused || player.value == null) return
 
       player.value.pause()
-      // TODO: watch paused and show controls in controls
     }
 
     const _setVolume = (volume: number) => {
