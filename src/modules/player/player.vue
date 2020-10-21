@@ -369,7 +369,7 @@ export default defineComponent({
         setDiscordState('paused')
 
         if (isFullscreen.value) {
-          // toggleFullscreen
+          toggleFullscreen()
         }
 
         // Toggling fullscreen already goes back so we only manually do it on big player, not full
@@ -455,7 +455,6 @@ export default defineComponent({
     )
 
     const onKeyDown = (e: KeyboardEvent) => {
-      // @ts-ignore
       keyDownHandler.value(e.key)
     }
     // endregion
