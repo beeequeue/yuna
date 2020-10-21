@@ -1,4 +1,4 @@
-import { DataProxy } from 'apollo-cache'
+import type { ApolloCache, DataProxy } from '@apollo/client/cache'
 import gql from 'graphql-tag'
 import { EPISODE_LIST, LIST_VIEW_QUERY } from '@/graphql/documents/queries'
 import {
@@ -18,8 +18,8 @@ import { EpisodeRelations } from '@/lib/relations'
 import { isNil } from '.'
 
 export const getFragment = <R extends {}, V = void>(
-  cache: DataProxy,
-  { id, fragment, fragmentName, variables }: DataProxy.Fragment<V>,
+  cache: ApolloCache<unknown>,
+  { id, fragment, fragmentName, variables }: DataProxy.Fragment<V, R>,
 ): R | null => {
   try {
     return cache.readFragment<R, V>({ id, fragment, fragmentName, variables })
@@ -29,7 +29,7 @@ export const getFragment = <R extends {}, V = void>(
 }
 
 export const getIsWatched = (
-  cache: DataProxy,
+  cache: ApolloCache<unknown>,
   animeId: number,
   episode: number,
 ) => {
@@ -58,7 +58,7 @@ export const getIsWatched = (
 }
 
 export const getCachedAnimeIdMal = (
-  cache: DataProxy,
+  cache: ApolloCache<unknown>,
   animeId: number,
 ): number | null => {
   const data = getFragment<{ idMal: number | null }>(cache, {
@@ -78,7 +78,7 @@ type CachedExternalLinks = {
 }
 
 export const getCachedExternalLinks = (
-  cache: DataProxy,
+  cache: ApolloCache<unknown>,
   animeId: number,
 ): CachedExternalLinks['externalLinks'] | null => {
   const data = getFragment<CachedExternalLinks>(cache, {
@@ -97,7 +97,7 @@ export const getCachedExternalLinks = (
 }
 
 const getNextEpisodeAiringAt = (
-  cache: DataProxy,
+  cache: ApolloCache<unknown>,
   animeId: number,
 ): number | null => {
   const data = getFragment<CacheAiringDataFragment, null>(cache, {
@@ -117,7 +117,7 @@ const getNextEpisodeAiringAt = (
 }
 
 export const getSoftCachedEpisodes = (
-  cache: DataProxy,
+  cache: ApolloCache<unknown>,
   animeId: number,
   provider: Provider,
 ): EpisodeListEpisodes[] | null => {
@@ -137,7 +137,7 @@ export const getSoftCachedEpisodes = (
 }
 
 export const cacheEpisodes = (
-  cache: DataProxy,
+  cache: ApolloCache<unknown>,
   episodes: EpisodeListEpisodes[],
 ) => {
   episodes = episodes.map(ep => ({
@@ -163,7 +163,7 @@ export const cacheEpisodes = (
 }
 
 export const cacheRelations = (
-  cache: RealProxy,
+  cache: ApolloCache<unknown>,
   relations: EpisodeRelations,
 ) => {
   Object.values(relations).forEach((episodes: EpisodeListEpisodes[]) => {
@@ -178,7 +178,7 @@ export type EpisodeMutationObject = {
 }
 
 export const writeEpisodeProgressToCache = (
-  cache: DataProxy,
+  cache: ApolloCache<unknown>,
   episode: EpisodeMutationObject,
 ) => {
   let episodes = getSoftCachedEpisodes(cache, episode.animeId, episode.provider)
@@ -198,7 +198,10 @@ export const writeEpisodeProgressToCache = (
   cacheEpisodes(cache, episodes)
 }
 
-export const removeFromCacheList = (cache: DataProxy, anilistId: number) => {
+export const removeFromCacheList = (
+  cache: ApolloCache<unknown>,
+  anilistId: number,
+) => {
   for (let i = 1; i < 100; i++) {
     let data: ListViewQuery
 
@@ -229,7 +232,7 @@ export const removeFromCacheList = (cache: DataProxy, anilistId: number) => {
 }
 
 export const addToCacheList = (
-  cache: DataProxy,
+  cache: ApolloCache<unknown>,
   entry: ListViewListEntries,
 ) => {
   let data: ListViewQuery

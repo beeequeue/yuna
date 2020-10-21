@@ -294,7 +294,6 @@ export default defineComponent({
       if (state.paused || player.value == null) return
 
       player.value.pause()
-      // TODO: watch paused and show controls in controls
     }
 
     const _setVolume = (volume: number) => {
@@ -331,7 +330,8 @@ export default defineComponent({
 
         if (!state.initiated) state.initiated = true
 
-        player.value.play()
+        // Silences an error if play() is interrupted by a pause
+        player.value.play().catch(() => null)
       },
       pause: _pause,
       setTime: _setTime,
@@ -369,7 +369,7 @@ export default defineComponent({
         setDiscordState('paused')
 
         if (isFullscreen.value) {
-          // toggleFullscreen
+          toggleFullscreen()
         }
 
         // Toggling fullscreen already goes back so we only manually do it on big player, not full
@@ -455,7 +455,6 @@ export default defineComponent({
     )
 
     const onKeyDown = (e: KeyboardEvent) => {
-      // @ts-ignore
       keyDownHandler.value(e.key)
     }
     // endregion

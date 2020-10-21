@@ -52,7 +52,10 @@ test('fetches and caches changelog if not cached', async () => {
   expect(localStorage[LocalStorageKey.Changelog]).toEqual(
     JSON.stringify(releasesJson.slice(0, 5)), // We cache 5 items
   )
-  expect(approximateFetchedAt).toBe(Math.floor(fetchedAt / 1000))
+
+  const approxFetchedAt = Math.floor(fetchedAt / 1000)
+  expect(approximateFetchedAt).toBeGreaterThanOrEqual(approxFetchedAt - 5)
+  expect(approximateFetchedAt).toBeLessThanOrEqual(approxFetchedAt + 5)
 })
 
 test('fetches changelog if cached but stale', async () => {

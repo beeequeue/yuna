@@ -55,6 +55,7 @@ init({
   dsn: 'https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205',
   environment: process.env.NODE_ENV,
   release: `v${version}`,
+  sampleRate: 0.75,
   ignoreErrors: [
     /Request has been terminated/,
     /Failed to fetch/,

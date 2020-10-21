@@ -22,7 +22,7 @@ const GQL_ENDPOINT = 'https://graphql.anilist.co'
 
 export class Anilist {
   public static login() {
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       authWindow = new BrowserWindow({
         width: 400,
         height: 600,
