@@ -2843,20 +2843,20 @@
     "@typescript-eslint/types" "4.4.0"
     eslint-visitor-keys "^2.0.0"
 
-"@vue/apollo-composable@4.0.0-alpha.10":
-  version "4.0.0-alpha.10"
-  resolved "https://registry.yarnpkg.com/@vue/apollo-composable/-/apollo-composable-4.0.0-alpha.10.tgz#17ad81552f55adde205cad982560ff120e92da87"
-  integrity sha512-PfbUFC+vCjtaRlhYJXekBD9x8yq/JGc/l0J9pEqvE5ZNAE5t6xUsSSdxiWt5bGo08slcdvVno7btydUWnIddBg==
+"@vue/apollo-composable@4.0.0-alpha.12":
+  version "4.0.0-alpha.12"
+  resolved "https://registry.yarnpkg.com/@vue/apollo-composable/-/apollo-composable-4.0.0-alpha.12.tgz#5aab61bf9703a039e95ef60ecb2293e1da80c87f"
+  integrity sha512-BhCHhDgcDPkKOE3ILb7xIGI98dAsX2Ao3TvOjcMlr89IOK3TuD5B9xgPTsFdctTbupWIVdR/n0FDVXjha7g5iA==
   dependencies:
-    throttle-debounce "^2.1.0"
-    vue-demi latest
+    throttle-debounce "^2.3.0"
+    vue-demi "^0.4.0"
 
-"@vue/apollo-option@4.0.0-alpha.7":
-  version "4.0.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/@vue/apollo-option/-/apollo-option-4.0.0-alpha.7.tgz#3ac4bad50ab31f202cee64f9e6bf32b077e46847"
-  integrity sha512-hWFNxzHbz16hhPOBbOqoA0eSdMnwh/1ALvEuqu/QbQcmUa7e5Di0+rBG+JESG98dVRNLOziy2nwrF3fR1oQicA==
+"@vue/apollo-option@4.0.0-alpha.11":
+  version "4.0.0-alpha.11"
+  resolved "https://registry.yarnpkg.com/@vue/apollo-option/-/apollo-option-4.0.0-alpha.11.tgz#b4ecac2d1ac40271cb7f20683fb8e4c85974329a"
+  integrity sha512-IU458Y2cH/eo3RYXyoEoozyRxEgUz/BLC96DQAQKiEc7hFkE6I0g/VZu4tVIP0Od1/ivezdGaAPEVPA2AxE1ug==
   dependencies:
-    throttle-debounce "^2.1.0"
+    throttle-debounce "^2.3.0"
 
 "@vue/babel-helper-vue-jsx-merge-props@^1.0.0":
   version "1.0.0"
@@ -3141,10 +3141,10 @@
   optionalDependencies:
     prettier "^1.18.2"
 
-"@vue/composition-api@1.0.0-beta.16":
-  version "1.0.0-beta.16"
-  resolved "https://registry.yarnpkg.com/@vue/composition-api/-/composition-api-1.0.0-beta.16.tgz#9f7202125214e9398f68018c1162b57b14fd0bdc"
-  integrity sha512-FZgmL2qb2Hy3TGFKCEXHwaddFdTfG17GoA1YFCNGTg5mD3+GfWVchsKKR7XxHIAwOaXiHK/djWWsviSD1NeFFw==
+"@vue/composition-api@1.0.0-beta.18":
+  version "1.0.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@vue/composition-api/-/composition-api-1.0.0-beta.18.tgz#9c91ed2fc297e643defee95f16c551d457384239"
+  integrity sha512-5Ins/G+un8rZoXRllMquvuihHYUMz7EKxgCPTvJiBRml0gRrOz2eRisQbjzj8fuTC6yeURjySpOKXdVkTV4HJA==
   dependencies:
     tslib "^2.0.1"
 
@@ -14786,7 +14786,7 @@ throat@^4.0.0:
   resolved "https://registry.yarnpkg.com/throat/-/throat-4.1.0.tgz#89037cbc92c56ab18926e6ba4cbb200e15672a6a"
   integrity sha1-iQN8vJLFarGJJua6TLsgDhVnKmo=
 
-throttle-debounce@^2.1.0:
+throttle-debounce@^2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/throttle-debounce/-/throttle-debounce-2.3.0.tgz#fd31865e66502071e411817e241465b3e9c372e2"
   integrity sha512-H7oLPV0P7+jgvrk+6mwwwBDmxTaxnu9HMXmloNLXwnNO0ZxZ31Orah2n8lU1eMPvsaowP2CX+USCgyovXfdOFQ==
@@ -15679,7 +15679,7 @@ vue-cli-plugin-electron-builder@2.0.0-rc.4:
     webpack-merge "^4.2.2"
     yargs "^15.3.1"
 
-vue-demi@latest:
+vue-demi@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.4.0.tgz#074e61674b1ec6d3483d54ba9fd7acc1378a66a2"
   integrity sha512-7xaEKWpcyrbP5fVNFWSgF+gf0bWAfvlhH0Cb08Ec4XeTK6FCplaqXmaRLivzl3ypM0mkNcBAjSgctzMul0hgYg==
