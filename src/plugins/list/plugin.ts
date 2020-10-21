@@ -34,40 +34,40 @@ export abstract class ListPlugin {
 
   public abstract isAvailable(): boolean
 
-  public abstract async GetListEntry(
+  public abstract GetListEntry(
     anilistId: number,
   ): Promise<ListEntryWithoutMedia | null>
 
-  public abstract async GetListEntries(
+  public abstract GetListEntries(
     options: QueryListEntriesArgs,
   ): Promise<ListEntryWithoutMedia[] | null>
 
-  public abstract async AddToList(
+  public abstract AddToList(
     anilistId: number,
   ): Promise<AddToListMutation['AddToList']>
 
-  public abstract async DeleteFromList(anilistId: number): Promise<boolean>
+  public abstract DeleteFromList(anilistId: number): Promise<boolean>
 
-  public abstract async UpdateStatus(
+  public abstract UpdateStatus(
     anilistId: number,
     status: MediaListStatus,
   ): Promise<UpdateStatusMutation['UpdateStatus']>
 
-  public abstract async StartRewatching(
+  public abstract StartRewatching(
     anilistId: number,
   ): Promise<StartRewatchingMutation['StartRewatching']>
 
-  public abstract async UpdateProgress(
+  public abstract UpdateProgress(
     anilistId: number,
     progress: number,
   ): Promise<UpdateProgressMutation['UpdateProgress']>
 
-  public abstract async UpdateScore(
+  public abstract UpdateScore(
     anilistId: number,
     score: number,
   ): Promise<UpdateScoreMutation['UpdateScore']>
 
-  public abstract async EditListEntry(
+  public abstract EditListEntry(
     anilistId: number,
     options: EditListEntryOptions,
   ): Promise<EditListEntryMutation['EditListEntry']>

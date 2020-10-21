@@ -1,5 +1,5 @@
 import { DocumentNode } from 'graphql'
-import { ApolloQueryResult } from 'apollo-client'
+import { ApolloQueryResult } from '@apollo/client'
 import { DollarApollo } from '@vue/apollo-option/types/vue-apollo'
 import { ArmServer } from '@/lib/arm-server'
 import {

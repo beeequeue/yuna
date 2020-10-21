@@ -1,3 +1,4 @@
+import { ApolloCache } from '@apollo/client/cache'
 import { captureException } from '@sentry/browser'
 
 import { EpisodeListEpisodes, Provider } from '@/graphql/generated/types'
@@ -21,7 +22,7 @@ const episodesExist = (
 ): episodes is EpisodeListEpisodes[] => !isNil(episodes) && episodes.length >= 1
 
 const getEpisodesFromCache = (
-  cache: RealProxy,
+  cache: ApolloCache<unknown>,
   id: number,
   provider: Provider,
 ) => {
@@ -41,7 +42,7 @@ const getEpisodesFromCache = (
 }
 
 const fetchEpisodesFromCrunchyroll = async (
-  cache: RealProxy,
+  cache: ApolloCache<unknown>,
   id: number,
   provider: Provider,
 ) => {
@@ -90,7 +91,10 @@ const fetchEpisodesFromCrunchyroll = async (
   return relations[id]
 }
 
-const fetchEpisodesFromHidive = async (cache: RealProxy, id: number) => {
+const fetchEpisodesFromHidive = async (
+  cache: ApolloCache<unknown>,
+  id: number,
+) => {
   const externalLinks = getCachedExternalLinks(cache, id) || []
   const hidiveLink = externalLinks.find(propEq('site', 'Hidive'))
 
@@ -127,7 +131,7 @@ type EpisodeVariables = {
 export const EpisodesResolver = async (
   _: any,
   { id, provider }: EpisodeVariables,
-  { cache }: { cache: RealProxy },
+  { cache }: { cache: ApolloCache<unknown> },
 ): Promise<EpisodeListEpisodes[] | null> => {
   const nextEpisodeAiringAt = EpisodeCache.getNextEpisodeAiringAt(id, provider)
   const isStale =

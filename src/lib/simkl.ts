@@ -381,7 +381,7 @@ export class Simkl {
     timeout: number
     interval: number
   }) {
-    return new Promise(resolve => {
+    return new Promise<void>(resolve => {
       const makeRequest = async () =>
         this.request<_OauthPinPending | _OauthPinFinished>(`oauth/pin/${code}`)
 
