@@ -331,7 +331,8 @@ export default defineComponent({
 
         if (!state.initiated) state.initiated = true
 
-        player.value.play()
+        // Silences an error if play() is interrupted by a pause
+        player.value.play().catch(() => null)
       },
       pause: _pause,
       setTime: _setTime,
