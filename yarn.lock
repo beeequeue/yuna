@@ -1720,10 +1720,10 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@mdi/js@5.7.55":
-  version "5.7.55"
-  resolved "https://registry.yarnpkg.com/@mdi/js/-/js-5.7.55.tgz#c3b487131755c726df1802a10ef72096b2de4c2f"
-  integrity sha512-fxOEaPPn4hTlNpUG7VzmleYiK8lilON8dw1g8U42OAILtIu2+knfEjguspfVNtS5aJu1zP+DBeoxbsGhIUZcEw==
+"@mdi/js@5.8.55":
+  version "5.8.55"
+  resolved "https://registry.yarnpkg.com/@mdi/js/-/js-5.8.55.tgz#630bc5fafd8b1d2f6e63489a9ab170177559e41b"
+  integrity sha512-2bvln56SW6V/nSDC/0/NTu1bMF/CgSyZox8mcWbAPWElBN3UYIrukKDUckEER8ifr8X2YJl1RLKQqi7T7qLzmg==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"

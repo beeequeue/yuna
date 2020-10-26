@@ -43,7 +43,7 @@
     "@types/webpack": "4.41.23"
   },
   "dependencies": {
-    "@mdi/js": "5.7.55",
+    "@mdi/js": "5.8.55",
     "@sentry/browser": "5.27.0",
     "@sentry/integrations": "5.27.0",
     "@sentry/node": "5.27.0",
