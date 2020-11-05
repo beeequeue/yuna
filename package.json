@@ -46,7 +46,7 @@
     "@mdi/js": "5.7.55",
     "@sentry/browser": "5.27.0",
     "@sentry/integrations": "5.27.0",
-    "@sentry/node": "5.27.0",
+    "@sentry/node": "5.27.3",
     "@vue/apollo-composable": "4.0.0-alpha.12",
     "@vue/apollo-option": "4.0.0-alpha.11",
     "@vue/composition-api": "1.0.0-beta.18",
