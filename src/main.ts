@@ -7,8 +7,8 @@ import Portal from 'portal-vue'
 import VueComposition, { provide } from '@vue/composition-api'
 import { DefaultApolloClient } from '@vue/apollo-composable'
 import ApolloOption from '@vue/apollo-option'
-import { init, setExtra } from '@sentry/browser'
-import * as Integrations from '@sentry/integrations'
+import { init, setExtra } from '@sentry/vue'
+import { Integrations } from '@sentry/tracing'
 
 import { updateRelations } from '@/lib/relations'
 import { LocalStorageKey } from '@/lib/local-storage'
@@ -51,11 +51,14 @@ const store = new Store(storeOptions)
 
 // Sentry
 init({
-  enabled: process.env.NODE_ENV === 'production',
+  Vue,
   dsn: 'https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205',
+  enabled: process.env.NODE_ENV === 'production',
   environment: process.env.NODE_ENV,
   release: `v${version}`,
   sampleRate: 0.75,
+  attachProps: true,
+  tracingOptions: { trackComponents: true },
   ignoreErrors: [
     /Request has been terminated/,
     /Failed to fetch/,
@@ -64,7 +67,9 @@ init({
     /'TimeRanges': The index provided/,
     /Unauthenticated request/,
   ],
-  integrations: [new Integrations.Vue({ Vue: Vue as any, attachProps: true })],
+  integrations: [
+    new Integrations.BrowserTracing(),
+  ],
   beforeSend: event => {
     const connectedTo = getIsConnectedTo(store)
     Object.entries(connectedTo).forEach(([service, connected]) =>
