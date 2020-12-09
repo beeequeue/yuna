@@ -1,33 +1,33 @@
-import { format } from 'date-fns'
-import crypto from 'crypto'
+import { format } from "date-fns"
+import crypto from "crypto"
 // import { captureException } from '@sentry/browser'
-import superagent from 'superagent/dist/superagent'
-import { ActionContext, Store } from 'vuex'
+import superagent from "superagent/dist/superagent"
+import { ActionContext, Store } from "vuex"
 
-import { EpisodeListEpisodes, Provider } from '@/graphql/generated/types'
-import { getConfig } from '@/config'
-import { userStore } from '@/lib/user'
-import { getHidiveLogin, getIsConnectedTo, setHidive } from '@/state/auth'
-import { isNil, isOfType, RequestError, RequestSuccess } from '@/utils'
-import { Stream } from '@/types'
+import { EpisodeListEpisodes, Provider } from "@/graphql/generated/types"
+import { getConfig } from "@/config"
+import { userStore } from "@/lib/user"
+import { getHidiveLogin, getIsConnectedTo, setHidive } from "@/state/auth"
+import { isNil, isOfType, RequestError, RequestSuccess } from "@/utils"
+import { Stream } from "@/types"
 
-const API_URL = 'api.hidive.com'
-const TOKEN = getConfig('HIDIVE_TOKEN')
-const DEVICE_NAME = 'Android'
-const APP_ID = getConfig('HIDIVE_CLIENT')
+const API_URL = "api.hidive.com"
+const TOKEN = getConfig("HIDIVE_TOKEN")
+const DEVICE_NAME = "Android"
+const APP_ID = getConfig("HIDIVE_CLIENT")
 
-let deviceId = ''
-let visitId = ''
-let ipAddress = ''
+let deviceId = ""
+let visitId = ""
+let ipAddress = ""
 
 export enum HidiveResponseCode {
-  Success = 'Success',
-  InvalidNonce = 'InvalidNonce',
-  InvalidSignature = 'InvalidSignature',
-  InvalidVisitId = 'InvalidVisitId',
-  InvalidEmail = 'InvalidEmail',
-  RegionRestricted = 'RegionRestricted',
-  PremiumContentRestricted = 'PremiumContentRestricted',
+  Success = "Success",
+  InvalidNonce = "InvalidNonce",
+  InvalidSignature = "InvalidSignature",
+  InvalidVisitId = "InvalidVisitId",
+  InvalidEmail = "InvalidEmail",
+  RegionRestricted = "RegionRestricted",
+  PremiumContentRestricted = "PremiumContentRestricted",
 }
 
 // const getErrorFromCode = (code: number) => {
@@ -51,17 +51,17 @@ export enum HidiveResponseCode {
 
 // @ts-ignore
 enum _Locale {
-  Japanese = 'jpn',
-  English = 'eng',
-  Spanish = 'spa',
-  SpanishEU = 'spa-eu',
-  SpanishLatAm = 'spa-la',
-  French = 'fre',
-  German = 'ger',
-  Korean = 'kor',
-  Portuguese = 'por',
-  Turkish = 'tur',
-  Italian = 'ita',
+  Japanese = "jpn",
+  English = "eng",
+  Spanish = "spa",
+  SpanishEU = "spa-eu",
+  SpanishLatAm = "spa-la",
+  French = "fre",
+  German = "ger",
+  Korean = "kor",
+  Portuguese = "por",
+  Turkish = "tur",
+  Italian = "ita",
 }
 
 export type HidiveProfile = {
@@ -169,7 +169,7 @@ type AuthenticateBody = {
     Email: string
     Id: number
     NextBillDate: string | null
-    ServiceLevel: 'Gold' | string
+    ServiceLevel: "Gold" | string
   }
 }
 
@@ -183,7 +183,7 @@ type ReqResponse = {
   IPAddress: string
   Message: string | null
   Messages: {} | any
-  Status: 'Success' | 'InvalidNonce' | string
+  Status: "Success" | "InvalidNonce" | string
   Timestamp: string
 }
 
@@ -193,12 +193,12 @@ type HidiveSuccess<D extends object = any> = {
   IPAddress: string
   Message: null
   Messages: {}
-  Status: 'Success'
+  Status: "Success"
 } & ReqResponse
 
 type HidiveError = {
   Data: any
-  Status: 'InvalidNonce' | string
+  Status: "InvalidNonce" | string
 } & ReqResponse
 
 type HidiveResponse<D extends object = any> =
@@ -206,19 +206,19 @@ type HidiveResponse<D extends object = any> =
   | RequestError<HidiveError>
 
 enum RequestType {
-  Ping = 'Ping',
-  InitDevice = 'InitDevice',
-  Authenticate = 'Authenticate',
-  GetTitle = 'GetTitle',
-  GetVideos = 'GetVideos',
+  Ping = "Ping",
+  InitDevice = "InitDevice",
+  Authenticate = "Authenticate",
+  GetTitle = "GetTitle",
+  GetVideos = "GetVideos",
 }
 
 type StoreType = Store<any> | ActionContext<any, any>
 
 export class Hidive {
   public static get profile() {
-    const userId = userStore.get('hidive.user.id', 0)
-    const profileId = userStore.get('hidive.user.profile', 0)
+    const userId = userStore.get("hidive.user.id", 0)
+    const profileId = userStore.get("hidive.user.profile", 0)
 
     return { userId, profileId }
   }
@@ -287,7 +287,7 @@ export class Hidive {
   public static async fetchEpisodesByUrl(anilistId: number, url: string) {
     const response = await superagent.get(url)
     if (!response.ok) {
-      throw new Error('Could not scrape info from Hidive.')
+      throw new Error("Could not scrape info from Hidive.")
     }
 
     const idMatch = response.text.match(/data-json='{"titleID":\s+?(\d+),/)
@@ -311,11 +311,11 @@ export class Hidive {
       return null
     }
 
-    const title = response.body.Data.Title as GetTitleBody['Title']
+    const title = response.body.Data.Title as GetTitleBody["Title"]
 
-    return title.Episodes.map<Omit<EpisodeListEpisodes, 'isWatched'>>(
+    return title.Episodes.map<Omit<EpisodeListEpisodes, "isWatched">>(
       (ep, index) => ({
-        __typename: 'Episode',
+        __typename: "Episode",
         provider: Provider.Hidive,
         id: `${title.Id}-${ep.VideoKey}`,
         animeId: anilistId,
@@ -328,7 +328,7 @@ export class Hidive {
           ep.VideoKey
         }`,
         subtitles: [],
-        thumbnail: ep.ScreenShotSmallUrl.replace(/^\/\//, 'https://'),
+        thumbnail: ep.ScreenShotSmallUrl.replace(/^\/\//, "https://"),
       }),
     )
   }
@@ -348,14 +348,14 @@ export class Hidive {
 
     const Data = response.body.Data as _Stream
     const videoUrls = Data.VideoUrls
-    const japaneseSubbedKey = Object.keys(videoUrls).find(str =>
-      str.includes('Japanese'),
+    const japaneseSubbedKey = Object.keys(videoUrls).find((str) =>
+      str.includes("Japanese"),
     ) as string
 
     return {
       url: videoUrls[japaneseSubbedKey].hls[0],
       subtitles: Data.CaptionLanguages.map(
-        lang => [lang, Data.CaptionVttUrls[lang]] as [string, string],
+        (lang) => [lang, Data.CaptionVttUrls[lang]] as [string, string],
       ),
       progress: Data.CurrentTime,
     }
@@ -377,13 +377,13 @@ export class Hidive {
     return (await superagent
       .post(`https://${API_URL}/api/v1/${type}`)
       .set({
-        'X-ApplicationId': APP_ID,
-        'X-DeviceId': deviceId,
-        'X-VisitId': visitId,
-        'X-UserId': this.profile.userId,
-        'X-ProfileId': this.profile.profileId,
-        'X-Nonce': nonce,
-        'X-Signature': signature,
+        "X-ApplicationId": APP_ID,
+        "X-DeviceId": deviceId,
+        "X-VisitId": visitId,
+        "X-UserId": this.profile.userId,
+        "X-ProfileId": this.profile.profileId,
+        "X-Nonce": nonce,
+        "X-Signature": signature,
       })
       .send(body)) as HidiveResponse<D>
   }
@@ -394,10 +394,10 @@ export class Hidive {
     let user: string
     let password: string
 
-    if (isOfType<{ store: StoreType }>(options, 'store')) {
+    if (isOfType<{ store: StoreType }>(options, "store")) {
       const login = getHidiveLogin(options.store)
-      user = login?.user ?? ''
-      password = login?.password ?? ''
+      user = login?.user ?? ""
+      password = login?.password ?? ""
     } else {
       user = options.user
       password = options.password
@@ -424,11 +424,11 @@ export class Hidive {
   }
 
   private static generateNonce() {
-    const date = format(this.getUTCDate(), 'yyMMddHHmm')
+    const date = format(this.getUTCDate(), "yyMMddHHmm")
 
     const nonce = date + TOKEN
 
-    const hashedNonce = crypto.createHash('sha256').update(nonce).digest('hex')
+    const hashedNonce = crypto.createHash("sha256").update(nonce).digest("hex")
 
     return hashedNonce
   }
@@ -445,15 +445,15 @@ export class Hidive {
       nonce +
       TOKEN
 
-    return crypto.createHash('sha256').update(sigCleanStr).digest('hex')
+    return crypto.createHash("sha256").update(sigCleanStr).digest("hex")
   }
 
   private static convertName(name: string) {
     return name
-      .replace(/[^a-zA-Z\d]/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-/, '')
-      .replace(/-$/, '')
+      .replace(/[^a-zA-Z\d]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-/, "")
+      .replace(/-$/, "")
       .toLowerCase()
   }
 }

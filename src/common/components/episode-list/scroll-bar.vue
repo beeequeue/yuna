@@ -13,9 +13,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { Required } from '@/decorators'
-import { clamp, isNil } from '@/utils'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { Required } from "@/decorators"
+import { clamp, isNil } from "@/utils"
 
 @Component
 export default class ScrollBar extends Vue {
@@ -58,7 +58,7 @@ export default class ScrollBar extends Vue {
 
       window.clearInterval(this.intervalId)
 
-      container.$el.addEventListener('scroll', this.updateMark)
+      container.$el.addEventListener("scroll", this.updateMark)
       this.episodeWrapper = container
 
       this.updateMark()
@@ -66,7 +66,7 @@ export default class ScrollBar extends Vue {
   }
 
   public destroyed() {
-    this.episodeWrapper!.$el.removeEventListener('scroll', this.updateMark)
+    this.episodeWrapper!.$el.removeEventListener("scroll", this.updateMark)
   }
 
   public getClasses(item: number) {
@@ -93,7 +93,7 @@ export default class ScrollBar extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .scroll-bar-container {
   display: flex;

@@ -36,14 +36,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { TooltipSettings } from 'v-tooltip'
-import { mdiHomeOutline, mdiMenu } from '@mdi/js'
+import { Component, Vue } from "vue-property-decorator"
+import { TooltipSettings } from "v-tooltip"
+import { mdiHomeOutline, mdiMenu } from "@mdi/js"
 
-import Icon from '@/common/components/icon.vue'
-import Search from '@/modules/search/search.vue'
-import Item from './item.vue'
-import SettingsDropdown from './settings-dropdown.vue'
+import Icon from "@/common/components/icon.vue"
+import Search from "@/modules/search/search.vue"
+import Item from "./item.vue"
+import SettingsDropdown from "./settings-dropdown.vue"
 
 @Component({
   components: { Search, SettingsDropdown, Icon, Item },
@@ -68,18 +68,18 @@ export default class Navbar extends Vue {
   }
 
   public get isInFirstSetup() {
-    return this.$route.path.includes('/first-time-setup')
+    return this.$route.path.includes("/first-time-setup")
   }
 
-  public getTooltip(item: 'queue' | 'list'): TooltipSettings | false {
-    let content = ''
+  public getTooltip(item: "queue" | "list"): TooltipSettings | false {
+    let content = ""
 
     switch (item) {
-      case 'queue':
-        content = 'Try importing your current shows from your List!'
+      case "queue":
+        content = "Try importing your current shows from your List!"
         break
-      case 'list':
-        content = 'Look through your List for your next show to watch!'
+      case "list":
+        content = "Look through your List for your next show to watch!"
         break
     }
 
@@ -87,7 +87,7 @@ export default class Navbar extends Vue {
       content,
       show: this.showFirstTimeTooltips && this.isInFirstSetup,
       autoHide: false,
-      trigger: 'manual',
+      trigger: "manual",
     }
   }
 
@@ -98,7 +98,7 @@ export default class Navbar extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .navbar {
   position: relative;

@@ -31,21 +31,21 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { mdiChevronDown } from '@mdi/js'
+import { Component, Vue } from "vue-property-decorator"
+import { mdiChevronDown } from "@mdi/js"
 
-import { EpisodeListEpisodes } from '@/graphql/generated/types'
-import Icon from '@/common/components/icon.vue'
-import Checkbox from '@/common/components/form/checkbox.vue'
-import AnimatedSize from '@/common/components/animated-size.vue'
-import CrunchyrollEpisode from './crunchyroll-episode.vue'
+import { EpisodeListEpisodes } from "@/graphql/generated/types"
+import Icon from "@/common/components/icon.vue"
+import Checkbox from "@/common/components/form/checkbox.vue"
+import AnimatedSize from "@/common/components/animated-size.vue"
+import CrunchyrollEpisode from "./crunchyroll-episode.vue"
 
-import { Required } from '@/decorators'
-import { _CollectionWithEpisodes } from '@/lib/crunchyroll'
-import { humanizeNumberList, isNotNil, pluck, prop, propEq } from '@/utils'
-import { TooltipSettings } from 'v-tooltip'
+import { Required } from "@/decorators"
+import { _CollectionWithEpisodes } from "@/lib/crunchyroll"
+import { humanizeNumberList, isNotNil, pluck, prop, propEq } from "@/utils"
+import { TooltipSettings } from "v-tooltip"
 
-const pluckId = (obj: Array<{ id: string }>) => pluck('id', obj)
+const pluckId = (obj: Array<{ id: string }>) => pluck("id", obj)
 
 @Component({
   components: { AnimatedSize, CrunchyrollEpisode, Checkbox, Icon },
@@ -64,7 +64,7 @@ export default class CrunchyrollCollection extends Vue {
     const selectedIds = pluckId(this.selectedEpisodes)
     const ownedIds = pluckId(this.collection.episodes)
 
-    return selectedIds.filter(id => ownedIds.includes(id))
+    return selectedIds.filter((id) => ownedIds.includes(id))
   }
 
   public get isFucked() {
@@ -79,9 +79,9 @@ export default class CrunchyrollCollection extends Vue {
     if (this.ownedSelectedEpisodes.length < 1) return null
 
     const selectedNumbers = this.ownedSelectedEpisodes
-      .map(id => this.selectedEpisodes.find(propEq('id', id)))
+      .map((id) => this.selectedEpisodes.find(propEq("id", id)))
       .filter(isNotNil)
-      .map(prop('episodeNumber'))
+      .map(prop("episodeNumber"))
 
     return humanizeNumberList(selectedNumbers)
   }
@@ -89,8 +89,8 @@ export default class CrunchyrollCollection extends Vue {
   public get tooltip(): TooltipSettings | null {
     if (this.isFucked) {
       return {
-        content: 'This is not available.',
-        placement: 'top',
+        content: "This is not available.",
+        placement: "top",
       }
     }
 
@@ -110,13 +110,13 @@ export default class CrunchyrollCollection extends Vue {
   }
 
   public getSelectedEpisode(id: string) {
-    return this.selectedEpisodes.find(propEq('id', id))
+    return this.selectedEpisodes.find(propEq("id", id))
   }
 }
 </script>
 
 <style scoped lang="scss">
-@import '../../../../colors';
+@import "../../../../colors";
 
 .collection {
   position: relative;
@@ -141,11 +141,11 @@ export default class CrunchyrollCollection extends Vue {
       fill: $white;
       padding: 0 5px;
 
-      & /deep/ svg {
+      & ::v-deep svg {
         transition: transform 0.5s;
       }
 
-      &.flip /deep/ svg {
+      &.flip ::v-deep svg {
         transform: rotateZ(-180deg);
       }
     }

@@ -1,23 +1,21 @@
-import Vue from 'vue'
-import { StoreOptions } from 'vuex'
-import Router from 'vue-router'
-import deepmerge from 'deepmerge'
+import { StoreOptions } from "vuex"
+import Router from "vue-router"
+import deepmerge from "deepmerge"
+import { render as originalRender } from "@testing-library/vue"
 
-import { VueClass } from '@vue/test-utils'
-import { render as originalRender } from '@testing-library/vue'
-
-import { DeepPartial } from '@/types'
-import { RootState, storeOptions } from '@/state/store'
+import { DeepPartial } from "@/types"
+import { RootState, storeOptions } from "@/state/store"
 
 export const render = <P extends Record<string, unknown>>(
-  component: VueClass<Vue>,
+  component: any, // TODO: Update when testing library does
   props: P = {} as P,
   customStore: DeepPartial<StoreOptions<RootState>> = {},
 ) =>
   originalRender(component, {
     props,
     store: deepmerge(storeOptions, customStore),
-    router: new Router(),
+    // TODO: remove any when fixed in testing library
+    ["router" as any]: new Router(),
   })
 
 export const mockLocaleStorage = (mock: Record<string, any>) => {

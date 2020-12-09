@@ -13,16 +13,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { Default, Required } from '@/decorators'
-import AnimatedSize from '@/common/components/animated-size.vue'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { Default, Required } from "@/decorators"
+import AnimatedSize from "@/common/components/animated-size.vue"
 @Component({
   components: { AnimatedSize },
 })
 export default class ListLink extends Vue {
   @Required(String) public logo!: string
   @Required(String) public title!: string
-  @Default(String, 'hundred') public type!: 'percent' | 'hundred'
+  @Default(String, "hundred") public type!: "percent" | "hundred"
   @Prop(Boolean) public loading!: boolean
   @Prop(String) public link!: string | null
   @Prop(Number) public score!: number | null
@@ -30,13 +30,13 @@ export default class ListLink extends Vue {
   public get scoreString() {
     if (!this.score) return null
 
-    return this.type === 'hundred' ? this.score.toFixed(2) : `${this.score}%`
+    return this.type === "hundred" ? this.score.toFixed(2) : `${this.score}%`
   }
 }
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .item > .logo {
   position: relative;
@@ -50,7 +50,7 @@ export default class ListLink extends Vue {
     height: 15px;
   }
 
-  & /deep/ svg {
+  & ::v-deep svg {
     height: 20px;
     width: 20px;
   }

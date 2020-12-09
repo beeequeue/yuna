@@ -1,13 +1,13 @@
 // eslint-disable no-use-before-declare
-import { getStoreAccessors } from 'vuex-typescript'
-import { userStore } from '@/lib/user'
-import { RootState } from '@/state/store'
-import { HidiveProfile } from '@/lib/hidive'
-import { getStreamingSources, isNil, isNotNil, omit, propEq } from '@/utils'
-import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
-import { SimklListPlugin } from '@/plugins/list/simkl-plugin'
-import { MediaExternalLink, Provider } from '@/graphql/generated/types'
-import { StreamingSource } from '@/types'
+import { getStoreAccessors } from "vuex-typescript"
+import { userStore } from "@/lib/user"
+import { RootState } from "@/state/store"
+import { HidiveProfile } from "@/lib/hidive"
+import { getStreamingSources, isNil, isNotNil, omit, propEq } from "@/utils"
+import { AnilistListPlugin } from "@/plugins/list/anilist/anilist-plugin"
+import { SimklListPlugin } from "@/plugins/list/simkl-plugin"
+import { MediaExternalLink, Provider } from "@/graphql/generated/types"
+import { StreamingSource } from "@/types"
 
 type ServiceData = {
   user: null | {
@@ -66,7 +66,7 @@ const getConnectionScore = (state: AuthState, provider: Provider) => {
 
 const getSourceScore = (source: StreamingSource, sources: string[]) => {
   // Since enums are lowercase
-  const lowercaseSources = sources.map(str => str.toLowerCase())
+  const lowercaseSources = sources.map((str) => str.toLowerCase())
 
   return lowercaseSources.includes(source) ? 0 : -1000
 }
@@ -82,7 +82,7 @@ export const getDefaultProvider = (
   if (isNil(links)) return Provider.Crunchyroll
 
   const sources = getStreamingSources(links.filter(isNotNil)).map(
-    source => source.site,
+    (source) => source.site,
   )
 
   const providers = {
@@ -107,29 +107,29 @@ export const getDefaultProvider = (
 
 const initialState: AuthState = {
   crunchyroll: {
-    user: userStore.get('crunchyroll.user', null),
-    token: userStore.get('crunchyroll.token', null),
-    expires: userStore.get('crunchyroll.expires', null),
-    refreshToken: userStore.get('crunchyroll.refreshToken', null),
+    user: userStore.get("crunchyroll.user", null),
+    token: userStore.get("crunchyroll.token", null),
+    expires: userStore.get("crunchyroll.expires", null),
+    refreshToken: userStore.get("crunchyroll.refreshToken", null),
     country: null,
   },
   anilist: {
-    user: userStore.get('anilist.user', null),
-    token: userStore.get('anilist.token', null),
-    expires: userStore.get('anilist.expires', null),
+    user: userStore.get("anilist.user", null),
+    token: userStore.get("anilist.token", null),
+    expires: userStore.get("anilist.expires", null),
   },
   hidive: {
-    profiles: userStore.get('hidive.profiles', []),
-    user: userStore.get('hidive.user', null),
+    profiles: userStore.get("hidive.profiles", []),
+    user: userStore.get("hidive.user", null),
     login: {
-      user: userStore.get('hidive.login.user', null),
-      password: userStore.get('hidive.login.password', null),
+      user: userStore.get("hidive.login.user", null),
+      password: userStore.get("hidive.login.password", null),
     },
   },
   simkl: {
-    token: userStore.get('simkl.token', null),
-    expires: userStore.get('simkl.expires', null),
-    user: userStore.get('simkl.user', null),
+    token: userStore.get("simkl.token", null),
+    expires: userStore.get("simkl.expires", null),
+    user: userStore.get("simkl.user", null),
   },
 }
 
@@ -177,7 +177,7 @@ export const auth = {
 
       if (isNil(selectedId)) return -1
 
-      return state.hidive.profiles.findIndex(propEq('Id', selectedId))
+      return state.hidive.profiles.findIndex(propEq("Id", selectedId))
     },
 
     getHidiveLogin(state: AuthState) {
@@ -214,14 +214,14 @@ export const auth = {
   },
 
   mutations: {
-    setCrunchyroll(state: AuthState, data: Omit<CrunchyrollData, 'country'>) {
+    setCrunchyroll(state: AuthState, data: Omit<CrunchyrollData, "country">) {
       state.crunchyroll.user = data.user
       state.crunchyroll.token = data.token
       state.crunchyroll.refreshToken = data.refreshToken
       state.crunchyroll.expires = data.expires
 
       const extraKeys = Object.keys(
-        omit(data, ['user', 'token', 'refreshToken', 'expires']),
+        omit(data, ["user", "token", "refreshToken", "expires"]),
       )
       if (extraKeys.length > 0) {
         // eslint-disable-next-line no-console
@@ -230,7 +230,7 @@ export const auth = {
         )
       }
 
-      userStore.set('crunchyroll', data)
+      userStore.set("crunchyroll", data)
     },
 
     setCrunchyrollCountry(state: AuthState, countryCode: string) {
@@ -242,13 +242,13 @@ export const auth = {
       state.anilist.token = data.token
       state.anilist.expires = data.expires
 
-      const extraKeys = Object.keys(omit(data, ['user', 'token', 'expires']))
+      const extraKeys = Object.keys(omit(data, ["user", "token", "expires"]))
       if (extraKeys.length > 0) {
         // eslint-disable-next-line no-console
         console.warn(`Tried to set ${extraKeys} without setters in setAnilist`)
       }
 
-      userStore.set('anilist', data)
+      userStore.set("anilist", data)
     },
 
     setHidive(state: AuthState, data: Required<HidiveData> | null) {
@@ -259,7 +259,7 @@ export const auth = {
           login: null as any,
         }
 
-        userStore.set('hidive', state.hidive)
+        userStore.set("hidive", state.hidive)
         return
       }
 
@@ -269,11 +269,11 @@ export const auth = {
           id: data.user!.id,
           profile: data.user!.profile,
           name: data.user!.name,
-          url: 'https://hidive.com/profile/edit',
+          url: "https://hidive.com/profile/edit",
         },
       }
 
-      userStore.set('hidive', data)
+      userStore.set("hidive", data)
     },
 
     setHidiveProfile(state: AuthState, index: number) {
@@ -286,7 +286,7 @@ export const auth = {
         profile: profile.Id,
       }
 
-      userStore.set('hidive', state.hidive)
+      userStore.set("hidive", state.hidive)
     },
 
     setSimkl(state: AuthState, data: Required<SimklData> | null) {
@@ -297,7 +297,7 @@ export const auth = {
           token: null,
         }
 
-        userStore.set('simkl', state.simkl)
+        userStore.set("simkl", state.simkl)
         return
       }
 
@@ -310,16 +310,16 @@ export const auth = {
         },
       }
 
-      userStore.set('simkl', data)
+      userStore.set("simkl", data)
     },
   },
 }
 
-const { commit, read } = getStoreAccessors<AuthState, RootState>('auth')
+const { commit, read } = getStoreAccessors<AuthState, RootState>("auth")
 
 type _Anime = {
   id: number
-  externalLinks: null | Array<null | Pick<MediaExternalLink, 'site' | 'url'>>
+  externalLinks: null | Array<null | Pick<MediaExternalLink, "site" | "url">>
 }
 
 export const getIsConnectedTo = read(auth.getters.getIsConnectedTo)

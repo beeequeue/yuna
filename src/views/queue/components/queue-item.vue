@@ -11,7 +11,7 @@
         <animated-size v-if="isWatching">
           <div class="progress">
             <div class="watched">{{ listEntry.progress }}</div>
-            <div class="total">{{ anime.episodes || '?' }}</div>
+            <div class="total">{{ anime.episodes || "?" }}</div>
           </div>
         </animated-size>
       </transition>
@@ -127,15 +127,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { mdiChevronDown, mdiMenu, mdiPencil } from '@mdi/js'
+import { Component, Vue } from "vue-property-decorator"
+import { mdiChevronDown, mdiMenu, mdiPencil } from "@mdi/js"
 
-import { EPISODE_LIST } from '@/graphql/documents/queries'
+import { EPISODE_LIST } from "@/graphql/documents/queries"
 import {
   setProgress,
   startRewatching,
   updateStatus,
-} from '@/graphql/mutations/list-entry'
+} from "@/graphql/mutations/list-entry"
 import {
   EpisodeListEpisodes,
   EpisodeListQuery,
@@ -143,23 +143,23 @@ import {
   MediaListStatus,
   Provider,
   QueueAnime,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 
-import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
-import Icon from '@/common/components/icon.vue'
-import AnimeBanner from '@/common/components/anime-banner.vue'
-import EpisodeList from '@/common/components/episode-list/episode-list.vue'
-import AnimatedSize from '@/common/components/animated-size.vue'
-import SourceList from '@/common/components/source-list.vue'
-import CButton from '@/common/components/button.vue'
-import SourceSelect from './source-select.vue'
+import NextEpisodeInfo from "@/common/components/next-episode-info.vue"
+import Icon from "@/common/components/icon.vue"
+import AnimeBanner from "@/common/components/anime-banner.vue"
+import EpisodeList from "@/common/components/episode-list/episode-list.vue"
+import AnimatedSize from "@/common/components/animated-size.vue"
+import SourceList from "@/common/components/source-list.vue"
+import CButton from "@/common/components/button.vue"
+import SourceSelect from "./source-select.vue"
 
-import { Query, Required } from '@/decorators'
-import { removeFromQueueById, toggleQueueItemOpen } from '@/state/user'
-import { initEditModal, sendErrorToast } from '@/state/app'
-import { QueueItem as IQueueItem } from '@/lib/user'
-import { capitalize, delay, getIconForStatus, isNil } from '@/utils'
-import { CrunchyrollProviders } from '@/types'
+import { Query, Required } from "@/decorators"
+import { removeFromQueueById, toggleQueueItemOpen } from "@/state/user"
+import { initEditModal, sendErrorToast } from "@/state/app"
+import { QueueItem as IQueueItem } from "@/lib/user"
+import { capitalize, delay, getIconForStatus, isNil } from "@/utils"
+import { CrunchyrollProviders } from "@/types"
 
 @Component({
   components: {
@@ -175,9 +175,9 @@ import { CrunchyrollProviders } from '@/types'
 })
 export default class QueueItem extends Vue {
   @Query<QueueItem, EpisodeListQuery, EpisodeListVariables>({
-    fetchPolicy: 'network-only',
+    fetchPolicy: "network-only",
     query: EPISODE_LIST,
-    loadingKey: 'episodesLoading',
+    loadingKey: "episodesLoading",
     variables() {
       return {
         id: this.anime.id,
@@ -188,18 +188,18 @@ export default class QueueItem extends Vue {
       return !this.anime.id || !this.item.open
     },
     error(err) {
-      if (typeof err === 'string') {
-        this.episodesFetchingError = err.replace('Network error: ', '')
+      if (typeof err === "string") {
+        this.episodesFetchingError = err.replace("Network error: ", "")
         return
       }
 
-      if (typeof err.message === 'string') {
+      if (typeof err.message === "string") {
         this.episodesFetchingError = err.message
         return
       }
 
       this.episodesFetchingError =
-        'Something went wrong fetching the episodes. :('
+        "Something went wrong fetching the episodes. :("
     },
     async result() {
       if (
@@ -211,7 +211,7 @@ export default class QueueItem extends Vue {
 
       sendErrorToast(
         this.$store,
-        'Could not find episodes on Crunchyroll! Try using the manual search!',
+        "Could not find episodes on Crunchyroll! Try using the manual search!",
       )
 
       this.highlightSourceSelector = true
@@ -280,7 +280,7 @@ export default class QueueItem extends Vue {
     const listEntryId = this.anime.listEntry?.id
 
     if (isNil(listEntryId)) {
-      return sendErrorToast(this.$store, 'No entry found..?')
+      return sendErrorToast(this.$store, "No entry found..?")
     }
 
     switch (status) {
@@ -342,7 +342,7 @@ export default class QueueItem extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 @function gradient($color, $opacity: 0.5) {
   @return linear-gradient(90deg, transparentize($color, $opacity), transparent);
@@ -418,7 +418,7 @@ export default class QueueItem extends Vue {
       cursor: -webkit-grab;
       z-index: 5;
 
-      & /deep/ svg {
+      & ::v-deep svg {
         fill: $highlight;
       }
 
@@ -460,11 +460,11 @@ export default class QueueItem extends Vue {
       padding: 0 5px;
       cursor: pointer;
 
-      & /deep/ svg {
+      & ::v-deep svg {
         transition: transform 0.5s;
       }
 
-      &.flip /deep/ svg {
+      &.flip ::v-deep svg {
         transform: rotateZ(-180deg);
       }
     }

@@ -8,7 +8,7 @@
           :disabled="saving"
           label="Status"
           :items="statusItems"
-          :on-change="value => setValue('status', value)"
+          :on-change="(value) => setValue('status', value)"
           :value="status"
         />
 
@@ -19,7 +19,7 @@
           :min="0"
           :max="anime.episodes"
           :value="progress"
-          :on-change="value => setValue('progress', value)"
+          :on-change="(value) => setValue('progress', value)"
         />
 
         <number-input
@@ -29,7 +29,7 @@
           :min="0"
           :max="100"
           :value="score"
-          :on-change="value => setValue('score', value)"
+          :on-change="(value) => setValue('score', value)"
         />
 
         <number-input
@@ -39,7 +39,7 @@
           :min="0"
           :max="999"
           :value="repeated"
-          :on-change="value => setValue('rewatched', value)"
+          :on-change="(value) => setValue('rewatched', value)"
         />
 
         <transition name="fade">
@@ -77,11 +77,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { mdiCloseCircle } from '@mdi/js'
+import { Component, Vue } from "vue-property-decorator"
+import { mdiCloseCircle } from "@mdi/js"
 
-import { deleteFromList, editListEntry } from '@/graphql/mutations/list-entry'
-import { MediaListStatus } from '@/graphql/generated/types'
+import { deleteFromList, editListEntry } from "@/graphql/mutations/list-entry"
+import { MediaListStatus } from "@/graphql/generated/types"
 
 import {
   EditModalAnime,
@@ -89,17 +89,17 @@ import {
   ModalName,
   setEditingAnimeValue,
   toggleModal,
-} from '@/state/app'
-import { enumToArray, humanizeMediaListStatus } from '@/utils'
+} from "@/state/app"
+import { enumToArray, humanizeMediaListStatus } from "@/utils"
 
-import CButton from '@/common/components/button.vue'
-import NumberInput from '@/common/components/form/number-input.vue'
+import CButton from "@/common/components/button.vue"
+import NumberInput from "@/common/components/form/number-input.vue"
 // @ts-ignore
-import Dropdown, { DropdownItem } from '@/common/components/form/dropdown.vue'
-import ModalBase from '@/common/modals/base.vue'
-import AnimeBanner from '@/common/components/anime-banner.vue'
-import Icon from '@/common/components/icon.vue'
-import Loading from '@/common/components/loading.vue'
+import Dropdown, { DropdownItem } from "@/common/components/form/dropdown.vue"
+import ModalBase from "@/common/modals/base.vue"
+import AnimeBanner from "@/common/components/anime-banner.vue"
+import Icon from "@/common/components/icon.vue"
+import Loading from "@/common/components/loading.vue"
 
 @Component({
   components: {
@@ -125,7 +125,7 @@ export default class EditModal extends Vue {
   }
 
   public statusItems: DropdownItem[] = enumToArray(MediaListStatus).map(
-    status => ({
+    (status) => ({
       label: humanizeMediaListStatus(
         { progress: null, status: status as any },
         false,
@@ -134,7 +134,7 @@ export default class EditModal extends Vue {
     }),
   )
 
-  public readonly modalName: ModalName = 'edit'
+  public readonly modalName: ModalName = "edit"
   public readonly deleteSvg = mdiCloseCircle
 
   public get anime() {
@@ -165,7 +165,7 @@ export default class EditModal extends Vue {
     return this.anime.listEntry.rewatched
   }
 
-  public setValue(key: keyof EditModalAnime['listEntry'], value: any) {
+  public setValue(key: keyof EditModalAnime["listEntry"], value: any) {
     setEditingAnimeValue(this.$store, { key, value })
   }
 
@@ -184,7 +184,7 @@ export default class EditModal extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 $gutter: 25px;
 
@@ -211,7 +211,7 @@ $gutter: 25px;
   & > .favourite {
     position: relative;
 
-    & > .button /deep/ .icon {
+    & > .button ::v-deep .icon {
       height: 35px;
       width: 35px;
     }

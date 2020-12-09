@@ -29,13 +29,13 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, watch } from '@vue/composition-api'
-import { useQuery, useResult } from '@vue/apollo-composable'
+import { computed, defineComponent, ref, watch } from "@vue/composition-api"
+import { useQuery, useResult } from "@vue/apollo-composable"
 
-import ExternalPlayer from '@/modules/player/external-player.vue'
-import { setProgress as setProgressAction } from '@/graphql/mutations/list-entry'
-import ANIME_QUERY from './player-anime.graphql'
-import { EPISODE_LIST } from '@/graphql/documents/queries'
+import ExternalPlayer from "@/modules/player/external-player.vue"
+import { setProgress as setProgressAction } from "@/graphql/mutations/list-entry"
+import ANIME_QUERY from "./player-anime.graphql"
+import { EPISODE_LIST } from "@/graphql/documents/queries"
 import {
   EpisodeListEpisodes,
   EpisodeListQuery,
@@ -43,11 +43,11 @@ import {
   PlayerAnimeQuery,
   PlayerAnimeVariables,
   Provider,
-} from '@/graphql/generated/types'
-import { usePlayer } from '@/state/player'
-import { getShouldAutoMarkWatched, getShouldAutoPlay } from '@/state/settings'
+} from "@/graphql/generated/types"
+import { usePlayer } from "@/state/player"
+import { getShouldAutoMarkWatched, getShouldAutoPlay } from "@/state/settings"
 
-import Player from './player.vue'
+import Player from "./player.vue"
 
 export default defineComponent({
   components: { ExternalPlayer, Player },
@@ -70,7 +70,7 @@ export default defineComponent({
     const listEntry = useResult(
       animeQuery.result,
       null,
-      data => data.anime?.listEntry,
+      (data) => data.anime?.listEntry,
     )
 
     const episodesQuery = useQuery<EpisodeListQuery, EpisodeListVariables>(
@@ -87,7 +87,7 @@ export default defineComponent({
     const episodes = useResult(
       episodesQuery.result,
       null,
-      data => data.episodes,
+      (data) => data.episodes,
     )
     const episode = computed(() =>
       playlist.currentIndex.value == null
@@ -104,7 +104,7 @@ export default defineComponent({
     const timeout = ref<number | null>(null)
     watch(
       nextEpisode,
-      newEpisode => {
+      (newEpisode) => {
         if (timeout.value != null) {
           clearTimeout(timeout.value)
         }
@@ -160,7 +160,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 $anim-speed: 0.5s;
 

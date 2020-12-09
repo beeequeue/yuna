@@ -1,21 +1,21 @@
-import { ApolloCache } from '@apollo/client/cache'
-import { captureException } from '@sentry/browser'
+import { ApolloCache } from "@apollo/client/cache"
+import { captureException } from "@sentry/browser"
 
-import { EpisodeListEpisodes, Provider } from '@/graphql/generated/types'
+import { EpisodeListEpisodes, Provider } from "@/graphql/generated/types"
 
-import { fetchEpisodesOfSeries } from '@/lib/myanimelist'
-import { getEpisodeRelations } from '@/lib/relations'
-import { EpisodeCache } from '@/lib/episode-cache'
-import { AniDB } from '@/lib/anidb'
-import { Hidive } from '@/lib/hidive'
-import { Simkl } from '@/lib/simkl'
-import { isNil, propEq } from '@/utils'
+import { fetchEpisodesOfSeries } from "@/lib/myanimelist"
+import { getEpisodeRelations } from "@/lib/relations"
+import { EpisodeCache } from "@/lib/episode-cache"
+import { AniDB } from "@/lib/anidb"
+import { Hidive } from "@/lib/hidive"
+import { Simkl } from "@/lib/simkl"
+import { isNil, propEq } from "@/utils"
 import {
   cacheRelations,
   getCachedAnimeIdMal,
   getCachedExternalLinks,
   getSoftCachedEpisodes,
-} from '@/utils/cache'
+} from "@/utils/cache"
 
 const episodesExist = (
   episodes: EpisodeListEpisodes[] | null | undefined,
@@ -79,7 +79,7 @@ const fetchEpisodesFromCrunchyroll = async (
     return null
   }
 
-  const episodesWithCorrectProvider = unconfirmedEpisodes.map(ep => ({
+  const episodesWithCorrectProvider = unconfirmedEpisodes.map((ep) => ({
     ...ep,
     provider: provider,
   }))
@@ -96,10 +96,10 @@ const fetchEpisodesFromHidive = async (
   id: number,
 ) => {
   const externalLinks = getCachedExternalLinks(cache, id) || []
-  const hidiveLink = externalLinks.find(propEq('site', 'Hidive'))
+  const hidiveLink = externalLinks.find(propEq("site", "Hidive"))
 
   if (isNil(hidiveLink)) {
-    throw new Error('Could not find link to Hidive.')
+    throw new Error("Could not find link to Hidive.")
   }
 
   let unconfirmedEpisodes: EpisodeListEpisodes[] | null = null

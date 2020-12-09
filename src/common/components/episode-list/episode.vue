@@ -45,15 +45,15 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue'
-import { mdiBookmark, mdiBookmarkRemove, mdiCheckCircleOutline } from '@mdi/js'
+import Vue, { PropType } from "vue"
+import { mdiBookmark, mdiBookmarkRemove, mdiCheckCircleOutline } from "@mdi/js"
 
-import { getSpoilerSettings } from '@/state/settings'
+import { getSpoilerSettings } from "@/state/settings"
 
-import CButton from '../button.vue'
-import Icon from '../icon.vue'
-import { ListEntry } from '@/state/app'
-import { Episode as IEpisode } from '@/graphql/generated/types'
+import CButton from "../button.vue"
+import Icon from "../icon.vue"
+import { ListEntry } from "@/state/app"
+import { Episode as IEpisode } from "@/graphql/generated/types"
 
 export default Vue.extend({
   components: { CButton, Icon },
@@ -62,13 +62,13 @@ export default Vue.extend({
       type: Object as PropType<
         Pick<
           IEpisode,
-          | 'animeId'
-          | 'index'
-          | 'provider'
-          | 'episodeNumber'
-          | 'thumbnail'
-          | 'title'
-          | 'isWatched'
+          | "animeId"
+          | "index"
+          | "provider"
+          | "episodeNumber"
+          | "thumbnail"
+          | "title"
+          | "isWatched"
         >
       >,
       required: true,
@@ -102,7 +102,7 @@ export default Vue.extend({
     buttonTooltip(): string | null {
       return this.episode.episodeNumber > 0
         ? null
-        : 'This episode shares watched status with episode 1.'
+        : "This episode shares watched status with episode 1."
     },
     classes(): Record<string, boolean> {
       return {
@@ -116,20 +116,20 @@ export default Vue.extend({
   },
   methods: {
     handleClick() {
-      this.$emit('click')
+      this.$emit("click")
     },
     setProgress() {
       const newProgress =
         this.episode.episodeNumber + (this.episode.isWatched ? -1 : 0)
 
-      this.$emit('update-progress', newProgress)
+      this.$emit("update-progress", newProgress)
     },
   },
 })
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .episode {
   position: relative;
@@ -205,7 +205,7 @@ export default Vue.extend({
       transform: rotateZ(-45deg) translateX(0);
     }
 
-    & /deep/ svg {
+    & ::v-deep svg {
       transform: rotateZ(45deg);
     }
   }
@@ -224,7 +224,7 @@ export default Vue.extend({
     & > div {
       width: 100%;
       text-align: left;
-      font-family: 'Raleway', sans-serif;
+      font-family: "Raleway", sans-serif;
       font-weight: 600;
       font-size: 1.1em;
       text-shadow: $outline;

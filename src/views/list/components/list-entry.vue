@@ -34,15 +34,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from "vue-property-decorator"
 
-import Actions from '@/common/components/actions.vue'
-import Loading from '@/common/components/loading.vue'
-import ScrollingText from '@/common/components/scrolling-text.vue'
-import { ListViewListEntries } from '@/graphql/generated/types'
+import Actions from "@/common/components/actions.vue"
+import Loading from "@/common/components/loading.vue"
+import ScrollingText from "@/common/components/scrolling-text.vue"
+import { ListViewListEntries } from "@/graphql/generated/types"
 
-import { Required } from '@/decorators'
-import { ListMedia } from '../types'
+import { Required } from "@/decorators"
+import { ListMedia } from "../types"
 
 @Component({ components: { ScrollingText, Loading, Actions } })
 export default class ListEntry extends Vue {
@@ -62,8 +62,8 @@ export default class ListEntry extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
-@import '../list-variables';
+@import "../../../colors";
+@import "../list-variables";
 
 .entry {
   position: relative;
@@ -136,7 +136,7 @@ export default class ListEntry extends Vue {
       position: relative;
       overflow: hidden;
 
-      font-family: 'Raleway', sans-serif;
+      font-family: "Raleway", sans-serif;
       font-weight: 600;
       font-size: 1.35em;
       white-space: nowrap;
@@ -148,7 +148,7 @@ export default class ListEntry extends Vue {
       filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.15));
       pointer-events: none;
 
-      & /deep/ .text {
+      & ::v-deep .text {
         padding-left: $triangleWidth;
         padding-right: 30px;
       }
@@ -162,7 +162,7 @@ export default class ListEntry extends Vue {
       transform: translateX(calc(100% + #{$triangleWidth} - 21px));
       transition: transform 0.25s;
 
-      & /deep/ .button {
+      & ::v-deep .button {
         border-radius: 0;
         /*box-shadow: -1px -1px 4px transparentize(black, 0.25);*/
         box-shadow: none;

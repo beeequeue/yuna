@@ -1,22 +1,22 @@
-import { activeWindow } from 'electron-util'
-import superagent from 'superagent/dist/superagent'
-import { ActionContext, Store } from 'vuex'
+import { activeWindow } from "electron-util"
+import superagent from "superagent/dist/superagent"
+import { ActionContext, Store } from "vuex"
 
-import missingThumbnail from '@/assets/missing-thumbnail.webp'
-import { EpisodeListEpisodes, Provider } from '@/graphql/generated/types'
+import missingThumbnail from "@/assets/missing-thumbnail.webp"
+import { EpisodeListEpisodes, Provider } from "@/graphql/generated/types"
 
-import { getConfig } from '@/config'
+import { getConfig } from "@/config"
 import {
   getSettings,
   setCrunchyrollLocale,
   SettingsStore,
-} from '@/state/settings'
-import { userStore } from '@/lib/user'
+} from "@/state/settings"
+import { userStore } from "@/lib/user"
 import {
   getIsConnectedTo,
   setCrunchyroll,
   setCrunchyrollCountry,
-} from '@/state/auth'
+} from "@/state/auth"
 import {
   anyPass,
   delay,
@@ -27,18 +27,18 @@ import {
   RequestError,
   RequestSuccess,
   T,
-} from '@/utils'
-import { Stream } from '@/types'
+} from "@/utils"
+import { Stream } from "@/types"
 
-const API_URL = 'api.crunchyroll.com'
-const VERSION = '0'
-const ENGLISH = 'enUS'
-const device_type = 'com.crunchyroll.windows.desktop'
+const API_URL = "api.crunchyroll.com"
+const VERSION = "0"
+const ENGLISH = "enUS"
+const device_type = "com.crunchyroll.windows.desktop"
 const device_id = getDeviceUuid()
-const access_token = getConfig('CRUNCHYROLL_TOKEN')
+const access_token = getConfig("CRUNCHYROLL_TOKEN")
 
 export type User = {
-  class: 'user'
+  class: "user"
   user_id: number
   etp_guid: string
   username: string
@@ -47,7 +47,7 @@ export type User = {
   last_name: string
   premium?: string
   is_publisher: false
-  access_type: 'premium' | string
+  access_type: "premium" | string
   created: string
 }
 
@@ -68,12 +68,12 @@ export type _ImageSet = {
 export type _StreamData = {
   hardsub_lang: string
   audio_lang: string
-  format: 'hls'
+  format: "hls"
   streams: _Stream[]
 }
 
 export type _Stream = {
-  quality: 'adaptive' | 'low' | 'mid' | 'high' | 'ultra'
+  quality: "adaptive" | "low" | "mid" | "high" | "ultra"
   expires: string
   url: string
 }
@@ -87,7 +87,7 @@ export type _Media = {
   series_id: string
   series_name: string
   series_etp_guid: string
-  media_type: 'anime' | 'drama'
+  media_type: "anime" | "drama"
   episode_number: string
   duration: number
   name: string
@@ -111,8 +111,8 @@ export type _Media = {
 }
 
 type _Series = {
-  class: 'series'
-  media_type: 'anime'
+  class: "series"
+  media_type: "anime"
   series_id: string
   etp_guid: string
   name: string
@@ -125,8 +125,8 @@ type _Series = {
 
 type _Collection = {
   availability_notes: string
-  class: 'collection'
-  media_type: 'anime'
+  class: "collection"
+  media_type: "anime"
   series_id: string
   collection_id: string
   complete: boolean
@@ -159,8 +159,8 @@ export type _SeriesWithCollections = {
 }
 
 export type _AutocompleteResult = {
-  class: 'series'
-  media_type: 'anime'
+  class: "series"
+  media_type: "anime"
   series_id: string
   name: string
   description: string
@@ -171,13 +171,13 @@ export type _AutocompleteResult = {
 }
 
 type CrunchyrollSuccess<D extends object = any> = {
-  code: 'ok'
+  code: "ok"
   error: false
   data: D
 }
 
 type CrunchyrollError = {
-  code: 'bad_request' | 'bad_session' | 'object_not_found' | 'forbidden'
+  code: "bad_request" | "bad_session" | "object_not_found" | "forbidden"
   error: true
   message: string
 }
@@ -202,20 +202,20 @@ export type SearchResult = {
 }
 
 type RequestTypes =
-  | 'add_to_queue'
-  | 'autocomplete'
-  | 'categories'
-  | 'info'
-  | 'list_collections'
-  | 'list_media'
-  | 'list_locales'
-  | 'log'
-  | 'login'
-  | 'logout'
-  | 'queue'
-  | 'recently_watched'
-  | 'remove_from_queue'
-  | 'start_session'
+  | "add_to_queue"
+  | "autocomplete"
+  | "categories"
+  | "info"
+  | "list_collections"
+  | "list_media"
+  | "list_locales"
+  | "log"
+  | "login"
+  | "logout"
+  | "queue"
+  | "recently_watched"
+  | "remove_from_queue"
+  | "start_session"
 
 const getUrl = (req: RequestTypes) =>
   `https://${API_URL}/${req}.${VERSION}.json`
@@ -226,7 +226,7 @@ const responseIsError = (
   return res.body.error === true
 }
 
-let _sessionId: string = userStore.get('crunchyroll.token', '')
+let _sessionId: string = userStore.get("crunchyroll.token", "")
 let _locales: _Locale[] = []
 
 export type SessionResponse = {
@@ -260,8 +260,8 @@ export class Crunchyroll {
       } catch (e) {
         if (getIsConnectedTo(store).crunchyroll) {
           store.dispatch(
-            'app/sendErrorToast',
-            'Could not create US session. 😞',
+            "app/sendErrorToast",
+            "Could not create US session. 😞",
             {
               root: true,
             },
@@ -273,7 +273,7 @@ export class Crunchyroll {
     if (data == null) {
       data = await Crunchyroll.createSessionFromUrl(
         store,
-        getUrl('start_session'),
+        getUrl("start_session"),
         auth,
       )
     }
@@ -291,15 +291,15 @@ export class Crunchyroll {
     password: string,
   ) => {
     const data = new FormData()
-    data.append('account', username)
-    data.append('password', password)
-    data.append('session_id', _sessionId)
+    data.append("account", username)
+    data.append("password", password)
+    data.append("session_id", _sessionId)
 
     const response = (await superagent
-      .post(getUrl('login'))
+      .post(getUrl("login"))
       .send(data)) as CrunchyrollResponse<LoginSuccess>
 
-    removeCookies({ domain: 'crunchyroll.com' })
+    removeCookies({ domain: "crunchyroll.com" })
 
     if (responseIsError(response)) {
       return Promise.reject(response.body.message)
@@ -311,7 +311,7 @@ export class Crunchyroll {
     )
     const user = response.body.data.user
 
-    _sessionId = session?.session_id ?? ''
+    _sessionId = session?.session_id ?? ""
     setCrunchyroll(store, {
       user: {
         id: Number(user.user_id),
@@ -336,7 +336,7 @@ export class Crunchyroll {
       expires: null,
     })
 
-    removeCookies({ domain: 'crunchyroll.com' })
+    removeCookies({ domain: "crunchyroll.com" })
 
     await Crunchyroll.createSession(store)
 
@@ -349,12 +349,12 @@ export class Crunchyroll {
   }
 
   public static fetchLocales = async (): Promise<_Locale[]> => {
-    let response = await Crunchyroll.request<_Locale[]>('list_locales')
+    let response = await Crunchyroll.request<_Locale[]>("list_locales")
 
     if (responseIsError(response)) {
       await delay(1500)
 
-      response = await Crunchyroll.request<_Locale[]>('list_locales')
+      response = await Crunchyroll.request<_Locale[]>("list_locales")
       if (responseIsError(response)) {
         throw new Error(response.body.message)
       }
@@ -367,12 +367,12 @@ export class Crunchyroll {
     anilistId: number,
     seriesId: number,
   ): Promise<_SeriesWithCollections> => {
-    const response = await Crunchyroll.request<_Series>('info', {
+    const response = await Crunchyroll.request<_Series>("info", {
       series_id: seriesId,
     })
 
     if (responseIsError(response)) {
-      if (response.body.code === 'bad_session') {
+      if (response.body.code === "bad_session") {
         activeWindow().reload()
       }
 
@@ -399,21 +399,21 @@ export class Crunchyroll {
   public static fetchEpisode = async (
     mediaId: string,
   ): Promise<_Media | null> => {
-    const response = await Crunchyroll.request<_Media>('info', {
+    const response = await Crunchyroll.request<_Media>("info", {
       media_id: mediaId,
-      fields: mediaFields.join(','),
+      fields: mediaFields.join(","),
     })
 
     if (responseIsError(response)) {
-      if (response.body.code === 'bad_session') {
+      if (response.body.code === "bad_session") {
         activeWindow().reload()
       }
 
-      if (response.body.code === 'object_not_found') {
+      if (response.body.code === "object_not_found") {
         return null
       }
 
-      if (response.body.code === 'forbidden') return null
+      if (response.body.code === "forbidden") return null
 
       throw new Error(response.body.message)
     }
@@ -426,14 +426,14 @@ export class Crunchyroll {
     seriesId: number,
   ): Promise<_CollectionWithEpisodes[]> => {
     const response = await Crunchyroll.request<_Collection[]>(
-      'list_collections',
+      "list_collections",
       {
         series_id: seriesId,
       },
     )
 
     if (responseIsError(response)) {
-      if (response.body.code === 'bad_session') {
+      if (response.body.code === "bad_session") {
         activeWindow().reload()
       }
 
@@ -453,14 +453,14 @@ export class Crunchyroll {
     id: number,
     collectionId: string,
   ): Promise<EpisodeListEpisodes[]> => {
-    const response = await Crunchyroll.request<_Media[]>('list_media', {
+    const response = await Crunchyroll.request<_Media[]>("list_media", {
       collection_id: collectionId,
       limit: 1000,
-      fields: mediaFields.join(','),
+      fields: mediaFields.join(","),
     })
 
     if (responseIsError(response)) {
-      if (response.body.code === 'bad_session') {
+      if (response.body.code === "bad_session") {
         activeWindow().reload()
       }
 
@@ -508,14 +508,14 @@ export class Crunchyroll {
     mediaId: number,
     progressInSeconds: number,
   ) => {
-    const response = await Crunchyroll.request('log', {
-      event: 'playback_status',
+    const response = await Crunchyroll.request("log", {
+      event: "playback_status",
       media_id: mediaId,
       playhead: progressInSeconds,
     })
 
     if (responseIsError(response)) {
-      throw new Error('Could not update progress of episode!')
+      throw new Error("Could not update progress of episode!")
     }
   }
 
@@ -523,16 +523,16 @@ export class Crunchyroll {
     query: string,
   ): Promise<SearchResult[]> => {
     const response = await Crunchyroll.request<_AutocompleteResult[]>(
-      'autocomplete',
+      "autocomplete",
       {
         q: query,
-        media_types: 'anime',
+        media_types: "anime",
         limit: 10,
       },
     )
 
     if (responseIsError(response)) {
-      if (response.body.code === 'bad_session') {
+      if (response.body.code === "bad_session") {
         activeWindow().reload()
       }
 
@@ -541,7 +541,7 @@ export class Crunchyroll {
 
     const data = response.body.data as _AutocompleteResult[]
 
-    return data.map(result => ({
+    return data.map((result) => ({
       id: Number(result.series_id),
       title: result.name,
       description: result.description,
@@ -568,7 +568,7 @@ export class Crunchyroll {
   ) =>
     (await superagent.get(`https://${API_URL}/${type}.${VERSION}.json`).query({
       session_id: _sessionId.length > 0 ? _sessionId : undefined,
-      locale: useCustomLocale ? SettingsStore.get('crLocale') : ENGLISH,
+      locale: useCustomLocale ? SettingsStore.get("crLocale") : ENGLISH,
       device_id,
       device_type,
       ...query,
@@ -585,8 +585,8 @@ export class Crunchyroll {
         access_token,
         device_type,
         device_id,
-        version: '1.1',
-        auth: auth || userStore.get('crunchyroll.refreshToken', null),
+        version: "1.1",
+        auth: auth || userStore.get("crunchyroll.refreshToken", null),
       })
       .ok(T)) as CrunchyrollResponse<SessionResponse>
 
@@ -596,8 +596,8 @@ export class Crunchyroll {
 
     _sessionId = response.body.data.session_id
 
-    userStore.set('crunchyroll.sessionId', _sessionId)
-    userStore.set('crunchyroll.country', response.body.data.country_code)
+    userStore.set("crunchyroll.sessionId", _sessionId)
+    userStore.set("crunchyroll.country", response.body.data.country_code)
 
     setCrunchyrollCountry(store, response.body.data.country_code)
 
@@ -608,16 +608,16 @@ export class Crunchyroll {
     mediaId: string,
   ): Promise<StreamInfo> => {
     const response = await Crunchyroll.request<StreamInfo>(
-      'info',
+      "info",
       {
         media_id: mediaId,
-        fields: ['media.stream_data', 'media.playhead'].join(','),
+        fields: ["media.stream_data", "media.playhead"].join(","),
       },
       true,
     )
 
     if (responseIsError(response)) {
-      if (response.body.code === 'bad_session') {
+      if (response.body.code === "bad_session") {
         activeWindow().reload()
       }
 
@@ -633,19 +633,19 @@ export class Crunchyroll {
 }
 
 const mediaFields = [
-  'most_likely_media',
-  'media',
-  'media.name',
-  'media.description',
-  'media.episode_number',
-  'media.duration',
-  'media.playhead',
-  'media.screenshot_image',
-  'media.media_id',
-  'media.series_id',
-  'media.series_name',
-  'media.collection_id',
-  'media.url',
+  "most_likely_media",
+  "media",
+  "media.name",
+  "media.description",
+  "media.episode_number",
+  "media.duration",
+  "media.playhead",
+  "media.screenshot_image",
+  "media.media_id",
+  "media.series_id",
+  "media.series_name",
+  "media.collection_id",
+  "media.url",
 ]
 
 const mediaToEpisode = (id: number) => (
@@ -659,8 +659,8 @@ const mediaToEpisode = (id: number) => (
     episode_number,
   }: _Media,
   index: number,
-): Omit<EpisodeListEpisodes, 'isWatched'> => ({
-  __typename: 'Episode',
+): Omit<EpisodeListEpisodes, "isWatched"> => ({
+  __typename: "Episode",
   provider: Provider.Crunchyroll,
   id: media_id,
   animeId: id,
@@ -675,10 +675,10 @@ const mediaToEpisode = (id: number) => (
 })
 
 const notNumberRegex = /[^\d.]/g
-const onlyNumbers = (str: string) => str.replace(notNumberRegex, '')
+const onlyNumbers = (str: string) => str.replace(notNumberRegex, "")
 
 const getEpisodeNumber = (num: string | number) => {
-  if (typeof num !== 'string') {
+  if (typeof num !== "string") {
     num = num.toString()
   }
 
@@ -694,7 +694,7 @@ const fixEpisodeNumbers = (episodes: EpisodeListEpisodes[]) => {
 
   const firstIndex = Math.max(0, getEpisodeNumber(episodeNumber) - 1)
 
-  return episodes.map(ep => {
+  return episodes.map((ep) => {
     const num = getEpisodeNumber(ep.episodeNumber)
 
     return {
@@ -709,7 +709,7 @@ const episodeNumberIsHalf = ({ episode_number }: _Media) =>
   getEpisodeNumber(episode_number) % 1 !== 0
 
 const isSpecialEpisode = ({ episode_number }: _Media) =>
-  episode_number === 'SP' || episode_number === ''
+  episode_number === "SP" || episode_number === ""
 
 const isRealEpisode = (ep: _Media) =>
   !anyPass(ep, [episodeNumberIsHalf, isSpecialEpisode])

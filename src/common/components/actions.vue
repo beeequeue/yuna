@@ -119,7 +119,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from '@vue/composition-api'
+import { computed, defineComponent } from "@vue/composition-api"
 import {
   mdiClose,
   mdiPause,
@@ -129,42 +129,42 @@ import {
   mdiPlaylistPlay,
   mdiPlaylistPlus,
   mdiRepeat,
-} from '@mdi/js'
+} from "@mdi/js"
 
 import {
   addToList,
   startRewatching,
   updateStatus,
-} from '@/graphql/mutations/list-entry'
+} from "@/graphql/mutations/list-entry"
 import {
   AnimeViewAnime,
   AnimeViewListEntry,
   MediaListStatus,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 import {
   addToQueue as _addToQueue,
   getIsInQueue,
   getQueue,
   removeFromQueueByIndex,
-} from '@/state/user'
-import { initEditModal, sendErrorToast } from '@/state/app'
-import { getSettings } from '@/state/settings'
-import { isNil, propEq } from '@/utils'
+} from "@/state/user"
+import { initEditModal, sendErrorToast } from "@/state/app"
+import { getSettings } from "@/state/settings"
+import { isNil, propEq } from "@/utils"
 
-import CButton from '@/common/components/button.vue'
-import { TooltipSettings } from 'v-tooltip'
-import { Maybe } from '@/types'
+import CButton from "@/common/components/button.vue"
+import { TooltipSettings } from "v-tooltip"
+import { Maybe } from "@/types"
 
 export enum ActionKeys {
-  ADD = 'addEntry',
-  START = 'startEntry',
-  RESUME = 'resumeEntry',
-  PAUSE = 'pauseEntry',
-  DROP = 'dropEntry',
-  REPEAT = 'repeatEntry',
-  ADD_QUEUE = 'addToQueue',
-  REMOVE_QUEUE = 'removeFromQueue',
-  EDIT = 'editEntry',
+  ADD = "addEntry",
+  START = "startEntry",
+  RESUME = "resumeEntry",
+  PAUSE = "pauseEntry",
+  DROP = "dropEntry",
+  REPEAT = "repeatEntry",
+  ADD_QUEUE = "addToQueue",
+  REMOVE_QUEUE = "removeFromQueue",
+  EDIT = "editEntry",
 }
 
 type Props = {
@@ -209,7 +209,7 @@ export default defineComponent<Props>({
 
       return {
         content,
-        placement: props.horizontal ? 'top' : 'right',
+        placement: props.horizontal ? "top" : "right",
       }
     }
 
@@ -218,16 +218,16 @@ export default defineComponent<Props>({
 
       initEditModal(root.$store, {
         animeId: props.anime.id,
-        title: props.anime?.title?.userPreferred ?? 'MISSING_TITLE',
+        title: props.anime?.title?.userPreferred ?? "MISSING_TITLE",
         episodes: props.anime.episodes,
-        bannerImage: props.anime?.bannerImage ?? '',
+        bannerImage: props.anime?.bannerImage ?? "",
         listEntry: props.listEntry,
       })
     }
 
     const createListEntry = async () => {
       if (!props.anime) {
-        return sendErrorToast(root.$store, 'No anime found..?')
+        return sendErrorToast(root.$store, "No anime found..?")
       }
 
       await addToList(root, props.anime.id)
@@ -235,7 +235,7 @@ export default defineComponent<Props>({
 
     const addToQueue = async () => {
       if (!props.anime) {
-        return sendErrorToast(root.$store, 'No anime found..?')
+        return sendErrorToast(root.$store, "No anime found..?")
       }
 
       if (!props.listEntry && shouldAddToListAsWell.value) {
@@ -247,11 +247,11 @@ export default defineComponent<Props>({
 
     const removeFromQueue = () => {
       if (!props.anime) {
-        return sendErrorToast(root.$store, 'No anime found..?')
+        return sendErrorToast(root.$store, "No anime found..?")
       }
 
       const index = getQueue(root.$store).findIndex(
-        propEq('id', props.anime.id),
+        propEq("id", props.anime.id),
       )
 
       removeFromQueueByIndex(root.$store, index)
@@ -259,7 +259,7 @@ export default defineComponent<Props>({
 
     const statusMutation = async (status: MediaListStatus) => {
       if (!props.anime) {
-        return sendErrorToast(root.$store, 'No anime found..?')
+        return sendErrorToast(root.$store, "No anime found..?")
       }
 
       if (status === MediaListStatus.Repeating) {
@@ -313,7 +313,7 @@ export default defineComponent<Props>({
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .actions {
   display: flex;

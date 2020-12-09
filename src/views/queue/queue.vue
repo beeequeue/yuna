@@ -84,24 +84,24 @@
 </template>
 
 <script lang="ts">
-import { Component, Inject, Vue } from 'vue-property-decorator'
-import { Container, Draggable } from 'vue-smooth-dnd'
-import { remote, shell } from 'electron'
-import { activeWindow, api } from 'electron-util'
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
-import { resolve } from 'path'
-import indexBy from 'lodash.keyby'
-import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from '@mdi/js'
+import { Component, Inject, Vue } from "vue-property-decorator"
+import { Container, Draggable } from "vue-smooth-dnd"
+import { remote, shell } from "electron"
+import { activeWindow, api } from "electron-util"
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs"
+import { resolve } from "path"
+import indexBy from "lodash.keyby"
+import { mdiClockOutline, mdiPause, mdiPlay, mdiPlaylistRemove } from "@mdi/js"
 
-import CButton from '@/common/components/button.vue'
-import QueueItem from './components/queue-item.vue'
-import ManualSearchModal from './modals/manual-search/manual-search-modal.vue'
+import CButton from "@/common/components/button.vue"
+import QueueItem from "./components/queue-item.vue"
+import ManualSearchModal from "./modals/manual-search/manual-search-modal.vue"
 
 import {
   IMPORT_EXTERNAL_LINKS_QUERY,
   IMPORT_QUERY,
   QUEUE_QUERY,
-} from './graphql/documents'
+} from "./graphql/documents"
 import {
   ImportExternalLinksExternalLinks,
   ImportExternalLinksQuery,
@@ -113,21 +113,21 @@ import {
   QueueAnime,
   QueueQuery,
   QueueVariables,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 
-import { Query } from '@/decorators'
-import { sendErrorToast, sendToast } from '@/state/app'
-import { getAnilistUsername } from '@/state/auth'
+import { Query } from "@/decorators"
+import { sendErrorToast, sendToast } from "@/state/app"
+import { getAnilistUsername } from "@/state/auth"
 import {
   addToQueue,
   getQueue,
   setQueue,
   setQueueItemProvider,
   toggleQueueItemOpen,
-} from '@/state/user'
-import { QueueItem as IQueueItem } from '@/lib/user'
-import { isNil, isNotNil, pick, prop, propEq, sortNumber } from '@/utils'
-import { PlayerState, PlayerSymbol } from '@/state/player'
+} from "@/state/user"
+import { QueueItem as IQueueItem } from "@/lib/user"
+import { isNil, isNotNil, pick, prop, propEq, sortNumber } from "@/utils"
+import { PlayerState, PlayerSymbol } from "@/state/player"
 
 @Component({
   components: {
@@ -139,8 +139,8 @@ import { PlayerState, PlayerSymbol } from '@/state/player'
   },
 })
 export default class Queue extends Vue {
-  private defaultBackupPath = resolve(api.app.getPath('userData'), 'backups')
-  private jsonFilter = { extensions: ['json'], name: '*' }
+  private defaultBackupPath = resolve(api.app.getPath("userData"), "backups")
+  private jsonFilter = { extensions: ["json"], name: "*" }
 
   @Inject(PlayerSymbol as symbol)
   private playerState!: Readonly<PlayerState>
@@ -149,15 +149,15 @@ export default class Queue extends Vue {
     query: QUEUE_QUERY,
     variables() {
       return {
-        ids: this.queue.map(prop<any, any>('id')).sort(sortNumber),
+        ids: this.queue.map(prop<any, any>("id")).sort(sortNumber),
       }
     },
     update(data) {
-      const items = indexBy(data.queue?.anime?.filter(isNotNil), anime =>
+      const items = indexBy(data.queue?.anime?.filter(isNotNil), (anime) =>
         anime.id.toString(),
       )
 
-      return this.queue.map(item => items[item.id])
+      return this.queue.map((item) => items[item.id])
     },
   })
   public animes!: QueueAnime[]
@@ -191,7 +191,7 @@ export default class Queue extends Vue {
   }
 
   public getItem(id: number) {
-    return this.queue.find(propEq('id', id)) as IQueueItem
+    return this.queue.find(propEq("id", id)) as IQueueItem
   }
 
   public handleDrop({ removedIndex, addedIndex, payload }: any) {
@@ -251,7 +251,7 @@ export default class Queue extends Vue {
     const { data, errors } = await this.$apollo.query<ImportQuery>({
       query: IMPORT_QUERY,
       variables,
-      fetchPolicy: 'network-only',
+      fetchPolicy: "network-only",
     })
 
     const entries = [...data.ListEntries, ...(data.ExtraListEntries || [])]
@@ -272,7 +272,7 @@ export default class Queue extends Vue {
 
     if (random) {
       const entriesNotInQueue = entries.filter(({ id }) => {
-        return !this.queue.some(item => item.id === id)
+        return !this.queue.some((item) => item.id === id)
       })
 
       if (entriesNotInQueue.length > 0) {
@@ -286,10 +286,10 @@ export default class Queue extends Vue {
         })
       }
     } else {
-      const currentQueue = this.queue.map(item => item.id)
+      const currentQueue = this.queue.map((item) => item.id)
       const newItems: number[] = []
 
-      const firstTenEntries = entries.filter(entry => {
+      const firstTenEntries = entries.filter((entry) => {
         const include = !newItems.includes(entry.mediaId)
 
         if (
@@ -319,7 +319,7 @@ export default class Queue extends Vue {
 
     if (diff < 1) {
       return sendToast(this.$store, {
-        type: 'error',
+        type: "error",
         title: "Couldn't find any shows in that state!",
         message: "At least none that aren't already in the Queue",
       })
@@ -327,16 +327,16 @@ export default class Queue extends Vue {
 
     if (!random) {
       sendToast(this.$store, {
-        type: 'success',
-        title: `Imported ${diff} show${diff === 1 ? '' : 's'} into the Queue!`,
-        message: '',
+        type: "success",
+        title: `Imported ${diff} show${diff === 1 ? "" : "s"} into the Queue!`,
+        message: "",
       })
     }
 
     setTimeout(() => {
       this.$refs.container.scrollTo({
         top: 100000,
-        behavior: 'smooth',
+        behavior: "smooth",
       })
     }, 350)
   }
@@ -359,8 +359,8 @@ export default class Queue extends Vue {
       `queue-${getAnilistUsername(this.$store)}-${Date.now()}.json`,
     )
 
-    const data = this.animes.map(anime =>
-      pick(anime, ['id', 'externalLinks', 'listEntry']),
+    const data = this.animes.map((anime) =>
+      pick(anime, ["id", "externalLinks", "listEntry"]),
     )
 
     if (!existsSync(this.defaultBackupPath)) {
@@ -368,8 +368,8 @@ export default class Queue extends Vue {
     }
 
     const { filePath } = await remote.dialog.showSaveDialog(activeWindow(), {
-      title: 'Export Queue...',
-      buttonLabel: 'Export',
+      title: "Export Queue...",
+      buttonLabel: "Export",
       defaultPath: exportFilePath,
       showsTagField: false,
       filters: [this.jsonFilter],
@@ -380,8 +380,8 @@ export default class Queue extends Vue {
     writeFileSync(filePath, JSON.stringify(data))
 
     sendToast(this.$store, {
-      type: 'success',
-      title: 'Exported Queue!',
+      type: "success",
+      title: "Exported Queue!",
       message: `Click this to see the file!`,
       timeout: 6000,
       click: () => shell.showItemInFolder(filePath!),
@@ -390,11 +390,11 @@ export default class Queue extends Vue {
 
   public async importQueueFromBackup() {
     const { filePaths } = await remote.dialog.showOpenDialog({
-      title: 'Import Backup...',
-      buttonLabel: 'Import',
+      title: "Import Backup...",
+      buttonLabel: "Import",
       defaultPath: this.defaultBackupPath,
       filters: [this.jsonFilter],
-      properties: ['openFile'],
+      properties: ["openFile"],
     })
 
     if (isNil(filePaths) || length < 1) return
@@ -403,15 +403,15 @@ export default class Queue extends Vue {
     try {
       const data = JSON.parse(readFileSync(openPath).toString())
 
-      if (typeof data !== 'object' || !Array.isArray(data)) {
-        throw new Error('Could not parse backup file!')
+      if (typeof data !== "object" || !Array.isArray(data)) {
+        throw new Error("Could not parse backup file!")
       }
 
-      if (data.some(({ id }) => typeof id !== 'number')) {
-        throw new Error('This backup is too old and is not supported anymore.')
+      if (data.some(({ id }) => typeof id !== "number")) {
+        throw new Error("This backup is too old and is not supported anymore.")
       }
 
-      ;(data as any[]).forEach(item => addToQueue(this.$store, item))
+      ;(data as any[]).forEach((item) => addToQueue(this.$store, item))
     } catch (err) {
       sendErrorToast(this.$store, err.message)
     }
@@ -424,7 +424,7 @@ export default class Queue extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .queue {
   display: flex;

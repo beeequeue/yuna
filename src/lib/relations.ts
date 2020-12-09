@@ -1,6 +1,6 @@
-import Store from 'electron-store'
-import superagent from 'superagent/dist/superagent'
-import { EpisodeListEpisodes } from '@/graphql/generated/types'
+import Store from "electron-store"
+import superagent from "superagent/dist/superagent"
+import { EpisodeListEpisodes } from "@/graphql/generated/types"
 
 // Branches
 
@@ -9,7 +9,7 @@ import { EpisodeListEpisodes } from '@/graphql/generated/types'
 //   relations: any
 // }
 const relationsCache = new Store<any>({
-  name: 'relationsCache',
+  name: "relationsCache",
 })
 
 type Branch = {
@@ -19,7 +19,7 @@ type Branch = {
 }
 
 type SectionLabel = {
-  type: 'label'
+  type: "label"
   item: string
 } & Branch
 
@@ -30,23 +30,23 @@ const getLabel = (str: string) => {
 }
 
 type Comment = {
-  type: 'comment'
+  type: "comment"
   item: string[]
 } & Branch
 
 const isComment = (obj: any): obj is Comment => {
-  return obj != null && (/^#.*/.test(obj) || obj.type === 'comment')
+  return obj != null && (/^#.*/.test(obj) || obj.type === "comment")
 }
 
 type KeyValue = {
-  type: 'key-value'
+  type: "key-value"
   name: string
   item: string
 } & Branch
 
 const keyValueRegex = /^- (.+): (.+).*/
 const isKeyValue = (obj: any): obj is KeyValue => {
-  return obj != null && (keyValueRegex.test(obj) || obj.type === 'key-value')
+  return obj != null && (keyValueRegex.test(obj) || obj.type === "key-value")
 }
 const getKeyValue = (line: string) => {
   const match = line.match(keyValueRegex) as RegExpMatchArray
@@ -58,7 +58,7 @@ const getKeyValue = (line: string) => {
 }
 
 type Rule = {
-  type: 'rule'
+  type: "rule"
   name: string
   item: {
     from: {
@@ -79,10 +79,10 @@ type Rule = {
 
 const ruleRegex = /([\d?~]+)\|([\d?~]+)\|([\d?~]+):(\d+(?:-\d+)?)/
 const isRule = (obj: any): obj is Rule => {
-  return obj != null && (ruleRegex.test(obj) || obj.type === 'rule')
+  return obj != null && (ruleRegex.test(obj) || obj.type === "rule")
 }
-const getRule = (line: string): Rule['item'] => {
-  const [from, to] = line.split(' -> ')
+const getRule = (line: string): Rule["item"] => {
+  const [from, to] = line.split(" -> ")
 
   const fromMatch = from.match(ruleRegex) as RegExpMatchArray
   const toMatch = to.match(ruleRegex) as RegExpMatchArray
@@ -100,7 +100,7 @@ const getRule = (line: string): Rule['item'] => {
       anilist: toMatch[3],
       episodeRange: toMatch[4],
     },
-    redirectsToSelf: line.endsWith('!'),
+    redirectsToSelf: line.endsWith("!"),
   }
 }
 
@@ -116,7 +116,7 @@ const parseBranch = (line: string) => {
   if (getLabel(line)) {
     const label: SectionLabel = {
       id: generateId(),
-      type: 'label',
+      type: "label",
       item: getLabel(line) as string,
     }
 
@@ -126,7 +126,7 @@ const parseBranch = (line: string) => {
   if (isComment(line)) {
     const comment: Comment = {
       id: generateId(),
-      type: 'comment',
+      type: "comment",
       item: [line.substr(2)],
     }
 
@@ -138,7 +138,7 @@ const parseBranch = (line: string) => {
 
     const keyValue: KeyValue = {
       id: generateId(),
-      type: 'key-value',
+      type: "key-value",
       name: key,
       item: value,
     }
@@ -149,8 +149,8 @@ const parseBranch = (line: string) => {
   if (isRule(line)) {
     const rule: Rule = {
       id: generateId(),
-      type: 'rule',
-      name: 'MISSING_NAME',
+      type: "rule",
+      name: "MISSING_NAME",
       item: getRule(line),
     }
 
@@ -161,7 +161,7 @@ const parseBranch = (line: string) => {
 type Branches = SectionLabel | Comment | KeyValue | Rule
 
 export const parseData = (data: string): ReadonlyArray<Branches> => {
-  const lines = data.split('\n')
+  const lines = data.split("\n")
   const tree: any[] = []
   let lastBranch: Branch | null = null
   let lastBranchIndex: number = -1
@@ -172,8 +172,8 @@ export const parseData = (data: string): ReadonlyArray<Branches> => {
   }
 
   lines
-    .filter(l => l.length > 0)
-    .forEach(line => {
+    .filter((l) => l.length > 0)
+    .forEach((line) => {
       const branch = parseBranch(line)
 
       if (isComment(branch) && lastBranch && isComment(lastBranch)) {
@@ -219,15 +219,15 @@ export type Format = {
 export const convert = (data: ReadonlyArray<Branches>) => {
   const toReturn: Format = { relations: {} } as any
 
-  data.forEach(branch => {
+  data.forEach((branch) => {
     if (isKeyValue(branch)) {
-      if (branch.name === 'version') {
+      if (branch.name === "version") {
         toReturn.version = branch.item
 
         return
       }
 
-      if (branch.name === 'last_modified') {
+      if (branch.name === "last_modified") {
         toReturn.lastModified = new Date(branch.item)
 
         return
@@ -237,11 +237,11 @@ export const convert = (data: ReadonlyArray<Branches>) => {
     if (isRule(branch)) {
       const from = branch.item.from.anilist
       const to =
-        branch.item.to.anilist !== '~'
+        branch.item.to.anilist !== "~"
           ? branch.item.to.anilist
           : branch.item.from.anilist
 
-      if (to === '?' || from === '?') return
+      if (to === "?" || from === "?") return
 
       if (!toReturn.relations[branch.item.from.anilist]) {
         toReturn.relations[branch.item.from.anilist] = []
@@ -274,7 +274,7 @@ export const convert = (data: ReadonlyArray<Branches>) => {
   return toReturn
 }
 
-let relations!: Format['relations']
+let relations!: Format["relations"]
 
 const DAY = 1000 * 60 * 60 * 24
 const WEEK = DAY * 7
@@ -282,15 +282,15 @@ const isStale = (updatedAt: number, time: number) =>
   updatedAt + time < Date.now()
 
 export const updateRelations = async () => {
-  const stale = isStale(relationsCache.get('updatedAt', 0), WEEK)
+  const stale = isStale(relationsCache.get("updatedAt", 0), WEEK)
 
   if (!stale) {
-    relations = relationsCache.get('relations')
-    return relationsCache.get('relations')
+    relations = relationsCache.get("relations")
+    return relationsCache.get("relations")
   }
 
   const response = await superagent.get(
-    'https://raw.githubusercontent.com/erengy/anime-relations/master/anime-relations.txt',
+    "https://raw.githubusercontent.com/erengy/anime-relations/master/anime-relations.txt",
   )
 
   if (!response.ok || response.error) {
@@ -321,9 +321,9 @@ export const getEpisodeRelations = (
 
   if (!relation) return { [id]: episodes }
 
-  relation.forEach(rel => {
-    const from = rel.episodes.from.split('-').map(Number)
-    const to = rel.episodes.to.split('-').map(Number)
+  relation.forEach((rel) => {
+    const from = rel.episodes.from.split("-").map(Number)
+    const to = rel.episodes.to.split("-").map(Number)
 
     if (episodes[from[0] - 1] != null) {
       toReturn[rel.id] = episodes

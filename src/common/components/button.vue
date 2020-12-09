@@ -12,16 +12,16 @@
     <icon v-if="confirmTimeout" class="alert" :icon="alertSvg" />
 
     <span v-if="content" class="content">
-      {{ confirm && confirmTimeout ? confirmText || 'Confirm' : content }}
+      {{ confirm && confirmTimeout ? confirmText || "Confirm" : content }}
     </span>
   </button>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import Icon from './icon.vue'
-import { mdiAlertCircleOutline } from '@mdi/js'
-import { isNotNil } from '@/utils'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import Icon from "./icon.vue"
+import { mdiAlertCircleOutline } from "@mdi/js"
+import { isNotNil } from "@/utils"
 
 @Component({ components: { Icon } })
 export default class CButton extends Vue {
@@ -29,7 +29,7 @@ export default class CButton extends Vue {
   @Prop(Function) public onConfirm?: () => any
   @Prop(String) public content?: string
   @Prop(String)
-  public type?: 'normal' | 'success' | 'warning' | 'danger' | 'white'
+  public type?: "normal" | "success" | "warning" | "danger" | "white"
   @Prop(String) public icon?: string
   @Prop(Boolean) public disabled?: boolean
   @Prop(Boolean) public raised?: boolean
@@ -48,16 +48,16 @@ export default class CButton extends Vue {
 
   public get id() {
     if (isNotNil(this.content)) {
-      return this.content.replace(/ /g, '-').toLowerCase()
+      return this.content.replace(/ /g, "-").toLowerCase()
     }
 
-    return `${this.type || 'normal'}`
+    return `${this.type || "normal"}`
   }
 
   public get classes() {
     return {
-      [this.type || 'normal']: true,
-      'with-icon': !!this.icon,
+      [this.type || "normal"]: true,
+      "with-icon": !!this.icon,
       raised: this.raised || (!this.flat && !this.raised),
       flat: this.flat,
       disabled: this.disabled,
@@ -93,7 +93,7 @@ export default class CButton extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 @mixin raised($color) {
   background: $color;

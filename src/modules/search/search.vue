@@ -41,20 +41,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { mdiClose, mdiLoading } from '@mdi/js'
+import { Component, Vue } from "vue-property-decorator"
+import { mdiClose, mdiLoading } from "@mdi/js"
 
-import SEARCH_QUERY from './search.graphql'
+import SEARCH_QUERY from "./search.graphql"
 import {
   SearchQuery,
   SearchResults,
   SearchVariables,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 
-import { Query } from '@/decorators'
+import { Query } from "@/decorators"
 
-import Icon from '@/common/components/icon.vue'
-import { isNotNil } from '@/utils'
+import Icon from "@/common/components/icon.vue"
+import { isNotNil } from "@/utils"
 @Component({ components: { Icon } })
 export default class Search extends Vue {
   @Query<Search, SearchQuery, SearchVariables>({
@@ -67,9 +67,9 @@ export default class Search extends Vue {
     skip() {
       return this.searchString.length < 1
     },
-    ['debounce' as any]: 750,
+    ["debounce" as any]: 750,
     notifyOnNetworkStatusChange: true,
-    fetchPolicy: 'network-only',
+    fetchPolicy: "network-only",
     result() {
       this.onFinish()
     },
@@ -78,7 +78,7 @@ export default class Search extends Vue {
 
   public isOpen = false
   public fakeLoading = false
-  public searchString = ''
+  public searchString = ""
 
   public emptySvg = mdiClose
   public loadingSvg = mdiLoading
@@ -105,7 +105,7 @@ export default class Search extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 @keyframes spin {
   from {

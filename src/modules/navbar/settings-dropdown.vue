@@ -35,18 +35,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from "vue-property-decorator"
 import {
   mdiBugOutline,
   mdiCached,
   mdiCogOutline,
   mdiGithub,
   mdiInformationOutline,
-} from '@mdi/js'
+} from "@mdi/js"
 
-import { EpisodeCache } from '@/lib/episode-cache'
-import { toggleModal } from '@/state/app'
-import Icon from '@/common/components/icon.vue'
+import { EpisodeCache } from "@/lib/episode-cache"
+import { toggleModal } from "@/state/app"
+import Icon from "@/common/components/icon.vue"
 
 @Component({ components: { Icon } })
 export default class SettingsDropdown extends Vue {
@@ -67,17 +67,17 @@ export default class SettingsDropdown extends Vue {
   }
 
   public openSettings() {
-    this.$router.push('/settings')
+    this.$router.push("/settings")
   }
 
   public toggleAboutModal() {
-    toggleModal(this.$store, 'about')
+    toggleModal(this.$store, "about")
   }
 }
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .wrapper {
   position: fixed;

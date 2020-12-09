@@ -16,9 +16,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from "vue-property-decorator"
 
-import { Required } from '@/decorators'
+import { Required } from "@/decorators"
 
 export type DropdownItem = {
   label: string
@@ -49,7 +49,7 @@ export default class Dropdown extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .dropdown {
   position: relative;

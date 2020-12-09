@@ -1,5 +1,5 @@
-import gql from 'graphql-tag'
-import { ANILIST_LIST_ENTRY_FRAGMENT } from '@/graphql/documents/fragments'
+import gql from "graphql-tag"
+import { ANILIST_LIST_ENTRY_FRAGMENT } from "@/graphql/documents/fragments"
 
 export const ANILIST_SET_SCORE = gql`
   mutation AnilistSetScore($mediaId: Int, $score: Int) {

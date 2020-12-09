@@ -11,14 +11,14 @@
     <text-input
       placeholder="Username"
       :class="{ 'full-width': fullWidth }"
-      :on-change="value => handleChange('username', value)"
+      :on-change="(value) => handleChange('username', value)"
     />
 
     <text-input
       password
       placeholder="Password"
       :class="{ 'full-width': fullWidth }"
-      :on-change="value => handleChange('password', value)"
+      :on-change="(value) => handleChange('password', value)"
     />
 
     <transition>
@@ -34,14 +34,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from "vue-property-decorator"
 
-import crIcon from '@/assets/crunchyroll.svg'
-import TextInput from '@/common/components/form/text-input.vue'
-import CButton from '@/common/components/button.vue'
-import Loading from '@/common/components/loading.vue'
+import crIcon from "@/assets/crunchyroll.svg"
+import TextInput from "@/common/components/form/text-input.vue"
+import CButton from "@/common/components/button.vue"
+import Loading from "@/common/components/loading.vue"
 
-import { Crunchyroll } from '@/lib/crunchyroll'
+import { Crunchyroll } from "@/lib/crunchyroll"
 
 @Component({ components: { Loading, CButton, TextInput } })
 export default class LoginCr extends Vue {
@@ -50,8 +50,8 @@ export default class LoginCr extends Vue {
 
   public loading: boolean | null = null
   public error: string | null = null
-  public username = ''
-  public password = ''
+  public username = ""
+  public password = ""
 
   public crIcon = crIcon
 
@@ -79,7 +79,7 @@ export default class LoginCr extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .login-cr {
   position: relative;
@@ -96,7 +96,7 @@ export default class LoginCr extends Vue {
   & > .text-input {
     margin: 0 25px 10px;
 
-    & /deep/ input {
+    & ::v-deep input {
       text-align: center;
     }
   }

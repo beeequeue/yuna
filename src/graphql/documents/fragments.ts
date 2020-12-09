@@ -1,5 +1,5 @@
-import gql from 'graphql-tag'
-import { DocumentNode } from 'graphql'
+import gql from "graphql-tag"
+import { DocumentNode } from "graphql"
 
 export const LIST_ENTRY_FRAGMENT = gql`
   fragment ListEntry on ListEntry {
@@ -29,7 +29,7 @@ export const MEDIA_LIST_ENTRY_FRAGMENT: DocumentNode & { name: string } = gql`
   ${LIST_ENTRY_FRAGMENT}
 ` as any
 
-MEDIA_LIST_ENTRY_FRAGMENT.name = 'MediaListEntry'
+MEDIA_LIST_ENTRY_FRAGMENT.name = "MediaListEntry"
 
 export const ANILIST_LIST_ENTRY_FRAGMENT = gql`
   fragment AniListEntry on MediaList {

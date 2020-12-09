@@ -1,16 +1,16 @@
-import { fireEvent } from '@testing-library/vue'
-import deepmerge from 'deepmerge'
+import { fireEvent } from "@testing-library/vue"
+import deepmerge from "deepmerge"
 
-import { MediaListStatus, Provider } from '@/graphql/generated/types'
-import { render } from '@/testing'
+import { MediaListStatus, Provider } from "@/graphql/generated/types"
+import { render } from "@/testing"
 
-import Episode from './episode.vue'
-import { EpisodeProps } from './episode.props'
+import Episode from "./episode.vue"
+import { EpisodeProps } from "./episode.props"
 
-const defaultEpisode: EpisodeProps['episode'] = {
+const defaultEpisode: EpisodeProps["episode"] = {
   animeId: 1337,
-  title: 'Your favorite episode',
-  thumbnail: 'https://picsum.photos/300/175.webp',
+  title: "Your favorite episode",
+  thumbnail: "https://picsum.photos/300/175.webp",
   index: 3,
   episodeNumber: 4,
   isWatched: false,
@@ -21,7 +21,7 @@ beforeEach(() => {
   jest.clearAllMocks()
 })
 
-test('renders an unwatched, unlisted episode correctly', async () => {
+test("renders an unwatched, unlisted episode correctly", async () => {
   const props: EpisodeProps = {
     episode: defaultEpisode,
     listEntry: null,
@@ -31,12 +31,12 @@ test('renders an unwatched, unlisted episode correctly', async () => {
 
   const { getByText, getByTestId, queryByTestId } = render(Episode, props)
 
-  expect(getByTestId('episode')).not.toHaveClass('current')
-  expect(queryByTestId('setWatched')).toBeNull()
-  expect(getByText('Episode 4')).toBeVisible()
+  expect(getByTestId("episode")).not.toHaveClass("current")
+  expect(queryByTestId("setWatched")).toBeNull()
+  expect(getByText("Episode 4")).toBeVisible()
 })
 
-test('renders an unwatched, listed episode correctly', async () => {
+test("renders an unwatched, listed episode correctly", async () => {
   const props: EpisodeProps = {
     episode: defaultEpisode,
     listEntry: {
@@ -50,12 +50,12 @@ test('renders an unwatched, listed episode correctly', async () => {
 
   const { getByText, getByTestId } = render(Episode, props)
 
-  expect(getByTestId('episode')).not.toHaveClass('current')
-  expect(getByTestId('setWatched')).toBeVisible()
-  expect(getByText('Episode 4')).toBeVisible()
+  expect(getByTestId("episode")).not.toHaveClass("current")
+  expect(getByTestId("setWatched")).toBeVisible()
+  expect(getByText("Episode 4")).toBeVisible()
 })
 
-test('renders a watched episode correctly', async () => {
+test("renders a watched episode correctly", async () => {
   const props: EpisodeProps = {
     episode: {
       ...defaultEpisode,
@@ -72,13 +72,13 @@ test('renders a watched episode correctly', async () => {
 
   const { getByText, getByTestId, getByLabelText } = render(Episode, props)
 
-  expect(getByTestId('episode')).not.toHaveClass('current')
-  expect(getByTestId('setUnwatched')).toBeVisible()
-  expect(getByLabelText('watched')).toBeVisible()
-  expect(getByText('Episode 4')).toBeVisible()
+  expect(getByTestId("episode")).not.toHaveClass("current")
+  expect(getByTestId("setUnwatched")).toBeVisible()
+  expect(getByLabelText("watched")).toBeVisible()
+  expect(getByText("Episode 4")).toBeVisible()
 })
 
-test('renders a small episode correctly', async () => {
+test("renders a small episode correctly", async () => {
   const props: EpisodeProps = {
     episode: defaultEpisode,
     listEntry: null,
@@ -88,10 +88,10 @@ test('renders a small episode correctly', async () => {
 
   const { getByTestId } = render(Episode, props)
 
-  expect(getByTestId('episode')).toHaveClass('small')
+  expect(getByTestId("episode")).toHaveClass("small")
 })
 
-test('renders spoiler-hidden episode correctly', async () => {
+test("renders spoiler-hidden episode correctly", async () => {
   const props: EpisodeProps = {
     episode: defaultEpisode,
     listEntry: {
@@ -115,9 +115,9 @@ test('renders spoiler-hidden episode correctly', async () => {
     },
   })
 
-  expect(getByText(defaultEpisode.title)).toHaveClass('blur')
-  expect(getByAltText('Episode 4')).toHaveClass('blur')
-  expect(getByText('Episode 4')).toBeVisible()
+  expect(getByText(defaultEpisode.title)).toHaveClass("blur")
+  expect(getByAltText("Episode 4")).toHaveClass("blur")
+  expect(getByText("Episode 4")).toBeVisible()
 
   await updateProps(
     deepmerge(props, {
@@ -126,12 +126,12 @@ test('renders spoiler-hidden episode correctly', async () => {
     }),
   )
 
-  expect(getByText(defaultEpisode.title)).not.toHaveClass('blur')
-  expect(getByAltText('Episode 4')).not.toHaveClass('blur')
+  expect(getByText(defaultEpisode.title)).not.toHaveClass("blur")
+  expect(getByAltText("Episode 4")).not.toHaveClass("blur")
 })
 
-describe('emit', () => {
-  test('emits click event when clicked', async () => {
+describe("emit", () => {
+  test("emits click event when clicked", async () => {
     const props: EpisodeProps = {
       episode: defaultEpisode,
       listEntry: {
@@ -145,7 +145,7 @@ describe('emit', () => {
 
     const { getByAltText, emitted } = render(Episode, props)
 
-    const container = getByAltText('Episode 4')
+    const container = getByAltText("Episode 4")
 
     expect(container).toBeVisible()
     await fireEvent.click(container)
@@ -153,8 +153,8 @@ describe('emit', () => {
     expect(emitted().click).toHaveLength(1)
   })
 
-  describe('update-progress', () => {
-    test('emits new progress on click when not watched', async () => {
+  describe("update-progress", () => {
+    test("emits new progress on click when not watched", async () => {
       const props: EpisodeProps = {
         episode: defaultEpisode,
         listEntry: {
@@ -168,16 +168,16 @@ describe('emit', () => {
 
       const { getByTestId, emitted } = render(Episode, props)
 
-      const container = getByTestId('setWatched')
+      const container = getByTestId("setWatched")
 
       expect(container).toBeVisible()
       await fireEvent.click(container)
 
-      expect(emitted()['update-progress']).toHaveLength(1)
-      expect(emitted()['update-progress'][0]).toStrictEqual([4])
+      expect(emitted()["update-progress"]).toHaveLength(1)
+      expect(emitted()["update-progress"][0]).toStrictEqual([4])
     })
 
-    test('emits new progress on click when watched', async () => {
+    test("emits new progress on click when watched", async () => {
       const props: EpisodeProps = {
         episode: { ...defaultEpisode, isWatched: true },
         listEntry: {
@@ -191,13 +191,13 @@ describe('emit', () => {
 
       const { getByTestId, emitted } = render(Episode, props)
 
-      const container = getByTestId('setUnwatched')
+      const container = getByTestId("setUnwatched")
 
       expect(container).toBeVisible()
       await fireEvent.click(container)
 
-      expect(emitted()['update-progress']).toHaveLength(1)
-      expect(emitted()['update-progress'][0]).toStrictEqual([3])
+      expect(emitted()["update-progress"]).toHaveLength(1)
+      expect(emitted()["update-progress"][0]).toStrictEqual([3])
     })
   })
 })

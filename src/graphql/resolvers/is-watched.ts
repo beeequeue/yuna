@@ -1,7 +1,7 @@
-import { ApolloCache } from '@apollo/client/cache'
+import { ApolloCache } from "@apollo/client/cache"
 
-import { EpisodeListEpisodes } from '@/graphql/generated/types'
-import { getIsWatched } from '@/utils/cache'
+import { EpisodeListEpisodes } from "@/graphql/generated/types"
+import { getIsWatched } from "@/utils/cache"
 
 export const isWatchedResolver = (
   episode: EpisodeListEpisodes,

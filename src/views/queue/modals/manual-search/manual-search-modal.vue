@@ -19,12 +19,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue } from "vue-property-decorator"
 
-import AnimatedSize from '@/common/components/animated-size.vue'
-import ModalBase from '@/common/modals/base.vue'
-import CrunchyrollEditor from './crunchyroll-editor.vue'
-import SearchStep from './search-step.vue'
+import AnimatedSize from "@/common/components/animated-size.vue"
+import ModalBase from "@/common/modals/base.vue"
+import CrunchyrollEditor from "./crunchyroll-editor.vue"
+import SearchStep from "./search-step.vue"
 
 import {
   getManualSearchOptions,
@@ -32,13 +32,13 @@ import {
   getSelectedEpisodes,
   ModalName,
   toggleModal,
-} from '@/state/app'
+} from "@/state/app"
 
 @Component({
   components: { CrunchyrollEditor, SearchStep, AnimatedSize, ModalBase },
 })
 export default class ManualSearchModal extends Vue {
-  public readonly modalName: ModalName = 'manualSearch'
+  public readonly modalName: ModalName = "manualSearch"
   public selectedId: number | null = null
 
   public get modalVisible() {
@@ -63,7 +63,7 @@ export default class ManualSearchModal extends Vue {
       !force &&
       this.selectedEpisodes.length > 0 &&
       !confirm(
-        'Are you sure you want to cancel your selections?\nYou have to click the green checkmark in the top right to confirm your selection!',
+        "Are you sure you want to cancel your selections?\nYou have to click the green checkmark in the top right to confirm your selection!",
       )
     ) {
       return
@@ -79,7 +79,7 @@ export default class ManualSearchModal extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../../colors';
+@import "../../../../colors";
 
 .manual-search-modal {
   position: relative;

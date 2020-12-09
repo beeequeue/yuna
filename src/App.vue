@@ -44,46 +44,46 @@
 </template>
 
 <script lang="ts">
-import { ipcRenderer, shell } from 'electron'
-import { captureException } from '@sentry/browser'
+import { ipcRenderer, shell } from "electron"
+import { captureException } from "@sentry/browser"
 import {
   computed,
   defineComponent,
   onErrorCaptured,
   watchEffect,
-} from '@vue/composition-api'
+} from "@vue/composition-api"
 
-import TitleBar from '@/common/components/title-bar.vue'
-import ToastOverlay from '@/common/components/toast-overlay.vue'
-import AboutModal from '@/common/modals/about-modal.vue'
-import EditModal from '@/common/modals/edit-modal.vue'
-import LocalSourceModal from '@/common/modals/local-source/local-source.vue'
-import PlayerContainer from '@/modules/player/player-container.vue'
-import Navbar from '@/modules/navbar/navbar.vue'
-import { Anilist } from '@/lib/anilist'
-import { Crunchyroll } from '@/lib/crunchyroll'
-import { Hidive } from '@/lib/hidive'
-import { getFinishedConnecting } from '@/state/auth'
-import { getHasFinishedSetup, setFfmpegFailed } from '@/state/settings'
+import TitleBar from "@/common/components/title-bar.vue"
+import ToastOverlay from "@/common/components/toast-overlay.vue"
+import AboutModal from "@/common/modals/about-modal.vue"
+import EditModal from "@/common/modals/edit-modal.vue"
+import LocalSourceModal from "@/common/modals/local-source/local-source.vue"
+import PlayerContainer from "@/modules/player/player-container.vue"
+import Navbar from "@/modules/navbar/navbar.vue"
+import { Anilist } from "@/lib/anilist"
+import { Crunchyroll } from "@/lib/crunchyroll"
+import { Hidive } from "@/lib/hidive"
+import { getFinishedConnecting } from "@/state/auth"
+import { getHasFinishedSetup, setFfmpegFailed } from "@/state/settings"
 import {
   getIsFullscreen,
   sendErrorToast,
   sendToast,
   setIsUpdateAvailable,
-} from '@/state/app'
+} from "@/state/app"
 import {
   ANILIST_LOGIN,
   CHECK_FOR_UPDATES,
   FFMPEG_DOWNLOADED,
   FFMPEG_FAILED,
   UPDATE_AVAILABLE,
-} from '@/messages'
-import { AnilistListPlugin } from '@/plugins/list/anilist/anilist-plugin'
-import { SimklListPlugin } from '@/plugins/list/simkl-plugin'
-import { router } from '@/router'
-import { ProvidePlayer } from '@/state/player'
+} from "@/messages"
+import { AnilistListPlugin } from "@/plugins/list/anilist/anilist-plugin"
+import { SimklListPlugin } from "@/plugins/list/simkl-plugin"
+import { router } from "@/router"
+import { ProvidePlayer } from "@/state/player"
 
-const requireBg = require.context('@/assets/bg', false, /\.webp$/)
+const requireBg = require.context("@/assets/bg", false, /\.webp$/)
 const backgrounds = requireBg.keys()
 
 export default defineComponent({
@@ -97,7 +97,7 @@ export default defineComponent({
     EditModal,
   },
   setup: (_props, context) => {
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       ipcRenderer.send(CHECK_FOR_UPDATES)
     }
 
@@ -105,11 +105,11 @@ export default defineComponent({
       sendErrorToast(context.root.$store, err.message)
 
       switch (process.env.NODE_ENV) {
-        case 'development':
+        case "development":
           //eslint-disable-next-line no-console
           console.error(err)
           break
-        case 'production':
+        case "production":
           captureException(err)
           break
       }
@@ -117,7 +117,7 @@ export default defineComponent({
 
     const plugins = [AnilistListPlugin, SimklListPlugin]
     window.listPlugins = plugins.map(
-      plugin => new plugin(context.root.$apollo, context.root.$store),
+      (plugin) => new plugin(context.root.$apollo, context.root.$store),
     )
 
     const hasFinishedSetup = computed(() =>
@@ -128,12 +128,12 @@ export default defineComponent({
     )
 
     if (!hasFinishedSetup.value) {
-      context.root.$router.push('/first-time-setup')
+      context.root.$router.push("/first-time-setup")
     }
 
     if (!isFinishedConnecting.value && hasFinishedSetup.value) {
       window.initialLogin = true
-      context.root.$router.push('login')
+      context.root.$router.push("login")
     }
 
     Hidive.createVisit(context.root.$store)
@@ -141,7 +141,7 @@ export default defineComponent({
 
     watchEffect(() => {
       if (!isFinishedConnecting.value && hasFinishedSetup.value) {
-        context.root.$router.push('login')
+        context.root.$router.push("login")
       }
     })
 
@@ -151,9 +151,9 @@ export default defineComponent({
       setIsUpdateAvailable(context.root.$store, downloadUrl)
 
       sendToast(context.root.$store, {
-        type: 'info',
-        title: 'A new update is available!',
-        message: 'Click here to download it.',
+        type: "info",
+        title: "A new update is available!",
+        message: "Click here to download it.",
         timeout: 15 * 1000,
         click: () => shell.openExternal(downloadUrl),
       })
@@ -163,10 +163,10 @@ export default defineComponent({
       setFfmpegFailed(context.root.$store, true)
 
       sendToast(context.root.$store, {
-        type: 'error',
-        title: 'Could not download FFMPEG.',
-        message: 'Local file support will not work.',
-        click: () => router.push('/settings#ffmpeg'),
+        type: "error",
+        title: "Could not download FFMPEG.",
+        message: "Local file support will not work.",
+        click: () => router.push("/settings#ffmpeg"),
       })
     })
 
@@ -174,9 +174,9 @@ export default defineComponent({
       setFfmpegFailed(context.root.$store, false)
 
       sendToast(context.root.$store, {
-        type: 'success',
-        title: 'Successfully downloaded FFMPEG!',
-        message: 'Local file support will work now!',
+        type: "success",
+        title: "Successfully downloaded FFMPEG!",
+        message: "Local file support will work now!",
       })
     })
 
@@ -190,7 +190,7 @@ export default defineComponent({
     })
 
     return {
-      isDev: process.env.NODE_ENV === 'development',
+      isDev: process.env.NODE_ENV === "development",
       backgroundImage: requireBg(
         backgrounds[Math.floor(Math.random() * backgrounds.length)],
       ),
@@ -203,8 +203,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-@import 'colors';
-@import 'tooltip';
+@import "colors";
+@import "tooltip";
 
 html,
 body,
@@ -217,7 +217,7 @@ body,
   overflow: hidden;
 
   color: $white;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -239,7 +239,7 @@ body,
   & h2,
   & h3,
   & h4 {
-    font-family: 'Raleway', sans-serif;
+    font-family: "Raleway", sans-serif;
     font-weight: 300;
   }
 

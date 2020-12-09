@@ -9,10 +9,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { format, formatDistance } from 'date-fns'
+import { Component, Vue } from "vue-property-decorator"
+import { format, formatDistance } from "date-fns"
 
-import { Required } from '@/decorators'
+import { Required } from "@/decorators"
 
 @Component
 export default class NextEpisodeInfo extends Vue {
@@ -28,7 +28,7 @@ export default class NextEpisodeInfo extends Vue {
 
     return format(
       this.nextAiringEpisode.airingAt * 1000,
-      'iiii, do MMM - kk:mm',
+      "iiii, do MMM - kk:mm",
     )
   }
 

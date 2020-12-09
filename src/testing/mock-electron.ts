@@ -1,8 +1,8 @@
-import type Electron from 'electron'
-import { DeepPartial } from '@/types'
+import type Electron from "electron"
+import { DeepPartial } from "@/types"
 
 jest.mock(
-  'electron',
+  "electron",
   (): DeepPartial<typeof Electron> => ({
     ipcRenderer: {
       on: () => null as any,
@@ -13,6 +13,6 @@ jest.mock(
   }),
 )
 
-jest.mock('electron-util', () => ({
-  api: { app: { getPath: () => 'USER_DATA_PATH' } },
+jest.mock("electron-util", () => ({
+  api: { app: { getPath: () => "USER_DATA_PATH" } },
 }))

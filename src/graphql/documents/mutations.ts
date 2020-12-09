@@ -1,5 +1,5 @@
-import gql from 'graphql-tag'
-import { LIST_ENTRY_FRAGMENT } from '@/graphql/documents/fragments'
+import gql from "graphql-tag"
+import { LIST_ENTRY_FRAGMENT } from "@/graphql/documents/fragments"
 
 export const ADD_TO_LIST = gql`
   mutation AddToList($anilistId: Int!) {

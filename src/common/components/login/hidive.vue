@@ -8,14 +8,14 @@
       <text-input
         placeholder="Email"
         :class="{ 'full-width': fullWidth }"
-        :on-change="value => handleChange('email', value)"
+        :on-change="(value) => handleChange('email', value)"
       />
 
       <text-input
         password
         placeholder="Password"
         :class="{ 'full-width': fullWidth }"
-        :on-change="value => handleChange('password', value)"
+        :on-change="(value) => handleChange('password', value)"
       />
 
       <transition>
@@ -40,20 +40,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from "vue-property-decorator"
 
-import hidiveIcon from '@/assets/hidive.svg'
-import TextInput from '@/common/components/form/text-input.vue'
-import CButton from '@/common/components/button.vue'
-import Loading from '@/common/components/loading.vue'
-import Dropdown, { DropdownItem } from '@/common/components/form/dropdown.vue'
+import hidiveIcon from "@/assets/hidive.svg"
+import TextInput from "@/common/components/form/text-input.vue"
+import CButton from "@/common/components/button.vue"
+import Loading from "@/common/components/loading.vue"
+import Dropdown, { DropdownItem } from "@/common/components/form/dropdown.vue"
 
-import { Hidive } from '@/lib/hidive'
+import { Hidive } from "@/lib/hidive"
 import {
   getHidiveProfileIndex,
   getHidiveProfiles,
   setHidiveProfile,
-} from '@/state/auth'
+} from "@/state/auth"
 
 @Component({ components: { Dropdown, Loading, CButton, TextInput } })
 export default class LoginHd extends Vue {
@@ -62,8 +62,8 @@ export default class LoginHd extends Vue {
 
   public loading: boolean | null = null
   public error: string | null = null
-  public email = ''
-  public password = ''
+  public email = ""
+  public password = ""
 
   public hidiveIcon = hidiveIcon
 
@@ -102,7 +102,7 @@ export default class LoginHd extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .login-hidive {
   position: relative;
@@ -124,7 +124,7 @@ export default class LoginHd extends Vue {
     & > .text-input {
       margin: 0 25px 10px;
 
-      & /deep/ input {
+      & ::v-deep input {
         text-align: center;
       }
     }

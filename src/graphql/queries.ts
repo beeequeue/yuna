@@ -1,20 +1,20 @@
-import { DocumentNode } from 'graphql'
-import { ApolloQueryResult } from '@apollo/client'
-import { DollarApollo } from '@vue/apollo-option/types/vue-apollo'
-import { ArmServer } from '@/lib/arm-server'
+import { DocumentNode } from "graphql"
+import { ApolloQueryResult } from "@apollo/client"
+import { DollarApollo } from "@vue/apollo-option/types/vue-apollo"
+import { ArmServer } from "@/lib/arm-server"
 import {
   ANILIST_IDS_FROM_MAL_IDS,
   LIST_VIEW_QUERY,
-} from '@/graphql/documents/queries'
+} from "@/graphql/documents/queries"
 import {
   AnilistIdsFromMalIdsQuery,
   AnilistIdsFromMalIdsQueryVariables,
   ListViewListEntries,
   ListViewQuery,
   ListViewQueryVariables,
-} from '@/graphql/generated/types'
-import { Instance } from '@/types'
-import { isNil } from '@/utils'
+} from "@/graphql/generated/types"
+import { Instance } from "@/types"
+import { isNil } from "@/utils"
 
 type BaseResult = {
   Page: null | {
@@ -27,7 +27,7 @@ type BaseResult = {
 type FetchAllPagesOptions<R extends BaseResult, V extends { page: number }> = {
   apollo: DollarApollo<any>
   query: DocumentNode
-  variables: Omit<V, 'page'>
+  variables: Omit<V, "page">
   result?: (data: R) => void
 }
 
@@ -56,7 +56,7 @@ export const fetchAllPages = async <
 
   for (let i = 0; i < pagesLeft; i++) {
     promises.push(
-      new Promise(async resolve => {
+      new Promise(async (resolve) => {
         let response: ApolloQueryResult<R> | null
 
         try {
@@ -92,12 +92,13 @@ export const getAnilistIdsFromMalIds = async (
   malIds: number[],
 ): Promise<MapResult> => {
   const armResponse = await ArmServer.batchGetIds(
-    malIds.map(id => ({ myanimelist: id })),
+    malIds.map((id) => ({ myanimelist: id })),
   )
 
   const armResults = armResponse
     .filter(
-      item => !isNil(item) && !isNil(item.anilist) && !isNil(item.myanimelist),
+      (item) =>
+        !isNil(item) && !isNil(item.anilist) && !isNil(item.myanimelist),
     )
     .reduce(
       (obj, item) => ({
@@ -108,7 +109,7 @@ export const getAnilistIdsFromMalIds = async (
     )
 
   const idsLeft = malIds.filter(
-    id => !Object.keys(armResults).map(Number).includes(id),
+    (id) => !Object.keys(armResults).map(Number).includes(id),
   )
 
   const responses = await fetchAllPages<
@@ -123,7 +124,7 @@ export const getAnilistIdsFromMalIds = async (
   })
 
   const anilistResults = responses
-    .map(data => data?.data.Page?.media ?? [])
+    .map((data) => data?.data.Page?.media ?? [])
     .flat()
     .reduce(
       (obj, item) => ({
@@ -152,7 +153,7 @@ export const getALofOfEntries = async (
       ListViewQueryVariables
     >({
       query: LIST_VIEW_QUERY,
-      errorPolicy: 'all',
+      errorPolicy: "all",
     })
 
     if (errors || data.ListEntries.length < 1) break

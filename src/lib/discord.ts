@@ -1,14 +1,14 @@
-import DiscordRPC, { Presence } from 'discord-rpc'
-import { ipcMain } from 'electron'
+import DiscordRPC, { Presence } from "discord-rpc"
+import { ipcMain } from "electron"
 
-import { SettingsStore } from '@/state/settings'
-import { getConfig } from '@/config'
+import { SettingsStore } from "@/state/settings"
+import { getConfig } from "@/config"
 import {
   DISCORD_DISABLE_RICH_PRESENCE,
   DISCORD_ENABLE_RICH_PRESENCE,
   DISCORD_PAUSE_WATCHING,
   DISCORD_SET_WATCHING,
-} from '@/messages'
+} from "@/messages"
 
 type WatchingOptions = {
   animeName: string
@@ -19,13 +19,13 @@ type WatchingOptions = {
 }
 
 export enum ImageKeys {
-  LOGO = 'logo',
-  LOGO_PADDED = 'logo-padded',
-  ANILIST = 'anilist',
-  SIMKL = 'simkl',
+  LOGO = "logo",
+  LOGO_PADDED = "logo-padded",
+  ANILIST = "anilist",
+  SIMKL = "simkl",
 }
 
-const id = getConfig('DISCORD_ID')!
+const id = getConfig("DISCORD_ID")!
 let discord!: Discord
 
 const generateId = () => Math.round(Math.random() * 100 + 20)
@@ -39,7 +39,7 @@ class Discord {
   private activityId: number = -1
 
   constructor() {
-    this.discord = new DiscordRPC.Client({ transport: 'ipc' })
+    this.discord = new DiscordRPC.Client({ transport: "ipc" })
 
     this.discord.login({ clientId: id }).catch(() => {
       this.disabled = true
@@ -62,18 +62,18 @@ class Discord {
     username,
   }: WatchingOptions) {
     const now = Math.round(Date.now() / 1000)
-    const mainListPlugin = SettingsStore.get('mainListPlugin')
-    const service = mainListPlugin === 'anilist' ? 'AniList' : 'Simkl'
+    const mainListPlugin = SettingsStore.get("mainListPlugin")
+    const service = mainListPlugin === "anilist" ? "AniList" : "Simkl"
 
     return this.setActivity({
       details: animeName,
-      state: '    ', // The API requires at least three characters, but if this is null it doesn't show player counts.
+      state: "    ", // The API requires at least three characters, but if this is null it doesn't show player counts.
       partySize: episode,
       partyMax: totalEpisodes,
       startTimestamp: now - progress,
       largeImageKey: ImageKeys.LOGO,
       smallImageKey:
-        mainListPlugin === 'anilist' ? ImageKeys.ANILIST : ImageKeys.SIMKL,
+        mainListPlugin === "anilist" ? ImageKeys.ANILIST : ImageKeys.SIMKL,
       smallImageText: username ? `${username} on ${service}` : undefined,
     })
   }

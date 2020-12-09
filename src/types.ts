@@ -1,6 +1,6 @@
-import { Store } from 'vuex'
-import { DollarApollo } from '@vue/apollo-option/types/vue-apollo'
-import { Provider } from '@/graphql/generated/types'
+import { Store } from "vuex"
+import { DollarApollo } from "@vue/apollo-option/types/vue-apollo"
+import { Provider } from "@/graphql/generated/types"
 
 export type Maybe<T> = T | null | undefined
 
@@ -11,10 +11,10 @@ export type DeepPartial<T> = T extends Function
   : T
 
 export enum SupportedMediaKeys {
-  MediaPlayPause = 'PLAYER_PLAY_PAUSE',
-  MediaStop = 'PLAYER_STOP',
-  MediaNextTrack = 'PLAYER_NEXT',
-  MediaPreviousTrack = 'PLAYER_PREVIOUS',
+  MediaPlayPause = "PLAYER_PLAY_PAUSE",
+  MediaStop = "PLAYER_STOP",
+  MediaNextTrack = "PLAYER_NEXT",
+  MediaPreviousTrack = "PLAYER_PREVIOUS",
 }
 
 export type Levels = {
@@ -33,17 +33,17 @@ export type Instance = {
 }
 
 export enum StreamingSource {
-  Amazon = 'amazon',
-  Animelab = 'animelab',
-  Crunchyroll = 'crunchyroll',
-  Funimation = 'funimation',
-  Hidive = 'hidive',
-  Hulu = 'hulu',
-  Madman = 'madman',
-  Netflix = 'netflix',
-  Viewster = 'viewster',
-  Viz = 'viz',
-  Wakanim = 'wakanim',
+  Amazon = "amazon",
+  Animelab = "animelab",
+  Crunchyroll = "crunchyroll",
+  Funimation = "funimation",
+  Hidive = "hidive",
+  Hulu = "hulu",
+  Madman = "madman",
+  Netflix = "netflix",
+  Viewster = "viewster",
+  Viz = "viz",
+  Wakanim = "wakanim",
 }
 
 export const SupportedSources = [

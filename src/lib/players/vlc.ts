@@ -1,16 +1,16 @@
-import { existsSync } from 'fs'
-import { basename } from 'path'
-import * as os from 'os'
-import superagent from 'superagent/dist/superagent'
-import { Store } from 'vuex'
+import { existsSync } from "fs"
+import { basename } from "path"
+import * as os from "os"
+import superagent from "superagent/dist/superagent"
+import { Store } from "vuex"
 import {
   ExternalPlayer,
   ExternalPlayerEvent,
-} from '@/lib/players/external-player'
-import { VLCStatusReport } from '@/lib/players/vlc.types'
-import { sendToast } from '@/state/app'
-import { SettingsStore } from '@/state/settings'
-import { isNil, isNotNil, NO_OP, RequestSuccess } from '@/utils'
+} from "@/lib/players/external-player"
+import { VLCStatusReport } from "@/lib/players/vlc.types"
+import { sendToast } from "@/state/app"
+import { SettingsStore } from "@/state/settings"
+import { isNil, isNotNil, NO_OP, RequestSuccess } from "@/utils"
 
 export type ExternalMetaData = {
   animeId: number
@@ -24,18 +24,18 @@ const noNulls = <T>(arr: Array<T | null | undefined>): T[] =>
 
 const findVLCPath = () => {
   const paths: string[] = [
-    '/Applications/VLC.app/Contents/MacOS/VLC',
-    '/usr/bin/vlc',
-    '/etc/vlc',
-    '/usr/bin/X11/vlc',
-    'C:\\Program Files\\VideoLAN\\VLC\\vlc.exe',
+    "/Applications/VLC.app/Contents/MacOS/VLC",
+    "/usr/bin/vlc",
+    "/etc/vlc",
+    "/usr/bin/X11/vlc",
+    "C:\\Program Files\\VideoLAN\\VLC\\vlc.exe",
   ]
 
-  return paths.find(path => existsSync(path)) || null
+  return paths.find((path) => existsSync(path)) || null
 }
 
 const vlcPath: string | null =
-  SettingsStore.get('externalPlayers.vlc') || findVLCPath()
+  SettingsStore.get("externalPlayers.vlc") || findVLCPath()
 
 export class VLC extends ExternalPlayer {
   private finished = false
@@ -49,19 +49,19 @@ export class VLC extends ExternalPlayer {
       store,
       vlcPath,
       noNulls([
-        '--extraintf=http',
-        '--http-host=127.0.0.1',
-        '--http-port=9090',
-        '--http-password=yuna',
-        '--play-and-exit',
-        PLATFORM !== 'darwin' ? '--one-instance' : null,
+        "--extraintf=http",
+        "--http-host=127.0.0.1",
+        "--http-port=9090",
+        "--http-password=yuna",
+        "--play-and-exit",
+        PLATFORM !== "darwin" ? "--one-instance" : null,
         ...filePaths,
       ]),
       meta,
     )
 
     this.currentFile = basename(filePaths[0])
-    this.files = filePaths.map(path => basename(path))
+    this.files = filePaths.map((path) => basename(path))
 
     this.checkInterval = window.setInterval(() => {
       this.checkStatus()
@@ -77,10 +77,10 @@ export class VLC extends ExternalPlayer {
 
     try {
       response = (await superagent
-        .get('http://127.0.0.1:9090/requests/status.json')
-        .auth('', 'yuna')
+        .get("http://127.0.0.1:9090/requests/status.json")
+        .auth("", "yuna")
         .timeout(500)
-        .on('error', NO_OP)) as RequestSuccess<VLCStatusReport>
+        .on("error", NO_OP)) as RequestSuccess<VLCStatusReport>
     } catch (e) {
       return
     }
@@ -98,8 +98,8 @@ export class VLC extends ExternalPlayer {
         this.close()
 
         sendToast(this.store, {
-          type: 'error',
-          title: 'VLC started playing an unknown file',
+          type: "error",
+          title: "VLC started playing an unknown file",
           message: `Cancelling playback of '${this.metaData.title}'.`,
           timeout: 8000,
         })
@@ -119,7 +119,7 @@ export class VLC extends ExternalPlayer {
       this.emit(ExternalPlayerEvent.FINISHED_EPISODE, { fileName })
     }
 
-    if (result.state === 'playing') {
+    if (result.state === "playing") {
       this.emit(ExternalPlayerEvent.PROGRESS, { progress: result.position })
     }
   }

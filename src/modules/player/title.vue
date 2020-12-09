@@ -15,10 +15,10 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue'
+import Vue, { PropType } from "vue"
 
-import { EpisodeListEpisodes } from '@/graphql/generated/types'
-import { getSpoilerSettings } from '@/state/settings'
+import { EpisodeListEpisodes } from "@/graphql/generated/types"
+import { getSpoilerSettings } from "@/state/settings"
 
 export default Vue.extend({
   props: {
@@ -32,7 +32,7 @@ export default Vue.extend({
     },
     episode: {
       type: Object as PropType<
-        Pick<EpisodeListEpisodes, 'episodeNumber' | 'title'>
+        Pick<EpisodeListEpisodes, "episodeNumber" | "title">
       >,
       required: true,
     },
@@ -47,8 +47,8 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
-@import '../../utils';
+@import "../../colors";
+@import "../../utils";
 
 .episode-info {
   position: absolute;

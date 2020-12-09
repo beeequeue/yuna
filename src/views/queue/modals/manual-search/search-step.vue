@@ -27,26 +27,26 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { mdiClose, mdiMagnify } from '@mdi/js'
+import { Component, Vue } from "vue-property-decorator"
+import { mdiClose, mdiMagnify } from "@mdi/js"
 
-import TextInput from '@/common/components/form/text-input.vue'
-import Loading from '@/common/components/loading.vue'
-import Icon from '@/common/components/icon.vue'
-import AnimeBanner from '@/common/components/anime-banner.vue'
+import TextInput from "@/common/components/form/text-input.vue"
+import Loading from "@/common/components/loading.vue"
+import Icon from "@/common/components/icon.vue"
+import AnimeBanner from "@/common/components/anime-banner.vue"
 
-import { Provider } from '@/graphql/generated/types'
-import { Required } from '@/decorators'
-import { ManualSearchOptions } from '@/state/app'
-import { Crunchyroll, SearchResult } from '@/lib/crunchyroll'
-import { capitalize, debounce } from '@/utils'
+import { Provider } from "@/graphql/generated/types"
+import { Required } from "@/decorators"
+import { ManualSearchOptions } from "@/state/app"
+import { Crunchyroll, SearchResult } from "@/lib/crunchyroll"
+import { capitalize, debounce } from "@/utils"
 
 @Component({ components: { Icon, AnimeBanner, Loading, TextInput } })
 export default class SearchStep extends Vue {
   @Required(Object) searchOptions!: ManualSearchOptions
   @Required(Function) setSelectedId!: (id: number | null) => void
 
-  public searchString = ''
+  public searchString = ""
   public loading = false
   public results: SearchResult[] | null = null
 
@@ -83,7 +83,7 @@ export default class SearchStep extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../../colors';
+@import "../../../../colors";
 
 .search-step {
   position: relative;
@@ -94,14 +94,14 @@ export default class SearchStep extends Vue {
   align-items: center;
 
   & > .search-bar {
-    font-family: 'Raleway', sans-serif;
+    font-family: "Raleway", sans-serif;
     font-size: 1.15em;
     width: 100%;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     border-bottom: 1px solid color($dark, 300);
 
-    & /deep/ input {
+    & ::v-deep input {
       text-align: center;
       background: $main;
       border: none;

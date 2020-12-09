@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from "vue-property-decorator"
 
 @Component
 export default class Item extends Vue {
@@ -18,7 +18,7 @@ export default class Item extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .item {
   align-self: stretch;
@@ -27,7 +27,7 @@ export default class Item extends Vue {
   align-items: stretch;
   padding: 0 25px;
 
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
   font-weight: 600;
   font-size: 1.25em;
   color: $white;

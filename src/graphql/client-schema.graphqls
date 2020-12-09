@@ -1,8 +1,8 @@
 enum Provider {
-  CRUNCHYROLL,
-  CRUNCHYROLL_MANUAL,
-  HIDIVE,
-  LOCAL,
+  CRUNCHYROLL
+  CRUNCHYROLL_MANUAL
+  HIDIVE
+  LOCAL
 }
 
 type Episode {
@@ -12,9 +12,13 @@ type Episode {
   title: String!
   duration: Int!
   progress: Int
-  """Index in the Array"""
+  """
+  Index in the Array
+  """
   index: Int!
-  """Number in Season"""
+  """
+  Number in Season
+  """
   episodeNumber: Int!
   thumbnail: String!
   url: String!
@@ -38,22 +42,34 @@ input EpisodeInput {
 }
 
 type ListEntry {
-  """Entry ID in service"""
+  """
+  Entry ID in service
+  """
   id: Int!
-  """Anime AniList ID"""
+  """
+  Anime AniList ID
+  """
   mediaId: Int!
-  """AniList Anime"""
+  """
+  AniList Anime
+  """
   media: Media!
-  """Status converted to AniList status"""
+  """
+  Status converted to AniList status
+  """
   status: MediaListStatus!
-  """Score formatted as 0-100"""
+  """
+  Score formatted as 0-100
+  """
   score: Int
   """
   Progress in episodes
   Not started = 0
   """
   progress: Int!
-  """Times rewatched"""
+  """
+  Times rewatched
+  """
   rewatched: Int!
 }
 
@@ -77,11 +93,11 @@ extend type Query {
   ListEntry(mediaId: Int!): ListEntry!
 
   ListEntries(
-    id_in: [Int!],
-    status: MediaListStatus,
-    status_not: MediaListStatus,
-    page: Int,
-    perPage: Int,
+    id_in: [Int!]
+    status: MediaListStatus
+    status_not: MediaListStatus
+    page: Int
+    perPage: Int
   ): [ListEntry!]!
 }
 

@@ -1,7 +1,7 @@
-import { DollarApollo } from '@vue/apollo-option/types/vue-apollo'
-import { captureException } from '@sentry/browser'
+import { DollarApollo } from "@vue/apollo-option/types/vue-apollo"
+import { captureException } from "@sentry/browser"
 
-import ANIME_PAGE_QUERY from '@/views/anime/anime.graphql'
+import ANIME_PAGE_QUERY from "@/views/anime/anime.graphql"
 import {
   AddToListMutation,
   AddToListVariables,
@@ -22,7 +22,7 @@ import {
   UpdateScoreVariables,
   UpdateStatusMutation,
   UpdateStatusVariables,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 import {
   ADD_TO_LIST,
   DELETE_FROM_LIST,
@@ -31,27 +31,27 @@ import {
   UPDATE_PROGRESS,
   UPDATE_SCORE,
   UPDATE_STATUS,
-} from '@/graphql/documents/mutations'
+} from "@/graphql/documents/mutations"
 import {
   addToCacheList,
   EpisodeMutationObject,
   removeFromCacheList,
   writeEpisodeProgressToCache,
-} from '@/utils/cache'
-import { Instance } from '@/types'
-import { ListEntryWithoutMedia } from '@/plugins/list/plugin'
+} from "@/utils/cache"
+import { Instance } from "@/types"
+import { ListEntryWithoutMedia } from "@/plugins/list/plugin"
 
 const getOptimisticResponse = (
   apollo: DollarApollo<any>,
   anilistId: number,
-  newValues: Partial<Omit<ListEntry, '__typename' | 'mediaId'>>,
+  newValues: Partial<Omit<ListEntry, "__typename" | "mediaId">>,
 ): ListEntryWithoutMedia => {
   const entry = (apollo.provider.defaultClient.cache as any).data.data[
     `ListEntry:${anilistId}`
   ] as ListEntry | undefined
 
   return {
-    __typename: 'ListEntry',
+    __typename: "ListEntry",
     id: entry?.id ?? -1,
     mediaId: anilistId,
     score: entry?.score ?? -1,
@@ -94,7 +94,7 @@ export const deleteFromList = async (
   return $apollo.mutate<DeleteFromListMutation>({
     mutation: DELETE_FROM_LIST,
     variables: { anilistId } as DeleteFromListVariables,
-    update: cache => {
+    update: (cache) => {
       removeFromCacheList(cache, anilistId)
 
       const variables: AnimeViewQueryVariables = { id: anilistId }
@@ -125,7 +125,7 @@ export const deleteFromList = async (
 export const editListEntry = async (
   { $apollo }: Instance,
   anilistId: number,
-  options: EditListEntryMutationVariables['options'],
+  options: EditListEntryMutationVariables["options"],
 ) => {
   const oldStatus = getOptimisticResponse($apollo, anilistId, {}).status
   const variables: EditListEntryMutationVariables = {
@@ -136,7 +136,7 @@ export const editListEntry = async (
   return $apollo.mutate<EditListEntryMutation>({
     mutation: EDIT_LIST_ENTRY,
     variables,
-    errorPolicy: 'all',
+    errorPolicy: "all",
     update: (proxy, { data }) => {
       if (!data || options.status === oldStatus) return data
 
@@ -216,7 +216,7 @@ export const setProgress = async (
   const progress = options.episodeNumber
 
   if (progress < 0) {
-    return captureException(new Error('Tried to set progress to -1'))
+    return captureException(new Error("Tried to set progress to -1"))
   }
 
   const variables: UpdateProgressVariables = {

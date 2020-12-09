@@ -45,19 +45,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from "vue-property-decorator"
 
-import anilistSvg from '@/assets/anilist.svg'
-import simklSvg from '@/assets/simkl.svg'
-import CButton from '@/common/components/button.vue'
-import LoginAL from '@/common/components/login/anilist.vue'
-import LoginSimkl from '@/common/components/login/simkl.vue'
-import { getIsConnectedTo } from '@/state/auth'
+import anilistSvg from "@/assets/anilist.svg"
+import simklSvg from "@/assets/simkl.svg"
+import CButton from "@/common/components/button.vue"
+import LoginAL from "@/common/components/login/anilist.vue"
+import LoginSimkl from "@/common/components/login/simkl.vue"
+import { getIsConnectedTo } from "@/state/auth"
 
 enum Window {
-  Main = 'MAIN',
-  Anilist = 'ANILIST',
-  Simkl = 'SIMKL',
+  Main = "MAIN",
+  Anilist = "ANILIST",
+  Simkl = "SIMKL",
 }
 
 @Component({ components: { CButton, LoginAL, LoginSimkl } })
@@ -88,7 +88,7 @@ export default class ListPlugins extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .list-plugins {
   position: relative;
@@ -131,7 +131,7 @@ export default class ListPlugins extends Vue {
         filter: grayscale(0.75) brightness(0.5);
 
         &,
-        & /deep/ svg {
+        & ::v-deep svg {
           height: 75px;
           width: 75px;
         }

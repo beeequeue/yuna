@@ -36,3 +36,5 @@ generates:
       - add:
           content: '/* eslint-disable */'
       - fragment-matcher
+    config:
+      apolloClientVersion: 2

@@ -10,7 +10,7 @@
           <div>Up next...</div>
 
           <div>
-            Episode {{ nextEpisode.episodeNumber }}/{{ episodesInAnime || '?' }}
+            Episode {{ nextEpisode.episodeNumber }}/{{ episodesInAnime || "?" }}
           </div>
 
           <div v-if="!shouldHide.title" class="episode-title">
@@ -49,16 +49,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mdiPlay } from '@mdi/js'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { mdiPlay } from "@mdi/js"
 
-import { EpisodeListEpisodes } from '@/graphql/generated/types'
+import { EpisodeListEpisodes } from "@/graphql/generated/types"
 
-import { Required } from '@/decorators'
-import { getSpoilerSettings } from '@/state/settings'
+import { Required } from "@/decorators"
+import { getSpoilerSettings } from "@/state/settings"
 
-import CButton from '@/common/components/button.vue'
-import Icon from '@/common/components/icon.vue'
+import CButton from "@/common/components/button.vue"
+import Icon from "@/common/components/icon.vue"
 
 @Component({
   components: { CButton, Icon },
@@ -116,13 +116,13 @@ export default class NextEpisodeOverlay extends Vue {
   public goToNextEpisode() {
     if (!this.nextEpisode) return
 
-    this.$emit('traverse-playlist', 1)
+    this.$emit("traverse-playlist", 1)
   }
 }
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 @keyframes expand {
   from {
@@ -146,7 +146,7 @@ export default class NextEpisodeOverlay extends Vue {
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
   text-shadow: $outline;
   font-size: 1.25em;
   font-weight: 600;
@@ -237,7 +237,7 @@ export default class NextEpisodeOverlay extends Vue {
       text-shadow: $outline !important;
       overflow: hidden;
 
-      & /deep/ .content {
+      & ::v-deep .content {
         padding: 0;
       }
     }

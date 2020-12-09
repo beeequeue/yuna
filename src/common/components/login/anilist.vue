@@ -18,12 +18,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mdiArrowLeft } from '@mdi/js'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { mdiArrowLeft } from "@mdi/js"
 
-import anilistLogoSvg from '@/assets/anilist.svg'
-import CButton from '@/common/components/button.vue'
-import { Anilist } from '@/lib/anilist'
+import anilistLogoSvg from "@/assets/anilist.svg"
+import CButton from "@/common/components/button.vue"
+import { Anilist } from "@/lib/anilist"
 
 @Component({ components: { CButton } })
 export default class LoginAl extends Vue {
@@ -57,7 +57,7 @@ export default class LoginAl extends Vue {
     margin: 15px;
 
     &,
-    & /deep/ svg {
+    & ::v-deep svg {
       height: 75px;
       width: 75px;
     }
@@ -66,7 +66,7 @@ export default class LoginAl extends Vue {
   & > .text-input {
     margin: 0 25px 8px;
 
-    & /deep/ input {
+    & ::v-deep input {
       text-align: center;
     }
   }

@@ -11,8 +11,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { isNil } from '@/utils'
+import { Component, Vue } from "vue-property-decorator"
+import { isNil } from "@/utils"
 
 @Component
 export default class AnimatedSize extends Vue {
@@ -37,9 +37,9 @@ export default class AnimatedSize extends Vue {
 
   private getExtreme(
     children: Element[],
-    property: 'top' | 'bottom' | 'left' | 'right',
+    property: "top" | "bottom" | "left" | "right",
   ) {
-    const extreme = ['top', 'left'].includes(property) ? 'min' : 'max'
+    const extreme = ["top", "left"].includes(property) ? "min" : "max"
 
     return children.reduce(
       (last, child) => {
@@ -47,7 +47,7 @@ export default class AnimatedSize extends Vue {
 
         return Math[extreme](value, last)
       },
-      extreme === 'min' ? Infinity : -Infinity,
+      extreme === "min" ? Infinity : -Infinity,
     )
   }
 
@@ -66,10 +66,10 @@ export default class AnimatedSize extends Vue {
         return
       }
 
-      const top = this.getExtreme(children, 'top')
-      const bottom = this.getExtreme(children, 'bottom')
-      const left = this.getExtreme(children, 'left')
-      const right = this.getExtreme(children, 'right')
+      const top = this.getExtreme(children, "top")
+      const bottom = this.getExtreme(children, "bottom")
+      const left = this.getExtreme(children, "left")
+      const right = this.getExtreme(children, "right")
 
       this.height = bottom - top
       this.width = right - left
@@ -88,7 +88,7 @@ export default class AnimatedSize extends Vue {
 
   transition: height 0.25s, width 0.25s;
 
-  & /deep/ *.h-w {
+  & ::v-deep *.h-w {
     &-enter-active,
     &-leave-active {
       transition: opacity 0.25s;

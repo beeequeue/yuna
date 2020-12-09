@@ -1,5 +1,5 @@
-import { ipcRenderer } from 'electron'
-import { onMounted, onUnmounted } from '@vue/composition-api'
+import { ipcRenderer } from "electron"
+import { onMounted, onUnmounted } from "@vue/composition-api"
 import {
   PLAYER_NEXT,
   PLAYER_PLAY_PAUSE,
@@ -7,7 +7,7 @@ import {
   PLAYER_STOP,
   REGISTER_MEDIA_KEYS,
   UNREGISTER_MEDIA_KEYS,
-} from '@/messages'
+} from "@/messages"
 
 type Actions = {
   play: () => void

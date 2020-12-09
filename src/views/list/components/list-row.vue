@@ -41,15 +41,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mdiChevronDown } from '@mdi/js'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { mdiChevronDown } from "@mdi/js"
 
-import Icon from '@/common/components/icon.vue'
-import { Required } from '@/decorators'
-import { ListViewListEntries, MediaListStatus } from '@/graphql/generated/types'
-import { clamp, humanizeMediaListStatus } from '@/utils'
-import { ListMedia } from '../types'
-import ListEntry from './list-entry.vue'
+import Icon from "@/common/components/icon.vue"
+import { Required } from "@/decorators"
+import { ListViewListEntries, MediaListStatus } from "@/graphql/generated/types"
+import { clamp, humanizeMediaListStatus } from "@/utils"
+import { ListMedia } from "../types"
+import ListEntry from "./list-entry.vue"
 
 @Component({ components: { Icon, ListEntry } })
 export default class ListRow extends Vue {
@@ -131,8 +131,8 @@ export default class ListRow extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
-@import '../list-variables';
+@import "../../../colors";
+@import "../list-variables";
 
 .list {
   transition: background 0.15s;
@@ -146,7 +146,7 @@ export default class ListRow extends Vue {
     padding: 5px 25px;
     display: flex;
     align-items: center;
-    font-family: 'Raleway', sans-serif;
+    font-family: "Raleway", sans-serif;
     font-weight: 200;
     text-shadow: 0 1px 1px transparentize(white, 0.85);
     font-size: 1.5em;

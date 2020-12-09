@@ -33,15 +33,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { shell } from 'electron'
-import { mdiArrowLeft } from '@mdi/js'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { shell } from "electron"
+import { mdiArrowLeft } from "@mdi/js"
 
-import simklLogo from '@/assets/simkl.svg'
-import CButton from '@/common/components/button.vue'
-import AnimatedSize from '@/common/components/animated-size.vue'
-import { Simkl } from '@/lib/simkl'
-import { countdown, isNil, secondsToTimeString } from '@/utils'
+import simklLogo from "@/assets/simkl.svg"
+import CButton from "@/common/components/button.vue"
+import AnimatedSize from "@/common/components/animated-size.vue"
+import { Simkl } from "@/lib/simkl"
+import { countdown, isNil, secondsToTimeString } from "@/utils"
 
 @Component({ components: { AnimatedSize, CButton } })
 export default class LoginSimkl extends Vue {
@@ -65,7 +65,7 @@ export default class LoginSimkl extends Vue {
 
     const { code, expires, url, interval } = this.codeDetails
 
-    countdown(5, seconds => {
+    countdown(5, (seconds) => {
       if (seconds === 0) {
         shell.openExternal(url)
       }
@@ -84,7 +84,7 @@ export default class LoginSimkl extends Vue {
   }
 
   public startEnterTimout() {
-    countdown(this.codeDetails!.expires, seconds => {
+    countdown(this.codeDetails!.expires, (seconds) => {
       if (seconds === 0) {
         this.codeDetails = null
       }
@@ -120,7 +120,7 @@ export default class LoginSimkl extends Vue {
     margin: 15px;
 
     &,
-    & /deep/ svg {
+    & ::v-deep svg {
       height: 75px;
       width: 75px;
     }

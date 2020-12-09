@@ -210,7 +210,7 @@ import {
   PropType,
   ref,
   watch,
-} from '@vue/composition-api'
+} from "@vue/composition-api"
 import {
   mdiArrowCollapse,
   mdiArrowExpand,
@@ -224,33 +224,33 @@ import {
   mdiPlay,
   mdiSkipNext,
   mdiSkipPrevious,
-} from '@mdi/js'
+} from "@mdi/js"
 import {
   EpisodeListEpisodes,
   PlayerAnimeAnime,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 
-import { usePlayer } from '@/state/player'
-import { secondsToTimeString } from '@/utils'
+import { usePlayer } from "@/state/player"
+import { secondsToTimeString } from "@/utils"
 
-import Icon from '@/common/components/icon.vue'
-import PlayerTitle from './title.vue'
-import ProgressBar from './progress-bar.vue'
-import VolumeSlider from './volume-slider.vue'
-import { PlayerState } from './player.types'
+import Icon from "@/common/components/icon.vue"
+import PlayerTitle from "./title.vue"
+import ProgressBar from "./progress-bar.vue"
+import VolumeSlider from "./volume-slider.vue"
+import { PlayerState } from "./player.types"
 
 enum ControlsEvent {
-  Play = 'play',
-  Pause = 'pause',
-  Timeskip = 'timeskip',
-  SetVolume = 'set-volume',
-  ToggleMute = 'toggle-mute',
-  SetSpeed = 'set-speed',
-  SetQuality = 'set-quality',
-  SetSubtitlesTrack = 'set-subtitles-track',
-  SetFullscreen = 'set-fullscreen',
-  UpdateProgress = 'update-progress',
-  Close = 'close',
+  Play = "play",
+  Pause = "pause",
+  Timeskip = "timeskip",
+  SetVolume = "set-volume",
+  ToggleMute = "toggle-mute",
+  SetSpeed = "set-speed",
+  SetQuality = "set-quality",
+  SetSubtitlesTrack = "set-subtitles-track",
+  SetFullscreen = "set-fullscreen",
+  UpdateProgress = "update-progress",
+  Close = "close",
 }
 
 export default defineComponent({
@@ -265,12 +265,12 @@ export default defineComponent({
       default: null,
     },
     listEntry: {
-      type: Object as PropType<PlayerAnimeAnime['listEntry'] | null>,
+      type: Object as PropType<PlayerAnimeAnime["listEntry"] | null>,
       default: null,
     },
     title: {
       type: String,
-      default: '',
+      default: "",
     },
     subtitles: {
       type: Object as PropType<{
@@ -292,10 +292,10 @@ export default defineComponent({
     const watched = computed(() => props.episode.isWatched)
     const markWatchedTooltip = computed(() => {
       if (props.episode.episodeNumber === 0) {
-        return 'This episode shares watched status with episode 1.'
+        return "This episode shares watched status with episode 1."
       }
 
-      return watched.value ? 'Unmark as watched' : 'Mark as watched'
+      return watched.value ? "Unmark as watched" : "Mark as watched"
     })
 
     const settingsOpen = ref(false)
@@ -322,7 +322,7 @@ export default defineComponent({
     // Show the controls temporarily when pausing
     watch(
       () => props.state.paused,
-      willPause => {
+      (willPause) => {
         if (willPause != true) return
 
         show()
@@ -366,8 +366,8 @@ export default defineComponent({
 
     watch(
       () => root.$route.path,
-      newPath => {
-        if (!newPath.includes('/player-full') && props.fullscreen) {
+      (newPath) => {
+        if (!newPath.includes("/player-full") && props.fullscreen) {
           emit(ControlsEvent.SetFullscreen, false)
         }
       },
@@ -395,7 +395,7 @@ export default defineComponent({
         // 0 is for Re:Zero's double first episode
         props.episode.episodeNumber !== 0 &&
         emit(ControlsEvent.UpdateProgress, progress),
-      maximize: () => root.$router.push('/player-big'),
+      maximize: () => root.$router.push("/player-big"),
       play: () => emit(ControlsEvent.Play),
       pause: () => emit(ControlsEvent.Pause),
       timeskip: (seconds: number) => emit(ControlsEvent.Timeskip, seconds),
@@ -431,7 +431,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 $buttonSize: 50px;
 

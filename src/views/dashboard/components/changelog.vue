@@ -27,17 +27,17 @@
 </template>
 
 <script lang="ts">
-import marked from 'marked'
-import superagent from 'superagent'
-import { defineComponent, ref } from '@vue/composition-api'
+import marked from "marked"
+import superagent from "superagent"
+import { defineComponent, ref } from "@vue/composition-api"
 
-import { LocalStorageKey } from '@/lib/local-storage'
-import type { GitHubRelease } from '@/types'
-import { RequestResponse, responseIsError } from '@/utils'
+import { LocalStorageKey } from "@/lib/local-storage"
+import type { GitHubRelease } from "@/types"
+import { RequestResponse, responseIsError } from "@/utils"
 
 type LiteRelease = Pick<
   GitHubRelease,
-  'id' | 'tag_name' | 'name' | 'body' | 'html_url' | 'published_at'
+  "id" | "tag_name" | "name" | "body" | "html_url" | "published_at"
 >
 
 const CHANGELOG_FETCH_TIMEOUT = 1000 * 60 * 30
@@ -62,11 +62,11 @@ renderer.text = (content: string) => {
 
 const fetchChangelog = async () => {
   const response = (await superagent.get(
-    'https://api.github.com/repos/beeequeue/yuna/releases',
+    "https://api.github.com/repos/beeequeue/yuna/releases",
   )) as RequestResponse<GitHubRelease[]>
 
   if (responseIsError(response) || !Array.isArray(response.body)) {
-    throw new Error('Something went wrong fetching the changelog!')
+    throw new Error("Something went wrong fetching the changelog!")
   }
 
   const changelog = response.body
@@ -94,24 +94,24 @@ const fetchChangelog = async () => {
 export default defineComponent({
   setup: () => {
     const changelog = ref<LiteRelease[]>(
-      JSON.parse(localStorage.getItem(LocalStorageKey.Changelog) || '[]'),
+      JSON.parse(localStorage.getItem(LocalStorageKey.Changelog) || "[]"),
     )
     const lastFetchedAt = ref(
       Number(localStorage.getItem(LocalStorageKey.ChangelogFetchedAt) || 0),
     )
 
     if (lastFetchedAt.value + CHANGELOG_FETCH_TIMEOUT < Date.now()) {
-      fetchChangelog().then(newChangelog => {
+      fetchChangelog().then((newChangelog) => {
         changelog.value = newChangelog
       })
     }
 
     return {
       changelog,
-      getHeader: (str: string) => str.replace(' - ', '<br/>'),
+      getHeader: (str: string) => str.replace(" - ", "<br/>"),
       formatDate: (date: string) =>
         // sv-SE uses YYYY-MM-DD, the only correct way
-        Intl.DateTimeFormat('sv-SE').format(new Date(date)),
+        Intl.DateTimeFormat("sv-SE").format(new Date(date)),
       compileMarkdown: (str: string) =>
         marked(str, {
           gfm: true,
@@ -123,7 +123,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .changelog {
   display: flex;
@@ -152,7 +152,7 @@ export default defineComponent({
       border-top: 1px solid color($main, 600);
     }
 
-    & /deep/ a {
+    & ::v-deep a {
       font-weight: 700;
       text-decoration: none;
       color: color($highlight, 400);
@@ -187,7 +187,7 @@ export default defineComponent({
         }
       }
 
-      & /deep/ ul {
+      & ::v-deep ul {
         text-align: left;
       }
     }

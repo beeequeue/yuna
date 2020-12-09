@@ -20,14 +20,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from "vue-property-decorator"
 
-import CButton from '@/common/components/button.vue'
-import Checkbox from '@/common/components/form/checkbox.vue'
+import CButton from "@/common/components/button.vue"
+import Checkbox from "@/common/components/form/checkbox.vue"
 
-import discordSvg from '@/assets/discord.svg'
-import richPresenceWebp from '@/assets/setup/discord.webp'
-import { getSettings, setDiscordRichPresence } from '@/state/settings'
+import discordSvg from "@/assets/discord.svg"
+import richPresenceWebp from "@/assets/setup/discord.webp"
+import { getSettings, setDiscordRichPresence } from "@/state/settings"
 
 @Component({ components: { CButton, Checkbox } })
 export default class Discord extends Vue {
@@ -47,7 +47,7 @@ export default class Discord extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .discord {
   display: flex;

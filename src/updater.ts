@@ -1,11 +1,11 @@
-import { platform } from 'os'
-import { app, ipcMain } from 'electron'
-import { activeWindow } from 'electron-util'
-import fetch from 'node-fetch'
-import { lte } from 'semver'
+import { platform } from "os"
+import { app, ipcMain } from "electron"
+import { activeWindow } from "electron-util"
+import fetch from "node-fetch"
+import { lte } from "semver"
 
-import { isNil } from '@/utils'
-import { CHECK_FOR_UPDATES, UPDATE_AVAILABLE } from './messages'
+import { isNil } from "@/utils"
+import { CHECK_FOR_UPDATES, UPDATE_AVAILABLE } from "./messages"
 
 const timeBetweenUpdateChecks = 30 * 60 * 1000
 let mainWindow: Electron.BrowserWindow | null = null
@@ -32,16 +32,16 @@ type GitHubRelease = {
 
 const getExtension = () => {
   switch (platform()) {
-    case 'darwin':
-      return '.dmg'
-    case 'win32':
-      return '.exe'
+    case "darwin":
+      return ".dmg"
+    case "win32":
+      return ".exe"
     default:
       return null
   }
 }
 
-const defaultUrl = 'https://github.com/beeequeue/yuna/releases'
+const defaultUrl = "https://github.com/beeequeue/yuna/releases"
 const getDownloadUrl = (data: GitHubRelease) => {
   const extension = getExtension()
 
@@ -49,7 +49,7 @@ const getDownloadUrl = (data: GitHubRelease) => {
     return defaultUrl
   }
 
-  const url = data.assets.find(asset =>
+  const url = data.assets.find((asset) =>
     asset.browser_download_url.endsWith(extension),
   )
 
@@ -58,7 +58,7 @@ const getDownloadUrl = (data: GitHubRelease) => {
 
 const checkForUpdates = async () => {
   const response = await fetch(
-    'https://api.github.com/repos/beeequeue/yuna/releases/latest',
+    "https://api.github.com/repos/beeequeue/yuna/releases/latest",
   )
 
   const body = (await response.json()) as GitHubRelease

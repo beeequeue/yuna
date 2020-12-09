@@ -63,26 +63,26 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mdiChevronDown, mdiFile } from '@mdi/js'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { mdiChevronDown, mdiFile } from "@mdi/js"
 
-import crIcon from '@/assets/crunchyroll.svg'
-import hidiveIcon from '@/assets/hidive.svg'
-import Icon from '@/common/components/icon.vue'
+import crIcon from "@/assets/crunchyroll.svg"
+import hidiveIcon from "@/assets/hidive.svg"
+import Icon from "@/common/components/icon.vue"
 
 import {
   Provider,
   QueueAnime,
   QueueExternalLinks,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 
-import { Required } from '@/decorators'
-import { initManualSearch, setLocalSourceAnime } from '@/state/app'
-import { getLocalFilesFolder } from '@/state/settings'
-import { StreamingSource, SupportedSources } from '@/types'
-import { getStreamingSources, isNil, isNotNil, itemsAreNotNil } from '@/utils'
+import { Required } from "@/decorators"
+import { initManualSearch, setLocalSourceAnime } from "@/state/app"
+import { getLocalFilesFolder } from "@/state/settings"
+import { StreamingSource, SupportedSources } from "@/types"
+import { getStreamingSources, isNil, isNotNil, itemsAreNotNil } from "@/utils"
 
-const streamingSiteCtx = require.context('@/assets', false)
+const streamingSiteCtx = require.context("@/assets", false)
 const siteImages = streamingSiteCtx.keys()
 
 @Component({ components: { Icon } })
@@ -143,7 +143,7 @@ export default class SourceSelect extends Vue {
   public getIsSupported(provider: Provider) {
     return isNotNil(
       this.supportedSources.find(
-        source => source.site.toLowerCase() === provider.toLowerCase(),
+        (source) => source.site.toLowerCase() === provider.toLowerCase(),
       ),
     )
   }
@@ -152,7 +152,7 @@ export default class SourceSelect extends Vue {
     return {
       fade:
         source.site.toUpperCase() !==
-        this.currentProvider.replace('Manual', ''),
+        this.currentProvider.replace("Manual", ""),
     }
   }
 
@@ -166,7 +166,7 @@ export default class SourceSelect extends Vue {
 
     if (provider === Provider.Local) {
       if (isNil(this.localFilesFolder)) {
-        this.$router.push('/settings#local-files')
+        this.$router.push("/settings#local-files")
 
         return
       }
@@ -185,7 +185,7 @@ export default class SourceSelect extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .source-select {
   position: relative;

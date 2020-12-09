@@ -36,13 +36,13 @@ import { MediaRelation } from '../../graphql/types'
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { mdiArrowLeftBold, mdiArrowRightBold } from '@mdi/js'
+import { Component, Vue } from "vue-property-decorator"
+import { mdiArrowLeftBold, mdiArrowRightBold } from "@mdi/js"
 
-import { AnimeViewRelations } from '@/graphql/generated/types'
+import { AnimeViewRelations } from "@/graphql/generated/types"
 
-import Icon from '@/common/components/icon.vue'
-import { Required } from '@/decorators'
+import Icon from "@/common/components/icon.vue"
+import { Required } from "@/decorators"
 
 @Component({
   components: { Icon },
@@ -51,11 +51,11 @@ export default class Relations extends Vue {
   @Required(Array) public prequels!: AnimeViewRelations[]
   @Required(Array) public sequels!: AnimeViewRelations[]
 
-  public getRelationIcon(relation: 'PREQUEL' | 'SEQUEL') {
+  public getRelationIcon(relation: "PREQUEL" | "SEQUEL") {
     switch (relation) {
-      case 'PREQUEL':
+      case "PREQUEL":
         return mdiArrowLeftBold
-      case 'SEQUEL':
+      case "SEQUEL":
         return mdiArrowRightBold
     }
   }
@@ -63,7 +63,7 @@ export default class Relations extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .relations {
   display: flex;
@@ -78,7 +78,7 @@ export default class Relations extends Vue {
     flex-direction: column;
     flex-shrink: 0;
     position: relative;
-    font-family: 'Raleway', sans-serif;
+    font-family: "Raleway", sans-serif;
     margin-bottom: 10px;
     background: color($main, 200);
     text-align: left;

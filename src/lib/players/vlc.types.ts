@@ -12,7 +12,7 @@ export type VLCMeta = {
 }
 
 type VLCVideoStream = {
-  Type: 'Video'
+  Type: "Video"
   Decoded_format: string
   Color_transfer_function: string
   Video_resolution: string
@@ -25,14 +25,14 @@ type VLCVideoStream = {
 }
 
 type VLCSubtitleStream = {
-  Type: 'Subtitle'
+  Type: "Subtitle"
   Description: string
   Language: string
   Codec: string
 }
 
 type VLCAudioStream = {
-  Type: 'Audio'
+  Type: "Audio"
   Description: string
   Language: string
   Codec: string
@@ -81,7 +81,7 @@ export type VLCStatusReport = {
     brightness: number
     gamma: number
   }
-  state: 'playing' | 'paused'
+  state: "playing" | "paused"
   loop: true
   version: string
   position: number

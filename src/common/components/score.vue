@@ -17,17 +17,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { mdiStar, mdiStarOutline } from '@mdi/js'
+import { Component, Vue } from "vue-property-decorator"
+import { mdiStar, mdiStarOutline } from "@mdi/js"
 
-import Icon from '@/common/components/icon.vue'
-import { Default, Query, Required } from '@/decorators'
-import { LIST_ENTRY_SCORE_QUERY } from '@/graphql/documents/queries'
-import { updateScore } from '@/graphql/mutations/list-entry'
+import Icon from "@/common/components/icon.vue"
+import { Default, Query, Required } from "@/decorators"
+import { LIST_ENTRY_SCORE_QUERY } from "@/graphql/documents/queries"
+import { updateScore } from "@/graphql/mutations/list-entry"
 import {
   ListEntryQuery,
   ListEntryQueryVariables,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 
 @Component({ components: { Icon } })
 export default class Score extends Vue {
@@ -35,7 +35,7 @@ export default class Score extends Vue {
   @Default(Number, 50) size!: number
 
   @Query<Score, ListEntryQuery, ListEntryQueryVariables>({
-    fetchPolicy: 'cache-first',
+    fetchPolicy: "cache-first",
     query: LIST_ENTRY_SCORE_QUERY,
     variables() {
       return {
@@ -46,7 +46,7 @@ export default class Score extends Vue {
       return data.ListEntry
     },
   })
-  public listEntry!: ListEntryQuery['ListEntry']
+  public listEntry!: ListEntryQuery["ListEntry"]
 
   public scores = [1, 25, 50, 75, 100]
   public hoveredIndex = -1
@@ -75,7 +75,7 @@ export default class Score extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .scores-container {
   position: relative;
@@ -108,7 +108,7 @@ export default class Score extends Vue {
       &.hollow {
         transform: scale(1.1);
 
-        & /deep/ svg path {
+        & ::v-deep svg path {
           stroke: mix(black, gold, 40%);
           stroke-width: 0.5px;
           stroke-linejoin: round;

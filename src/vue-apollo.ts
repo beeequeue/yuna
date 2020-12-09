@@ -1,37 +1,37 @@
-import { ApolloProvider } from '@vue/apollo-option'
+import { ApolloProvider } from "@vue/apollo-option"
 import {
   createApolloClient,
   CreateClientOptions,
-} from 'vue-cli-plugin-apollo/graphql-client'
-import { Store } from 'vuex'
+} from "vue-cli-plugin-apollo/graphql-client"
+import { Store } from "vuex"
 import {
   defaultDataIdFromObject,
   IntrospectionFragmentMatcher,
-} from 'apollo-cache-inmemory'
-import Bottleneck from 'bottleneck'
-import { captureException } from '@sentry/browser'
+} from "apollo-cache-inmemory"
+import Bottleneck from "bottleneck"
+import { captureException } from "@sentry/browser"
 
-import introspectionResult from '@/graphql/generated/introspection-result'
-import { createResolvers } from '@/graphql/resolvers'
-import { EpisodeListEpisodes, ListEntry } from '@/graphql/generated/types'
-import { userStore } from '@/lib/user'
-import { getEpisodeCacheKey, isNil, isOfTypename } from '@/utils'
+import introspectionResult from "@/graphql/generated/introspection-result"
+import { createResolvers } from "@/graphql/resolvers"
+import { EpisodeListEpisodes, ListEntry } from "@/graphql/generated/types"
+import { userStore } from "@/lib/user"
+import { getEpisodeCacheKey, isNil, isOfTypename } from "@/utils"
 import {
   getAnilistRequestsUntilLimiting,
   setAnilistRequests,
-} from '@/state/app'
+} from "@/state/app"
 
 // Http endpoint
-const httpEndpoint = 'https://graphql.anilist.co'
+const httpEndpoint = "https://graphql.anilist.co"
 
 const dataIdFromObject = (obj: { __typename?: string; [key: string]: any }) => {
   // Episode
-  if (isOfTypename<EpisodeListEpisodes>(obj, 'Episode')) {
+  if (isOfTypename<EpisodeListEpisodes>(obj, "Episode")) {
     return getEpisodeCacheKey(obj)
   }
 
   // ListEntry
-  if (isOfTypename<ListEntry>(obj, 'ListEntry')) {
+  if (isOfTypename<ListEntry>(obj, "ListEntry")) {
     return `ListEntry:${obj.mediaId}`
   }
 
@@ -70,7 +70,7 @@ const createOptions = (store: Store<any>): CreateClientOptions => ({
   wsEndpoint: null,
 
   // Override the way the Authorization header is set
-  getAuth: () => userStore.get('anilist.token'),
+  getAuth: () => userStore.get("anilist.token"),
 
   // Fetch override
   httpLinkOptions: {
@@ -108,7 +108,7 @@ export const createProvider = (store: Store<any>) => {
     defaultClient: apolloClient,
     defaultOptions: {
       $query: {
-        fetchPolicy: 'cache-first',
+        fetchPolicy: "cache-first",
       },
     },
     async errorHandler({ networkError }) {
@@ -120,7 +120,7 @@ export const createProvider = (store: Store<any>) => {
         return
       }
 
-      if (process.env.NODE_ENV === 'production') {
+      if (process.env.NODE_ENV === "production") {
         if (isNil(networkError)) return
 
         return captureException(networkError)

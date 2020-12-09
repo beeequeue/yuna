@@ -55,23 +55,23 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from "vue-property-decorator"
 
-import crIcon from '@/assets/crunchyroll.svg'
-import hidiveIcon from '@/assets/hidive.svg'
-import LoginCr from '@/common/components/login/crunchyroll.vue'
-import LoginHd from '@/common/components/login/hidive.vue'
-import TextInput from '@/common/components/form/text-input.vue'
-import CButton from '@/common/components/button.vue'
+import crIcon from "@/assets/crunchyroll.svg"
+import hidiveIcon from "@/assets/hidive.svg"
+import LoginCr from "@/common/components/login/crunchyroll.vue"
+import LoginHd from "@/common/components/login/hidive.vue"
+import TextInput from "@/common/components/form/text-input.vue"
+import CButton from "@/common/components/button.vue"
 
-import { getFinishedConnecting, getIsConnectedTo } from '@/state/auth'
-import { Crunchyroll } from '@/lib/crunchyroll'
-import { Hidive } from '@/lib/hidive'
+import { getFinishedConnecting, getIsConnectedTo } from "@/state/auth"
+import { Crunchyroll } from "@/lib/crunchyroll"
+import { Hidive } from "@/lib/hidive"
 
 enum Window {
-  Main = 'MAIN',
-  Crunchyroll = 'CRUNCHYROLL',
-  Hidive = 'HIDIVE',
+  Main = "MAIN",
+  Crunchyroll = "CRUNCHYROLL",
+  Hidive = "HIDIVE",
 }
 
 @Component({ components: { LoginHd, LoginCr, CButton, TextInput } })
@@ -119,7 +119,7 @@ export default class Connections extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .connections {
   display: flex;

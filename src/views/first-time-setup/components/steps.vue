@@ -13,10 +13,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from "vue-property-decorator"
 
-import { Required } from '@/decorators'
-import { SetupStep } from '@/state/settings'
+import { Required } from "@/decorators"
+import { SetupStep } from "@/state/settings"
 
 @Component
 export default class Steps extends Vue {
@@ -26,15 +26,15 @@ export default class Steps extends Vue {
   public getStepName(step: SetupStep) {
     switch (step) {
       case SetupStep.LIST_MANAGERS:
-        return 'List managers'
+        return "List managers"
       case SetupStep.CONNECT:
-        return 'Streaming services'
+        return "Streaming services"
       case SetupStep.SPOILERS:
-        return 'Spoiler settings'
+        return "Spoiler settings"
       case SetupStep.DISCORD:
-        return 'Discord Rich Presence'
+        return "Discord Rich Presence"
       case SetupStep.LOCAL_FILES:
-        return 'Local files'
+        return "Local files"
     }
   }
 
@@ -48,7 +48,7 @@ export default class Steps extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .steps-container {
   display: flex;
@@ -96,7 +96,7 @@ export default class Steps extends Vue {
       color: $white !important;
       text-align: right;
       text-shadow: $outline;
-      font-family: 'Raleway', sans-serif;
+      font-family: "Raleway", sans-serif;
       opacity: 0.6;
       transition: opacity 0.5s;
     }

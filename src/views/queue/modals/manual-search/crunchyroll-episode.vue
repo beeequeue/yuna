@@ -19,13 +19,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from "vue-property-decorator"
 
-import { EpisodeListEpisodes } from '@/graphql/generated/types'
-import Checkbox from '@/common/components/form/checkbox.vue'
+import { EpisodeListEpisodes } from "@/graphql/generated/types"
+import Checkbox from "@/common/components/form/checkbox.vue"
 
-import { Required } from '@/decorators'
-import { isNil, isNotNil } from '@/utils'
+import { Required } from "@/decorators"
+import { isNil, isNotNil } from "@/utils"
 
 @Component({ components: { Checkbox } })
 export default class CrunchyrollEpisode extends Vue {
@@ -51,7 +51,7 @@ export default class CrunchyrollEpisode extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../../colors';
+@import "../../../../colors";
 
 .episode {
   display: flex;

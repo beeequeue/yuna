@@ -43,14 +43,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue } from "vue-property-decorator"
 
-import ListPlugins from '@/views/first-time-setup/components/list-plugins.vue'
-import Connections from './components/connections.vue'
-import Steps from './components/steps.vue'
-import SpoilerSettings from './components/spoiler-settings.vue'
-import Discord from './components/discord.vue'
-import LocalFilesSetup from './components/local-files-setup.vue'
+import ListPlugins from "@/views/first-time-setup/components/list-plugins.vue"
+import Connections from "./components/connections.vue"
+import Steps from "./components/steps.vue"
+import SpoilerSettings from "./components/spoiler-settings.vue"
+import Discord from "./components/discord.vue"
+import LocalFilesSetup from "./components/local-files-setup.vue"
 
 import {
   _setupSteps,
@@ -58,8 +58,8 @@ import {
   getNextUnfinishedStep,
   removeFinishedStep,
   SetupStep,
-} from '@/state/settings'
-import { getIsConnectedTo } from '@/state/auth'
+} from "@/state/settings"
+import { getIsConnectedTo } from "@/state/auth"
 
 @Component({
   components: {
@@ -108,7 +108,7 @@ export default class FirstTimeSetup extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .first-time-setup {
   position: absolute;

@@ -55,21 +55,21 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Vue, Watch } from 'vue-property-decorator'
-import Fuse from 'fuse.js'
-import { mdiInformationOutline } from '@mdi/js'
+import { Component, Emit, Vue, Watch } from "vue-property-decorator"
+import Fuse from "fuse.js"
+import { mdiInformationOutline } from "@mdi/js"
 
-import anichartSvg from '@/assets/anichart.svg'
-import anilistSvg from '@/assets/anilist.svg'
-import simklSvg from '@/assets/simkl.svg'
-import TextInput from '@/common/components/form/text-input.vue'
-import CSelect from '@/common/components/select.vue'
-import Loading from '@/common/components/loading.vue'
-import Icon from '@/common/components/icon.vue'
+import anichartSvg from "@/assets/anichart.svg"
+import anilistSvg from "@/assets/anilist.svg"
+import simklSvg from "@/assets/simkl.svg"
+import TextInput from "@/common/components/form/text-input.vue"
+import CSelect from "@/common/components/select.vue"
+import Loading from "@/common/components/loading.vue"
+import Icon from "@/common/components/icon.vue"
 
-import { Default } from '@/decorators'
-import { getAnilistUserId, getIsConnectedTo, getSimklUser } from '@/state/auth'
-import { ListViewListEntries, MediaStatus } from '@/graphql/generated/types'
+import { Default } from "@/decorators"
+import { getAnilistUserId, getIsConnectedTo, getSimklUser } from "@/state/auth"
+import { ListViewListEntries, MediaStatus } from "@/graphql/generated/types"
 import {
   capitalize,
   debounce,
@@ -79,10 +79,10 @@ import {
   isNil,
   isNotNil,
   prop,
-} from '@/utils'
-import { ListMedia } from '../types'
-import { SelectItem, StreamingSource } from '@/types'
-type Media = NonNullable<NonNullable<ListMedia[number]>['media']>
+} from "@/utils"
+import { ListMedia } from "../types"
+import { SelectItem, StreamingSource } from "@/types"
+type Media = NonNullable<NonNullable<ListMedia[number]>["media"]>
 
 @Component({ components: { Icon, CSelect, Loading, TextInput } })
 export default class Filters extends Vue {
@@ -108,12 +108,12 @@ export default class Filters extends Vue {
 
   public filteredMedia: number[] = []
 
-  @Watch('searchString')
-  @Watch('selectedSource')
-  @Watch('selectedAiringStatus')
+  @Watch("searchString")
+  @Watch("selectedSource")
+  @Watch("selectedAiringStatus")
   public updateFilteredMedia() {
     const media = Object.values(this.media)
-      .map(m => m!.media)
+      .map((m) => m!.media)
       .filter(isNotNil)
 
     const filteredByTitles = this.filterByTitles(media)
@@ -122,20 +122,20 @@ export default class Filters extends Vue {
 
     const filteredByStatus = this.filterByStatus(filteredBySources)
 
-    this.filteredMedia = filteredByStatus.map(prop('id'))
+    this.filteredMedia = filteredByStatus.map(prop("id"))
   }
 
-  @Watch('filteredMedia')
-  @Emit('show-filtered')
+  @Watch("filteredMedia")
+  @Emit("show-filtered")
   public emitFilteredItem(): number[] | null {
     return this.entries
-      .filter(entry => this.filteredMedia.includes(entry.mediaId))
-      .map(prop('id'))
+      .filter((entry) => this.filteredMedia.includes(entry.mediaId))
+      .map(prop("id"))
   }
 
   // Name filter
 
-  public searchString = ''
+  public searchString = ""
 
   // beautiful!
   public debouncedSetSearchString = debounce(
@@ -153,17 +153,17 @@ export default class Filters extends Vue {
     const fuse = new Fuse(media, {
       isCaseSensitive: false,
       shouldSort: true,
-      keys: ['title.english', 'title.romaji'] as any,
+      keys: ["title.english", "title.romaji"] as any,
       threshold: 0.35,
     })
 
-    return fuse.search(this.searchString).map(item => item.item)
+    return fuse.search(this.searchString).map((item) => item.item)
   }
 
   // Sources
 
   public sources: SelectItem[] = enumToArray(StreamingSource).map<SelectItem>(
-    source => ({
+    (source) => ({
       label: capitalize(source.toString()),
       value: source.toString(),
     }),
@@ -174,23 +174,23 @@ export default class Filters extends Vue {
   public filterBySources(media: Media[]): Media[] {
     if (isNil(this.selectedSource)) return media
 
-    return media.filter(m => {
+    return media.filter((m) => {
       const links = (m.externalLinks ?? []).filter(isNotNil)
       const sources = getStreamingSources(links)
 
       return sources.some(
-        source => source.site.toLowerCase() === this.selectedSource!,
+        (source) => source.site.toLowerCase() === this.selectedSource!,
       )
     })
   }
 
   // Airing Status
-  public airingStatuses: SelectItem[] = enumKeysToArray(MediaStatus).map<
-    SelectItem
-  >(status => ({
+  public airingStatuses: SelectItem[] = enumKeysToArray(
+    MediaStatus,
+  ).map<SelectItem>((status) => ({
     label: status
       .toString()
-      .replace(/([A-Z])/g, ' $1')
+      .replace(/([A-Z])/g, " $1")
       .trim(),
     value: MediaStatus[status],
   }))
@@ -201,14 +201,14 @@ export default class Filters extends Vue {
     if (isNil(this.selectedAiringStatus)) return media
 
     return media.filter(
-      m => !isNil(m) && m.airingStatus === this.selectedAiringStatus,
+      (m) => !isNil(m) && m.airingStatus === this.selectedAiringStatus,
     )
   }
 }
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .menu {
   width: 100%;
@@ -216,7 +216,7 @@ export default class Filters extends Vue {
   position: relative;
   display: grid;
   grid-template-columns: 125px 1fr 250px 1fr 125px;
-  grid-template-areas: 'links airing-status search sources loader';
+  grid-template-areas: "links airing-status search sources loader";
   grid-gap: 10px;
   justify-items: center;
   align-items: center;
@@ -250,12 +250,12 @@ export default class Filters extends Vue {
       fill: $white;
       height: 20px;
 
-      & /deep/ svg {
+      & ::v-deep svg {
         height: 20px;
       }
     }
 
-    & /deep/ svg {
+    & ::v-deep svg {
       height: 26px;
       width: 26px;
     }
@@ -277,7 +277,7 @@ export default class Filters extends Vue {
   & > .number-input {
     width: 100%;
 
-    & /deep/ input {
+    & ::v-deep input {
       &::-webkit-input-placeholder {
         font-weight: 400;
       }

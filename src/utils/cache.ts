@@ -1,6 +1,6 @@
-import type { ApolloCache, DataProxy } from '@apollo/client/cache'
-import gql from 'graphql-tag'
-import { EPISODE_LIST, LIST_VIEW_QUERY } from '@/graphql/documents/queries'
+import type { ApolloCache, DataProxy } from "@apollo/client/cache"
+import gql from "graphql-tag"
+import { EPISODE_LIST, LIST_VIEW_QUERY } from "@/graphql/documents/queries"
 import {
   CacheAiringDataFragment,
   CachedAnimeListEntryFragment,
@@ -11,11 +11,11 @@ import {
   ListViewQuery,
   ListViewQueryVariables,
   Provider,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 
-import { EpisodeCache } from '@/lib/episode-cache'
-import { EpisodeRelations } from '@/lib/relations'
-import { isNil } from '.'
+import { EpisodeCache } from "@/lib/episode-cache"
+import { EpisodeRelations } from "@/lib/relations"
+import { isNil } from "."
 
 export const getFragment = <R extends {}, V = void>(
   cache: ApolloCache<unknown>,
@@ -80,7 +80,7 @@ type CachedExternalLinks = {
 export const getCachedExternalLinks = (
   cache: ApolloCache<unknown>,
   animeId: number,
-): CachedExternalLinks['externalLinks'] | null => {
+): CachedExternalLinks["externalLinks"] | null => {
   const data = getFragment<CachedExternalLinks>(cache, {
     id: `Media:${animeId}`,
     fragment: gql`
@@ -140,7 +140,7 @@ export const cacheEpisodes = (
   cache: ApolloCache<unknown>,
   episodes: EpisodeListEpisodes[],
 ) => {
-  episodes = episodes.map(ep => ({
+  episodes = episodes.map((ep) => ({
     ...ep,
     isWatched:
       ep.isWatched || getIsWatched(cache, ep.animeId, ep.episodeNumber),
@@ -190,7 +190,7 @@ export const writeEpisodeProgressToCache = (
 
   if (isNil(episodes)) return
 
-  episodes = episodes.map(ep => ({
+  episodes = episodes.map((ep) => ({
     ...ep,
     isWatched: getIsWatched(cache, episode.animeId, ep.episodeNumber),
   }))
@@ -212,7 +212,7 @@ export const removeFromCacheList = (
       })!
 
       const index = data.ListEntries.findIndex(
-        entry => entry.mediaId === anilistId,
+        (entry) => entry.mediaId === anilistId,
       )
 
       if (index === -1) continue

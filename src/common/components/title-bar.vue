@@ -53,10 +53,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { shell } from 'electron'
-import { activeWindow, is } from 'electron-util'
-import gql from 'graphql-tag'
+import { Component, Vue } from "vue-property-decorator"
+import { shell } from "electron"
+import { activeWindow, is } from "electron-util"
+import gql from "graphql-tag"
 import {
   mdiChevronLeft,
   mdiChevronRight,
@@ -64,26 +64,26 @@ import {
   mdiDownloadOutline,
   mdiInformationOutline,
   mdiMinus,
-} from '@mdi/js'
+} from "@mdi/js"
 
 import {
   closeAllModals,
   getAnilistRequestsUntilLimiting,
   getUpdateUrl,
-} from '@/state/app'
-import { getCrunchyrollCountry, getIsConnectedTo } from '@/state/auth'
-import { Query } from '@/decorators'
+} from "@/state/app"
+import { getCrunchyrollCountry, getIsConnectedTo } from "@/state/auth"
+import { Query } from "@/decorators"
 
-import Icon from './icon.vue'
-import { version } from '../../../package.json'
+import Icon from "./icon.vue"
+import { version } from "../../../package.json"
 
-const flagContext = require.context('svg-country-flags/svg')
+const flagContext = require.context("svg-country-flags/svg")
 
 @Component<TitleBar>({ components: { Icon } })
 export default class TitleBar extends Vue {
   @Query<TitleBar, { Viewer: null | { id: number } }>({
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'ignore',
+    fetchPolicy: "no-cache",
+    errorPolicy: "ignore",
     query: gql`
       {
         Viewer {
@@ -115,9 +115,9 @@ export default class TitleBar extends Vue {
 
   public get name() {
     const shouldUseSillyName = Math.random() <= 0.1
-    if (!shouldUseSillyName) return 'Yuna'
+    if (!shouldUseSillyName) return "Yuna"
 
-    return ['Yummy', '(○^ω^)_旦 '][Math.round(Math.random())]
+    return ["Yummy", "(○^ω^)_旦 "][Math.round(Math.random())]
   }
 
   public get country() {
@@ -159,7 +159,7 @@ export default class TitleBar extends Vue {
   private restrictedViews = [/login/, /first-time-setup/]
   public get isOnRestrictedView(): boolean {
     return this.restrictedViews.some(
-      view => view.exec(this.$route.path) != null,
+      (view) => view.exec(this.$route.path) != null,
     )
   }
 
@@ -192,7 +192,7 @@ export default class TitleBar extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .title-bar {
   position: relative;
@@ -242,7 +242,7 @@ export default class TitleBar extends Vue {
     margin-left: 10px;
     -webkit-app-region: no-drag;
 
-    & /deep/ svg {
+    & ::v-deep svg {
       height: 12px;
     }
   }

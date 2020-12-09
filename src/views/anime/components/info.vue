@@ -35,25 +35,25 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from "vue-property-decorator"
 
-import alLogo from '@/assets/anilist.svg'
-import malLogo from '@/assets/myanimelist.webp'
-import simklLogo from '@/assets/simkl.svg'
+import alLogo from "@/assets/anilist.svg"
+import malLogo from "@/assets/myanimelist.webp"
+import simklLogo from "@/assets/simkl.svg"
 
-import { Query, Required } from '@/decorators'
-import { MAL_SCORE_QUERY, SIMKL_INFO_QUERY } from '@/graphql/documents/queries'
+import { Query, Required } from "@/decorators"
+import { MAL_SCORE_QUERY, SIMKL_INFO_QUERY } from "@/graphql/documents/queries"
 import {
   AnimeViewNextAiringEpisode,
   MalScoreQuery,
   MalScoreQueryVariables,
   SimklInfoQuery,
   SimklInfoQueryVariables,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 
-import ListLink from '@/views/anime/components/list-link.vue'
-import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
-import Icon from '@/common/components/icon.vue'
+import ListLink from "@/views/anime/components/list-link.vue"
+import NextEpisodeInfo from "@/common/components/next-episode-info.vue"
+import Icon from "@/common/components/icon.vue"
 
 @Component({
   components: { ListLink, NextEpisodeInfo, Icon },
@@ -70,7 +70,7 @@ export default class Info extends Vue {
     variables() {
       return { id: this.id }
     },
-    update: data => data.anime?.scoreMal ?? null,
+    update: (data) => data.anime?.scoreMal ?? null,
   })
   public scoreMal!: number | null
 
@@ -79,9 +79,9 @@ export default class Info extends Vue {
     variables() {
       return { id: this.id }
     },
-    update: data => data.Media ?? null,
+    update: (data) => data.Media ?? null,
   })
-  public simklInfo: SimklInfoQuery['Media'] = {
+  public simklInfo: SimklInfoQuery["Media"] = {
     id: -1,
     linkSimkl: null,
     scoreSimkl: null,
@@ -106,7 +106,7 @@ export default class Info extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .info-container {
   display: flex;

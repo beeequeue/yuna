@@ -1,6 +1,6 @@
-import { ActionContext } from 'vuex'
-import { getStoreAccessors } from 'vuex-typescript'
-import { v4 as uuid } from 'uuid'
+import { ActionContext } from "vuex"
+import { getStoreAccessors } from "vuex-typescript"
+import { v4 as uuid } from "uuid"
 
 import {
   ListEntry,
@@ -8,15 +8,15 @@ import {
   MediaExternalLink,
   MediaListStatus,
   Provider,
-} from '@/graphql/generated/types'
-import { RootState } from '@/state/store'
-import { getDefaultProvider } from '@/state/auth'
-import { QueueItem, userStore } from '@/lib/user'
-import { isNotNil, propEq } from '@/utils'
-import { setUser } from '@sentry/browser'
+} from "@/graphql/generated/types"
+import { RootState } from "@/state/store"
+import { getDefaultProvider } from "@/state/auth"
+import { QueueItem, userStore } from "@/lib/user"
+import { isNotNil, propEq } from "@/utils"
+import { setUser } from "@sentry/browser"
 
 const isInQueue = (state: UserState, id: number) =>
-  isNotNil(state.queue.find(propEq('id', id)))
+  isNotNil(state.queue.find(propEq("id", id)))
 
 const isCurrentlyWatching = (anime: AddToQueueOptions) =>
   [MediaListStatus.Current, MediaListStatus.Repeating].includes(
@@ -28,9 +28,9 @@ type SetProviderOptions = {
   provider: Provider
 }
 
-type AddToQueueOptions = Pick<Media, 'id'> & {
-  externalLinks: Array<null | Pick<MediaExternalLink, 'site' | 'url'>> | null
-  listEntry: Pick<ListEntry, 'status'> | null
+type AddToQueueOptions = Pick<Media, "id"> & {
+  externalLinks: Array<null | Pick<MediaExternalLink, "site" | "url">> | null
+  listEntry: Pick<ListEntry, "status"> | null
 }
 
 export type UserState = {
@@ -39,16 +39,16 @@ export type UserState = {
 }
 
 const initialState: UserState = {
-  deviceUuid: userStore.get('deviceUuid', uuid()),
-  queue: userStore.get('queue', []),
+  deviceUuid: userStore.get("deviceUuid", uuid()),
+  queue: userStore.get("queue", []),
 }
 
 // Migration from number[]
 if (
   initialState.queue.length > 0 &&
-  typeof initialState.queue[0] === 'number'
+  typeof initialState.queue[0] === "number"
 ) {
-  initialState.queue = initialState.queue.map(id => ({
+  initialState.queue = initialState.queue.map((id) => ({
     id: id as any,
     open: true,
     provider: Provider.Crunchyroll,
@@ -82,7 +82,7 @@ export const user = {
     setQueue(state: UserState, queue: QueueItem[]) {
       state.queue = queue
 
-      userStore.set('queue', queue)
+      userStore.set("queue", queue)
     },
 
     addItemToQueue(state: UserState, item: QueueItem) {
@@ -90,39 +90,39 @@ export const user = {
 
       state.queue = [...state.queue, item]
 
-      userStore.set('queue', state.queue)
+      userStore.set("queue", state.queue)
     },
 
     removeFromQueueByIndex(state: UserState, index: number) {
       state.queue.splice(index, 1)
 
-      userStore.set('queue', state.queue)
+      userStore.set("queue", state.queue)
     },
 
     removeFromQueueById(state: UserState, id: number) {
       if (!isInQueue(state, id)) return
 
-      state.queue.splice(state.queue.findIndex(propEq('id', id)), 1)
+      state.queue.splice(state.queue.findIndex(propEq("id", id)), 1)
 
-      userStore.set('queue', state.queue)
+      userStore.set("queue", state.queue)
     },
 
     toggleQueueItemOpen(state: UserState, id: number) {
       if (!isInQueue(state, id)) return
 
-      const index = state.queue.findIndex(propEq('id', id))
+      const index = state.queue.findIndex(propEq("id", id))
       state.queue[index].open = !state.queue[index].open
 
-      userStore.set('queue', state.queue)
+      userStore.set("queue", state.queue)
     },
 
     setQueueItemProvider(state: UserState, options: SetProviderOptions) {
       if (!isInQueue(state, options.id)) return
 
-      const index = state.queue.findIndex(propEq('id', options.id))
+      const index = state.queue.findIndex(propEq("id", options.id))
       state.queue[index].provider = options.provider
 
-      userStore.set('queue', state.queue)
+      userStore.set("queue", state.queue)
     },
   },
 
@@ -138,7 +138,7 @@ export const user = {
 }
 
 const { read, commit, dispatch } = getStoreAccessors<UserState, RootState>(
-  'user',
+  "user",
 )
 
 export const getQueue = read(user.getters.getQueue)

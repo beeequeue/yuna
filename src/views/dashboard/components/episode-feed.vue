@@ -30,23 +30,23 @@
 </template>
 
 <script lang="ts">
-import { mdiClipboardTextOutline, mdiPlaylistCheck } from '@mdi/js'
-import { computed, defineComponent, ref } from '@vue/composition-api'
-import { useQuery, useResult } from '@vue/apollo-composable'
+import { mdiClipboardTextOutline, mdiPlaylistCheck } from "@mdi/js"
+import { computed, defineComponent, ref } from "@vue/composition-api"
+import { useQuery, useResult } from "@vue/apollo-composable"
 
-import Icon from '@/common/components/icon.vue'
-import { EPISODE_FEED_LIST_IDS } from '@/graphql/documents/queries'
-import { EpisodeFeedListIdsQuery } from '@/graphql/generated/types'
+import Icon from "@/common/components/icon.vue"
+import { EPISODE_FEED_LIST_IDS } from "@/graphql/documents/queries"
+import { EpisodeFeedListIdsQuery } from "@/graphql/generated/types"
 
-import { getAnilistUserId } from '@/state/auth'
-import { getQueue } from '@/state/user'
-import { prop } from '@/utils'
+import { getAnilistUserId } from "@/state/auth"
+import { getQueue } from "@/state/user"
+import { prop } from "@/utils"
 
-import AnimatedList from './animated-list.vue'
+import AnimatedList from "./animated-list.vue"
 
 enum EpisodeFeedMode {
-  LIST = 'LIST',
-  QUEUE = 'QUEUE',
+  LIST = "LIST",
+  QUEUE = "QUEUE",
 }
 
 export default defineComponent({
@@ -55,11 +55,11 @@ export default defineComponent({
     const mode = ref(EpisodeFeedMode.QUEUE)
 
     const query = useQuery<EpisodeFeedListIdsQuery>(EPISODE_FEED_LIST_IDS)
-    const listIds = useResult(query.result, null, data =>
-      data.ListEntries.map(prop('mediaId')),
+    const listIds = useResult(query.result, null, (data) =>
+      data.ListEntries.map(prop("mediaId")),
     )
 
-    const queueIds = getQueue(root.$store).map(prop('id'))
+    const queueIds = getQueue(root.$store).map(prop("id"))
 
     return {
       mode,
@@ -78,7 +78,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .episode-feed {
   display: flex;

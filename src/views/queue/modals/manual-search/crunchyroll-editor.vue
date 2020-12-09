@@ -34,44 +34,44 @@
     <div class="status" :class="{ error: !correctAmount }">
       Selected episodes:
       <span class="selected">{{ selectedEpisodeCount }}</span>
-      {{ ' / ' }}
+      {{ " / " }}
       <span>{{ episodeCount }}</span>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
-import { TooltipSettings } from 'v-tooltip'
-import gql from 'graphql-tag'
-import { mdiArrowLeft, mdiCheck } from '@mdi/js'
+import { Component, Vue, Watch } from "vue-property-decorator"
+import { TooltipSettings } from "v-tooltip"
+import gql from "graphql-tag"
+import { mdiArrowLeft, mdiCheck } from "@mdi/js"
 
-import { cacheEpisodes } from '@/graphql/mutations/episodes'
-import { EpisodeListEpisodes, Provider, Maybe } from '@/graphql/generated/types'
-import Loading from '@/common/components/loading.vue'
-import Icon from '@/common/components/icon.vue'
-import CButton from '@/common/components/button.vue'
-import AnimeBanner from '@/common/components/anime-banner.vue'
-import CrunchyrollCollection from './crunchyroll-collection.vue'
+import { cacheEpisodes } from "@/graphql/mutations/episodes"
+import { EpisodeListEpisodes, Provider, Maybe } from "@/graphql/generated/types"
+import Loading from "@/common/components/loading.vue"
+import Icon from "@/common/components/icon.vue"
+import CButton from "@/common/components/button.vue"
+import AnimeBanner from "@/common/components/anime-banner.vue"
+import CrunchyrollCollection from "./crunchyroll-collection.vue"
 
-import { Query, Required } from '@/decorators'
+import { Query, Required } from "@/decorators"
 import {
   ManualSearchOptions,
   selectCrunchyrollEpisodes,
   unselectCrunchyrollEpisodes,
-} from '@/state/app'
-import { _SeriesWithCollections, Crunchyroll } from '@/lib/crunchyroll'
-import { isNil, pluck } from '@/utils'
+} from "@/state/app"
+import { _SeriesWithCollections, Crunchyroll } from "@/lib/crunchyroll"
+import { isNil, pluck } from "@/utils"
 
 type EpisodeCountVariables = {
   id: Maybe<number>
 }
 
 type EpisodeCountQuery = {
-  __typename?: 'Query'
+  __typename?: "Query"
 
   anime: Maybe<{
-    __typename?: 'Media'
+    __typename?: "Media"
 
     episodes: Maybe<number>
   }>
@@ -97,8 +97,8 @@ export default class CrunchyrollEditor extends Vue {
         id: this.searchOptions.anilistId,
       }
     },
-    loadingKey: 'episodeCountLoading',
-    update: data => data.anime!.episodes,
+    loadingKey: "episodeCountLoading",
+    update: (data) => data.anime!.episodes,
   })
   public episodeCount!: number
   public episodeCountLoading = 0
@@ -120,14 +120,14 @@ export default class CrunchyrollEditor extends Vue {
   public get confirmTooltip(): TooltipSettings {
     return {
       content: "Are you sure? You haven't selected all the episodes!",
-      trigger: 'manual',
+      trigger: "manual",
       show: this.confirming,
     }
   }
 
   // Remove duplicate episode numbers
   public get selectedEpisodeCount() {
-    const numbers = pluck('episodeNumber', this.selectedEpisodes)
+    const numbers = pluck("episodeNumber", this.selectedEpisodes)
     return new Set(numbers).size
   }
 
@@ -140,7 +140,7 @@ export default class CrunchyrollEditor extends Vue {
   }
 
   public clearSelectedEpisodes() {
-    this.unselectEpisodes(pluck('id', this.selectedEpisodes))
+    this.unselectEpisodes(pluck("id", this.selectedEpisodes))
   }
 
   public goBack() {
@@ -181,7 +181,7 @@ export default class CrunchyrollEditor extends Vue {
     unselectCrunchyrollEpisodes(this.$store, episodes)
   }
 
-  @Watch('id')
+  @Watch("id")
   public async fetchAnime() {
     this.loading = true
 
@@ -190,9 +190,9 @@ export default class CrunchyrollEditor extends Vue {
       this.id,
     )
 
-    this.anime.collections = this.anime.collections.map(coll => ({
+    this.anime.collections = this.anime.collections.map((coll) => ({
       ...coll,
-      episodes: coll.episodes.map(ep => ({
+      episodes: coll.episodes.map((ep) => ({
         ...ep,
         provider: Provider.CrunchyrollManual,
       })),
@@ -204,7 +204,7 @@ export default class CrunchyrollEditor extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../../colors';
+@import "../../../../colors";
 
 .loading-wrapper {
   position: absolute;
@@ -248,7 +248,7 @@ export default class CrunchyrollEditor extends Vue {
       fill: $white;
       cursor: pointer;
 
-      & /deep/ .icon {
+      & ::v-deep .icon {
         height: 43px;
         width: 30px;
       }

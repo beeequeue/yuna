@@ -16,7 +16,7 @@
       setting="spoiler-descriptions"
       text="Descriptions"
       :checked="settings.spoilers.anime.description"
-      :on-change="checked => setSpoiler('anime.description', checked)"
+      :on-change="(checked) => setSpoiler('anime.description', checked)"
     />
 
     <h3>
@@ -33,14 +33,14 @@
       setting="spoiler-episode-title"
       text="Titles"
       :checked="settings.spoilers.episode.name"
-      :on-change="checked => setSpoiler('episode.name', checked)"
+      :on-change="(checked) => setSpoiler('episode.name', checked)"
     />
 
     <checkbox
       setting="spoiler-episode-thumbnail"
       text="Thumbnails"
       :checked="settings.spoilers.episode.thumbnail"
-      :on-change="checked => setSpoiler('episode.thumbnail', checked)"
+      :on-change="(checked) => setSpoiler('episode.thumbnail', checked)"
     />
 
     <c-button content="Next" :click="finishStep" />
@@ -53,17 +53,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mdiInformationOutline } from '@mdi/js'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { mdiInformationOutline } from "@mdi/js"
 
-import Icon from '@/common/components/icon.vue'
-import Checkbox from '@/common/components/form/checkbox.vue'
-import CButton from '@/common/components/button.vue'
-import Episode from '@/common/components/episode-list/episode.vue'
+import Icon from "@/common/components/icon.vue"
+import Checkbox from "@/common/components/form/checkbox.vue"
+import CButton from "@/common/components/button.vue"
+import Episode from "@/common/components/episode-list/episode.vue"
 
-import { EpisodeListEpisodes } from '@/graphql/generated/types'
-import thumbnailWebp from '@/assets/setup/episode_thumb.webp'
-import { getSettings, setSpoiler } from '@/state/settings'
+import { EpisodeListEpisodes } from "@/graphql/generated/types"
+import thumbnailWebp from "@/assets/setup/episode_thumb.webp"
+import { getSettings, setSpoiler } from "@/state/settings"
 
 @Component({ components: { Episode, CButton, Icon, Checkbox } })
 export default class SpoilerSettings extends Vue {
@@ -71,7 +71,7 @@ export default class SpoilerSettings extends Vue {
 
   public episodes: EpisodeListEpisodes = [
     {
-      title: 'A Really Good Episode',
+      title: "A Really Good Episode",
       thumbnail: thumbnailWebp,
       duration: 60 * 25,
       index: 2,
@@ -89,7 +89,7 @@ export default class SpoilerSettings extends Vue {
 
   public setSpoiler(key: string, value: boolean) {
     setSpoiler(this.$store, {
-      path: key.split('.') as any,
+      path: key.split(".") as any,
       value,
     })
   }
@@ -97,7 +97,7 @@ export default class SpoilerSettings extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .spoiler-settings {
   & > .checkbox-container {
@@ -110,7 +110,7 @@ export default class SpoilerSettings extends Vue {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: 'Raleway', sans-serif;
+    font-family: "Raleway", sans-serif;
     font-weight: 500;
 
     & > .icon {
