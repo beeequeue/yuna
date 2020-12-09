@@ -59,6 +59,11 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v1
 
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
 
@@ -71,6 +76,11 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v1
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
 
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
