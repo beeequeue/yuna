@@ -64,45 +64,45 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
-import { RecycleScroller } from 'vue-virtual-scroller'
-import Fuse from 'fuse.js'
-import { mdiClose, mdiFolder } from '@mdi/js'
+import { Component, Vue, Watch } from "vue-property-decorator"
+import { RecycleScroller } from "vue-virtual-scroller"
+import Fuse from "fuse.js"
+import { mdiClose, mdiFolder } from "@mdi/js"
 
-import ModalBase from '@/common/modals/base.vue'
-import Loading from '@/common/components/loading.vue'
-import { cacheEpisodes } from '@/graphql/mutations/episodes'
-import LOCAL_SOURCE_ANIME from './local-source-anime.graphql'
+import ModalBase from "@/common/modals/base.vue"
+import Loading from "@/common/components/loading.vue"
+import { cacheEpisodes } from "@/graphql/mutations/episodes"
+import LOCAL_SOURCE_ANIME from "./local-source-anime.graphql"
 import {
   EpisodeListEpisodes,
   LocalSourceAnimeQuery,
   LocalSourceAnimeVariables,
   Provider,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 
-import { Query } from '@/decorators'
+import { Query } from "@/decorators"
 import {
   getLocalSourceOptions,
   ModalName,
   sendToast,
   setLocalSourceAnime,
   toggleModal,
-} from '@/state/app'
-import { LocalAnime, LocalFiles } from '@/lib/local-files'
-import { getLocalFilesFolder } from '@/state/settings'
-import CButton from '@/common/components/button.vue'
-import AnimatedSize from '@/common/components/animated-size.vue'
-import { isNil } from '@/utils'
-import { getFolderPath } from '@/utils/ffmpeg'
+} from "@/state/app"
+import { LocalAnime, LocalFiles } from "@/lib/local-files"
+import { getLocalFilesFolder } from "@/state/settings"
+import CButton from "@/common/components/button.vue"
+import AnimatedSize from "@/common/components/animated-size.vue"
+import { isNil } from "@/utils"
+import { getFolderPath } from "@/utils/ffmpeg"
 
 const combineDuplicatesBasedOnScore = (
   anime: Fuse.FuseResult<LocalAnime>[],
 ) => {
   const newArray: Fuse.FuseResult<LocalAnime>[] = []
 
-  anime.forEach(oldAnime => {
+  anime.forEach((oldAnime) => {
     const index = newArray.findIndex(
-      newAnime => newAnime.item.title === oldAnime.item.title,
+      (newAnime) => newAnime.item.title === oldAnime.item.title,
     )
 
     if (index !== -1) {
@@ -121,7 +121,7 @@ const combineDuplicatesBasedOnScore = (
   components: { CButton, AnimatedSize, Loading, ModalBase, RecycleScroller },
 })
 export default class LocalSourceModal extends Vue {
-  public readonly modalName: ModalName = 'localSource'
+  public readonly modalName: ModalName = "localSource"
 
   @Query<LocalSourceModal, LocalSourceAnimeQuery, LocalSourceAnimeVariables>({
     query: LOCAL_SOURCE_ANIME,
@@ -134,7 +134,7 @@ export default class LocalSourceModal extends Vue {
       }
     },
   })
-  public anime!: LocalSourceAnimeQuery['anime']
+  public anime!: LocalSourceAnimeQuery["anime"]
 
   public selectedFolder = getLocalFilesFolder(this.$store)
   public localAnime: LocalAnime[] = []
@@ -150,8 +150,8 @@ export default class LocalSourceModal extends Vue {
 
   public get titles() {
     return {
-      english: this.anime?.title?.english ?? '',
-      romaji: this.anime?.title?.romaji ?? '',
+      english: this.anime?.title?.english ?? "",
+      romaji: this.anime?.title?.romaji ?? "",
     }
   }
 
@@ -165,7 +165,7 @@ export default class LocalSourceModal extends Vue {
     }
 
     return (
-      '...' + this.selectedFolder.slice(length - this.folderPathLimit, length)
+      "..." + this.selectedFolder.slice(length - this.folderPathLimit, length)
     )
   }
 
@@ -175,7 +175,7 @@ export default class LocalSourceModal extends Vue {
     return this.selectedFolder !== getLocalFilesFolder(this.$store)
   }
 
-  @Watch('titles')
+  @Watch("titles")
   public async updateLocalAnime() {
     this.selectedFolder = getLocalFilesFolder(this.$store)
     this.loadingLocalAnime = true
@@ -184,7 +184,7 @@ export default class LocalSourceModal extends Vue {
 
     const fuse = new Fuse(this.localAnime, {
       isCaseSensitive: false,
-      keys: ['title'],
+      keys: ["title"],
       threshold: 0.75,
       includeScore: true,
     })
@@ -203,12 +203,12 @@ export default class LocalSourceModal extends Vue {
       // Sort results by score
       .sort((a, b) => a.score! - b.score!)
       // Map back to the anime
-      .map(result => result.item)
+      .map((result) => result.item)
   }
 
   public async manuallySelectFolder() {
     const folder = await getFolderPath({
-      title: 'Manually select anime folder...',
+      title: "Manually select anime folder...",
     })
 
     if (isNil(folder)) return
@@ -230,11 +230,11 @@ export default class LocalSourceModal extends Vue {
         this.creatingEpisodes = false
       }, 750)
 
-      const [title, message] = err.message.split('|')
+      const [title, message] = err.message.split("|")
       return sendToast(this.$store, {
-        type: 'error',
+        type: "error",
         title,
-        message: message || '😢',
+        message: message || "😢",
         timeout: 10000,
       })
     }
@@ -242,7 +242,7 @@ export default class LocalSourceModal extends Vue {
     const progress = this.anime?.listEntry?.progress ?? 0
 
     const episodes = files.map<EpisodeListEpisodes>((file, index) => ({
-      __typename: 'Episode',
+      __typename: "Episode",
       provider: Provider.Local,
       id: file.id,
       animeId: this.animeId!,
@@ -266,12 +266,12 @@ export default class LocalSourceModal extends Vue {
     toggleModal(this.$store, this.modalName)
 
     const notification = {
-      title: 'Finished extracting!',
+      title: "Finished extracting!",
       message: `${localAnime.title} is ready for watching!`,
     }
 
     sendToast(this.$store, {
-      type: 'success',
+      type: "success",
       title: notification.title,
       message: notification.message,
       timeout: 10_000,
@@ -283,7 +283,7 @@ export default class LocalSourceModal extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .local-source-modal {
   position: relative;
@@ -301,7 +301,7 @@ export default class LocalSourceModal extends Vue {
 
     & > .title {
       margin: 15px 0 0;
-      font-family: 'Raleway', sans-serif;
+      font-family: "Raleway", sans-serif;
       font-size: 1.25em;
       font-weight: 200;
       max-width: 400px;
@@ -389,7 +389,7 @@ export default class LocalSourceModal extends Vue {
       cursor: pointer;
       border-radius: 5px;
 
-      font-family: 'Raleway', sans-serif;
+      font-family: "Raleway", sans-serif;
 
       transition: background 75ms;
 

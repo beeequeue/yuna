@@ -8,7 +8,7 @@
           setting="queue-auto-add-list"
           text="Mark shows as Planning when adding them to the queue."
           :checked="settings.autoMarkAsPlanning"
-          :on-change="checked => setSetting('autoMarkAsPlanning', checked)"
+          :on-change="(checked) => setSetting('autoMarkAsPlanning', checked)"
         />
 
         <section id="discord">
@@ -139,7 +139,7 @@
           setting="spoiler-descriptions"
           text="Descriptions"
           :checked="settings.spoilers.anime.description"
-          :on-change="checked => setSpoiler('anime.description', checked)"
+          :on-change="(checked) => setSpoiler('anime.description', checked)"
         />
 
         <h3>
@@ -156,14 +156,14 @@
           setting="spoiler-episode-title"
           text="Titles"
           :checked="settings.spoilers.episode.name"
-          :on-change="checked => setSpoiler('episode.name', checked)"
+          :on-change="(checked) => setSpoiler('episode.name', checked)"
         />
 
         <checkbox
           setting="spoiler-episode-thumbnail"
           text="Thumbnails"
           :checked="settings.spoilers.episode.thumbnail"
-          :on-change="checked => setSpoiler('episode.thumbnail', checked)"
+          :on-change="(checked) => setSpoiler('episode.thumbnail', checked)"
         />
       </section>
 
@@ -174,14 +174,14 @@
           setting="autoPlay"
           text="AutoPlay next epsiode"
           :checked="settings.autoPlay"
-          :on-change="checked => setSetting('autoPlay', checked)"
+          :on-change="(checked) => setSetting('autoPlay', checked)"
         />
 
         <checkbox
           setting="autoMarkWatched"
           text="Automatically mark episodes as watched"
           :checked="settings.autoMarkWatched"
-          :on-change="checked => setSetting('autoMarkWatched', checked)"
+          :on-change="(checked) => setSetting('autoMarkWatched', checked)"
         />
 
         <section id="keybindings" class="category">
@@ -306,9 +306,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { ipcRenderer, shell } from 'electron'
-import { Key } from 'ts-key-enum'
+import { Component, Vue } from "vue-property-decorator"
+import { ipcRenderer, shell } from "electron"
+import { Key } from "ts-key-enum"
 import {
   mdiCheckBold,
   mdiCloseThick,
@@ -317,26 +317,26 @@ import {
   mdiRefresh,
   mdiUndoVariant,
   mdiVlc,
-} from '@mdi/js'
+} from "@mdi/js"
 
-import LoginAL from '@/common/components/login/anilist.vue'
-import LoginSimkl from '@/common/components/login/simkl.vue'
-import LoginCR from '@/common/components/login/crunchyroll.vue'
-import LoginHD from '@/common/components/login/hidive.vue'
-import Checkbox from '@/common/components/form/checkbox.vue'
-import CButton from '@/common/components/button.vue'
-import Icon from '@/common/components/icon.vue'
+import LoginAL from "@/common/components/login/anilist.vue"
+import LoginSimkl from "@/common/components/login/simkl.vue"
+import LoginCR from "@/common/components/login/crunchyroll.vue"
+import LoginHD from "@/common/components/login/hidive.vue"
+import Checkbox from "@/common/components/form/checkbox.vue"
+import CButton from "@/common/components/button.vue"
+import Icon from "@/common/components/icon.vue"
 // @ts-ignore
-import Dropdown, { DropdownItem } from '@/common/components/form/dropdown.vue'
-import Connection from './components/connection.vue'
-import Keybinding from './components/keybinding.vue'
+import Dropdown, { DropdownItem } from "@/common/components/form/dropdown.vue"
+import Connection from "./components/connection.vue"
+import Keybinding from "./components/keybinding.vue"
 
-import { Crunchyroll } from '@/lib/crunchyroll'
+import { Crunchyroll } from "@/lib/crunchyroll"
 import {
   getCrunchyrollCountry,
   getIsConnectedTo,
   getListPlugins,
-} from '@/state/auth'
+} from "@/state/auth"
 import {
   addKeybinding,
   getCrunchyrollLocale,
@@ -353,16 +353,16 @@ import {
   setSpoiler,
   SettingsState,
   setVLCPath,
-} from '@/state/settings'
-import { FFMPEG_RETRY, OPEN_DEVTOOLS } from '@/messages'
-import { capitalize, isNil } from '@/utils'
-import { getFilePath, getFolderPath } from '@/utils/ffmpeg'
+} from "@/state/settings"
+import { FFMPEG_RETRY, OPEN_DEVTOOLS } from "@/messages"
+import { capitalize, isNil } from "@/utils"
+import { getFilePath, getFolderPath } from "@/utils/ffmpeg"
 
 enum Window {
-  Anilist = 'Anilist',
-  Simkl = 'Simkl',
-  Crunchyroll = 'Crunchyroll',
-  Hidive = 'Hidive',
+  Anilist = "Anilist",
+  Simkl = "Simkl",
+  Crunchyroll = "Crunchyroll",
+  Hidive = "Hidive",
 }
 
 @Component({
@@ -402,19 +402,19 @@ export default class Settings extends Vue {
 
     if (!isNil(hash) && hash.length > 2) {
       const section = document
-        .getElementById(hash.replace('#', ''))!
+        .getElementById(hash.replace("#", ""))!
         .getBoundingClientRect()
       this.$refs.settings.scrollTo({
         top: section.top - 90,
-        behavior: 'smooth',
+        behavior: "smooth",
       })
     }
   }
 
   public get keybindingActions(): string[] {
     return Object.keys(KeybindingAction)
-      .map(key => KeybindingAction[key as keyof typeof KeybindingAction])
-      .filter(item => typeof item === 'string')
+      .map((key) => KeybindingAction[key as keyof typeof KeybindingAction])
+      .filter((item) => typeof item === "string")
   }
 
   public get settings(): SettingsState {
@@ -422,7 +422,7 @@ export default class Settings extends Vue {
   }
 
   public get isUsingUSSession() {
-    return getCrunchyrollCountry(this.$store) === 'US'
+    return getCrunchyrollCountry(this.$store) === "US"
   }
 
   public get crunchyrollLocale() {
@@ -438,7 +438,7 @@ export default class Settings extends Vue {
   }
 
   public get localeItems() {
-    return Crunchyroll.locales.map<DropdownItem>(locale => ({
+    return Crunchyroll.locales.map<DropdownItem>((locale) => ({
       label: locale.label,
       value: locale.locale_id,
     }))
@@ -455,7 +455,7 @@ export default class Settings extends Vue {
   public get mainListPluginSelectItems(): DropdownItem[] {
     const plugins = getListPlugins(this.$store)
 
-    return plugins.map(plugin => ({
+    return plugins.map((plugin) => ({
       label: capitalize(plugin.name),
       value: plugin.name,
       disabled: !plugin.available,
@@ -479,7 +479,7 @@ export default class Settings extends Vue {
 
   public setSpoiler(key: string, value: boolean) {
     setSpoiler(this.$store, {
-      path: key.split('.') as any,
+      path: key.split(".") as any,
       value,
     })
   }
@@ -497,14 +497,14 @@ export default class Settings extends Vue {
   }
 
   public async handleUnblockerChange(checked: boolean) {
-    this.setSetting('useCRUnblocker', checked)
+    this.setSetting("useCRUnblocker", checked)
 
     await Crunchyroll.createSession(this.$store)
   }
 
   public async setLocalFilesFolder() {
     const path = await getFolderPath({
-      title: 'Set directory for Local Files',
+      title: "Set directory for Local Files",
     })
 
     if (isNil(path)) return
@@ -518,8 +518,8 @@ export default class Settings extends Vue {
 
   public async setVLCPath() {
     const path = await getFilePath({
-      title: 'Set directory for Local Files',
-      filters: [{ name: 'vlc', extensions: ['exe'] }],
+      title: "Set directory for Local Files",
+      filters: [{ name: "vlc", extensions: ["exe"] }],
     })
 
     if (isNil(path)) return
@@ -572,27 +572,27 @@ export default class Settings extends Vue {
   public getPrettyActionName(action: KeybindingAction) {
     switch (action) {
       case KeybindingAction.PAUSE:
-        return 'Pause'
+        return "Pause"
       case KeybindingAction.PLAY:
-        return 'Play'
+        return "Play"
       case KeybindingAction.PAUSE_PLAY:
-        return 'Pause / Play'
+        return "Pause / Play"
       case KeybindingAction.SKIP_BACK:
-        return 'Skip backwards'
+        return "Skip backwards"
       case KeybindingAction.SKIP_FORWARD:
-        return 'Skip forwards'
+        return "Skip forwards"
       case KeybindingAction.TOGGLE_FULLSCREEN:
-        return 'Toggle fullscreen'
+        return "Toggle fullscreen"
       case KeybindingAction.TOGGLE_MUTED:
-        return 'Toggle muted'
+        return "Toggle muted"
       case KeybindingAction.VOLUME_DOWN:
-        return 'Decrease volume'
+        return "Decrease volume"
       case KeybindingAction.VOLUME_UP:
-        return 'Increase volume'
+        return "Increase volume"
       case KeybindingAction.FRAME_FORWARD:
-        return 'Skip forwards 1 frame'
+        return "Skip forwards 1 frame"
       case KeybindingAction.FRAME_BACK:
-        return 'Skip backwards 1 frame'
+        return "Skip backwards 1 frame"
       default:
         return action
     }
@@ -605,7 +605,7 @@ export default class Settings extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .container {
   position: absolute;
@@ -638,7 +638,7 @@ export default class Settings extends Vue {
       display: flex;
       align-items: center;
       position: relative;
-      font-family: 'Raleway', sans-serif;
+      font-family: "Raleway", sans-serif;
 
       &:not(p) {
         font-weight: 500;
@@ -800,7 +800,7 @@ export default class Settings extends Vue {
     justify-content: center;
     align-items: center;
     font-size: 1.5em;
-    font-family: 'Raleway', sans-serif;
+    font-family: "Raleway", sans-serif;
 
     & > .hint {
       margin-top: 10px;

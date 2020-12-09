@@ -30,17 +30,17 @@
 </template>
 
 <script lang="ts">
-import { addDays as _addDays, startOfDay } from 'date-fns'
-import { useQuery, useResult } from '@vue/apollo-composable'
-import { defineComponent, ref } from '@vue/composition-api'
+import { addDays as _addDays, startOfDay } from "date-fns"
+import { useQuery, useResult } from "@vue/apollo-composable"
+import { defineComponent, ref } from "@vue/composition-api"
 
-import NextEpisodeInfo from '@/common/components/next-episode-info.vue'
+import NextEpisodeInfo from "@/common/components/next-episode-info.vue"
 import {
   AiringFeedItemFragment,
   EpisodeFeedQuery,
   EpisodeFeedVariables,
-} from '@/graphql/generated/types'
-import EPISODE_FEED_QUERY from './episode-feed.graphql'
+} from "@/graphql/generated/types"
+import EPISODE_FEED_QUERY from "./episode-feed.graphql"
 
 // startOfDay is used to make sure we can cache the results properly
 // if we don't, every query will have different time variables
@@ -55,7 +55,7 @@ export default defineComponent<{ ids: number[] }>({
       required: true,
     },
   },
-  setup: props => {
+  setup: (props) => {
     const page = ref(1)
 
     const query = useQuery<EpisodeFeedQuery, EpisodeFeedVariables>(
@@ -74,7 +74,7 @@ export default defineComponent<{ ids: number[] }>({
     const airingSchedules = useResult(
       query.result,
       [],
-      data => data.Page?.airingSchedules,
+      (data) => data.Page?.airingSchedules,
     )
 
     const getEpisodeClass = (schedule: AiringFeedItemFragment) => ({
@@ -91,7 +91,7 @@ export default defineComponent<{ ids: number[] }>({
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .episodes {
   direction: ltr;
@@ -168,7 +168,7 @@ export default defineComponent<{ ids: number[] }>({
       text-align: left;
 
       & > .title {
-        font-family: 'Raleway', sans-serif;
+        font-family: "Raleway", sans-serif;
         font-weight: 500;
         white-space: nowrap;
         overflow: hidden;

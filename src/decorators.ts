@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
-import { ApolloError } from 'apollo-client'
-import { Vue } from 'vue/types/vue'
-import { Prop } from 'vue/types/options'
-import { VueApolloQueryDefinition } from '@vue/apollo-option/types/options'
-import { createDecorator, VueDecorator } from 'vue-class-component'
+import { ApolloError } from "apollo-client"
+import { Vue } from "vue/types/vue"
+import { Prop } from "vue/types/options"
+import { VueApolloQueryDefinition } from "@vue/apollo-option/types/options"
+import { createDecorator, VueDecorator } from "vue-class-component"
 
 interface QueryOptions<C extends Vue, R = any>
   extends VueApolloQueryDefinition<R> {
@@ -81,7 +81,7 @@ export function Default<T extends Constructor | ObjectConstructor>(
     }
 
     // If the default value is an array or function it has to be a factory function
-    if (Array.isArray(defaultValue) || typeof defaultValue === 'object') {
+    if (Array.isArray(defaultValue) || typeof defaultValue === "object") {
       ;(componentOptions.props as any)[key].default = () => defaultValue
     }
   })

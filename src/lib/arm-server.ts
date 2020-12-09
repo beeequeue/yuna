@@ -1,5 +1,5 @@
-import superagent from 'superagent/dist/superagent'
-import { prop, RequestResponse, responseIsError, T } from '../utils'
+import superagent from "superagent/dist/superagent"
+import { prop, RequestResponse, responseIsError, T } from "../utils"
 
 type Relation = {
   anilist: number | null
@@ -16,11 +16,11 @@ type RelationError = {
 
 export class ArmServer {
   public static async getIdsFor(
-    service: 'anilist' | 'anidb' | 'myanimelist' | 'kitsu',
+    service: "anilist" | "anidb" | "myanimelist" | "kitsu",
     id: number,
   ) {
     const response = (await superagent
-      .get('https://relations.yuna.moe/api/ids')
+      .get("https://relations.yuna.moe/api/ids")
       .query({ source: service, id })
       .ok(T)) as RequestResponse<Relation, RelationError>
 
@@ -40,7 +40,7 @@ export class ArmServer {
       Array.from({ length: hundreds }).map(
         (_, i) =>
           superagent
-            .post('https://relations.yuna.moe/api/ids')
+            .post("https://relations.yuna.moe/api/ids")
             .send(options.slice(i * 100, (i + 1) * 100))
             .ok(T) as Promise<
             RequestResponse<Array<Relation | null>, RelationError>
@@ -52,6 +52,6 @@ export class ArmServer {
       return options.map(() => null)
     }
 
-    return responses.map(prop('body')).flat()
+    return responses.map(prop("body")).flat()
   }
 }

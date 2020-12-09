@@ -1,12 +1,12 @@
-import electron from 'electron'
-import { ActionContext, Store } from 'vuex'
-import request from 'superagent/dist/superagent'
+import electron from "electron"
+import { ActionContext, Store } from "vuex"
+import request from "superagent/dist/superagent"
 
-import { getConfig } from '@/config'
-import { setAnilist } from '@/state/auth'
-import { NO_OP, removeCookies } from '@/utils'
-import { LOGGED_INTO_ANILIST } from '@/messages'
-import { updateMainListPlugin } from '@/state/settings'
+import { getConfig } from "@/config"
+import { setAnilist } from "@/state/auth"
+import { NO_OP, removeCookies } from "@/utils"
+import { LOGGED_INTO_ANILIST } from "@/messages"
+import { updateMainListPlugin } from "@/state/settings"
 
 type BrowserWindow = electron.BrowserWindow
 type StoreType = Store<any> | ActionContext<any, any>
@@ -18,11 +18,11 @@ type Parameters = {
 
 const { BrowserWindow } = electron.remote
 let authWindow: BrowserWindow
-const GQL_ENDPOINT = 'https://graphql.anilist.co'
+const GQL_ENDPOINT = "https://graphql.anilist.co"
 
 export class Anilist {
   public static login() {
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve) => {
       authWindow = new BrowserWindow({
         width: 400,
         height: 600,
@@ -31,26 +31,26 @@ export class Anilist {
         minimizable: false,
         resizable: false,
         show: false,
-        title: 'AniList Login',
+        title: "AniList Login",
         darkTheme: true,
-        backgroundColor: '#111',
+        backgroundColor: "#111",
       })
 
       authWindow
         .loadURL(
           `https://anilist.co/api/v2/oauth/authorize?client_id=${getConfig(
-            'ANILIST_ID',
+            "ANILIST_ID",
           )}&response_type=token`,
         )
         .catch(NO_OP)
 
-      authWindow.webContents.on('dom-ready', () => {
+      authWindow.webContents.on("dom-ready", () => {
         authWindow.webContents.findInPage(LOGGED_INTO_ANILIST, {
           matchCase: true,
         })
       })
 
-      authWindow.webContents.on('found-in-page', (_, result) => {
+      authWindow.webContents.on("found-in-page", (_, result) => {
         if (result.matches < 1) return
 
         resolve()
@@ -65,7 +65,7 @@ export class Anilist {
   }
 
   public static logOut = (store: StoreType) => {
-    removeCookies({ domain: 'anilist.co' })
+    removeCookies({ domain: "anilist.co" })
 
     setAnilist(store, {
       user: null,
@@ -82,12 +82,12 @@ export class Anilist {
   ) {
     return request
       .post(GQL_ENDPOINT)
-      .auth(token, { type: 'bearer' })
+      .auth(token, { type: "bearer" })
       .send({ query: `query { user: Viewer { id name siteUrl } }` })
-      .then(data => {
+      .then((data) => {
         const user = data.body.data.user
 
-        if (!user) throw new Error('Could not get logged in user')
+        if (!user) throw new Error("Could not get logged in user")
 
         setAnilist(store, { user, token, expires })
         updateMainListPlugin(store)

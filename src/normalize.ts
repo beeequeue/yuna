@@ -2,11 +2,11 @@ import {
   Event as SentryEvent,
   Exception as SentryException,
   Stacktrace,
-} from '@sentry/browser'
-import { api } from 'electron-util'
+} from "@sentry/browser"
+import { api } from "electron-util"
 
 /** Application base path used for URL normalization. */
-const APP_PATH = api.app.getAppPath().replace(/\\/g, '/')
+const APP_PATH = api.app.getAppPath().replace(/\\/g, "/")
 
 /**
  * Normalizes URLs in exceptions and stacktraces so Sentry can fingerprint
@@ -18,10 +18,10 @@ const APP_PATH = api.app.getAppPath().replace(/\\/g, '/')
  */
 export const normalizeUrl = (url: string, base: string = APP_PATH): string => {
   // Escape RegExp special characters
-  const escapedBase = base.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&')
+  const escapedBase = base.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&")
   return decodeURI(url)
-    .replace(/\\/g, '/')
-    .replace(new RegExp(`(file://)?/*${escapedBase}/*`, 'ig'), 'app:///')
+    .replace(/\\/g, "/")
+    .replace(new RegExp(`(file://)?/*${escapedBase}/*`, "ig"), "app:///")
 }
 
 /**
@@ -68,7 +68,7 @@ export const normalizeEvent = (event: SentryEvent): SentryEvent => {
   // would not work due to user folders in file names.
   const stacktrace = getStacktrace(copy)
   if (stacktrace && stacktrace.frames) {
-    stacktrace.frames.forEach(frame => {
+    stacktrace.frames.forEach((frame) => {
       if (frame.filename) {
         frame.filename = normalizeUrl(frame.filename)
       }
@@ -77,8 +77,8 @@ export const normalizeEvent = (event: SentryEvent): SentryEvent => {
 
   const breadcrumbs = copy.breadcrumbs
   if (breadcrumbs) {
-    breadcrumbs.forEach(crumb => {
-      if (crumb.category === 'navigation') {
+    breadcrumbs.forEach((crumb) => {
+      if (crumb.category === "navigation") {
         crumb.data!.from = normalizeUrl(crumb.data!.from)
         crumb.data!.to = normalizeUrl(crumb.data!.to)
       }
@@ -94,7 +94,7 @@ export const normalizeEvent = (event: SentryEvent): SentryEvent => {
   // information, which we don't want. Generally remove it, since we know that
   // we are browsing with Chrome.
   if (request.headers) {
-    delete request.headers['User-Agent']
+    delete request.headers["User-Agent"]
   }
 
   // The Node SDK currently adds a default tag for server_name, which contains

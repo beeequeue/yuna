@@ -1,4 +1,4 @@
-import { Levels } from '@/types'
+import { Levels } from "@/types"
 
 export type PlayerState = {
   streamUrl: string | null

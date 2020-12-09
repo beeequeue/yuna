@@ -15,10 +15,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mdiChevronDown } from '@mdi/js'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { mdiChevronDown } from "@mdi/js"
 
-import Icon from '@/common/components/icon.vue'
+import Icon from "@/common/components/icon.vue"
 
 @Component({
   components: { Icon },
@@ -57,7 +57,7 @@ export default class Description extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .description {
   position: relative;

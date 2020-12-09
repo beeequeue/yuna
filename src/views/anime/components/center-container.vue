@@ -12,14 +12,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from "vue-property-decorator"
 
-import { AnimeViewNextAiringEpisode } from '@/graphql/generated/types'
-import { Required } from '@/decorators'
+import { AnimeViewNextAiringEpisode } from "@/graphql/generated/types"
+import { Required } from "@/decorators"
 
-import Icon from '@/common/components/icon.vue'
-import Description from './description.vue'
-import Info from './info.vue'
+import Icon from "@/common/components/icon.vue"
+import Description from "./description.vue"
+import Info from "./info.vue"
 
 @Component({
   components: { Description, Icon, Info },
@@ -36,7 +36,7 @@ export default class CenterContainer extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .center-container {
   position: relative;

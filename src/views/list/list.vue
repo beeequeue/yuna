@@ -23,15 +23,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
-import Loading from '@/common/components/loading.vue'
-import TextInput from '@/common/components/form/text-input.vue'
-import NumberInput from '@/common/components/form/number-input.vue'
-import ListRow from './components/list-row.vue'
-import ListEntry from './components/list-entry.vue'
-import Filters from './components/filters.vue'
-import { LIST_MEDIA_QUERY, LIST_VIEW_QUERY } from '@/graphql/documents/queries'
-import { fetchAllPages } from '@/graphql/queries'
+import { Component, Vue, Watch } from "vue-property-decorator"
+import Loading from "@/common/components/loading.vue"
+import TextInput from "@/common/components/form/text-input.vue"
+import NumberInput from "@/common/components/form/number-input.vue"
+import ListRow from "./components/list-row.vue"
+import ListEntry from "./components/list-entry.vue"
+import Filters from "./components/filters.vue"
+import { LIST_MEDIA_QUERY, LIST_VIEW_QUERY } from "@/graphql/documents/queries"
+import { fetchAllPages } from "@/graphql/queries"
 import {
   ListMediaQuery,
   ListMediaQueryVariables,
@@ -39,19 +39,19 @@ import {
   ListViewQuery,
   ListViewQueryVariables,
   MediaListStatus,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 
-import { Query } from '@/decorators'
-import { LocalStorageKey } from '@/lib/local-storage'
-import { isNil, isNotNil, prop, propEq } from '@/utils'
-import { ListMedia } from './types'
+import { Query } from "@/decorators"
+import { LocalStorageKey } from "@/lib/local-storage"
+import { isNil, isNotNil, prop, propEq } from "@/utils"
+import { ListMedia } from "./types"
 
 type MetaData = { [key in MediaListStatus]: { open: boolean } }
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
-    cachedMedia: NonNullable<NonNullable<ListMedia[number]>['media']>[] | null
+    cachedMedia: NonNullable<NonNullable<ListMedia[number]>["media"]>[] | null
   }
 }
 
@@ -62,7 +62,7 @@ export default class List extends Vue {
   @Query<List, ListViewQuery, ListViewQueryVariables>({
     query: LIST_VIEW_QUERY,
     variables: {},
-    update: data => data.ListEntries,
+    update: (data) => data.ListEntries,
   })
   public entries!: ListViewListEntries[]
 
@@ -96,19 +96,19 @@ export default class List extends Vue {
   public getList(status: MediaListStatus) {
     if (isNil(this.entries)) return []
 
-    const entries = this.entries.filter(propEq('status', status))
+    const entries = this.entries.filter(propEq("status", status))
 
     if (isNil(this.filteredEntryIds)) return entries
 
-    return entries.filter(entry => this.filteredEntryIds!.includes(entry.id))
+    return entries.filter((entry) => this.filteredEntryIds!.includes(entry.id))
   }
 
   public getTotalListLength(status: MediaListStatus) {
-    return (this.entries || []).filter(propEq('status', status)).length
+    return (this.entries || []).filter(propEq("status", status)).length
   }
 
   private setMediaLoading(mediaIds: number[], loading: boolean) {
-    mediaIds.forEach(id => {
+    mediaIds.forEach((id) => {
       if (isNil(this.media[id])) {
         Vue.set(this.media, id, {
           media: null,
@@ -120,7 +120,7 @@ export default class List extends Vue {
 
       Vue.set(
         this.media[id]!,
-        'loading',
+        "loading",
         isNil(this.media[id]!.media) ? loading : false,
       )
     })
@@ -139,7 +139,7 @@ export default class List extends Vue {
 
   private getOpenState(status: MediaListStatus): boolean {
     return JSON.parse(
-      localStorage.getItem(this.getLocalStorageKey(status)) || 'true',
+      localStorage.getItem(this.getLocalStorageKey(status)) || "true",
     )
   }
 
@@ -151,12 +151,12 @@ export default class List extends Vue {
     this.saveOpenState(status)
   }
 
-  @Watch('entries')
+  @Watch("entries")
   public async getMedia() {
-    const mediaIds = this.entries.map(prop('mediaId'))
+    const mediaIds = this.entries.map(prop("mediaId"))
 
     const idsToFetch = mediaIds.filter(
-      id => !Object.keys(this.media).includes(id.toString()),
+      (id) => !Object.keys(this.media).includes(id.toString()),
     )
 
     if (idsToFetch.length < 1) return
@@ -167,19 +167,19 @@ export default class List extends Vue {
       apollo: this.$apollo,
       query: LIST_MEDIA_QUERY,
       variables: { ids: idsToFetch },
-      result: data => {
+      result: (data) => {
         if (isNil(data)) return
 
         const newMedia = data.Page?.media?.filter(isNotNil) ?? []
 
-        newMedia.forEach(media => {
+        newMedia.forEach((media) => {
           Vue.set(this.media, media.id, {
             ...this.media[media.id]!,
             media,
           })
         })
 
-        this.setMediaLoading(newMedia.map(prop('id')), false)
+        this.setMediaLoading(newMedia.map(prop("id")), false)
       },
     })
 
@@ -190,14 +190,14 @@ export default class List extends Vue {
     if (!window.cachedMedia) return {}
 
     return Object.fromEntries(
-      window.cachedMedia.map(media => [media.id, { media, loading: false }]),
+      window.cachedMedia.map((media) => [media.id, { media, loading: false }]),
     )
   }
 
   public cacheMedia() {
     const toCache = Object.values(this.media)
-      .filter(media => !isNil(media) && !isNil(media.media) && !media.loading)
-      .map(media => media!.media!)
+      .filter((media) => !isNil(media) && !isNil(media.media) && !media.loading)
+      .map((media) => media!.media!)
 
     window.cachedMedia = toCache
   }
@@ -205,7 +205,7 @@ export default class List extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .list-page {
   position: absolute;

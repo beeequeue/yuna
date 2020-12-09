@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
-import Vue, { VNode } from 'vue'
-import { DataProxy } from 'apollo-cache'
-import { ListPlugin } from '@/plugins/list/plugin'
+import Vue, { VNode } from "vue"
+import { DataProxy } from "apollo-cache"
+import { ListPlugin } from "@/plugins/list/plugin"
 
 declare global {
   namespace JSX {

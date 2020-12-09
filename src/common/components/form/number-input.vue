@@ -13,9 +13,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { Required } from '@/decorators'
-import { isNotNil } from '@/utils'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { Required } from "@/decorators"
+import { isNotNil } from "@/utils"
 
 @Component
 export default class NumberInput extends Vue {
@@ -45,7 +45,7 @@ export default class NumberInput extends Vue {
     this.validationError = null
 
     if (isNaN(value)) {
-      this.validationError = 'Not a number!'
+      this.validationError = "Not a number!"
       return
     }
 
@@ -59,7 +59,7 @@ export default class NumberInput extends Vue {
       return
     }
 
-    if (e.currentTarget.value === '') return this.onChange(0)
+    if (e.currentTarget.value === "") return this.onChange(0)
 
     this.onChange(value)
   }
@@ -67,7 +67,7 @@ export default class NumberInput extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .number-input {
   position: relative;

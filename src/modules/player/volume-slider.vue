@@ -30,11 +30,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mdiVolumeHigh, mdiVolumeMute } from '@mdi/js'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { mdiVolumeHigh, mdiVolumeMute } from "@mdi/js"
 
-import Icon from '@/common/components/icon.vue'
-import { clamp } from '@/utils'
+import Icon from "@/common/components/icon.vue"
+import { clamp } from "@/utils"
 
 @Component({
   components: { Icon },
@@ -56,7 +56,7 @@ export default class VolumeSlider extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .volume-slider {
   position: relative;
@@ -95,7 +95,7 @@ export default class VolumeSlider extends Vue {
       height: 4px;
     }
 
-    & > input[type='range'] {
+    & > input[type="range"] {
       -webkit-appearance: none;
       background: rgba(0, 0, 0, 0.5);
       cursor: pointer;

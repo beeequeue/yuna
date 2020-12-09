@@ -1,7 +1,7 @@
-import Store from 'electron-store'
-import { mocked } from 'ts-jest/utils'
+import Store from "electron-store"
+import { mocked } from "ts-jest/utils"
 
-jest.mock('electron-store')
+jest.mock("electron-store")
 
 const mockedStore = mocked(Store)
 
@@ -29,7 +29,7 @@ class MockStore<O extends Record<PropertyKey, any>> {
     return Object.keys(this.store).length
   }
 
-  path = 'PATH_TO_STORE'
+  path = "PATH_TO_STORE"
 }
 
 mockedStore.mockImplementation((): any => new MockStore())

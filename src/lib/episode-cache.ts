@@ -1,6 +1,6 @@
-import Store from 'electron-store'
+import Store from "electron-store"
 
-import { EpisodeListEpisodes, Provider } from '@/graphql/generated/types'
+import { EpisodeListEpisodes, Provider } from "@/graphql/generated/types"
 
 // interface VersionSchema {
 //   __version: number
@@ -12,11 +12,11 @@ type EpisodeCacheSchema = {
   }
 }
 const episodeCache = new Store<any>({
-  name: 'episodeCache',
+  name: "episodeCache",
 })
 
 const CURRENT_VERSION = 1
-let schemaVersion = episodeCache.get('__version', null)
+let schemaVersion = episodeCache.get("__version", null)
 
 if (schemaVersion !== CURRENT_VERSION) {
   if (schemaVersion == null) {
@@ -25,7 +25,7 @@ if (schemaVersion !== CURRENT_VERSION) {
     schemaVersion = 1
   }
 
-  episodeCache.set('__version', schemaVersion)
+  episodeCache.set("__version", schemaVersion)
 }
 
 export class EpisodeCache {
@@ -56,8 +56,8 @@ export class EpisodeCache {
   }
 
   public static clear() {
-    const version = episodeCache.get('__version')
+    const version = episodeCache.get("__version")
     episodeCache.clear()
-    episodeCache.set('__version', version)
+    episodeCache.set("__version", version)
   }
 }

@@ -1,76 +1,76 @@
-import Vue from 'vue'
-import Router, { RawLocation } from 'vue-router'
-import { ErrorHandler } from 'vue-router/types/router'
-import { trackView } from '@/lib/tracking'
+import Vue from "vue"
+import Router, { RawLocation } from "vue-router"
+import { ErrorHandler } from "vue-router/types/router"
+import { trackView } from "@/lib/tracking"
 
 Vue.use(Router)
 
 export enum View {
-  Dashboard = 'dashboard',
-  FirstTimeSetup = 'first-time-setup',
-  Login = 'login',
-  List = 'list',
-  Queue = 'queue',
-  Anime = 'anime',
-  Settings = 'settings',
+  Dashboard = "dashboard",
+  FirstTimeSetup = "first-time-setup",
+  Login = "login",
+  List = "list",
+  Queue = "queue",
+  Anime = "anime",
+  Settings = "settings",
 }
 
 export const router = new Router({
-  mode: 'hash',
-  base: '/',
+  mode: "hash",
+  base: "/",
   routes: [
     {
-      path: '/',
+      path: "/",
       name: View.Dashboard,
       component: () =>
         import(
-          /* webpackChunkName: "dashboard" */ './views/dashboard/dashboard.vue'
+          /* webpackChunkName: "dashboard" */ "./views/dashboard/dashboard.vue"
         ),
     },
     {
-      path: '/first-time-setup',
+      path: "/first-time-setup",
       name: View.FirstTimeSetup,
       component: () =>
         import(
-          /* webpackChunkName: "first-time-setup" */ './views/first-time-setup/first-time-setup.vue'
+          /* webpackChunkName: "first-time-setup" */ "./views/first-time-setup/first-time-setup.vue"
         ),
     },
     {
-      path: '/login',
+      path: "/login",
       name: View.Login,
       component: () =>
-        import(/* webpackChunkName: "login" */ './views/login/login.vue'),
+        import(/* webpackChunkName: "login" */ "./views/login/login.vue"),
     },
     {
-      path: '/queue',
+      path: "/queue",
       name: View.Queue,
       component: () =>
-        import(/* webpackChunkName: "queue" */ './views/queue/queue.vue'),
+        import(/* webpackChunkName: "queue" */ "./views/queue/queue.vue"),
     },
     {
-      path: '/list',
+      path: "/list",
       name: View.List,
       component: () =>
-        import(/* webpackChunkName: "list" */ './views/list/list.vue'),
+        import(/* webpackChunkName: "list" */ "./views/list/list.vue"),
     },
     {
-      path: '/anime/:id',
+      path: "/anime/:id",
       name: View.Anime,
       component: () =>
-        import(/* webpackChunkName: "anime" */ './views/anime/anime.vue'),
+        import(/* webpackChunkName: "anime" */ "./views/anime/anime.vue"),
     },
     {
-      path: '/settings',
+      path: "/settings",
       name: View.Settings,
       component: () =>
         import(
-          /* webpackChunkName: "settings" */ './views/settings/settings.vue'
+          /* webpackChunkName: "settings" */ "./views/settings/settings.vue"
         ),
     },
   ],
 })
 
-router.afterEach(to => {
+router.afterEach((to) => {
   if (to.name != null && Object.values(View).includes(to.name as View)) {
     trackView(to.name as View)
   }
@@ -80,9 +80,9 @@ router.afterEach(to => {
  * Preventing "NavigationDuplicated" errors in console in Vue-router >= 3.1.0
  * https://github.com/vuejs/vue-router/issues/2881#issuecomment-520554378
  */
-const routerMethods = ['push', 'replace'] as const
+const routerMethods = ["push", "replace"] as const
 
-routerMethods.forEach(method => {
+routerMethods.forEach((method) => {
   const originalCall = Router.prototype[method]
 
   Router.prototype[method] = function (

@@ -1,18 +1,18 @@
-import { BrowserWindow } from 'electron'
-import { download } from 'electron-dl'
-import extractZip from 'extract-zip'
-import fetch from 'node-fetch'
-import os from 'os'
-import { join } from 'path'
-import { existsSync, promises as fs } from 'fs'
-import { captureException } from '@sentry/node'
+import { BrowserWindow } from "electron"
+import { download } from "electron-dl"
+import extractZip from "extract-zip"
+import fetch from "node-fetch"
+import os from "os"
+import { join } from "path"
+import { existsSync, promises as fs } from "fs"
+import { captureException } from "@sentry/node"
 
-import { FFMPEG_SAVE_FOLDER } from '@/utils/ffmpeg'
-import { FFMPEG_DOWNLOADED, FFMPEG_FAILED } from '@/messages'
+import { FFMPEG_SAVE_FOLDER } from "@/utils/ffmpeg"
+import { FFMPEG_DOWNLOADED, FFMPEG_FAILED } from "@/messages"
 
-const PLATFORM = os.platform() as 'win32' | 'linux' | 'darwin'
-const ARCH = os.arch() as 'x64' | 'ia32'
-const EXT = PLATFORM === 'win32' ? '.exe' : ''
+const PLATFORM = os.platform() as "win32" | "linux" | "darwin"
+const ARCH = os.arch() as "x64" | "ia32"
+const EXT = PLATFORM === "win32" ? ".exe" : ""
 
 type FfmpegVersion = {
   ffmpeg: string
@@ -21,14 +21,14 @@ type FfmpegVersion = {
 }
 
 type FfmpegTargets =
-  | 'windows-64'
-  | 'windows-32'
-  | 'osx-64'
-  | 'linux-32'
-  | 'linux-64'
-  | 'linux-armhf'
-  | 'linux-armel'
-  | 'linux-arm64'
+  | "windows-64"
+  | "windows-32"
+  | "osx-64"
+  | "linux-32"
+  | "linux-64"
+  | "linux-armhf"
+  | "linux-armel"
+  | "linux-arm64"
 
 type DownloadUrls = {
   bin: Record<FfmpegTargets, FfmpegVersion>
@@ -37,7 +37,7 @@ type DownloadUrls = {
 }
 
 const fetchDownloadUrls = async (): Promise<DownloadUrls> => {
-  const response = await fetch('https://ffbinaries.com/api/v1/version/latest')
+  const response = await fetch("https://ffbinaries.com/api/v1/version/latest")
 
   if (!response.ok) {
     throw new Error(
@@ -52,17 +52,17 @@ const match = <I extends string, O extends string>(
   input: I,
   matches: Array<[matchString: I | string, output: O]>,
 ): O | null =>
-  matches.find(matchArray => matchArray.includes(input))?.[1] ?? null
+  matches.find((matchArray) => matchArray.includes(input))?.[1] ?? null
 
 const getDownloadUrlForPlatform = (urls: DownloadUrls) => {
   const platform = match(PLATFORM, [
-    ['win32', 'windows'],
-    ['darwin', 'osx'],
-    ['linux', 'linux'],
+    ["win32", "windows"],
+    ["darwin", "osx"],
+    ["linux", "linux"],
   ])!
   const arch = match(ARCH, [
-    ['ia32', '32'],
-    ['x64', '64'],
+    ["ia32", "32"],
+    ["x64", "64"],
   ])!
   const versionToDownload = `${platform}-${arch}` as FfmpegTargets
 
@@ -70,7 +70,7 @@ const getDownloadUrlForPlatform = (urls: DownloadUrls) => {
 }
 
 const deleteFolderRecursive = async (path: string) => {
-  const promises = (await fs.readdir(path)).map<Promise<void>>(async file => {
+  const promises = (await fs.readdir(path)).map<Promise<void>>(async (file) => {
     const curPath = join(path, file)
 
     if ((await fs.lstat(curPath)).isDirectory()) {
@@ -94,7 +94,7 @@ const extractZipBinaries = async (filename: string) => {
 
   await extractZip(zipFile, {
     dir: FFMPEG_SAVE_FOLDER,
-    onEntry: entry => {
+    onEntry: (entry) => {
       const match = goodFileRegex.exec(entry.fileName)
       if (!match || !match[1]) {
         return
@@ -113,8 +113,8 @@ export const downloadBinariesIfNecessary = async (
 ) => {
   if (
     !force &&
-    existsSync(join(FFMPEG_SAVE_FOLDER, 'ffmpeg' + EXT)) &&
-    existsSync(join(FFMPEG_SAVE_FOLDER, 'ffprobe' + EXT))
+    existsSync(join(FFMPEG_SAVE_FOLDER, "ffmpeg" + EXT)) &&
+    existsSync(join(FFMPEG_SAVE_FOLDER, "ffprobe" + EXT))
   ) {
     return
   }
@@ -130,23 +130,23 @@ export const downloadBinariesIfNecessary = async (
   try {
     await download(window, downloadUrl.ffmpeg, {
       directory: FFMPEG_SAVE_FOLDER,
-      filename: 'ffmpeg.zip',
+      filename: "ffmpeg.zip",
       showBadge: false,
     })
     await download(window, downloadUrl.ffprobe, {
       directory: FFMPEG_SAVE_FOLDER,
-      filename: 'ffprobe.zip',
+      filename: "ffprobe.zip",
       showBadge: false,
     })
 
-    await extractZipBinaries('ffmpeg.zip')
-    await extractZipBinaries('ffprobe.zip')
+    await extractZipBinaries("ffmpeg.zip")
+    await extractZipBinaries("ffprobe.zip")
 
     window.webContents.send(FFMPEG_DOWNLOADED)
   } catch (err) {
     window.webContents.send(FFMPEG_FAILED)
 
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== "production") {
       throw err
     } else {
       captureException(err)

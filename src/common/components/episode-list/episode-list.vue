@@ -11,7 +11,7 @@
 
     <scroll-bar
       v-if="!noVerticalPadding"
-      :items="episodes.map(e => e.episodeNumber)"
+      :items="episodes.map((e) => e.episodeNumber)"
       :progress="listEntry && listEntry.progress"
       :item-size="itemSize"
       :scroll-to-episode="scrollToEpisode"
@@ -42,24 +42,24 @@
 </template>
 
 <script lang="ts">
-import { Component, Inject, Prop, Vue, Watch } from 'vue-property-decorator'
-import { RecycleScroller } from 'vue-virtual-scroller'
+import { Component, Inject, Prop, Vue, Watch } from "vue-property-decorator"
+import { RecycleScroller } from "vue-virtual-scroller"
 import {
   EpisodeListEpisodes,
   Provider,
   QueueAnime,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 
-import { Required } from '@/decorators'
-import { setProgress } from '@/graphql/mutations/list-entry'
-import { Hidive, HidiveResponseCode } from '@/lib/hidive'
-import { PlayerState, PlayerSymbol } from '@/state/player'
-import { delay, isNil } from '@/utils'
+import { Required } from "@/decorators"
+import { setProgress } from "@/graphql/mutations/list-entry"
+import { Hidive, HidiveResponseCode } from "@/lib/hidive"
+import { PlayerState, PlayerSymbol } from "@/state/player"
+import { delay, isNil } from "@/utils"
 
-import Loading from '../loading.vue'
-import SourceList from '../source-list.vue'
-import ScrollBar from './scroll-bar.vue'
-import Episode from './episode.vue'
+import Loading from "../loading.vue"
+import SourceList from "../source-list.vue"
+import ScrollBar from "./scroll-bar.vue"
+import Episode from "./episode.vue"
 
 @Component({
   components: { ScrollBar, RecycleScroller, SourceList, Loading, Episode },
@@ -106,13 +106,13 @@ export default class EpisodeList extends Vue {
 
   public get episodeWrapperClasses() {
     return {
-      'pad-right': this.padRight,
+      "pad-right": this.padRight,
       padding: !this.noVerticalPadding,
       small: this.small,
     }
   }
 
-  @Watch('episodes')
+  @Watch("episodes")
   public async tryToFetchEpisode() {
     this.notAvailable = false
 
@@ -129,7 +129,7 @@ export default class EpisodeList extends Vue {
         if (err.message === HidiveResponseCode.RegionRestricted) {
           this.notAvailable = true
           setTimeout(() => {
-            this.$refs.container!.$el.scrollTo({ left: 0, behavior: 'smooth' })
+            this.$refs.container!.$el.scrollTo({ left: 0, behavior: "smooth" })
           }, 500)
           return
         }
@@ -170,11 +170,11 @@ export default class EpisodeList extends Vue {
 
     container.$el.scrollTo({
       left: index * this.itemSize - baseOffset + extraOffset,
-      behavior: 'smooth',
+      behavior: "smooth",
     })
   }
 
-  @Watch('open')
+  @Watch("open")
   public async handleOpeningList() {
     // Have to wait for opening animation to finished before the component inside is rendered
     await delay(255)
@@ -197,7 +197,7 @@ export default class EpisodeList extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .loading-wrapper {
   padding: 10px;
@@ -220,7 +220,7 @@ export default class EpisodeList extends Vue {
     padding: 10px;
     padding-right: 100px;
     background: linear-gradient(90deg, $danger, $danger, $danger, transparent);
-    font-family: 'Raleway', sans-serif;
+    font-family: "Raleway", sans-serif;
     font-weight: 500;
     text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     z-index: 10;

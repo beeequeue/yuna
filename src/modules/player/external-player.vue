@@ -5,18 +5,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { basename } from 'path'
+import { Component, Prop, Vue, Watch } from "vue-property-decorator"
+import { basename } from "path"
 
-import { setProgress } from '@/graphql/mutations/list-entry'
-import { EpisodeListEpisodes } from '@/graphql/generated/types'
+import { setProgress } from "@/graphql/mutations/list-entry"
+import { EpisodeListEpisodes } from "@/graphql/generated/types"
 
-import { Required } from '@/decorators'
+import { Required } from "@/decorators"
 import {
   ExternalPlayer as ExternalPlayerClass,
   ExternalPlayerEvent,
-} from '@/lib/players/external-player'
-import { VLC } from '@/lib/players/vlc'
+} from "@/lib/players/external-player"
+import { VLC } from "@/lib/players/vlc"
 
 @Component
 export default class ExternalPlayer extends Vue {
@@ -38,12 +38,12 @@ export default class ExternalPlayer extends Vue {
     this.handleNewFile()
   }
 
-  @Watch('index')
+  @Watch("index")
   public async handleNewFile() {
     // Open VLC/MPC-HC/whatever
     this.process = new VLC(
       this.$store,
-      this.episodes.map(ep => ep.url).slice(this.index),
+      this.episodes.map((ep) => ep.url).slice(this.index),
       {
         animeId: this.firstEpisode.animeId,
         title: this.title.userPreferred,
@@ -51,7 +51,7 @@ export default class ExternalPlayer extends Vue {
     )
       .on(ExternalPlayerEvent.FINISHED_EPISODE, ({ fileName }) => {
         const episode = this.episodes.find(
-          episode => basename(episode.url) === fileName,
+          (episode) => basename(episode.url) === fileName,
         )!
 
         setProgress(this, episode)
@@ -61,14 +61,14 @@ export default class ExternalPlayer extends Vue {
         ({ progress }) => (this.progress = progress),
       )
       .on(ExternalPlayerEvent.CLEAR_PLAYLIST, () =>
-        this.$emit('clear-playlist'),
+        this.$emit("clear-playlist"),
       )
   }
 }
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .external-player {
   position: relative;

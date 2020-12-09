@@ -9,8 +9,8 @@
 </template>
 
 <script lang="ts">
-import EpisodeFeed from './components/episode-feed.vue'
-import Changelog from './components/changelog.vue'
+import EpisodeFeed from "./components/episode-feed.vue"
+import Changelog from "./components/changelog.vue"
 
 export default {
   components: { EpisodeFeed, Changelog },
@@ -18,7 +18,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .container {
   position: absolute;

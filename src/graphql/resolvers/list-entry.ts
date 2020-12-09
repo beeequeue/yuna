@@ -1,7 +1,7 @@
-import { Store } from 'vuex'
-import ApolloClient from 'apollo-client'
-import { activeWindow } from 'electron-util'
-import { SINGLE_MEDIA_QUERY } from '@/graphql/documents/queries'
+import { Store } from "vuex"
+import ApolloClient from "apollo-client"
+import { activeWindow } from "electron-util"
+import { SINGLE_MEDIA_QUERY } from "@/graphql/documents/queries"
 import {
   ListEntry,
   Media,
@@ -9,21 +9,21 @@ import {
   SingleMediaQuery,
   SingleMediaQueryVariables,
   SingleMediaSingleMedia,
-} from '@/graphql/generated/types'
-import { ListEntryWithoutMedia, ListPlugin } from '@/plugins/list/plugin'
-import { getListPlugins } from '@/state/auth'
-import { getMainListPlugin } from '@/state/settings'
-import { SHOW_ERROR } from '@/messages'
-import { isNil } from '@/utils'
+} from "@/graphql/generated/types"
+import { ListEntryWithoutMedia, ListPlugin } from "@/plugins/list/plugin"
+import { getListPlugins } from "@/state/auth"
+import { getMainListPlugin } from "@/state/settings"
+import { SHOW_ERROR } from "@/messages"
+import { isNil } from "@/utils"
 
 const browserWindow = activeWindow()
 
 const getEnabledPlugins = (store: Store<any>) => {
   const enabledPlugins = getListPlugins(store)
-    .filter(p => p.available)
-    .map(p => p.name)
+    .filter((p) => p.available)
+    .map((p) => p.name)
 
-  return window.listPlugins.filter(plugin =>
+  return window.listPlugins.filter((plugin) =>
     enabledPlugins.includes(plugin.service),
   )
 }
@@ -35,10 +35,10 @@ export const GetListEntry = (store: Store<any>) => async (
 ): Promise<ListEntryWithoutMedia | null> => {
   const mainListPlugin = getMainListPlugin(store)
   const plugin = window.listPlugins.find(
-    plugin => plugin.service === mainListPlugin,
+    (plugin) => plugin.service === mainListPlugin,
   )
 
-  if (isNil(plugin)) throw new Error('Selected List Plugin could not be found.')
+  if (isNil(plugin)) throw new Error("Selected List Plugin could not be found.")
 
   return plugin.GetListEntry((media?.id || variables?.mediaId)!)
 }
@@ -50,10 +50,10 @@ export const GetListEntries = (store: Store<any>) => async (
 ): Promise<ListEntryWithoutMedia[] | null> => {
   const mainListPlugin = getMainListPlugin(store)
   const plugin = window.listPlugins.find(
-    plugin => plugin.service === mainListPlugin,
+    (plugin) => plugin.service === mainListPlugin,
   )
 
-  if (isNil(plugin)) throw new Error('Selected List Plugin could not be found.')
+  if (isNil(plugin)) throw new Error("Selected List Plugin could not be found.")
 
   return plugin.GetListEntries(variables)
 }
@@ -74,13 +74,13 @@ export const GetMedia = async (
 const DoAction = (
   action: keyof Pick<
     ListPlugin,
-    | 'AddToList'
-    | 'DeleteFromList'
-    | 'UpdateStatus'
-    | 'StartRewatching'
-    | 'UpdateProgress'
-    | 'UpdateScore'
-    | 'EditListEntry'
+    | "AddToList"
+    | "DeleteFromList"
+    | "UpdateStatus"
+    | "StartRewatching"
+    | "UpdateProgress"
+    | "UpdateScore"
+    | "EditListEntry"
   >,
 ) => (store: Store<any>) => async (
   _root: undefined,
@@ -91,9 +91,9 @@ const DoAction = (
   const errors: { [key: string]: Error } = {}
   const secondParameter = Object.values(rest)[0]
 
-  const promises = getEnabledPlugins(store).map(plugin =>
+  const promises = getEnabledPlugins(store).map((plugin) =>
     (plugin[action](anilistId, secondParameter as never) as Promise<any>).catch(
-      err => {
+      (err) => {
         errors[plugin.service] = err
       },
     ),
@@ -121,16 +121,16 @@ const DoAction = (
   return results[0] as ReturnType<ListPlugin[typeof action]>
 }
 
-export const AddToList = DoAction('AddToList')
+export const AddToList = DoAction("AddToList")
 
-export const DeleteFromList = DoAction('DeleteFromList')
+export const DeleteFromList = DoAction("DeleteFromList")
 
-export const UpdateStatus = DoAction('UpdateStatus')
+export const UpdateStatus = DoAction("UpdateStatus")
 
-export const StartRewatching = DoAction('StartRewatching')
+export const StartRewatching = DoAction("StartRewatching")
 
-export const UpdateProgress = DoAction('UpdateProgress')
+export const UpdateProgress = DoAction("UpdateProgress")
 
-export const UpdateScore = DoAction('UpdateScore')
+export const UpdateScore = DoAction("UpdateScore")
 
-export const EditListEntry = DoAction('EditListEntry')
+export const EditListEntry = DoAction("EditListEntry")

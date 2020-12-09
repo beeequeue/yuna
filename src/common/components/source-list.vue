@@ -11,18 +11,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue } from "vue-property-decorator"
 
-import { AnimeViewExternalLinks } from '@/graphql/generated/types'
+import { AnimeViewExternalLinks } from "@/graphql/generated/types"
 
-import { Default } from '@/decorators'
-import { StreamingSource } from '@/types'
-import { getStreamingSources } from '@/utils'
+import { Default } from "@/decorators"
+import { StreamingSource } from "@/types"
+import { getStreamingSources } from "@/utils"
 
-import CButton from './button.vue'
-import Icon from './icon.vue'
+import CButton from "./button.vue"
+import Icon from "./icon.vue"
 
-const streamingSiteCtx = require.context('@/assets', false)
+const streamingSiteCtx = require.context("@/assets", false)
 const siteImages = streamingSiteCtx.keys()
 
 @Component({ components: { CButton, Icon } })
@@ -49,7 +49,7 @@ export default class SourceList extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .source-list {
   width: 100%;

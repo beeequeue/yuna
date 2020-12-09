@@ -25,15 +25,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mdiRepeat } from '@mdi/js'
-import Score from '@/common/components/score.vue'
-import Icon from './icon.vue'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { mdiRepeat } from "@mdi/js"
+import Score from "@/common/components/score.vue"
+import Icon from "./icon.vue"
 
-import { AnimeViewListEntry, MediaListStatus } from '@/graphql/generated/types'
+import { AnimeViewListEntry, MediaListStatus } from "@/graphql/generated/types"
 
-import { Required } from '@/decorators'
-import { getIconForStatus, humanizeMediaListStatus } from '@/utils'
+import { Required } from "@/decorators"
+import { getIconForStatus, humanizeMediaListStatus } from "@/utils"
 
 @Component({ components: { Score, Icon } })
 export default class CoverImage extends Vue {
@@ -60,7 +60,7 @@ export default class CoverImage extends Vue {
   }
 
   public get statusString(): string | null {
-    if (!this.listEntry) return 'Not in List'
+    if (!this.listEntry) return "Not in List"
 
     return humanizeMediaListStatus(
       this.listEntry as AnimeViewListEntry,
@@ -75,7 +75,7 @@ export default class CoverImage extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .cover-image {
   display: block;
@@ -119,7 +119,7 @@ export default class CoverImage extends Vue {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: 'Raleway', sans-serif;
+    font-family: "Raleway", sans-serif;
     font-weight: 300;
     background-color: $dark;
     padding: 6px 0;

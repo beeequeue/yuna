@@ -18,13 +18,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mdiCheck, mdiClose } from '@mdi/js'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { mdiCheck, mdiClose } from "@mdi/js"
 
-import { Required } from '@/decorators'
+import { Required } from "@/decorators"
 
-import CButton from '@/common/components/button.vue'
-import Icon from '@/common/components/icon.vue'
+import CButton from "@/common/components/button.vue"
+import Icon from "@/common/components/icon.vue"
 
 @Component({
   components: { CButton, Icon },
@@ -48,7 +48,7 @@ export default class Checkbox extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .checkbox-container {
   position: relative;
@@ -70,7 +70,7 @@ export default class Checkbox extends Vue {
     width: 100%;
     display: flex;
     align-items: center;
-    font-family: 'Raleway', sans-serif;
+    font-family: "Raleway", sans-serif;
     font-size: 0.9em;
     font-weight: 300;
     cursor: pointer;

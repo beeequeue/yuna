@@ -9,15 +9,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from "vue-property-decorator"
 
-import { Required } from '@/decorators'
-import { RootState } from '@/state/store'
-import { getModalStates, toggleModal } from '@/state/app'
+import { Required } from "@/decorators"
+import { RootState } from "@/state/store"
+import { getModalStates, toggleModal } from "@/state/app"
 
 @Component
 export default class ModalBase extends Vue {
-  @Required(String) public name!: keyof RootState['app']['modals']
+  @Required(String) public name!: keyof RootState["app"]["modals"]
   @Prop(Function) public toggleVisible!: () => any
 
   public get visible(): boolean {
@@ -36,7 +36,7 @@ export default class ModalBase extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .modal {
   position: absolute;

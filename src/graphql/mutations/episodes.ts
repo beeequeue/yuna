@@ -1,15 +1,15 @@
-import gql from 'graphql-tag'
-import { EPISODE_LIST } from '@/graphql/documents/queries'
-import { CACHE_EPISODES } from '@/graphql/documents/mutations'
+import gql from "graphql-tag"
+import { EPISODE_LIST } from "@/graphql/documents/queries"
+import { CACHE_EPISODES } from "@/graphql/documents/mutations"
 import {
   CacheEpisodesMutation,
   CacheEpisodesVariables,
   EpisodeInput,
   EpisodeListVariables,
   Provider,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 
-import { Instance } from '@/types'
+import { Instance } from "@/types"
 
 type CacheEpisodesAiring = {
   AiringSchedule: null | {
@@ -36,7 +36,7 @@ export const cacheEpisodes = async (
       }
     `,
     variables: { id: animeId },
-    errorPolicy: 'ignore',
+    errorPolicy: "ignore",
   })
 
   const airing = (data.AiringSchedule?.airingAt ?? 0) * 1000

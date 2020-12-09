@@ -1,11 +1,11 @@
-import type { Resolvers } from 'apollo-client'
-import type { Store } from 'vuex'
+import type { Resolvers } from "apollo-client"
+import type { Store } from "vuex"
 
-import { isWatchedResolver } from './is-watched'
-import { scoreMalResolver } from './score-mal'
-import { simklResolvers } from './simkl-media'
-import { CacheEpisodesResolver } from './cache-episodes'
-import { EpisodesResolver } from './episodes'
+import { isWatchedResolver } from "./is-watched"
+import { scoreMalResolver } from "./score-mal"
+import { simklResolvers } from "./simkl-media"
+import { CacheEpisodesResolver } from "./cache-episodes"
+import { EpisodesResolver } from "./episodes"
 import {
   AddToList,
   DeleteFromList,
@@ -17,7 +17,7 @@ import {
   UpdateProgress,
   UpdateScore,
   UpdateStatus,
-} from './list-entry'
+} from "./list-entry"
 
 export const createResolvers = (store: Store<any>): Resolvers => ({
   Media: {

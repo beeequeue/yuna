@@ -1,21 +1,21 @@
-import { activeWindow } from 'electron-util'
+import { activeWindow } from "electron-util"
 import {
   NotificationFunctionOptions,
   NotificationTypes,
-} from 'vue-notifications'
-import { ActionContext } from 'vuex'
-import { getStoreAccessors } from 'vuex-typescript'
-import { addBreadcrumb, Severity } from '@sentry/browser'
+} from "vue-notifications"
+import { ActionContext } from "vuex"
+import { getStoreAccessors } from "vuex-typescript"
+import { addBreadcrumb, Severity } from "@sentry/browser"
 
 import {
   EpisodeListEpisodes,
   ListEntry as IListEntry,
   MediaListStatus,
   Provider,
-} from '@/graphql/generated/types'
-import { router } from '@/router'
-import { RootState } from '@/state/store'
-import { generateId, isNil, pluck, propEq } from '@/utils'
+} from "@/graphql/generated/types"
+import { router } from "@/router"
+import { RootState } from "@/state/store"
+import { generateId, isNil, pluck, propEq } from "@/utils"
 
 export type Toast = {
   id: string
@@ -29,9 +29,10 @@ type ToastOptions = NotificationFunctionOptions<NotificationTypes> & {
   click?: (...a: any[]) => any
 }
 
-type AddToastMutationOptions = NotificationFunctionOptions<
-  NotificationTypes
-> & { id: string; click?: (...a: any[]) => any }
+type AddToastMutationOptions = NotificationFunctionOptions<NotificationTypes> & {
+  id: string
+  click?: (...a: any[]) => any
+}
 
 export type ListEntry = {
   id: number
@@ -54,7 +55,7 @@ export type EditModalAnime = {
   title: string
   bannerImage: string
   episodes: number | null
-  listEntry: Omit<IListEntry, '__typename' | 'mediaId' | 'media'>
+  listEntry: Omit<IListEntry, "__typename" | "mediaId" | "media">
 }
 
 export type ManualSearchOptions = {
@@ -84,7 +85,7 @@ export type AppState = {
   }
 }
 
-export type ModalName = keyof AppState['modals']
+export type ModalName = keyof AppState["modals"]
 
 type AppContext = ActionContext<AppState, RootState>
 
@@ -132,16 +133,16 @@ export const app = {
 
     getModalStates(
       state: AppState,
-    ): { [key in keyof AppState['modals']]: boolean } {
+    ): { [key in keyof AppState["modals"]]: boolean } {
       const entries = Object.entries(state.modals).map(
         ([key, obj]) => [key, obj.visible] as [string, boolean],
       )
 
       return entries.reduce((obj, [key, value]) => {
-        obj[key as keyof AppState['modals']] = value
+        obj[key as keyof AppState["modals"]] = value
 
         return obj
-      }, {} as Record<keyof AppState['modals'], boolean>)
+      }, {} as Record<keyof AppState["modals"], boolean>)
     },
 
     getEditingAnime(state: AppState) {
@@ -189,16 +190,16 @@ export const app = {
 
     removeToast(state: AppState, id: string) {
       state.toasts = state.toasts.filter(
-        toast => !propEq<typeof toast, 'id'>('id', id)(toast),
+        (toast) => !propEq<typeof toast, "id">("id", id)(toast),
       )
     },
 
-    toggleModal(state: AppState, modal: keyof AppState['modals']) {
+    toggleModal(state: AppState, modal: keyof AppState["modals"]) {
       state.modals[modal].visible = !state.modals[modal].visible
     },
 
     closeAllModals(state: AppState) {
-      Object.keys(state.modals).forEach(modal => {
+      Object.keys(state.modals).forEach((modal) => {
         ;(state.modals as any)[modal].visible = false
       })
     },
@@ -208,11 +209,11 @@ export const app = {
       state.modals.edit.anime = JSON.parse(JSON.stringify(anime))
     },
 
-    setEditingAnimeValue<K extends keyof EditModalAnime['listEntry']>(
+    setEditingAnimeValue<K extends keyof EditModalAnime["listEntry"]>(
       state: AppState,
       payload: {
         key: K
-        value: EditModalAnime['listEntry'][K]
+        value: EditModalAnime["listEntry"][K]
       },
     ) {
       if (!state.modals.edit.anime) return
@@ -243,7 +244,7 @@ export const app = {
       browserWindow.setFullScreen(b)
 
       if (state.isFullscreen) {
-        router.push('/player-full')
+        router.push("/player-full")
       } else {
         router.back()
       }
@@ -254,7 +255,7 @@ export const app = {
       episodes: EpisodeListEpisodes[],
     ) {
       const { selectedEpisodes } = state.modals.manualSearch
-      const selectedIds = pluck('id', selectedEpisodes)
+      const selectedIds = pluck("id", selectedEpisodes)
 
       const filteredEpisodes = episodes.filter(
         ({ id }) => !selectedIds.includes(id),
@@ -301,11 +302,11 @@ export const app = {
       const { selectedEpisodes } = state.modals.manualSearch
 
       const remainingEpisodes = selectedEpisodes.filter(
-        episode => !ids.find(id => id === episode.id),
+        (episode) => !ids.find((id) => id === episode.id),
       )
 
       let lastEpNumber = 0
-      const episodesWithFixedNumbers = remainingEpisodes.map(episode => {
+      const episodesWithFixedNumbers = remainingEpisodes.map((episode) => {
         // TODO: implement fix for multiple episodes with same number
         const realNum = lastEpNumber + 1
         lastEpNumber = realNum
@@ -342,12 +343,12 @@ export const app = {
       }
 
       addBreadcrumb({
-        category: 'toast',
+        category: "toast",
         level:
-          realOptions.type !== 'success'
+          realOptions.type !== "success"
             ? (realOptions.type as Severity)
             : Severity.Info,
-        type: realOptions.type === 'error' ? 'error' : 'default',
+        type: realOptions.type === "error" ? "error" : "default",
         message: `${options.title} - ${options.message}`,
       })
 
@@ -358,31 +359,31 @@ export const app = {
 
     sendErrorToast(context: AppContext, error: string) {
       sendToast(context, {
-        type: 'error',
-        title: 'An error occurred!',
+        type: "error",
+        title: "An error occurred!",
         message: error,
       })
     },
 
     initEditModal(context: AppContext, anime: EditModalAnime) {
       setEditingAnime(context, anime)
-      toggleModal(context, 'edit')
+      toggleModal(context, "edit")
     },
 
     initManualSearch(
       context: AppContext,
-      options: Omit<ManualSearchOptions, 'selectedEpisodes'>,
+      options: Omit<ManualSearchOptions, "selectedEpisodes">,
     ) {
       setManualSearchOptions(context, {
         ...options,
         selectedEpisodes: [],
       })
-      toggleModal(context, 'manualSearch')
+      toggleModal(context, "manualSearch")
     },
   },
 }
 
-const { read, commit, dispatch } = getStoreAccessors<AppState, RootState>('app')
+const { read, commit, dispatch } = getStoreAccessors<AppState, RootState>("app")
 
 export const getUpdateUrl = read(app.getters.getUpdateUrl)
 export const getToasts = read(app.getters.getToasts)

@@ -1,6 +1,6 @@
-import { AnimeViewAnime } from '@/graphql/generated/types'
-import { isNil } from '@/utils'
-import { fetchRating } from '@/lib/myanimelist'
+import { AnimeViewAnime } from "@/graphql/generated/types"
+import { isNil } from "@/utils"
+import { fetchRating } from "@/lib/myanimelist"
 
 export const scoreMalResolver = async (
   media: AnimeViewAnime,

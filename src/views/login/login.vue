@@ -55,17 +55,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { mdiCheck } from '@mdi/js'
+import { Component, Vue } from "vue-property-decorator"
+import { mdiCheck } from "@mdi/js"
 
-import Icon from '@/common/components/icon.vue'
-import CButton from '@/common/components/button.vue'
-import LoginAL from '@/common/components/login/anilist.vue'
-import LoginSimkl from '@/common/components/login/simkl.vue'
-import LoginCR from '@/common/components/login/crunchyroll.vue'
-import LoginHD from '@/common/components/login/hidive.vue'
+import Icon from "@/common/components/icon.vue"
+import CButton from "@/common/components/button.vue"
+import LoginAL from "@/common/components/login/anilist.vue"
+import LoginSimkl from "@/common/components/login/simkl.vue"
+import LoginCR from "@/common/components/login/crunchyroll.vue"
+import LoginHD from "@/common/components/login/hidive.vue"
 
-import { getFinishedConnecting, getIsConnectedTo } from '@/state/auth'
+import { getFinishedConnecting, getIsConnectedTo } from "@/state/auth"
 
 @Component({
   components: {
@@ -94,7 +94,7 @@ export default class Login extends Vue {
     if (this.isFinished) {
       if (window.initialLogin) {
         window.initialLogin = false
-        return this.$router.push('/')
+        return this.$router.push("/")
       }
 
       this.$router.back()
@@ -108,7 +108,7 @@ export default class Login extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .login-container {
   position: fixed;

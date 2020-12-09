@@ -25,11 +25,11 @@ declare type GlobalFetch = {
 declare type CSSProps = Partial<
   Omit<
     CSSStyleDeclaration,
-    | 'getPropertyPriority'
-    | 'getPropertyValue'
-    | 'item'
-    | 'removeProperty'
-    | 'setProperty'
+    | "getPropertyPriority"
+    | "getPropertyValue"
+    | "item"
+    | "removeProperty"
+    | "setProperty"
   >
 >
 
@@ -37,8 +37,8 @@ declare interface Level {
   attrs: {
     BANDWIDTH: number
     CODECS: string
-    'FRAME-RATE': string
-    'PROGRAM-ID': string
+    "FRAME-RATE": string
+    "PROGRAM-ID": string
     RESOLUTION: string
   }
   bitrate: number
@@ -56,40 +56,40 @@ declare interface Level {
   loadError: number
 }
 
-declare module '*.vue' {
-  import Vue from 'vue'
+declare module "*.vue" {
+  import Vue from "vue"
   export default Vue
 }
 
-declare module '*.svg' {
-  import Vue from 'vue'
+declare module "*.svg" {
+  import Vue from "vue"
   export default Vue
 }
 
-declare module '!url-loader!' {
+declare module "!url-loader!" {
   const str: string
   export default str
 }
 
-declare module '*.webp' {
+declare module "*.webp" {
   const content: string
   export default content
 }
 
-declare module '*.graphql' {
-  import { DocumentNode } from 'graphql'
+declare module "*.graphql" {
+  import { DocumentNode } from "graphql"
 
   const content: DocumentNode
   export default content
 }
 
-declare module 'superagent/dist/superagent' {
-  import request from 'superagent'
+declare module "superagent/dist/superagent" {
+  import request from "superagent"
   export = request
 }
 
-declare module 'vue-smooth-dnd' {
-  import Vue, { VueConstructor } from 'vue'
+declare module "vue-smooth-dnd" {
+  import Vue, { VueConstructor } from "vue"
 
   export const Container: VueConstructor<Vue>
   export const Draggable: VueConstructor<Vue>
@@ -102,13 +102,13 @@ declare interface InputEvent<
   target: E
 }
 
-declare module 'vue-cli-plugin-apollo/graphql-client' {
-  import { ApolloClientOptions, Resolvers } from 'apollo-client'
-  import { ApolloLink, DocumentNode } from 'apollo-link'
-  import { FetchOptions } from 'apollo-link-http'
-  import { ClientStateConfig } from 'apollo-link-state'
-  import { ApolloCache } from 'apollo-cache'
-  import { InMemoryCacheConfig } from 'apollo-cache-inmemory'
+declare module "vue-cli-plugin-apollo/graphql-client" {
+  import { ApolloClientOptions, Resolvers } from "apollo-client"
+  import { ApolloLink, DocumentNode } from "apollo-link"
+  import { FetchOptions } from "apollo-link-http"
+  import { ClientStateConfig } from "apollo-link-state"
+  import { ApolloCache } from "apollo-cache"
+  import { InMemoryCacheConfig } from "apollo-cache-inmemory"
 
   interface CreateClientOptions {
     /** URL to the HTTP API */
@@ -161,7 +161,7 @@ declare module 'vue-cli-plugin-apollo/graphql-client' {
   export const restartWebsockets: (a: any) => void
 }
 
-declare module '*/package.json' {
+declare module "*/package.json" {
   const content: {
     version: string
     [key: string]: any
@@ -169,10 +169,10 @@ declare module '*/package.json' {
   export = content
 }
 
-declare module 'vue-notifications' {
-  import { PluginFunction } from 'vue'
+declare module "vue-notifications" {
+  import { PluginFunction } from "vue"
 
-  export type NotificationTypes = 'success' | 'info' | 'warning' | 'error'
+  export type NotificationTypes = "success" | "info" | "warning" | "error"
 
   export interface NotificationFunctionOptions<T> {
     title: string
@@ -185,10 +185,10 @@ declare module 'vue-notifications' {
   export interface NotificationPluginOptions {
     type?: NotificationTypes
     timeout?: number
-    success?: (options: NotificationFunctionOptions<'success'>) => void
-    info?: (options: NotificationFunctionOptions<'info'>) => void
-    warning?: (options: NotificationFunctionOptions<'warning'>) => void
-    error?: (options: NotificationFunctionOptions<'error'>) => void
+    success?: (options: NotificationFunctionOptions<"success">) => void
+    info?: (options: NotificationFunctionOptions<"info">) => void
+    warning?: (options: NotificationFunctionOptions<"warning">) => void
+    error?: (options: NotificationFunctionOptions<"error">) => void
   }
 
   const plugin: PluginFunction<NotificationPluginOptions>
@@ -196,13 +196,13 @@ declare module 'vue-notifications' {
   export default plugin
 }
 
-declare module 'vue-virtual-scroller' {
-  import { PluginObject } from 'vue'
-  import { ThisTypedComponentOptionsWithArrayProps } from 'vue/types/options'
+declare module "vue-virtual-scroller" {
+  import { PluginObject } from "vue"
+  import { ThisTypedComponentOptionsWithArrayProps } from "vue/types/options"
 
   export interface RecycleScrollerProps {
     items: any[]
-    direction?: 'vertical' | 'horizontal'
+    direction?: "vertical" | "horizontal"
     itemSize?: number
     minItemSize?: number
     sizeField?: string
@@ -227,18 +227,18 @@ declare module 'vue-virtual-scroller' {
   export default plugin
 }
 
-declare module 'v-tooltip' {
-  import { PluginObject } from 'vue'
+declare module "v-tooltip" {
+  import { PluginObject } from "vue"
 
   type Triggers =
-    | 'hover'
-    | 'click'
-    | 'focus'
-    | 'hover click'
-    | 'hover focus'
-    | 'click focus'
-    | 'click hover focus'
-    | 'manual'
+    | "hover"
+    | "click"
+    | "focus"
+    | "hover click"
+    | "hover focus"
+    | "click focus"
+    | "click hover focus"
+    | "manual"
 
   export interface TooltipSettings {
     content: string
@@ -258,21 +258,21 @@ declare module 'v-tooltip' {
           hide: number
         }
     placement?:
-      | 'auto'
-      | 'auto-start'
-      | 'auto-end'
-      | 'top'
-      | 'top-start'
-      | 'top-end'
-      | 'right'
-      | 'right-start'
-      | 'right-end'
-      | 'bottom'
-      | 'bottom-start'
-      | 'bottom-end'
-      | 'left'
-      | 'left-start'
-      | 'left-end'
+      | "auto"
+      | "auto-start"
+      | "auto-end"
+      | "top"
+      | "top-start"
+      | "top-end"
+      | "right"
+      | "right-start"
+      | "right-end"
+      | "bottom"
+      | "bottom-start"
+      | "bottom-end"
+      | "left"
+      | "left-start"
+      | "left-end"
     offset?: number
     container?: string
     arrowSelector?: string

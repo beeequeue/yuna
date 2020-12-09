@@ -10,7 +10,7 @@ $bg: rgba(5, 5, 5, 0.9);
     color: white;
     border-radius: 6px;
     padding: 6px 15px;
-    font-family: 'Lato', sans-serif;
+    font-family: "Lato", sans-serif;
     text-shadow: 0 0 4px black !important;
     max-width: 250px;
   }
@@ -25,7 +25,7 @@ $bg: rgba(5, 5, 5, 0.9);
     z-index: 1;
   }
 
-  &[x-placement^='top'] {
+  &[x-placement^="top"] {
     margin-bottom: 5px;
 
     .tooltip-arrow {
@@ -40,7 +40,7 @@ $bg: rgba(5, 5, 5, 0.9);
     }
   }
 
-  &[x-placement^='bottom'] {
+  &[x-placement^="bottom"] {
     margin-top: 5px;
 
     .tooltip-arrow {
@@ -55,7 +55,7 @@ $bg: rgba(5, 5, 5, 0.9);
     }
   }
 
-  &[x-placement^='right'] {
+  &[x-placement^="right"] {
     margin-left: 5px;
 
     .tooltip-arrow {
@@ -70,7 +70,7 @@ $bg: rgba(5, 5, 5, 0.9);
     }
   }
 
-  &[x-placement^='left'] {
+  &[x-placement^="left"] {
     margin-right: 5px;
 
     .tooltip-arrow {
@@ -101,13 +101,13 @@ $bg: rgba(5, 5, 5, 0.9);
     }
   }
 
-  &[aria-hidden='true'] {
+  &[aria-hidden="true"] {
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.15s, visibility 0.15s;
   }
 
-  &[aria-hidden='false'] {
+  &[aria-hidden="false"] {
     visibility: visible;
     opacity: 1;
     transition: opacity 0.15s;

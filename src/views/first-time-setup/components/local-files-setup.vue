@@ -35,17 +35,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mdiFolderSearch, mdiVlc } from '@mdi/js'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { mdiFolderSearch, mdiVlc } from "@mdi/js"
 
-import CButton from '@/common/components/button.vue'
-import Icon from '@/common/components/icon.vue'
-import Checkbox from '@/common/components/form/checkbox.vue'
+import CButton from "@/common/components/button.vue"
+import Icon from "@/common/components/icon.vue"
+import Checkbox from "@/common/components/form/checkbox.vue"
 
-import { VLC } from '@/lib/players/vlc'
-import { getSettings, setLocalFilesFolder, setVLCPath } from '@/state/settings'
-import { isNil } from '@/utils'
-import { getFilePath, getFolderPath } from '@/utils/ffmpeg'
+import { VLC } from "@/lib/players/vlc"
+import { getSettings, setLocalFilesFolder, setVLCPath } from "@/state/settings"
+import { isNil } from "@/utils"
+import { getFilePath, getFolderPath } from "@/utils/ffmpeg"
 
 @Component({ components: { Icon, CButton, Checkbox } })
 export default class Discord extends Vue {
@@ -60,7 +60,7 @@ export default class Discord extends Vue {
 
   public async setTemporaryLocalFilesFolder() {
     const path = await getFolderPath({
-      title: 'Set directory for Local Files',
+      title: "Set directory for Local Files",
     })
 
     if (isNil(path)) return
@@ -70,8 +70,8 @@ export default class Discord extends Vue {
 
   public async setTemporaryVLCPath() {
     const path = await getFilePath({
-      title: 'Set directory for Local Files',
-      filters: [{ name: 'vlc', extensions: ['exe'] }],
+      title: "Set directory for Local Files",
+      filters: [{ name: "vlc", extensions: ["exe"] }],
     })
 
     if (isNil(path)) return
@@ -89,7 +89,7 @@ export default class Discord extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .local-files-setup {
   display: flex;

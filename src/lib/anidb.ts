@@ -1,15 +1,15 @@
-import superagent from 'superagent/dist/superagent'
-import Bottleneck from 'bottleneck'
-import { OptionsV2, parseString as _parseString } from 'xml2js'
-import { parseBooleans, parseNumbers, stripPrefix } from 'xml2js/lib/processors'
-import { getConfig } from '@/config'
-import { Crunchyroll } from '@/lib/crunchyroll'
-import { ArmServer } from '@/lib/arm-server'
-import { delay, isNil, RequestResponse, responseIsError, T } from '@/utils'
+import superagent from "superagent/dist/superagent"
+import Bottleneck from "bottleneck"
+import { OptionsV2, parseString as _parseString } from "xml2js"
+import { parseBooleans, parseNumbers, stripPrefix } from "xml2js/lib/processors"
+import { getConfig } from "@/config"
+import { Crunchyroll } from "@/lib/crunchyroll"
+import { ArmServer } from "@/lib/arm-server"
+import { delay, isNil, RequestResponse, responseIsError, T } from "@/utils"
 
 type XmlTitle = {
   _: string
-  lang: 'ja' | 'en' | 'x-jat'
+  lang: "ja" | "en" | "x-jat"
 }
 
 type XmlResource = {
@@ -64,7 +64,7 @@ const getIdentifier = (ep: XmlEpisode) => {
 
   if (Array.isArray(ep.resources.resource)) {
     const correctType = ep.resources.resource.find(
-      resource => resource.type === 28,
+      (resource) => resource.type === 28,
     )
     if (correctType == null) return null
 
@@ -80,8 +80,8 @@ const limiter = new Bottleneck({
 })
 
 const query = {
-  client: getConfig('ANIDB_CLIENT'),
-  clientver: getConfig('ANIDB_CLIENTVER'),
+  client: getConfig("ANIDB_CLIENT"),
+  clientver: getConfig("ANIDB_CLIENTVER"),
   protover: 1,
 }
 
@@ -95,7 +95,7 @@ export class AniDB {
   }
 
   public static async getIdFromAnilistId(id: number) {
-    const result = await ArmServer.getIdsFor('anilist', id)
+    const result = await ArmServer.getIdsFor("anilist", id)
 
     return result?.anidb || null
   }
@@ -103,16 +103,16 @@ export class AniDB {
   private static async getFirstEpisodeCrunchyrollId(anidbId: number) {
     const request = () =>
       superagent
-        .get('http://api.anidb.net:9001/httpapi')
+        .get("http://api.anidb.net:9001/httpapi")
         .query({
           ...query,
-          request: 'anime',
+          request: "anime",
           aid: anidbId,
         })
         .ok(T)
 
     // When developing we lose the rate limiting between refreshes, leading to temporary bans
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       await delay(2000)
     }
 
@@ -144,7 +144,7 @@ export class AniDB {
     if (Array.isArray(episode)) {
       firstEpisode =
         episode.find(
-          ep => ep.epno.type === EpisodeType.EPISODE && ep.epno._ === 1,
+          (ep) => ep.epno.type === EpisodeType.EPISODE && ep.epno._ === 1,
         ) || null
     } else {
       firstEpisode = episode

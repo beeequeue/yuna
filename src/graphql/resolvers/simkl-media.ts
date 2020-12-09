@@ -1,12 +1,12 @@
-import { ApolloClient } from 'apollo-client'
-import { MAL_ID_FROM_ANILIST_ID } from '@/graphql/documents/queries'
+import { ApolloClient } from "apollo-client"
+import { MAL_ID_FROM_ANILIST_ID } from "@/graphql/documents/queries"
 import {
   MalIdFromAnilistIdQuery,
   MalIdFromAnilistIdQueryVariables,
   Media,
-} from '@/graphql/generated/types'
-import { Simkl } from '@/lib/simkl'
-import { isNil } from '@/utils'
+} from "@/graphql/generated/types"
+import { Simkl } from "@/lib/simkl"
+import { isNil } from "@/utils"
 
 type Proxy = { cache: RealProxy; client: ApolloClient<any> }
 
@@ -15,7 +15,7 @@ const getMalId = async (client: ApolloClient<any>, mediaId: number) => {
     mediaId,
   }
   const result = await client.query<MalIdFromAnilistIdQuery>({
-    fetchPolicy: 'cache-first',
+    fetchPolicy: "cache-first",
     query: MAL_ID_FROM_ANILIST_ID,
     variables,
   })
@@ -33,7 +33,7 @@ export const scoreSimklResolver = async (
   if (isNil(malId)) {
     if (isNil(media.id)) {
       // eslint-disable-next-line no-console
-      console.warn('Got no Media ID when looking for Simkl Link')
+      console.warn("Got no Media ID when looking for Simkl Link")
       return null
     }
 
@@ -59,7 +59,7 @@ export const linkSimklResolver = async (
   if (isNil(malId)) {
     if (isNil(media.id)) {
       // eslint-disable-next-line no-console
-      console.warn('Got no Media ID when looking for Simkl Link')
+      console.warn("Got no Media ID when looking for Simkl Link")
       return null
     }
 

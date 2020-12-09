@@ -7,7 +7,7 @@
       class="toast"
       :class="{ [toast.type]: true }"
       :style="{ top: getDistanceFromTop(i) + 'px' }"
-      @click="e => handleClick(e, toast)"
+      @click="(e) => handleClick(e, toast)"
     >
       <div class="title">{{ toast.title }}</div>
       <div class="message">{{ toast.message }}</div>
@@ -18,11 +18,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { mdiClose } from '@mdi/js'
+import { Component, Vue } from "vue-property-decorator"
+import { mdiClose } from "@mdi/js"
 
-import { getToasts, removeToast, Toast } from '@/state/app'
-import Icon from '@/common/components/icon.vue'
+import { getToasts, removeToast, Toast } from "@/state/app"
+import Icon from "@/common/components/icon.vue"
 
 @Component({
   components: { Icon },
@@ -48,7 +48,7 @@ export default class ToastOverlay extends Vue {
   public handleClick(e: any, toast: Toast) {
     const clickedOnClose = e.path.some(
       (el: HTMLElement) =>
-        el.className && el.className.toString().includes('close'),
+        el.className && el.className.toString().includes("close"),
     )
 
     if (!clickedOnClose && toast.click) toast.click()
@@ -63,7 +63,7 @@ export default class ToastOverlay extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .toast-container {
   position: absolute;
@@ -111,7 +111,7 @@ export default class ToastOverlay extends Vue {
 
     & > .title {
       text-align: left;
-      font-family: 'Raleway', sans-serif;
+      font-family: "Raleway", sans-serif;
       font-size: 1.1em;
       font-weight: 700;
       margin-bottom: 5px;

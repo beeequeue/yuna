@@ -1,29 +1,29 @@
-import { ipcRenderer } from 'electron'
-import Store from 'electron-store'
-import { Key } from 'ts-key-enum'
-import Vue from 'vue'
-import { ActionContext } from 'vuex'
-import { getStoreAccessors } from 'vuex-typescript'
+import { ipcRenderer } from "electron"
+import Store from "electron-store"
+import { Key } from "ts-key-enum"
+import Vue from "vue"
+import { ActionContext } from "vuex"
+import { getStoreAccessors } from "vuex-typescript"
 
 import {
   DISCORD_DISABLE_RICH_PRESENCE,
   DISCORD_ENABLE_RICH_PRESENCE,
-} from '@/messages'
-import { RootState } from '@/state/store'
-import { enumKeysToArray, hasKey, isNotNil } from '@/utils'
+} from "@/messages"
+import { RootState } from "@/state/store"
+import { enumKeysToArray, hasKey, isNotNil } from "@/utils"
 
 export enum KeybindingAction {
-  PAUSE = 'PAUSE',
-  PLAY = 'PLAY',
-  PAUSE_PLAY = 'PAUSE_PLAY',
-  SKIP_BACK = 'SKIP_BACK',
-  SKIP_FORWARD = 'SKIP_FORWARD',
-  VOLUME_UP = 'VOLUME_UP',
-  VOLUME_DOWN = 'VOLUME_DOWN',
-  TOGGLE_MUTED = 'TOGGLE_MUTED',
-  TOGGLE_FULLSCREEN = 'TOGGLE_FULLSCREEN',
-  FRAME_FORWARD = 'FRAME_FORWARD',
-  FRAME_BACK = 'FRAME_BACK',
+  PAUSE = "PAUSE",
+  PLAY = "PLAY",
+  PAUSE_PLAY = "PAUSE_PLAY",
+  SKIP_BACK = "SKIP_BACK",
+  SKIP_FORWARD = "SKIP_FORWARD",
+  VOLUME_UP = "VOLUME_UP",
+  VOLUME_DOWN = "VOLUME_DOWN",
+  TOGGLE_MUTED = "TOGGLE_MUTED",
+  TOGGLE_FULLSCREEN = "TOGGLE_FULLSCREEN",
+  FRAME_FORWARD = "FRAME_FORWARD",
+  FRAME_BACK = "FRAME_BACK",
 }
 
 type KeybindingSettings = {
@@ -49,11 +49,11 @@ type DiscordSettings = {
 }
 
 export enum SetupStep {
-  LIST_MANAGERS = 'LIST_MANAGERS',
-  CONNECT = 'CONNECT',
-  SPOILERS = 'SPOILERS',
-  DISCORD = 'DISCORD',
-  LOCAL_FILES = 'LOCAL_FILES',
+  LIST_MANAGERS = "LIST_MANAGERS",
+  CONNECT = "CONNECT",
+  SPOILERS = "SPOILERS",
+  DISCORD = "DISCORD",
+  LOCAL_FILES = "LOCAL_FILES",
 }
 
 export const _setupSteps = enumKeysToArray(SetupStep) as SetupStep[]
@@ -83,7 +83,7 @@ export type SettingsState = {
 
 type SettingsContext = ActionContext<SettingsState, RootState>
 
-export const SettingsStore = new Store<any>({ name: 'settings' })
+export const SettingsStore = new Store<any>({ name: "settings" })
 
 const {
   PAUSE_PLAY,
@@ -98,15 +98,15 @@ const {
 } = KeybindingAction
 
 const defaultBindings: KeybindingSettings = {
-  ' ': [PAUSE_PLAY],
+  " ": [PAUSE_PLAY],
   [Key.ArrowUp]: [VOLUME_UP],
   [Key.ArrowDown]: [VOLUME_DOWN],
   m: [TOGGLE_MUTED],
   [Key.ArrowRight]: [SKIP_FORWARD],
   [Key.ArrowLeft]: [SKIP_BACK],
   f: [TOGGLE_FULLSCREEN],
-  '.': [FRAME_FORWARD],
-  ',': [FRAME_BACK],
+  ".": [FRAME_FORWARD],
+  ",": [FRAME_BACK],
 }
 
 const defaultSpoilers: SpoilerSettings = {
@@ -123,14 +123,14 @@ const defaultDiscord: DiscordSettings = {
   richPresence: true,
 }
 
-const oldSteps = SettingsStore.get('setup.finishedSteps', []) as SetupStep[]
+const oldSteps = SettingsStore.get("setup.finishedSteps", []) as SetupStep[]
 
 const migratedSteps =
-  typeof oldSteps[0] !== 'number'
+  typeof oldSteps[0] !== "number"
     ? oldSteps
     : oldSteps
         .map((step: SetupStep | number) => {
-          if (typeof step !== 'number') return step
+          if (typeof step !== "number") return step
 
           switch (step) {
             case 1:
@@ -148,24 +148,24 @@ const migratedSteps =
         .filter(isNotNil)
 
 const initialState: SettingsState = {
-  autoMarkAsPlanning: SettingsStore.get('autoMarkAsPlanning', true),
-  useCRUnblocker: SettingsStore.get('useCRUnblocker', true),
-  crLocale: SettingsStore.get('crLocale', 'enUS'),
-  autoUpdate: SettingsStore.get('autoUpdate', true),
-  beta: SettingsStore.get('beta', false),
-  autoPlay: SettingsStore.get('autoPlay', true),
-  autoMarkWatched: SettingsStore.get('autoMarkWatched', true),
-  discord: SettingsStore.get('discord', { ...defaultDiscord }),
-  keybindings: SettingsStore.get('keybindings', { ...defaultBindings }),
-  spoilers: SettingsStore.get('spoilers', { ...defaultSpoilers }),
-  externalPlayers: SettingsStore.get('externalPlayers', { vlc: null }),
-  localFilesFolder: SettingsStore.get('localFilesFolder', null),
-  mainListPlugin: SettingsStore.get('mainListPlugin', 'anilist'),
+  autoMarkAsPlanning: SettingsStore.get("autoMarkAsPlanning", true),
+  useCRUnblocker: SettingsStore.get("useCRUnblocker", true),
+  crLocale: SettingsStore.get("crLocale", "enUS"),
+  autoUpdate: SettingsStore.get("autoUpdate", true),
+  beta: SettingsStore.get("beta", false),
+  autoPlay: SettingsStore.get("autoPlay", true),
+  autoMarkWatched: SettingsStore.get("autoMarkWatched", true),
+  discord: SettingsStore.get("discord", { ...defaultDiscord }),
+  keybindings: SettingsStore.get("keybindings", { ...defaultBindings }),
+  spoilers: SettingsStore.get("spoilers", { ...defaultSpoilers }),
+  externalPlayers: SettingsStore.get("externalPlayers", { vlc: null }),
+  localFilesFolder: SettingsStore.get("localFilesFolder", null),
+  mainListPlugin: SettingsStore.get("mainListPlugin", "anilist"),
   setup: {
     finishedSteps: migratedSteps,
   },
-  ffmpegFailed: SettingsStore.get('ffmpegFailed', false),
-  window: SettingsStore.get('window', {}),
+  ffmpegFailed: SettingsStore.get("ffmpegFailed", false),
+  window: SettingsStore.get("window", {}),
 }
 
 SettingsStore.set(initialState)
@@ -199,8 +199,8 @@ export const settings = {
     getKeysForAction(
       state: SettingsState,
     ): (action: KeybindingAction) => Key[] {
-      return action => {
-        const keysWithAction = Object.keys(state.keybindings).filter(key => {
+      return (action) => {
+        const keysWithAction = Object.keys(state.keybindings).filter((key) => {
           const actions = state.keybindings[key]
 
           if (!actions || actions.length < 1) return false
@@ -219,7 +219,7 @@ export const settings = {
         const actions = state.keybindings[key]
         if (!actions) return
 
-        actions.forEach(action => {
+        actions.forEach((action) => {
           if (actionFunctionMap[action]) {
             actionFunctionMap[action]()
           }
@@ -241,7 +241,7 @@ export const settings = {
 
     getNextUnfinishedStep(state: SettingsState) {
       const remainingSteps = _setupSteps.filter(
-        i => !state.setup.finishedSteps.includes(i),
+        (i) => !state.setup.finishedSteps.includes(i),
       )
 
       if (!remainingSteps) return null
@@ -258,7 +258,7 @@ export const settings = {
     setCrunchyrollLocale(state: SettingsState, locale: string) {
       state.crLocale = locale
 
-      SettingsStore.set('crLocale', locale)
+      SettingsStore.set("crLocale", locale)
     },
 
     addKeybinding(
@@ -299,7 +299,7 @@ export const settings = {
       }
 
       const newActions = storedActions.filter(
-        newAction => newAction === options.action,
+        (newAction) => newAction === options.action,
       )
 
       Vue.set(state.keybindings, options.key, newActions)
@@ -314,38 +314,38 @@ export const settings = {
     resetKeybindings(state: SettingsState) {
       state.keybindings = { ...defaultBindings }
 
-      SettingsStore.set('keybindings', state.keybindings)
+      SettingsStore.set("keybindings", state.keybindings)
     },
 
     setSpoiler(
       state: SettingsState,
       payload: {
-        path: [keyof SettingsState['spoilers'], string]
+        path: [keyof SettingsState["spoilers"], string]
         value: boolean
       },
     ) {
       if (!hasKey(state.spoilers[payload.path[0]], payload.path[1])) {
         //eslint-disable-next-line no-console
         return console.error(
-          'Tried to set unknown setting: ' + payload.path.join('.'),
+          "Tried to set unknown setting: " + payload.path.join("."),
         )
       }
 
       ;(state.spoilers[payload.path[0]] as any)[payload.path[1]] = payload.value
 
-      SettingsStore.set(['spoilers', ...payload.path].join('.'), payload.value)
+      SettingsStore.set(["spoilers", ...payload.path].join("."), payload.value)
     },
 
     setLocalFilesFolder(state: SettingsState, path: string | null) {
       state.localFilesFolder = path
 
-      SettingsStore.set('localFilesFolder', path)
+      SettingsStore.set("localFilesFolder", path)
     },
 
     setVLCPath(state: SettingsState, path: string | null) {
       state.externalPlayers.vlc = path
 
-      SettingsStore.set('externalPlayers', state.externalPlayers)
+      SettingsStore.set("externalPlayers", state.externalPlayers)
     },
 
     setDiscordRichPresence(state: SettingsState, enabled: boolean) {
@@ -357,7 +357,7 @@ export const settings = {
 
       state.discord.richPresence = enabled
 
-      SettingsStore.set('discord.richPresence', enabled)
+      SettingsStore.set("discord.richPresence", enabled)
     },
 
     setSetting(
@@ -369,7 +369,7 @@ export const settings = {
     ) {
       if (!hasKey(state, options.setting)) {
         // eslint-disable-next-line no-console
-        return console.error('Tried to set unknown setting: ' + options.setting)
+        return console.error("Tried to set unknown setting: " + options.setting)
       }
 
       ;(state[options.setting] as any) = options.value
@@ -383,7 +383,7 @@ export const settings = {
       if (!steps.includes(step)) {
         steps.push(step)
 
-        SettingsStore.set('setup.finishedSteps', steps)
+        SettingsStore.set("setup.finishedSteps", steps)
       }
     },
 
@@ -393,20 +393,20 @@ export const settings = {
       if (index === -1) return
 
       state.setup.finishedSteps.splice(index, 1)
-      SettingsStore.set('setup.finishedSteps', state.setup.finishedSteps)
+      SettingsStore.set("setup.finishedSteps", state.setup.finishedSteps)
     },
 
     setMainListPlugin(
       state: SettingsState,
-      service: SettingsState['mainListPlugin'],
+      service: SettingsState["mainListPlugin"],
     ) {
       state.mainListPlugin = service
-      SettingsStore.set('mainListPlugin', service)
+      SettingsStore.set("mainListPlugin", service)
     },
 
     setFfmpegFailed(state: SettingsState, failed: boolean) {
       state.ffmpegFailed = failed
-      SettingsStore.set('ffmpegFailed', failed)
+      SettingsStore.set("ffmpegFailed", failed)
     },
   },
 
@@ -424,7 +424,7 @@ export const settings = {
 }
 
 const { read, commit, dispatch } = getStoreAccessors<SettingsState, RootState>(
-  'settings',
+  "settings",
 )
 
 export const getSettings = read(settings.getters.getSettings)

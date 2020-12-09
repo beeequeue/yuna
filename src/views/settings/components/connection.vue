@@ -16,27 +16,27 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { mdiLinkVariant, mdiLinkVariantOff } from '@mdi/js'
+import { Component, Vue } from "vue-property-decorator"
+import { mdiLinkVariant, mdiLinkVariantOff } from "@mdi/js"
 
-import crIcon from '@/assets/crunchyroll.svg'
-import alIcon from '@/assets/anilist.svg'
-import hidiveIcon from '@/assets/hidive.svg'
-import simklIcon from '@/assets/simkl.svg'
-import CButton from '@/common/components/button.vue'
+import crIcon from "@/assets/crunchyroll.svg"
+import alIcon from "@/assets/anilist.svg"
+import hidiveIcon from "@/assets/hidive.svg"
+import simklIcon from "@/assets/simkl.svg"
+import CButton from "@/common/components/button.vue"
 
-import { Required } from '@/decorators'
-import { RootState } from '@/state/store'
-import { getIsConnectedTo, getFinishedConnecting } from '@/state/auth'
-import { Crunchyroll } from '@/lib/crunchyroll'
-import { Anilist } from '@/lib/anilist'
-import { Hidive } from '@/lib/hidive'
-import { Simkl } from '@/lib/simkl'
-import { capitalize } from '@/utils'
+import { Required } from "@/decorators"
+import { RootState } from "@/state/store"
+import { getIsConnectedTo, getFinishedConnecting } from "@/state/auth"
+import { Crunchyroll } from "@/lib/crunchyroll"
+import { Anilist } from "@/lib/anilist"
+import { Hidive } from "@/lib/hidive"
+import { Simkl } from "@/lib/simkl"
+import { capitalize } from "@/utils"
 
 @Component({ components: { CButton } })
 export default class Connection extends Vue {
-  @Required(String) public type!: 'crunchyroll' | 'anilist' | 'hidive' | 'simkl'
+  @Required(String) public type!: "crunchyroll" | "anilist" | "hidive" | "simkl"
   @Required(Function) public setCurrentWindow!: (window: string) => any
 
   public connectSvg = mdiLinkVariant
@@ -56,38 +56,38 @@ export default class Connection extends Vue {
 
   public async disconnect() {
     switch (this.type) {
-      case 'crunchyroll':
+      case "crunchyroll":
         await Crunchyroll.logOut(this.$store)
         break
 
-      case 'anilist':
+      case "anilist":
         Anilist.logOut(this.$store)
         break
 
-      case 'hidive':
+      case "hidive":
         await Hidive.disconnect(this.$store)
         break
 
-      case 'simkl':
+      case "simkl":
         await Simkl.disconnect(this.$store)
         break
     }
 
     if (!getFinishedConnecting(this.$store)) {
-      this.$router.push('/login')
+      this.$router.push("/login")
     }
   }
 
   // eslint-disable-next-line
   public get image() {
     switch (this.type) {
-      case 'crunchyroll':
+      case "crunchyroll":
         return crIcon
-      case 'anilist':
+      case "anilist":
         return alIcon
-      case 'hidive':
+      case "hidive":
         return hidiveIcon
-      case 'simkl':
+      case "simkl":
         return simklIcon
     }
   }
@@ -97,7 +97,7 @@ export default class Connection extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .connection {
   position: relative;

@@ -1,10 +1,10 @@
-import { api } from 'electron-util'
-import { remote, FileFilter } from 'electron'
-import os from 'os'
-import { join } from 'path'
-import { isNil } from '@/utils/index'
+import { api } from "electron-util"
+import { remote, FileFilter } from "electron"
+import os from "os"
+import { join } from "path"
+import { isNil } from "@/utils/index"
 
-const ext = os.platform() === 'win32' ? '.exe' : ''
+const ext = os.platform() === "win32" ? ".exe" : ""
 
 export const getFilePath = async ({
   title,
@@ -15,8 +15,8 @@ export const getFilePath = async ({
 }) => {
   const { filePaths } = await remote.dialog.showOpenDialog({
     title,
-    buttonLabel: 'Select file',
-    properties: ['openFile'],
+    buttonLabel: "Select file",
+    properties: ["openFile"],
     filters,
   })
 
@@ -28,8 +28,8 @@ export const getFilePath = async ({
 export const getFolderPath = async ({ title }: { title: string }) => {
   const { filePaths } = await remote.dialog.showOpenDialog({
     title,
-    buttonLabel: 'Select',
-    properties: ['openDirectory'],
+    buttonLabel: "Select",
+    properties: ["openDirectory"],
   })
 
   if (isNil(filePaths)) return null
@@ -37,9 +37,9 @@ export const getFolderPath = async ({ title }: { title: string }) => {
   return filePaths[0] || null
 }
 
-export const FFMPEG_SAVE_FOLDER = join(api.app.getPath('userData'), 'ffmpeg')
+export const FFMPEG_SAVE_FOLDER = join(api.app.getPath("userData"), "ffmpeg")
 
 const getPath = (name: string) => join(FFMPEG_SAVE_FOLDER, name + ext)
 
-export const FFMPEG_PATH = getPath('ffmpeg')
-export const FFPROBE_PATH = getPath('ffprobe')
+export const FFMPEG_PATH = getPath("ffmpeg")
+export const FFPROBE_PATH = getPath("ffprobe")

@@ -38,13 +38,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator'
-import { mdiChevronDown } from '@mdi/js'
+import { Component, Emit, Prop, Vue, Watch } from "vue-property-decorator"
+import { mdiChevronDown } from "@mdi/js"
 
-import { Required } from '@/decorators'
-import { px } from '@/utils'
-import { SelectItem } from '@/types'
-import Icon from './icon.vue'
+import { Required } from "@/decorators"
+import { px } from "@/utils"
+import { SelectItem } from "@/types"
+import Icon from "./icon.vue"
 
 @Component<CSelect>({ components: { Icon } })
 export default class CSelect extends Vue {
@@ -69,11 +69,11 @@ export default class CSelect extends Vue {
   }
 
   public get selectedLabel() {
-    const item = this.items.find(item => item.value === this.value)
+    const item = this.items.find((item) => item.value === this.value)
     return item ? item.label : null
   }
 
-  @Emit('input')
+  @Emit("input")
   public select(item: SelectItem) {
     this.open = false
 
@@ -84,7 +84,7 @@ export default class CSelect extends Vue {
     return item.value
   }
 
-  @Watch('open')
+  @Watch("open")
   public async updatePosition() {
     if (!this.open) return
 
@@ -102,7 +102,7 @@ export default class CSelect extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .multi-select {
   position: relative;

@@ -18,8 +18,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { Key } from 'ts-key-enum'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { Key } from "ts-key-enum"
 import {
   mdiAppleKeyboardShift,
   mdiArrowDownBold,
@@ -30,10 +30,10 @@ import {
   mdiKeyboardTab,
   mdiPlus,
   mdiSubdirectoryArrowLeft,
-} from '@mdi/js'
+} from "@mdi/js"
 
-import CButton from '@/common/components/button.vue'
-import { getKeysForAction, KeybindingAction } from '@/state/settings'
+import CButton from "@/common/components/button.vue"
+import { getKeysForAction, KeybindingAction } from "@/state/settings"
 
 @Component({
   components: { CButton },
@@ -63,7 +63,7 @@ export default class Keybinding extends Vue {
         return mdiArrowUpBold
       case Key.ArrowDown:
         return mdiArrowDownBold
-      case ' ':
+      case " ":
         return mdiColorHelper
       case Key.Shift:
         return mdiAppleKeyboardShift

@@ -15,9 +15,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from "vue-property-decorator"
 
-import { AnimeViewTitle } from '@/graphql/generated/types'
+import { AnimeViewTitle } from "@/graphql/generated/types"
 
 @Component
 export default class AnimeTitle extends Vue {
@@ -31,7 +31,7 @@ export default class AnimeTitle extends Vue {
       if (!this.title) return null
 
       const classname =
-        str === this.title.userPreferred && !alreadyExists ? 'preferred' : null
+        str === this.title.userPreferred && !alreadyExists ? "preferred" : null
 
       if (classname !== null) {
         alreadyExists = true
@@ -41,23 +41,23 @@ export default class AnimeTitle extends Vue {
     }
 
     return {
-      english: ifPreferred(this.title.english || ''),
-      romaji: ifPreferred(this.title.romaji || ''),
-      native: ifPreferred(this.title.native || ''),
+      english: ifPreferred(this.title.english || ""),
+      romaji: ifPreferred(this.title.romaji || ""),
+      native: ifPreferred(this.title.native || ""),
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .title {
   display: flex;
   flex-direction: column;
 
   & > div {
-    font-family: 'Raleway', sans-serif;
+    font-family: "Raleway", sans-serif;
     padding: 5px 0;
     font-weight: 500;
     color: color($white, 100);

@@ -1,4 +1,4 @@
-import { View } from '@/router'
+import { View } from "@/router"
 
 let missedViews: View[] = []
 

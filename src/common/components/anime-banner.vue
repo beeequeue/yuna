@@ -27,10 +27,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue } from "vue-property-decorator"
 
-import DiagmondsWebp from '@/assets/diagmonds.webp'
-import { Required } from '@/decorators'
+import DiagmondsWebp from "@/assets/diagmonds.webp"
+import { Required } from "@/decorators"
 
 @Component
 export default class AnimeBanner extends Vue {
@@ -53,7 +53,7 @@ export default class AnimeBanner extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .anime-banner {
   display: block;
@@ -104,7 +104,7 @@ export default class AnimeBanner extends Vue {
     justify-content: center;
     align-items: center;
 
-    font-family: 'Raleway', sans-serif;
+    font-family: "Raleway", sans-serif;
     font-weight: 700;
     font-size: 1.5em;
     color: $white;

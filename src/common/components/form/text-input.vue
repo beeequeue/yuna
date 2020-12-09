@@ -12,8 +12,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { Required } from '@/decorators'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { Required } from "@/decorators"
 
 @Component
 export default class TextInput extends Vue {
@@ -39,7 +39,7 @@ export default class TextInput extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../../colors';
+@import "../../../colors";
 
 .text-input {
   position: relative;

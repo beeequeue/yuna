@@ -18,16 +18,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { chromeVersion, electronVersion } from 'electron-util'
+import { Component, Vue } from "vue-property-decorator"
+import { chromeVersion, electronVersion } from "electron-util"
 
-import ModalBase from '@/common/modals/base.vue'
-import { ModalName } from '@/state/app'
-import { version } from '../../../package.json'
+import ModalBase from "@/common/modals/base.vue"
+import { ModalName } from "@/state/app"
+import { version } from "../../../package.json"
 
 @Component({ components: { ModalBase } })
 export default class AboutModal extends Vue {
-  public readonly modalName: ModalName = 'about'
+  public readonly modalName: ModalName = "about"
 
   public readonly version = version
   public readonly electronVersion = electronVersion
@@ -36,7 +36,7 @@ export default class AboutModal extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .about-modal {
   position: relative;

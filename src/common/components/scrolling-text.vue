@@ -7,9 +7,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
-import { Required } from '@/decorators'
-import { isNil } from '@/utils'
+import { Component, Vue, Watch } from "vue-property-decorator"
+import { Required } from "@/decorators"
+import { isNil } from "@/utils"
 
 @Component
 export default class ScrollingText extends Vue {
@@ -26,7 +26,7 @@ export default class ScrollingText extends Vue {
     this.reset()
   }
 
-  @Watch('hovering')
+  @Watch("hovering")
   public onHoveringChange() {
     if (isNil(this.$refs.text)) return
 
@@ -58,7 +58,7 @@ export default class ScrollingText extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .scrolling-text > .container {
   display: flex;

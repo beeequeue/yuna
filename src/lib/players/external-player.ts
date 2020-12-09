@@ -1,9 +1,9 @@
-import { ChildProcess, spawn } from 'child_process'
-import { EventEmitter } from 'events'
-import { Store } from 'vuex'
+import { ChildProcess, spawn } from "child_process"
+import { EventEmitter } from "events"
+import { Store } from "vuex"
 
-import { sendToast } from '@/state/app'
-import { isNil } from '@/utils'
+import { sendToast } from "@/state/app"
+import { isNil } from "@/utils"
 
 export type ExternalMetaData = {
   animeId: number
@@ -11,11 +11,11 @@ export type ExternalMetaData = {
 }
 
 export enum ExternalPlayerEvent {
-  EXITED = 'EXITED',
-  PROGRESS = 'PROGRESS',
-  FINISHED_EPISODE = 'FINISHED_EPISODE',
-  CHANGED_EPISODE = 'CHANGED_EPISODE',
-  CLEAR_PLAYLIST = 'CLEAR_PLAYLIST',
+  EXITED = "EXITED",
+  PROGRESS = "PROGRESS",
+  FINISHED_EPISODE = "FINISHED_EPISODE",
+  CHANGED_EPISODE = "CHANGED_EPISODE",
+  CLEAR_PLAYLIST = "CLEAR_PLAYLIST",
 }
 
 export abstract class ExternalPlayer extends EventEmitter {
@@ -40,22 +40,22 @@ export abstract class ExternalPlayer extends EventEmitter {
     this.metaData = meta
 
     if (isNil(playerPath)) {
-      throw new Error('Could not start external player!')
+      throw new Error("Could not start external player!")
     }
 
     this.process = spawn(playerPath, args)
 
-    this.process.on('error', () => {
+    this.process.on("error", () => {
       sendToast(this.store, {
         title: "Couldn't start VLC!",
-        message: 'Check that the path is correct in the settings!',
-        type: 'error',
+        message: "Check that the path is correct in the settings!",
+        type: "error",
       })
 
       this.exit()
     })
 
-    this.process.on('exit', () => {
+    this.process.on("exit", () => {
       this.exit()
     })
   }

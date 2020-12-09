@@ -28,13 +28,13 @@ import {
   UpdateProgressMutation,
   UpdateScoreMutation,
   UpdateStatusMutation,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 import {
   ListEntryWithoutMedia,
   ListPlugin,
   ListPluginType,
-} from '@/plugins/list/plugin'
-import { isNil, isNotNil } from '@/utils'
+} from "@/plugins/list/plugin"
+import { isNil, isNotNil } from "@/utils"
 import {
   ANILIST_CREATE_ENTRY,
   ANILIST_DELETE_ENTRY,
@@ -44,13 +44,13 @@ import {
   ANILIST_SET_SCORE,
   ANILIST_SET_STATUS,
   ANILIST_START_REWATCHING,
-} from '@/plugins/list/anilist/anilist-documents'
-import { MEDIA_LIST_ENTRY_FROM_MEDIA_ID } from '@/graphql/documents/queries'
-import { getAnilistUserId, getIsConnectedTo } from '@/state/auth'
+} from "@/plugins/list/anilist/anilist-documents"
+import { MEDIA_LIST_ENTRY_FROM_MEDIA_ID } from "@/graphql/documents/queries"
+import { getAnilistUserId, getIsConnectedTo } from "@/state/auth"
 
 export class AnilistListPlugin extends ListPlugin implements ListPlugin {
-  public static service = 'anilist'
-  public service = 'anilist'
+  public static service = "anilist"
+  public service = "anilist"
   public static type = ListPluginType.Full
   public type = ListPluginType.Full
 
@@ -62,7 +62,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     mediaListEntry: AnilistSetStatusSaveMediaListEntry,
   ): ListEntryWithoutMedia {
     return {
-      __typename: 'ListEntry' as const,
+      __typename: "ListEntry" as const,
       id: mediaListEntry.id,
       mediaId: mediaListEntry.mediaId,
       status: mediaListEntry.status || MediaListStatus.Planning,
@@ -75,17 +75,17 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public async GetListEntry(
     mediaId: number,
   ): Promise<ListEntryWithoutMedia | null> {
-    const listEntryResult = await this.apollo.query<
-      MediaListEntryFromMediaIdQuery
-    >({
-      query: MEDIA_LIST_ENTRY_FROM_MEDIA_ID,
-      fetchPolicy: 'cache-first',
-      errorPolicy: 'ignore',
-      variables: {
-        mediaId,
-        userId: getAnilistUserId(this.store),
-      } as MediaListEntryFromMediaIdVariables,
-    })
+    const listEntryResult = await this.apollo.query<MediaListEntryFromMediaIdQuery>(
+      {
+        query: MEDIA_LIST_ENTRY_FROM_MEDIA_ID,
+        fetchPolicy: "cache-first",
+        errorPolicy: "ignore",
+        variables: {
+          mediaId,
+          userId: getAnilistUserId(this.store),
+        } as MediaListEntryFromMediaIdVariables,
+      },
+    )
 
     if (isNil(listEntryResult.data.MediaList)) return null
 
@@ -100,9 +100,9 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
         // Remove nulls
         .filter(isNotNil)
         // Remove custom list entries
-        .filter(list => !list.isCustomList)
+        .filter((list) => !list.isCustomList)
         // Get the entries
-        .map(list => list.entries!.filter(isNotNil))
+        .map((list) => list.entries!.filter(isNotNil))
         // Flatten to one array
         .flat()
     )
@@ -122,7 +122,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
         {
           query: ANILIST_LIST_ENTRIES,
           variables,
-          errorPolicy: 'all',
+          errorPolicy: "all",
         },
       )
 
@@ -164,13 +164,15 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     }
 
     return list
-      .filter(entry => isNil(options.id_in) || options.id_in.includes(entry.id))
+      .filter(
+        (entry) => isNil(options.id_in) || options.id_in.includes(entry.id),
+      )
       .map(this.fromMediaListEntry)
   }
 
   public async AddToList(
     anilistId: number,
-  ): Promise<AddToListMutation['AddToList']> {
+  ): Promise<AddToListMutation["AddToList"]> {
     const result = await this.apollo.mutate<AnilistCreateEntryMutation>({
       mutation: ANILIST_CREATE_ENTRY,
       variables: { mediaId: anilistId } as AnilistCreateEntryVariables,
@@ -186,10 +188,10 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
 
   public async DeleteFromList(
     anilistId: number,
-  ): Promise<DeleteFromListMutation['DeleteFromList']> {
+  ): Promise<DeleteFromListMutation["DeleteFromList"]> {
     const idResult = await this.apollo.query<MediaListEntryFromMediaIdQuery>({
-      fetchPolicy: 'cache-first',
-      errorPolicy: 'ignore',
+      fetchPolicy: "cache-first",
+      errorPolicy: "ignore",
       query: MEDIA_LIST_ENTRY_FROM_MEDIA_ID,
       variables: {
         mediaId: anilistId,
@@ -221,7 +223,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public async UpdateStatus(
     anilistId: number,
     status: MediaListStatus,
-  ): Promise<UpdateStatusMutation['UpdateStatus']> {
+  ): Promise<UpdateStatusMutation["UpdateStatus"]> {
     const result = await this.apollo.mutate<AnilistSetStatusMutation>({
       mutation: ANILIST_SET_STATUS,
       variables: { mediaId: anilistId, status } as AnilistSetStatusVariables,
@@ -237,7 +239,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
 
   public async StartRewatching(
     anilistId: number,
-  ): Promise<StartRewatchingMutation['StartRewatching']> {
+  ): Promise<StartRewatchingMutation["StartRewatching"]> {
     const result = await this.apollo.mutate<AnilistStartRewatchingMutation>({
       mutation: ANILIST_START_REWATCHING,
       variables: { mediaId: anilistId } as AnilistStartRewatchingVariables,
@@ -254,7 +256,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public async UpdateProgress(
     anilistId: number,
     progress: number,
-  ): Promise<UpdateProgressMutation['UpdateProgress']> {
+  ): Promise<UpdateProgressMutation["UpdateProgress"]> {
     const result = await this.apollo.mutate<AnilistSetProgressMutation>({
       mutation: ANILIST_SET_PROGRESS,
       variables: {
@@ -274,7 +276,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public async UpdateScore(
     anilistId: number,
     score: number,
-  ): Promise<UpdateScoreMutation['UpdateScore']> {
+  ): Promise<UpdateScoreMutation["UpdateScore"]> {
     const result = await this.apollo.mutate<AnilistSetScoreMutation>({
       mutation: ANILIST_SET_SCORE,
       variables: { mediaId: anilistId, score } as AnilistSetScoreVariables,
@@ -291,10 +293,10 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
   public async EditListEntry(
     anilistId: number,
     { progress, rewatched, score, status }: EditListEntryOptions,
-  ): Promise<EditListEntryMutation['EditListEntry']> {
+  ): Promise<EditListEntryMutation["EditListEntry"]> {
     const listEntry = await this.GetListEntry(anilistId)
 
-    if (isNil(listEntry)) throw new Error('Show is not in list!')
+    if (isNil(listEntry)) throw new Error("Show is not in list!")
 
     const variables: AnilistEditListEntryMutationVariables = {
       id: listEntry.id,
@@ -307,7 +309,7 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     const result = await this.apollo.mutate<AnilistEditListEntryMutation>({
       mutation: ANILIST_EDIT_LIST_ENTRY,
       variables,
-      errorPolicy: 'all',
+      errorPolicy: "all",
     })
 
     const errors = result.errors ?? []

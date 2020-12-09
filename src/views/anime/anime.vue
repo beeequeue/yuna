@@ -68,17 +68,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import CButton from '@/common/components/button.vue'
-import EpisodeList from '@/common/components/episode-list/episode-list.vue'
-import CoverImage from '@/common/components/cover-image.vue'
-import Actions from '@/common/components/actions.vue'
-import AnimeTitle from './components/title.vue'
-import CenterContainer from './components/center-container.vue'
-import Relations from './components/relations.vue'
+import { Component, Vue } from "vue-property-decorator"
+import CButton from "@/common/components/button.vue"
+import EpisodeList from "@/common/components/episode-list/episode-list.vue"
+import CoverImage from "@/common/components/cover-image.vue"
+import Actions from "@/common/components/actions.vue"
+import AnimeTitle from "./components/title.vue"
+import CenterContainer from "./components/center-container.vue"
+import Relations from "./components/relations.vue"
 
-import { EPISODE_LIST } from '@/graphql/documents/queries'
-import ANIME_QUERY from './anime.graphql'
+import { EPISODE_LIST } from "@/graphql/documents/queries"
+import ANIME_QUERY from "./anime.graphql"
 import {
   AnimeViewListEntry,
   AnimeViewQuery,
@@ -86,12 +86,12 @@ import {
   EpisodeListEpisodes,
   EpisodeListQuery,
   EpisodeListVariables,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 
-import { Query } from '@/decorators'
-import { getDefaultProvider } from '@/state/auth'
-import { getSpoilerSettings } from '@/state/settings'
-import { getRelations, isNil } from '@/utils'
+import { Query } from "@/decorators"
+import { getDefaultProvider } from "@/state/auth"
+import { getSpoilerSettings } from "@/state/settings"
+import { getRelations, isNil } from "@/utils"
 
 @Component({
   components: {
@@ -116,16 +116,16 @@ export default class Anime extends Vue {
       return isNil(this.id)
     },
     error(err) {
-      this.error = typeof err === 'string' ? err : err.message
+      this.error = typeof err === "string" ? err : err.message
     },
   })
   public data!: AnimeViewQuery | null
   error: string | null = null
 
   @Query<Anime, EpisodeListQuery, EpisodeListVariables>({
-    fetchPolicy: 'network-only',
+    fetchPolicy: "network-only",
     query: EPISODE_LIST,
-    loadingKey: 'episodesLoading',
+    loadingKey: "episodesLoading",
     variables() {
       return {
         id: this.id,
@@ -136,18 +136,18 @@ export default class Anime extends Vue {
       return isNil(this.id) || isNil(this.data) || isNil(this.data.anime)
     },
     error(err) {
-      if (typeof err === 'string') {
-        this.episodesFetchingError = err.replace('Network error: ', '')
+      if (typeof err === "string") {
+        this.episodesFetchingError = err.replace("Network error: ", "")
         return
       }
 
-      if (typeof err.message === 'string') {
-        this.episodesFetchingError = err.message.replace('Network error: ', '')
+      if (typeof err.message === "string") {
+        this.episodesFetchingError = err.message.replace("Network error: ", "")
         return
       }
 
       this.episodesFetchingError =
-        'Something went wrong fetching the episodes. :('
+        "Something went wrong fetching the episodes. :("
     },
   })
   public episodes!: EpisodeListEpisodes[] | null
@@ -180,7 +180,7 @@ export default class Anime extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .anime {
   position: absolute;
@@ -242,7 +242,7 @@ export default class Anime extends Vue {
       text-shadow: 0 0 5px black;
 
       & > h1 {
-        font-family: 'Raleway', sans-serif;
+        font-family: "Raleway", sans-serif;
       }
 
       & > .button {

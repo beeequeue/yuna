@@ -83,8 +83,8 @@
 </template>
 
 <script lang="ts">
-import { ipcRenderer } from 'electron'
-import Hls from 'hls.js'
+import { ipcRenderer } from "electron"
+import Hls from "hls.js"
 import {
   computed,
   defineComponent,
@@ -94,37 +94,37 @@ import {
   reactive,
   ref,
   watch,
-} from '@vue/composition-api'
-import { addBreadcrumb } from '@sentry/browser'
-import { mdiLoading, mdiPlayCircle } from '@mdi/js'
+} from "@vue/composition-api"
+import { addBreadcrumb } from "@sentry/browser"
+import { mdiLoading, mdiPlayCircle } from "@mdi/js"
 
 import {
   EpisodeListEpisodes,
   MediaRelation,
   PlayerAnimeAnime,
   Provider,
-} from '@/graphql/generated/types'
-import { DISCORD_PAUSE_WATCHING, DISCORD_SET_WATCHING } from '@/messages'
-import { Crunchyroll } from '@/lib/crunchyroll'
-import { Hidive, HidiveResponseCode } from '@/lib/hidive'
-import { LocalStorageKey } from '@/lib/local-storage'
+} from "@/graphql/generated/types"
+import { DISCORD_PAUSE_WATCHING, DISCORD_SET_WATCHING } from "@/messages"
+import { Crunchyroll } from "@/lib/crunchyroll"
+import { Hidive, HidiveResponseCode } from "@/lib/hidive"
+import { LocalStorageKey } from "@/lib/local-storage"
 import {
   getIsFullscreen,
   sendErrorToast,
   setFullscreen as setFullscreenAction,
-} from '@/state/app'
-import { getAnilistUsername } from '@/state/auth'
-import { getKeydownHandler, KeybindingAction } from '@/state/settings'
-import { usePlayer } from '@/state/player'
-import { Levels, Stream } from '@/types'
-import { capitalize, clamp, getRelations, lastItem } from '@/utils'
+} from "@/state/app"
+import { getAnilistUsername } from "@/state/auth"
+import { getKeydownHandler, KeybindingAction } from "@/state/settings"
+import { usePlayer } from "@/state/player"
+import { Levels, Stream } from "@/types"
+import { capitalize, clamp, getRelations, lastItem } from "@/utils"
 
-import Icon from '@/common/components/icon.vue'
-import Controls from './controls.vue'
-import NextEpisodeOverlay from './next-episode-overlay.vue'
-import EndOfSeasonOverlay from './end-of-season-overlay.vue'
-import { registerMediaKeys } from './register-media-keys'
-import { PlayerState } from './player.types'
+import Icon from "@/common/components/icon.vue"
+import Controls from "./controls.vue"
+import NextEpisodeOverlay from "./next-episode-overlay.vue"
+import EndOfSeasonOverlay from "./end-of-season-overlay.vue"
+import { registerMediaKeys } from "./register-media-keys"
+import { PlayerState } from "./player.types"
 
 const getNumberFromLocalStorage = (
   key: LocalStorageKey,
@@ -144,7 +144,7 @@ const fetchStream = async (
       return await Hidive.fetchStream(id)
     } catch (err) {
       if (err.message === HidiveResponseCode.RegionRestricted) {
-        throw new Error('This show is not available in your country.')
+        throw new Error("This show is not available in your country.")
       }
 
       throw new Error(err)
@@ -155,7 +155,7 @@ const fetchStream = async (
 }
 
 enum PlayerEvent {
-  UpdateProgress = 'update-progress',
+  UpdateProgress = "update-progress",
 }
 
 export default defineComponent({
@@ -230,10 +230,10 @@ export default defineComponent({
       lastScrobble: 0,
       lastHeartbeat: 0,
 
-      muted: localStorage.getItem(LocalStorageKey.Muted) === 'true',
+      muted: localStorage.getItem(LocalStorageKey.Muted) === "true",
       volume: getNumberFromLocalStorage(LocalStorageKey.Volume, 70),
       speed: getNumberFromLocalStorage(LocalStorageKey.Speed, 1),
-      quality: localStorage.getItem(LocalStorageKey.Quality) ?? '1080',
+      quality: localStorage.getItem(LocalStorageKey.Quality) ?? "1080",
     })
 
     const updateProgress = (progress: number) =>
@@ -252,13 +252,13 @@ export default defineComponent({
       updateProgress(props.episode.episodeNumber)
     }
     const setDiscordState = (
-      discordState: 'watching' | 'paused',
+      discordState: "watching" | "paused",
       progress?: number,
     ) => {
       if (props.episode == null || props.anime == null) return
 
       ipcRenderer.send(
-        discordState === 'watching'
+        discordState === "watching"
           ? DISCORD_SET_WATCHING
           : DISCORD_PAUSE_WATCHING,
         {
@@ -281,7 +281,7 @@ export default defineComponent({
     )
     const setSubtitleTracks = (arr: [string, string][]) => {
       subtitles.tracks =
-        arr.length > 0 ? [...arr, ['None', '']] : (subtitles.tracks = arr)
+        arr.length > 0 ? [...arr, ["None", ""]] : (subtitles.tracks = arr)
     }
     const changeSubtitles = (index: number) => {
       localStorage.setItem(LocalStorageKey.Subtitle, index.toString())
@@ -314,7 +314,7 @@ export default defineComponent({
       player.value.currentTime = time
 
       if (!state.paused) {
-        setDiscordState('watching', time)
+        setDiscordState("watching", time)
       }
     }
 
@@ -366,14 +366,14 @@ export default defineComponent({
       },
       close: () => {
         playlist.setPlaylist(null)
-        setDiscordState('paused')
+        setDiscordState("paused")
 
         if (isFullscreen.value) {
           toggleFullscreen()
         }
 
         // Toggling fullscreen already goes back so we only manually do it on big player, not full
-        if (root.$route.path === '/player-big') {
+        if (root.$route.path === "/player-big") {
           root.$router.back()
         }
       },
@@ -462,7 +462,7 @@ export default defineComponent({
     const registerEventHandlers = () => {
       if (player.value == null || props.episode == null) return
 
-      hls.value.on('hlsManifestParsed', (_event, data) => {
+      hls.value.on("hlsManifestParsed", (_event, data) => {
         let i = 0
 
         state.levels = (data.levels as any).reduce((map: any, level: Level) => {
@@ -482,7 +482,7 @@ export default defineComponent({
         hls.value.loadLevel = state.levels[state.quality]
       })
 
-      hls.value.on('hlsMediaAttached', () => {
+      hls.value.on("hlsMediaAttached", () => {
         player.value!.currentTime =
           state.playhead < (props.episode as EpisodeListEpisodes).duration * 0.8
             ? state.playhead
@@ -494,12 +494,12 @@ export default defineComponent({
       player.value.onplay = () => {
         state.paused = false
 
-        setDiscordState('watching')
+        setDiscordState("watching")
       }
       player.value.onpause = () => {
         state.paused = true
 
-        setDiscordState('paused')
+        setDiscordState("paused")
       }
       player.value.oncanplay = () => {
         state.loading = false
@@ -512,14 +512,14 @@ export default defineComponent({
 
       player.value.onprogress = handlers.loadedProgress
       player.value.ontimeupdate = handlers.timeUpdate
-      player.value.addEventListener('ended', handlers.ended)
+      player.value.addEventListener("ended", handlers.ended)
     }
 
     const handleNewEpisode = async () => {
       if (!props.episode) return
 
       addBreadcrumb({
-        category: 'action',
+        category: "action",
         message: `Started ${props.episode.provider}:${props.episode.animeId}:${props.episode.episodeNumber}`,
       })
 
@@ -650,7 +650,7 @@ export default defineComponent({
       onKeyDown,
 
       maximized: computed(() =>
-        ['/player-big', '/player-full'].includes(root.$route.path),
+        ["/player-big", "/player-full"].includes(root.$route.path),
       ),
 
       mdiPlayCircle,
@@ -661,7 +661,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 @keyframes spin {
   from {
@@ -691,7 +691,7 @@ export default defineComponent({
 
     &::cue {
       background: none;
-      font-family: 'Lato', sans-serif;
+      font-family: "Lato", sans-serif;
       text-shadow: $outline;
       font-weight: bold;
 

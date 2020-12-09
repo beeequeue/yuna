@@ -1,14 +1,14 @@
-import Bottleneck from 'bottleneck'
-import request from 'superagent/dist/superagent'
-import { captureException } from '@sentry/browser'
+import Bottleneck from "bottleneck"
+import request from "superagent/dist/superagent"
+import { captureException } from "@sentry/browser"
 
-import { EpisodeListEpisodes } from '@/graphql/generated/types'
+import { EpisodeListEpisodes } from "@/graphql/generated/types"
 
-import { Crunchyroll } from '@/lib/crunchyroll'
-import { isNil, RequestResponse, responseIsError, T } from '@/utils'
+import { Crunchyroll } from "@/lib/crunchyroll"
+import { isNil, RequestResponse, responseIsError, T } from "@/utils"
 
 const baseUrl = `https://myanimelist.net/anime`
-const CRUNCHYROLL_PROVIDER_ID = '1'
+const CRUNCHYROLL_PROVIDER_ID = "1"
 
 const malLimiter = new Bottleneck({
   maxConcurrent: 2,
@@ -41,10 +41,10 @@ const handleError = (
   }
 
   if (response && response.status === 429) {
-    return Promise.reject('Too many requests, try again later.')
+    return Promise.reject("Too many requests, try again later.")
   }
 
-  return Promise.reject(message || 'Something went wrong!')
+  return Promise.reject(message || "Something went wrong!")
 }
 
 export const fetchEpisodesOfSeries = async (
@@ -64,7 +64,7 @@ export const fetchEpisodesOfSeries = async (
     return []
   }
 
-  const videoUrl = episodesLinkMatch[0] + '/1'
+  const videoUrl = episodesLinkMatch[0] + "/1"
   const response = await requestLimited(videoUrl)
 
   if (responseIsError(response)) {

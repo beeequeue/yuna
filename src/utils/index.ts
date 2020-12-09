@@ -1,9 +1,9 @@
-import { session } from 'electron'
-import { api } from 'electron-util'
-import { existsSync, readFileSync, writeFileSync } from 'fs'
-import { HTTPError, Response } from 'superagent'
-import { v4 as uuid } from 'uuid'
-import { resolve } from 'path'
+import { session } from "electron"
+import { api } from "electron-util"
+import { existsSync, readFileSync, writeFileSync } from "fs"
+import { HTTPError, Response } from "superagent"
+import { v4 as uuid } from "uuid"
+import { resolve } from "path"
 import {
   mdiCheckboxMarked,
   mdiCheckboxMarkedCircleOutline,
@@ -14,7 +14,7 @@ import {
   mdiPause,
   mdiPauseCircleOutline,
   mdiRepeat,
-} from '@mdi/js'
+} from "@mdi/js"
 
 import {
   AnimeViewQuery,
@@ -23,8 +23,8 @@ import {
   MediaRelation,
   PlayerAnimeQuery,
   Provider,
-} from '@/graphql/generated/types'
-import { StreamingSource } from '@/types'
+} from "@/graphql/generated/types"
+import { StreamingSource } from "@/types"
 import CookiesGetFilter = Electron.CookiesGetFilter
 
 export const NO_OP = () => {
@@ -56,7 +56,7 @@ export const responseIsError = (
   return !!(res as any)?.body?.error || !!res?.error
 }
 
-const add0ToNumber = (num: number) => num.toString().replace(/^(\d)$/, '0$1')
+const add0ToNumber = (num: number) => num.toString().replace(/^(\d)$/, "0$1")
 
 export const secondsToTimeString = (input: number) => {
   const minutes = Math.floor(input / 60)
@@ -73,13 +73,13 @@ export const humanizeMediaListStatus = (
   entry: MediaListEntry,
   episodes: number | null | false,
 ) => {
-  const lengthString = episodes || '?'
+  const lengthString = episodes || "?"
   const progressString =
-    episodes !== false ? ` ${entry.progress || 0}/${lengthString}` : ''
+    episodes !== false ? ` ${entry.progress || 0}/${lengthString}` : ""
 
   switch (entry.status) {
     case MediaListStatus.Completed:
-      return 'Completed'
+      return "Completed"
     case MediaListStatus.Current:
       return `Watching${progressString}`
     case MediaListStatus.Dropped:
@@ -87,7 +87,7 @@ export const humanizeMediaListStatus = (
     case MediaListStatus.Paused:
       return `Paused${progressString}`
     case MediaListStatus.Planning:
-      return 'Planning'
+      return "Planning"
     case MediaListStatus.Repeating:
       return `Repeating${progressString}`
     default:
@@ -118,8 +118,8 @@ export const getIconForStatus = (
 }
 
 export const deviceUuidFilePath = resolve(
-  api.app.getPath('userData'),
-  '.device',
+  api.app.getPath("userData"),
+  ".device",
 )
 
 export const getDeviceUuid = (): string => {
@@ -134,8 +134,8 @@ export const getDeviceUuid = (): string => {
 }
 
 export const generateId = () => {
-  const chars = 'abcdefghijklmnopqrstuvwxyz1234567890'
-  let id = ''
+  const chars = "abcdefghijklmnopqrstuvwxyz1234567890"
+  let id = ""
 
   for (let i = 0; i < 8; i++) {
     id += chars[Math.round(Math.random() * chars.length - 1)]
@@ -155,31 +155,31 @@ export const enumKeysToArray = <E>(Enum: E): Array<keyof E> =>
   Object.keys(Enum) as any
 
 export const capitalize = (str: string) => {
-  let words = str.split(' ')
+  let words = str.split(" ")
 
-  words = words.map(word => {
+  words = words.map((word) => {
     const first = word.slice(0, 1).toUpperCase()
     return first + word.slice(1).toLowerCase()
   })
 
-  return words.join(' ')
+  return words.join(" ")
 }
 
 export const isOfType = <T>(
   obj: any,
   ...properties: Array<keyof T>
-): obj is T => properties.every(p => !isNil(obj[p]))
+): obj is T => properties.every((p) => !isNil(obj[p]))
 
 export const isOfTypename = <T extends { __typename?: string }>(
   obj: any,
-  typename: T['__typename'],
+  typename: T["__typename"],
 ): obj is T => obj.__typename === typename
 
 export const arrayIsOfType = <T>(
   arr: any[],
   ...properties: Array<keyof T>
 ): arr is T[] =>
-  Array.isArray(arr) && arr.every(item => isOfType<any>(item, ...properties))
+  Array.isArray(arr) && arr.every((item) => isOfType<any>(item, ...properties))
 
 export const getEpisodeCacheKey = (ep: EpisodeListEpisodes) =>
   `Episode:${ep.provider}:${ep.id}`
@@ -196,11 +196,11 @@ export const removeCookies = async (filter: CookiesGetFilter) => {
 
   const cookies = await session.defaultSession.cookies.get(filter)
 
-  cookies.forEach(cookie => {
+  cookies.forEach((cookie) => {
     if (!cookie.domain) return
 
-    const prefix = cookie.domain.includes('crunchyroll') ? 'api.' : ''
-    const url = 'https://' + prefix + cookie.domain.replace(/^\./, '')
+    const prefix = cookie.domain.includes("crunchyroll") ? "api." : ""
+    const url = "https://" + prefix + cookie.domain.replace(/^\./, "")
 
     session.defaultSession.cookies.remove(url, cookie.name)
   })
@@ -216,9 +216,9 @@ export const getRelations = (
 
   const filtered = relations
     .filter(isNotNil)
-    .filter(propEq('relationType', type as MediaRelation))
+    .filter(propEq("relationType", type as MediaRelation))
 
-  return filtered.map(relation => relation?.node)
+  return filtered.map((relation) => relation?.node)
 }
 
 type ExternalLink = {
@@ -256,10 +256,10 @@ export const humanizeNumberList = (list: number[]) => {
 }
 
 export const delay = async (ms: number) =>
-  new Promise(resolve => setTimeout(resolve, ms))
+  new Promise((resolve) => setTimeout(resolve, ms))
 
 export const stripFalsy = <T extends any>(arr: T[]) =>
-  arr.filter(item => !!item)
+  arr.filter((item) => !!item)
 
 export const isCrunchyroll = (provider: Provider) =>
   [Provider.CrunchyrollManual, Provider.Crunchyroll].includes(provider)
@@ -282,7 +282,7 @@ export const lastItem = <T>(arr: T[]) => {
 }
 
 export const pluck = <K extends keyof T, T extends {}>(key: K, objArray: T[]) =>
-  objArray.map(obj => obj[key])
+  objArray.map((obj) => obj[key])
 
 export const isNil = <T>(
   variable: T | null | undefined,
@@ -313,7 +313,7 @@ export const anyPass = <
 >(
   item: P,
   predicates: F,
-) => predicates.some(predicate => predicate(item))
+) => predicates.some((predicate) => predicate(item))
 
 export const pick = <T extends {}, K extends Array<keyof T>>(
   obj: T,

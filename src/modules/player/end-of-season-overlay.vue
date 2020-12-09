@@ -11,7 +11,7 @@
       <score v-if="listEntry" :media-id="listEntry.mediaId" />
 
       <div v-if="isFinalEpisode && sequels.length > 0" class="sequel-container">
-        <h1 class="text">Sequel{{ sequels.length > 1 ? 's' : '' }}:</h1>
+        <h1 class="text">Sequel{{ sequels.length > 1 ? "s" : "" }}:</h1>
 
         <div v-for="sequel in sequels" :key="sequel.id" class="sequel">
           <anime-banner class="banner" :anime="sequel" link />
@@ -22,21 +22,21 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { format, formatDistance } from 'date-fns'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { format, formatDistance } from "date-fns"
 
 import {
   AnimeViewNextAiringEpisode,
   PlayerAnimeListEntry,
-} from '@/graphql/generated/types'
+} from "@/graphql/generated/types"
 
-import { Required } from '@/decorators'
-import { Sequel } from '@/state/app'
+import { Required } from "@/decorators"
+import { Sequel } from "@/state/app"
 
-import CButton from '@/common/components/button.vue'
-import AnimeBanner from '@/common/components/anime-banner.vue'
-import Icon from '@/common/components/icon.vue'
-import Score from '@/common/components/score.vue'
+import CButton from "@/common/components/button.vue"
+import AnimeBanner from "@/common/components/anime-banner.vue"
+import Icon from "@/common/components/icon.vue"
+import Score from "@/common/components/score.vue"
 
 @Component({
   components: { Score, AnimeBanner, CButton, Icon },
@@ -59,7 +59,7 @@ export default class EndOfSeasonOverlay extends Vue {
   public get nextEpisodeDateString() {
     if (!this.nextAiringEpisode) return null
 
-    return format(this.nextAiringEpisode.airingAt * 1000, 'iii do MMM - kk:mm')
+    return format(this.nextAiringEpisode.airingAt * 1000, "iii do MMM - kk:mm")
   }
 
   public get nextEpisodeDistanceString() {
@@ -69,13 +69,13 @@ export default class EndOfSeasonOverlay extends Vue {
   }
 
   public get endMessage() {
-    return `The end${this.isFinalEpisode ? '!' : ' for now!'}`
+    return `The end${this.isFinalEpisode ? "!" : " for now!"}`
   }
 }
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 @keyframes expand {
   from {
@@ -123,7 +123,7 @@ export default class EndOfSeasonOverlay extends Vue {
     font-size: 1.25em;
     padding: 5px;
     overflow: hidden;
-    font-family: 'Raleway', sans-serif;
+    font-family: "Raleway", sans-serif;
     text-shadow: $outline;
     font-weight: 600 !important;
     margin: 0;

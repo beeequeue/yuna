@@ -1,25 +1,25 @@
-import { Store } from 'vuex'
-import superagent from 'superagent/dist/superagent'
-import { captureException } from '@sentry/browser'
+import { Store } from "vuex"
+import superagent from "superagent/dist/superagent"
+import { captureException } from "@sentry/browser"
 
-import { getConfig } from '@/config'
-import { isNil, RequestError, RequestSuccess } from '@/utils'
-import { setSimkl } from '@/state/auth'
-import { updateMainListPlugin } from '@/state/settings'
-import { MediaListStatus } from '@/graphql/generated/types'
-import { userStore } from '@/lib/user'
+import { getConfig } from "@/config"
+import { isNil, RequestError, RequestSuccess } from "@/utils"
+import { setSimkl } from "@/state/auth"
+import { updateMainListPlugin } from "@/state/settings"
+import { MediaListStatus } from "@/graphql/generated/types"
+import { userStore } from "@/lib/user"
 
 type SimklListStatus =
-  | 'plantowatch'
-  | 'watching'
-  | 'notinteresting'
-  | 'hold'
-  | 'completed'
+  | "plantowatch"
+  | "watching"
+  | "notinteresting"
+  | "hold"
+  | "completed"
 
 type _Show = {
   title: string
   year: number
-  type: 'anime'
+  type: "anime"
   ids: {
     simkl: number
     slug: string
@@ -58,9 +58,9 @@ type _ShowFull = {
   genres: string[]
   country: string
   total_episodes: number
-  status: 'ended'
+  status: "ended"
   network: string
-  anime_type: 'tv'
+  anime_type: "tv"
   ratings?: {
     simkl?: {
       rating: number
@@ -85,7 +85,7 @@ type _ShowFull = {
 
 type _OauthCode = {
   result: string
-  device_code: 'DEVICE_CODE'
+  device_code: "DEVICE_CODE"
   user_code: string
   verification_url: string
   expires_in: number
@@ -93,12 +93,12 @@ type _OauthCode = {
 }
 
 type _OauthPinPending = {
-  result: 'KO'
+  result: "KO"
   message: string
 }
 
 type _OauthPinFinished = {
-  result: 'OK'
+  result: "OK"
   access_token: string
 }
 
@@ -181,20 +181,20 @@ export type SimklListEntry = {
 }
 
 type SimklQuery = {
-  extended?: 'full'
+  extended?: "full"
 }
 
 type SimklResponse<D extends {} | null = any> =
   | RequestSuccess<D>
   | RequestError<null>
 
-const BASE_URL = 'https://api.simkl.com'
+const BASE_URL = "https://api.simkl.com"
 
 const responseIsError = (res: SimklResponse): res is RequestError<null> => {
   return res.status > 400 || !res.ok
 }
 
-let _token = userStore.get('simkl.token', '')
+let _token = userStore.get("simkl.token", "")
 
 export class Simkl {
   private static watchlist: SimklListEntry[] = []
@@ -206,7 +206,7 @@ export class Simkl {
   ): Promise<{ watched: _SetWatchedBody; notWatched: _SetWatchedBody }> {
     const anime = await this.getAnimeInfo(malId)
 
-    if (isNil(anime)) throw new Error('Could not find Anime on Simkl.')
+    if (isNil(anime)) throw new Error("Could not find Anime on Simkl.")
 
     const episodes = Array.from({
       length: anime.total_episodes,
@@ -239,13 +239,13 @@ export class Simkl {
     const response = await Simkl.request<
       _SyncAllItems | null,
       SimklQuery & { date_from: string }
-    >('sync/all-items/anime', {
-      type: 'post',
+    >("sync/all-items/anime", {
+      type: "post",
       query: { date_from: new Date(this.lastUpdate).toISOString() },
     })
 
     if (responseIsError(response)) {
-      throw new Error('Could not update Simkl watchlist')
+      throw new Error("Could not update Simkl watchlist")
     }
 
     this.lastUpdate = Date.now()
@@ -254,12 +254,12 @@ export class Simkl {
 
     const updatedItems = [
       ...(response.body?.anime ?? []),
-      ...((response.body as any)?.[''] ?? []),
+      ...((response.body as any)?.[""] ?? []),
     ]
 
-    updatedItems.forEach(item => {
+    updatedItems.forEach((item) => {
       const index = this.watchlist.findIndex(
-        listItem => listItem.show.ids.simkl === item.show.ids.simkl,
+        (listItem) => listItem.show.ids.simkl === item.show.ids.simkl,
       )
 
       if (index === -1) {
@@ -270,19 +270,19 @@ export class Simkl {
     })
   }
 
-  public static readonly clientId = getConfig('SIMKL_ID')!
+  public static readonly clientId = getConfig("SIMKL_ID")!
 
   public static statusFromSimklStatus(status: SimklListStatus) {
     switch (status) {
-      case 'plantowatch':
+      case "plantowatch":
         return MediaListStatus.Planning
-      case 'watching':
+      case "watching":
         return MediaListStatus.Current
-      case 'notinteresting':
+      case "notinteresting":
         return MediaListStatus.Dropped
-      case 'hold':
+      case "hold":
         return MediaListStatus.Paused
-      case 'completed':
+      case "completed":
         return MediaListStatus.Completed
     }
   }
@@ -292,21 +292,21 @@ export class Simkl {
   ): SimklListStatus {
     switch (status) {
       case MediaListStatus.Planning:
-        return 'plantowatch'
+        return "plantowatch"
       case MediaListStatus.Completed:
-        return 'completed'
+        return "completed"
       case MediaListStatus.Repeating:
       case MediaListStatus.Current:
-        return 'watching'
+        return "watching"
       case MediaListStatus.Dropped:
-        return 'notinteresting'
+        return "notinteresting"
       case MediaListStatus.Paused:
-        return 'hold'
+        return "hold"
     }
   }
 
   public static async getAnimeInfo(malId: number) {
-    const response = await this.request<_ShowFull[]>('search/id', {
+    const response = await this.request<_ShowFull[]>("search/id", {
       query: {
         mal: malId,
       },
@@ -356,10 +356,10 @@ export class Simkl {
   }
 
   public static async getDeviceCode() {
-    const response = await this.request<_OauthCode>('oauth/pin')
+    const response = await this.request<_OauthCode>("oauth/pin")
 
     if (responseIsError(response)) {
-      throw new Error('Could not get code from Simkl!')
+      throw new Error("Could not get code from Simkl!")
     }
 
     return {
@@ -381,14 +381,14 @@ export class Simkl {
     timeout: number
     interval: number
   }) {
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve) => {
       const makeRequest = async () =>
         this.request<_OauthPinPending | _OauthPinFinished>(`oauth/pin/${code}`)
 
       const intervalId = window.setInterval(async () => {
         const response = await makeRequest()
 
-        if (responseIsError(response) || response.body.result !== 'OK') return
+        if (responseIsError(response) || response.body.result !== "OK") return
 
         window.clearInterval(intervalId)
         window.clearInterval(timeoutId)
@@ -415,10 +415,10 @@ export class Simkl {
   }
 
   public static async getUserInfo() {
-    const response = await this.request<_UserSettings>('/users/settings')
+    const response = await this.request<_UserSettings>("/users/settings")
 
     if (responseIsError(response)) {
-      throw new Error('Could not get User from Simkl!')
+      throw new Error("Could not get User from Simkl!")
     }
 
     return {
@@ -435,8 +435,8 @@ export class Simkl {
 
     if (bodies.watched.shows[0].episodes.length > 0) {
       promises.push(
-        this.request<_SyncHistory, _SetWatchedBody>('sync/history', {
-          type: 'post',
+        this.request<_SyncHistory, _SetWatchedBody>("sync/history", {
+          type: "post",
           body: bodies.watched,
         }),
       )
@@ -444,8 +444,8 @@ export class Simkl {
 
     if (bodies.notWatched.shows[0].episodes.length > 0) {
       promises.push(
-        this.request<_SyncHistory, _SetWatchedBody>('sync/history/remove', {
-          type: 'post',
+        this.request<_SyncHistory, _SetWatchedBody>("sync/history/remove", {
+          type: "post",
           body: bodies.notWatched,
         }),
       )
@@ -454,8 +454,8 @@ export class Simkl {
     const responses = await Promise.all(promises)
 
     if (responses.some(responseIsError)) {
-      responses.filter(r => !r.ok).forEach(r => captureException(r.error))
-      throw new Error('Could not scrobble progress to Simkl.')
+      responses.filter((r) => !r.ok).forEach((r) => captureException(r.error))
+      throw new Error("Could not scrobble progress to Simkl.")
     }
   }
 
@@ -471,7 +471,7 @@ export class Simkl {
     }
 
     const item = this.watchlist.find(
-      item => Number(item.show.ids.mal) === malId,
+      (item) => Number(item.show.ids.mal) === malId,
     )
 
     if (isNil(item)) {
@@ -496,8 +496,8 @@ export class Simkl {
     const response = await this.request<
       { added: _SyncAddToList },
       _SyncAddToList
-    >('sync/add-to-list', {
-      type: 'post',
+    >("sync/add-to-list", {
+      type: "post",
       body: {
         shows: [
           {
@@ -511,11 +511,11 @@ export class Simkl {
     })
 
     if (responseIsError(response)) {
-      throw new Error('Could not add show to list.')
+      throw new Error("Could not add show to list.")
     }
 
     const item =
-      this.watchlist.find(i => Number(i.show.ids.mal) === malId) ||
+      this.watchlist.find((i) => Number(i.show.ids.mal) === malId) ||
       (await Simkl.watchedInfo(malId))!
 
     return {
@@ -525,19 +525,19 @@ export class Simkl {
   }
 
   public static async removeFromList(malId: number): Promise<boolean> {
-    const response = await this.request('sync/history/remove', {
-      type: 'post',
+    const response = await this.request("sync/history/remove", {
+      type: "post",
       body: {
         shows: [{ ids: { mal: malId } }],
       },
     })
 
     if (responseIsError(response)) {
-      throw new Error('Could not delete item from Simkl List.')
+      throw new Error("Could not delete item from Simkl List.")
     }
 
     const index = this.watchlist.findIndex(
-      item => Number(item.show.ids.mal) === malId,
+      (item) => Number(item.show.ids.mal) === malId,
     )
     if (index !== -1) {
       this.watchlist.splice(index, 1)
@@ -551,8 +551,8 @@ export class Simkl {
    * @param malId
    */
   public static async addRating(malId: number, rating: number) {
-    const response = await this.request('sync/ratings', {
-      type: 'post',
+    const response = await this.request("sync/ratings", {
+      type: "post",
       body: {
         shows: [
           {
@@ -564,31 +564,31 @@ export class Simkl {
     })
 
     if (responseIsError(response)) {
-      throw new Error('Could not update Simkl rating.')
+      throw new Error("Could not update Simkl rating.")
     }
   }
 
   private static async request<B extends {} | null = any, Q extends {} = any>(
     path: string,
     {
-      type = 'get',
+      type = "get",
       full = false,
       query = {} as any,
       body,
     }: {
-      type?: 'get' | 'post'
+      type?: "get" | "post"
       full?: boolean
       query?: Q & SimklQuery
       body?: Q & SimklQuery
     } = {},
   ) {
     if (full) {
-      query.extended = 'full'
+      query.extended = "full"
     }
 
     return (await superagent[type](`${BASE_URL}/${path}`)
-      .set('simkl-api-key', this.clientId)
-      .auth(_token, { type: 'bearer' })
+      .set("simkl-api-key", this.clientId)
+      .auth(_token, { type: "bearer" })
       .query(query)
       .send(body)) as SimklResponse<B>
   }

@@ -7,10 +7,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
-import { mdiLoading } from '@mdi/js'
+import { Component, Prop, Vue } from "vue-property-decorator"
+import { mdiLoading } from "@mdi/js"
 
-import Icon from './icon.vue'
+import Icon from "./icon.vue"
 
 @Component({ components: { Icon } })
 export default class Loading extends Vue {
@@ -21,7 +21,7 @@ export default class Loading extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 @keyframes spin {
   from {

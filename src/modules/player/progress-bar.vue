@@ -29,9 +29,9 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { secondsToTimeString } from '@/utils'
-import { Required } from '@/decorators'
+import { Component, Vue } from "vue-property-decorator"
+import { secondsToTimeString } from "@/utils"
+import { Required } from "@/decorators"
 
 @Component
 export default class ProgressBar extends Vue {
@@ -54,7 +54,7 @@ export default class ProgressBar extends Vue {
   public get tooltip() {
     return {
       content: this.hoverTime,
-      placement: 'top',
+      placement: "top",
       show: this.visible && this.hovering,
     }
   }
@@ -96,7 +96,7 @@ export default class ProgressBar extends Vue {
 </script>
 
 <style scoped lang="scss">
-@import '../../colors';
+@import "../../colors";
 
 .progress {
   position: absolute;

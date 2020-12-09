@@ -16,89 +16,89 @@ const result: IntrospectionResultData = {
   __schema: {
     types: [
       {
-        kind: 'UNION',
-        name: 'NotificationUnion',
+        kind: "UNION",
+        name: "NotificationUnion",
         possibleTypes: [
           {
-            name: 'AiringNotification',
+            name: "AiringNotification",
           },
           {
-            name: 'FollowingNotification',
+            name: "FollowingNotification",
           },
           {
-            name: 'ActivityMessageNotification',
+            name: "ActivityMessageNotification",
           },
           {
-            name: 'ActivityMentionNotification',
+            name: "ActivityMentionNotification",
           },
           {
-            name: 'ActivityReplyNotification',
+            name: "ActivityReplyNotification",
           },
           {
-            name: 'ActivityReplySubscribedNotification',
+            name: "ActivityReplySubscribedNotification",
           },
           {
-            name: 'ActivityLikeNotification',
+            name: "ActivityLikeNotification",
           },
           {
-            name: 'ActivityReplyLikeNotification',
+            name: "ActivityReplyLikeNotification",
           },
           {
-            name: 'ThreadCommentMentionNotification',
+            name: "ThreadCommentMentionNotification",
           },
           {
-            name: 'ThreadCommentReplyNotification',
+            name: "ThreadCommentReplyNotification",
           },
           {
-            name: 'ThreadCommentSubscribedNotification',
+            name: "ThreadCommentSubscribedNotification",
           },
           {
-            name: 'ThreadCommentLikeNotification',
+            name: "ThreadCommentLikeNotification",
           },
           {
-            name: 'ThreadLikeNotification',
+            name: "ThreadLikeNotification",
           },
           {
-            name: 'RelatedMediaAdditionNotification',
+            name: "RelatedMediaAdditionNotification",
           },
         ],
       },
       {
-        kind: 'UNION',
-        name: 'ActivityUnion',
+        kind: "UNION",
+        name: "ActivityUnion",
         possibleTypes: [
           {
-            name: 'TextActivity',
+            name: "TextActivity",
           },
           {
-            name: 'ListActivity',
+            name: "ListActivity",
           },
           {
-            name: 'MessageActivity',
+            name: "MessageActivity",
           },
         ],
       },
       {
-        kind: 'UNION',
-        name: 'LikeableUnion',
+        kind: "UNION",
+        name: "LikeableUnion",
         possibleTypes: [
           {
-            name: 'ListActivity',
+            name: "ListActivity",
           },
           {
-            name: 'TextActivity',
+            name: "TextActivity",
           },
           {
-            name: 'MessageActivity',
+            name: "MessageActivity",
           },
           {
-            name: 'ActivityReply',
+            name: "ActivityReply",
           },
           {
-            name: 'Thread',
+            name: "Thread",
           },
           {
-            name: 'ThreadComment',
+            name: "ThreadComment",
           },
         ],
       },
