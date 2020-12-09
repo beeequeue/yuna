@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/BeeeQueue/yuna/actions?query=workflow%3A%22Build+%26+Publish%22+branch%3Amaster">
-    <img src="https://img.shields.io/github/workflow/status/BeeeQueue/yuna/CI/CD?label=build"/>
+    <img src="https://img.shields.io/github/workflow/status/BeeeQueue/yuna/CI?label=build"/>
   </a>
 
   <a href="https://github.com/BeeeQueue/yuna/releases">
