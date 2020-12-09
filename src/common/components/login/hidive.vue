@@ -124,7 +124,7 @@ export default class LoginHd extends Vue {
     & > .text-input {
       margin: 0 25px 10px;
 
-      & /deep/ input {
+      & ::v-deep input {
         text-align: center;
       }
     }

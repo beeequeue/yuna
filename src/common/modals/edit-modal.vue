@@ -211,7 +211,7 @@ $gutter: 25px;
   & > .favourite {
     position: relative;
 
-    & > .button /deep/ .icon {
+    & > .button ::v-deep .icon {
       height: 35px;
       width: 35px;
     }

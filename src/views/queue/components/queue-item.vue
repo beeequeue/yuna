@@ -418,7 +418,7 @@ export default class QueueItem extends Vue {
       cursor: -webkit-grab;
       z-index: 5;
 
-      & /deep/ svg {
+      & ::v-deep svg {
         fill: $highlight;
       }
 
@@ -460,11 +460,11 @@ export default class QueueItem extends Vue {
       padding: 0 5px;
       cursor: pointer;
 
-      & /deep/ svg {
+      & ::v-deep svg {
         transition: transform 0.5s;
       }
 
-      &.flip /deep/ svg {
+      &.flip ::v-deep svg {
         transform: rotateZ(-180deg);
       }
     }

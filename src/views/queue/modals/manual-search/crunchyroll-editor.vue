@@ -248,7 +248,7 @@ export default class CrunchyrollEditor extends Vue {
       fill: $white;
       cursor: pointer;
 
-      & /deep/ .icon {
+      & ::v-deep .icon {
         height: 43px;
         width: 30px;
       }

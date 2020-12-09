@@ -57,7 +57,7 @@ export default class LoginAl extends Vue {
     margin: 15px;
 
     &,
-    & /deep/ svg {
+    & ::v-deep svg {
       height: 75px;
       width: 75px;
     }
@@ -66,7 +66,7 @@ export default class LoginAl extends Vue {
   & > .text-input {
     margin: 0 25px 8px;
 
-    & /deep/ input {
+    & ::v-deep input {
       text-align: center;
     }
   }

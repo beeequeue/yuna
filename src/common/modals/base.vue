@@ -62,7 +62,7 @@ export default class ModalBase extends Vue {
   &.v-leave-active {
     transition: opacity 0.25s;
 
-    & /deep/ .modal-body {
+    & ::v-deep .modal-body {
       transition: transform 0.25s;
     }
   }
@@ -70,7 +70,7 @@ export default class ModalBase extends Vue {
   &.v-enter {
     opacity: 0;
 
-    & /deep/ .modal-body {
+    & ::v-deep .modal-body {
       transform: translateY(10%);
     }
   }
@@ -78,7 +78,7 @@ export default class ModalBase extends Vue {
   &.v-leave-to {
     opacity: 0;
 
-    & /deep/ .modal-body {
+    & ::v-deep .modal-body {
       transform: translateY(-10%);
     }
   }

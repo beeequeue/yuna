@@ -50,7 +50,7 @@ export default class ListLink extends Vue {
     height: 15px;
   }
 
-  & /deep/ svg {
+  & ::v-deep svg {
     height: 20px;
     width: 20px;
   }

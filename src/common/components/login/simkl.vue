@@ -120,7 +120,7 @@ export default class LoginSimkl extends Vue {
     margin: 15px;
 
     &,
-    & /deep/ svg {
+    & ::v-deep svg {
       height: 75px;
       width: 75px;
     }

@@ -148,7 +148,7 @@ export default class ListEntry extends Vue {
       filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.15));
       pointer-events: none;
 
-      & /deep/ .text {
+      & ::v-deep .text {
         padding-left: $triangleWidth;
         padding-right: 30px;
       }
@@ -162,7 +162,7 @@ export default class ListEntry extends Vue {
       transform: translateX(calc(100% + #{$triangleWidth} - 21px));
       transition: transform 0.25s;
 
-      & /deep/ .button {
+      & ::v-deep .button {
         border-radius: 0;
         /*box-shadow: -1px -1px 4px transparentize(black, 0.25);*/
         box-shadow: none;

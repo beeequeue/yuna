@@ -65,7 +65,7 @@ export default class SourceList extends Vue {
     filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.75));
     transition: transform 0.15s;
 
-    & /deep/ svg {
+    & ::v-deep svg {
       height: 100%;
     }
 

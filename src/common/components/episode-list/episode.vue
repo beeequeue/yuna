@@ -205,7 +205,7 @@ export default Vue.extend({
       transform: rotateZ(-45deg) translateX(0);
     }
 
-    & /deep/ svg {
+    & ::v-deep svg {
       transform: rotateZ(45deg);
     }
   }

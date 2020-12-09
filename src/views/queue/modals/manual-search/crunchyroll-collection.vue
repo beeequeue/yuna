@@ -141,11 +141,11 @@ export default class CrunchyrollCollection extends Vue {
       fill: $white;
       padding: 0 5px;
 
-      & /deep/ svg {
+      & ::v-deep svg {
         transition: transform 0.5s;
       }
 
-      &.flip /deep/ svg {
+      &.flip ::v-deep svg {
         transform: rotateZ(-180deg);
       }
     }

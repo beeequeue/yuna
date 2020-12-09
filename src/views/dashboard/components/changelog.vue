@@ -152,7 +152,7 @@ export default defineComponent({
       border-top: 1px solid color($main, 600);
     }
 
-    & /deep/ a {
+    & ::v-deep a {
       font-weight: 700;
       text-decoration: none;
       color: color($highlight, 400);
@@ -187,7 +187,7 @@ export default defineComponent({
         }
       }
 
-      & /deep/ ul {
+      & ::v-deep ul {
         text-align: left;
       }
     }

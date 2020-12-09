@@ -131,7 +131,7 @@ export default class ListPlugins extends Vue {
         filter: grayscale(0.75) brightness(0.5);
 
         &,
-        & /deep/ svg {
+        & ::v-deep svg {
           height: 75px;
           width: 75px;
         }

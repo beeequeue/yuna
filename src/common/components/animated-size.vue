@@ -88,7 +88,7 @@ export default class AnimatedSize extends Vue {
 
   transition: height 0.25s, width 0.25s;
 
-  & /deep/ *.h-w {
+  & ::v-deep  *.h-w {
     &-enter-active,
     &-leave-active {
       transition: opacity 0.25s;

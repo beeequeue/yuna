@@ -250,12 +250,12 @@ export default class Filters extends Vue {
       fill: $white;
       height: 20px;
 
-      & /deep/ svg {
+      & ::v-deep svg {
         height: 20px;
       }
     }
 
-    & /deep/ svg {
+    & ::v-deep svg {
       height: 26px;
       width: 26px;
     }
@@ -277,7 +277,7 @@ export default class Filters extends Vue {
   & > .number-input {
     width: 100%;
 
-    & /deep/ input {
+    & ::v-deep input {
       &::-webkit-input-placeholder {
         font-weight: 400;
       }

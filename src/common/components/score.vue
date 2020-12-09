@@ -108,7 +108,7 @@ export default class Score extends Vue {
       &.hollow {
         transform: scale(1.1);
 
-        & /deep/ svg path {
+        & ::v-deep svg path {
           stroke: mix(black, gold, 40%);
           stroke-width: 0.5px;
           stroke-linejoin: round;

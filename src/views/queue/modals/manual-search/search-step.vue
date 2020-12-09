@@ -101,7 +101,7 @@ export default class SearchStep extends Vue {
     border-bottom-right-radius: 0;
     border-bottom: 1px solid color($dark, 300);
 
-    & /deep/ input {
+    & ::v-deep input {
       text-align: center;
       background: $main;
       border: none;

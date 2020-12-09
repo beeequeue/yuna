@@ -237,7 +237,7 @@ export default class NextEpisodeOverlay extends Vue {
       text-shadow: $outline !important;
       overflow: hidden;
 
-      & /deep/ .content {
+      & ::v-deep .content {
         padding: 0;
       }
     }
