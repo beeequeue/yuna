@@ -36,8 +36,7 @@ const isDirectory = async (path: string) => {
 }
 
 const isPlayableFile = (path: string) =>
-  // eslint-disable-next-line no-useless-escape
-  path.match(new RegExp(`\.${ACCEPTED_EXTENSIONS.join("|")}$`))
+  path.match(new RegExp(`\\.${ACCEPTED_EXTENSIONS.join("|")}$`))
 
 const removeDuplicates = (array: LocalAnime[]) => {
   const newArray: LocalAnime[] = []
