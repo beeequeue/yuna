@@ -131,7 +131,7 @@
     "@vue/eslint-config-prettier": "6.0.0",
     "@vue/eslint-config-typescript": "7.0.0",
     "babel-eslint": "10.1.0",
-    "browserslist": "4.15.0",
+    "browserslist": "4.16.0",
     "cross-env": "7.0.3",
     "deepmerge": "4.2.2",
     "electron": "8.3.1",
