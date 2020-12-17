@@ -76,7 +76,7 @@
     "superagent": "6.1.0",
     "svg-country-flags": "1.2.9",
     "ts-debounce": "2.1.0",
-    "ts-key-enum": "2.0.3",
+    "ts-key-enum": "2.0.5",
     "uuid": "8.3.2",
     "v-tooltip": "2.0.3",
     "vue": "2.6.12",

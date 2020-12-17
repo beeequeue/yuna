@@ -14741,10 +14741,10 @@ ts-jest@^24.2.0:
     semver "^5.5"
     yargs-parser "10.x"
 
-ts-key-enum@2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/ts-key-enum/-/ts-key-enum-2.0.3.tgz#f37dc56d3cd0ce7e667e1780eb76ed7d3bf1ff09"
-  integrity sha512-hdzWAxZDIz1mrXvXHn4WMi6GAzMTnDfeanztDt7nzA5Ck8IEjW/vXrYhA7tXg9XCDGpChCITXQKuCr/997WCWg==
+ts-key-enum@2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/ts-key-enum/-/ts-key-enum-2.0.5.tgz#ba411307ab867c6a38ee0922db409dc2bff0919d"
+  integrity sha512-UQ162P3Q2KGkLVazgImOWKLtmCi6JqNyc5gBYaHu+ec2zj/q1OX8iT0lADRGbEtQH7ovnyALKK83lli5vFv8Ww==
 
 ts-loader@^6.2.2:
   version "6.2.2"
