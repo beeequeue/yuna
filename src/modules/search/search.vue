@@ -11,11 +11,13 @@
       @keydown.esc.capture="$refs.searchbar.blur()"
     />
 
-    <transition name="fade"> <span v-if="isOpen" class="fader" /> </transition>
+    <transition name="fade">
+      <span v-if="isOpen" class="fader" />
+    </transition>
 
     <div class="list" :class="{ open: isOpen }">
       <span v-if="fakeLoading" key="loader" class="loading-spinner">
-        <icon :icon="loadingSvg" />
+        <icon :icon="mdiLoading" />
       </span>
 
       <div
@@ -33,7 +35,7 @@
 
       <icon
         v-if="!fakeLoading && results.length < 1"
-        :icon="emptySvg"
+        :icon="mdiClose"
         class="empty"
       />
     </div>
@@ -41,7 +43,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator"
+import { defineComponent, ref } from "@vue/composition-api"
+import { useQuery, useResult } from "@vue/apollo-composable"
 import { mdiClose, mdiLoading } from "@mdi/js"
 
 import SEARCH_QUERY from "./search.graphql"
@@ -51,57 +54,62 @@ import {
   SearchVariables,
 } from "@/graphql/generated/types"
 
-import { Query } from "@/decorators"
-
 import Icon from "@/common/components/icon.vue"
-import { isNotNil } from "@/utils"
-@Component({ components: { Icon } })
-export default class Search extends Vue {
-  @Query<Search, SearchQuery, SearchVariables>({
-    query: SEARCH_QUERY,
-    variables(): SearchVariables {
-      return {
-        search: this.searchString,
-      }
-    },
-    skip() {
-      return this.searchString.length < 1
-    },
-    ["debounce" as any]: 750,
-    notifyOnNetworkStatusChange: true,
-    fetchPolicy: "network-only",
-    result() {
-      this.onFinish()
-    },
-  })
-  public search: SearchQuery | null = null
 
-  public isOpen = false
-  public fakeLoading = false
-  public searchString = ""
+export default defineComponent({
+  components: { Icon },
+  setup() {
+    const isOpen = ref(false)
+    const fakeLoading = ref(false)
+    const searchString = ref("")
 
-  public emptySvg = mdiClose
-  public loadingSvg = mdiLoading
+    const { result, onResult } = useQuery<SearchQuery, SearchVariables>(
+      SEARCH_QUERY,
+      () => ({
+        search: searchString.value,
+      }),
+      () => ({
+        fetchPolicy: "network-only",
+        notifyOnNetworkStatusChange: true,
+        enabled: searchString.value.length > 0,
+        debounce: 750,
+      }),
+    )
 
-  public get results(): SearchResults[] {
-    return this.search?.anime?.results?.filter(isNotNil) ?? []
-  }
+    onResult(() => {
+      fakeLoading.value = false
+    })
 
-  public selectAllInInput(e: MouseEvent) {
-    const target = e.currentTarget as HTMLInputElement
-    target.select()
-  }
+    const selectAllInInput = (e: MouseEvent) => {
+      const target = e.currentTarget as HTMLInputElement
+      target.select()
+    }
 
-  public setSearchString(e: KeyboardEvent) {
-    const { value: search } = e.currentTarget as HTMLInputElement
-    this.searchString = search
-    this.fakeLoading = true
-  }
+    const setSearchString = (e: KeyboardEvent) => {
+      const { value } = e.currentTarget as HTMLInputElement
+      searchString.value = value
+      fakeLoading.value = true
+    }
 
-  public onFinish() {
-    this.fakeLoading = false
-  }
-}
+    return {
+      isOpen,
+      fakeLoading,
+
+      searchString,
+      results: useResult(
+        result,
+        [],
+        (data) => data.anime!.results as SearchResults[],
+      ),
+
+      selectAllInInput,
+      setSearchString,
+
+      mdiClose,
+      mdiLoading,
+    }
+  },
+})
 </script>
 
 <style scoped lang="scss">
