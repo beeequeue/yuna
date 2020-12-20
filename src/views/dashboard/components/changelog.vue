@@ -42,20 +42,20 @@ type LiteRelease = Pick<
 
 const CHANGELOG_FETCH_TIMEOUT = 1000 * 60 * 30
 
-const renderer = new marked.Renderer()
+const customRenderer = new marked.Renderer()
 
-const regex = / (#\d+)/g
-renderer.text = (content: string) => {
-  const matches = content.match(regex) ?? []
+const regex = /([^&])(#\d+)/g
+customRenderer.text = (content: string) => {
+  const matches: RegExpMatchArray = content.match(regex) ?? []
 
   return matches.reduce((accum, match) => {
-    const hash = match.trim()
+    const charBefore = match.slice(0, 1)
+    const hash = match.slice(1)
     const id = hash.slice(1)
 
     return accum.replace(
       match,
-      // Keep the space! It's in the regex!
-      ` <a href="https://github.com/beeequeue/yuna/issues/${id}" target="_blank">${hash}</a>`,
+      `${charBefore}<a href="https://github.com/beeequeue/yuna/issues/${id}" target="_blank">${hash}</a>`,
     )
   }, content)
 }
@@ -115,7 +115,8 @@ export default defineComponent({
       compileMarkdown: (str: string) =>
         marked(str, {
           gfm: true,
-          renderer,
+          breaks: true,
+          renderer: customRenderer,
         }),
     }
   },
