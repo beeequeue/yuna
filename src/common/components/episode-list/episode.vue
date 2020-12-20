@@ -152,7 +152,7 @@ export default Vue.extend({
   overflow: hidden;
 
   will-change: height;
-  transition: height 0.25s;
+  transition: height 0.25s, filter 0.5s;
 
   &:first-child {
     margin-left: 0;
@@ -160,6 +160,10 @@ export default Vue.extend({
 
   &:hover > .button {
     bottom: 0;
+  }
+
+  &.watched > .thumbnail {
+    filter: brightness(0.35);
   }
 
   &.small {
