@@ -3149,7 +3149,7 @@
   optionalDependencies:
     vue-loader-v16 "npm:vue-loader@^16.0.0-beta.7"
 
-"@vue/cli-shared-utils@^4.5.8", "@vue/cli-shared-utils@^4.5.9":
+"@vue/cli-shared-utils@^4.5.6", "@vue/cli-shared-utils@^4.5.8", "@vue/cli-shared-utils@^4.5.9":
   version "4.5.9"
   resolved "https://registry.yarnpkg.com/@vue/cli-shared-utils/-/cli-shared-utils-4.5.9.tgz#487cea4b4282f4dff907ee7d8abba8dd0dd03ccd"
   integrity sha512-anvsrv+rkQC+hgxaT2nQQxnSWSsIzyysZ36LO7qPjXvDRBvcvKLAAviFlUkYbZ+ntbV8puzJ3zw+gUhQw4SEVA==
@@ -15390,11 +15390,12 @@ vue-cli-plugin-apollo@0.22.2:
     subscriptions-transport-ws "^0.9.16"
     ts-node "^8.10.2"
 
-vue-cli-plugin-electron-builder@2.0.0-rc.4:
-  version "2.0.0-rc.4"
-  resolved "https://registry.yarnpkg.com/vue-cli-plugin-electron-builder/-/vue-cli-plugin-electron-builder-2.0.0-rc.4.tgz#c819279e00fe6771912f5f0468ee26f279750a5b"
-  integrity sha512-yA/MUY8t/OiCnNea0zyVhFuewd+g/mGTc7MNbE/e/sb9XjBsEW517CD5KhLIu5/uItmvmMOpjLSTDILqE2RJFA==
+vue-cli-plugin-electron-builder@2.0.0-rc.5:
+  version "2.0.0-rc.5"
+  resolved "https://registry.yarnpkg.com/vue-cli-plugin-electron-builder/-/vue-cli-plugin-electron-builder-2.0.0-rc.5.tgz#87cd8d09877f5f3ae339abc0bedc47d7d2b733ac"
+  integrity sha512-l1/BkwxMDgDSz3fW+KPM3mdVu6ItR6jGhqR6xGhTHxre3dH9XCEfpT+esZp6wxex9trUJzlL+wMmzm79dYKl0A==
   dependencies:
+    "@vue/cli-shared-utils" "^4.5.6"
     chokidar "^3.0.2"
     electron-builder "^22.2.0"
     execa "^4.0.0"
