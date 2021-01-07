@@ -3060,15 +3060,15 @@
   optionalDependencies:
     fork-ts-checker-webpack-plugin-v5 "npm:fork-ts-checker-webpack-plugin@^5.0.11"
 
-"@vue/cli-plugin-unit-jest@4.5.8":
-  version "4.5.8"
-  resolved "https://registry.yarnpkg.com/@vue/cli-plugin-unit-jest/-/cli-plugin-unit-jest-4.5.8.tgz#0310d48b61cd922f8cc7d7898d02a5b5dbc33e87"
-  integrity sha512-B3MqSf4Wp3x2Qoy7/1MqNasjgsqa5pOocCzljtvCR2uwF+i+MKRsw8dhAr/0ikarRehwVcl2WMVtlJoNJ1zX1A==
+"@vue/cli-plugin-unit-jest@4.5.10":
+  version "4.5.10"
+  resolved "https://registry.yarnpkg.com/@vue/cli-plugin-unit-jest/-/cli-plugin-unit-jest-4.5.10.tgz#0c319fc951a94dd3d4c4e6e24a1f1fd9424f0c64"
+  integrity sha512-x4IPonIpzFmJWD4RvUInSYFDy9W8Ck0h5oxG/3vKQlDR3y2E3Zgh/p0DvcFn6krCXzCJDxGQ+YmxKE0AsUVgYw==
   dependencies:
     "@babel/core" "^7.11.0"
     "@babel/plugin-transform-modules-commonjs" "^7.9.6"
     "@types/jest" "^24.0.19"
-    "@vue/cli-shared-utils" "^4.5.8"
+    "@vue/cli-shared-utils" "^4.5.10"
     babel-core "^7.0.0-bridge.0"
     babel-jest "^24.9.0"
     babel-plugin-transform-es2015-modules-commonjs "^6.26.2"
@@ -3149,10 +3149,10 @@
   optionalDependencies:
     vue-loader-v16 "npm:vue-loader@^16.0.0-beta.7"
 
-"@vue/cli-shared-utils@^4.5.8", "@vue/cli-shared-utils@^4.5.9":
-  version "4.5.9"
-  resolved "https://registry.yarnpkg.com/@vue/cli-shared-utils/-/cli-shared-utils-4.5.9.tgz#487cea4b4282f4dff907ee7d8abba8dd0dd03ccd"
-  integrity sha512-anvsrv+rkQC+hgxaT2nQQxnSWSsIzyysZ36LO7qPjXvDRBvcvKLAAviFlUkYbZ+ntbV8puzJ3zw+gUhQw4SEVA==
+"@vue/cli-shared-utils@^4.5.10", "@vue/cli-shared-utils@^4.5.8", "@vue/cli-shared-utils@^4.5.9":
+  version "4.5.10"
+  resolved "https://registry.yarnpkg.com/@vue/cli-shared-utils/-/cli-shared-utils-4.5.10.tgz#e3b84c38bba19c6d995278b15261da865790561c"
+  integrity sha512-Lid6FflDqcvo/JBIBjUriAQ1RkQaKbBpzXSLEK/JmoKkQRHW/rRhDLGI1dEVyOLYnDEiL1m8o1xPJaplUUiXpA==
   dependencies:
     "@hapi/joi" "^15.0.1"
     chalk "^2.4.2"
