@@ -172,7 +172,7 @@
 
         <checkbox
           setting="autoPlay"
-          text="AutoPlay next epsiode"
+          text="AutoPlay next episode"
           :checked="settings.autoPlay"
           :on-change="(checked) => setSetting('autoPlay', checked)"
         />
