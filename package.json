@@ -67,7 +67,7 @@
     "graphql": "15.4.0",
     "hls.js": "0.14.17",
     "lodash.keyby": "4.6.0",
-    "marked": "1.2.7",
+    "marked": "2.0.1",
     "node-fetch": "2.6.1",
     "normalize.css": "8.0.1",
     "portal-vue": "2.1.7",
