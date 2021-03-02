@@ -49,9 +49,7 @@ const getDownloadUrl = (data: GitHubRelease) => {
     return defaultUrl
   }
 
-  const url = data.assets.find((asset) =>
-    asset.browser_download_url.endsWith(extension),
-  )
+  const url = data.assets.find((asset) => asset.browser_download_url.endsWith(extension))
 
   return url?.browser_download_url ?? defaultUrl
 }

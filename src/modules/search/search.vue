@@ -33,11 +33,7 @@
         </div>
       </div>
 
-      <icon
-        v-if="!fakeLoading && results.length < 1"
-        :icon="mdiClose"
-        class="empty"
-      />
+      <icon v-if="!fakeLoading && results.length < 1" :icon="mdiClose" class="empty" />
     </div>
   </div>
 </template>
@@ -48,11 +44,7 @@ import { useQuery, useResult } from "@vue/apollo-composable"
 import { mdiClose, mdiLoading } from "@mdi/js"
 
 import SEARCH_QUERY from "./search.graphql"
-import {
-  SearchQuery,
-  SearchResults,
-  SearchVariables,
-} from "@/graphql/generated/types"
+import { SearchQuery, SearchResults, SearchVariables } from "@/graphql/generated/types"
 
 import Icon from "@/common/components/icon.vue"
 
@@ -96,11 +88,7 @@ export default defineComponent({
       fakeLoading,
 
       searchString,
-      results: useResult(
-        result,
-        [],
-        (data) => data.anime!.results as SearchResults[],
-      ),
+      results: useResult(result, [], (data) => data.anime!.results as SearchResults[]),
 
       selectAllInInput,
       setSearchString,

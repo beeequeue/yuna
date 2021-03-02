@@ -124,15 +124,10 @@ export default class EditModal extends Vue {
     this.saving = false
   }
 
-  public statusItems: DropdownItem[] = enumToArray(MediaListStatus).map(
-    (status) => ({
-      label: humanizeMediaListStatus(
-        { progress: null, status: status as any },
-        false,
-      ),
-      value: status.toString(),
-    }),
-  )
+  public statusItems: DropdownItem[] = enumToArray(MediaListStatus).map((status) => ({
+    label: humanizeMediaListStatus({ progress: null, status: status as any }, false),
+    value: status.toString(),
+  }))
 
   public readonly modalName: ModalName = "edit"
   public readonly deleteSvg = mdiCloseCircle

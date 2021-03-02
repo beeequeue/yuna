@@ -95,10 +95,7 @@ export const humanizeMediaListStatus = (
   }
 }
 
-export const getIconForStatus = (
-  status: MediaListStatus | null,
-  circled = false,
-) => {
+export const getIconForStatus = (status: MediaListStatus | null, circled = false) => {
   if (isNil(status)) return null
 
   switch (status) {
@@ -117,10 +114,7 @@ export const getIconForStatus = (
   }
 }
 
-export const deviceUuidFilePath = resolve(
-  api.app.getPath("userData"),
-  ".device",
-)
+export const deviceUuidFilePath = resolve(api.app.getPath("userData"), ".device")
 
 export const getDeviceUuid = (): string => {
   if (existsSync(deviceUuidFilePath)) {
@@ -151,8 +145,7 @@ export const clamp = (x: number, min: number, max: number) =>
 
 export const enumToArray = <E>(Enum: E): E[] => Object.values(Enum)
 
-export const enumKeysToArray = <E>(Enum: E): Array<keyof E> =>
-  Object.keys(Enum) as any
+export const enumKeysToArray = <E>(Enum: E): Array<keyof E> => Object.keys(Enum) as any
 
 export const capitalize = (str: string) => {
   let words = str.split(" ")
@@ -165,20 +158,15 @@ export const capitalize = (str: string) => {
   return words.join(" ")
 }
 
-export const isOfType = <T>(
-  obj: any,
-  ...properties: Array<keyof T>
-): obj is T => properties.every((p) => !isNil(obj[p]))
+export const isOfType = <T>(obj: any, ...properties: Array<keyof T>): obj is T =>
+  properties.every((p) => !isNil(obj[p]))
 
 export const isOfTypename = <T extends { __typename?: string }>(
   obj: any,
   typename: T["__typename"],
 ): obj is T => obj.__typename === typename
 
-export const arrayIsOfType = <T>(
-  arr: any[],
-  ...properties: Array<keyof T>
-): arr is T[] =>
+export const arrayIsOfType = <T>(arr: any[], ...properties: Array<keyof T>): arr is T[] =>
   Array.isArray(arr) && arr.every((item) => isOfType<any>(item, ...properties))
 
 export const getEpisodeCacheKey = (ep: EpisodeListEpisodes) =>
@@ -189,9 +177,7 @@ export const removeCookies = async (filter: CookiesGetFilter) => {
 
   if (!session.defaultSession) {
     // eslint-disable-next-line no-console
-    return console.warn(
-      `Could not get default session when deleting cookie.\n${filter}`,
-    )
+    return console.warn(`Could not get default session when deleting cookie.\n${filter}`)
   }
 
   const cookies = await session.defaultSession.cookies.get(filter)
@@ -258,8 +244,7 @@ export const humanizeNumberList = (list: number[]) => {
 export const delay = async (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms))
 
-export const stripFalsy = <T extends any>(arr: T[]) =>
-  arr.filter((item) => !!item)
+export const stripFalsy = <T extends any>(arr: T[]) => arr.filter((item) => !!item)
 
 export const isCrunchyroll = (provider: Provider) =>
   [Provider.CrunchyrollManual, Provider.Crunchyroll].includes(provider)
@@ -267,13 +252,11 @@ export const isCrunchyroll = (provider: Provider) =>
 // Ramda replacements
 export const T = () => true
 
-export const prop = <O extends {}, P extends keyof O>(prop: P) => (obj: O) =>
-  obj[prop]
+export const prop = <O extends {}, P extends keyof O>(prop: P) => (obj: O) => obj[prop]
 
-export const propEq = <O extends {}, P extends keyof O>(
-  prop: P,
-  value: O[P],
-) => (obj: O) => obj[prop] === value
+export const propEq = <O extends {}, P extends keyof O>(prop: P, value: O[P]) => (
+  obj: O,
+) => obj[prop] === value
 
 export const lastItem = <T>(arr: T[]) => {
   if (arr.length < 1) return null
@@ -284,19 +267,16 @@ export const lastItem = <T>(arr: T[]) => {
 export const pluck = <K extends keyof T, T extends {}>(key: K, objArray: T[]) =>
   objArray.map((obj) => obj[key])
 
-export const isNil = <T>(
-  variable: T | null | undefined,
-): variable is null | undefined => variable === null || variable === undefined
+export const isNil = <T>(variable: T | null | undefined): variable is null | undefined =>
+  variable === null || variable === undefined
 
 export const isNotNil = <T>(variable: T | null | undefined): variable is T =>
   !isNil(variable)
 
-export const itemsAreNotNil = <T>(
-  arr: Array<T | null | undefined>,
-): arr is T[] => !arr.some(isNil)
+export const itemsAreNotNil = <T>(arr: Array<T | null | undefined>): arr is T[] =>
+  !arr.some(isNil)
 
-export const complement = (fn: (...a: any[]) => any) => (input: any) =>
-  !fn(input)
+export const complement = (fn: (...a: any[]) => any) => (input: any) => !fn(input)
 
 export const mapAsync = async <T, R>(
   items: T[],
@@ -362,10 +342,7 @@ export const debounce = <P extends Array<any>>(
   }
 }
 
-export const countdown = (
-  seconds: number,
-  fn: (secondsLeft: number) => void,
-) => {
+export const countdown = (seconds: number, fn: (secondsLeft: number) => void) => {
   let _seconds = seconds
 
   fn(_seconds)

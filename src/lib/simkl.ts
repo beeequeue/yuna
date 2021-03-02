@@ -184,9 +184,7 @@ type SimklQuery = {
   extended?: "full"
 }
 
-type SimklResponse<D extends {} | null = any> =
-  | RequestSuccess<D>
-  | RequestError<null>
+type SimklResponse<D extends {} | null = any> = RequestSuccess<D> | RequestError<null>
 
 const BASE_URL = "https://api.simkl.com"
 
@@ -287,9 +285,7 @@ export class Simkl {
     }
   }
 
-  public static simklStatusFromMediaStatus(
-    status: MediaListStatus,
-  ): SimklListStatus {
+  public static simklStatusFromMediaStatus(status: MediaListStatus): SimklListStatus {
     switch (status) {
       case MediaListStatus.Planning:
         return "plantowatch"
@@ -313,9 +309,7 @@ export class Simkl {
     })
 
     if (responseIsError(response)) {
-      throw new Error(
-        `Couldn't fetch /search/id?mal=${malId} (${response.status})`,
-      )
+      throw new Error(`Couldn't fetch /search/id?mal=${malId} (${response.status})`)
     }
 
     const simklId = response.body?.[0]?.ids?.simkl ?? null
@@ -327,9 +321,7 @@ export class Simkl {
     })
 
     if (responseIsError(fullResponse)) {
-      throw new Error(
-        `Couldn't fetch /anime/${simklId} (${fullResponse.status})`,
-      )
+      throw new Error(`Couldn't fetch /anime/${simklId} (${fullResponse.status})`)
     }
 
     return fullResponse.body as _ShowFull
@@ -470,9 +462,7 @@ export class Simkl {
       await this.updateWatchlist()
     }
 
-    const item = this.watchlist.find(
-      (item) => Number(item.show.ids.mal) === malId,
-    )
+    const item = this.watchlist.find((item) => Number(item.show.ids.mal) === malId)
 
     if (isNil(item)) {
       return null
@@ -493,22 +483,22 @@ export class Simkl {
     malId: number,
     list: SimklListStatus,
   ): Promise<SimklListEntry> {
-    const response = await this.request<
-      { added: _SyncAddToList },
-      _SyncAddToList
-    >("sync/add-to-list", {
-      type: "post",
-      body: {
-        shows: [
-          {
-            to: list,
-            ids: {
-              mal: malId,
+    const response = await this.request<{ added: _SyncAddToList }, _SyncAddToList>(
+      "sync/add-to-list",
+      {
+        type: "post",
+        body: {
+          shows: [
+            {
+              to: list,
+              ids: {
+                mal: malId,
+              },
             },
-          },
-        ],
+          ],
+        },
       },
-    })
+    )
 
     if (responseIsError(response)) {
       throw new Error("Could not add show to list.")
@@ -536,9 +526,7 @@ export class Simkl {
       throw new Error("Could not delete item from Simkl List.")
     }
 
-    const index = this.watchlist.findIndex(
-      (item) => Number(item.show.ids.mal) === malId,
-    )
+    const index = this.watchlist.findIndex((item) => Number(item.show.ids.mal) === malId)
     if (index !== -1) {
       this.watchlist.splice(index, 1)
     }

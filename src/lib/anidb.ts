@@ -63,9 +63,7 @@ const getIdentifier = (ep: XmlEpisode) => {
   if (ep.resources == null) return null
 
   if (Array.isArray(ep.resources.resource)) {
-    const correctType = ep.resources.resource.find(
-      (resource) => resource.type === 28,
-    )
+    const correctType = ep.resources.resource.find((resource) => resource.type === 28)
     if (correctType == null) return null
 
     return correctType.externalentity.identifier?.[0]
@@ -116,9 +114,7 @@ export class AniDB {
       await delay(2000)
     }
 
-    const response = (await limiter.schedule(() =>
-      request(),
-    )) as RequestResponse
+    const response = (await limiter.schedule(() => request())) as RequestResponse
 
     if (await isXMLError(response)) {
       return null
@@ -134,8 +130,7 @@ export class AniDB {
       valueProcessors: [parseNumbers, parseBooleans],
     })
 
-    const episode =
-      data?.episodes?.episode || (null as XmlEpisode[] | XmlEpisode | null)
+    const episode = data?.episodes?.episode || (null as XmlEpisode[] | XmlEpisode | null)
 
     if (isNil(episode)) return null
 
@@ -143,9 +138,8 @@ export class AniDB {
 
     if (Array.isArray(episode)) {
       firstEpisode =
-        episode.find(
-          (ep) => ep.epno.type === EpisodeType.EPISODE && ep.epno._ === 1,
-        ) || null
+        episode.find((ep) => ep.epno.type === EpisodeType.EPISODE && ep.epno._ === 1) ||
+        null
     } else {
       firstEpisode = episode
     }

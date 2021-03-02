@@ -70,23 +70,18 @@ const fetchChangelog = async () => {
   }
 
   const changelog = response.body
-    .map<LiteRelease>(
-      ({ id, name, body, html_url, tag_name, published_at }) => ({
-        id,
-        name,
-        body,
-        html_url,
-        tag_name,
-        published_at,
-      }),
-    )
+    .map<LiteRelease>(({ id, name, body, html_url, tag_name, published_at }) => ({
+      id,
+      name,
+      body,
+      html_url,
+      tag_name,
+      published_at,
+    }))
     .slice(0, 5)
 
   localStorage.setItem(LocalStorageKey.Changelog, JSON.stringify(changelog))
-  localStorage.setItem(
-    LocalStorageKey.ChangelogFetchedAt,
-    Date.now().toString(),
-  )
+  localStorage.setItem(LocalStorageKey.ChangelogFetchedAt, Date.now().toString())
 
   return changelog
 }

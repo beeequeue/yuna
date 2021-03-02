@@ -81,10 +81,7 @@ export default class ListRow extends Vue {
   }
 
   public get visibleEntries() {
-    return this.list.slice(
-      this.itemsScrolled,
-      this.itemsScrolled + this.visibleItems,
-    )
+    return this.list.slice(this.itemsScrolled, this.itemsScrolled + this.visibleItems)
   }
 
   public get lengthString() {

@@ -1,10 +1,7 @@
 <template>
   <transition>
     <div class="volume-slider">
-      <icon
-        :icon="muted ? mutedSvg : volumeHighSvg"
-        @click.native="onToggleMute"
-      />
+      <icon :icon="muted ? mutedSvg : volumeHighSvg" @click.native="onToggleMute" />
 
       <span class="slider-container" :class="{ open }">
         <input

@@ -7,11 +7,7 @@ import { MediaRelation } from '../../graphql/types'
       class="relation"
       @click="$router.push(`/anime/${prequel.id}`)"
     >
-      <img
-        v-if="prequel.bannerImage"
-        :src="prequel.bannerImage"
-        class="banner"
-      />
+      <img v-if="prequel.bannerImage" :src="prequel.bannerImage" class="banner" />
 
       <div class="title">
         <icon :icon="getRelationIcon('PREQUEL')" />

@@ -73,17 +73,12 @@ const getSourceScore = (source: StreamingSource, sources: string[]) => {
 
 // Being connected adds 100, while the source not existing removes -1000
 // effectively removing it from competition
-export const getDefaultProvider = (
-  state: AuthState,
-  anime: _Anime,
-): Provider => {
+export const getDefaultProvider = (state: AuthState, anime: _Anime): Provider => {
   const links = anime.externalLinks || []
 
   if (isNil(links)) return Provider.Crunchyroll
 
-  const sources = getStreamingSources(links.filter(isNotNil)).map(
-    (source) => source.site,
-  )
+  const sources = getStreamingSources(links.filter(isNotNil)).map((source) => source.site)
 
   const providers = {
     [Provider.Crunchyroll]:
@@ -96,9 +91,7 @@ export const getDefaultProvider = (
       getSourceScore(StreamingSource.Hidive, sources),
   }
 
-  const entries = Object.entries(providers) as Array<
-    [keyof typeof providers, number]
-  >
+  const entries = Object.entries(providers) as Array<[keyof typeof providers, number]>
   return entries.reduce(
     (provider, entry) => (entry[1] > providers[provider] ? entry[0] : provider),
     Provider.Crunchyroll as keyof typeof providers,
@@ -195,9 +188,7 @@ export const auth = {
       return state.simkl.user
     },
 
-    getListPlugins(
-      state: AuthState,
-    ): Array<{ name: string; available: boolean }> {
+    getListPlugins(state: AuthState): Array<{ name: string; available: boolean }> {
       const { anilist, simkl } = _getIsConnectedTo(state)
 
       return [
@@ -225,9 +216,7 @@ export const auth = {
       )
       if (extraKeys.length > 0) {
         // eslint-disable-next-line no-console
-        console.warn(
-          `Tried to set ${extraKeys} without setters in setCrunchyroll`,
-        )
+        console.warn(`Tried to set ${extraKeys} without setters in setCrunchyroll`)
       }
 
       userStore.set("crunchyroll", data)
@@ -334,9 +323,7 @@ export const getSimklUser = read(auth.getters.getSimklUser)
 export const getListPlugins = read(auth.getters.getListPlugins)
 
 export const setCrunchyroll = commit(auth.mutations.setCrunchyroll)
-export const setCrunchyrollCountry = commit(
-  auth.mutations.setCrunchyrollCountry,
-)
+export const setCrunchyrollCountry = commit(auth.mutations.setCrunchyrollCountry)
 export const setAnilist = commit(auth.mutations.setAnilist)
 export const setHidive = commit(auth.mutations.setHidive)
 export const setHidiveProfile = commit(auth.mutations.setHidiveProfile)

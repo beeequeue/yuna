@@ -29,11 +29,7 @@ import {
   UpdateScoreMutation,
   UpdateStatusMutation,
 } from "@/graphql/generated/types"
-import {
-  ListEntryWithoutMedia,
-  ListPlugin,
-  ListPluginType,
-} from "@/plugins/list/plugin"
+import { ListEntryWithoutMedia, ListPlugin, ListPluginType } from "@/plugins/list/plugin"
 import { isNil, isNotNil } from "@/utils"
 import {
   ANILIST_CREATE_ENTRY,
@@ -72,20 +68,16 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     }
   }
 
-  public async GetListEntry(
-    mediaId: number,
-  ): Promise<ListEntryWithoutMedia | null> {
-    const listEntryResult = await this.apollo.query<MediaListEntryFromMediaIdQuery>(
-      {
-        query: MEDIA_LIST_ENTRY_FROM_MEDIA_ID,
-        fetchPolicy: "cache-first",
-        errorPolicy: "ignore",
-        variables: {
-          mediaId,
-          userId: getAnilistUserId(this.store),
-        } as MediaListEntryFromMediaIdVariables,
-      },
-    )
+  public async GetListEntry(mediaId: number): Promise<ListEntryWithoutMedia | null> {
+    const listEntryResult = await this.apollo.query<MediaListEntryFromMediaIdQuery>({
+      query: MEDIA_LIST_ENTRY_FROM_MEDIA_ID,
+      fetchPolicy: "cache-first",
+      errorPolicy: "ignore",
+      variables: {
+        mediaId,
+        userId: getAnilistUserId(this.store),
+      } as MediaListEntryFromMediaIdVariables,
+    })
 
     if (isNil(listEntryResult.data.MediaList)) return null
 
@@ -118,13 +110,11 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
         page: i + 1,
         perPage: 500,
       }
-      const { data, errors } = await this.apollo.query<AnilistListEntriesQuery>(
-        {
-          query: ANILIST_LIST_ENTRIES,
-          variables,
-          errorPolicy: "all",
-        },
-      )
+      const { data, errors } = await this.apollo.query<AnilistListEntriesQuery>({
+        query: ANILIST_LIST_ENTRIES,
+        variables,
+        errorPolicy: "all",
+      })
 
       const list = this.getEntriesFromQuery(data)
 
@@ -164,15 +154,11 @@ export class AnilistListPlugin extends ListPlugin implements ListPlugin {
     }
 
     return list
-      .filter(
-        (entry) => isNil(options.id_in) || options.id_in.includes(entry.id),
-      )
+      .filter((entry) => isNil(options.id_in) || options.id_in.includes(entry.id))
       .map(this.fromMediaListEntry)
   }
 
-  public async AddToList(
-    anilistId: number,
-  ): Promise<AddToListMutation["AddToList"]> {
+  public async AddToList(anilistId: number): Promise<AddToListMutation["AddToList"]> {
     const result = await this.apollo.mutate<AnilistCreateEntryMutation>({
       mutation: ANILIST_CREATE_ENTRY,
       variables: { mediaId: anilistId } as AnilistCreateEntryVariables,

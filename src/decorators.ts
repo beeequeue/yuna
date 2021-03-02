@@ -5,19 +5,15 @@ import { Prop } from "vue/types/options"
 import { VueApolloQueryDefinition } from "@vue/apollo-option/types/options"
 import { createDecorator, VueDecorator } from "vue-class-component"
 
-interface QueryOptions<C extends Vue, R = any>
-  extends VueApolloQueryDefinition<R> {
+interface QueryOptions<C extends Vue, R = any> extends VueApolloQueryDefinition<R> {
   update?: (this: C, data: R) => void
   skip?: (this: C) => boolean
   result?: (this: C) => void
   error?: (this: C, error: Error | ApolloError | string) => void
 }
 
-interface QueryOptionsWithVariables<
-  C extends Vue,
-  R = any,
-  V = undefined | null
-> extends QueryOptions<C, R> {
+interface QueryOptionsWithVariables<C extends Vue, R = any, V = undefined | null>
+  extends QueryOptions<C, R> {
   variables: ((this: C) => V) | V
 }
 
@@ -27,9 +23,7 @@ interface QueryOptionsWithVariables<
  * @return PropertyDecorator | void
  */
 export function Query<C extends Vue, R = any, V extends {} | null = null>(
-  options: V extends null
-    ? QueryOptions<C, R>
-    : QueryOptionsWithVariables<C, R, V>,
+  options: V extends null ? QueryOptions<C, R> : QueryOptionsWithVariables<C, R, V>,
 ): VueDecorator {
   return createDecorator((componentOptions, key) => {
     if (!componentOptions.apollo) {
@@ -37,8 +31,7 @@ export function Query<C extends Vue, R = any, V extends {} | null = null>(
     }
 
     ;(componentOptions.apollo as any)[key] = {
-      update: (data: any) =>
-        Object.keys(data).includes(key) ? data[key] : data,
+      update: (data: any) => (Object.keys(data).includes(key) ? data[key] : data),
       ...options,
     }
   })
@@ -65,9 +58,7 @@ type Constructor =
 
 export function Default<T extends Constructor | ObjectConstructor>(
   type: T,
-  defaultValue: ReturnType<T> extends Array<any>
-    ? () => ReturnType<T>
-    : ReturnType<T>,
+  defaultValue: ReturnType<T> extends Array<any> ? () => ReturnType<T> : ReturnType<T>,
 ): VueDecorator {
   return createDecorator((componentOptions, key) => {
     if (!componentOptions.props) {

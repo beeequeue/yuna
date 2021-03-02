@@ -1,14 +1,5 @@
-import {
-  computed,
-  inject,
-  InjectionKey,
-  provide,
-  reactive,
-} from "@vue/composition-api"
-import {
-  Episode,
-  Provider as StreamingProvider,
-} from "@/graphql/generated/types"
+import { computed, inject, InjectionKey, provide, reactive } from "@vue/composition-api"
+import { Episode, Provider as StreamingProvider } from "@/graphql/generated/types"
 import { pick } from "@/utils"
 
 export type PlayerState = {
@@ -49,9 +40,7 @@ export const usePlayer = () => {
 
     // Mutations
     // TODO: add clear()
-    setPlaylist: (
-      episodes: null | Pick<Episode, "animeId" | "index" | "provider">[],
-    ) => {
+    setPlaylist: (episodes: null | Pick<Episode, "animeId" | "index" | "provider">[]) => {
       if (episodes == null) {
         state.playlist = []
         state.currentIndex = null
@@ -59,9 +48,7 @@ export const usePlayer = () => {
         return
       }
 
-      state.playlist = episodes.map((ep) =>
-        pick(ep, ["animeId", "index", "provider"]),
-      )
+      state.playlist = episodes.map((ep) => pick(ep, ["animeId", "index", "provider"]))
     },
 
     traversePlaylist: (steps: number) => {

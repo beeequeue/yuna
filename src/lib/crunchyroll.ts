@@ -6,17 +6,9 @@ import missingThumbnail from "@/assets/missing-thumbnail.webp"
 import { EpisodeListEpisodes, Provider } from "@/graphql/generated/types"
 
 import { getConfig } from "@/config"
-import {
-  getSettings,
-  setCrunchyrollLocale,
-  SettingsStore,
-} from "@/state/settings"
+import { getSettings, setCrunchyrollLocale, SettingsStore } from "@/state/settings"
 import { userStore } from "@/lib/user"
-import {
-  getIsConnectedTo,
-  setCrunchyroll,
-  setCrunchyrollCountry,
-} from "@/state/auth"
+import { getIsConnectedTo, setCrunchyroll, setCrunchyrollCountry } from "@/state/auth"
 import {
   anyPass,
   delay,
@@ -217,8 +209,7 @@ type RequestTypes =
   | "remove_from_queue"
   | "start_session"
 
-const getUrl = (req: RequestTypes) =>
-  `https://${API_URL}/${req}.${VERSION}.json`
+const getUrl = (req: RequestTypes) => `https://${API_URL}/${req}.${VERSION}.json`
 
 const responseIsError = (
   res: CrunchyrollResponse,
@@ -259,23 +250,15 @@ export class Crunchyroll {
         )
       } catch (e) {
         if (getIsConnectedTo(store).crunchyroll) {
-          store.dispatch(
-            "app/sendErrorToast",
-            "Could not create US session. 😞",
-            {
-              root: true,
-            },
-          )
+          store.dispatch("app/sendErrorToast", "Could not create US session. 😞", {
+            root: true,
+          })
         }
       }
     }
 
     if (data == null) {
-      data = await Crunchyroll.createSessionFromUrl(
-        store,
-        getUrl("start_session"),
-        auth,
-      )
+      data = await Crunchyroll.createSessionFromUrl(store, getUrl("start_session"), auth)
     }
 
     if (getIsConnectedTo(store).crunchyroll) {
@@ -285,11 +268,7 @@ export class Crunchyroll {
     return data
   }
 
-  public static login = async (
-    store: StoreType,
-    username: string,
-    password: string,
-  ) => {
+  public static login = async (store: StoreType, username: string, password: string) => {
     const data = new FormData()
     data.append("account", username)
     data.append("password", password)
@@ -305,10 +284,7 @@ export class Crunchyroll {
       return Promise.reject(response.body.message)
     }
 
-    const session = await Crunchyroll.createSession(
-      store,
-      response.body.data.auth,
-    )
+    const session = await Crunchyroll.createSession(store, response.body.data.auth)
     const user = response.body.data.user
 
     _sessionId = session?.session_id ?? ""
@@ -379,10 +355,7 @@ export class Crunchyroll {
       throw new Error(response.body.message)
     }
 
-    const collections = await Crunchyroll.fetchCollectionsAndEpisodes(
-      anilistId,
-      seriesId,
-    )
+    const collections = await Crunchyroll.fetchCollectionsAndEpisodes(anilistId, seriesId)
 
     return {
       id: anilistId,
@@ -396,9 +369,7 @@ export class Crunchyroll {
     }
   }
 
-  public static fetchEpisode = async (
-    mediaId: string,
-  ): Promise<_Media | null> => {
+  public static fetchEpisode = async (mediaId: string): Promise<_Media | null> => {
     const response = await Crunchyroll.request<_Media>("info", {
       media_id: mediaId,
       fields: mediaFields.join(","),
@@ -425,12 +396,9 @@ export class Crunchyroll {
     id: number,
     seriesId: number,
   ): Promise<_CollectionWithEpisodes[]> => {
-    const response = await Crunchyroll.request<_Collection[]>(
-      "list_collections",
-      {
-        series_id: seriesId,
-      },
-    )
+    const response = await Crunchyroll.request<_Collection[]>("list_collections", {
+      series_id: seriesId,
+    })
 
     if (responseIsError(response)) {
       if (response.body.code === "bad_session") {
@@ -442,10 +410,7 @@ export class Crunchyroll {
 
     return mapAsync(response.body.data, async (coll: _Collection) => ({
       ...coll,
-      episodes: await Crunchyroll.fetchEpisodesOfCollection(
-        id,
-        coll.collection_id,
-      ),
+      episodes: await Crunchyroll.fetchEpisodesOfCollection(id, coll.collection_id),
     }))
   }
 
@@ -467,9 +432,7 @@ export class Crunchyroll {
       throw new Error(response.body.message)
     }
 
-    const episodes = response.body.data
-      .filter(isRealEpisode)
-      .map(mediaToEpisode(id))
+    const episodes = response.body.data.filter(isRealEpisode).map(mediaToEpisode(id))
 
     return fixEpisodeNumbers(episodes)
   }
@@ -487,9 +450,7 @@ export class Crunchyroll {
     return Crunchyroll.fetchEpisodesOfCollection(id, episode.collection_id)
   }
 
-  public static fetchStream = async (
-    mediaId: number | string,
-  ): Promise<Stream> => {
+  public static fetchStream = async (mediaId: number | string): Promise<Stream> => {
     const streamInfo = await Crunchyroll.fetchStreamInfo(mediaId.toString())
     const streams = streamInfo.stream_data.streams
 
@@ -519,17 +480,12 @@ export class Crunchyroll {
     }
   }
 
-  public static searchByString = async (
-    query: string,
-  ): Promise<SearchResult[]> => {
-    const response = await Crunchyroll.request<_AutocompleteResult[]>(
-      "autocomplete",
-      {
-        q: query,
-        media_types: "anime",
-        limit: 10,
-      },
-    )
+  public static searchByString = async (query: string): Promise<SearchResult[]> => {
+    const response = await Crunchyroll.request<_AutocompleteResult[]>("autocomplete", {
+      q: query,
+      media_types: "anime",
+      limit: 10,
+    })
 
     if (responseIsError(response)) {
       if (response.body.code === "bad_session") {
@@ -546,8 +502,7 @@ export class Crunchyroll {
       title: result.name,
       description: result.description,
       url: result.url,
-      portraitImage:
-        result.portrait_image.large_url || result.portrait_image.medium_url,
+      portraitImage: result.portrait_image.large_url || result.portrait_image.medium_url,
       landscapeImage:
         result.landscape_image.full_url ||
         result.landscape_image.large_url ||
@@ -604,9 +559,7 @@ export class Crunchyroll {
     return response.body.data
   }
 
-  private static fetchStreamInfo = async (
-    mediaId: string,
-  ): Promise<StreamInfo> => {
+  private static fetchStreamInfo = async (mediaId: string): Promise<StreamInfo> => {
     const response = await Crunchyroll.request<StreamInfo>(
       "info",
       {
@@ -649,15 +602,7 @@ const mediaFields = [
 ]
 
 const mediaToEpisode = (id: number) => (
-  {
-    name,
-    duration,
-    screenshot_image,
-    media_id,
-    url,
-    playhead,
-    episode_number,
-  }: _Media,
+  { name, duration, screenshot_image, media_id, url, playhead, episode_number }: _Media,
   index: number,
 ): Omit<EpisodeListEpisodes, "isWatched"> => ({
   __typename: "Episode",

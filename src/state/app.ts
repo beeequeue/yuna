@@ -1,8 +1,5 @@
 import { activeWindow } from "electron-util"
-import {
-  NotificationFunctionOptions,
-  NotificationTypes,
-} from "vue-notifications"
+import { NotificationFunctionOptions, NotificationTypes } from "vue-notifications"
 import { ActionContext } from "vuex"
 import { getStoreAccessors } from "vuex-typescript"
 import { addBreadcrumb, Severity } from "@sentry/browser"
@@ -131,9 +128,7 @@ export const app = {
       return state.toasts
     },
 
-    getModalStates(
-      state: AppState,
-    ): { [key in keyof AppState["modals"]]: boolean } {
+    getModalStates(state: AppState): { [key in keyof AppState["modals"]]: boolean } {
       const entries = Object.entries(state.modals).map(
         ([key, obj]) => [key, obj.visible] as [string, boolean],
       )
@@ -250,16 +245,11 @@ export const app = {
       }
     },
 
-    selectCrunchyrollEpisodes(
-      state: AppState,
-      episodes: EpisodeListEpisodes[],
-    ) {
+    selectCrunchyrollEpisodes(state: AppState, episodes: EpisodeListEpisodes[]) {
       const { selectedEpisodes } = state.modals.manualSearch
       const selectedIds = pluck("id", selectedEpisodes)
 
-      const filteredEpisodes = episodes.filter(
-        ({ id }) => !selectedIds.includes(id),
-      )
+      const filteredEpisodes = episodes.filter(({ id }) => !selectedIds.includes(id))
 
       let count = selectedEpisodes.length
       let lastNumber = 0
@@ -345,9 +335,7 @@ export const app = {
       addBreadcrumb({
         category: "toast",
         level:
-          realOptions.type !== "success"
-            ? (realOptions.type as Severity)
-            : Severity.Info,
+          realOptions.type !== "success" ? (realOptions.type as Severity) : Severity.Info,
         type: realOptions.type === "error" ? "error" : "default",
         message: `${options.title} - ${options.message}`,
       })
@@ -400,18 +388,14 @@ export const getAnilistRequestsUntilLimiting = read(
 export const setIsUpdateAvailable = commit(app.mutations.setIsUpdateAvailable)
 const setEditingAnime = commit(app.mutations.setEditingAnime)
 export const setEditingAnimeValue = commit(app.mutations.setEditingAnimeValue)
-export const setManualSearchOptions = commit(
-  app.mutations.setManualSearchOptions,
-)
+export const setManualSearchOptions = commit(app.mutations.setManualSearchOptions)
 export const setLocalSourceAnime = commit(app.mutations.setLocalSourceAnime)
 export const removeToast = commit(app.mutations.removeToast)
 export const toggleModal = commit(app.mutations.toggleModal)
 const addToast = commit(app.mutations.addToast)
 export const closeAllModals = commit(app.mutations.closeAllModals)
 export const setFullscreen = commit(app.mutations.setFullscreen)
-export const selectCrunchyrollEpisodes = commit(
-  app.mutations.selectCrunchyrollEpisodes,
-)
+export const selectCrunchyrollEpisodes = commit(app.mutations.selectCrunchyrollEpisodes)
 export const unselectCrunchyrollEpisodes = commit(
   app.mutations.unselectCrunchyrollEpisodes,
 )

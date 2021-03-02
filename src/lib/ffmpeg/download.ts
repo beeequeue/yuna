@@ -51,8 +51,7 @@ const fetchDownloadUrls = async (): Promise<DownloadUrls> => {
 const match = <I extends string, O extends string>(
   input: I,
   matches: Array<[matchString: I | string, output: O]>,
-): O | null =>
-  matches.find((matchArray) => matchArray.includes(input))?.[1] ?? null
+): O | null => matches.find((matchArray) => matchArray.includes(input))?.[1] ?? null
 
 const getDownloadUrlForPlatform = (urls: DownloadUrls) => {
   const platform = match(PLATFORM, [

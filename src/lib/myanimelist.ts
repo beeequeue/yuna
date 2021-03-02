@@ -25,17 +25,12 @@ const jikanLimiter = new Bottleneck({
   minTime: 250,
 })
 
-const _request = async <B extends {} = any>(
-  url: string,
-): Promise<RequestResponse<B>> =>
+const _request = async <B extends {} = any>(url: string): Promise<RequestResponse<B>> =>
   request.get(url).ok(T) as Promise<RequestResponse<B>>
 
 const requestLimited = (url: string) => malLimiter.schedule(() => _request(url))
 
-const handleError = (
-  response: RequestResponse | null,
-  message?: string,
-): any => {
+const handleError = (response: RequestResponse | null, message?: string): any => {
   if (response && response.status === 404) {
     return []
   }
@@ -87,9 +82,7 @@ export const fetchEpisodesOfSeries = async (
   return Crunchyroll.fetchSeasonFromEpisode(id, mediaIdMatch[1])
 }
 
-export const fetchRating = async (
-  id: string | number,
-): Promise<number | null> => {
+export const fetchRating = async (id: string | number): Promise<number | null> => {
   let response: RequestResponse<{ score: string | null }> | null = null
 
   try {

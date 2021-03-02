@@ -31,9 +31,7 @@ export default Vue.extend({
       required: true,
     },
     episode: {
-      type: Object as PropType<
-        Pick<EpisodeListEpisodes, "episodeNumber" | "title">
-      >,
+      type: Object as PropType<Pick<EpisodeListEpisodes, "episodeNumber" | "title">>,
       required: true,
     },
     watched: Boolean,

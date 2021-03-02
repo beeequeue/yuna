@@ -237,9 +237,7 @@ export const convert = (data: ReadonlyArray<Branches>) => {
     if (isRule(branch)) {
       const from = branch.item.from.anilist
       const to =
-        branch.item.to.anilist !== "~"
-          ? branch.item.to.anilist
-          : branch.item.from.anilist
+        branch.item.to.anilist !== "~" ? branch.item.to.anilist : branch.item.from.anilist
 
       if (to === "?" || from === "?") return
 
@@ -278,8 +276,7 @@ let relations!: Format["relations"]
 
 const DAY = 1000 * 60 * 60 * 24
 const WEEK = DAY * 7
-const isStale = (updatedAt: number, time: number) =>
-  updatedAt + time < Date.now()
+const isStale = (updatedAt: number, time: number) => updatedAt + time < Date.now()
 
 export const updateRelations = async () => {
   const stale = isStale(relationsCache.get("updatedAt", 0), WEEK)
@@ -294,9 +291,7 @@ export const updateRelations = async () => {
   )
 
   if (!response.ok || response.error) {
-    throw new Error(
-      `❌  Failed fetching anime-relations.txt - ${response.status}`,
-    )
+    throw new Error(`❌  Failed fetching anime-relations.txt - ${response.status}`)
   }
 
   const data = convert(parseData(response.text)).relations

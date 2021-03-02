@@ -4,10 +4,7 @@
       <div class="steps">
         <div>
           <transition name="fade">
-            <login-a-l
-              v-if="!isConnectedTo.anilist"
-              :on-finished="onSuccessfulLogin"
-            />
+            <login-a-l v-if="!isConnectedTo.anilist" :on-finished="onSuccessfulLogin" />
 
             <icon v-else :icon="checkSvg" />
           </transition>
@@ -15,10 +12,7 @@
 
         <div>
           <transition name="fade">
-            <login-simkl
-              v-if="!isConnectedTo.simkl"
-              :on-finished="onSuccessfulLogin"
-            />
+            <login-simkl v-if="!isConnectedTo.simkl" :on-finished="onSuccessfulLogin" />
 
             <icon v-else :icon="checkSvg" />
           </transition>

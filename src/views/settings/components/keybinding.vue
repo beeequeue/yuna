@@ -41,10 +41,7 @@ import { getKeysForAction, KeybindingAction } from "@/state/settings"
 export default class Keybinding extends Vue {
   @Prop(String) public action!: KeybindingAction
   @Prop(Function)
-  public unbindKey!: (opts: {
-    key: Key | string
-    action: KeybindingAction
-  }) => void
+  public unbindKey!: (opts: { key: Key | string; action: KeybindingAction }) => void
   @Prop(Function) public openKeybindModal!: (action: KeybindingAction) => void
 
   public plusSvg = mdiPlus

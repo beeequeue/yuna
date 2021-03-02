@@ -23,9 +23,7 @@ const getEnabledPlugins = (store: Store<any>) => {
     .filter((p) => p.available)
     .map((p) => p.name)
 
-  return window.listPlugins.filter((plugin) =>
-    enabledPlugins.includes(plugin.service),
-  )
+  return window.listPlugins.filter((plugin) => enabledPlugins.includes(plugin.service))
 }
 
 export const GetListEntry = (store: Store<any>) => async (
@@ -34,9 +32,7 @@ export const GetListEntry = (store: Store<any>) => async (
   _cache: { cache: RealProxy },
 ): Promise<ListEntryWithoutMedia | null> => {
   const mainListPlugin = getMainListPlugin(store)
-  const plugin = window.listPlugins.find(
-    (plugin) => plugin.service === mainListPlugin,
-  )
+  const plugin = window.listPlugins.find((plugin) => plugin.service === mainListPlugin)
 
   if (isNil(plugin)) throw new Error("Selected List Plugin could not be found.")
 
@@ -49,9 +45,7 @@ export const GetListEntries = (store: Store<any>) => async (
   _cache: { cache: RealProxy },
 ): Promise<ListEntryWithoutMedia[] | null> => {
   const mainListPlugin = getMainListPlugin(store)
-  const plugin = window.listPlugins.find(
-    (plugin) => plugin.service === mainListPlugin,
-  )
+  const plugin = window.listPlugins.find((plugin) => plugin.service === mainListPlugin)
 
   if (isNil(plugin)) throw new Error("Selected List Plugin could not be found.")
 
@@ -92,30 +86,21 @@ const DoAction = (
   const secondParameter = Object.values(rest)[0]
 
   const promises = getEnabledPlugins(store).map((plugin) =>
-    (plugin[action](anilistId, secondParameter as never) as Promise<any>).catch(
-      (err) => {
-        errors[plugin.service] = err
-      },
-    ),
+    (plugin[action](anilistId, secondParameter as never) as Promise<any>).catch((err) => {
+      errors[plugin.service] = err
+    }),
   )
 
   const results = await Promise.all(promises as any)
 
-  const minorErrors = Object.entries(errors).filter(
-    ([plugin]) => plugin !== mainPlugin,
-  )
+  const minorErrors = Object.entries(errors).filter(([plugin]) => plugin !== mainPlugin)
   minorErrors.forEach(([plugin, error]) => {
-    browserWindow.webContents.send(
-      SHOW_ERROR,
-      `${plugin}-plugin: ${error.message}`,
-    )
+    browserWindow.webContents.send(SHOW_ERROR, `${plugin}-plugin: ${error.message}`)
   })
 
   const mainPluginError = errors[mainPlugin]
   if (!isNil(mainPluginError)) {
-    throw new Error(
-      `${getMainListPlugin(store)}-plugin: ${mainPluginError.message}`,
-    )
+    throw new Error(`${getMainListPlugin(store)}-plugin: ${mainPluginError.message}`)
   }
 
   return results[0] as ReturnType<ListPlugin[typeof action]>

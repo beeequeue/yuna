@@ -16,10 +16,7 @@ import { createResolvers } from "@/graphql/resolvers"
 import { EpisodeListEpisodes, ListEntry } from "@/graphql/generated/types"
 import { userStore } from "@/lib/user"
 import { getEpisodeCacheKey, isNil, isOfTypename } from "@/utils"
-import {
-  getAnilistRequestsUntilLimiting,
-  setAnilistRequests,
-} from "@/state/app"
+import { getAnilistRequestsUntilLimiting, setAnilistRequests } from "@/state/app"
 
 // Http endpoint
 const httpEndpoint = "https://graphql.anilist.co"

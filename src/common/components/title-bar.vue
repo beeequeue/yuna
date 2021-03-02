@@ -158,9 +158,7 @@ export default class TitleBar extends Vue {
 
   private restrictedViews = [/login/, /first-time-setup/]
   public get isOnRestrictedView(): boolean {
-    return this.restrictedViews.some(
-      (view) => view.exec(this.$route.path) != null,
-    )
+    return this.restrictedViews.some((view) => view.exec(this.$route.path) != null)
   }
 
   public get isMac() {

@@ -4328,10 +4328,7 @@ export type LocalSourceAnimeQuery = { __typename?: "Query" } & {
           >
         >
         listEntry: Maybe<
-          { __typename?: "ListEntry" } & Pick<
-            ListEntry,
-            "id" | "mediaId" | "progress"
-          >
+          { __typename?: "ListEntry" } & Pick<ListEntry, "id" | "mediaId" | "progress">
         >
       }
   >
@@ -4342,10 +4339,7 @@ export type ListEntryFragment = { __typename?: "ListEntry" } & Pick<
   "id" | "mediaId" | "score" | "progress" | "status" | "rewatched"
 >
 
-export type MediaMalIdFragment = { __typename?: "Media" } & Pick<
-  Media,
-  "id" | "idMal"
->
+export type MediaMalIdFragment = { __typename?: "Media" } & Pick<Media, "id" | "idMal">
 
 export type MediaListEntryFragment = { __typename?: "Media" } & {
   listEntry: Maybe<{ __typename?: "ListEntry" } & ListEntryFragment>
@@ -4432,10 +4426,7 @@ export type SingleMediaQueryVariables = Exact<{
 
 export type SingleMediaQuery = { __typename?: "Query" } & {
   SingleMedia: Maybe<
-    { __typename?: "Media" } & Pick<
-      Media,
-      "id" | "isFavourite" | "episodes"
-    > & {
+    { __typename?: "Media" } & Pick<Media, "id" | "isFavourite" | "episodes"> & {
         title: Maybe<
           { __typename?: "MediaTitle" } & Pick<
             MediaTitle,
@@ -4443,10 +4434,7 @@ export type SingleMediaQuery = { __typename?: "Query" } & {
           >
         >
         coverImage: Maybe<
-          { __typename?: "MediaCoverImage" } & Pick<
-            MediaCoverImage,
-            "medium" | "color"
-          >
+          { __typename?: "MediaCoverImage" } & Pick<MediaCoverImage, "medium" | "color">
         >
       }
   >
@@ -4572,9 +4560,7 @@ export type AnilistIdsFromMalIdsQuery = { __typename?: "Query" } & {
       pageInfo: Maybe<
         { __typename?: "PageInfo" } & Pick<PageInfo, "perPage" | "lastPage">
       >
-      media: Maybe<
-        Array<Maybe<{ __typename?: "Media" } & Pick<Media, "id" | "idMal">>>
-      >
+      media: Maybe<Array<Maybe<{ __typename?: "Media" } & Pick<Media, "id" | "idMal">>>>
     }
   >
 }
@@ -4582,9 +4568,7 @@ export type AnilistIdsFromMalIdsQuery = { __typename?: "Query" } & {
 export type EpisodeFeedListIdsQueryVariables = Exact<{ [key: string]: never }>
 
 export type EpisodeFeedListIdsQuery = { __typename?: "Query" } & {
-  ListEntries: Array<
-    { __typename?: "ListEntry" } & Pick<ListEntry, "id" | "mediaId">
-  >
+  ListEntries: Array<{ __typename?: "ListEntry" } & Pick<ListEntry, "id" | "mediaId">>
 }
 
 export type MalScoreQueryVariables = Exact<{
@@ -4592,9 +4576,7 @@ export type MalScoreQueryVariables = Exact<{
 }>
 
 export type MalScoreQuery = { __typename?: "Query" } & {
-  anime: Maybe<
-    { __typename?: "Media" } & Pick<Media, "id" | "idMal" | "scoreMal">
-  >
+  anime: Maybe<{ __typename?: "Media" } & Pick<Media, "id" | "idMal" | "scoreMal">>
 }
 
 export type SimklInfoQueryVariables = Exact<{
@@ -4602,9 +4584,7 @@ export type SimklInfoQueryVariables = Exact<{
 }>
 
 export type SimklInfoQuery = { __typename?: "Query" } & {
-  Media: Maybe<
-    { __typename?: "Media" } & Pick<Media, "id" | "scoreSimkl" | "linkSimkl">
-  >
+  Media: Maybe<{ __typename?: "Media" } & Pick<Media, "id" | "scoreSimkl" | "linkSimkl">>
 }
 
 export type CacheEpisodesAiringQueryVariables = Exact<{
@@ -4627,9 +4607,7 @@ export type PlayerAnimeQueryVariables = Exact<{
 export type PlayerAnimeQuery = { __typename?: "Query" } & {
   anime: Maybe<
     { __typename?: "Media" } & Pick<Media, "id" | "idMal" | "episodes"> & {
-        title: Maybe<
-          { __typename?: "MediaTitle" } & Pick<MediaTitle, "userPreferred">
-        >
+        title: Maybe<{ __typename?: "MediaTitle" } & Pick<MediaTitle, "userPreferred">>
         nextAiringEpisode: Maybe<
           { __typename?: "AiringSchedule" } & Pick<
             AiringSchedule,
@@ -4641,15 +4619,9 @@ export type PlayerAnimeQuery = { __typename?: "Query" } & {
             edges: Maybe<
               Array<
                 Maybe<
-                  { __typename?: "MediaEdge" } & Pick<
-                    MediaEdge,
-                    "relationType"
-                  > & {
+                  { __typename?: "MediaEdge" } & Pick<MediaEdge, "relationType"> & {
                       node: Maybe<
-                        { __typename?: "Media" } & Pick<
-                          Media,
-                          "id" | "bannerImage"
-                        > & {
+                        { __typename?: "Media" } & Pick<Media, "id" | "bannerImage"> & {
                             title: Maybe<
                               { __typename?: "MediaTitle" } & Pick<
                                 MediaTitle,
@@ -4687,16 +4659,10 @@ export type SearchQuery = { __typename?: "Query" } & {
           Maybe<
             { __typename?: "Media" } & Pick<Media, "id" | "type"> & {
                 title: Maybe<
-                  { __typename?: "MediaTitle" } & Pick<
-                    MediaTitle,
-                    "userPreferred"
-                  >
+                  { __typename?: "MediaTitle" } & Pick<MediaTitle, "userPreferred">
                 >
                 coverImage: Maybe<
-                  { __typename?: "MediaCoverImage" } & Pick<
-                    MediaCoverImage,
-                    "medium"
-                  >
+                  { __typename?: "MediaCoverImage" } & Pick<MediaCoverImage, "medium">
                 >
                 streamingEpisodes: Maybe<
                   Array<
@@ -4774,9 +4740,7 @@ export type AnilistDeleteEntryMutationVariables = Exact<{
 }>
 
 export type AnilistDeleteEntryMutation = { __typename?: "Mutation" } & {
-  DeleteMediaListEntry: Maybe<
-    { __typename?: "Deleted" } & Pick<Deleted, "deleted">
-  >
+  DeleteMediaListEntry: Maybe<{ __typename?: "Deleted" } & Pick<Deleted, "deleted">>
 }
 
 export type AnilistEditListEntryMutationVariables = Exact<{
@@ -4815,9 +4779,7 @@ export type AnilistListEntriesQuery = { __typename?: "Query" } & {
               "name" | "isCustomList"
             > & {
                 entries: Maybe<
-                  Array<
-                    Maybe<{ __typename?: "MediaList" } & AniListEntryFragment>
-                  >
+                  Array<Maybe<{ __typename?: "MediaList" } & AniListEntryFragment>>
                 >
               }
           >
@@ -4831,19 +4793,13 @@ export type CachedAnimeListEntryFragment = { __typename?: "Media" } & {
   listEntry: Maybe<{ __typename?: "ListEntry" } & Pick<ListEntry, "progress">>
 }
 
-export type CachedMalIdFragment = { __typename?: "Media" } & Pick<
-  Media,
-  "idMal"
->
+export type CachedMalIdFragment = { __typename?: "Media" } & Pick<Media, "idMal">
 
 export type CachedExternalLinksFragment = { __typename?: "Media" } & {
   externalLinks: Maybe<
     Array<
       Maybe<
-        { __typename?: "MediaExternalLink" } & Pick<
-          MediaExternalLink,
-          "site" | "url"
-        >
+        { __typename?: "MediaExternalLink" } & Pick<MediaExternalLink, "site" | "url">
       >
     >
   >
@@ -4905,15 +4861,9 @@ export type AnimeViewQuery = { __typename?: "Query" } & {
             edges: Maybe<
               Array<
                 Maybe<
-                  { __typename?: "MediaEdge" } & Pick<
-                    MediaEdge,
-                    "relationType"
-                  > & {
+                  { __typename?: "MediaEdge" } & Pick<MediaEdge, "relationType"> & {
                       node: Maybe<
-                        { __typename?: "Media" } & Pick<
-                          Media,
-                          "id" | "bannerImage"
-                        > & {
+                        { __typename?: "Media" } & Pick<Media, "id" | "bannerImage"> & {
                             title: Maybe<
                               { __typename?: "MediaTitle" } & Pick<
                                 MediaTitle,
@@ -4951,9 +4901,7 @@ export type EpisodeFeedQuery = { __typename?: "Query" } & {
       airingSchedules: Maybe<
         Array<Maybe<{ __typename?: "AiringSchedule" } & AiringFeedItemFragment>>
       >
-      pageInfo: Maybe<
-        { __typename?: "PageInfo" } & Pick<PageInfo, "hasNextPage">
-      >
+      pageInfo: Maybe<{ __typename?: "PageInfo" } & Pick<PageInfo, "hasNextPage">>
     }
   >
 }
@@ -4964,14 +4912,9 @@ export type AiringFeedItemFragment = { __typename?: "AiringSchedule" } & Pick<
 > & {
     media: Maybe<
       { __typename?: "Media" } & Pick<Media, "id"> & {
-          title: Maybe<
-            { __typename?: "MediaTitle" } & Pick<MediaTitle, "userPreferred">
-          >
+          title: Maybe<{ __typename?: "MediaTitle" } & Pick<MediaTitle, "userPreferred">>
           coverImage: Maybe<
-            { __typename?: "MediaCoverImage" } & Pick<
-              MediaCoverImage,
-              "color" | "medium"
-            >
+            { __typename?: "MediaCoverImage" } & Pick<MediaCoverImage, "color" | "medium">
           >
         }
     >
@@ -4992,10 +4935,7 @@ export type QueueQuery = { __typename?: "Query" } & {
               "id" | "idMal" | "episodes" | "status" | "siteUrl" | "bannerImage"
             > & {
                 title: Maybe<
-                  { __typename?: "MediaTitle" } & Pick<
-                    MediaTitle,
-                    "userPreferred"
-                  >
+                  { __typename?: "MediaTitle" } & Pick<MediaTitle, "userPreferred">
                 >
                 nextAiringEpisode: Maybe<
                   { __typename?: "AiringSchedule" } & Pick<
@@ -5071,15 +5011,11 @@ export type LocalSourceAnimeTitle = NonNullable<
 export type LocalSourceAnimeListEntry = NonNullable<
   NonNullable<LocalSourceAnimeQuery["anime"]>["listEntry"]
 >
-export type MediaListEntryListEntry = NonNullable<
-  MediaListEntryFragment["listEntry"]
->
+export type MediaListEntryListEntry = NonNullable<MediaListEntryFragment["listEntry"]>
 export type AddToListVariables = AddToListMutationVariables
 export type AddToListAddToList = NonNullable<AddToListMutation["AddToList"]>
 export type UpdateStatusVariables = UpdateStatusMutationVariables
-export type UpdateStatusUpdateStatus = NonNullable<
-  UpdateStatusMutation["UpdateStatus"]
->
+export type UpdateStatusUpdateStatus = NonNullable<UpdateStatusMutation["UpdateStatus"]>
 export type StartRewatchingVariables = StartRewatchingMutationVariables
 export type StartRewatchingStartRewatching = NonNullable<
   StartRewatchingMutation["StartRewatching"]
@@ -5089,9 +5025,7 @@ export type UpdateProgressUpdateProgress = NonNullable<
   UpdateProgressMutation["UpdateProgress"]
 >
 export type UpdateScoreVariables = UpdateScoreMutationVariables
-export type UpdateScoreUpdateScore = NonNullable<
-  UpdateScoreMutation["UpdateScore"]
->
+export type UpdateScoreUpdateScore = NonNullable<UpdateScoreMutation["UpdateScore"]>
 export type DeleteFromListVariables = DeleteFromListMutationVariables
 export type EditListEntryVariables = EditListEntryMutationVariables
 export type EditListEntryEditListEntry = NonNullable<
@@ -5099,9 +5033,7 @@ export type EditListEntryEditListEntry = NonNullable<
 >
 export type CacheEpisodesVariables = CacheEpisodesMutationVariables
 export type SingleMediaVariables = SingleMediaQueryVariables
-export type SingleMediaSingleMedia = NonNullable<
-  SingleMediaQuery["SingleMedia"]
->
+export type SingleMediaSingleMedia = NonNullable<SingleMediaQuery["SingleMedia"]>
 export type SingleMediaTitle = NonNullable<
   NonNullable<SingleMediaQuery["SingleMedia"]>["title"]
 >
@@ -5121,9 +5053,7 @@ export type ListMediaMedia = NonNullable<
   NonNullable<NonNullable<ListMediaQuery["Page"]>["media"]>[number]
 >
 export type ListMediaTitle = NonNullable<
-  NonNullable<
-    NonNullable<NonNullable<ListMediaQuery["Page"]>["media"]>[number]
-  >["title"]
+  NonNullable<NonNullable<NonNullable<ListMediaQuery["Page"]>["media"]>[number]>["title"]
 >
 export type ListMediaCoverImage = NonNullable<
   NonNullable<
@@ -5148,13 +5078,9 @@ export type EpisodeListEpisodes = NonNullable<
   NonNullable<EpisodeListQuery["episodes"]>[number]
 >
 export type MalIdFromAnilistIdVariables = MalIdFromAnilistIdQueryVariables
-export type MalIdFromAnilistIdMedia = NonNullable<
-  MalIdFromAnilistIdQuery["Media"]
->
+export type MalIdFromAnilistIdMedia = NonNullable<MalIdFromAnilistIdQuery["Media"]>
 export type AnilistIdsFromMalIdsVariables = AnilistIdsFromMalIdsQueryVariables
-export type AnilistIdsFromMalIdsPage = NonNullable<
-  AnilistIdsFromMalIdsQuery["Page"]
->
+export type AnilistIdsFromMalIdsPage = NonNullable<AnilistIdsFromMalIdsQuery["Page"]>
 export type AnilistIdsFromMalIdsPageInfo = NonNullable<
   NonNullable<AnilistIdsFromMalIdsQuery["Page"]>["pageInfo"]
 >
@@ -5200,9 +5126,7 @@ export type PlayerAnime_Title = NonNullable<
   NonNullable<
     NonNullable<
       NonNullable<
-        NonNullable<
-          NonNullable<PlayerAnimeQuery["anime"]>["relations"]
-        >["edges"]
+        NonNullable<NonNullable<PlayerAnimeQuery["anime"]>["relations"]>["edges"]
       >[number]
     >["node"]
   >["title"]
@@ -5212,16 +5136,12 @@ export type PlayerAnimeListEntry = NonNullable<
 >
 export type SearchVariables = SearchQueryVariables
 export type SearchAnime = NonNullable<SearchQuery["anime"]>
-export type SearchPageInfo = NonNullable<
-  NonNullable<SearchQuery["anime"]>["pageInfo"]
->
+export type SearchPageInfo = NonNullable<NonNullable<SearchQuery["anime"]>["pageInfo"]>
 export type SearchResults = NonNullable<
   NonNullable<NonNullable<SearchQuery["anime"]>["results"]>[number]
 >
 export type SearchTitle = NonNullable<
-  NonNullable<
-    NonNullable<NonNullable<SearchQuery["anime"]>["results"]>[number]
-  >["title"]
+  NonNullable<NonNullable<NonNullable<SearchQuery["anime"]>["results"]>[number]>["title"]
 >
 export type SearchCoverImage = NonNullable<
   NonNullable<
@@ -5275,16 +5195,12 @@ export type AnilistListEntriesListCollection = NonNullable<
   AnilistListEntriesQuery["listCollection"]
 >
 export type AnilistListEntriesLists = NonNullable<
-  NonNullable<
-    NonNullable<AnilistListEntriesQuery["listCollection"]>["lists"]
-  >[number]
+  NonNullable<NonNullable<AnilistListEntriesQuery["listCollection"]>["lists"]>[number]
 >
 export type AnilistListEntriesEntries = NonNullable<
   NonNullable<
     NonNullable<
-      NonNullable<
-        NonNullable<AnilistListEntriesQuery["listCollection"]>["lists"]
-      >[number]
+      NonNullable<NonNullable<AnilistListEntriesQuery["listCollection"]>["lists"]>[number]
     >["entries"]
   >[number]
 >
@@ -5299,9 +5215,7 @@ export type CacheAiringDataNextAiringEpisode = NonNullable<
 >
 export type AnimeViewVariables = AnimeViewQueryVariables
 export type AnimeViewAnime = NonNullable<AnimeViewQuery["anime"]>
-export type AnimeViewTitle = NonNullable<
-  NonNullable<AnimeViewQuery["anime"]>["title"]
->
+export type AnimeViewTitle = NonNullable<NonNullable<AnimeViewQuery["anime"]>["title"]>
 export type AnimeViewCoverImage = NonNullable<
   NonNullable<AnimeViewQuery["anime"]>["coverImage"]
 >
@@ -5359,9 +5273,7 @@ export type QueueAnime = NonNullable<
   NonNullable<NonNullable<QueueQuery["queue"]>["anime"]>[number]
 >
 export type QueueTitle = NonNullable<
-  NonNullable<
-    NonNullable<NonNullable<QueueQuery["queue"]>["anime"]>[number]
-  >["title"]
+  NonNullable<NonNullable<NonNullable<QueueQuery["queue"]>["anime"]>[number]>["title"]
 >
 export type QueueNextAiringEpisode = NonNullable<
   NonNullable<
@@ -5376,9 +5288,7 @@ export type QueueExternalLinks = NonNullable<
   >[number]
 >
 export type QueueListEntry = NonNullable<
-  NonNullable<
-    NonNullable<NonNullable<QueueQuery["queue"]>["anime"]>[number]
-  >["listEntry"]
+  NonNullable<NonNullable<NonNullable<QueueQuery["queue"]>["anime"]>[number]>["listEntry"]
 >
 export type ImportVariables = ImportQueryVariables
 export type ImportListEntries = NonNullable<
@@ -5388,11 +5298,7 @@ export type ImportExtraListEntries = NonNullable<
   NonNullable<ImportQuery["ExtraListEntries"]>[number]
 >
 export type ImportExternalLinksVariables = ImportExternalLinksQueryVariables
-export type ImportExternalLinksMedia = NonNullable<
-  ImportExternalLinksQuery["Media"]
->
+export type ImportExternalLinksMedia = NonNullable<ImportExternalLinksQuery["Media"]>
 export type ImportExternalLinksExternalLinks = NonNullable<
-  NonNullable<
-    NonNullable<ImportExternalLinksQuery["Media"]>["externalLinks"]
-  >[number]
+  NonNullable<NonNullable<ImportExternalLinksQuery["Media"]>["externalLinks"]>[number]
 >

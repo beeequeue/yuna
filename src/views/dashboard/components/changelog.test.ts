@@ -15,9 +15,7 @@ beforeEach(() => {
   Nock.cleanAll()
 
   const body: GitHubRelease[] = releasesJson
-  Nock("https://api.github.com")
-    .get("/repos/beeequeue/yuna/releases")
-    .reply(200, body)
+  Nock("https://api.github.com").get("/repos/beeequeue/yuna/releases").reply(200, body)
 })
 
 test("fetches and caches changelog if not cached", async () => {
@@ -39,9 +37,7 @@ test("fetches and caches changelog if not cached", async () => {
     releasesJson[0].name.replace(" - ", "<br>"),
   )
   expect(versions[0].querySelector(".body")?.innerHTML).toContain(
-    `Local file playback (for real this time) ${hashToLink(614)} ${hashToLink(
-      602,
-    )}`,
+    `Local file playback (for real this time) ${hashToLink(614)} ${hashToLink(602)}`,
   )
 
   // Check that it was cached
@@ -82,9 +78,7 @@ test("fetches changelog if cached but stale", async () => {
 test("does not fetch changelog if not stale", async () => {
   mockLocaleStorage({
     [LocalStorageKey.Changelog]: JSON.stringify(releasesJson.slice(3, 5)),
-    [LocalStorageKey.ChangelogFetchedAt]: addMinutes(new Date(), 15)
-      .getTime()
-      .toString(),
+    [LocalStorageKey.ChangelogFetchedAt]: addMinutes(new Date(), 15).getTime().toString(),
   })
 
   const { findAllByTestId } = render(Changelog)

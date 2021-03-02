@@ -56,13 +56,8 @@ export default class ExternalPlayer extends Vue {
 
         setProgress(this, episode)
       })
-      .on(
-        ExternalPlayerEvent.PROGRESS,
-        ({ progress }) => (this.progress = progress),
-      )
-      .on(ExternalPlayerEvent.CLEAR_PLAYLIST, () =>
-        this.$emit("clear-playlist"),
-      )
+      .on(ExternalPlayerEvent.PROGRESS, ({ progress }) => (this.progress = progress))
+      .on(ExternalPlayerEvent.CLEAR_PLAYLIST, () => this.$emit("clear-playlist"))
   }
 }
 </script>

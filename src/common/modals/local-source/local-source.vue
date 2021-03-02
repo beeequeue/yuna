@@ -23,9 +23,7 @@
 
         <c-button
           v-tooltip.top="
-            !manuallySelected
-              ? 'Manually select folder'
-              : 'Reset to default local folder'
+            !manuallySelected ? 'Manually select folder' : 'Reset to default local folder'
           "
           :click="!manuallySelected ? manuallySelectFolder : updateLocalAnime"
           :icon="!manuallySelected ? folderSvg : resetSvg"
@@ -95,9 +93,7 @@ import AnimatedSize from "@/common/components/animated-size.vue"
 import { isNil } from "@/utils"
 import { getFolderPath } from "@/utils/ffmpeg"
 
-const combineDuplicatesBasedOnScore = (
-  anime: Fuse.FuseResult<LocalAnime>[],
-) => {
+const combineDuplicatesBasedOnScore = (anime: Fuse.FuseResult<LocalAnime>[]) => {
   const newArray: Fuse.FuseResult<LocalAnime>[] = []
 
   anime.forEach((oldAnime) => {
@@ -164,9 +160,7 @@ export default class LocalSourceModal extends Vue {
       return this.selectedFolder
     }
 
-    return (
-      "..." + this.selectedFolder.slice(length - this.folderPathLimit, length)
-    )
+    return "..." + this.selectedFolder.slice(length - this.folderPathLimit, length)
   }
 
   public get manuallySelected() {

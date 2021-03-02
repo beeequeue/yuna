@@ -19,9 +19,7 @@ const isInQueue = (state: UserState, id: number) =>
   isNotNil(state.queue.find(propEq("id", id)))
 
 const isCurrentlyWatching = (anime: AddToQueueOptions) =>
-  [MediaListStatus.Current, MediaListStatus.Repeating].includes(
-    anime.listEntry?.status!,
-  )
+  [MediaListStatus.Current, MediaListStatus.Repeating].includes(anime.listEntry?.status!)
 
 type SetProviderOptions = {
   id: number
@@ -44,10 +42,7 @@ const initialState: UserState = {
 }
 
 // Migration from number[]
-if (
-  initialState.queue.length > 0 &&
-  typeof initialState.queue[0] === "number"
-) {
+if (initialState.queue.length > 0 && typeof initialState.queue[0] === "number") {
   initialState.queue = initialState.queue.map((id) => ({
     id: id as any,
     open: true,
@@ -137,18 +132,14 @@ export const user = {
   },
 }
 
-const { read, commit, dispatch } = getStoreAccessors<UserState, RootState>(
-  "user",
-)
+const { read, commit, dispatch } = getStoreAccessors<UserState, RootState>("user")
 
 export const getQueue = read(user.getters.getQueue)
 export const getIsInQueue = read(user.getters.getIsInQueue)
 
 export const setQueue = commit(user.mutations.setQueue)
 const _addToQueue = commit(user.mutations.addItemToQueue)
-export const removeFromQueueByIndex = commit(
-  user.mutations.removeFromQueueByIndex,
-)
+export const removeFromQueueByIndex = commit(user.mutations.removeFromQueueByIndex)
 export const removeFromQueueById = commit(user.mutations.removeFromQueueById)
 export const toggleQueueItemOpen = commit(user.mutations.toggleQueueItemOpen)
 export const setQueueItemProvider = commit(user.mutations.setQueueItemProvider)

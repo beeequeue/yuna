@@ -87,10 +87,7 @@ export const addToList = async ({ $apollo }: Instance, anilistId: number) =>
     },
   })
 
-export const deleteFromList = async (
-  { $apollo }: Instance,
-  anilistId: number,
-) => {
+export const deleteFromList = async ({ $apollo }: Instance, anilistId: number) => {
   return $apollo.mutate<DeleteFromListMutation>({
     mutation: DELETE_FROM_LIST,
     variables: { anilistId } as DeleteFromListVariables,
@@ -168,10 +165,7 @@ export const updateStatus = async (
   })
 }
 
-export const startRewatching = async (
-  { $apollo }: Instance,
-  anilistId: number,
-) => {
+export const startRewatching = async ({ $apollo }: Instance, anilistId: number) => {
   await $apollo.mutate<StartRewatchingMutation>({
     mutation: START_REWATCHING,
     variables: { anilistId } as StartRewatchingVariables,

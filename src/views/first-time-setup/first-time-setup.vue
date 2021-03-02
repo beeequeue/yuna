@@ -3,11 +3,7 @@
     <div class="content">
       <steps :steps="steps" :current="currentStep" />
 
-      <transition-group
-        tag="div"
-        class="steps"
-        :class="{ hide: currentStep == null }"
-      >
+      <transition-group tag="div" class="steps" :class="{ hide: currentStep == null }">
         <list-plugins
           v-if="currentStep === SetupStep.LIST_MANAGERS"
           key="list-plugins"

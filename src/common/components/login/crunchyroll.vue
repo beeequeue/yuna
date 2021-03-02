@@ -1,10 +1,6 @@
 <template>
   <div class="step login-cr" @keydown.enter="login">
-    <a
-      v-tooltip.top="'Crunchyroll'"
-      href="https://crunchyroll.com"
-      class="logo"
-    >
+    <a v-tooltip.top="'Crunchyroll'" href="https://crunchyroll.com" class="logo">
       <span v-html="crIcon" />
     </a>
 

@@ -49,11 +49,7 @@
         </div>
 
         <div v-if="unsupportedSources.length > 0" class="menu-item unsupported">
-          <a
-            v-for="source in unsupportedSources"
-            :key="source.site"
-            :href="source.url"
-          >
+          <a v-for="source in unsupportedSources" :key="source.site" :href="source.url">
             <span class="svg" v-html="getLogo(source)" />
           </a>
         </div>
@@ -70,11 +66,7 @@ import crIcon from "@/assets/crunchyroll.svg"
 import hidiveIcon from "@/assets/hidive.svg"
 import Icon from "@/common/components/icon.vue"
 
-import {
-  Provider,
-  QueueAnime,
-  QueueExternalLinks,
-} from "@/graphql/generated/types"
+import { Provider, QueueAnime, QueueExternalLinks } from "@/graphql/generated/types"
 
 import { Required } from "@/decorators"
 import { initManualSearch, setLocalSourceAnime } from "@/state/app"
@@ -101,10 +93,7 @@ export default class SourceSelect extends Vue {
   public fileSvg = mdiFile
 
   public get streamingSources() {
-    if (
-      isNil(this.anime.externalLinks) ||
-      !itemsAreNotNil(this.anime.externalLinks)
-    ) {
+    if (isNil(this.anime.externalLinks) || !itemsAreNotNil(this.anime.externalLinks)) {
       return []
     }
 
@@ -119,8 +108,7 @@ export default class SourceSelect extends Vue {
 
   public get unsupportedSources() {
     return this.streamingSources.filter(
-      ({ site }) =>
-        !SupportedSources.includes(site.toLowerCase() as StreamingSource),
+      ({ site }) => !SupportedSources.includes(site.toLowerCase() as StreamingSource),
     )
   }
 
@@ -129,9 +117,7 @@ export default class SourceSelect extends Vue {
   }
 
   public getLogo(source: QueueExternalLinks) {
-    const image = `./${
-      StreamingSource[source.site as keyof typeof StreamingSource]
-    }.svg`
+    const image = `./${StreamingSource[source.site as keyof typeof StreamingSource]}.svg`
 
     if (!siteImages.includes(image)) {
       return null
@@ -150,9 +136,7 @@ export default class SourceSelect extends Vue {
 
   public getDropdownClasses(source: QueueExternalLinks) {
     return {
-      fade:
-        source.site.toUpperCase() !==
-        this.currentProvider.replace("Manual", ""),
+      fade: source.site.toUpperCase() !== this.currentProvider.replace("Manual", ""),
     }
   }
 

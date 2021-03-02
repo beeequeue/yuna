@@ -9,12 +9,7 @@
           content="Connect"
           :click="() => setCurrentWindow(Window.Crunchyroll)"
         />
-        <c-button
-          v-else
-          type="danger"
-          content="Disconnect"
-          :click="logoutCrunchyroll"
-        />
+        <c-button v-else type="danger" content="Disconnect" :click="logoutCrunchyroll" />
       </div>
 
       <div class="connection">
@@ -25,12 +20,7 @@
           content="Connect"
           :click="() => setCurrentWindow(Window.Hidive)"
         />
-        <c-button
-          v-else
-          type="danger"
-          content="Disconnect"
-          :click="logoutHidive"
-        />
+        <c-button v-else type="danger" content="Disconnect" :click="logoutHidive" />
       </div>
     </div>
 

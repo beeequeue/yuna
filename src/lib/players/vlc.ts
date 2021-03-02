@@ -3,10 +3,7 @@ import { basename } from "path"
 import * as os from "os"
 import superagent from "superagent/dist/superagent"
 import { Store } from "vuex"
-import {
-  ExternalPlayer,
-  ExternalPlayerEvent,
-} from "@/lib/players/external-player"
+import { ExternalPlayer, ExternalPlayerEvent } from "@/lib/players/external-player"
 import { VLCStatusReport } from "@/lib/players/vlc.types"
 import { sendToast } from "@/state/app"
 import { SettingsStore } from "@/state/settings"
@@ -19,8 +16,7 @@ export type ExternalMetaData = {
 
 const PLATFORM = os.platform()
 
-const noNulls = <T>(arr: Array<T | null | undefined>): T[] =>
-  arr.filter(isNotNil)
+const noNulls = <T>(arr: Array<T | null | undefined>): T[] => arr.filter(isNotNil)
 
 const findVLCPath = () => {
   const paths: string[] = [
@@ -34,8 +30,7 @@ const findVLCPath = () => {
   return paths.find((path) => existsSync(path)) || null
 }
 
-const vlcPath: string | null =
-  SettingsStore.get("externalPlayers.vlc") || findVLCPath()
+const vlcPath: string | null = SettingsStore.get("externalPlayers.vlc") || findVLCPath()
 
 export class VLC extends ExternalPlayer {
   private finished = false
@@ -90,11 +85,7 @@ export class VLC extends ExternalPlayer {
     const fileName = VLC.getFileName(result)
 
     if (fileName !== this.currentFile) {
-      if (
-        !isNil(fileName) &&
-        fileName.length > 0 &&
-        !this.files.includes(fileName)
-      ) {
+      if (!isNil(fileName) && fileName.length > 0 && !this.files.includes(fileName)) {
         this.close()
 
         sendToast(this.store, {

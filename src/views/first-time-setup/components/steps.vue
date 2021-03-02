@@ -1,11 +1,6 @@
 <template>
   <div class="steps-container">
-    <div
-      v-for="(step, i) in steps"
-      :key="step"
-      class="step"
-      :class="getClasses(step, i)"
-    >
+    <div v-for="(step, i) in steps" :key="step" class="step" :class="getClasses(step, i)">
       <div class="name">{{ getStepName(step) }}</div>
       {{ i + 1 }}
     </div>

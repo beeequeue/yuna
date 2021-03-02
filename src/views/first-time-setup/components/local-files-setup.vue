@@ -55,8 +55,7 @@ export default class Discord extends Vue {
   public folderSvg = mdiFolderSearch
 
   public localFilesFolder = getSettings(this.$store).localFilesFolder
-  public vlcPath =
-    getSettings(this.$store).externalPlayers.vlc || VLC.getVLCPath()
+  public vlcPath = getSettings(this.$store).externalPlayers.vlc || VLC.getVLCPath()
 
   public async setTemporaryLocalFilesFolder() {
     const path = await getFolderPath({
