@@ -11,5 +11,5 @@ generates:
   schema.graphql:
     plugins:
       - add:
-          content: '# THIS IS A GENERATED FILE'
+          content: "# THIS IS A GENERATED FILE"
       - schema-ast
