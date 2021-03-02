@@ -3,34 +3,63 @@
   <title>Yuna</title>
 
   <head>
-    <% if (VUE_APP_NODE_MODULES_PATH !== "false") { %><script>require('module').globalPaths.push('<%= VUE_APP_NODE_MODULES_PATH %>')</script><% } %>
+    <% if (VUE_APP_NODE_MODULES_PATH !== "false") { %>
+    <script>
+      require("module").globalPaths.push("<%= VUE_APP_NODE_MODULES_PATH %>")
+    </script>
+    <% } %>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
 
-    <link href="fonts/fonts.css" rel="stylesheet">
+    <link href="fonts/fonts.css" rel="stylesheet" />
 
-    <link href="fonts/Lato/Lato-Regular.woff" rel="preload" as="font" importance="high" crossorigin="anonymous">
+    <link
+      href="fonts/Lato/Lato-Regular.woff"
+      rel="preload"
+      as="font"
+      importance="high"
+      crossorigin="anonymous"
+    />
 
-    <link href="fonts/Raleway/Raleway-Regular.woff" rel="preload" as="font" importance="high" crossorigin="anonymous">
+    <link
+      href="fonts/Raleway/Raleway-Regular.woff"
+      rel="preload"
+      as="font"
+      importance="high"
+      crossorigin="anonymous"
+    />
 
-    <style> body { background: #10111a } </style>
+    <style>
+      body {
+        background: #10111a;
+      }
+    </style>
   </head>
 
   <body>
     <div id="app"></div>
 
-    <script src="https://mammal.haglund.dev/script.js" auto="false" spa="hash" site="GTSQCPIN" defer></script>
+    <script
+      src="https://mammal.haglund.dev/script.js"
+      auto="false"
+      spa="hash"
+      site="GTSQCPIN"
+      defer
+    ></script>
 
     <script>
-      navigator.serviceWorker.register('service-worker.js', {
-        scope: './'
-      }).then(function() {
-        console.log("Registered service worker!");
-      }).catch(function(err) {
-        console.log("Error registering service worker.", err);
-      });
+      navigator.serviceWorker
+        .register("service-worker.js", {
+          scope: "./",
+        })
+        .then(function () {
+          console.log("Registered service worker!")
+        })
+        .catch(function (err) {
+          console.log("Error registering service worker.", err)
+        })
     </script>
     <!-- built files will be auto injected -->
   </body>
