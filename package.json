@@ -75,7 +75,7 @@
     "semver": "7.3.4",
     "superagent": "6.1.0",
     "svg-country-flags": "1.2.9",
-    "ts-debounce": "2.1.0",
+    "ts-debounce": "3.0.0",
     "ts-key-enum": "2.0.5",
     "uuid": "8.3.2",
     "v-tooltip": "2.0.3",
