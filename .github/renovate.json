@@ -1,0 +1,19 @@
+{
+  "extends": ["config:js-app", "helpers:disableTypesNodeMajor"],
+  "prConcurrentLimit": 5,
+  "branchConcurrentLimit": 5,
+  "schedule": ["before 11am"],
+  "labels": ["dependencies"],
+  "baseBranches": ["master"],
+  "automerge": false,
+  "packageRules": [
+    {
+      "sourceUrlPrefixes": ["https://github.com/vitejs/vite/"],
+      "groupName": "Vite monorepo packages"
+    },
+    {
+      "groupName": "eslint",
+      "packagePatterns": ["eslint"]
+    }
+  ]
+}
