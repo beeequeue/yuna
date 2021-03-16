@@ -1,6 +1,6 @@
 import { api } from "electron-util"
 import ffmpeg from "fluent-ffmpeg"
-import { existsSync, promises as fs } from "fs"
+import { existsSync, mkdirSync, promises as fs } from "fs"
 import path, { basename } from "path"
 import crypto from "crypto"
 
@@ -89,6 +89,10 @@ export class LocalFiles {
         ...parsed,
       }
     })
+
+    if (!existsSync(this.thumbnailFolder)) {
+      mkdirSync(this.thumbnailFolder, { recursive: true })
+    }
 
     const promises = fileNames
       .filter(isNotNil)

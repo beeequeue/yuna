@@ -9,8 +9,14 @@
     />
 
     <div class="title-container">
-      <div class="episode-number">Episode {{ episode.episodeNumber }}</div>
-      <div class="title" :class="{ blur: blur.title }">{{ episode.title }}</div>
+      <div class="episode-number">{{ episodeNumberString }}</div>
+      <div
+        v-if="episode.title !== episodeNumberString"
+        class="title"
+        :class="{ blur: blur.title }"
+      >
+        {{ episode.title }}
+      </div>
     </div>
 
     <transition v-if="listEntry != null" name="fade">
@@ -91,6 +97,9 @@ export default Vue.extend({
     checkSvg: mdiCheckCircleOutline,
   }),
   computed: {
+    episodeNumberString() {
+      return `Episode ${this.episode.episodeNumber}`
+    },
     blur(): { title: boolean; thumbnail: boolean } {
       const { episode: settings } = getSpoilerSettings(this.$store)
 
@@ -143,7 +152,7 @@ export default Vue.extend({
   overflow: hidden;
 
   will-change: height;
-  transition: height 0.25s;
+  transition: height 0.25s, filter 0.5s;
 
   &:first-child {
     margin-left: 0;
@@ -151,6 +160,10 @@ export default Vue.extend({
 
   &:hover > .button {
     bottom: 0;
+  }
+
+  &.watched > .thumbnail {
+    filter: brightness(0.35);
   }
 
   &.small {
