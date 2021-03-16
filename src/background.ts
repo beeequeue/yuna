@@ -27,11 +27,11 @@ import {
   REGISTER_MEDIA_KEYS,
   UNREGISTER_MEDIA_KEYS,
 } from "./messages"
-import { initUpdateChecker } from "./updater"
+import { initUpdateChecker } from "./background/updater"
 import { version } from "../package.json"
 import { SupportedMediaKeys } from "@/types"
 import { clamp, debounce, enumKeysToArray } from "@/utils"
-import { downloadBinariesIfNecessary } from "@/lib/ffmpeg/download"
+import { downloadBinariesIfNecessary } from "@/lib/ffmpeg"
 
 const isDevelopment = process.env.NODE_ENV !== "production"
 if (isDevelopment) {
@@ -135,6 +135,7 @@ const createMainWindow = () => {
       webSecurity: false,
       allowRunningInsecureContent: false,
       nodeIntegration: (process.env.ELECTRON_NODE_INTEGRATION as unknown) as boolean,
+      contextIsolation: false,
     },
   })
 

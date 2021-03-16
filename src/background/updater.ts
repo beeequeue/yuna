@@ -4,8 +4,8 @@ import { activeWindow } from "electron-util"
 import fetch from "node-fetch"
 import { lte } from "semver"
 
+import { CHECK_FOR_UPDATES, UPDATE_AVAILABLE } from "@/messages"
 import { isNil } from "@/utils"
-import { CHECK_FOR_UPDATES, UPDATE_AVAILABLE } from "./messages"
 
 const timeBetweenUpdateChecks = 30 * 60 * 1000
 let mainWindow: Electron.BrowserWindow | null = null

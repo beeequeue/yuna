@@ -514,7 +514,7 @@ export default class Settings extends Vue {
   public pathClick() {
     if (isNil(this.localFilesFolder)) return
 
-    shell.openItem(this.localFilesFolder)
+    shell.openPath(this.localFilesFolder)
   }
 
   public setMainListPlugin(plugin: string) {
