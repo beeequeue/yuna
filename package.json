@@ -5,7 +5,7 @@
   "author": "BeeeQueue",
   "license": "AGPL-3.0-only",
   "engines": {
-    "node": "^12"
+    "node": ">=12.11"
   },
   "private": true,
   "repository": {
