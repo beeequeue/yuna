@@ -20,8 +20,8 @@
 
       <transition name="fade">
         <div v-if="queue.length < 1" class="empty-message">
-          Seems your queue is empty! <br />You can import shows from your list
-          or add some by searching! <br />
+          Seems your queue is empty! <br />You can import shows from your list or add some
+          by searching! <br />
 
           <c-button
             content="Import Watching from List"
@@ -32,10 +32,7 @@
       </transition>
     </div>
 
-    <div
-      class="sidebar"
-      :class="{ small: isPlayerOpen, external: isExternalPlayer }"
-    >
+    <div class="sidebar" :class="{ small: isPlayerOpen, external: isExternalPlayer }">
       <span class="fill" />
 
       <a
@@ -63,10 +60,7 @@
         :click="importPaused"
       />
 
-      <c-button
-        content="Import Exported Queue"
-        :click="importQueueFromBackup"
-      />
+      <c-button content="Import Exported Queue" :click="importQueueFromBackup" />
 
       <c-button content="Export Queue" :click="exportQueue" />
 
@@ -177,8 +171,8 @@ export default class Queue extends Vue {
 
   public get isExternalPlayer() {
     return (
-      this.playerState.playlist[this.playerState.currentIndex ?? -1]
-        ?.provider === Provider.Local
+      this.playerState.playlist[this.playerState.currentIndex ?? -1]?.provider ===
+      Provider.Local
     )
   }
 
@@ -257,17 +251,11 @@ export default class Queue extends Vue {
     const entries = [...data.ListEntries, ...(data.ExtraListEntries || [])]
 
     if (entries.length < 1) {
-      return sendErrorToast(
-        this.$store,
-        "Couldn't find any shows in that state!",
-      )
+      return sendErrorToast(this.$store, "Couldn't find any shows in that state!")
     }
 
     if (errors || entries.length < 1) {
-      return sendErrorToast(
-        this.$store,
-        "Couldn't find any shows in that state!",
-      )
+      return sendErrorToast(this.$store, "Couldn't find any shows in that state!")
     }
 
     if (random) {
@@ -292,11 +280,7 @@ export default class Queue extends Vue {
       const firstTenEntries = entries.filter((entry) => {
         const include = !newItems.includes(entry.mediaId)
 
-        if (
-          currentQueue.includes(entry.mediaId) ||
-          !include ||
-          newItems.length >= 10
-        ) {
+        if (currentQueue.includes(entry.mediaId) || !include || newItems.length >= 10) {
           return false
         }
 

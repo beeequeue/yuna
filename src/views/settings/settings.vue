@@ -36,9 +36,7 @@
             class="us-cr-failed"
             :class="{ visible: settings.useCRUnblocker && !isUsingUSSession }"
           >
-            <div>
-              There seems to have been an issue creating a US session. 😟
-            </div>
+            <div>There seems to have been an issue creating a US session. 😟</div>
 
             <c-button
               :icon="retrySvg"
@@ -187,19 +185,12 @@
         <section id="keybindings" class="category">
           <h3>
             Keybindings
-            <icon
-              v-tooltip.right="'Click a binding to remove it.'"
-              :icon="infoSvg"
-            />
+            <icon v-tooltip.right="'Click a binding to remove it.'" :icon="infoSvg" />
           </h3>
 
           <div class="keybinding-container">
             <div class="names">
-              <div
-                v-for="action in keybindingActions"
-                :key="action"
-                class="name"
-              >
+              <div v-for="action in keybindingActions" :key="action" class="name">
                 {{ getPrettyActionName(action) }}:
               </div>
             </div>
@@ -332,11 +323,7 @@ import Connection from "./components/connection.vue"
 import Keybinding from "./components/keybinding.vue"
 
 import { Crunchyroll } from "@/lib/crunchyroll"
-import {
-  getCrunchyrollCountry,
-  getIsConnectedTo,
-  getListPlugins,
-} from "@/state/auth"
+import { getCrunchyrollCountry, getIsConnectedTo, getListPlugins } from "@/state/auth"
 import {
   addKeybinding,
   getCrunchyrollLocale,
@@ -470,10 +457,7 @@ export default class Settings extends Vue {
     ipcRenderer.send(OPEN_DEVTOOLS)
   }
 
-  public setSetting(
-    setting: keyof SettingsState,
-    value: SettingsState[typeof setting],
-  ) {
+  public setSetting(setting: keyof SettingsState, value: SettingsState[typeof setting]) {
     setSetting(this.$store, { setting, value })
   }
 

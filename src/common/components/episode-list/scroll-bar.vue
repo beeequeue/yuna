@@ -44,9 +44,7 @@ export default class ScrollBar extends Vue {
   public get totalWidth() {
     if (!this.episodeWrapper) return 0
 
-    return (
-      this.episodeWrapper.$el.scrollWidth - this.episodeWrapper.$el.clientWidth
-    )
+    return this.episodeWrapper.$el.scrollWidth - this.episodeWrapper.$el.clientWidth
   }
 
   private intervalId = 0
@@ -79,9 +77,7 @@ export default class ScrollBar extends Vue {
   public updateMark() {
     const scrollAmount = this.episodeWrapper!.$el.scrollLeft
 
-    const index = Math.floor(
-      (scrollAmount / this.totalWidth) * this.items.length,
-    )
+    const index = Math.floor((scrollAmount / this.totalWidth) * this.items.length)
 
     this.scrollIndex = this.items[clamp(index, 0, this.items.length - 1)]
   }

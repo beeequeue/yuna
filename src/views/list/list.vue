@@ -1,10 +1,6 @@
 <template>
   <div class="list-page">
-    <filters
-      :entries="entries"
-      :media="media"
-      @show-filtered="updateFilteredEntryIds"
-    />
+    <filters :entries="entries" :media="media" @show-filtered="updateFilteredEntryIds" />
 
     <div class="list-container">
       <list-row
@@ -118,11 +114,7 @@ export default class List extends Vue {
         return
       }
 
-      Vue.set(
-        this.media[id]!,
-        "loading",
-        isNil(this.media[id]!.media) ? loading : false,
-      )
+      Vue.set(this.media[id]!, "loading", isNil(this.media[id]!.media) ? loading : false)
     })
   }
 
@@ -138,9 +130,7 @@ export default class List extends Vue {
   }
 
   private getOpenState(status: MediaListStatus): boolean {
-    return JSON.parse(
-      localStorage.getItem(this.getLocalStorageKey(status)) || "true",
-    )
+    return JSON.parse(localStorage.getItem(this.getLocalStorageKey(status)) || "true")
   }
 
   public toggleOpen(status: MediaListStatus) {

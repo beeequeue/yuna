@@ -46,15 +46,9 @@ export enum StreamingSource {
   Wakanim = "wakanim",
 }
 
-export const SupportedSources = [
-  StreamingSource.Crunchyroll,
-  StreamingSource.Hidive,
-]
+export const SupportedSources = [StreamingSource.Crunchyroll, StreamingSource.Hidive]
 
-export const CrunchyrollProviders = [
-  Provider.Crunchyroll,
-  Provider.CrunchyrollManual,
-]
+export const CrunchyrollProviders = [Provider.Crunchyroll, Provider.CrunchyrollManual]
 
 export type SelectItem = { label: string; value: string }
 

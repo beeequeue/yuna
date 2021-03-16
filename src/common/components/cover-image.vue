@@ -4,11 +4,7 @@
 
     <img :src="src" class="shadow" />
 
-    <score
-      v-if="showRating && listEntry"
-      :media-id="listEntry.mediaId"
-      :size="38"
-    />
+    <score v-if="showRating && listEntry" :media-id="listEntry.mediaId" :size="38" />
 
     <div
       v-if="mediaListStatus"
@@ -62,10 +58,7 @@ export default class CoverImage extends Vue {
   public get statusString(): string | null {
     if (!this.listEntry) return "Not in List"
 
-    return humanizeMediaListStatus(
-      this.listEntry as AnimeViewListEntry,
-      this.length,
-    )
+    return humanizeMediaListStatus(this.listEntry as AnimeViewListEntry, this.length)
   }
 
   public get statusIcon() {

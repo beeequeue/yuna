@@ -44,11 +44,7 @@
 <script lang="ts">
 import { Component, Inject, Prop, Vue, Watch } from "vue-property-decorator"
 import { RecycleScroller } from "vue-virtual-scroller"
-import {
-  EpisodeListEpisodes,
-  Provider,
-  QueueAnime,
-} from "@/graphql/generated/types"
+import { EpisodeListEpisodes, Provider, QueueAnime } from "@/graphql/generated/types"
 
 import { Required } from "@/decorators"
 import { setProgress } from "@/graphql/mutations/list-entry"
@@ -142,9 +138,11 @@ export default class EpisodeList extends Vue {
   public playEpisode(index: number) {
     if (this.episodes == null) return
 
-    this.player.playlist = this.episodes.map(
-      ({ animeId, provider, index }) => ({ animeId, provider, index }),
-    )
+    this.player.playlist = this.episodes.map(({ animeId, provider, index }) => ({
+      animeId,
+      provider,
+      index,
+    }))
     this.player.currentIndex = index
   }
 
@@ -189,9 +187,7 @@ export default class EpisodeList extends Vue {
       return
     }
 
-    this.scrollToEpisode(
-      this.episodes[this.listEntry.progress ?? 0]?.index ?? 0,
-    )
+    this.scrollToEpisode(this.episodes[this.listEntry.progress ?? 0]?.index ?? 0)
   }
 }
 </script>

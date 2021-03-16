@@ -8,15 +8,11 @@
       </div>
 
       <a href="https://github.com/beeequeue/yuna/issues">
-        <div class="item report-bug">
-          <icon :icon="bugSvg" /> <span>Report bug</span>
-        </div>
+        <div class="item report-bug"><icon :icon="bugSvg" /> <span>Report bug</span></div>
       </a>
 
       <a href="https://github.com/beeequeue/yuna">
-        <div class="item github">
-          <icon :icon="githubSvg" /> <span>Source code</span>
-        </div>
+        <div class="item github"><icon :icon="githubSvg" /> <span>Source code</span></div>
       </a>
 
       <div

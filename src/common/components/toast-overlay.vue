@@ -47,8 +47,7 @@ export default class ToastOverlay extends Vue {
 
   public handleClick(e: any, toast: Toast) {
     const clickedOnClose = e.path.some(
-      (el: HTMLElement) =>
-        el.className && el.className.toString().includes("close"),
+      (el: HTMLElement) => el.className && el.className.toString().includes("close"),
     )
 
     if (!clickedOnClose && toast.click) toast.click()

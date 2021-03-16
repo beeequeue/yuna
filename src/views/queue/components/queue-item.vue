@@ -1,10 +1,6 @@
 <template>
   <div class="queue-item" :class="{ [`anime-${anime.id}`]: true }">
-    <div
-      v-if="listEntry != null"
-      v-tooltip.right="capitalize(status)"
-      class="status"
-    >
+    <div v-if="listEntry != null" v-tooltip.right="capitalize(status)" class="status">
       <transition name="fade" mode="out-in">
         <icon v-if="iconForStatus" :icon="iconForStatus" />
 
@@ -198,14 +194,10 @@ export default class QueueItem extends Vue {
         return
       }
 
-      this.episodesFetchingError =
-        "Something went wrong fetching the episodes. :("
+      this.episodesFetchingError = "Something went wrong fetching the episodes. :("
     },
     async result() {
-      if (
-        !isNil(this.episodes) ||
-        !CrunchyrollProviders.includes(this.item.provider)
-      ) {
+      if (!isNil(this.episodes) || !CrunchyrollProviders.includes(this.item.provider)) {
         return
       }
 
@@ -391,8 +383,7 @@ export default class QueueItem extends Vue {
       padding-right: 20px;
       width: 20px;
       fill: $white;
-      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.75))
-        drop-shadow(0 0 5px black);
+      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 5px black);
     }
   }
 

@@ -15,10 +15,7 @@ type Actions = {
   skipBySeconds: (seconds: number) => void
 }
 
-export const registerMediaKeys = (
-  state: { paused: boolean },
-  actions: Actions,
-) => {
+export const registerMediaKeys = (state: { paused: boolean }, actions: Actions) => {
   onMounted(() => {
     ipcRenderer.send(REGISTER_MEDIA_KEYS)
 

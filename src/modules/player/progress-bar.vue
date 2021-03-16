@@ -16,10 +16,7 @@
       }"
     />
 
-    <div
-      class="played"
-      :style="{ right: 100 - progressPercentage * 100 + '%' }"
-    />
+    <div class="played" :style="{ right: 100 - progressPercentage * 100 + '%' }" />
 
     <div
       v-tooltip="tooltip"

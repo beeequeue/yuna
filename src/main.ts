@@ -87,9 +87,7 @@ init({
 // Handle outside links
 document.addEventListener("click", (event) => {
   // Did we click a link? Find one in hierarchy
-  const linkElement = (event as any).path.find(
-    (el: HTMLElement) => el.tagName === "A",
-  )
+  const linkElement = (event as any).path.find((el: HTMLElement) => el.tagName === "A")
 
   // If there is one, check that the link isn't to our own app
   if (linkElement != null && linkElement.host !== window.location.host) {

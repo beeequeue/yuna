@@ -72,8 +72,7 @@ class Discord {
       partyMax: totalEpisodes,
       startTimestamp: now - progress,
       largeImageKey: ImageKeys.LOGO,
-      smallImageKey:
-        mainListPlugin === "anilist" ? ImageKeys.ANILIST : ImageKeys.SIMKL,
+      smallImageKey: mainListPlugin === "anilist" ? ImageKeys.ANILIST : ImageKeys.SIMKL,
       smallImageText: username ? `${username} on ${service}` : undefined,
     })
   }

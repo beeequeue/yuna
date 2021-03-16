@@ -2,16 +2,10 @@
   <transition>
     <div v-if="nextEpisode" class="next-episode-container">
       <transition>
-        <div
-          v-if="maximized"
-          class="text"
-          :class="{ 'hide-title': shouldHide.title }"
-        >
+        <div v-if="maximized" class="text" :class="{ 'hide-title': shouldHide.title }">
           <div>Up next...</div>
 
-          <div>
-            Episode {{ nextEpisode.episodeNumber }}/{{ episodesInAnime || "?" }}
-          </div>
+          <div>Episode {{ nextEpisode.episodeNumber }}/{{ episodesInAnime || "?" }}</div>
 
           <div v-if="!shouldHide.title" class="episode-title">
             {{ nextEpisode.title }}
@@ -30,18 +24,10 @@
       </div>
 
       <transition>
-        <div
-          v-if="maximized && shouldAutoPlay && intervalId"
-          class="timer-container"
-        >
+        <div v-if="maximized && shouldAutoPlay && intervalId" class="timer-container">
           <span>Starting in {{ secondsLeft }}...</span>
 
-          <c-button
-            flat
-            type="white"
-            content="Cancel"
-            @click.native="cancelCountdown"
-          />
+          <c-button flat type="white" content="Cancel" @click.native="cancelCountdown" />
         </div>
       </transition>
     </div>

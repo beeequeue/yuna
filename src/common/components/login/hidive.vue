@@ -49,11 +49,7 @@ import Loading from "@/common/components/loading.vue"
 import Dropdown, { DropdownItem } from "@/common/components/form/dropdown.vue"
 
 import { Hidive } from "@/lib/hidive"
-import {
-  getHidiveProfileIndex,
-  getHidiveProfiles,
-  setHidiveProfile,
-} from "@/state/auth"
+import { getHidiveProfileIndex, getHidiveProfiles, setHidiveProfile } from "@/state/auth"
 
 @Component({ components: { Dropdown, Loading, CButton, TextInput } })
 export default class LoginHd extends Vue {

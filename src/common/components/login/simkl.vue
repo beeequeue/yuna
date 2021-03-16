@@ -20,9 +20,7 @@
         Copy this code into the Simkl page:
         <div class="code">{{ codeDetails.code }}</div>
 
-        <div v-if="openCountdown > 0">
-          The window will open in {{ openCountdown }}...
-        </div>
+        <div v-if="openCountdown > 0">The window will open in {{ openCountdown }}...</div>
         <div v-else>
           The code will time out in
           {{ secondsToTimeString(enterTimeout) }}.
@@ -53,9 +51,7 @@ export default class LoginSimkl extends Vue {
 
   public openCountdown = 0
   public enterTimeout = 0
-  public codeDetails: PromiseReturnType<
-    typeof Simkl.getDeviceCode
-  > | null = null
+  public codeDetails: PromiseReturnType<typeof Simkl.getDeviceCode> | null = null
 
   public secondsToTimeString = secondsToTimeString
 

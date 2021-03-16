@@ -34,17 +34,13 @@ export abstract class ListPlugin {
 
   public abstract isAvailable(): boolean
 
-  public abstract GetListEntry(
-    anilistId: number,
-  ): Promise<ListEntryWithoutMedia | null>
+  public abstract GetListEntry(anilistId: number): Promise<ListEntryWithoutMedia | null>
 
   public abstract GetListEntries(
     options: QueryListEntriesArgs,
   ): Promise<ListEntryWithoutMedia[] | null>
 
-  public abstract AddToList(
-    anilistId: number,
-  ): Promise<AddToListMutation["AddToList"]>
+  public abstract AddToList(anilistId: number): Promise<AddToListMutation["AddToList"]>
 
   public abstract DeleteFromList(anilistId: number): Promise<boolean>
 

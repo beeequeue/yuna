@@ -42,9 +42,7 @@ export class ArmServer {
           superagent
             .post("https://relations.yuna.moe/api/ids")
             .send(options.slice(i * 100, (i + 1) * 100))
-            .ok(T) as Promise<
-            RequestResponse<Array<Relation | null>, RelationError>
-          >,
+            .ok(T) as Promise<RequestResponse<Array<Relation | null>, RelationError>>,
       ),
     )
 

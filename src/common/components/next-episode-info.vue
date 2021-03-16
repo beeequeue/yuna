@@ -26,10 +26,7 @@ export default class NextEpisodeInfo extends Vue {
   public get nextEpisodeDateString() {
     if (!this.nextAiringEpisode) return null
 
-    return format(
-      this.nextAiringEpisode.airingAt * 1000,
-      "iiii, do MMM - kk:mm",
-    )
+    return format(this.nextAiringEpisode.airingAt * 1000, "iiii, do MMM - kk:mm")
   }
 
   public get nextEpisodeDistanceString() {

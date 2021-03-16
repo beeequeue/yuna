@@ -4,11 +4,7 @@
       <c-button
         v-if="
           !isOnList ||
-          (!isPlanning &&
-            !isWatching &&
-            !isCompleted &&
-            !isDropped &&
-            !isPaused)
+          (!isPlanning && !isWatching && !isCompleted && !isDropped && !isPaused)
         "
         :key="ActionKeys.ADD"
         v-tooltip="getTooltip('Set as Planning')"
@@ -37,11 +33,7 @@
         :click="() => statusMutation(MediaListStatus.Current)"
       />
 
-      <div
-        v-if="isWatching && ifBig(true)"
-        key="isWatching"
-        class="multi-button"
-      >
+      <div v-if="isWatching && ifBig(true)" key="isWatching" class="multi-button">
         <c-button
           v-tooltip="getTooltip('Pause')"
           :icon="mdiPause"
@@ -131,11 +123,7 @@ import {
   mdiRepeat,
 } from "@mdi/js"
 
-import {
-  addToList,
-  startRewatching,
-  updateStatus,
-} from "@/graphql/mutations/list-entry"
+import { addToList, startRewatching, updateStatus } from "@/graphql/mutations/list-entry"
 import {
   AnimeViewAnime,
   AnimeViewListEntry,
@@ -250,9 +238,7 @@ export default defineComponent<Props>({
         return sendErrorToast(root.$store, "No anime found..?")
       }
 
-      const index = getQueue(root.$store).findIndex(
-        propEq("id", props.anime.id),
-      )
+      const index = getQueue(root.$store).findIndex(propEq("id", props.anime.id))
 
       removeFromQueueByIndex(root.$store, index)
     }

@@ -23,9 +23,7 @@ export const router = new Router({
       path: "/",
       name: View.Dashboard,
       component: () =>
-        import(
-          /* webpackChunkName: "dashboard" */ "./views/dashboard/dashboard.vue"
-        ),
+        import(/* webpackChunkName: "dashboard" */ "./views/dashboard/dashboard.vue"),
     },
     {
       path: "/first-time-setup",
@@ -38,34 +36,28 @@ export const router = new Router({
     {
       path: "/login",
       name: View.Login,
-      component: () =>
-        import(/* webpackChunkName: "login" */ "./views/login/login.vue"),
+      component: () => import(/* webpackChunkName: "login" */ "./views/login/login.vue"),
     },
     {
       path: "/queue",
       name: View.Queue,
-      component: () =>
-        import(/* webpackChunkName: "queue" */ "./views/queue/queue.vue"),
+      component: () => import(/* webpackChunkName: "queue" */ "./views/queue/queue.vue"),
     },
     {
       path: "/list",
       name: View.List,
-      component: () =>
-        import(/* webpackChunkName: "list" */ "./views/list/list.vue"),
+      component: () => import(/* webpackChunkName: "list" */ "./views/list/list.vue"),
     },
     {
       path: "/anime/:id",
       name: View.Anime,
-      component: () =>
-        import(/* webpackChunkName: "anime" */ "./views/anime/anime.vue"),
+      component: () => import(/* webpackChunkName: "anime" */ "./views/anime/anime.vue"),
     },
     {
       path: "/settings",
       name: View.Settings,
       component: () =>
-        import(
-          /* webpackChunkName: "settings" */ "./views/settings/settings.vue"
-        ),
+        import(/* webpackChunkName: "settings" */ "./views/settings/settings.vue"),
     },
   ],
 })

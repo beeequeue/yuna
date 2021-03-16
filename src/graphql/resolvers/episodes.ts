@@ -91,10 +91,7 @@ const fetchEpisodesFromCrunchyroll = async (
   return relations[id]
 }
 
-const fetchEpisodesFromHidive = async (
-  cache: ApolloCache<unknown>,
-  id: number,
-) => {
+const fetchEpisodesFromHidive = async (cache: ApolloCache<unknown>, id: number) => {
   const externalLinks = getCachedExternalLinks(cache, id) || []
   const hidiveLink = externalLinks.find(propEq("site", "Hidive"))
 
@@ -104,10 +101,7 @@ const fetchEpisodesFromHidive = async (
 
   let unconfirmedEpisodes: EpisodeListEpisodes[] | null = null
   try {
-    unconfirmedEpisodes = (await Hidive.fetchEpisodesByUrl(
-      id,
-      hidiveLink.url,
-    )) as any
+    unconfirmedEpisodes = (await Hidive.fetchEpisodesByUrl(id, hidiveLink.url)) as any
   } catch (err) {
     throw new Error(err)
   }
@@ -134,8 +128,7 @@ export const EpisodesResolver = async (
   { cache }: { cache: ApolloCache<unknown> },
 ): Promise<EpisodeListEpisodes[] | null> => {
   const nextEpisodeAiringAt = EpisodeCache.getNextEpisodeAiringAt(id, provider)
-  const isStale =
-    !isNil(nextEpisodeAiringAt) && Date.now() >= nextEpisodeAiringAt
+  const isStale = !isNil(nextEpisodeAiringAt) && Date.now() >= nextEpisodeAiringAt
 
   let episodes: EpisodeListEpisodes[] | null = null
 

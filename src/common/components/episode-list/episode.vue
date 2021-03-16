@@ -40,12 +40,7 @@
     </transition>
 
     <transition>
-      <icon
-        v-if="episode.isWatched"
-        :icon="checkSvg"
-        label="watched"
-        class="check"
-      />
+      <icon v-if="episode.isWatched" :icon="checkSvg" label="watched" class="check" />
     </transition>
   </div>
 </template>
@@ -116,9 +111,7 @@ export default Vue.extend({
     classes(): Record<string, boolean> {
       return {
         watched: this.episode.isWatched,
-        active:
-          !this.small &&
-          Number(this.scrollerValue) === this.episode.episodeNumber,
+        active: !this.small && Number(this.scrollerValue) === this.episode.episodeNumber,
         small: this.small,
       }
     },
@@ -128,8 +121,7 @@ export default Vue.extend({
       this.$emit("click")
     },
     setProgress() {
-      const newProgress =
-        this.episode.episodeNumber + (this.episode.isWatched ? -1 : 0)
+      const newProgress = this.episode.episodeNumber + (this.episode.isWatched ? -1 : 0)
 
       this.$emit("update-progress", newProgress)
     },

@@ -75,9 +75,7 @@ export class LocalFiles {
     localAnime: LocalAnime,
   ): Promise<LocalAnimeFile[]> {
     // Get files in directory
-    const files = (await fs.readdir(localAnime.folderPath)).filter(
-      isPlayableFile,
-    )
+    const files = (await fs.readdir(localAnime.folderPath)).filter(isPlayableFile)
 
     const fileNames = await mapAsync(files, async (f, i) => {
       const parsed = await this.parseFileName(f, localAnime.folderPath)
@@ -163,9 +161,7 @@ export class LocalFiles {
     name = name.replace(/\[.*?\]/g, "").trim()
 
     this.bannedWords.forEach((regex) => {
-      name = name
-        .replace(new RegExp(`\\(.*(?:${regex.source}).*\\)`), "")
-        .trim()
+      name = name.replace(new RegExp(`\\(.*(?:${regex.source}).*\\)`), "").trim()
     })
 
     this.bannedWords.forEach((regex) => {
@@ -192,14 +188,9 @@ export class LocalFiles {
 
   private static async parseFileName(filename: string, folderPath: string) {
     const original = filename
-    const backupTitle = this.cleanupFilename(
-      this.getGoodBackupTitle(folderPath),
-    )
+    const backupTitle = this.cleanupFilename(this.getGoodBackupTitle(folderPath))
 
-    const extension = filename.slice(
-      filename.lastIndexOf(".") + 1,
-      filename.length,
-    )
+    const extension = filename.slice(filename.lastIndexOf(".") + 1, filename.length)
 
     filename = this.cleanupFilename(filename)
 
@@ -315,17 +306,12 @@ export class LocalFiles {
   }
 
   private static getVideoStreamTitle(data: ffmpeg.FfprobeData) {
-    const videoStream = data.streams.find(
-      (stream) => stream.codec_type === "video",
-    )
+    const videoStream = data.streams.find((stream) => stream.codec_type === "video")
 
     return videoStream?.tags.title ?? (null as string | null)
   }
 
-  private static generateScreenshot(
-    command: ffmpeg.FfmpegCommand,
-    filename: string,
-  ) {
+  private static generateScreenshot(command: ffmpeg.FfmpegCommand, filename: string) {
     return new Promise<ffmpeg.FfprobeData>((resolve, reject) => {
       command
         .screenshot({

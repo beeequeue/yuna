@@ -1,8 +1,4 @@
-import {
-  ListEntryWithoutMedia,
-  ListPlugin,
-  ListPluginType,
-} from "@/plugins/list/plugin"
+import { ListEntryWithoutMedia, ListPlugin, ListPluginType } from "@/plugins/list/plugin"
 import { MAL_ID_FROM_ANILIST_ID } from "@/graphql/documents/queries"
 import { getAnilistIdsFromMalIds } from "@/graphql/queries"
 import {
@@ -95,9 +91,7 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
     return this.fromWatchedInfo(anilistId, item)
   }
 
-  public async GetListEntries(
-    options: QueryListEntriesArgs,
-  ): Promise<ListEntry[]> {
+  public async GetListEntries(options: QueryListEntriesArgs): Promise<ListEntry[]> {
     // defaulting the values in the parameters didn't work for some reason
     options = options || {}
 
@@ -140,9 +134,7 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
     return entries
   }
 
-  public async AddToList(
-    anilistId: number,
-  ): Promise<AddToListMutation["AddToList"]> {
+  public async AddToList(anilistId: number): Promise<AddToListMutation["AddToList"]> {
     return this.UpdateStatus(anilistId, MediaListStatus.Planning)
   }
 
@@ -168,9 +160,7 @@ export class SimklListPlugin extends ListPlugin implements ListPlugin {
     const malId = await this.getMALId(anilistId)
 
     if (isNil(malId)) {
-      throw new Error(
-        "Could not find necessary data to add item to Simkl list.",
-      )
+      throw new Error("Could not find necessary data to add item to Simkl list.")
     }
 
     await Simkl.setProgress(malId, progress)

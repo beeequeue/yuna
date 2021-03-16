@@ -1,10 +1,6 @@
 <template>
   <transition>
-    <div
-      v-if="playlist.current.value"
-      class="player-container"
-      :class="classes"
-    >
+    <div v-if="playlist.current.value" class="player-container" :class="classes">
       <player
         v-if="playlist.current.value.provider !== 'LOCAL'"
         key="player"
@@ -67,11 +63,7 @@ export default defineComponent({
       }),
     )
     const anime = useResult(animeQuery.result, null)
-    const listEntry = useResult(
-      animeQuery.result,
-      null,
-      (data) => data.anime?.listEntry,
-    )
+    const listEntry = useResult(animeQuery.result, null, (data) => data.anime?.listEntry)
 
     const episodesQuery = useQuery<EpisodeListQuery, EpisodeListVariables>(
       EPISODE_LIST,
@@ -84,11 +76,7 @@ export default defineComponent({
         throttle: 0,
       }),
     )
-    const episodes = useResult(
-      episodesQuery.result,
-      null,
-      (data) => data.episodes,
-    )
+    const episodes = useResult(episodesQuery.result, null, (data) => data.episodes)
     const episode = computed(() =>
       playlist.currentIndex.value == null
         ? null

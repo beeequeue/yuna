@@ -76,10 +76,7 @@ export class Anilist {
     updateMainListPlugin(store)
   }
 
-  public static async updateUserData(
-    store: Store<any>,
-    { token, expires }: Parameters,
-  ) {
+  public static async updateUserData(store: Store<any>, { token, expires }: Parameters) {
     return request
       .post(GQL_ENDPOINT)
       .auth(token, { type: "bearer" })

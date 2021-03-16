@@ -1,12 +1,12 @@
 overwrite: true
 
 schema:
-  - 'https://graphql.anilist.co'
-  - 'src/graphql/client-schema.graphqls'
+  - "https://graphql.anilist.co"
+  - "src/graphql/client-schema.graphqls"
 
 documents:
-  - 'src/**/*.{graphql,ts}'
-  - '!**/*.d.ts'
+  - "src/**/*.{graphql,ts}"
+  - "!**/*.d.ts"
 
 config:
   avoidOptionals: true
@@ -20,9 +20,9 @@ generates:
   src/graphql/generated/types.ts:
     plugins:
       - add:
-          content: '/* THIS IS A GENERATED FILE */'
+          content: "/* THIS IS A GENERATED FILE */"
       - add:
-          content: '/* eslint-disable */'
+          content: "/* eslint-disable */"
       - typescript
       - typescript-operations
       - typescript-compatibility
@@ -32,9 +32,9 @@ generates:
   src/graphql/generated/introspection-result.ts:
     plugins:
       - add:
-          content: '/* THIS IS A GENERATED FILE */'
+          content: "/* THIS IS A GENERATED FILE */"
       - add:
-          content: '/* eslint-disable */'
+          content: "/* eslint-disable */"
       - fragment-matcher
     config:
       apolloClientVersion: 2

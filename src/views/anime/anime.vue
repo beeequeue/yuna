@@ -146,8 +146,7 @@ export default class Anime extends Vue {
         return
       }
 
-      this.episodesFetchingError =
-        "Something went wrong fetching the episodes. :("
+      this.episodesFetchingError = "Something went wrong fetching the episodes. :("
     },
   })
   public episodes!: EpisodeListEpisodes[] | null
@@ -165,8 +164,7 @@ export default class Anime extends Vue {
 
     const progress = this.getListEntry(data)?.progress ?? 0
     const setting = getSpoilerSettings(this.$store).anime.description
-    const shouldBlur =
-      progress < Math.ceil((data.anime.episodes as number) * 0.33)
+    const shouldBlur = progress < Math.ceil((data.anime.episodes as number) * 0.33)
 
     return shouldBlur && setting
   }

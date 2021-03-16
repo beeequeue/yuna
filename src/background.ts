@@ -89,9 +89,7 @@ electronDebug({})
 
 const registerMediaKeys = (window: BrowserWindow) => {
   enumKeysToArray(SupportedMediaKeys).forEach((key) =>
-    globalShortcut.register(key, () =>
-      window.webContents.send(SupportedMediaKeys[key]),
-    ),
+    globalShortcut.register(key, () => window.webContents.send(SupportedMediaKeys[key])),
   )
 }
 
@@ -136,8 +134,7 @@ const createMainWindow = () => {
     webPreferences: {
       webSecurity: false,
       allowRunningInsecureContent: false,
-      nodeIntegration: (process.env
-        .ELECTRON_NODE_INTEGRATION as unknown) as boolean,
+      nodeIntegration: (process.env.ELECTRON_NODE_INTEGRATION as unknown) as boolean,
     },
   })
 

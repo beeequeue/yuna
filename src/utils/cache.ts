@@ -142,8 +142,7 @@ export const cacheEpisodes = (
 ) => {
   episodes = episodes.map((ep) => ({
     ...ep,
-    isWatched:
-      ep.isWatched || getIsWatched(cache, ep.animeId, ep.episodeNumber),
+    isWatched: ep.isWatched || getIsWatched(cache, ep.animeId, ep.episodeNumber),
   }))
 
   if (episodes.length < 1) {
@@ -198,10 +197,7 @@ export const writeEpisodeProgressToCache = (
   cacheEpisodes(cache, episodes)
 }
 
-export const removeFromCacheList = (
-  cache: ApolloCache<unknown>,
-  anilistId: number,
-) => {
+export const removeFromCacheList = (cache: ApolloCache<unknown>, anilistId: number) => {
   for (let i = 1; i < 100; i++) {
     let data: ListViewQuery
 
@@ -211,9 +207,7 @@ export const removeFromCacheList = (
         variables: {},
       })!
 
-      const index = data.ListEntries.findIndex(
-        (entry) => entry.mediaId === anilistId,
-      )
+      const index = data.ListEntries.findIndex((entry) => entry.mediaId === anilistId)
 
       if (index === -1) continue
 

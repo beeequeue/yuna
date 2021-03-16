@@ -13,12 +13,7 @@
 
     <search />
 
-    <item
-      v-tooltip="getTooltip('list')"
-      text="List"
-      path="/list"
-      class="align-left"
-    />
+    <item v-tooltip="getTooltip('list')" text="List" path="/list" class="align-left" />
 
     <icon
       class="button align-left"

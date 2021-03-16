@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 declare type UnPromisify<T> = T extends Promise<infer R> ? R : T
 
-declare type PromiseReturnType<T> = T extends (...a: any[]) => Promise<infer R>
-  ? R
-  : T
+declare type PromiseReturnType<T> = T extends (...a: any[]) => Promise<infer R> ? R : T
 
 type Fathom = {
   blockTrackingForMe: () => void
@@ -25,11 +23,7 @@ declare type GlobalFetch = {
 declare type CSSProps = Partial<
   Omit<
     CSSStyleDeclaration,
-    | "getPropertyPriority"
-    | "getPropertyValue"
-    | "item"
-    | "removeProperty"
-    | "setProperty"
+    "getPropertyPriority" | "getPropertyValue" | "item" | "removeProperty" | "setProperty"
   >
 >
 

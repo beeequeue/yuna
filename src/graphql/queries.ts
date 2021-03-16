@@ -2,10 +2,7 @@ import { DocumentNode } from "graphql"
 import { ApolloQueryResult } from "@apollo/client"
 import { DollarApollo } from "@vue/apollo-option/types/vue-apollo"
 import { ArmServer } from "@/lib/arm-server"
-import {
-  ANILIST_IDS_FROM_MAL_IDS,
-  LIST_VIEW_QUERY,
-} from "@/graphql/documents/queries"
+import { ANILIST_IDS_FROM_MAL_IDS, LIST_VIEW_QUERY } from "@/graphql/documents/queries"
 import {
   AnilistIdsFromMalIdsQuery,
   AnilistIdsFromMalIdsQueryVariables,
@@ -31,10 +28,7 @@ type FetchAllPagesOptions<R extends BaseResult, V extends { page: number }> = {
   result?: (data: R) => void
 }
 
-export const fetchAllPages = async <
-  R extends BaseResult,
-  V extends { page: number }
->({
+export const fetchAllPages = async <R extends BaseResult, V extends { page: number }>({
   apollo,
   query,
   variables,
@@ -96,10 +90,7 @@ export const getAnilistIdsFromMalIds = async (
   )
 
   const armResults = armResponse
-    .filter(
-      (item) =>
-        !isNil(item) && !isNil(item.anilist) && !isNil(item.myanimelist),
-    )
+    .filter((item) => !isNil(item) && !isNil(item.anilist) && !isNil(item.myanimelist))
     .reduce(
       (obj, item) => ({
         ...obj,
@@ -108,9 +99,7 @@ export const getAnilistIdsFromMalIds = async (
       {} as MapResult,
     )
 
-  const idsLeft = malIds.filter(
-    (id) => !Object.keys(armResults).map(Number).includes(id),
-  )
+  const idsLeft = malIds.filter((id) => !Object.keys(armResults).map(Number).includes(id))
 
   const responses = await fetchAllPages<
     AnilistIdsFromMalIdsQuery,
@@ -140,18 +129,12 @@ export const getAnilistIdsFromMalIds = async (
   }
 }
 
-export const getALofOfEntries = async (
-  { $apollo }: Instance,
-  amount: number,
-) => {
+export const getALofOfEntries = async ({ $apollo }: Instance, amount: number) => {
   const entries: ListViewListEntries[] = []
   const fiveHundreds = Math.floor(amount / 500)
 
   for (let i = 0; i < fiveHundreds; i++) {
-    const { data, errors } = await $apollo.query<
-      ListViewQuery,
-      ListViewQueryVariables
-    >({
+    const { data, errors } = await $apollo.query<ListViewQuery, ListViewQueryVariables>({
       query: LIST_VIEW_QUERY,
       errorPolicy: "all",
     })

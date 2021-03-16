@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-if="currentWindow === Window.Main"
-    :key="Window.Main"
-    class="step list-plugins"
-  >
+  <div v-if="currentWindow === Window.Main" :key="Window.Main" class="step list-plugins">
     <div class="list-manager-container">
       <div
         class="list-manager"

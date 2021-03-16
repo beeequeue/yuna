@@ -8,12 +8,7 @@
       <icon :icon="backSvg" class="tick" :class="tickClasses" />
 
       <portal to="modal">
-        <div
-          v-if="open"
-          key="backdrop"
-          class="backdrop"
-          @click="open = false"
-        />
+        <div v-if="open" key="backdrop" class="backdrop" @click="open = false" />
 
         <div
           v-if="open"

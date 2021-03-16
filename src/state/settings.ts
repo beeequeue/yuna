@@ -5,10 +5,7 @@ import Vue from "vue"
 import { ActionContext } from "vuex"
 import { getStoreAccessors } from "vuex-typescript"
 
-import {
-  DISCORD_DISABLE_RICH_PRESENCE,
-  DISCORD_ENABLE_RICH_PRESENCE,
-} from "@/messages"
+import { DISCORD_DISABLE_RICH_PRESENCE, DISCORD_ENABLE_RICH_PRESENCE } from "@/messages"
 import { RootState } from "@/state/store"
 import { enumKeysToArray, hasKey, isNotNil } from "@/utils"
 
@@ -196,9 +193,7 @@ export const settings = {
       return state.keybindings
     },
 
-    getKeysForAction(
-      state: SettingsState,
-    ): (action: KeybindingAction) => Key[] {
+    getKeysForAction(state: SettingsState): (action: KeybindingAction) => Key[] {
       return (action) => {
         const keysWithAction = Object.keys(state.keybindings).filter((key) => {
           const actions = state.keybindings[key]
@@ -213,9 +208,7 @@ export const settings = {
     },
 
     getKeydownHandler(state: SettingsState) {
-      return (actionFunctionMap: { [key: string]: () => any }) => (
-        key: Key | string,
-      ) => {
+      return (actionFunctionMap: { [key: string]: () => any }) => (key: Key | string) => {
         const actions = state.keybindings[key]
         if (!actions) return
 
@@ -298,9 +291,7 @@ export const settings = {
         return
       }
 
-      const newActions = storedActions.filter(
-        (newAction) => newAction === options.action,
-      )
+      const newActions = storedActions.filter((newAction) => newAction === options.action)
 
       Vue.set(state.keybindings, options.key, newActions)
 
@@ -326,9 +317,7 @@ export const settings = {
     ) {
       if (!hasKey(state.spoilers[payload.path[0]], payload.path[1])) {
         //eslint-disable-next-line no-console
-        return console.error(
-          "Tried to set unknown setting: " + payload.path.join("."),
-        )
+        return console.error("Tried to set unknown setting: " + payload.path.join("."))
       }
 
       ;(state.spoilers[payload.path[0]] as any)[payload.path[1]] = payload.value
@@ -396,10 +385,7 @@ export const settings = {
       SettingsStore.set("setup.finishedSteps", state.setup.finishedSteps)
     },
 
-    setMainListPlugin(
-      state: SettingsState,
-      service: SettingsState["mainListPlugin"],
-    ) {
+    setMainListPlugin(state: SettingsState, service: SettingsState["mainListPlugin"]) {
       state.mainListPlugin = service
       SettingsStore.set("mainListPlugin", service)
     },
@@ -423,15 +409,11 @@ export const settings = {
   },
 }
 
-const { read, commit, dispatch } = getStoreAccessors<SettingsState, RootState>(
-  "settings",
-)
+const { read, commit, dispatch } = getStoreAccessors<SettingsState, RootState>("settings")
 
 export const getSettings = read(settings.getters.getSettings)
 export const getShouldAutoPlay = read(settings.getters.getShouldAutoPlay)
-export const getShouldAutoMarkWatched = read(
-  settings.getters.getShouldAutoMarkWatched,
-)
+export const getShouldAutoMarkWatched = read(settings.getters.getShouldAutoMarkWatched)
 export const getCrunchyrollLocale = read(settings.getters.getCrunchyrollLocale)
 export const getKeybindings = read(settings.getters.getKeybindings)
 export const getKeysForAction = read(settings.getters.getKeysForAction)
@@ -439,31 +421,21 @@ export const getKeydownHandler = read(settings.getters.getKeydownHandler)
 export const getSpoilerSettings = read(settings.getters.getSpoilerSettings)
 export const getLocalFilesFolder = read(settings.getters.getLocalFilesFolder)
 export const getHasFinishedSetup = read(settings.getters.getHasFinishedSetup)
-export const getNextUnfinishedStep = read(
-  settings.getters.getNextUnfinishedStep,
-)
+export const getNextUnfinishedStep = read(settings.getters.getNextUnfinishedStep)
 export const getMainListPlugin = read(settings.getters.getMainListPlugin)
 
-export const setCrunchyrollLocale = commit(
-  settings.mutations.setCrunchyrollLocale,
-)
+export const setCrunchyrollLocale = commit(settings.mutations.setCrunchyrollLocale)
 export const addKeybinding = commit(settings.mutations.addKeybinding)
 export const removeKeybinding = commit(settings.mutations.removeKeybinding)
 export const resetKeybindings = commit(settings.mutations.resetKeybindings)
 export const setSpoiler = commit(settings.mutations.setSpoiler)
-export const setLocalFilesFolder = commit(
-  settings.mutations.setLocalFilesFolder,
-)
+export const setLocalFilesFolder = commit(settings.mutations.setLocalFilesFolder)
 export const setVLCPath = commit(settings.mutations.setVLCPath)
 export const setSetting = commit(settings.mutations.setSetting)
-export const setDiscordRichPresence = commit(
-  settings.mutations.setDiscordRichPresence,
-)
+export const setDiscordRichPresence = commit(settings.mutations.setDiscordRichPresence)
 export const addFinishedStep = commit(settings.mutations.addFinishedStep)
 export const removeFinishedStep = commit(settings.mutations.removeFinishedStep)
 export const setMainListPlugin = commit(settings.mutations.setMainListPlugin)
 export const setFfmpegFailed = commit(settings.mutations.setFfmpegFailed)
 
-export const updateMainListPlugin = dispatch(
-  settings.actions.updateMainListPlugin,
-)
+export const updateMainListPlugin = dispatch(settings.actions.updateMainListPlugin)

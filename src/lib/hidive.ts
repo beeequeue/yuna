@@ -260,11 +260,7 @@ export class Hidive {
     }
   }
 
-  public static async connect(
-    store: StoreType,
-    user: string,
-    password: string,
-  ) {
+  public static async connect(store: StoreType, user: string, password: string) {
     const response = await this.authenticate({ user, password })
 
     if (isNil(response)) return
@@ -313,24 +309,20 @@ export class Hidive {
 
     const title = response.body.Data.Title as GetTitleBody["Title"]
 
-    return title.Episodes.map<Omit<EpisodeListEpisodes, "isWatched">>(
-      (ep, index) => ({
-        __typename: "Episode",
-        provider: Provider.Hidive,
-        id: `${title.Id}-${ep.VideoKey}`,
-        animeId: anilistId,
-        title: ep.Name,
-        duration: title.RunTime * 60,
-        progress: null,
-        index,
-        episodeNumber: ep.EpisodeNumberValue,
-        url: `https://hidive.com/tv/${this.convertName(title.Name)}/${
-          ep.VideoKey
-        }`,
-        subtitles: [],
-        thumbnail: ep.ScreenShotSmallUrl.replace(/^\/\//, "https://"),
-      }),
-    )
+    return title.Episodes.map<Omit<EpisodeListEpisodes, "isWatched">>((ep, index) => ({
+      __typename: "Episode",
+      provider: Provider.Hidive,
+      id: `${title.Id}-${ep.VideoKey}`,
+      animeId: anilistId,
+      title: ep.Name,
+      duration: title.RunTime * 60,
+      progress: null,
+      index,
+      episodeNumber: ep.EpisodeNumberValue,
+      url: `https://hidive.com/tv/${this.convertName(title.Name)}/${ep.VideoKey}`,
+      subtitles: [],
+      thumbnail: ep.ScreenShotSmallUrl.replace(/^\/\//, "https://"),
+    }))
   }
 
   public static async fetchStream(id: string): Promise<Stream | null> {
@@ -367,10 +359,7 @@ export class Hidive {
     this.authenticate({ store })
   }
 
-  public static async request<D extends object = any>(
-    type: RequestType,
-    body?: any,
-  ) {
+  public static async request<D extends object = any>(type: RequestType, body?: any) {
     const nonce = this.generateNonce()
     const signature = this.generateSignature(nonce, body)
 
@@ -403,13 +392,10 @@ export class Hidive {
       password = options.password
     }
 
-    const response = await this.request<AuthenticateBody>(
-      RequestType.Authenticate,
-      {
-        Email: user,
-        Password: password,
-      },
-    )
+    const response = await this.request<AuthenticateBody>(RequestType.Authenticate, {
+      Email: user,
+      Password: password,
+    })
 
     if (!response.ok || response.body.Code !== 0) {
       // captureException(new Error(response.body.Message!))

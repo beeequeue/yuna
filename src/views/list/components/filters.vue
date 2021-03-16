@@ -178,31 +178,27 @@ export default class Filters extends Vue {
       const links = (m.externalLinks ?? []).filter(isNotNil)
       const sources = getStreamingSources(links)
 
-      return sources.some(
-        (source) => source.site.toLowerCase() === this.selectedSource!,
-      )
+      return sources.some((source) => source.site.toLowerCase() === this.selectedSource!)
     })
   }
 
   // Airing Status
-  public airingStatuses: SelectItem[] = enumKeysToArray(
-    MediaStatus,
-  ).map<SelectItem>((status) => ({
-    label: status
-      .toString()
-      .replace(/([A-Z])/g, " $1")
-      .trim(),
-    value: MediaStatus[status],
-  }))
+  public airingStatuses: SelectItem[] = enumKeysToArray(MediaStatus).map<SelectItem>(
+    (status) => ({
+      label: status
+        .toString()
+        .replace(/([A-Z])/g, " $1")
+        .trim(),
+      value: MediaStatus[status],
+    }),
+  )
 
   public selectedAiringStatus: string | null = null
 
   public filterByStatus(media: Media[]): Media[] {
     if (isNil(this.selectedAiringStatus)) return media
 
-    return media.filter(
-      (m) => !isNil(m) && m.airingStatus === this.selectedAiringStatus,
-    )
+    return media.filter((m) => !isNil(m) && m.airingStatus === this.selectedAiringStatus)
   }
 }
 </script>

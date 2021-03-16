@@ -1,11 +1,11 @@
 //eslint-disable-next-line no-console
-console.log('Service worker startups.')
+console.log("Service worker startups.")
 
-const endsWith = (url, ...strs) => strs.some(str => url.endsWith(str))
-const matches = (url, ...regexps) => regexps.some(regex => url.match(regex))
+const endsWith = (url, ...strs) => strs.some((str) => url.endsWith(str))
+const matches = (url, ...regexps) => regexps.some((regex) => url.match(regex))
 
-const fromCache = async request => {
-  const cache = await caches.open('images')
+const fromCache = async (request) => {
+  const cache = await caches.open("images")
   const match = await cache.match(request)
 
   if (!match) return null
@@ -13,33 +13,29 @@ const fromCache = async request => {
   return match
 }
 
-const update = async request => {
-  const cache = await caches.open('images')
+const update = async (request) => {
+  const cache = await caches.open("images")
   const response = await fetch(request)
 
   cache.put(request, response)
   return response
 }
 
-self.addEventListener('install', () => {
+self.addEventListener("install", () => {
   //eslint-disable-next-line no-console
-  console.log('Service worker installed.')
+  console.log("Service worker installed.")
 
   self.skipWaiting()
 })
 
-self.addEventListener('fetch', event => {
+self.addEventListener("fetch", (event) => {
   const { url } = event.request
-  const isImage = endsWith(url, '.png', '.jpg', '.jpeg', '.gif')
-  const isFromCacheableUrl = matches(
-    url,
-    /img\d\.ak\.crunchyroll\.com/,
-    /s\d.anilist.co/,
-  )
+  const isImage = endsWith(url, ".png", ".jpg", ".jpeg", ".gif")
+  const isFromCacheableUrl = matches(url, /img\d\.ak\.crunchyroll\.com/, /s\d.anilist.co/)
 
   if (!isImage || !isFromCacheableUrl) return
 
-  fromCache(event.request).then(match => {
+  fromCache(event.request).then((match) => {
     if (match) {
       try {
         event.respondWith(match)

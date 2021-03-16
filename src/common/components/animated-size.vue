@@ -35,10 +35,7 @@ export default class AnimatedSize extends Vue {
     this.update()
   }
 
-  private getExtreme(
-    children: Element[],
-    property: "top" | "bottom" | "left" | "right",
-  ) {
+  private getExtreme(children: Element[], property: "top" | "bottom" | "left" | "right") {
     const extreme = ["top", "left"].includes(property) ? "min" : "max"
 
     return children.reduce(

@@ -103,9 +103,7 @@
               v-tooltip.top="markWatchedTooltip"
               class="button"
               :icon="bookmarkRemoveSvg"
-              @click.native="
-                updateProgress(Math.max(0, episode.episodeNumber - 1))
-              "
+              @click.native="updateProgress(Math.max(0, episode.episodeNumber - 1))"
             />
           </transition>
         </span>
@@ -117,11 +115,7 @@
           class="settings button-collapser"
           :class="{ open: settingsOpen }"
         >
-          <icon
-            class="button"
-            :icon="settingSvg"
-            @click.native="toggleSettingsOpen"
-          />
+          <icon class="button" :icon="settingSvg" @click.native="toggleSettingsOpen" />
         </span>
       </transition>
 
@@ -169,20 +163,14 @@
         <label v-if="state.levels != null">
           Quality:
           <select :value="state.quality" @input="handleSetQuality">
-            <option v-for="(_, q) in state.levels" :key="q" :value="q">
-              {{ q }}p
-            </option>
+            <option v-for="(_, q) in state.levels" :key="q" :value="q">{{ q }}p</option>
           </select>
         </label>
 
         <label v-if="subtitles.tracks.length > 0">
           Subtitles:
           <select :value="subtitles.selected" @input="handleSetSubtitlesTrack">
-            <option
-              v-for="(subtitle, q) in subtitles.tracks"
-              :key="q"
-              :value="q"
-            >
+            <option v-for="(subtitle, q) in subtitles.tracks" :key="q" :value="q">
               {{ subtitle[0] }}
             </option>
           </select>
@@ -204,13 +192,7 @@
 </template>
 
 <script lang="ts">
-import {
-  computed,
-  defineComponent,
-  PropType,
-  ref,
-  watch,
-} from "@vue/composition-api"
+import { computed, defineComponent, PropType, ref, watch } from "@vue/composition-api"
 import {
   mdiArrowCollapse,
   mdiArrowExpand,
@@ -225,10 +207,7 @@ import {
   mdiSkipNext,
   mdiSkipPrevious,
 } from "@mdi/js"
-import {
-  EpisodeListEpisodes,
-  PlayerAnimeAnime,
-} from "@/graphql/generated/types"
+import { EpisodeListEpisodes, PlayerAnimeAnime } from "@/graphql/generated/types"
 
 import { usePlayer } from "@/state/player"
 import { secondsToTimeString } from "@/utils"
@@ -337,8 +316,7 @@ export default defineComponent({
 
       return `${current} / ${duration}`
     })
-    const toggleFullscreen = () =>
-      emit(ControlsEvent.SetFullscreen, !props.fullscreen)
+    const toggleFullscreen = () => emit(ControlsEvent.SetFullscreen, !props.fullscreen)
 
     const clickTimeout = ref<number | null>(null)
     const handleCoverClick = () => {
@@ -393,8 +371,7 @@ export default defineComponent({
       traversePlaylist: playlist.traversePlaylist,
       updateProgress: (progress: number) =>
         // 0 is for Re:Zero's double first episode
-        props.episode.episodeNumber !== 0 &&
-        emit(ControlsEvent.UpdateProgress, progress),
+        props.episode.episodeNumber !== 0 && emit(ControlsEvent.UpdateProgress, progress),
       maximize: () => root.$router.push("/player-big"),
       play: () => emit(ControlsEvent.Play),
       pause: () => emit(ControlsEvent.Pause),

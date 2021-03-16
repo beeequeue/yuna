@@ -23,9 +23,7 @@ export type QueueItem = {
 export const userStore = new Store<any>({
   name: NODE_ENV === "development" ? "user-d" : "user",
   encryptionKey:
-    NODE_ENV === "production"
-      ? "not really secure but better than nothing?"
-      : undefined,
+    NODE_ENV === "production" ? "not really secure but better than nothing?" : undefined,
 })
 
 // Ultra primitive migration
@@ -46,10 +44,7 @@ if (oldVersion !== CURRENT_VERSION) {
 
   if (oldVersion === 2) {
     userStore.set("crunchyroll", null)
-    userStore.set(
-      "anilist.user.url",
-      userStore.get("anilist.user.siteUrl", null),
-    )
+    userStore.set("anilist.user.url", userStore.get("anilist.user.siteUrl", null))
     userStore.delete("anilist.user.siteUrl")
 
     userStore.set("__version", 3)

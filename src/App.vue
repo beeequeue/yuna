@@ -1,16 +1,10 @@
 <template>
   <transition name="fade">
-    <div
-      id="app"
-      tabindex="0"
-      :style="`background-image: url(${backgroundImage})`"
-    >
+    <div id="app" tabindex="0" :style="`background-image: url(${backgroundImage})`">
       <title-bar v-if="!isFullscreen" />
 
       <transition>
-        <navbar
-          v-if="isFinishedConnecting && hasFinishedSetup && !isFullscreen"
-        />
+        <navbar v-if="isFinishedConnecting && hasFinishedSetup && !isFullscreen" />
       </transition>
 
       <transition name="route">
@@ -120,9 +114,7 @@ export default defineComponent({
       (plugin) => new plugin(context.root.$apollo, context.root.$store),
     )
 
-    const hasFinishedSetup = computed(() =>
-      getHasFinishedSetup(context.root.$store),
-    )
+    const hasFinishedSetup = computed(() => getHasFinishedSetup(context.root.$store))
     const isFinishedConnecting = computed(() =>
       getFinishedConnecting(context.root.$store),
     )

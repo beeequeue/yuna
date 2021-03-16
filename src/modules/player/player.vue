@@ -126,15 +126,10 @@ import EndOfSeasonOverlay from "./end-of-season-overlay.vue"
 import { registerMediaKeys } from "./register-media-keys"
 import { PlayerState } from "./player.types"
 
-const getNumberFromLocalStorage = (
-  key: LocalStorageKey,
-  defaultValue: number,
-) => Number(localStorage.getItem(key) ?? defaultValue)
+const getNumberFromLocalStorage = (key: LocalStorageKey, defaultValue: number) =>
+  Number(localStorage.getItem(key) ?? defaultValue)
 
-const fetchStream = async (
-  provider: Provider,
-  id: string,
-): Promise<Stream | null> => {
+const fetchStream = async (provider: Provider, id: string): Promise<Stream | null> => {
   if ([Provider.Crunchyroll, Provider.CrunchyrollManual].includes(provider)) {
     return Crunchyroll.fetchStream(id)
   }
@@ -197,9 +192,7 @@ export default defineComponent({
       gainNode.value = audioContext.createGain()
       gainNode.value.gain.value = state.volume / 100
 
-      audioContext
-        .createMediaElementSource(player.value!)
-        .connect(gainNode.value)
+      audioContext.createMediaElementSource(player.value!).connect(gainNode.value)
 
       gainNode.value.connect(audioContext.destination)
     }
@@ -251,16 +244,11 @@ export default defineComponent({
 
       updateProgress(props.episode.episodeNumber)
     }
-    const setDiscordState = (
-      discordState: "watching" | "paused",
-      progress?: number,
-    ) => {
+    const setDiscordState = (discordState: "watching" | "paused", progress?: number) => {
       if (props.episode == null || props.anime == null) return
 
       ipcRenderer.send(
-        discordState === "watching"
-          ? DISCORD_SET_WATCHING
-          : DISCORD_PAUSE_WATCHING,
+        discordState === "watching" ? DISCORD_SET_WATCHING : DISCORD_PAUSE_WATCHING,
         {
           animeName: props.anime.title?.userPreferred,
           episode: props.episode.episodeNumber,
@@ -526,16 +514,11 @@ export default defineComponent({
       actions.pause()
 
       try {
-        const stream = await fetchStream(
-          props.episode.provider,
-          props.episode.id,
-        )
+        const stream = await fetchStream(props.episode.provider, props.episode.id)
 
         if (!stream) {
           throw new Error(
-            `Did not receive stream data from ${capitalize(
-              props.episode.provider,
-            )}.`,
+            `Did not receive stream data from ${capitalize(props.episode.provider)}.`,
           )
         }
 
@@ -589,11 +572,7 @@ export default defineComponent({
           return clearInterval(interval)
         }
 
-        gainNode.value.gain.value = clamp(
-          gainNode.value.gain.value - 0.05,
-          0,
-          2,
-        )
+        gainNode.value.gain.value = clamp(gainNode.value.gain.value - 0.05, 0, 2)
       }, 10)
     }
 
