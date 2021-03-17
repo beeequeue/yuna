@@ -5,6 +5,14 @@
   },
   "win": {},
   "linux": {
+    "target": [
+      {
+        "target": "AppImage"
+      },
+      {
+        "target": "deb"
+      }
+    ],
     "category": "Video"
   },
   "mac": {
