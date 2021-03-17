@@ -1,8 +1,12 @@
 {
   "name": "yuna",
   "description": "An anime player that integrates with AniList, Crunchyroll, and Hidive.",
-  "version": "1.4.21",
-  "author": "BeeeQueue",
+  "version": "1.4.22",
+  "author": {
+    "name": "BeeeQueue",
+    "email": "adam@haglund.dev",
+    "url": "https://github.com/BeeeQueue"
+  },
   "license": "AGPL-3.0-only",
   "engines": {
     "node": ">=12.11"
