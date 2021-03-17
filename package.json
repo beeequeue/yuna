@@ -43,7 +43,7 @@
     "@types/webpack": "4.41.23"
   },
   "dependencies": {
-    "@mdi/js": "5.8.55",
+    "@mdi/js": "5.9.55",
     "@sentry/node": "5.29.0",
     "@sentry/vue": "5.29.0",
     "@vue/apollo-composable": "4.0.0-alpha.12",
