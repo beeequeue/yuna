@@ -10,6 +10,7 @@ import ApolloOption from "@vue/apollo-option"
 import { init, setExtra } from "@sentry/vue"
 import { Integrations } from "@sentry/tracing"
 
+import { initFathom } from "@/lib/fathom"
 import { updateRelations } from "@/lib/relations"
 import { LocalStorageKey } from "@/lib/local-storage"
 import { getIsConnectedTo } from "@/state/auth"
@@ -29,11 +30,11 @@ import "regenerator-runtime/runtime"
 import "normalize.css"
 import "vue-virtual-scroller/dist/vue-virtual-scroller.css"
 
-if (process.env.NODE_ENV !== "production") {
-  localStorage.setItem(LocalStorageKey.BlockFathom, "true")
-} else {
-  localStorage.removeItem(LocalStorageKey.BlockFathom)
-}
+// Left-over from when I blocked fathom in development but it didn't work in prod
+// This is making sure that it's always unblocked
+localStorage.removeItem(LocalStorageKey.BlockFathom)
+
+initFathom()
 
 // Vue config
 Vue.config.productionTip = false

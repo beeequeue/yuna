@@ -3,17 +3,9 @@ declare type UnPromisify<T> = T extends Promise<infer R> ? R : T
 
 declare type PromiseReturnType<T> = T extends (...a: any[]) => Promise<infer R> ? R : T
 
-type Fathom = {
-  blockTrackingForMe: () => void
-  enableTrackingForMe: () => void
-  trackPageview: (options?: { url?: string; referrer?: string }) => void
-  trackGoal: (id: string, value: number) => void
-}
-
 // @ts-ignore
 declare interface Window {
   initialLogin: boolean
-  fathom: Fathom
 }
 
 declare type GlobalFetch = {

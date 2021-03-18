@@ -66,6 +66,7 @@
     "electron-store": "6.0.1",
     "electron-util": "0.14.2",
     "extract-zip": "2.0.1",
+    "fathom-client": "3.0.0",
     "fluent-ffmpeg": "2.1.2",
     "fuse.js": "6.4.3",
     "graphql": "15.4.0",

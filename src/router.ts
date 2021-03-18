@@ -1,7 +1,6 @@
 import Vue from "vue"
 import Router, { RawLocation } from "vue-router"
 import { ErrorHandler } from "vue-router/types/router"
-import { trackView } from "@/lib/tracking"
 
 Vue.use(Router)
 
@@ -60,12 +59,6 @@ export const router = new Router({
         import(/* webpackChunkName: "settings" */ "./views/settings/settings.vue"),
     },
   ],
-})
-
-router.afterEach((to) => {
-  if (to.name != null && Object.values(View).includes(to.name as View)) {
-    trackView(to.name as View)
-  }
 })
 
 /*
