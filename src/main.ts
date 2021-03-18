@@ -22,7 +22,7 @@ import { router } from "./router"
 import { storeOptions } from "./state/store"
 import { createProvider } from "./vue-apollo"
 import { normalizeEvent } from "./normalize"
-import { version } from "../package.json"
+import pkgJson from "../package.json"
 
 // https://github.com/Akryum/vue-cli-plugin-apollo/issues/355
 import "regenerator-runtime/runtime"
@@ -34,7 +34,7 @@ import "vue-virtual-scroller/dist/vue-virtual-scroller.css"
 // This is making sure that it's always unblocked
 localStorage.removeItem(LocalStorageKey.BlockFathom)
 
-initFathom()
+initFathom(pkgJson.version)
 
 // Vue config
 Vue.config.productionTip = false
@@ -56,7 +56,7 @@ init({
   dsn: "https://cd3bdb81216e42018409783fedc64b7d@sentry.io/1336205",
   enabled: process.env.NODE_ENV === "production",
   environment: process.env.NODE_ENV,
-  release: `v${version}`,
+  release: `v${pkgJson.version}`,
   sampleRate: 0.75,
   attachProps: true,
   tracingOptions: { trackComponents: true },
