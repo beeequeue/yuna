@@ -20,9 +20,7 @@ import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer"
 
 import { destroyDiscord, registerDiscord } from "./lib/discord"
 import {
-  ANILIST_LOGIN,
   FFMPEG_RETRY,
-  LOGGED_INTO_ANILIST,
   OPEN_DEVTOOLS,
   REGISTER_MEDIA_KEYS,
   UNREGISTER_MEDIA_KEYS,
@@ -295,22 +293,6 @@ app.on("ready", async () => {
     // Install Vue Devtools
     await installExtension(VUEJS_DEVTOOLS)
   }
-
-  protocol.registerStringProtocol("yuna", async (req, cb) => {
-    const matches = req.url!.match(
-      /access_token=(.*)&.*&expires_in=(\d+)/,
-    ) as RegExpMatchArray
-
-    if (!matches || !matches[1]) {
-      return cb("Failed to get token")
-    }
-
-    mainWindow!.webContents.send(ANILIST_LOGIN, {
-      token: matches[1],
-      expires: Date.now() + Number(matches[2]),
-    })
-    cb(LOGGED_INTO_ANILIST)
-  })
 
   mainWindow = createMainWindow()
 })

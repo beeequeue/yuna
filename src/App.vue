@@ -54,7 +54,6 @@ import EditModal from "@/common/modals/edit-modal.vue"
 import LocalSourceModal from "@/common/modals/local-source/local-source.vue"
 import PlayerContainer from "@/modules/player/player-container.vue"
 import Navbar from "@/modules/navbar/navbar.vue"
-import { Anilist } from "@/lib/anilist"
 import { Crunchyroll } from "@/lib/crunchyroll"
 import { Hidive } from "@/lib/hidive"
 import { getFinishedConnecting } from "@/state/auth"
@@ -66,7 +65,6 @@ import {
   setIsUpdateAvailable,
 } from "@/state/app"
 import {
-  ANILIST_LOGIN,
   CHECK_FOR_UPDATES,
   FFMPEG_DOWNLOADED,
   FFMPEG_FAILED,
@@ -170,15 +168,6 @@ export default defineComponent({
         title: "Successfully downloaded FFMPEG!",
         message: "Local file support will work now!",
       })
-    })
-
-    type Parameters = {
-      token: string
-      expires: number
-    }
-
-    ipcRenderer.on(ANILIST_LOGIN, async (_: any, params: Parameters) => {
-      await Anilist.updateUserData(context.root.$store, params)
     })
 
     return {

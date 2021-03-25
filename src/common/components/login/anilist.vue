@@ -34,7 +34,9 @@ export default class LoginAl extends Vue {
   public arrowSvg = mdiArrowLeft
 
   public async login() {
-    await Anilist.login()
+    const result = await Anilist.login()
+
+    await Anilist.updateUserData(this.$store, result)
 
     this.onFinished && this.onFinished()
   }
