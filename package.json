@@ -113,7 +113,7 @@
     "@types/ffprobe-static": "2.0.0",
     "@types/fluent-ffmpeg": "2.1.16",
     "@types/hls.js": "0.13.3",
-    "@types/jest": "24.0.19",
+    "@types/jest": "24.9.1",
     "@types/lodash.keyby": "4.6.6",
     "@types/lzma-native": "4.0.0",
     "@types/marked": "2.0.0",
