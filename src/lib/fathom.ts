@@ -7,7 +7,7 @@ export const initFathom = (version: string) => {
   })
 
   Fathom.load("SWBYGOWF", {
-    url: "https://mammal.haglund.dev/script.js",
+    url: "./fathom.js",
     spa: "hash",
   })
 }

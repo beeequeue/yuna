@@ -5,7 +5,6 @@ import request from "superagent/dist/superagent"
 import { getConfig } from "@/config"
 import { setAnilist } from "@/state/auth"
 import { NO_OP, removeCookies } from "@/utils"
-import { LOGGED_INTO_ANILIST } from "@/messages"
 import { updateMainListPlugin } from "@/state/settings"
 
 type BrowserWindow = electron.BrowserWindow
@@ -22,7 +21,7 @@ const GQL_ENDPOINT = "https://graphql.anilist.co"
 
 export class Anilist {
   public static login() {
-    return new Promise<void>((resolve) => {
+    return new Promise<Parameters>((resolve) => {
       authWindow = new BrowserWindow({
         width: 400,
         height: 600,
@@ -45,16 +44,15 @@ export class Anilist {
         )
         .catch(NO_OP)
 
-      authWindow.webContents.on("dom-ready", () => {
-        authWindow.webContents.findInPage(LOGGED_INTO_ANILIST, {
-          matchCase: true,
-        })
-      })
+      authWindow.webContents.on("will-redirect", (_, url) => {
+        const parsedUrl = new URL(url)
+        const params = new URLSearchParams(parsedUrl.hash.slice(1))
+        const token = params.get("access_token")
+        const expires = params.get("expires_in")
 
-      authWindow.webContents.on("found-in-page", (_, result) => {
-        if (result.matches < 1) return
+        if (!token) return
 
-        resolve()
+        resolve({ token, expires: Date.now() + Number(expires!) })
 
         if (!authWindow) return
         authWindow.close()

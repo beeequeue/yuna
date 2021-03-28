@@ -34,7 +34,9 @@ import "vue-virtual-scroller/dist/vue-virtual-scroller.css"
 // This is making sure that it's always unblocked
 localStorage.removeItem(LocalStorageKey.BlockFathom)
 
-initFathom(pkgJson.version)
+if (process.env.NODE_ENV === "production") {
+  initFathom(pkgJson.version)
+}
 
 // Vue config
 Vue.config.productionTip = false
