@@ -111,7 +111,7 @@
     "@types/electron-devtools-installer": "2.2.0",
     "@types/ffmpeg-static": "3.0.0",
     "@types/ffprobe-static": "2.0.0",
-    "@types/fluent-ffmpeg": "2.1.16",
+    "@types/fluent-ffmpeg": "2.1.17",
     "@types/hls.js": "0.13.3",
     "@types/jest": "24.9.1",
     "@types/lodash.keyby": "4.6.6",
