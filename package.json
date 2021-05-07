@@ -105,7 +105,7 @@
     "@graphql-codegen/typescript-operations": "1.17.15",
     "@sentry/webpack-plugin": "1.14.2",
     "@testing-library/jest-dom": "5.11.10",
-    "@testing-library/vue": "5.6.1",
+    "@testing-library/vue": "5.6.2",
     "@types/date-fns": "2.6.0",
     "@types/discord-rpc": "3.0.5",
     "@types/electron-devtools-installer": "2.2.0",
