@@ -9,7 +9,7 @@
   },
   "license": "AGPL-3.0-only",
   "engines": {
-    "node": ">=12.11"
+    "node": ">=16.15"
   },
   "private": true,
   "repository": {
