@@ -73,7 +73,7 @@
     "hls.js": "0.14.17",
     "lodash.keyby": "4.6.0",
     "marked": "2.0.1",
-    "node-fetch": "2.6.1",
+    "node-fetch": "2.6.7",
     "normalize.css": "8.0.1",
     "portal-vue": "2.1.7",
     "register-scheme": "0.0.2",
