@@ -139,7 +139,7 @@
     "browserslist": "4.16.5",
     "cross-env": "7.0.3",
     "deepmerge": "4.2.2",
-    "electron": "9.4.4",
+    "electron": "18.3.7",
     "eslint": "7.15.0",
     "eslint-plugin-prettier": "3.3.0",
     "eslint-plugin-vue": "7.2.0",
